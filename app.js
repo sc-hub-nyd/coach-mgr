@@ -176,15 +176,24 @@ const sidebar = document.getElementById('sidebar');
 
 // Initialization
 function init() {
-    loadData();
-    
-    // Apply Team Info Settings
-    document.documentElement.style.setProperty('--primary', state.teamInfo.color);
-    const sidebarTitle = document.querySelector('.sidebar-header h2');
-    if(sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
-    setupEventListeners();
-    setupModals();
-    navigate('dashboard');
+    try {
+        loadData();
+        
+        // Apply Team Info Settings
+        document.documentElement.style.setProperty('--primary', state.teamInfo.color);
+        const sidebarTitle = document.querySelector('.sidebar-header h2');
+        if(sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
+        setupEventListeners();
+        setupModals();
+        navigate('dashboard');
+    } catch (e) {
+        console.error("Initialization error:", e);
+        alert("初期化エラーが発生しました: " + e.message);
+        // Attempt recovery navigation
+        try {
+            navigate('dashboard');
+        } catch (err) {}
+    }
 }
 
 // UI Helpers
@@ -936,13 +945,13 @@ function initDashboard() {
     const topScorers = Object.entries(scorerCounts)
         .map(([id, count]) => ({ p: state.players.find(pl => pl.id === parseInt(id)), count }))
         .filter(x => x.p)
-        .sort((a,b) => b.count - a.count || (parseInt(a.p.number) - parseInt(b.p.number)))
+        .sort((a,b) => b.count - a.count || ((parseInt(a.p.number) || 0) - (parseInt(b.p.number) || 0)))
         .slice(0, 3);
 
     const topAssists = Object.entries(assistCounts)
         .map(([id, count]) => ({ p: state.players.find(pl => pl.id === parseInt(id)), count }))
         .filter(x => x.p)
-        .sort((a,b) => b.count - a.count || (parseInt(a.p.number) - parseInt(b.p.number)))
+        .sort((a,b) => b.count - a.count || ((parseInt(a.p.number) || 0) - (parseInt(b.p.number) || 0)))
         .slice(0, 3);
 
     const elTopScorers = document.getElementById('dash-top-scorers');
