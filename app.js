@@ -131,6 +131,42 @@ function saveData() {
     }));
 }
 
+// Show a fallback modal with the JSON text for environments where download is not available (iOS, file://)
+function _showExportFallbackModal(jsonStr) {
+    const modal = document.getElementById('modal-export-fallback');
+    const textarea = document.getElementById('export-json-textarea');
+    const btnCopy = document.getElementById('btn-copy-export-json');
+    const successMsg = document.getElementById('export-copy-success');
+    if (!modal || !textarea) return;
+
+    textarea.value = jsonStr;
+    if (successMsg) successMsg.style.display = 'none';
+    modal.classList.remove('hidden');
+
+    if (btnCopy) {
+        const newBtn = btnCopy.cloneNode(true);
+        btnCopy.parentNode.replaceChild(newBtn, btnCopy);
+        newBtn.addEventListener('click', () => {
+            textarea.select();
+            textarea.setSelectionRange(0, textarea.value.length); // for mobile
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(jsonStr).then(() => {
+                        const msg = document.getElementById('export-copy-success');
+                        if (msg) { msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 2500); }
+                    });
+                } else {
+                    document.execCommand('copy');
+                    const msg = document.getElementById('export-copy-success');
+                    if (msg) { msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 2500); }
+                }
+            } catch(e) {
+                alert('コピーできませんでした。テキストを手動で選択してコピーしてください。');
+            }
+        });
+    }
+}
+
 // DOM Elements
 const viewContainer = document.getElementById('view-container');
 const topbarTitle = document.getElementById('topbar-title');
@@ -1722,18 +1758,35 @@ function initSettings() {
                 positions: state.positions,
                 teamInfo: state.teamInfo
             }, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
+
             const now = new Date();
             const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
-            a.href = url;
-            a.download = `coachMgrBackup_${dateStr}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast('データをエクスポートしました');
+            const filename = `coachMgrBackup_${dateStr}.json`;
+
+            // Try programmatic download (works on desktop & Android Chrome)
+            try {
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 500);
+                showToast(`${filename} をダウンロードしました`);
+            } catch (err) {
+                // Fallback: show modal with JSON text to copy (iOS Safari / file://)
+                _showExportFallbackModal(dataStr);
+            }
+
+            // iOS Safari: blob download silently fails without error, so also show modal
+            // if the download anchor likely didn't work (detected via iOS UA)
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (isIOS) {
+                setTimeout(() => _showExportFallbackModal(dataStr), 300);
+            }
         });
     }
 
@@ -2604,6 +2657,34 @@ function initAnimation(params) {
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseUp);
+
+    // --- Touch support (mobile) ---
+    function getTouchPos(touchEvent) {
+        const rect = canvas.getBoundingClientRect();
+        const touch = touchEvent.touches[0] || touchEvent.changedTouches[0];
+        return {
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        };
+    }
+
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const pos = getTouchPos(e);
+        handleMouseDown({ clientX: pos.clientX, clientY: pos.clientY, button: 0 });
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const pos = getTouchPos(e);
+        handleMouseMove({ clientX: pos.clientX, clientY: pos.clientY });
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        const pos = getTouchPos(e);
+        handleMouseUp({ clientX: pos.clientX, clientY: pos.clientY });
+    }, { passive: false });
 }
 
 function updateFrameCount() {
