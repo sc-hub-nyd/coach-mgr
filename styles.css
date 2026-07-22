@@ -24,15 +24,22 @@
     box-sizing: border-box;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-primary);
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 input, select, textarea, button {
     font-family: inherit;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 /* Glassmorphism utility */
@@ -52,19 +59,24 @@ input, select, textarea, button {
 .app-container {
     display: flex;
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .sidebar {
     width: var(--sidebar-width);
     background: var(--surface-color);
     backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
     border-right: 1px solid var(--surface-border);
     display: flex;
     flex-direction: column;
     position: fixed;
     height: 100vh;
+    height: 100dvh;
     z-index: 100;
     transition: transform var(--transition);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .sidebar-header {
@@ -116,6 +128,7 @@ input, select, textarea, button {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .topbar {
@@ -126,6 +139,7 @@ input, select, textarea, button {
     padding: 0 2rem;
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
     border-bottom: 1px solid var(--surface-border);
     position: sticky;
     top: 0;
@@ -677,6 +691,7 @@ canvas {
     width: 100%;
     height: 100%;
     cursor: crosshair;
+    touch-action: none;
 }
 
 /* Modals */
@@ -686,8 +701,10 @@ canvas {
     left: 0;
     width: 100%;
     height: 100%;
+    height: 100dvh;
     background: rgba(0,0,0,0.5);
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -776,6 +793,15 @@ canvas {
 
 /* Responsive */
 @media (max-width: 768px) {
+    .topbar {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .topbar-title {
+        font-size: 1.1rem;
+    }
+
     .view-container {
         padding: 1rem; /* Compact spacing on mobile */
     }
@@ -786,6 +812,7 @@ canvas {
     
     .sidebar.open {
         transform: translateX(0);
+        box-shadow: 4px 0 20px rgba(0,0,0,0.15);
     }
     
     .main-content {
@@ -794,6 +821,11 @@ canvas {
     
     .menu-toggle {
         display: block;
+    }
+
+    /* Prevent iOS Safari auto-zoom on input focus */
+    .form-control, select, input[type="text"], input[type="number"], input[type="date"], input[type="password"], textarea {
+        font-size: 16px !important;
     }
 }
 
@@ -1736,6 +1768,7 @@ summary {
 body.role-read-only #btn-add-match,
 body.role-read-only #btn-add-practice,
 body.role-read-only #btn-add-player,
+body.role-read-only #btn-import-players-csv,
 body.role-read-only #btn-add-formation,
 body.role-read-only #btn-add-library-menu,
 body.role-read-only #btn-edit-match,
@@ -1785,3 +1818,27 @@ body.role-read-only #pd-tab-goals textarea {
     border-color: transparent;
     resize: none;
 }
+
+/* CSV Preview Table */
+.csv-preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+}
+.csv-preview-table th {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.35rem 0.6rem;
+    border-bottom: 1px solid var(--surface-border);
+}
+.csv-preview-table td {
+    padding: 0.35rem 0.6rem;
+    border-bottom: 1px solid var(--surface-border);
+    color: var(--text-primary);
+}
+.csv-preview-table tr:last-child td {
+    border-bottom: none;
+}
+

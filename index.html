@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
     <link rel="stylesheet" href="styles.css">
@@ -205,7 +205,8 @@
         <div class="dashboard-grid" id="player-summary-cards" style="margin-bottom:1.5rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
             <!-- Rendered dynamically by role in initPlayers() -->
         </div>
-        <div class="header-actions" style="justify-content:flex-end;">
+        <div class="header-actions" style="justify-content:flex-end; gap:0.5rem;">
+            <button class="btn btn-secondary" id="btn-import-players-csv"><i class="fa-solid fa-file-csv"></i> CSVから一括登録</button>
             <button class="btn btn-primary" id="btn-add-player"><i class="fa-solid fa-user-plus"></i> 選手を追加</button>
         </div>
         <div class="dashboard-grid" id="player-grid">
@@ -576,9 +577,16 @@
                             <button class="btn btn-secondary" id="anim-insert-frame" style="padding:0.25rem 0.1rem; font-size:0.65rem; justify-content:center;" title="現在表示中のシーンの直後に割り込み挿入"><i class="fa-solid fa-code-commit"></i> 間に挿入</button>
                         </div>
                         
-                        <!-- Timeline Scene List Area -->
-                        <div id="anim-frame-list" style="display:flex; gap:0.25rem; overflow-x:auto; margin-top:0.35rem; padding:0.25rem 0; max-width:100%;">
-                            <!-- Rendered dynamically by updateFrameCount() -->
+                        <!-- Hybrid Scene Navigator Controls -->
+                        <div id="anim-scene-navigator" style="margin-top:0.35rem; display:flex; flex-direction:column; gap:0.25rem;">
+                            <div style="display:flex; align-items:center; gap:0.2rem; width:100%;">
+                                <button class="btn btn-secondary" id="anim-prev-frame" style="padding:0.2rem 0.45rem; font-size:0.65rem; height:24px; box-sizing:border-box; justify-content:center;" title="前のシーンへ"><i class="fa-solid fa-chevron-left"></i></button>
+                                <select id="anim-frame-select" class="form-control" style="flex:1; padding:0.1rem 0.2rem; font-size:0.7rem; height:24px; border:1px solid var(--surface-border); border-radius:4px; background:#ffffff; color:var(--text-primary); text-align:center; font-weight:600; min-width:0;">
+                                    <option value="-1">シーン未作成 (0)</option>
+                                </select>
+                                <button class="btn btn-secondary" id="anim-next-frame" style="padding:0.2rem 0.45rem; font-size:0.65rem; height:24px; box-sizing:border-box; justify-content:center;" title="次のシーンへ"><i class="fa-solid fa-chevron-right"></i></button>
+                                <button class="btn btn-danger" id="anim-delete-frame" style="padding:0.2rem 0.45rem; font-size:0.65rem; height:24px; box-sizing:border-box; justify-content:center;" title="現在のシーンを削除"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
                         </div>
 
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.25rem; margin-top:0.3rem;">
@@ -590,9 +598,10 @@
 
                 <!-- Section 7: Global Tools (Always at the bottom) -->
                 <div class="canvas-toolbar-section" style="border-top:1.5px solid var(--surface-border); border-bottom:none; padding-top:0.35rem; padding-bottom:0; margin-bottom:0;">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.25rem;">
-                        <button class="btn btn-secondary" id="tool-undo" style="padding:0.25rem; font-size:0.7rem; justify-content:center;" title="元に戻す (Ctrl+Z)"><i class="fa-solid fa-rotate-left"></i> 戻す</button>
-                        <button class="btn btn-danger" id="tool-clear" style="padding:0.25rem; font-size:0.7rem; justify-content:center;" title="すべて消去"><i class="fa-solid fa-trash"></i> 消去</button>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.2rem;">
+                        <button class="btn btn-secondary" id="tool-undo" style="padding:0.25rem 0.1rem; font-size:0.65rem; justify-content:center;" title="元に戻す (Ctrl+Z)"><i class="fa-solid fa-rotate-left"></i> 戻す</button>
+                        <button class="btn btn-secondary" id="tool-redo" style="padding:0.25rem 0.1rem; font-size:0.65rem; justify-content:center;" title="やり直し (Ctrl+Y)"><i class="fa-solid fa-rotate-right"></i> 進む</button>
+                        <button class="btn btn-danger" id="tool-clear" style="padding:0.25rem 0.1rem; font-size:0.65rem; justify-content:center;" title="すべて消去"><i class="fa-solid fa-trash"></i> 消去</button>
                     </div>
                 </div>
 
@@ -1227,6 +1236,45 @@
         </div>
     </div>
 
-    <script src="app.js?v=18"></script>
+    <!-- Player CSV Bulk Import Modal -->
+    <div id="modal-import-players-csv" class="modal-overlay hidden" style="z-index: 1002;">
+        <div class="modal" style="max-width: 580px; width: 92%;">
+            <button class="btn-close-modal" onclick="document.getElementById('modal-import-players-csv').classList.add('hidden')" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
+            <h2 style="margin-bottom:0.4rem; font-size:1.2rem; color:var(--primary);"><i class="fa-solid fa-file-csv"></i> 選手データ一括登録 (CSV)</h2>
+            <p class="text-secondary" style="font-size:0.8rem; margin-bottom:1rem;">
+                CSVファイルを選択するか、テキスト入力エリアに直接貼り付けて一括登録できます。
+            </p>
+            
+            <div style="background:rgba(0,0,0,0.03); border:1px solid var(--surface-border); border-radius:8px; padding:0.75rem; margin-bottom:1rem; font-size:0.75rem; color:var(--text-secondary);">
+                <div style="font-weight:bold; color:var(--text-primary); margin-bottom:0.25rem;"><i class="fa-solid fa-circle-info"></i> CSVフォーマット例（1行1選手）</div>
+                <code>背番号, 氏名, 学年, ポジション</code><br>
+                <code>10, 山田 太郎, 6年, FW</code><br>
+                <code>7, 佐藤 健太, 5年, MF</code>
+            </div>
+
+            <form id="form-import-players-csv">
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="font-size:0.85rem; font-weight:600; margin-bottom:0.4rem;">CSVファイルの選択 または 直接入力</label>
+                    <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
+                        <input type="file" id="input-csv-file" accept=".csv, .txt" class="form-control" style="padding:0.4rem 0.6rem; font-size:0.8rem;">
+                    </div>
+                    <textarea id="textarea-csv-data" class="form-control" rows="5" placeholder="背番号, 氏名, 学年, ポジション&#10;10, 山田 太郎, 6年, FW&#10;7, 佐藤 健太, 5年, MF" style="font-family:monospace; font-size:0.8rem;"></textarea>
+                </div>
+
+                <div id="csv-preview-container" style="display:none; margin-bottom:1rem; max-height:180px; overflow-y:auto; border:1px solid var(--surface-border); border-radius:8px; padding:0.5rem; background:#fff;">
+                    <!-- CSV parsed preview table injected here -->
+                </div>
+
+                <div id="csv-error-msg" style="display:none; color:#ef4444; font-size:0.8rem; margin-bottom:0.75rem;"></div>
+
+                <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+                    <button type="button" class="btn btn-secondary btn-close-modal" onclick="document.getElementById('modal-import-players-csv').classList.add('hidden')">キャンセル</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-csv-import"><i class="fa-solid fa-upload"></i> 一括登録する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
