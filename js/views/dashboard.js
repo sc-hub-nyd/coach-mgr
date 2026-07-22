@@ -69,8 +69,8 @@ export function openMatchListModal(title, matches) {
     if (matches.length === 0) {
         contentEl.innerHTML = '<div class="text-secondary" style="font-style:italic; font-size:0.85rem;">該当する試合がありません</div>';
     } else {
-        contentEl.innerHTML = matches.map(m => `
-            <div class="schedule-item" style="cursor:pointer;" onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); location.hash='#matches'; setTimeout(() => { const btn = document.querySelector('.btn-detail-match[data-id=\\'${m.id}\\']'); if(btn) btn.click(); }, 100);">
+        contentEl.innerHTML = matches.map((m, idx) => `
+            <div class="schedule-item pml-match-item" data-id="${m.id}" style="cursor:pointer;">
                 <div class="schedule-item-info">
                     <div class="schedule-item-icon-box match"><i class="fa-solid fa-trophy"></i></div>
                     <div class="schedule-item-details">
@@ -80,6 +80,18 @@ export function openMatchListModal(title, matches) {
                 </div>
             </div>
         `).join('');
+
+        contentEl.querySelectorAll('.pml-match-item').forEach(item => {
+            item.onclick = () => {
+                const matchId = parseInt(item.dataset.id, 10);
+                document.getElementById('modal-player-matches-list').classList.add('hidden');
+                navigate('matches');
+                setTimeout(() => {
+                    const btn = document.querySelector(`.btn-detail-match[data-id='${matchId}']`);
+                    if (btn) btn.click();
+                }, 100);
+            };
+        });
     }
     openModal('modal-player-matches-list');
 }
@@ -177,8 +189,8 @@ export function initDashboard() {
         if (upcomingEvents.length === 0) {
             elUpcoming.innerHTML = '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic;">今後の予定はありません</div>';
         } else {
-            elUpcoming.innerHTML = upcomingEvents.slice(0, 5).map(ev => `
-                <div class="schedule-item" style="padding:0.4rem 0.6rem; cursor:pointer;" onclick="location.hash='#${ev.type === 'match' ? 'matches' : 'practices'}';">
+            elUpcoming.innerHTML = upcomingEvents.slice(0, 5).map((ev, idx) => `
+                <div class="schedule-item dash-upcoming-item" data-route="${ev.type === 'match' ? 'matches' : 'practices'}" style="padding:0.4rem 0.6rem; cursor:pointer;">
                     <div class="schedule-item-info">
                         <div class="schedule-item-icon-box ${ev.type === 'match' ? 'match' : 'practice'}" style="width:24px; height:24px; font-size:0.7rem;">
                             <i class="fa-solid ${ev.type === 'match' ? 'fa-trophy' : 'fa-calendar-check'}"></i>
@@ -190,6 +202,10 @@ export function initDashboard() {
                     </div>
                 </div>
             `).join('');
+
+            elUpcoming.querySelectorAll('.dash-upcoming-item').forEach(item => {
+                item.onclick = () => navigate(item.dataset.route);
+            });
         }
     }
 
@@ -206,8 +222,8 @@ export function initDashboard() {
         if (pastEvents.length === 0) {
             elPast.innerHTML = '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic;">過去の履歴はありません</div>';
         } else {
-            elPast.innerHTML = pastEvents.slice(0, 3).map(ev => `
-                <div class="schedule-item" style="padding:0.4rem 0.6rem; cursor:pointer;" onclick="location.hash='#${ev.type === 'match' ? 'matches' : 'practices'}';">
+            elPast.innerHTML = pastEvents.slice(0, 3).map((ev, idx) => `
+                <div class="schedule-item dash-past-item" data-route="${ev.type === 'match' ? 'matches' : 'practices'}" style="padding:0.4rem 0.6rem; cursor:pointer;">
                     <div class="schedule-item-info">
                         <div class="schedule-item-icon-box ${ev.type === 'match' ? 'match' : 'practice'}" style="width:24px; height:24px; font-size:0.7rem;">
                             <i class="fa-solid ${ev.type === 'match' ? 'fa-trophy' : 'fa-calendar-check'}"></i>
@@ -219,6 +235,10 @@ export function initDashboard() {
                     </div>
                 </div>
             `).join('');
+
+            elPast.querySelectorAll('.dash-past-item').forEach(item => {
+                item.onclick = () => navigate(item.dataset.route);
+            });
         }
     }
 }
