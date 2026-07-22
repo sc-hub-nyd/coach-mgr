@@ -1,30 +1,15 @@
 // App State & Data
 let state = {
-    matches: [
-        { id: 1, date: '2026-07-15', opponent: 'FC Tokyo U15', result: '2-1', type: 'League', scorers: '10番, 9番', comments: '前半は押し込まれたが、後半システム変更から逆転。', playerFeedback: [] },
-        { id: 2, date: '2026-07-10', opponent: 'Yokohama U15', result: '0-0', type: 'Friendly', scorers: '', comments: '決定力不足。守備陣はよく耐えた。', playerFeedback: [] }
-    ],
-    practices: [
-        { 
-            id: 1, date: '2026-07-16', attendance: '20/22', 
-            menus: [
-                { id: 101, focus: 'ポゼッション', organize: '20m x 20m グリッド\n4 vs 4 + 1フリーマン', keyfactor: '・ボールを受ける前の首振り\n・サポートの角度と距離', options: '・パスが5本繋がったら1点\n・慣れたら2タッチ制限', frames: null },
-                { id: 102, focus: '紅白戦', organize: 'ハーフコート 8 vs 8', keyfactor: '・攻守の切り替えのスピード\n・前線からの連動したプレス', options: '', frames: null }
-            ]
-        }
-    ],
-    players: [
-        { id: 1, name: '山田 太郎', number: 10, position: 'FW', history: [{ id: 101, date: '2026-07-01', comment: '入部時評価', skills: [4, 3, 5, 2, 4, 3] }] },
-        { id: 2, name: '佐藤 次郎', number: 5, position: 'DF', history: [{ id: 102, date: '2026-07-01', comment: '入部時評価', skills: [2, 4, 3, 5, 4, 4] }] }
-    ],
-    menuLibrary: [
-        { id: 201, focus: 'ポゼッション 4vs4+フリーマン', organize: '20m x 20m グリッド\n4 vs 4 + 1フリーマン', keyfactor: '・ボールを受ける前の首振り\n・サポートの角度と距離', options: '・パスが5本繋がったら1点\n・慣れたら2タッチ制限', frames: null }
-    ],
+    matches: [],
+    practices: [],
+    players: [],
+    menuLibrary: [],
     matchTypes: ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'],
     menuCategories: ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'],
     skillMetrics: ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'],
-    positions: ['FW', 'MF', 'DF', 'GK'],
-    teamInfo: { name: 'My Team', color: '#f23932', passcode: '1234' },
+    positions: ['GK', 'DF', 'MF', 'FW'],
+    positionsCat2: ['CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH'],
+    teamInfo: { name: 'My Team', color: '#f23932', passcode: '7064' },
     currentUserRole: 'parent',
     customFormations: [
         {
@@ -102,17 +87,15 @@ function loadData() {
         state.matches = parsed.matches || [];
         state.practices = parsed.practices || [];
         state.players = parsed.players || [];
+        state.menuLibrary = parsed.menuLibrary || [];
         state.matchTypes = parsed.matchTypes || ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'];
         state.menuCategories = parsed.menuCategories || ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'];
         state.skillMetrics = parsed.skillMetrics || ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'];
-        state.positions = parsed.positions || ['FW', 'MF', 'DF', 'GK'];
-        state.teamInfo = parsed.teamInfo || { name: 'My Team', color: '#f23932', passcode: '1234' };
-        if (!state.teamInfo.passcode) state.teamInfo.passcode = '1234';
+        state.positions = parsed.positions || ['GK', 'DF', 'MF', 'FW'];
+        state.positionsCat2 = parsed.positionsCat2 || ['CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH'];
+        state.teamInfo = parsed.teamInfo || { name: 'My Team', color: '#f23932', passcode: '7064' };
+        if (!state.teamInfo.passcode) state.teamInfo.passcode = '7064';
         state.customFormations = parsed.customFormations || state.customFormations;
-
-        state.menuLibrary = parsed.menuLibrary || [
-            { id: 201, focus: 'ポゼッション 4vs4+フリーマン', organize: '20m x 20m グリッド\n4 vs 4 + 1フリーマン', keyfactor: '・ボールを受ける前の首振り\n・サポートの角度と距離', options: '・パスが5本繋がったら1点\n・慣れたら2タッチ制限', category: 'ポゼッション', frames: null }
-        ];
 
         // Migrate matches
         state.matches.forEach(m => {
@@ -167,10 +150,10 @@ function loadData() {
             }
         });
     } else {
-        // Default seed data
-        state.menuLibrary = [
-            { id: 201, focus: 'ポゼッション 4vs4+フリーマン', organize: '20m x 20m グリッド\n4 vs 4 + 1フリーマン', keyfactor: '・ボールを受ける前の首振り\n・サポートの角度と距離', options: '・パスが5本繋がったら1点\n・慣れたら2タッチ制限', category: 'ポゼッション', frames: null }
-        ];
+        state.matches = [];
+        state.practices = [];
+        state.players = [];
+        state.menuLibrary = [];
     }
 }
 
@@ -184,6 +167,7 @@ function saveData() {
         menuCategories: state.menuCategories,
         skillMetrics: state.skillMetrics,
         positions: state.positions,
+        positionsCat2: state.positionsCat2,
         teamInfo: state.teamInfo,
         customFormations: state.customFormations
     }));
@@ -322,7 +306,7 @@ function setupEventListeners() {
         formPasscode.addEventListener('submit', (e) => {
             e.preventDefault();
             const val = inputPasscode ? inputPasscode.value.trim() : '';
-            const targetPass = (state.teamInfo && state.teamInfo.passcode) ? state.teamInfo.passcode : '1234';
+            const targetPass = (state.teamInfo && state.teamInfo.passcode) ? state.teamInfo.passcode : '7064';
 
             if (val === targetPass) {
                 state.currentUserRole = 'coach';
@@ -456,6 +440,7 @@ function initData() {
             menuCategories: state.menuCategories,
             skillMetrics: state.skillMetrics,
             positions: state.positions,
+            positionsCat2: state.positionsCat2,
             teamInfo: state.teamInfo,
             customFormations: state.customFormations
         }, null, 2);
@@ -526,12 +511,30 @@ function initData() {
     if (inputImportView) {
         inputImportView.onchange = (e) => handleImportFile(e.target.files[0], inputImportView);
     }
+
+    const btnAllClear = document.getElementById('btn-data-all-clear');
+    if (btnAllClear) {
+        btnAllClear.onclick = () => {
+            if (!confirm('【警告】入力済みのデータをすべて消去して初期化します。\nこの操作は取り消せません。よろしいですか？')) {
+                return;
+            }
+            if (!confirm('本当にすべてのデータを消去しますか？（最終確認）')) {
+                return;
+            }
+            state.matches = [];
+            state.practices = [];
+            state.players = [];
+            state.menuLibrary = [];
+            localStorage.removeItem('coachMgrData');
+            showToast('すべての入力データをクリアしました。');
+            setTimeout(() => location.reload(), 1000);
+        };
+    }
 }
 
 // Modals & Forms
-// Modals & Forms
-function addGoalRecordRow(scorerId = null, assistId = null) {
-    const container = document.getElementById('goal-records-list');
+function addGoalRecordRow(scorerId = null, assistId = null, targetContainerId = 'goal-records-list') {
+    const container = document.getElementById(targetContainerId);
     if (!container) return;
     
     const rowId = 'goal-row-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
@@ -606,11 +609,35 @@ function setupModals() {
         };
     }
 
+    const btnAddPeriodGoalRecord = document.getElementById('btn-add-period-goal-record');
+    if (btnAddPeriodGoalRecord) {
+        btnAddPeriodGoalRecord.onclick = () => {
+            addGoalRecordRow(null, null, 'period-goal-records-list');
+        };
+    }
+
     const btnAddFormationVideo = document.getElementById('btn-add-formation-video');
     if (btnAddFormationVideo) {
         btnAddFormationVideo.onclick = () => {
             addFormationVideoRow();
         };
+    }
+
+    const formationScoreUs = document.getElementById('formation-score-us');
+    if (formationScoreUs) {
+        formationScoreUs.addEventListener('input', (e) => {
+            const score = parseInt(e.target.value, 10) || 0;
+            const container = document.getElementById('period-goal-records-list');
+            if (container) {
+                const currentRows = container.querySelectorAll('.goal-record-row').length;
+                if (score > currentRows) {
+                    const diff = score - currentRows;
+                    for (let i = 0; i < diff; i++) {
+                        addGoalRecordRow(null, null, 'period-goal-records-list');
+                    }
+                }
+            }
+        });
     }
 
     const matchScoreUs = document.getElementById('match-score-us');
@@ -765,6 +792,8 @@ function setupModals() {
                 document.getElementById('menu-keyfactor').value = libMenu.keyfactor || '';
                 document.getElementById('menu-options').value = libMenu.options || '';
                 document.getElementById('menu-category').value = libMenu.category || 'その他';
+                const vInp = document.getElementById('menu-video-url');
+                if (vInp) vInp.value = libMenu.videoUrl || '';
                 document.getElementById('menu-library-source-id').value = libMenu.id;
             }
         } else {
@@ -774,6 +803,8 @@ function setupModals() {
             document.getElementById('menu-keyfactor').value = '';
             document.getElementById('menu-options').value = '';
             document.getElementById('menu-category').value = 'ウォーミングアップ';
+            const vInp = document.getElementById('menu-video-url');
+            if (vInp) vInp.value = '';
             document.getElementById('menu-library-source-id').value = '';
         }
     });
@@ -791,6 +822,9 @@ function setupModals() {
             }
         }
 
+        const videoUrlInp = document.getElementById('menu-video-url');
+        const videoUrlVal = videoUrlInp ? videoUrlInp.value.trim() : '';
+
         const newMenuObj = {
             id: Date.now(),
             focus: document.getElementById('menu-focus').value,
@@ -798,6 +832,7 @@ function setupModals() {
             keyfactor: document.getElementById('menu-keyfactor').value,
             options: document.getElementById('menu-options').value,
             category: document.getElementById('menu-category').value,
+            videoUrl: videoUrlVal,
             frames: frames
         };
         
@@ -818,6 +853,7 @@ function setupModals() {
                 targetMenu.keyfactor = newMenuObj.keyfactor;
                 targetMenu.options = newMenuObj.options;
                 targetMenu.category = newMenuObj.category;
+                targetMenu.videoUrl = newMenuObj.videoUrl;
                 saveData();
                 showToast('メニューを更新しました');
                 document.getElementById('modal-menu').classList.add('hidden');
@@ -991,12 +1027,30 @@ function setupModals() {
                     }
                 });
 
+                // Collect Period Scores
+                const scoreUs = parseInt(document.getElementById('formation-score-us').value, 10) || 0;
+                const scoreThem = parseInt(document.getElementById('formation-score-them').value, 10) || 0;
+                
+                // Collect Period Goal Records
+                const goalRecords = [];
+                const goalRows = document.querySelectorAll('#period-goal-records-list .goal-record-row');
+                goalRows.forEach(row => {
+                    const scorerVal = row.querySelector('.goal-scorer-select').value;
+                    const assistVal = row.querySelector('.goal-assist-select').value;
+                    const scorerId = scorerVal ? parseInt(scorerVal, 10) : null;
+                    const assistId = assistVal ? parseInt(assistVal, 10) : null;
+                    goalRecords.push({ scorerId, assistId });
+                });
+
                 if (formationId) {
                     // Update
                     const formObj = match.formations.find(f => f.id === parseInt(formationId));
                     if (formObj) {
                         formObj.name = name;
                         formObj.system = system;
+                        formObj.scoreUs = scoreUs;
+                        formObj.scoreThem = scoreThem;
+                        formObj.goalRecords = goalRecords;
                         formObj.videoUrl = videoUrl;
                         formObj.videoUrls = videoUrls;
                         formObj.lineup = lineup;
@@ -1007,20 +1061,59 @@ function setupModals() {
                         id: Date.now(),
                         name,
                         system,
+                        scoreUs,
+                        scoreThem,
+                        goalRecords,
                         videoUrl,
                         videoUrls,
                         lineup,
                         boardData: []
                     });
                 }
+
+                // Recalculate match total scores and result from all periods
+                let totalUs = 0;
+                let totalThem = 0;
+                const allMatchGoalRecords = [];
                 
+                match.formations.forEach(f => {
+                    totalUs += (f.scoreUs !== undefined ? f.scoreUs : 0);
+                    totalThem += (f.scoreThem !== undefined ? f.scoreThem : 0);
+                    if (f.goalRecords && f.goalRecords.length > 0) {
+                        allMatchGoalRecords.push(...f.goalRecords);
+                    }
+                });
+
+                match.goalRecords = allMatchGoalRecords;
+                
+                // Rebuild match scorers string
+                const scorersList = [];
+                allMatchGoalRecords.forEach(r => {
+                    let text = '';
+                    if (r.scorerId) {
+                        const sPlayer = state.players.find(p => p.id === r.scorerId);
+                        text += sPlayer ? `${sPlayer.name}` : '不明な選手';
+                    } else {
+                        text += 'オウンゴール/その他';
+                    }
+                    if (r.assistId) {
+                        const aPlayer = state.players.find(p => p.id === r.assistId);
+                        text += aPlayer ? ` (アシスト:${aPlayer.name})` : '';
+                    }
+                    scorersList.push(text);
+                });
+                match.scorers = scorersList.join(', ');
+
+                if (match.formations.length > 0) {
+                    match.result = `${totalUs} - ${totalThem}`;
+                }
+
                 saveData();
-                showToast('フォーメーションを保存しました');
+                showToast('ピリオド(得点・フォーメーション)情報を保存しました');
                 document.getElementById('modal-formation').classList.add('hidden');
                 
                 // Re-render detail view
-                const btnDetail = document.querySelector(`.btn-detail-match[data-id="${matchId}"]`);
-                if(btnDetail) btnDetail.click();
+                openMatchDetail(matchId);
             }
         });
     }
@@ -1182,17 +1275,24 @@ function openPracticeModal(practiceId = null) {
 }
 
 function initDashboard() {
-    // Separate completed and upcoming matches
-    const completedMatches = state.matches.filter(m => m.result && /^\d+-\d+$/.test(m.result));
-    const upcomingMatches = state.matches.filter(m => !m.result || !/^\d+-\d+$/.test(m.result));
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+
+    // Separate completed (past or today only) and upcoming matches
+    const completedMatches = state.matches.filter(m => m.result && /(\d+)\s*-\s*(\d+)/.test(m.result) && m.date <= todayStr);
+    const upcomingMatches = state.matches.filter(m => !m.result || !/(\d+)\s*-\s*(\d+)/.test(m.result) || m.date > todayStr);
 
     // 1. Calculate overall stats
     let wins = 0, losses = 0, draws = 0;
     completedMatches.forEach(m => {
-        const [us, them] = m.result.split('-').map(Number);
-        if (us > them) wins++;
-        else if (us < them) losses++;
-        else draws++;
+        const match = m.result.match(/(\d+)\s*-\s*(\d+)/);
+        if (match) {
+            const us = parseInt(match[1], 10);
+            const them = parseInt(match[2], 10);
+            if (us > them) wins++;
+            else if (us < them) losses++;
+            else draws++;
+        }
     });
     
     const dbRecord = document.getElementById('dash-db-record');
@@ -1209,11 +1309,15 @@ function initDashboard() {
         if (!statsByType[type]) {
             statsByType[type] = { wins: 0, losses: 0, draws: 0, total: 0 };
         }
-        const [us, them] = m.result.split('-').map(Number);
-        if (us > them) statsByType[type].wins++;
-        else if (us < them) statsByType[type].losses++;
-        else statsByType[type].draws++;
-        statsByType[type].total++;
+        const match = m.result.match(/(\d+)\s*-\s*(\d+)/);
+        if (match) {
+            const us = parseInt(match[1], 10);
+            const them = parseInt(match[2], 10);
+            if (us > them) statsByType[type].wins++;
+            else if (us < them) statsByType[type].losses++;
+            else statsByType[type].draws++;
+            statsByType[type].total++;
+        }
     });
 
     const dbMatchTypes = document.getElementById('dash-db-match-types');
@@ -1252,7 +1356,7 @@ function initDashboard() {
     if (btnGoMatches) btnGoMatches.onclick = () => navigate('matches');
 
     const btnGoPlayers = document.getElementById('dash-btn-go-players');
-    if (btnGoPlayers) btnGoPlayers.onclick = () => navigate('players');
+    if (btnGoPlayers) btnGoPlayers.onclick = () => openLeaderRankingModal();
 
     // 2. Render Recent completed matches horizontally (latest 3)
     const matchesContent = document.getElementById('dash-matches-content');
@@ -1260,23 +1364,39 @@ function initDashboard() {
         if (completedMatches.length > 0) {
             const sortedMatches = [...completedMatches].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
             matchesContent.innerHTML = sortedMatches.map(m => {
-                const [us, them] = m.result.split('-').map(Number);
-                let badgeClass = 'badge-sub';
-                let resultLabel = '引き分け';
-                if (us > them) { badgeClass = 'badge-fw'; resultLabel = '勝ち'; }
-                else if (us < them) { badgeClass = 'badge-df'; resultLabel = '負け'; }
+                const match = m.result.match(/(\d+)\s*-\s*(\d+)/);
+                let us = 0, them = 0;
+                if (match) {
+                    us = parseInt(match[1], 10);
+                    them = parseInt(match[2], 10);
+                }
+                let resultLabel = '引分';
+                let badgeClass = 'draw';
+                let bgStyle = 'rgba(100,116,139,0.15)';
+                let colorStyle = '#475569';
+                if (us > them) { 
+                    resultLabel = '勝ち'; 
+                    badgeClass = 'win';
+                    bgStyle = 'var(--primary)';
+                    colorStyle = '#ffffff';
+                } else if (us < them) { 
+                    resultLabel = '負け'; 
+                    badgeClass = 'loss';
+                    bgStyle = 'rgba(100,116,139,0.15)';
+                    colorStyle = '#475569';
+                }
                 
+                const displayScore = match ? `${us} - ${them}` : m.result;
+
                 return `
-                    <div class="glass" style="display:flex; flex-direction:column; justify-content:space-between; padding:0.8rem 1rem; border-radius:12px; cursor:pointer; min-height:100px; transition:var(--transition);" onclick="openMatchDetail(${m.id})">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.4rem;">
-                            <span class="schedule-badge ${us > them ? 'match' : (us < them ? 'practice' : 'practice')}" style="background:${us > them ? 'rgba(34,197,94,0.15)' : (us < them ? 'rgba(239,68,68,0.15)' : 'rgba(100,116,139,0.15)')}; color:${us > them ? '#15803d' : (us < them ? '#b91c1c' : '#475569')};">${resultLabel}</span>
+                    <div class="glass" style="display:flex; flex-direction:column; justify-content:space-between; padding:0.8rem 1rem; border-radius:12px; cursor:pointer; min-height:115px; transition:var(--transition);" onclick="openMatchDetail(${m.id})">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.3rem;">
+                            <span class="schedule-badge ${badgeClass}" style="background:${bgStyle}; color:${colorStyle}; font-weight:bold;">${resultLabel}</span>
                             <span style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date}</span>
                         </div>
-                        <div style="font-size:0.9rem; font-weight:bold; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:0.4rem;">vs ${m.opponent}</div>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:0.75rem; color:var(--text-secondary);">${m.type}</span>
-                            <span style="font-size:1.2rem; font-weight:bold; color:var(--primary);">${m.result}</span>
-                        </div>
+                        <div style="font-size:0.9rem; font-weight:bold; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:0.25rem;">vs ${m.opponent}</div>
+                        <div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.2rem;">${m.type}</div>
+                        <div style="font-size:1.25rem; font-weight:bold; color:var(--primary); text-align:right; line-height:1.1;">${displayScore}</div>
                     </div>
                 `;
             }).join('');
@@ -1300,32 +1420,9 @@ function initDashboard() {
         }
     }
 
-    // Render Form Guide (latest 5 completed matches)
-    const formGuideContainer = document.getElementById('dash-form-guide-container');
-    const formGuideEl = document.getElementById('dash-db-form-guide');
-    if (formGuideContainer && formGuideEl) {
-        if (completedMatches.length > 0) {
-            formGuideContainer.style.display = 'flex';
-            const sortedCompletedForForm = [...completedMatches].sort((a,b) => new Date(a.date) - new Date(b.date));
-            const last5Matches = sortedCompletedForForm.slice(-5);
-            formGuideEl.innerHTML = last5Matches.map(m => {
-                const [us, them] = m.result.split('-').map(Number);
-                let badgeClass = 'draw';
-                let label = '分';
-                let tooltipResult = '引分';
-                if (us > them) { badgeClass = 'win'; label = '勝'; tooltipResult = '勝ち'; }
-                else if (us < them) { badgeClass = 'loss'; label = '敗'; tooltipResult = '負け'; }
-                return `<span class="form-badge ${badgeClass}" title="vs ${m.opponent} (${m.result}) - ${tooltipResult}">${label}</span>`;
-            }).join('');
-        } else {
-            formGuideContainer.style.display = 'none';
-        }
-    }
+
 
     // 3. Chronological Schedule List (Bottom Card)
-    const now = new Date();
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-
     const allEvents = [];
     
     // Merge practices
@@ -1343,7 +1440,7 @@ function initDashboard() {
     
     // Merge matches
     state.matches.forEach(m => {
-        const hasResult = m.result && /^\d+-\d+$/.test(m.result);
+        const hasResult = m.result && /(\d+)\s*-\s*(\d+)/.test(m.result);
         allEvents.push({
             type: 'match',
             date: m.date,
@@ -1541,19 +1638,79 @@ function initDashboard() {
         .sort((a,b) => b.count - a.count || ((parseInt(a.p.number) || 0) - (parseInt(b.p.number) || 0)))
         .slice(0, 3);
 
+    const renderDashLeaderItem = (item, idx) => `
+        <div style="display:flex; align-items:baseline; margin-bottom:0.25rem; cursor:pointer;" onclick="openPlayerDetail(${item.p.id})">
+            <span style="width:1.1rem; font-weight:bold; color:var(--text-secondary); text-align:right; margin-right:0.25rem; flex-shrink:0; font-size:0.7rem;">${idx + 1}.</span>
+            <span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><strong>${item.p.number} ${item.p.name}</strong> (${item.count})</span>
+        </div>
+    `;
+
     const elTopScorers = document.getElementById('dash-top-scorers');
     if(elTopScorers) {
         elTopScorers.innerHTML = topScorers.length > 0 
-            ? topScorers.map(item => `<li style="margin-bottom:0.25rem; cursor:pointer;" onclick="openPlayerDetail(${item.p.id})"><strong>${item.p.number} ${item.p.name}</strong> (${item.count}得点)</li>`).join('')
-            : '<div style="color:var(--text-secondary); font-size:0.85rem; padding:0.5rem 0;">得点記録がありません。</div>';
+            ? topScorers.map((item, idx) => renderDashLeaderItem(item, idx)).join('')
+            : '<div style="color:var(--text-secondary); font-size:0.72rem; padding:0.25rem 0;">得点記録なし</div>';
     }
 
     const elTopAssists = document.getElementById('dash-top-assists');
     if(elTopAssists) {
         elTopAssists.innerHTML = topAssists.length > 0 
-            ? topAssists.map(item => `<li style="margin-bottom:0.25rem; cursor:pointer;" onclick="openPlayerDetail(${item.p.id})"><strong>${item.p.number} ${item.p.name}</strong> (${item.count}アシスト)</li>`).join('')
+            ? topAssists.map((item, idx) => renderDashLeaderItem(item, idx)).join('')
+            : '<div style="color:var(--text-secondary); font-size:0.72rem; padding:0.25rem 0;">アシスト記録なし</div>';
+    }
+
+    const btnGoRanking = document.getElementById('dash-btn-go-players');
+    if (btnGoRanking) {
+        btnGoRanking.onclick = () => openLeaderRankingModal();
+    }
+}
+
+function openLeaderRankingModal() {
+    const scorerCounts = {};
+    const assistCounts = {};
+    state.matches.forEach(m => {
+        if (m.goalRecords) {
+            m.goalRecords.forEach(r => {
+                if (r.scorerId) scorerCounts[r.scorerId] = (scorerCounts[r.scorerId] || 0) + 1;
+                if (r.assistId) assistCounts[r.assistId] = (assistCounts[r.assistId] || 0) + 1;
+            });
+        }
+    });
+
+    const allScorers = Object.entries(scorerCounts)
+        .map(([id, count]) => ({ p: state.players.find(pl => pl.id === parseInt(id)), count }))
+        .filter(x => x.p)
+        .sort((a,b) => b.count - a.count || ((parseInt(a.p.number) || 0) - (parseInt(b.p.number) || 0)));
+
+    const allAssists = Object.entries(assistCounts)
+        .map(([id, count]) => ({ p: state.players.find(pl => pl.id === parseInt(id)), count }))
+        .filter(x => x.p)
+        .sort((a,b) => b.count - a.count || ((parseInt(a.p.number) || 0) - (parseInt(b.p.number) || 0)));
+
+    const renderRankingItem = (item, idx) => {
+        return `
+            <div style="display:flex; align-items:baseline; margin-bottom:0.3rem; cursor:pointer;" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
+                <span style="width:1.6rem; font-weight:bold; color:var(--text-secondary); text-align:right; margin-right:0.4rem; flex-shrink:0;">${idx + 1}.</span>
+                <span style="flex:1;"><strong>${item.p.number} ${item.p.name}</strong> (${item.count})</span>
+            </div>
+        `;
+    };
+
+    const elRankingScorers = document.getElementById('ranking-scorers-list');
+    if (elRankingScorers) {
+        elRankingScorers.innerHTML = allScorers.length > 0
+            ? allScorers.map((item, idx) => renderRankingItem(item, idx)).join('')
+            : '<div style="color:var(--text-secondary); font-size:0.85rem; padding:0.5rem 0;">得点記録がありません。</div>';
+    }
+
+    const elRankingAssists = document.getElementById('ranking-assists-list');
+    if (elRankingAssists) {
+        elRankingAssists.innerHTML = allAssists.length > 0
+            ? allAssists.map((item, idx) => renderRankingItem(item, idx)).join('')
             : '<div style="color:var(--text-secondary); font-size:0.85rem; padding:0.5rem 0;">アシスト記録がありません。</div>';
     }
+
+    openModal('modal-leader-ranking');
 }
 
 // View Initializers
@@ -1580,14 +1737,18 @@ function initMatches() {
 
     // Stats Update
     let wins = 0, losses = 0, draws = 0, goals = 0;
-    const completedMatches = filteredMatches.filter(m => m.result && /^\d+-\d+$/.test(m.result));
+    const completedMatches = filteredMatches.filter(m => m.result && /(\d+)\s*-\s*(\d+)/.test(m.result));
 
     completedMatches.forEach(m => {
-        const [us, them] = m.result.split('-').map(Number);
-        goals += us;
-        if(us > them) wins++;
-        else if(us < them) losses++;
-        else draws++;
+        const match = m.result.match(/(\d+)\s*-\s*(\d+)/);
+        if (match) {
+            const us = parseInt(match[1], 10);
+            const them = parseInt(match[2], 10);
+            goals += us;
+            if (us > them) wins++;
+            else if (us < them) losses++;
+            else draws++;
+        }
     });
     const elRecord = document.getElementById('dash-record');
     const elGoals = document.getElementById('dash-goals');
@@ -1604,11 +1765,15 @@ function initMatches() {
         if (!statsByType[type]) {
             statsByType[type] = { wins: 0, losses: 0, draws: 0, total: 0 };
         }
-        const [us, them] = m.result.split('-').map(Number);
-        if (us > them) statsByType[type].wins++;
-        else if (us < them) statsByType[type].losses++;
-        else statsByType[type].draws++;
-        statsByType[type].total++;
+        const match = m.result.match(/(\d+)\s*-\s*(\d+)/);
+        if (match) {
+            const us = parseInt(match[1], 10);
+            const them = parseInt(match[2], 10);
+            if (us > them) statsByType[type].wins++;
+            else if (us < them) statsByType[type].losses++;
+            else statsByType[type].draws++;
+            statsByType[type].total++;
+        }
     });
 
     const elMatchTypes = document.getElementById('dash-match-types');
@@ -1705,8 +1870,9 @@ function initMatches() {
                     <div class="library-grid">
             `;
             grouped[month].forEach(m => {
-                const isCompleted = m.result && /^\d+-\d+$/.test(m.result);
-                const resultText = isCompleted ? m.result : '<span style="font-weight:normal; color:var(--text-secondary); font-size:0.9rem;">試合予定</span>';
+                const matchScore = m.result ? m.result.match(/(\d+)\s*-\s*(\d+)/) : null;
+                const isCompleted = !!matchScore;
+                const resultText = isCompleted ? `${matchScore[1]} - ${matchScore[2]}` : '<span style="font-weight:normal; color:var(--text-secondary); font-size:0.9rem;">試合予定</span>';
                 html += `
                     <div class="card match-card">
                         <div class="match-card-header">
@@ -1717,7 +1883,7 @@ function initMatches() {
                             <div class="match-card-result">${resultText}</div>
                         </div>
                         ${isCompleted ? `
-                        <div class="match-card-scorers" title="${m.scorers || '記録なし'}">
+                        <div class="match-card-scorers" style="text-align:left;" title="${m.scorers || '記録なし'}">
                             <i class="fa-solid fa-futbol" style="font-size:0.8rem;"></i> ${m.scorers || '記録なし'}
                         </div>
                         ` : ''}
@@ -1814,7 +1980,7 @@ function openMatchDetail(id) {
         tabInfo.click();
 
         // 1. Render Basic Info
-        let scorersHtml = '記録なし';
+        let scorersHtml = '<div style="text-align:left;">記録なし</div>';
         if (m.goalRecords && m.goalRecords.length > 0) {
             scorersHtml = m.goalRecords.map((r, idx) => {
                 let scorerText = '';
@@ -1830,23 +1996,26 @@ function openMatchDetail(id) {
                     const aPlayer = state.players.find(pl => pl.id === r.assistId);
                     assistText = aPlayer ? ` (アシ: <span class="player-link" data-id="${aPlayer.id}" style="cursor:pointer; font-weight:bold; color:var(--primary); text-decoration:underline;">${aPlayer.number} ${aPlayer.name}</span>)` : '';
                 }
-                return `<div style="margin-bottom:0.25rem;">${idx+1}. ${scorerText}${assistText}</div>`;
+                return `<div style="display:flex; align-items:baseline; margin-bottom:0.25rem;">
+                    <span style="width:1.5rem; text-align:left; font-weight:500; color:var(--text-secondary); flex-shrink:0;">${idx+1}.</span>
+                    <div style="text-align:left; flex:1;">${scorerText}${assistText}</div>
+                </div>`;
             }).join('');
         } else if (m.scorers) {
-            scorersHtml = `<div>${m.scorers}</div>`;
+            scorersHtml = `<div style="text-align:left;">${m.scorers}</div>`;
         }
 
         const content = document.getElementById('match-detail-content');
         content.innerHTML = `
-            <div style="font-size:1.2rem; font-weight:bold;">${m.date} | ${m.type}${m.tournament ? ` (${m.tournament})` : ''}</div>
-            <div style="font-size:1.5rem; color:var(--primary); margin-bottom:1rem;">vs ${m.opponent} ${m.result ? `(${m.result})` : '(試合予定)'}</div>
-            <div class="detail-box">
-                <h4><i class="fa-solid fa-futbol"></i> 得点者・アシスト</h4>
-                <div style="font-size:0.95rem; line-height:1.4;">${scorersHtml}</div>
+            <div style="font-size:1.2rem; font-weight:bold; text-align:left;">${m.date} | ${m.type}${m.tournament ? ` (${m.tournament})` : ''}</div>
+            <div style="font-size:1.5rem; color:var(--primary); margin-bottom:1rem; text-align:left;">vs ${m.opponent} ${m.result ? `(${m.result})` : '(試合予定)'}</div>
+            <div class="detail-box" style="text-align:left;">
+                <h4 style="text-align:left;"><i class="fa-solid fa-futbol"></i> 得点者・アシスト</h4>
+                <div style="font-size:0.95rem; line-height:1.4; text-align:left; display:flex; flex-direction:column; align-items:flex-start;">${scorersHtml}</div>
             </div>
-            <div class="detail-box">
-                <h4><i class="fa-solid fa-comment-dots"></i> チーム振り返りメモ</h4>
-                <p style="white-space:pre-wrap;">${m.comments || '記録なし'}</p>
+            <div class="detail-box" style="text-align:left;">
+                <h4 style="text-align:left;"><i class="fa-solid fa-comment-dots"></i> チーム振り返りメモ</h4>
+                <p style="white-space:pre-wrap; text-align:left;">${m.comments || '記録なし'}</p>
             </div>
         `;
         
@@ -1923,11 +2092,15 @@ function openMatchDetail(id) {
                 `).join('') : '';
 
                 const hasBoardData = f.boardData && f.boardData.length > 0;
+                const scoreBadge = (f.scoreUs !== undefined && f.scoreThem !== undefined)
+                    ? `<span class="badge" style="background:var(--primary); color:#ffffff; font-weight:bold;">${f.scoreUs} - ${f.scoreThem}</span>`
+                    : '';
                 return `
                     <div class="card" style="margin-bottom:1rem; padding:1rem; cursor:pointer;" onclick="editFormation(${m.id}, ${f.id})">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
                             <strong style="color:var(--primary); font-size:1.1rem;">${f.name}</strong>
                             <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
+                                ${scoreBadge}
                                 ${videoBtn}
                                 <span class="badge">${f.system || '-'}</span>
                             </div>
@@ -2017,6 +2190,11 @@ function openMatchDetail(id) {
             document.getElementById('form-formation').reset();
             document.getElementById('formation-match-id').value = m.id;
             document.getElementById('formation-id').value = '';
+            document.getElementById('formation-score-us').value = 0;
+            document.getElementById('formation-score-them').value = 0;
+            
+            const pGoalList = document.getElementById('period-goal-records-list');
+            if (pGoalList) pGoalList.innerHTML = '';
             
             const vList = document.getElementById('formation-video-list');
             if (vList) {
@@ -2035,6 +2213,23 @@ function openMatchDetail(id) {
             
             renderFormationPitch(defaultSys, []);
 
+            const modalTitle = document.getElementById('formation-modal-title');
+            if (modalTitle) modalTitle.textContent = 'フォーメーション編集';
+
+            const formElem = document.getElementById('form-formation');
+            if (formElem) {
+                const inputs = formElem.querySelectorAll('input, select, textarea, button');
+                inputs.forEach(el => {
+                    el.disabled = false;
+                    el.style.display = '';
+                });
+
+                const pitch = document.getElementById('tactical-formation-pitch');
+                if (pitch) {
+                    pitch.style.pointerEvents = 'auto';
+                }
+            }
+
             openModal('modal-formation');
         };
 
@@ -2047,7 +2242,6 @@ function openMatchDetail(id) {
 
         // Define window.editFormation for editing existing formation periods
         window.editFormation = (matchId, formationId) => {
-            if (state.currentUserRole !== 'coach') return; // Read-only for parent
             const match = state.matches.find(mObj => mObj.id === matchId);
             if (!match) return;
             const fObj = match.formations.find(f => f.id === formationId);
@@ -2057,7 +2251,17 @@ function openMatchDetail(id) {
             document.getElementById('formation-match-id').value = matchId;
             document.getElementById('formation-id').value = formationId;
             document.getElementById('formation-name').value = fObj.name || '';
+            document.getElementById('formation-score-us').value = fObj.scoreUs !== undefined ? fObj.scoreUs : 0;
+            document.getElementById('formation-score-them').value = fObj.scoreThem !== undefined ? fObj.scoreThem : 0;
             
+            const pGoalList = document.getElementById('period-goal-records-list');
+            if (pGoalList) {
+                pGoalList.innerHTML = '';
+                if (fObj.goalRecords && fObj.goalRecords.length > 0) {
+                    fObj.goalRecords.forEach(r => addGoalRecordRow(r.scorerId, r.assistId, 'period-goal-records-list'));
+                }
+            }
+
             const vList = document.getElementById('formation-video-list');
             if (vList) {
                 vList.innerHTML = '';
@@ -2075,6 +2279,43 @@ function openMatchDetail(id) {
             };
 
             renderFormationPitch(selectedSys, fObj.lineup || []);
+
+            // Handle parent (read-only) mode UI adjustment
+            const modalTitle = document.getElementById('formation-modal-title');
+            const isReadOnly = state.currentUserRole !== 'coach';
+
+            if (modalTitle) {
+                modalTitle.textContent = isReadOnly ? 'フォーメーション' : 'フォーメーション編集';
+            }
+
+            const formElem = document.getElementById('form-formation');
+            if (formElem) {
+                const inputs = formElem.querySelectorAll('input, select, textarea, button');
+                inputs.forEach(el => {
+                    if (el.classList.contains('btn-close-modal')) {
+                        el.disabled = false;
+                        el.style.display = '';
+                    } else if (isReadOnly) {
+                        if (el.tagName === 'BUTTON') {
+                            el.style.display = 'none';
+                        } else {
+                            el.disabled = true;
+                        }
+                    } else {
+                        if (el.tagName === 'BUTTON') {
+                            el.style.display = '';
+                        } else {
+                            el.disabled = false;
+                        }
+                    }
+                });
+
+                const pitch = document.getElementById('tactical-formation-pitch');
+                if (pitch) {
+                    pitch.style.pointerEvents = isReadOnly ? 'none' : 'auto';
+                }
+            }
+
             openModal('modal-formation');
         };
 
@@ -2217,7 +2458,7 @@ function initPractices() {
                                             <button class="btn btn-danger btn-delete-menu" data-pid="${p.id}" data-mid="${menu.id}" style="padding:0.3rem; font-size:0.8rem;"><i class="fa-solid fa-times"></i></button>
                                         </div>
                                     </summary>
-                                    ${(menu.organize || menu.keyfactor || menu.options || menu.frames) ? `
+                                    ${(menu.organize || menu.keyfactor || menu.options || menu.videoUrl || menu.frames) ? `
                                     <div class="practice-menu-item-details" style="padding:0 0.8rem 0.8rem 0.8rem; border-top:1px solid rgba(0,0,0,0.05); font-size:0.85rem; color:var(--text-secondary); display:flex; flex-direction:column; gap:0.5rem; margin-top:0.4rem;">
                                         <div class="practice-canvas-wrapper" style="width:100%; height:140px; background:#1e293b; border-radius:8px; overflow:hidden; position:relative; margin-top:0.25rem;" onclick="event.stopPropagation();">
                                             <canvas id="practice-mini-pitch-${p.id}-${menu.id}" width="800" height="500" style="width:100%; height:100%; object-fit:contain; pointer-events:none;"></canvas>
@@ -2229,6 +2470,7 @@ function initPractices() {
                                         </div>
                                         ${menu.organize ? `<div><strong><i class="fa-solid fa-users"></i> オーガナイズ</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${menu.organize}</div></div>` : ''}
                                         ${menu.keyfactor ? `<div><strong><i class="fa-solid fa-key"></i> キーファクター</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${menu.keyfactor}</div></div>` : ''}
+                                        ${menu.videoUrl ? `<div><strong><i class="fa-brands fa-youtube" style="color:#ef4444;"></i> 参考動画</strong><div style="margin-top:0.15rem;"><a href="${menu.videoUrl}" target="_blank" rel="noopener noreferrer" style="color:#ef4444; text-decoration:underline; font-weight:bold; word-break:break-all;"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
                                         ${menu.options ? `<div><strong><i class="fa-solid fa-sliders"></i> オプション</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${menu.options}</div></div>` : ''}
                                     </div>
                                     ` : '<div style="padding:0 0.8rem 0.8rem 0.8rem; font-size:0.8rem; color:var(--text-secondary);">詳細説明はありません。</div>'}
@@ -2386,6 +2628,8 @@ function initPractices() {
                     document.getElementById('menu-organize').value = menu.organize || '';
                     document.getElementById('menu-keyfactor').value = menu.keyfactor || '';
                     document.getElementById('menu-options').value = menu.options || '';
+                    const vInp = document.getElementById('menu-video-url');
+                    if (vInp) vInp.value = menu.videoUrl || '';
 
                     document.getElementById('menu-library-select').parentElement.style.display = 'none'; // hide library select
                     
@@ -2584,8 +2828,84 @@ function editFormation(matchId, formId) {
 }
 
 function initPlayers() {
-    const elDashPlayers = document.getElementById('dash-players');
-    if (elDashPlayers) elDashPlayers.textContent = state.players.length + '名';
+    const summaryCardsContainer = document.getElementById('player-summary-cards');
+    if (summaryCardsContainer) {
+        const totalPlayers = state.players.length;
+        const isParent = state.currentUserRole === 'parent';
+
+        // Calculate Position Breakdown
+        const posCounts = { FW: 0, MF: 0, DF: 0, GK: 0 };
+        state.players.forEach(p => {
+            const positions = Array.isArray(p.position) ? p.position : [p.position];
+            positions.forEach(pos => {
+                if (pos) {
+                    const u = pos.toUpperCase();
+                    if (u.includes('FW')) posCounts.FW++;
+                    else if (u.includes('MF')) posCounts.MF++;
+                    else if (u.includes('DF')) posCounts.DF++;
+                    else if (u.includes('GK')) posCounts.GK++;
+                }
+            });
+        });
+
+        // Calculate Latest Assessment / Growth Data
+        let totalSkillAvg = 0;
+        let evaluatedCount = 0;
+        let latestAssessmentDate = null;
+        let goalSetCount = 0;
+
+        state.players.forEach(p => {
+            if (p.goals && (p.goals.shortTerm || p.goals.longTerm)) {
+                goalSetCount++;
+            }
+            if (p.history && p.history.length > 0) {
+                evaluatedCount++;
+                const skills = p.history[0].skills || [0,0,0,0,0,0];
+                const sum = skills.reduce((a, b) => a + (b || 0), 0);
+                const avg = skills.length > 0 ? sum / skills.length : 0;
+                totalSkillAvg += avg;
+
+                const dStr = p.history[0].date;
+                if (dStr) {
+                    if (!latestAssessmentDate || new Date(dStr) > new Date(latestAssessmentDate)) {
+                        latestAssessmentDate = dStr;
+                    }
+                }
+            }
+        });
+
+        const teamAvgSkill = evaluatedCount > 0 ? (totalSkillAvg / evaluatedCount).toFixed(1) : '-';
+
+        // Unified 3 summary cards for both Parent and Coach roles
+        summaryCardsContainer.innerHTML = `
+            <div class="card stat-card" style="padding:0.75rem 1rem;">
+                <div class="stat-icon" style="background:rgba(242,57,50,0.1); color:var(--primary);"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-info">
+                    <h3 style="font-size:0.75rem;">チームの仲間</h3>
+                    <p style="font-size:1.15rem;">${totalPlayers}名</p>
+                </div>
+            </div>
+            <div class="card stat-card" style="padding:0.75rem 1rem;">
+                <div class="stat-icon" style="background:rgba(59,130,246,0.1); color:#2563eb;"><i class="fa-solid fa-layer-group"></i></div>
+                <div class="stat-info">
+                    <h3 style="font-size:0.75rem;">ポジション内訳</h3>
+                    <div style="font-size:0.72rem; font-weight:bold; color:var(--text-primary); margin-top:0.2rem; display:flex; gap:0.35rem; flex-wrap:wrap;">
+                        <span style="color:#ef4444;">FW:${posCounts.FW}</span>
+                        <span style="color:#3b82f6;">MF:${posCounts.MF}</span>
+                        <span style="color:#22c55e;">DF:${posCounts.DF}</span>
+                        <span style="color:#eab308;">GK:${posCounts.GK}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card stat-card" style="padding:0.75rem 1rem;">
+                <div class="stat-icon" style="background:rgba(34,197,94,0.1); color:#16a34a;"><i class="fa-solid fa-chart-line"></i></div>
+                <div class="stat-info">
+                    <h3 style="font-size:0.75rem;">チーム平均スキル</h3>
+                    <p style="font-size:1.15rem;">Lv ${teamAvgSkill} <span style="font-size:0.7rem; font-weight:normal; color:var(--text-secondary);">/ 5.0</span></p>
+                </div>
+            </div>
+        `;
+    }
 
     const playerGrid = document.getElementById('player-grid');
     if (!playerGrid) return;
@@ -2633,8 +2953,8 @@ function initPlayers() {
                         </div>
                         <div class="player-number">${p.number}</div>
                     </div>
-                    <div class="radar-container">
-                        <canvas id="radar-${p.id}" width="200" height="200"></canvas>
+                    <div class="radar-container" style="width:200px; height:200px; margin:0 auto; position:relative;">
+                        <canvas id="radar-${p.id}" width="400" height="400" style="width:200px; height:200px;"></canvas>
                     </div>
                 </div>
             `;
@@ -2653,6 +2973,15 @@ function initPlayers() {
         const posContainer = document.getElementById('player-position-container');
         if(posContainer) {
             posContainer.innerHTML = state.positions.map(p => `
+                <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
+                    <input type="checkbox" class="player-pos-checkbox" value="${p}"> ${p}
+                </label>
+            `).join('');
+        }
+        
+        const posCat2Container = document.getElementById('player-position-cat2-container');
+        if(posCat2Container) {
+            posCat2Container.innerHTML = (state.positionsCat2 || []).map(p => `
                 <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
                     <input type="checkbox" class="player-pos-checkbox" value="${p}"> ${p}
                 </label>
@@ -2789,8 +3118,9 @@ function initLibrary() {
                             <div style="padding:0.8rem; border-top:1px solid rgba(0,0,0,0.05); font-size:0.85rem; display:flex; flex-direction:column; gap:0.5rem; color:var(--text-secondary); cursor:default;" onclick="event.stopPropagation();">
                                 ${m.organize ? `<div><strong style="color:var(--text-secondary); font-size:0.8rem;"><i class="fa-solid fa-users"></i> オーガナイズ</strong><div style="white-space:pre-wrap; margin-top:0.1rem; line-height:1.3;">${m.organize}</div></div>` : ''}
                                 ${m.keyfactor ? `<div><strong style="color:var(--text-secondary); font-size:0.8rem;"><i class="fa-solid fa-key"></i> キーファクター</strong><div style="white-space:pre-wrap; margin-top:0.1rem; line-height:1.3;">${m.keyfactor}</div></div>` : ''}
+                                ${m.videoUrl ? `<div><strong style="color:var(--text-secondary); font-size:0.8rem;"><i class="fa-brands fa-youtube" style="color:#ef4444;"></i> 参考動画</strong><div style="margin-top:0.1rem;"><a href="${m.videoUrl}" target="_blank" rel="noopener noreferrer" style="color:#ef4444; text-decoration:underline; font-weight:bold; word-break:break-all;"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
                                 ${m.options ? `<div><strong style="color:var(--text-secondary); font-size:0.8rem;"><i class="fa-solid fa-plus"></i> オプション</strong><div style="white-space:pre-wrap; margin-top:0.1rem; line-height:1.3;">${m.options}</div></div>` : ''}
-                                ${(!m.organize && !m.keyfactor && !m.options) ? '<div style="font-size:0.8rem; color:var(--text-secondary);">詳細説明はありません。</div>' : ''}
+                                ${(!m.organize && !m.keyfactor && !m.options && !m.videoUrl) ? '<div style="font-size:0.8rem; color:var(--text-secondary);">詳細説明はありません。</div>' : ''}
                             </div>
                         </details>
                     </div>
@@ -2870,6 +3200,8 @@ function initLibrary() {
                 document.getElementById('menu-organize').value = menu.organize || '';
                 document.getElementById('menu-keyfactor').value = menu.keyfactor || '';
                 document.getElementById('menu-options').value = menu.options || '';
+                const vInp = document.getElementById('menu-video-url');
+                if (vInp) vInp.value = menu.videoUrl || '';
 
                 document.getElementById('menu-library-select').parentElement.style.display = 'none'; // hide library select
                 
@@ -2987,7 +3319,7 @@ function initSettings() {
     if(teamNameInput && teamColorInput) {
         teamNameInput.value = state.teamInfo.name;
         teamColorInput.value = state.teamInfo.color;
-        if (teamPasscodeInput) teamPasscodeInput.value = state.teamInfo.passcode || '1234';
+        if (teamPasscodeInput) teamPasscodeInput.value = state.teamInfo.passcode || '7064';
         
         const formTeamInfo = document.getElementById('form-team-info');
         const newFormTeamInfo = formTeamInfo.cloneNode(true);
@@ -3033,6 +3365,7 @@ function initSettings() {
     renderList('menu-category-list', state.menuCategories);
     renderList('skill-metric-list', state.skillMetrics);
     renderList('position-list', state.positions);
+    renderList('position-cat2-list', state.positionsCat2);
     renderList('custom-formation-list', state.customFormations, (item) => `${item.name} (${item.coords.length}人制)`);
 
     // Master item edit handler
@@ -3051,6 +3384,8 @@ function initSettings() {
                 targetArray = state.skillMetrics;
             } else if (listId === 'position-list') {
                 targetArray = state.positions;
+            } else if (listId === 'position-cat2-list') {
+                targetArray = state.positionsCat2;
             }
 
             if (!targetArray) return;
@@ -3070,7 +3405,7 @@ function initSettings() {
                         if (p.menus) p.menus.forEach(m => { if (m.category === oldVal) m.category = trimmed; });
                     });
                     state.menuLibrary.forEach(m => { if (m.category === oldVal) m.category = trimmed; });
-                } else if (listId === 'position-list') {
+                } else if (listId === 'position-list' || listId === 'position-cat2-list') {
                     state.players.forEach(p => {
                         if (Array.isArray(p.position)) {
                             p.position = p.position.map(pos => pos === oldVal ? trimmed : pos);
@@ -3111,6 +3446,12 @@ function initSettings() {
                     const posList = Array.isArray(p.position) ? p.position : [p.position];
                     return posList.includes(label);
                 });
+            } else if (listId === 'position-cat2-list') {
+                label = state.positionsCat2[idx];
+                inUse = state.players.some(p => {
+                    const posList = Array.isArray(p.position) ? p.position : [p.position];
+                    return posList.includes(label);
+                });
             } else if (listId === 'custom-formation-list') {
                 label = state.customFormations[idx].name;
                 inUse = state.matches.some(m => m.formations && m.formations.some(f => f.system === label));
@@ -3130,6 +3471,7 @@ function initSettings() {
             if(listId === 'menu-category-list') state.menuCategories.splice(idx, 1);
             if(listId === 'skill-metric-list') state.skillMetrics.splice(idx, 1);
             if(listId === 'position-list') state.positions.splice(idx, 1);
+            if(listId === 'position-cat2-list') state.positionsCat2.splice(idx, 1);
             if(listId === 'custom-formation-list') state.customFormations.splice(idx, 1);
             saveData();
             initSettings();
@@ -3175,34 +3517,43 @@ function initSettings() {
                 editorList.innerHTML = '';
             }
             
+            const cat1Roles = (state.positions && state.positions.length > 0) ? state.positions : ['GK', 'DF', 'MF', 'FW'];
+            const cat2Roles = (state.positionsCat2 && state.positionsCat2.length > 0) ? state.positionsCat2 : ['CB', 'SB', 'CH', 'SH', 'ST', 'WG'];
+            
+            const cat1Options = cat1Roles.map(r => `<option value="${r}" ${node.role === r ? 'selected' : ''}>${r}</option>`).join('');
+            const cat2Options = `<option value="">(選択なし)</option>` + cat2Roles.map(r => `<option value="${r}" ${node.label === r ? 'selected' : ''}>${r}</option>`).join('');
+            
             const row = document.createElement('div');
             row.className = 'custom-formation-node-row';
             row.id = `custom-node-editor-row-${node.index}`;
+            row.style = 'display:flex; gap:0.4rem; align-items:center; margin-bottom:0.4rem;';
             row.innerHTML = `
                 <strong style="font-size:0.8rem; min-width:20px;">#${node.index + 1}</strong>
-                <input type="text" class="form-control custom-node-label-input" value="${node.label}" placeholder="表示名 (例: LCB)" style="font-size:0.8rem; padding:0.2rem; height:auto; flex:1;" required>
-                <select class="form-control custom-node-role-select" style="font-size:0.8rem; padding:0.2rem; height:auto; width:70px;">
-                    <option value="GK" ${node.role === 'GK' ? 'selected' : ''}>GK</option>
-                    <option value="DF" ${node.role === 'DF' ? 'selected' : ''}>DF</option>
-                    <option value="MF" ${node.role === 'MF' ? 'selected' : ''}>MF</option>
-                    <option value="FW" ${node.role === 'FW' ? 'selected' : ''}>FW</option>
+                <select class="form-control custom-node-role-select" title="カテゴリ1" style="font-size:0.8rem; padding:0.2rem 0.4rem; height:auto; flex:1;">
+                    ${cat1Options}
+                </select>
+                <select class="form-control custom-node-cat2-select" title="カテゴリ2" style="font-size:0.8rem; padding:0.2rem 0.4rem; height:auto; flex:1;">
+                    ${cat2Options}
                 </select>
             `;
             
-            const labelInput = row.querySelector('.custom-node-label-input');
             const roleSelect = row.querySelector('.custom-node-role-select');
+            const cat2Select = row.querySelector('.custom-node-cat2-select');
             
-            labelInput.oninput = (ev) => {
-                node.label = ev.target.value;
-                const span = document.getElementById(`custom-pitch-node-label-span-${node.index}`);
-                if (span) span.textContent = ev.target.value || '?';
+            const updateNodeLabels = () => {
+                const c1 = roleSelect.value;
+                const c2 = cat2Select.value;
+                node.role = c1;
+                node.label = c2 ? c2 : c1;
+                
+                const spanLabel = document.getElementById(`custom-pitch-node-label-span-${node.index}`);
+                const spanRole = document.getElementById(`custom-pitch-node-role-span-${node.index}`);
+                if (spanLabel) spanLabel.textContent = node.label;
+                if (spanRole) spanRole.textContent = node.role;
             };
             
-            roleSelect.onchange = (ev) => {
-                node.role = ev.target.value;
-                const span = document.getElementById(`custom-pitch-node-role-span-${node.index}`);
-                if (span) span.textContent = ev.target.value;
-            };
+            roleSelect.onchange = updateNodeLabels;
+            cat2Select.onchange = updateNodeLabels;
             
             editorList.appendChild(row);
             
@@ -3286,6 +3637,10 @@ function initSettings() {
         document.getElementById('btn-custom-formation-clear-all').onclick = clearBoard;
         
         pitchCanvas.onclick = (e) => {
+            if (e.target.closest('.pitch-node')) {
+                return;
+            }
+            
             const maxCount = parseInt(selectCount.value, 10);
             if (placedNodes.length >= maxCount) {
                 alert(`ポジションは最大 ${maxCount} 箇所まで設定可能です。`);
@@ -3327,8 +3682,9 @@ function initSettings() {
             
             const finalCoords = placedNodes.map(node => {
                 const rowEl = document.getElementById(`custom-node-editor-row-${node.index}`);
-                const label = rowEl.querySelector('.custom-node-label-input').value.trim() || node.label;
                 const role = rowEl.querySelector('.custom-node-role-select').value;
+                const cat2Val = rowEl.querySelector('.custom-node-cat2-select').value;
+                const label = cat2Val ? cat2Val : role;
                 return {
                     role,
                     label,
@@ -3386,6 +3742,7 @@ function initSettings() {
     setupAddForm('form-add-menu-category', 'new-menu-category', state.menuCategories);
     setupAddForm('form-add-skill-metric', 'new-skill-metric', state.skillMetrics);
     setupAddForm('form-add-position', 'new-position', state.positions);
+    setupAddForm('form-add-position-cat2', 'new-position-cat2', state.positionsCat2);
 
     // Initialize data export and import handlers
     initData();
@@ -3524,7 +3881,6 @@ function openPlayerDetail(id) {
                         ${delBtn}
                     </div>
                     <div class="timeline-item-comment" style="white-space:pre-wrap;">${item.comment}</div>
-                    <div class="timeline-item-skills">S:${item.data ? item.data.skills[0] : item.skills[0]} P:${item.data ? item.data.skills[1] : item.skills[1]} D:${item.data ? item.data.skills[2] : item.skills[2]} DF:${item.data ? item.data.skills[3] : item.skills[3]} PH:${item.data ? item.data.skills[4] : item.skills[4]} M:${item.data ? item.data.skills[5] : item.skills[5]}</div>
                 </div>
             `;
         } else {
@@ -3661,10 +4017,22 @@ function openPlayerDetail(id) {
         document.getElementById('player-name').value = p.name;
         document.getElementById('player-number').value = p.number;
         
-        // Populate and check checkbox list
+        // Populate and check checkbox lists for Category 1 & Category 2
         const posContainer = document.getElementById('player-position-container');
         if(posContainer) {
             posContainer.innerHTML = state.positions.map(pos => {
+                const checked = (Array.isArray(p.position) ? p.position : [p.position]).includes(pos) ? 'checked' : '';
+                return `
+                    <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
+                        <input type="checkbox" class="player-pos-checkbox" value="${pos}" ${checked}> ${pos}
+                    </label>
+                `;
+            }).join('');
+        }
+        
+        const posCat2Container = document.getElementById('player-position-cat2-container');
+        if(posCat2Container) {
+            posCat2Container.innerHTML = (state.positionsCat2 || []).map(pos => {
                 const checked = (Array.isArray(p.position) ? p.position : [p.position]).includes(pos) ? 'checked' : '';
                 return `
                     <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
@@ -3812,7 +4180,8 @@ function drawRadarChart(canvasId, skills, prevSkills = null) {
     const h = canvas.height;
     const cx = w / 2;
     const cy = h / 2;
-    const radius = w / 2 - 25;
+    const scaleFactor = w / 200; // Resolution multiplier
+    const radius = w / 2 - (56 * scaleFactor / 2);
     
     ctx.clearRect(0, 0, w, h);
     
@@ -3831,7 +4200,8 @@ function drawRadarChart(canvasId, skills, prevSkills = null) {
             if (j === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.strokeStyle = 'rgba(203, 213, 225, 0.4)';
+        ctx.lineWidth = 1 * scaleFactor;
         ctx.stroke();
         
         // Draw axis lines
@@ -3841,14 +4211,16 @@ function drawRadarChart(canvasId, skills, prevSkills = null) {
                 ctx.beginPath();
                 ctx.moveTo(cx, cy);
                 ctx.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.strokeStyle = 'rgba(203, 213, 225, 0.5)';
+                ctx.lineWidth = 1 * scaleFactor;
                 ctx.stroke();
                 
-                // Labels
-                const lx = cx + (radius + 15) * Math.cos(angle);
-                const ly = cy + (radius + 15) * Math.sin(angle);
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = '10px Inter';
+                // Labels - High Contrast & Scaled Crisp Font with padding safety
+                const labelDist = radius + (14 * scaleFactor);
+                const lx = cx + labelDist * Math.cos(angle);
+                const ly = cy + labelDist * Math.sin(angle);
+                ctx.fillStyle = '#334155'; // Darker Slate for high contrast & crispness
+                ctx.font = `bold ${Math.round(10.5 * scaleFactor)}px 'Inter', 'Hiragino Kaku Gothic ProN', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(labels[j], lx, ly);
@@ -3869,11 +4241,11 @@ function drawRadarChart(canvasId, skills, prevSkills = null) {
             else ctx.lineTo(x, y);
         }
         ctx.closePath();
-        ctx.fillStyle = 'rgba(148, 163, 184, 0.2)'; // Slate-400 transparent
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.25)'; // Slate-400 transparent
         ctx.fill();
         ctx.strokeStyle = '#64748b'; // Slate-500
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 2 * scaleFactor;
+        ctx.setLineDash([4 * scaleFactor, 4 * scaleFactor]);
         ctx.stroke();
         ctx.setLineDash([]);
         
@@ -3884,7 +4256,7 @@ function drawRadarChart(canvasId, skills, prevSkills = null) {
             const x = cx + r * Math.cos(angle);
             const y = cy + r * Math.sin(angle);
             ctx.beginPath();
-            ctx.arc(x, y, 2, 0, Math.PI*2);
+            ctx.arc(x, y, 3 * scaleFactor, 0, Math.PI*2);
             ctx.fillStyle = '#64748b';
             ctx.fill();
         }
@@ -3902,10 +4274,10 @@ function drawRadarChart(canvasId, skills, prevSkills = null) {
         else ctx.lineTo(x, y);
     }
     ctx.closePath();
-    ctx.fillStyle = 'rgba(242, 57, 50, 0.3)'; // Primary color transparent
+    ctx.fillStyle = 'rgba(242, 57, 50, 0.35)'; // Primary color transparent
     ctx.fill();
     ctx.strokeStyle = '#f23932'; // Primary color
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5 * scaleFactor;
     ctx.stroke();
     
     // Draw Data Points
@@ -3916,7 +4288,7 @@ function drawRadarChart(canvasId, skills, prevSkills = null) {
         const x = cx + r * Math.cos(angle);
         const y = cy + r * Math.sin(angle);
         ctx.beginPath();
-        ctx.arc(x, y, 3, 0, Math.PI*2);
+        ctx.arc(x, y, 4 * scaleFactor, 0, Math.PI*2);
         ctx.fillStyle = '#f23932';
         ctx.fill();
     }
@@ -4260,6 +4632,13 @@ function initAnimation(params) {
     btnAdd.parentNode.replaceChild(newBtnAdd, btnAdd);
     newBtnAdd.addEventListener('click', addFrame);
 
+    const btnInsert = document.getElementById('anim-insert-frame');
+    if (btnInsert) {
+        const newBtnInsert = btnInsert.cloneNode(true);
+        btnInsert.parentNode.replaceChild(newBtnInsert, btnInsert);
+        newBtnInsert.addEventListener('click', insertFrame);
+    }
+
     const btnPlay = document.getElementById('anim-play');
     const newBtnPlay = btnPlay.cloneNode(true);
     btnPlay.parentNode.replaceChild(newBtnPlay, btnPlay);
@@ -4354,8 +4733,10 @@ function initAnimation(params) {
             if (practice) {
                 const menu = practice.menus.find(m => m.id === currentMenuId);
                 if (menu) {
-                    if (frames.length === 0 && objects.length > 0) {
+                    if (frames.length === 0) {
                         frames.push(JSON.parse(JSON.stringify(objects)));
+                    } else {
+                        frames[frames.length - 1] = JSON.parse(JSON.stringify(objects));
                     }
                     menu.frames = JSON.parse(JSON.stringify(frames));
                     const templateEl = document.getElementById('canvas-pitch-template');
@@ -4377,8 +4758,10 @@ function initAnimation(params) {
         newBtnSave.addEventListener('click', () => {
             const libMenu = state.menuLibrary.find(m => m.id === currentLibraryId);
             if (libMenu) {
-                if (frames.length === 0 && objects.length > 0) {
+                if (frames.length === 0) {
                     frames.push(JSON.parse(JSON.stringify(objects)));
+                } else {
+                    frames[frames.length - 1] = JSON.parse(JSON.stringify(objects));
                 }
                 libMenu.frames = JSON.parse(JSON.stringify(frames));
                 const templateEl = document.getElementById('canvas-pitch-template');
@@ -4450,10 +4833,31 @@ function initAnimation(params) {
         });
     }
 
+    const elGoalSize = document.getElementById('canvas-goal-size');
+    if (elGoalSize) {
+        const newEl = elGoalSize.cloneNode(true);
+        elGoalSize.parentNode.replaceChild(newEl, elGoalSize);
+        newEl.addEventListener('change', (e) => {
+            const val = e.target.value;
+            let scale = 1.0;
+            if (val === 'small') scale = 0.7;
+            else if (val === 'large') scale = 1.6;
+            else if (val === 'full') scale = 2.4;
+            
+            if (selectedObject && selectedObject.type === 'minigoal') {
+                selectedObject.sizeCategory = val;
+                selectedObject.goalScale = scale;
+                saveHistory();
+                drawPitch(objects);
+            }
+        });
+    }
+
     canvas.addEventListener('mousedown', handleMouseDown);
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseUp);
+    canvas.addEventListener('dblclick', handleCanvasDblClick);
 
     // --- Touch support (mobile) ---
     function getTouchPos(touchEvent) {
@@ -4484,14 +4888,75 @@ function initAnimation(params) {
     }, { passive: false });
 }
 
+let currentFrameIndex = -1;
+
 function updateFrameCount() {
     const el = document.getElementById('frame-count');
     if(el) el.textContent = frames.length;
+
+    const listEl = document.getElementById('anim-frame-list');
+    if (!listEl) return;
+
+    if (frames.length === 0) {
+        listEl.innerHTML = '<span style="font-size:0.65rem; color:var(--text-secondary); font-style:italic;">シーン未作成</span>';
+        return;
+    }
+
+    listEl.innerHTML = frames.map((f, idx) => {
+        const isCurrent = idx === currentFrameIndex;
+        const bg = isCurrent ? 'var(--primary)' : 'rgba(0,0,0,0.06)';
+        const color = isCurrent ? '#ffffff' : 'var(--text-primary)';
+        return `
+            <div style="display:inline-flex; align-items:center; gap:3px; background:${bg}; color:${color}; padding:2px 6px; border-radius:4px; font-size:0.68rem; font-weight:600; white-space:nowrap;">
+                <span style="cursor:pointer;" onclick="selectFrame(${idx})" title="シーン ${idx + 1} を読み込み">#${idx + 1}</span>
+                <button type="button" onclick="deleteFrame(${idx})" style="background:none; border:none; color:${isCurrent ? '#ffffff' : '#ef4444'}; font-size:0.65rem; padding:0 1px; cursor:pointer; font-weight:bold; line-height:1;" title="このシーンを削除">&times;</button>
+            </div>
+        `;
+    }).join('');
+}
+
+function selectFrame(index) {
+    if (isPlaying) return;
+    if (index >= 0 && index < frames.length) {
+        currentFrameIndex = index;
+        objects = JSON.parse(JSON.stringify(frames[index]));
+        selectedObject = null;
+        updateFrameCount();
+        drawPitch(objects);
+        showToast(`シーン #${index + 1} を表示中`);
+    }
+}
+
+function deleteFrame(index) {
+    if (isPlaying) return;
+    if (index >= 0 && index < frames.length) {
+        frames.splice(index, 1);
+        if (frames.length > 0) {
+            currentFrameIndex = Math.min(index, frames.length - 1);
+            objects = JSON.parse(JSON.stringify(frames[currentFrameIndex]));
+        } else {
+            currentFrameIndex = -1;
+        }
+        selectedObject = null;
+        updateFrameCount();
+        drawPitch(objects);
+        showToast(`シーン #${index + 1} を削除しました`);
+    }
 }
 
 function addFrame() {
     frames.push(JSON.parse(JSON.stringify(objects)));
+    currentFrameIndex = frames.length - 1;
     updateFrameCount();
+    showToast(`末尾にシーン #${frames.length} を追加しました`);
+}
+
+function insertFrame() {
+    const insertIdx = (currentFrameIndex >= 0 && currentFrameIndex < frames.length) ? currentFrameIndex + 1 : frames.length;
+    frames.splice(insertIdx, 0, JSON.parse(JSON.stringify(objects)));
+    currentFrameIndex = insertIdx;
+    updateFrameCount();
+    showToast(`シーン #${insertIdx + 1} として間に挿入しました`);
 }
 
 function stopAnimation() {
@@ -4894,8 +5359,18 @@ function drawPitchToCtx(renderObjects, targetCanvas, targetCtx, template = 'full
     renderObjects.forEach(obj => {
         if(obj.type === 'line') {
             drawArrowToCtx(obj.x1, obj.y1, obj.x2, obj.y2, obj.lineType || 'pass', targetCtx);
+            if (typeof selectedObject !== 'undefined' && selectedObject === obj) {
+                targetCtx.fillStyle = 'var(--primary)';
+                targetCtx.beginPath(); targetCtx.arc(obj.x1, obj.y1, 5, 0, Math.PI*2); targetCtx.fill();
+                targetCtx.beginPath(); targetCtx.arc(obj.x2, obj.y2, 5, 0, Math.PI*2); targetCtx.fill();
+            }
         } else if (obj.type === 'ladder') {
             drawLadderToCtx(obj.x1, obj.y1, obj.x2, obj.y2, targetCtx);
+            if (typeof selectedObject !== 'undefined' && selectedObject === obj) {
+                targetCtx.fillStyle = 'var(--primary)';
+                targetCtx.beginPath(); targetCtx.arc(obj.x1, obj.y1, 5, 0, Math.PI*2); targetCtx.fill();
+                targetCtx.beginPath(); targetCtx.arc(obj.x2, obj.y2, 5, 0, Math.PI*2); targetCtx.fill();
+            }
         } else if (obj.type === 'rect') {
             targetCtx.strokeStyle = 'rgba(51, 65, 85, 0.7)';
             targetCtx.lineWidth = 1.5;
@@ -4965,34 +5440,60 @@ function drawPitchToCtx(renderObjects, targetCanvas, targetCtx, template = 'full
             targetCtx.translate(obj.x, obj.y);
             if (obj.angle) targetCtx.rotate((obj.angle * Math.PI) / 180);
 
-            // Draw top-down mini goal
+            let scale = obj.goalScale || 1.0;
+            if (!obj.goalScale) {
+                if (obj.sizeCategory === 'small') scale = 0.7;
+                else if (obj.sizeCategory === 'large') scale = 1.6;
+                else if (obj.sizeCategory === 'full') scale = 2.4;
+            }
+
+            const gw = 30 * scale;
+            const gh = 15 * scale;
+            const hw = gw / 2;
+
+            // Draw top-down goal
             targetCtx.strokeStyle = '#334155';
-            targetCtx.lineWidth = 2.5;
-            targetCtx.strokeRect(-15, -10, 30, 15);
+            targetCtx.lineWidth = Math.max(2, 2.5 * scale);
+            targetCtx.strokeRect(-hw, -gh * 0.66, gw, gh);
             
             targetCtx.beginPath();
             targetCtx.lineWidth = 1;
             targetCtx.strokeStyle = 'rgba(51, 65, 85, 0.4)';
-            for (let nx = -12; nx < 15; nx += 6) {
-                targetCtx.moveTo(nx, -10);
-                targetCtx.lineTo(nx, 5);
+            const gridStepX = 6 * scale;
+            for (let nx = -hw + gridStepX; nx < hw; nx += gridStepX) {
+                targetCtx.moveTo(nx, -gh * 0.66);
+                targetCtx.lineTo(nx, gh * 0.33);
             }
-            for (let ny = -8; ny < 5; ny += 4) {
-                targetCtx.moveTo(-15, ny);
-                targetCtx.lineTo(15, ny);
+            const gridStepY = 4 * scale;
+            for (let ny = -gh * 0.5; ny < gh * 0.33; ny += gridStepY) {
+                targetCtx.moveTo(-hw, ny);
+                targetCtx.lineTo(hw, ny);
             }
             targetCtx.stroke();
             targetCtx.restore();
 
-            // Draw highlight if selected
+            // Draw highlight & resize handle handles if selected
             if (typeof selectedObject !== 'undefined' && selectedObject === obj) {
+                const selR = (obj.radius || 15) * scale + 6;
                 targetCtx.beginPath();
-                targetCtx.arc(obj.x, obj.y, obj.radius + 4, 0, Math.PI * 2);
+                targetCtx.arc(obj.x, obj.y, selR, 0, Math.PI * 2);
                 targetCtx.strokeStyle = 'var(--primary)';
                 targetCtx.lineWidth = 2;
                 targetCtx.setLineDash([2, 2]);
                 targetCtx.stroke();
                 targetCtx.setLineDash([]);
+
+                // Draw resize handles (4 corners / cardinal handles)
+                targetCtx.fillStyle = 'var(--primary)';
+                const handleSize = 8;
+                [
+                    { hx: obj.x - selR, hy: obj.y },
+                    { hx: obj.x + selR, hy: obj.y },
+                    { hx: obj.x, hy: obj.y - selR },
+                    { hx: obj.x, hy: obj.y + selR }
+                ].forEach(pt => {
+                    targetCtx.fillRect(pt.hx - handleSize/2, pt.hy - handleSize/2, handleSize, handleSize);
+                });
             }
         } else if (obj.type === 'text') {
             targetCtx.fillStyle = obj.color;
@@ -5274,6 +5775,44 @@ function applyGridSnap(val, axis = 'x') {
     return val;
 }
 
+function handleCanvasDblClick(e) {
+    if (isPlaying) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+    for (let i = objects.length - 1; i >= 0; i--) {
+        const obj = objects[i];
+        if (obj.type === 'text') {
+            const dx = x - obj.x;
+            const dy = y - obj.y;
+            ctx.font = 'bold 14px Inter, sans-serif';
+            const tw = ctx.measureText(obj.text || '').width;
+            if (Math.abs(dx) <= tw / 2 + 10 && Math.abs(dy) <= 15) {
+                const modal = document.getElementById('modal-text-input');
+                const input = document.getElementById('canvas-text-value');
+                if (modal && input) {
+                    input.value = obj.text || '';
+                    modal.classList.remove('hidden');
+                    input.focus();
+                    
+                    const form = document.getElementById('form-text-input');
+                    form.onsubmit = (ev) => {
+                        ev.preventDefault();
+                        if (input.value) {
+                            obj.text = input.value;
+                            saveHistory();
+                            drawPitch(objects);
+                        }
+                        modal.classList.add('hidden');
+                    };
+                }
+                break;
+            }
+        }
+    }
+}
+
 function handleMouseDown(e) {
     if (isPlaying) return;
     const rect = canvas.getBoundingClientRect();
@@ -5281,19 +5820,58 @@ function handleMouseDown(e) {
     let y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
     if (currentTool === 'select') {
+        const prevSelected = selectedObject;
         selectedObject = null;
         isResizing = false;
         resizeHandle = null;
         
+        // 1. Check resize handle hits for previously selected object first
+        if (prevSelected) {
+            if (prevSelected.type === 'minigoal') {
+                const scale = prevSelected.goalScale || 1.0;
+                const selR = (prevSelected.radius || 15) * scale + 6;
+                const s = 18; // Wide hit area for handle drag
+                if (Math.abs(x - (prevSelected.x - selR)) <= s && Math.abs(y - prevSelected.y) <= s) { isResizing = true; resizeHandle = 'goal-w'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
+                if (Math.abs(x - (prevSelected.x + selR)) <= s && Math.abs(y - prevSelected.y) <= s) { isResizing = true; resizeHandle = 'goal-e'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
+                if (Math.abs(x - prevSelected.x) <= s && Math.abs(y - (prevSelected.y - selR)) <= s) { isResizing = true; resizeHandle = 'goal-n'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
+                if (Math.abs(x - prevSelected.x) <= s && Math.abs(y - (prevSelected.y + selR)) <= s) { isResizing = true; resizeHandle = 'goal-s'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
+            } else if (prevSelected.type === 'rect') {
+                const s = 18;
+                if (Math.abs(x - prevSelected.x1) <= s && Math.abs(y - prevSelected.y1) <= s) { isResizing = true; resizeHandle = 'nw'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
+                if (Math.abs(x - prevSelected.x2) <= s && Math.abs(y - prevSelected.y1) <= s) { isResizing = true; resizeHandle = 'ne'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
+                if (Math.abs(x - prevSelected.x1) <= s && Math.abs(y - prevSelected.y2) <= s) { isResizing = true; resizeHandle = 'sw'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
+                if (Math.abs(x - prevSelected.x2) <= s && Math.abs(y - prevSelected.y2) <= s) { isResizing = true; resizeHandle = 'se'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
+            }
+        }
+        
+        // 2. Otherwise select or drag objects
         for(let i = objects.length-1; i >= 0; i--) {
             const obj = objects[i];
-            if (obj.type === 'rect') {
-                const s = 10;
-                if (Math.abs(x - obj.x1) <= s && Math.abs(y - obj.y1) <= s) { isResizing = true; resizeHandle = 'nw'; draggedObject = obj; selectedObject = obj; break; }
-                if (Math.abs(x - obj.x2) <= s && Math.abs(y - obj.y1) <= s) { isResizing = true; resizeHandle = 'ne'; draggedObject = obj; selectedObject = obj; break; }
-                if (Math.abs(x - obj.x1) <= s && Math.abs(y - obj.y2) <= s) { isResizing = true; resizeHandle = 'sw'; draggedObject = obj; selectedObject = obj; break; }
-                if (Math.abs(x - obj.x2) <= s && Math.abs(y - obj.y2) <= s) { isResizing = true; resizeHandle = 'se'; draggedObject = obj; selectedObject = obj; break; }
-                
+
+            if (obj.type === 'line' || obj.type === 'ladder') {
+                // Distance from point (x, y) to line segment (x1, y1)-(x2, y2)
+                const A = x - obj.x1;
+                const B = y - obj.y1;
+                const C = obj.x2 - obj.x1;
+                const D = obj.y2 - obj.y1;
+                const dot = A * C + B * D;
+                const lenSq = C * C + D * D;
+                let param = -1;
+                if (lenSq !== 0) param = dot / lenSq;
+                let xx, yy;
+                if (param < 0) { xx = obj.x1; yy = obj.y1; }
+                else if (param > 1) { xx = obj.x2; yy = obj.y2; }
+                else { xx = obj.x1 + param * C; yy = obj.y1 + param * D; }
+                const dx = x - xx;
+                const dy = y - yy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist <= 12) {
+                    draggedObject = obj;
+                    selectedObject = obj;
+                    startX = x; startY = y;
+                    break;
+                }
+            } else if (obj.type === 'rect') {
                 const mx1 = Math.min(obj.x1, obj.x2);
                 const mx2 = Math.max(obj.x1, obj.x2);
                 const my1 = Math.min(obj.y1, obj.y2);
@@ -5304,7 +5882,7 @@ function handleMouseDown(e) {
                     startX = x; startY = y;
                     break;
                 }
-            } else if(obj.type !== 'line' && obj.type !== 'ladder') {
+            } else {
                 const dx = x - obj.x;
                 const dy = y - obj.y;
                 let isHit = false;
@@ -5312,13 +5890,19 @@ function handleMouseDown(e) {
                     ctx.font = 'bold 14px Inter, sans-serif';
                     const tw = ctx.measureText(obj.text || '').width;
                     isHit = Math.abs(dx) <= tw/2 + 5 && Math.abs(dy) <= 15;
+                } else if (obj.type === 'minigoal') {
+                    const scale = obj.goalScale || 1.0;
+                    const gw = 30 * scale;
+                    const gh = 15 * scale;
+                    isHit = Math.abs(dx) <= (gw/2 + 10) && Math.abs(dy) <= (gh/2 + 10);
                 } else {
-                    isHit = Math.sqrt(dx*dx + dy*dy) <= obj.radius + 5;
+                    isHit = Math.sqrt(dx*dx + dy*dy) <= (obj.radius + 5);
                 }
                 
                 if(isHit) {
                     draggedObject = obj;
                     selectedObject = obj;
+                    startX = x; startY = y;
                     
                     if (obj.type === 'player') {
                         const elNum = document.getElementById('canvas-player-number');
@@ -5366,6 +5950,16 @@ function handleMouseDown(e) {
             radius = 14;
             type = 'player';
         }
+        let goalScale = 1.0;
+        let sizeCategory = 'medium';
+        const elGoalSize = document.getElementById('canvas-goal-size');
+        if (elGoalSize) {
+            sizeCategory = elGoalSize.value;
+            if (sizeCategory === 'small') goalScale = 0.7;
+            else if (sizeCategory === 'large') goalScale = 1.6;
+            else if (sizeCategory === 'full') goalScale = 2.4;
+        }
+
         if(currentTool === 'ball') { color = '#ffffff'; radius = 8; type = 'ball'; }
         if(currentTool === 'marker') { color = '#f97316'; radius = 8; type = 'marker'; }
         if(currentTool === 'cone') { color = '#facc15'; radius = 10; type = 'cone'; }
@@ -5374,6 +5968,10 @@ function handleMouseDown(e) {
         
         if (type) {
             const newObj = { id: objectIdCounter++, type, x, y, radius, color, number };
+            if (type === 'minigoal') {
+                newObj.sizeCategory = sizeCategory;
+                newObj.goalScale = goalScale;
+            }
             if (type === 'text') {
                 const modal = document.getElementById('modal-text-input');
                 const input = document.getElementById('canvas-text-value');
@@ -5422,12 +6020,22 @@ function handleMouseMove(e) {
     const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
     if(draggedObject) {
-        if (isResizing && draggedObject.type === 'rect') {
+        if (isResizing && draggedObject.type === 'minigoal') {
+            const dist = Math.sqrt(Math.pow(x - draggedObject.x, 2) + Math.pow(y - draggedObject.y, 2));
+            const newScale = Math.max(0.4, Math.min(3.5, dist / 21));
+            draggedObject.goalScale = parseFloat(newScale.toFixed(2));
+        } else if (isResizing && draggedObject.type === 'rect') {
             if (resizeHandle === 'nw') { draggedObject.x1 = applyGridSnap(x, 'x'); draggedObject.y1 = applyGridSnap(y, 'y'); }
             if (resizeHandle === 'ne') { draggedObject.x2 = applyGridSnap(x, 'x'); draggedObject.y1 = applyGridSnap(y, 'y'); }
             if (resizeHandle === 'sw') { draggedObject.x1 = applyGridSnap(x, 'x'); draggedObject.y2 = applyGridSnap(y, 'y'); }
             if (resizeHandle === 'se') { draggedObject.x2 = applyGridSnap(x, 'x'); draggedObject.y2 = applyGridSnap(y, 'y'); }
         } else if (draggedObject.type === 'rect') {
+            const dx = applyGridSnap(x, 'x') - applyGridSnap(startX, 'x');
+            const dy = applyGridSnap(y, 'y') - applyGridSnap(startY, 'y');
+            draggedObject.x1 += dx; draggedObject.x2 += dx;
+            draggedObject.y1 += dy; draggedObject.y2 += dy;
+            startX = x; startY = y;
+        } else if (draggedObject.type === 'line' || draggedObject.type === 'ladder') {
             const dx = applyGridSnap(x, 'x') - applyGridSnap(startX, 'x');
             const dy = applyGridSnap(y, 'y') - applyGridSnap(startY, 'y');
             draggedObject.x1 += dx; draggedObject.x2 += dx;
