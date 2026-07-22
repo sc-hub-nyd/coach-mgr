@@ -107,9 +107,10 @@ export function openMenuModal(practiceId = null, menuId = null) {
     openModal('modal-menu');
 }
 
+let displayedPracticeCount = 10;
+
 export function initPractices() {
     const filterNendo = document.getElementById('filter-nendo-practice');
-    const filterMonth = document.getElementById('filter-month-practice');
 
     if (filterNendo) {
         const nendos = Array.from(new Set(state.practices.map(p => getNendo(p.date)))).sort((a, b) => b - a);
@@ -118,6 +119,7 @@ export function initPractices() {
 
         filterNendo.onchange = (e) => {
             filters.currentPracticeNendo = e.target.value;
+            displayedPracticeCount = 10; // Reset display count on filter change
             initPractices();
         };
     }
@@ -135,8 +137,10 @@ export function initPractices() {
     }
 
     const sortedPractices = [...filteredPractices].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const totalCount = sortedPractices.length;
+    const itemsToDisplay = sortedPractices.slice(0, displayedPracticeCount);
 
-    practiceList.innerHTML = sortedPractices.map(p => `
+    let html = itemsToDisplay.map(p => `
         <div class="card" style="padding:1.25rem; margin-bottom:1rem;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
                 <div>
@@ -169,6 +173,25 @@ export function initPractices() {
             </div>
         </div>
     `).join('');
+
+    if (totalCount > 10) {
+        const currentlyShowing = Math.min(displayedPracticeCount, totalCount);
+        const hasMore = currentlyShowing < totalCount;
+
+        html += `
+            <div class="pagination-container">
+                <div class="pagination-info">
+                    ${currentlyShowing} / ${totalCount} 件を表示中
+                </div>
+                <div class="pagination-actions">
+                    ${hasMore ? `<button class="btn btn-secondary btn-sm" id="btn-load-more-practices"><i class="fa-solid fa-angles-down"></i> さらに10件読み込む</button>` : ''}
+                    ${hasMore ? `<button class="btn btn-secondary btn-sm" id="btn-show-all-practices"><i class="fa-solid fa-list-check"></i> 全件表示</button>` : ''}
+                </div>
+            </div>
+        `;
+    }
+
+    practiceList.innerHTML = html;
 
     // Bind event listeners
     document.querySelectorAll('.btn-add-menu').forEach(btn => {
@@ -220,6 +243,22 @@ export function initPractices() {
             }
         };
     });
+
+    const btnLoadMore = document.getElementById('btn-load-more-practices');
+    if (btnLoadMore) {
+        btnLoadMore.onclick = () => {
+            displayedPracticeCount += 10;
+            initPractices();
+        };
+    }
+
+    const btnShowAll = document.getElementById('btn-show-all-practices');
+    if (btnShowAll) {
+        btnShowAll.onclick = () => {
+            displayedPracticeCount = totalCount;
+            initPractices();
+        };
+    }
 
     const btnAddPractice = document.getElementById('btn-add-practice');
     if (btnAddPractice) {

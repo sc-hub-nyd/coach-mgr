@@ -165,6 +165,8 @@ export function openMatchDetail(matchId) {
     openModal('modal-match-detail');
 }
 
+let displayedMatchCount = 10;
+
 export function initMatches() {
     const filterSelect = document.getElementById('filter-nendo-match');
     if (filterSelect) {
@@ -174,6 +176,7 @@ export function initMatches() {
         
         filterSelect.onchange = (e) => {
             filters.currentMatchNendo = e.target.value;
+            displayedMatchCount = 10; // Reset display count on filter change
             initMatches();
         };
     }
@@ -191,8 +194,10 @@ export function initMatches() {
     }
 
     const sortedMatches = [...filteredMatches].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const totalCount = sortedMatches.length;
+    const itemsToDisplay = sortedMatches.slice(0, displayedMatchCount);
 
-    matchList.innerHTML = sortedMatches.map(m => `
+    let html = itemsToDisplay.map(m => `
         <div class="card" style="padding:1.25rem; margin-bottom:1rem;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
                 <div>
@@ -215,6 +220,25 @@ export function initMatches() {
         </div>
     `).join('');
 
+    if (totalCount > 10) {
+        const currentlyShowing = Math.min(displayedMatchCount, totalCount);
+        const hasMore = currentlyShowing < totalCount;
+
+        html += `
+            <div class="pagination-container">
+                <div class="pagination-info">
+                    ${currentlyShowing} / ${totalCount} 件を表示中
+                </div>
+                <div class="pagination-actions">
+                    ${hasMore ? `<button class="btn btn-secondary btn-sm" id="btn-load-more-matches"><i class="fa-solid fa-angles-down"></i> さらに10件読み込む</button>` : ''}
+                    ${hasMore ? `<button class="btn btn-secondary btn-sm" id="btn-show-all-matches"><i class="fa-solid fa-list-check"></i> 全件表示</button>` : ''}
+                </div>
+            </div>
+        `;
+    }
+
+    matchList.innerHTML = html;
+
     // Bind item action listeners
     document.querySelectorAll('.btn-detail-match').forEach(btn => {
         btn.onclick = () => openMatchDetail(parseInt(btn.dataset.id, 10));
@@ -233,6 +257,22 @@ export function initMatches() {
             }
         };
     });
+
+    const btnLoadMore = document.getElementById('btn-load-more-matches');
+    if (btnLoadMore) {
+        btnLoadMore.onclick = () => {
+            displayedMatchCount += 10;
+            initMatches();
+        };
+    }
+
+    const btnShowAll = document.getElementById('btn-show-all-matches');
+    if (btnShowAll) {
+        btnShowAll.onclick = () => {
+            displayedMatchCount = totalCount;
+            initMatches();
+        };
+    }
 
     const btnAddMatch = document.getElementById('btn-add-match');
     if (btnAddMatch) {
