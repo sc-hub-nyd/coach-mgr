@@ -102,7 +102,9 @@ export function initDashboard() {
     const elMatchTypes = document.getElementById('dash-db-match-types');
     const elUpcoming = document.getElementById('dash-upcoming-schedule-content');
     const elPast = document.getElementById('dash-past-schedule-content');
-    const elLeaderRankings = document.getElementById('dash-leader-rankings');
+    const elTopScorers = document.getElementById('dash-top-scorers');
+    const elTopAssists = document.getElementById('dash-top-assists');
+    const elMatchesContent = document.getElementById('dash-matches-content');
 
     // Calculate W-L-D stats
     let wins = 0, losses = 0, draws = 0;
@@ -136,41 +138,83 @@ export function initDashboard() {
         }).join('');
     }
 
-    // Leader Rankings Preview
-    if (elLeaderRankings) {
-        const scorerCounts = {};
-        const assistCounts = {};
-        state.matches.forEach(m => {
-            if (m.goalRecords) {
-                m.goalRecords.forEach(r => {
-                    if (r.scorerId) scorerCounts[r.scorerId] = (scorerCounts[r.scorerId] || 0) + 1;
-                    if (r.assistId) assistCounts[r.assistId] = (assistCounts[r.assistId] || 0) + 1;
-                });
-            }
-        });
+    // Leader Rankings (Top Scorers & Top Assists)
+    const scorerCounts = {};
+    const assistCounts = {};
+    state.matches.forEach(m => {
+        if (m.goalRecords) {
+            m.goalRecords.forEach(r => {
+                if (r.scorerId) scorerCounts[r.scorerId] = (scorerCounts[r.scorerId] || 0) + 1;
+                if (r.assistId) assistCounts[r.assistId] = (assistCounts[r.assistId] || 0) + 1;
+            });
+        }
+    });
 
-        const topScorerId = Object.keys(scorerCounts).sort((a, b) => scorerCounts[b] - scorerCounts[a])[0];
-        const topAssistId = Object.keys(assistCounts).sort((a, b) => assistCounts[b] - assistCounts[a])[0];
+    const topScorers = Object.keys(scorerCounts)
+        .map(id => ({ player: state.players.find(p => p.id === parseInt(id, 10)), count: scorerCounts[id] }))
+        .filter(item => item.player)
+        .sort((a, b) => b.count - a.count);
 
-        const topScorer = topScorerId ? state.players.find(p => p.id === parseInt(topScorerId, 10)) : null;
-        const topAssist = topAssistId ? state.players.find(p => p.id === parseInt(topAssistId, 10)) : null;
+    const topAssists = Object.keys(assistCounts)
+        .map(id => ({ player: state.players.find(p => p.id === parseInt(id, 10)), count: assistCounts[id] }))
+        .filter(item => item.player)
+        .sort((a, b) => b.count - a.count);
 
-        elLeaderRankings.innerHTML = `
-            <div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.2rem;">
-                <i class="fa-solid fa-fire" style="color:#ef4444;"></i> 得点王: <strong>${topScorer ? `${topScorer.name} (${scorerCounts[topScorerId]}点)` : 'なし'}</strong>
-            </div>
-            <div style="font-size:0.75rem; color:var(--text-secondary);">
-                <i class="fa-solid fa-shoe-prints" style="color:#22c55e;"></i> アシスト王: <strong>${topAssist ? `${topAssist.name} (${assistCounts[topAssistId]}回)` : 'なし'}</strong>
-            </div>
-        `;
-        elLeaderRankings.style.cursor = 'pointer';
-        elLeaderRankings.onclick = () => openLeaderRankingModal('all');
+    if (elTopScorers) {
+        elTopScorers.innerHTML = topScorers.length === 0
+            ? '<div style="font-style:italic; color:var(--text-secondary);">なし</div>'
+            : topScorers.slice(0, 3).map(item => `<div><strong>${item.player.name}</strong> (${item.count}点)</div>`).join('');
     }
 
-    // Dash Card Click Handlers
-    const cardMatches = document.getElementById('dash-card-matches');
-    if (cardMatches) {
-        cardMatches.onclick = () => navigate('matches');
+    if (elTopAssists) {
+        elTopAssists.innerHTML = topAssists.length === 0
+            ? '<div style="font-style:italic; color:var(--text-secondary);">なし</div>'
+            : topAssists.slice(0, 3).map(item => `<div><strong>${item.player.name}</strong> (${item.count}回)</div>`).join('');
+    }
+
+    // Recent Matches Content
+    if (elMatchesContent) {
+        const recentMatches = [...state.matches]
+            .filter(m => m.result)
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, 3);
+
+        if (recentMatches.length === 0) {
+            elMatchesContent.innerHTML = '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; grid-column:1/-1; padding:0.5rem;">試合結果の記録がありません</div>';
+        } else {
+            elMatchesContent.innerHTML = recentMatches.map(m => `
+                <div class="glass dash-match-card-item" data-id="${m.id}" style="padding:0.6rem 0.75rem; border-radius:10px; cursor:pointer; display:flex; flex-direction:column; justify-content:space-between;">
+                    <div style="font-size:0.7rem; color:var(--text-secondary); display:flex; justify-content:space-between;">
+                        <span>${m.date}</span>
+                        <span class="badge" style="font-size:0.65rem; background:rgba(242,57,50,0.1); color:var(--primary);">${m.type}</span>
+                    </div>
+                    <div style="font-weight:bold; font-size:0.85rem; margin:0.3rem 0 0.1rem 0; text-align:center; color:var(--text-primary);">vs ${m.opponent}</div>
+                    <div style="font-size:1.2rem; font-weight:800; text-align:center; color:var(--primary);">${m.result}</div>
+                </div>
+            `).join('');
+
+            elMatchesContent.querySelectorAll('.dash-match-card-item').forEach(item => {
+                item.onclick = () => {
+                    const matchId = parseInt(item.dataset.id, 10);
+                    navigate('matches');
+                    setTimeout(() => {
+                        const btn = document.querySelector(`.btn-detail-match[data-id='${matchId}']`);
+                        if (btn) btn.click();
+                    }, 100);
+                };
+            });
+        }
+    }
+
+    // Dash Action Button Click Handlers
+    const btnGoPlayers = document.getElementById('dash-btn-go-players');
+    if (btnGoPlayers) {
+        btnGoPlayers.onclick = () => openLeaderRankingModal('all');
+    }
+
+    const btnGoMatches = document.getElementById('dash-btn-go-matches');
+    if (btnGoMatches) {
+        btnGoMatches.onclick = () => navigate('matches');
     }
 
     // Upcoming & Past Schedules

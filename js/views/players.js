@@ -293,11 +293,9 @@ export function openPlayerDetail(id) {
             else if (lower === 'gk') badgeClass = 'badge-gk';
             return `<span class="player-position ${badgeClass}" style="font-size:0.8rem; padding:0.2rem 0.5rem; border-radius:12px; font-weight:600; display:inline-block; margin-right:0.25rem;">${pos}</span>`;
         }).join('');
-        pdPosition.style.background = 'transparent';
-        pdPosition.style.border = 'none';
-        pdPosition.style.padding = '0';
     }
-    document.getElementById('pd-name').textContent = p.name;
+    const nameEl = document.getElementById('pd-name');
+    if (nameEl) nameEl.textContent = `${p.number ? `No.${p.number} ` : ''}${p.name}`;
     
     let playerGoals = 0;
     let playerAssists = 0;
@@ -314,6 +312,101 @@ export function openPlayerDetail(id) {
     const elPdAssists = document.getElementById('pd-assists');
     if (elPdGoals) elPdGoals.textContent = playerGoals;
     if (elPdAssists) elPdAssists.textContent = playerAssists;
+
+    // Draw Radar Chart
+    const currentSkills = (p.history && p.history.length > 0) ? p.history[0].skills : [3, 3, 3, 3, 3, 3];
+    drawRadarChart('pd-radar', currentSkills);
+
+    // Evaluation History
+    const historyContainer = document.getElementById('pd-history-list');
+    if (historyContainer) {
+        const historyList = p.history || [];
+        if (historyList.length === 0) {
+            historyContainer.innerHTML = '<div style="color:var(--text-secondary); font-style:italic; font-size:0.8rem; padding:0.5rem 0;">評価履歴がまだありません</div>';
+        } else {
+            historyContainer.innerHTML = historyList.map(h => `
+                <div style="background:rgba(0,0,0,0.02); padding:0.6rem 0.8rem; border-radius:8px; border:1px solid var(--surface-border); font-size:0.8rem;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem; font-weight:bold; color:var(--text-secondary);">
+                        <span><i class="fa-regular fa-calendar"></i> ${h.date}</span>
+                    </div>
+                    ${h.comment ? `<div style="white-space:pre-wrap; color:var(--text-primary);">${h.comment}</div>` : ''}
+                </div>
+            `).join('');
+        }
+    }
+
+    // Goals (IDP)
+    const inpGoalPlayerId = document.getElementById('goals-player-id');
+    const inpShortGoal = document.getElementById('player-goal-short');
+    const inpLongGoal = document.getElementById('player-goal-long');
+    if (inpGoalPlayerId) inpGoalPlayerId.value = p.id;
+    if (inpShortGoal) inpShortGoal.value = (p.goals && p.goals.shortTerm) || '';
+    if (inpLongGoal) inpLongGoal.value = (p.goals && p.goals.longTerm) || '';
+
+    // 1on1 Notes
+    const inp1on1PlayerId = document.getElementById('1on1-player-id');
+    const notesContainer = document.getElementById('pd-1on1-list');
+    if (inp1on1PlayerId) inp1on1PlayerId.value = p.id;
+    if (notesContainer) {
+        const notes = p.notes1on1 || [];
+        if (notes.length === 0) {
+            notesContainer.innerHTML = '<div style="color:var(--text-secondary); font-style:italic; font-size:0.8rem; padding:0.5rem 0;">面談記録がありません</div>';
+        } else {
+            notesContainer.innerHTML = notes.map(n => `
+                <div style="background:rgba(0,0,0,0.02); padding:0.5rem 0.75rem; border-radius:8px; border:1px solid var(--surface-border); font-size:0.8rem;">
+                    <div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.15rem; font-weight:bold;">${n.date}</div>
+                    <div style="white-space:pre-wrap; color:var(--text-primary);">${n.content}</div>
+                </div>
+            `).join('');
+        }
+    }
+
+    // Tabs Switch Listener
+    document.querySelectorAll('.player-detail-tab').forEach(tab => {
+        tab.onclick = () => {
+            document.querySelectorAll('.player-detail-tab').forEach(t => {
+                t.classList.remove('active');
+                t.style.fontWeight = 'normal';
+                t.style.borderBottom = 'none';
+                t.style.color = 'var(--text-secondary)';
+            });
+            tab.classList.add('active');
+            tab.style.fontWeight = 'bold';
+            tab.style.borderBottom = '2px solid var(--primary)';
+            tab.style.color = 'var(--text-primary)';
+
+            const targetTab = tab.dataset.tab;
+            document.querySelectorAll('.player-detail-tab-pane').forEach(pane => {
+                if (pane.id === targetTab) {
+                    pane.style.display = 'block';
+                } else {
+                    pane.style.display = 'none';
+                }
+            });
+        };
+    });
+
+    // Edit and Delete Buttons
+    const btnEdit = document.getElementById('btn-edit-player-detail');
+    if (btnEdit) {
+        btnEdit.onclick = () => {
+            document.getElementById('modal-player-detail').classList.add('hidden');
+            openPlayerModal(p.id);
+        };
+    }
+
+    const btnDelete = document.getElementById('btn-delete-player-detail');
+    if (btnDelete) {
+        btnDelete.onclick = () => {
+            if (confirm(`${p.name} 選手を削除しますか？`)) {
+                state.players = state.players.filter(pl => pl.id !== p.id);
+                saveData();
+                showToast('選手を削除しました');
+                document.getElementById('modal-player-detail').classList.add('hidden');
+                initPlayers();
+            }
+        };
+    }
 
     openModal('modal-player-detail');
 }
