@@ -70,7 +70,12 @@ let state = {
 
 let currentMatchNendo = 'all';
 let currentPracticeNendo = 'all';
+let currentPracticeMonth = 'all';
 let currentLibraryCategory = 'all';
+
+let currentMatchPage = 1;
+let currentPracticePage = 1;
+const ITEMS_PER_PAGE = 10;
 
 function getNendo(dateStr) {
     const d = new Date(dateStr);
@@ -171,6 +176,116 @@ function saveData() {
         teamInfo: state.teamInfo,
         customFormations: state.customFormations
     }));
+
+    // Auto sync to cloud if GAS API URL is configured (silent background push)
+    if (state.teamInfo && state.teamInfo.gasApiUrl) {
+        syncPushGasCloud(true);
+    }
+}
+
+// GAS Cloud Sync Engine
+function syncPushGasCloud(isSilent = false) {
+    if (!state.teamInfo || !state.teamInfo.gasApiUrl) {
+        if (!isSilent) alert('Google Apps Script の Web API URL が設定されていません。「設定」画面で入力してください。');
+        return Promise.reject('No URL');
+    }
+
+    const payload = {
+        action: 'push',
+        sheetName: state.teamInfo.gasSheetName || '',
+        data: {
+            matches: state.matches,
+            practices: state.practices,
+            players: state.players,
+            menuLibrary: state.menuLibrary,
+            matchTypes: state.matchTypes,
+            menuCategories: state.menuCategories,
+            skillMetrics: state.skillMetrics,
+            positions: state.positions,
+            positionsCat2: state.positionsCat2,
+            teamInfo: state.teamInfo,
+            customFormations: state.customFormations
+        }
+    };
+
+    if (!isSilent) showToast('クラウドへ同期中...');
+
+    return fetch(state.teamInfo.gasApiUrl, {
+        method: 'POST',
+        mode: 'cors',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+    })
+    .then(res => {
+        if (!res.ok) throw new Error(`HTTPエラー: ${res.status}`);
+        return res.json();
+    })
+    .then(resData => {
+        if (resData && resData.status === 'success') {
+            if (!isSilent) showToast('クラウドへの送信が完了しました！');
+            return resData;
+        } else {
+            throw new Error(resData.message || '同期エラー');
+        }
+    })
+    .catch(err => {
+        console.error('GAS Sync Push Error Details:', err);
+        if (!isSilent) alert(`クラウド送信に失敗しました:\n${err.message || err}\n\n※GASの「デプロイ」で「アクセスできるユーザー: 全員」に設定されているかご確認ください。`);
+    });
+}
+
+function syncPullGasCloud(isSilent = false) {
+    if (!state.teamInfo || !state.teamInfo.gasApiUrl) {
+        if (!isSilent) alert('Google Apps Script の Web API URL が設定されていません。「設定」画面で入力してください。');
+        return Promise.reject('No URL');
+    }
+
+    if (!isSilent) showToast('クラウドからデータを受信中...');
+
+    const sheetParam = state.teamInfo.gasSheetName ? `&sheetName=${encodeURIComponent(state.teamInfo.gasSheetName)}` : '';
+    const fetchUrl = `${state.teamInfo.gasApiUrl}?action=pull${sheetParam}&t=${Date.now()}`;
+
+    return fetch(fetchUrl, {
+        method: 'GET',
+        mode: 'cors',
+        redirect: 'follow'
+    })
+    .then(res => {
+        if (!res.ok) throw new Error(`HTTPエラー: ${res.status}`);
+        return res.json();
+    })
+    .then(resData => {
+        if (resData && resData.status === 'success' && resData.data) {
+            let remoteData = resData.data;
+            if (typeof remoteData === 'string') {
+                try { remoteData = JSON.parse(remoteData); } catch(e) {}
+            }
+            
+            // Validate data integrity
+            if (remoteData && (remoteData.matches || remoteData.players || remoteData.practices)) {
+                const currentGasUrl = state.teamInfo.gasApiUrl;
+                const currentGasSheetName = state.teamInfo.gasSheetName;
+                localStorage.setItem('coachMgrData', JSON.stringify(remoteData));
+                loadData();
+                if (currentGasUrl) state.teamInfo.gasApiUrl = currentGasUrl;
+                if (currentGasSheetName) state.teamInfo.gasSheetName = currentGasSheetName;
+
+                document.documentElement.style.setProperty('--primary', state.teamInfo.color);
+                const sidebarTitle = document.querySelector('.sidebar-header h2');
+                if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
+                
+                if (!isSilent) showToast('クラウドから最新データを復元しました！');
+                navigate(state.currentRoute || 'dashboard');
+                return remoteData;
+            }
+        }
+        throw new Error('有効なクラウドデータが見つかりませんでした');
+    })
+    .catch(err => {
+        console.error('GAS Sync Pull Error Details:', err);
+        if (!isSilent) alert(`クラウドからの復元に失敗しました:\n${err.message || err}`);
+    });
 }
 
 // Show a fallback modal with the JSON text for environments where download is not available (iOS, file://)
@@ -227,11 +342,18 @@ function init() {
         if(sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
         setupEventListeners();
         setupModals();
-        navigate('dashboard');
+        
+        // Auto pull latest data from cloud if configured
+        if (state.teamInfo && state.teamInfo.gasApiUrl) {
+            syncPullGasCloud(true).finally(() => {
+                navigate('dashboard');
+            });
+        } else {
+            navigate('dashboard');
+        }
     } catch (e) {
         console.error("Initialization error:", e);
         alert("初期化エラーが発生しました: " + e.message);
-        // Attempt recovery navigation
         try {
             navigate('dashboard');
         } catch (err) {}
@@ -366,6 +488,19 @@ function updateRoleUI() {
             : '<i class="fa-solid fa-user-lock"></i> コーチモードへ';
     }
 
+    const btnTopbarSync = document.getElementById('btn-topbar-sync');
+    if (btnTopbarSync) {
+        const hasUrl = state.teamInfo && state.teamInfo.gasApiUrl;
+        btnTopbarSync.style.display = hasUrl ? 'inline-flex' : 'none';
+        btnTopbarSync.onclick = () => {
+            if (isCoach) {
+                syncPushGasCloud(false);
+            } else {
+                syncPullGasCloud(false);
+            }
+        };
+    }
+
     // Toggle sidebar library and settings link visibility for parent role
     const settingsLink = document.querySelector('.nav-links li[data-route="settings"]');
     if (settingsLink) {
@@ -428,8 +563,14 @@ function navigate(route, params = null) {
         viewContainer.appendChild(template.content.cloneNode(true));
         
         if (route === 'dashboard') initDashboard();
-        if (route === 'matches') initMatches();
-        if (route === 'practices') initPractices();
+        if (route === 'matches') {
+            currentMatchPage = 1;
+            initMatches();
+        }
+        if (route === 'practices') {
+            currentPracticePage = 1;
+            initPractices();
+        }
         if (route === 'players') initPlayers();
         if (route === 'data') initData();
         if (route === 'library') initLibrary();
@@ -566,16 +707,17 @@ function addGoalRecordRow(scorerId = null, assistId = null, targetContainerId = 
     const div = document.createElement('div');
     div.id = rowId;
     div.className = 'goal-record-row';
-    div.style = 'display:flex; gap:0.5rem; align-items:center; width:100%;';
+    div.style = 'display:flex; gap:0.4rem; align-items:center; width:100%; font-size:0.8rem;';
     div.innerHTML = `
-        <select class="form-control goal-scorer-select" style="flex:1; padding:0.3rem; font-size:0.85rem;">
+        <span style="min-width:3rem; text-align:right; font-size:0.78rem; color:var(--text-secondary); flex-shrink:0;">得点:</span>
+        <select class="form-control goal-scorer-select" style="flex:1; min-width:0; padding:0.25rem 0.4rem; font-size:0.8rem; height:auto;">
             ${scorerOptions}
         </select>
-        <span style="font-size:0.8rem; color:var(--text-secondary);">アシ:</span>
-        <select class="form-control goal-assist-select" style="flex:1; padding:0.3rem; font-size:0.85rem;">
+        <span style="min-width:3.6rem; text-align:right; font-size:0.78rem; color:var(--text-secondary); flex-shrink:0;">アシスト:</span>
+        <select class="form-control goal-assist-select" style="flex:1; min-width:0; padding:0.25rem 0.4rem; font-size:0.8rem; height:auto;">
             ${assistOptions}
         </select>
-        <button type="button" class="btn btn-danger" onclick="document.getElementById('${rowId}').remove()" style="padding:0.25rem 0.5rem; font-size:0.85rem;"><i class="fa-solid fa-trash"></i></button>
+        <button type="button" class="btn btn-danger" onclick="document.getElementById('${rowId}').remove()" style="padding:0.25rem 0.45rem; font-size:0.8rem; flex-shrink:0;" title="削除"><i class="fa-solid fa-trash-can"></i></button>
     `;
     container.appendChild(div);
 }
@@ -1750,6 +1892,7 @@ function initMatches() {
         
         filterSelect.onchange = (e) => {
             currentMatchNendo = e.target.value;
+            currentMatchPage = 1;
             initMatches();
         };
     }
@@ -1874,11 +2017,13 @@ function initMatches() {
             : '<div style="color:var(--text-secondary); font-size:0.75rem;">-</div>';
     }
 
+    const displayedMatches = filteredMatches.slice(0, currentMatchPage * ITEMS_PER_PAGE);
+
     // List Update (Grouped by month grid, similar to practices)
     const matchList = document.getElementById('match-list');
     if (matchList) {
         const grouped = {};
-        filteredMatches.forEach(m => {
+        displayedMatches.forEach(m => {
             const ym = m.date.substring(0, 7).replace('-', '年') + '月';
             if (!grouped[ym]) grouped[ym] = [];
             grouped[ym].push(m);
@@ -1906,8 +2051,30 @@ function initMatches() {
                             <div class="match-card-result">${resultText}</div>
                         </div>
                         ${isCompleted ? `
-                        <div class="match-card-scorers" style="text-align:left;" title="${m.scorers || '記録なし'}">
-                            <i class="fa-solid fa-futbol" style="font-size:0.8rem;"></i> ${m.scorers || '記録なし'}
+                        <div class="match-card-scorers" style="text-align:left;" title="${(() => {
+                            if (m.goalRecords && m.goalRecords.length > 0) {
+                                return m.goalRecords.map(r => {
+                                    if (r.scorerId) {
+                                        const p = state.players.find(pl => pl.id === r.scorerId);
+                                        return p ? `${p.name}` : '不明な選手';
+                                    }
+                                    return 'オウンゴール/その他';
+                                }).join(', ');
+                            }
+                            return (m.scorers || '記録なし').replace(/\s*\([^)]*アシスト[^)]*\)/g, '');
+                        })()}">
+                            <i class="fa-solid fa-futbol" style="font-size:0.8rem;"></i> ${(() => {
+                                if (m.goalRecords && m.goalRecords.length > 0) {
+                                    return m.goalRecords.map(r => {
+                                        if (r.scorerId) {
+                                            const p = state.players.find(pl => pl.id === r.scorerId);
+                                            return p ? `${p.name}` : '不明な選手';
+                                        }
+                                        return 'オウンゴール/その他';
+                                    }).join(', ');
+                                }
+                                return (m.scorers || '記録なし').replace(/\s*\([^)]*アシスト[^)]*\)/g, '');
+                            })()}
                         </div>
                         ` : ''}
                         <div class="match-card-actions">
@@ -1922,6 +2089,18 @@ function initMatches() {
                 </div>
             `;
         });
+
+        if (filteredMatches.length > displayedMatches.length) {
+            const remaining = filteredMatches.length - displayedMatches.length;
+            html += `
+                <div style="text-align:center; margin: 1.5rem 0 1rem 0;">
+                    <button class="btn btn-secondary" id="btn-load-more-matches" style="padding: 0.6rem 2rem; font-size: 0.9rem; border-radius: 9999px; display:inline-flex; align-items:center; gap:0.4rem; font-weight:600;">
+                        <i class="fa-solid fa-angle-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredMatches.length} 件)
+                    </button>
+                </div>
+            `;
+        }
+
         matchList.innerHTML = html || `
             <div class="card" style="padding:3rem 2rem; text-align:center; border: 1.5px dashed var(--surface-border); display:flex; flex-direction:column; align-items:center; gap:1rem; width:100%; box-sizing:border-box;">
                 <div style="font-size:3rem; color:var(--text-secondary); opacity:0.6;"><i class="fa-solid fa-trophy"></i></div>
@@ -1932,6 +2111,15 @@ function initMatches() {
                 <button class="btn btn-primary" id="btn-empty-add-match" style="margin-top:0.5rem;"><i class="fa-solid fa-plus"></i> 最初の試合を追加</button>
             </div>
         `;
+
+        const btnLoadMoreMatches = document.getElementById('btn-load-more-matches');
+        if (btnLoadMoreMatches) {
+            btnLoadMoreMatches.onclick = () => {
+                currentMatchPage++;
+                initMatches();
+            };
+        }
+
         setTimeout(() => {
             const btnEmptyAdd = document.getElementById('btn-empty-add-match');
             if (btnEmptyAdd) {
@@ -1944,9 +2132,12 @@ function initMatches() {
     }
 
     // Match Modal
-    document.getElementById('btn-add-match').addEventListener('click', () => {
-        openMatchModal();
-    });
+    const btnAddMatch = document.getElementById('btn-add-match');
+    if (btnAddMatch) {
+        btnAddMatch.onclick = () => {
+            openMatchModal();
+        };
+    }
 
     document.querySelectorAll('.btn-detail-match').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -2237,7 +2428,7 @@ function openMatchDetail(id) {
             renderFormationPitch(defaultSys, []);
 
             const modalTitle = document.getElementById('formation-modal-title');
-            if (modalTitle) modalTitle.textContent = 'フォーメーション編集';
+            if (modalTitle) modalTitle.textContent = 'ピリオド編集';
 
             const formElem = document.getElementById('form-formation');
             if (formElem) {
@@ -2308,7 +2499,7 @@ function openMatchDetail(id) {
             const isReadOnly = state.currentUserRole !== 'coach';
 
             if (modalTitle) {
-                modalTitle.textContent = isReadOnly ? 'フォーメーション' : 'フォーメーション編集';
+                modalTitle.textContent = isReadOnly ? 'ピリオド詳細' : 'ピリオド編集';
             }
 
             const formElem = document.getElementById('form-formation');
@@ -2358,7 +2549,6 @@ function openMatchDetail(id) {
     }
 }
 
-let currentPracticeMonth = 'all';
 
 function renderPracticeRoster(selectedPlayerIds = []) {
     const container = document.getElementById('practice-attendance-roster');
@@ -2401,6 +2591,7 @@ function initPractices() {
         filterSelect.onchange = (e) => {
             currentPracticeNendo = e.target.value;
             currentPracticeMonth = 'all';
+            currentPracticePage = 1;
             initPractices();
         };
     }
@@ -2421,6 +2612,7 @@ function initPractices() {
         
         filterMonthSelect.onchange = (e) => {
             currentPracticeMonth = e.target.value;
+            currentPracticePage = 1;
             initPractices();
         };
     }
@@ -2435,11 +2627,13 @@ function initPractices() {
     const elPractices = document.getElementById('dash-practices');
     if (elPractices) elPractices.textContent = filteredPractices.length;
 
+    const displayedPractices = filteredPractices.slice(0, currentPracticePage * ITEMS_PER_PAGE);
+
     // List Update
     const practiceList = document.getElementById('practice-list');
     
     const grouped = {};
-    filteredPractices.forEach(p => {
+    displayedPractices.forEach(p => {
         const ym = p.date.substring(0, 7).replace('-', '年') + '月';
         if (!grouped[ym]) grouped[ym] = [];
         grouped[ym].push(p);
@@ -2507,6 +2701,17 @@ function initPractices() {
         html += `</div></div>`;
     });
     
+    if (filteredPractices.length > displayedPractices.length) {
+        const remaining = filteredPractices.length - displayedPractices.length;
+        html += `
+            <div style="text-align:center; margin: 1.5rem 0 1rem 0;">
+                <button class="btn btn-secondary" id="btn-load-more-practices" style="padding: 0.6rem 2rem; font-size: 0.9rem; border-radius: 9999px; display:inline-flex; align-items:center; gap:0.4rem; font-weight:600;">
+                    <i class="fa-solid fa-angle-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredPractices.length} 件)
+                </button>
+            </div>
+        `;
+    }
+
     if (sortedMonths.length === 0) {
         html = `
             <div class="card" style="padding:3rem 2rem; text-align:center; border: 1.5px dashed var(--surface-border); display:flex; flex-direction:column; align-items:center; gap:1rem; width:100%; box-sizing:border-box;">
@@ -2518,18 +2723,27 @@ function initPractices() {
                 <button class="btn btn-primary" id="btn-empty-add-practice" style="margin-top:0.5rem;"><i class="fa-solid fa-plus"></i> 最初の練習日を追加</button>
             </div>
         `;
-        setTimeout(() => {
-            const btnEmptyAdd = document.getElementById('btn-empty-add-practice');
-            if (btnEmptyAdd) {
-                btnEmptyAdd.onclick = () => {
-                    const btnAdd = document.getElementById('btn-add-practice');
-                    if (btnAdd) btnAdd.click();
-                };
-            }
-        }, 50);
     }
 
     practiceList.innerHTML = html;
+
+    const btnLoadMorePractices = document.getElementById('btn-load-more-practices');
+    if (btnLoadMorePractices) {
+        btnLoadMorePractices.onclick = () => {
+            currentPracticePage++;
+            initPractices();
+        };
+    }
+
+    setTimeout(() => {
+        const btnEmptyAdd = document.getElementById('btn-empty-add-practice');
+        if (btnEmptyAdd) {
+            btnEmptyAdd.onclick = () => {
+                const btnAdd = document.getElementById('btn-add-practice');
+                if (btnAdd) btnAdd.click();
+            };
+        }
+    }, 50);
 
     // Clear old animation loops for practice mini pitches
     if (window.practiceMiniPitchIntervals) {
@@ -2537,9 +2751,9 @@ function initPractices() {
     }
     window.practiceMiniPitchIntervals = [];
 
-    // Draw practice mini pitches
+    // Draw practice mini pitches for displayed items
     setTimeout(() => {
-        filteredPractices.forEach(p => {
+        displayedPractices.forEach(p => {
             if (p.menus && p.menus.length > 0) {
                 p.menus.forEach(menu => {
                     const mCanv = document.getElementById(`practice-mini-pitch-${p.id}-${menu.id}`);
@@ -3564,6 +3778,54 @@ function initSettings() {
             const sidebarTitle = document.querySelector('.sidebar-header h2');
             if(sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
         });
+    }
+
+    // GAS Sync Settings & Events
+    const gasApiInput = document.getElementById('gas-api-url');
+    const gasSheetInput = document.getElementById('gas-sheet-name');
+    if (gasApiInput) {
+        gasApiInput.value = state.teamInfo.gasApiUrl || '';
+    }
+    if (gasSheetInput) {
+        gasSheetInput.value = state.teamInfo.gasSheetName || '';
+    }
+
+    const formGasSync = document.getElementById('form-gas-sync');
+    if (formGasSync) {
+        formGasSync.onsubmit = (e) => {
+            e.preventDefault();
+            const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
+            const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
+            state.teamInfo.gasApiUrl = urlVal;
+            state.teamInfo.gasSheetName = sheetVal;
+            saveData();
+            updateRoleUI();
+            showToast('クラウド同期設定を保存しました');
+        };
+    }
+
+    const btnPush = document.getElementById('btn-manual-sync-push');
+    if (btnPush) {
+        btnPush.onclick = () => {
+            const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
+            const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
+            if (urlVal) state.teamInfo.gasApiUrl = urlVal;
+            state.teamInfo.gasSheetName = sheetVal;
+            syncPushGasCloud(false);
+        };
+    }
+
+    const btnPull = document.getElementById('btn-manual-sync-pull');
+    if (btnPull) {
+        btnPull.onclick = () => {
+            const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
+            const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
+            if (urlVal) state.teamInfo.gasApiUrl = urlVal;
+            state.teamInfo.gasSheetName = sheetVal;
+            if (confirm('クラウドからデータを復元しますか？ローカルのデータは上書きされます。')) {
+                syncPullGasCloud(false);
+            }
+        };
     }
 
     // Generic list renderer
