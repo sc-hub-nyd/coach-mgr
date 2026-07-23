@@ -1,6 +1,6 @@
 // Menu Library View Module
 
-import { state, saveData, filters } from '../state.js';
+import { state, saveData, filters } from '../state.js?v=25';
 import { showToast, openModal } from '../ui.js';
 import { navigate } from '../router.js';
 import { openMenuModal } from './practices.js';

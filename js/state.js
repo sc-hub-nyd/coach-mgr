@@ -273,7 +273,6 @@ function populateSampleData() {
 
     saveData();
 }
-}
 
 export function saveData() {
     localStorage.setItem('coachMgrData', JSON.stringify({

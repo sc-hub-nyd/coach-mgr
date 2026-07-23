@@ -1,7 +1,7 @@
 // Dashboard View Module
 
-import { state, getNendo } from '../state.js';
-import { filters } from '../state.js';
+import { state, getNendo } from '../state.js?v=25';
+import { filters } from '../state.js?v=25';
 import { navigate } from '../router.js';
 import { openModal } from '../ui.js';
 

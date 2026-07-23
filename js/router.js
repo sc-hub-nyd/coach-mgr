@@ -1,6 +1,6 @@
 // Routing, Navigation & Role Management Module
 
-import { state } from './state.js';
+import { state } from './state.js?v=25';
 import { showToast } from './ui.js';
 
 let viewInitializers = {};

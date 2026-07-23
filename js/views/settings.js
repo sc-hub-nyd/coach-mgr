@@ -1,6 +1,6 @@
 // Settings & Master Management View Module
 
-import { state, saveData } from '../state.js';
+import { state, saveData } from '../state.js?v=25';
 import { showToast, openModal } from '../ui.js';
 
 export function openCustomFormationModal(editIndex = null) {

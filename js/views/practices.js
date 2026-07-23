@@ -1,6 +1,6 @@
 // Practices View Module
 
-import { state, saveData, getNendo, filters } from '../state.js';
+import { state, saveData, getNendo, filters } from '../state.js?v=25';
 import { showToast, openModal } from '../ui.js';
 import { navigate } from '../router.js';
 

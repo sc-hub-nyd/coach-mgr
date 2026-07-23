@@ -1,6 +1,6 @@
 // Application Main Entry Point (ES Module)
 
-import { loadData, state } from './state.js';
+import { loadData, state } from './state.js?v=25';
 import { setupModals } from './ui.js';
 import { registerViewInitializers, setupEventListeners, navigate } from './router.js';
 
