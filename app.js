@@ -5193,11 +5193,6 @@ function initAnimation(params) {
                 openModal('modal-menu');
             });
         }
-        // initAnimation 内の処理に追加
-        const sidePanel = document.getElementById('anim-detail-side-panel');
-        if (sidePanel && window.innerWidth <= 768) {
-            sidePanel.classList.add('collapsed');
-        }
     }
 
     // Fixed internal resolution
