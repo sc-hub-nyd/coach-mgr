@@ -2907,6 +2907,34 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         padding: 0.5rem !important;
         font-size: 0.8rem !important;
     }
+
+    .toast-container {
+        top: 60px !important;
+        /* ヘッダー直下に配置 */
+        bottom: auto !important;
+        /* 下部固定を解除 */
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: 90% !important;
+        /* 画面幅に合わせて横幅を確保 */
+        max-width: 400px !important;
+        align-items: center !important;
+    }
+
+    .toast {
+        width: 100% !important;
+        text-align: center !important;
+        justify-content: center !important;
+        transform: translateY(-150%) !important;
+        /* 初期状態は上に隠す */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* 表示時（アニメーション） */
+    .toast.show {
+        transform: translateY(0) !important;
+    }
 }
 
 /* 4. 作図画面（Animation）が開いている時は縦横問わず完全非表示 */
