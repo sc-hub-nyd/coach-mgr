@@ -2498,47 +2498,45 @@ body.drawing-mode .view-container {
 /* ===== スマホ（768px以下）作図画面（Canvas）の完全レイアウト修正 ===== */
 @media (max-width: 768px) {
 
-    /* 1. メイン領域の幅を確定 */
-    .anim-main-workspace {
-        position: relative !important;
-        width: 100% !important;
-        overflow: hidden !important;
+    /* --- 開閉ボタンの配置を固定化 --- */
+    #anim-side-panel-toggle-btn {
+        position: absolute !important;
+        left: -32px !important;
+        /* パネルの外側（左縁）に出す */
+        top: 12px !important;
+        width: 32px !important;
+        height: 40px !important;
+        z-index: 600 !important;
+        /* タップ可能にするため最前面へ */
+        background: #ffffff !important;
+        border: 1px solid #e5e7eb !important;
+        border-right: none !important;
+        border-radius: 8px 0 0 8px !important;
+        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
     }
 
-    /* 2. キャンバスエリアを画面いっぱいに開放 */
-    .anim-canvas-area {
-        width: calc(100% - 50px) !important;
-        /* 左ツールドック(50px)以外をすべて使用 */
-        padding: 0.5rem !important;
-        flex: 1 !important;
-    }
-
-    /* 3. 右側詳細パネルを「初期状態で画面外に完全追いやる」設定 */
+    /* パネルの表示（.open）とアイコン切り替え */
     .anim-detail-side-panel {
         position: absolute !important;
         top: 0 !important;
         right: 0 !important;
+        width: 280px !important;
+        max-width: 80% !important;
         height: 100% !important;
-        width: 260px !important;
         z-index: 500 !important;
         background: #ffffff !important;
         box-shadow: -4px 0 20px rgba(0, 0, 0, 0.25) !important;
-
-        /* 初期状態：画面外へ押し出す */
         transform: translateX(100%) !important;
+        /* デフォルトで右外へ隠す */
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
-    /* パネルが開いた時（.open クラス付与時）だけ画面内に入れる */
+    /* .open クラスが付いた時に左へスライドイン */
     .anim-detail-side-panel.open {
         transform: translateX(0) !important;
-    }
-
-    /* 4. アニメーションプレイヤーバーのスマホ調整 */
-    .anim-player-bar {
-        bottom: 10px !important;
-        max-width: 95% !important;
-        padding: 0 8px !important;
-        gap: 0.3rem !important;
     }
 }
