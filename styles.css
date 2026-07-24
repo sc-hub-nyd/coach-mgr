@@ -2952,7 +2952,7 @@ body.drawing-mode .main-content {
 /* =========================================================
    スマホ・タブレット共通（1024px以下）レイアウト＆ボトムナビ完全補正
    ========================================================= */
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 768px) {
 
     /* 1. ハンバーガーボタンを非表示 */
     .menu-toggle {
@@ -2961,6 +2961,10 @@ body.drawing-mode .main-content {
 
     /* 2. 縦向き（Portrait）：画面下に固定ボトムナビ */
     @media (orientation: portrait) {
+        .sidebar:not(.open) {
+            display: none !important;
+        }
+
         .bottom-nav {
             display: flex !important;
             position: fixed !important;
