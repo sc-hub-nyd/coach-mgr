@@ -2644,55 +2644,59 @@ body.drawing-mode .view-container {
         font-size: 0.75rem !important;
     }
 
-    /* 1. ヘッダー全体の高さと余白を短小化 */
     .topbar {
-        padding: 0 0.5rem !important;
-        height: 50px !important;
-        gap: 0.25rem !important;
+        padding: 0 0.6rem !important;
+        height: 52px !important;
+        gap: 0.3rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
     }
 
-    /* 2. タイトルの文字サイズ調整と省略表示 */
+    /* 右側のボタン群ラッパーを中央揃えに固定 */
+    .topbar>div:last-child {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.3rem !important;
+        height: 100% !important;
+    }
+
     .topbar-title {
-        font-size: 0.9rem !important;
+        font-size: 0.95rem !important;
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
-        max-width: 120px !important;
+        max-width: 110px !important;
     }
 
-    /* 3. ボタン類のフォントサイズ・パディング縮小 */
+    /* ボタンの高さを固定し、縦伸びを防止 */
     .topbar .btn {
-        padding: 0.2rem 0.4rem !important;
-        font-size: 0.7rem !important;
-        height: 28px !important;
-    }
-
-    /* 4. スマホでは「同期」「モード切替」等の文字を非表示にし、アイコンのみにする */
-    #btn-topbar-sync {
-        padding: 0 0.4rem !important;
-    }
-
-    /* ロールバッジ（コーチ/保護者）のコンパクト化 */
-    #user-role-badge {
-        padding: 0.15rem 0.4rem !important;
-        font-size: 0.65rem !important;
-    }
-
-    /* ボタン内のテキスト（「同期」「保護者モードへ」等）をスマホでは隠してアイコン化 */
-    #btn-topbar-sync span,
-    #btn-toggle-role span {
-        display: none !important;
-    }
-
-    /* バッジ内のテキストを短縮化 */
-    #user-role-badge {
+        padding: 0.3rem 0.5rem !important;
+        font-size: 0.72rem !important;
+        height: 32px !important;
+        line-height: 1 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         white-space: nowrap !important;
     }
 
-    /* 5. アバター画像のサイズ縮小 */
+    /* ロールバッジ（保護者/コーチ）の高さ揃え */
+    #user-role-badge {
+        padding: 0.3rem 0.5rem !important;
+        font-size: 0.68rem !important;
+        height: 32px !important;
+        box-sizing: border-box !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        white-space: nowrap !important;
+    }
+
+    /* アバター画像のサイズ固定 */
     .avatar {
-        width: 28px !important;
-        height: 28px !important;
+        width: 32px !important;
+        height: 32px !important;
+        flex-shrink: 0 !important;
     }
 }
 
