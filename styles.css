@@ -2495,55 +2495,50 @@ body.drawing-mode .view-container {
     white-space: pre-wrap;
 }
 
-/* スマホ・タブレット（768px以下）での作図画面最適化 */
+/* ===== スマホ（768px以下）作図画面（Canvas）の完全レイアウト修正 ===== */
 @media (max-width: 768px) {
 
-    /* 1. ヘッダーのボタン領域をコンパクト化 */
-    .anim-header {
-        padding: 0 0.5rem;
-    }
-
-    .anim-header-left button,
-    .anim-header-right button {
-        padding: 0.2rem 0.5rem;
-        font-size: 0.75rem;
-    }
-
-    /* 2. メインワークスペースのレイアウト調整 */
+    /* 1. メイン領域の幅を確定 */
     .anim-main-workspace {
-        position: relative;
-        flex-direction: row;
-    }
-
-    /* 3. キャンバス表示エリアを最大化 */
-    .anim-canvas-area {
-        padding: 0.5rem !important;
-        width: 100%;
-        height: 100%;
-    }
-
-    .canvas-wrapper {
-        width: 100%;
-        height: auto;
-        max-height: calc(100vh - 120px);
-        max-height: calc(100dvh - 120px);
-    }
-
-    .canvas-wrapper canvas {
+        position: relative !important;
         width: 100% !important;
-        height: auto !important;
-        max-height: 100% !important;
-        aspect-ratio: 8/5;
-        object-fit: contain;
+        overflow: hidden !important;
     }
 
-    /* 4. 右側詳細パネルをスマホでは絶対配置＆初期折りたたみに設定 */
+    /* 2. キャンバスエリアを画面いっぱいに開放 */
+    .anim-canvas-area {
+        width: calc(100% - 50px) !important;
+        /* 左ツールドック(50px)以外をすべて使用 */
+        padding: 0.5rem !important;
+        flex: 1 !important;
+    }
+
+    /* 3. 右側詳細パネルを「初期状態で画面外に完全追いやる」設定 */
     .anim-detail-side-panel {
-        position: absolute;
-        right: 0;
-        top: 0;
-        height: 100%;
-        z-index: 300;
-        box-shadow: -4px 0 15px rgba(0, 0, 0, 0.2);
+        position: absolute !important;
+        top: 0 !important;
+        right: 0 !important;
+        height: 100% !important;
+        width: 260px !important;
+        z-index: 500 !important;
+        background: #ffffff !important;
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.25) !important;
+
+        /* 初期状態：画面外へ押し出す */
+        transform: translateX(100%) !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* パネルが開いた時（.open クラス付与時）だけ画面内に入れる */
+    .anim-detail-side-panel.open {
+        transform: translateX(0) !important;
+    }
+
+    /* 4. アニメーションプレイヤーバーのスマホ調整 */
+    .anim-player-bar {
+        bottom: 10px !important;
+        max-width: 95% !important;
+        padding: 0 8px !important;
+        gap: 0.3rem !important;
     }
 }
