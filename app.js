@@ -644,14 +644,17 @@ function updateRoleUI() {
         dataLink.style.display = isCoach ? 'flex' : 'none';
     }
 
+    // ★ 追加：ボトムナビの表示切替（左ペインと完全同期）
     const bottomLibraryLink = document.querySelector('.bottom-nav .nav-item[data-route="library"]');
     if (bottomLibraryLink) {
         bottomLibraryLink.style.display = isCoach ? 'flex' : 'none';
     }
 
-    if (!isCoach && (state.currentRoute === 'settings' || state.currentRoute === 'library' || state.currentRoute === 'data')) {
-        navigate('dashboard');
+    const bottomSettingsLink = document.querySelector('.bottom-nav .nav-item[data-route="settings"]');
+    if (bottomSettingsLink) {
+        bottomSettingsLink.style.display = isCoach ? 'flex' : 'none';
     }
+
 
     if (!isCoach && (state.currentRoute === 'settings' || state.currentRoute === 'library' || state.currentRoute === 'data')) {
         navigate('dashboard');
