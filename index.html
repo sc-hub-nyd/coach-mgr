@@ -380,20 +380,21 @@
                             <input type="password" id="gas-auth-token" class="sl-input"
                                 placeholder="任意の合い言葉（例: mysecret123）" style="flex:1; min-width:0;">
                         </div>
-                        <div class="sl-row sl-row-last"
-                            style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:0.5rem;">
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-invite-link"
-                                style="white-space:nowrap; font-weight:bold; color:var(--primary); border-color:var(--primary);"><i
-                                    class="fa-solid fa-share-nodes"></i> 保護者用設定リンクをコピー</button>
-                            <div style="display:flex; gap:0.4rem; flex-wrap:nowrap; margin-left:auto;">
-                                <button type="button" class="btn btn-secondary btn-sm" id="btn-manual-sync-pull"
-                                    style="white-space:nowrap;"><i class="fa-solid fa-cloud-arrow-down"></i>
-                                    クラウドから復元</button>
-                                <button type="button" class="btn btn-primary btn-sm" id="btn-manual-sync-push"
-                                    style="white-space:nowrap;"><i class="fa-solid fa-cloud-arrow-up"></i>
-                                    クラウドへ送信</button>
-                                <button type="submit" class="btn btn-secondary btn-sm"
-                                    style="white-space:nowrap;">保存</button>
+                        <div class="sl-row sl-row-last gas-actions-row">
+                            <button type="button" class="btn btn-secondary btn-sm btn-copy-link"
+                                id="btn-copy-invite-link">
+                                <i class="fa-solid fa-share-nodes"></i> 保護者用設定リンクをコピー
+                            </button>
+                            <div class="gas-actions-group">
+                                <button type="button" class="btn btn-secondary btn-sm" id="btn-manual-sync-pull">
+                                    <i class="fa-solid fa-cloud-arrow-down"></i> クラウドから復元
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="btn-manual-sync-push">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i> クラウドへ送信
+                                </button>
+                                <button type="submit" class="btn btn-secondary btn-sm btn-save">
+                                    保存
+                                </button>
                             </div>
                         </div>
                     </form>

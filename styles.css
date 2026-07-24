@@ -2881,6 +2881,32 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         font-weight: 700 !important;
         background: rgba(242, 57, 50, 0.08) !important;
     }
+
+    .gas-actions-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.6rem !important;
+    }
+
+    .gas-actions-row #btn-copy-invite-link {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 0.5rem !important;
+    }
+
+    .gas-actions-group {
+        width: 100% !important;
+        margin-left: 0 !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+
+    .gas-actions-group .btn {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 0.5rem !important;
+        font-size: 0.8rem !important;
+    }
 }
 
 /* 4. 作図画面（Animation）が開いている時は縦横問わず完全非表示 */
@@ -3074,4 +3100,28 @@ body.drawing-mode .main-content {
 /* JSで display: none が指定された場合は強制非表示 */
 .bottom-nav .nav-item[style*="display: none"] {
     display: none !important;
+}
+
+/* GAS同期ボタン群のレイアウト調整 */
+.gas-actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem !important;
+}
+
+#btn-copy-invite-link {
+    font-weight: bold;
+    color: var(--primary);
+    border-color: var(--primary);
+    white-space: nowrap;
+}
+
+.gas-actions-group {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: nowrap;
+    margin-left: auto;
 }
