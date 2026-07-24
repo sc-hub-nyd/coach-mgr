@@ -2894,3 +2894,100 @@ body.drawing-mode .main-content {
     margin-left: 0 !important;
     padding-bottom: 0 !important;
 }
+
+/* =========================================================
+   スマホ（768px以下）レイアウト崩れ・被り完全補正
+   ========================================================= */
+@media (max-width: 768px) {
+
+    /* 1. ボトムナビゲーションにコンテンツが被るのを防ぐ底面余白 */
+    .view-container {
+        padding-bottom: 90px !important;
+    }
+
+    /* 2. 選手管理トップのサマリーカードを3列横並びに固定 */
+    #player-summary-cards {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.4rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    #player-summary-cards .stat-card {
+        padding: 0.5rem 0.3rem !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        min-height: auto !important;
+    }
+
+    #player-summary-cards .stat-icon {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.85rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    #player-summary-cards .stat-info {
+        margin-left: 0 !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+
+    #player-summary-cards .stat-info h3 {
+        font-size: 0.6rem !important;
+        white-space: nowrap !important;
+    }
+
+    #player-summary-cards .stat-info p {
+        font-size: 0.85rem !important;
+    }
+
+    #player-summary-cards .stat-info div {
+        font-size: 0.58rem !important;
+        justify-content: center !important;
+    }
+
+    /* 3. CSV登録・選手追加ボタンのコンパクト化 */
+    .header-actions {
+        margin-bottom: 1rem !important;
+        gap: 0.4rem !important;
+    }
+
+    .header-actions .btn {
+        padding: 0.4rem 0.65rem !important;
+        font-size: 0.72rem !important;
+    }
+
+    /* 4. ヘッダー（TopBar）右側ボタン群の縦伸び・はみ出し防止 */
+    .topbar {
+        padding: 0 0.5rem !important;
+        height: 48px !important;
+    }
+
+    .topbar>div:last-child {
+        gap: 0.25rem !important;
+        height: 100% !important;
+        align-items: center !important;
+    }
+
+    .topbar .btn {
+        padding: 0.25rem 0.4rem !important;
+        font-size: 0.65rem !important;
+        height: 28px !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+    }
+
+    #user-role-badge {
+        padding: 0.25rem 0.4rem !important;
+        font-size: 0.62rem !important;
+        height: 28px !important;
+        white-space: nowrap !important;
+    }
+
+    .avatar {
+        width: 28px !important;
+        height: 28px !important;
+        flex-shrink: 0 !important;
+    }
+}
