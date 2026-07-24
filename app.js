@@ -5608,9 +5608,30 @@ function initAnimation(params) {
             if (sideOpt) sideOpt.textContent = 'なし';
         }
 
+        // --- 右パネル初期化処理 ---
+        if (window.innerWidth <= 768) {
+            sidePanel.classList.remove('open');
+            const icon = sideToggleBtn.querySelector('i');
+            if (icon) icon.className = 'fa-solid fa-chevron-left';
+        } else {
+            sidePanel.classList.add('open');
+            const icon = sideToggleBtn.querySelector('i');
+            if (icon) icon.className = 'fa-solid fa-chevron-right';
+        }
+
+        // ボタンタップ時の処理
         sideToggleBtn.onclick = (e) => {
             e.stopPropagation();
-            sidePanel.classList.toggle('collapsed');
+            const isOpen = sidePanel.classList.toggle('open');
+
+            const icon = sideToggleBtn.querySelector('i');
+            if (icon) {
+                if (isOpen) {
+                    icon.className = 'fa-solid fa-chevron-right';
+                } else {
+                    icon.className = 'fa-solid fa-chevron-left';
+                }
+            }
         };
     }
 
