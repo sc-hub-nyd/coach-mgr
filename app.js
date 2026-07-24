@@ -697,6 +697,12 @@ function navigate(route, params = null) {
         }
     });
 
+    // ★ 追加：ボトムナビの active クラス切り替え
+    const bottomNavLinks = document.querySelectorAll('.bottom-nav .nav-item');
+    bottomNavLinks.forEach(link => {
+        link.classList.toggle('active', link.dataset.route === route);
+    });
+
     // Auto-close sidebar & overlay
     const sidebar = document.getElementById('sidebar');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
