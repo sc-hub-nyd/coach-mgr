@@ -2949,22 +2949,44 @@ body.drawing-mode .main-content {
     padding-bottom: 0 !important;
 }
 
+/* デフォルト（769px以上のPC画面）ではボトムナビ/スリムバーを完全非表示 */
+.bottom-nav {
+    display: none !important;
+}
+
+/* 4. 作図画面（Animation）が開いている時は非表示 */
+body:has(.anim-app-container) .bottom-nav,
+body.drawing-mode .bottom-nav {
+    display: none !important;
+}
+
+body:has(.anim-app-container) .main-content,
+body.drawing-mode .main-content {
+    margin-left: 0 !important;
+    padding-bottom: 0 !important;
+}
+
 /* =========================================================
-   スマホ・タブレット共通（1024px以下）レイアウト＆ボトムナビ完全補正
+   スマホ・タブレット共通（768px以下）完全レイアウト補正
    ========================================================= */
 @media screen and (max-width: 768px) {
 
-    /* 1. ハンバーガーボタンを非表示 */
+    /* 1. ハンバーガーボタンおよびPC用サイドバーの完全非表示 */
     .menu-toggle {
         display: none !important;
     }
 
+    .sidebar:not(.open) {
+        display: none !important;
+    }
+
+    /* メインコンテンツのPC用左余白(250px)をリセット */
+    .main-content {
+        margin-left: 0 !important;
+    }
+
     /* 2. 縦向き（Portrait）：画面下に固定ボトムナビ */
     @media (orientation: portrait) {
-        .sidebar:not(.open) {
-            display: none !important;
-        }
-
         .bottom-nav {
             display: flex !important;
             position: fixed !important;
@@ -2981,7 +3003,6 @@ body.drawing-mode .main-content {
             padding-bottom: env(safe-area-inset-bottom, 0px) !important;
         }
 
-        /* 下部ナビの分だけコンテンツ底面に余白を空ける */
         .view-container {
             padding-bottom: 80px !important;
         }
@@ -3016,10 +3037,10 @@ body.drawing-mode .main-content {
         }
     }
 
-    /* ボトムナビ要素の基本スタイル */
+    /* ナビゲーションアイテムの基本スタイル */
     .bottom-nav .nav-item {
         display: flex;
-        /* ★ !important を削除して JS からの none 制御を許可する */
+        /* JSでの非表示制御用に!importantは付けない */
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
@@ -3042,7 +3063,59 @@ body.drawing-mode .main-content {
         background: rgba(242, 57, 50, 0.08) !important;
     }
 
-    /* 4. 選手管理サマリーカードを3列固定 */
+    /* ヘッダー全体とタイトルの位置調整 */
+    .topbar {
+        padding: 0 0.75rem !important;
+        height: 50px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 0.5rem !important;
+    }
+
+    .topbar-title {
+        font-size: 1.0rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        margin-right: auto !important;
+        /* タイトルを自然な左配置に固定 */
+    }
+
+    /* 右側ボタン群のテキストを隠してアイコン化（省スペース化） */
+    .topbar>div:last-child {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.35rem !important;
+        height: 100% !important;
+        flex-shrink: 0 !important;
+    }
+
+    .topbar .btn span:not(.fa-solid):not(.fa-regular):not(.fas),
+    .topbar #role-toggle-btn span {
+        display: none !important;
+        /* ボタンの文字を非表示に */
+    }
+
+    .topbar .btn {
+        padding: 0.35rem 0.6rem !important;
+        font-size: 0.85rem !important;
+        height: 32px !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+        border-radius: 8px !important;
+    }
+
+    #user-role-badge {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.68rem !important;
+        height: 32px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        white-space: nowrap !important;
+    }
+
+    /* 選手管理サマリーカードを3列固定 */
     #player-summary-cards {
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 0.4rem !important;
@@ -3083,53 +3156,9 @@ body.drawing-mode .main-content {
         font-size: 0.58rem !important;
         justify-content: center !important;
     }
-
-    /* ヘッダー右側ボタン群の縦伸び防止 */
-    .topbar {
-        padding: 0 0.5rem !important;
-        height: 48px !important;
-    }
-
-    .topbar>div:last-child {
-        gap: 0.25rem !important;
-        height: 100% !important;
-        align-items: center !important;
-    }
-
-    .topbar .btn {
-        padding: 0.25rem 0.4rem !important;
-        font-size: 0.65rem !important;
-        height: 28px !important;
-        line-height: 1 !important;
-        white-space: nowrap !important;
-    }
-
-    #user-role-badge {
-        padding: 0.25rem 0.4rem !important;
-        font-size: 0.62rem !important;
-        height: 28px !important;
-        white-space: nowrap !important;
-    }
-
-    .avatar {
-        width: 28px !important;
-        height: 28px !important;
-        flex-shrink: 0 !important;
-    }
 }
 
-/* 5. 作図画面（Animation）が開いている時はボトムナビを隠す */
-body:has(.anim-app-container) .bottom-nav,
-body.drawing-mode .bottom-nav {
-    display: none !important;
-}
-
-body:has(.anim-app-container) .main-content,
-body.drawing-mode .main-content {
-    margin-left: 0 !important;
-}
-
-/* JSで display: none が指定された場合は強制非表示 */
+/* JSで display: none が指定された場合の優先適用 */
 .bottom-nav .nav-item[style*="display: none"] {
     display: none !important;
 }
