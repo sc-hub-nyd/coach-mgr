@@ -399,6 +399,9 @@ function syncPushGasCloud(isSilent = false) {
         return Promise.reject('No URL');
     }
 
+    // ▼ 【追加】同期ボタンのローディング状態化
+    setSyncButtonLoading(true, 'push');
+
     const payload = {
         action: 'push',
         sheetName: state.teamInfo.gasSheetName || '',
@@ -432,18 +435,20 @@ function syncPushGasCloud(isSilent = false) {
             return res.json();
         })
         .then(resData => {
+            setSyncButtonLoading(false, 'push'); // ▼ 【追加】解除
             if (resData && resData.status === 'success') {
                 if (!isSilent) showToast('クラウドへの送信が完了しました！');
-                setSyncStateUI('success'); // 【追加】成功ステータス更新
+                setSyncStateUI('success');
                 return resData;
             } else {
-                setSyncStateUI('error'); // 【追加】エラー更新
+                setSyncStateUI('error');
                 throw new Error(resData.message || '同期エラー');
             }
         })
         .catch(err => {
+            setSyncButtonLoading(false, 'push'); // ▼ 【追加】解除
             console.error('GAS Sync Push Error Details:', err);
-            setSyncStateUI('error'); // 【追加】エラー更新
+            setSyncStateUI('error');
             if (!isSilent) alert(`クラウド送信に失敗しました:\n${err.message || err}`);
         });
 }
@@ -453,6 +458,9 @@ function syncPullGasCloud(isSilent = false) {
         if (!isSilent) alert('Google Apps Script の Web API URL が設定されていません。「設定」画面で入力してください。');
         return Promise.reject('No URL');
     }
+
+    // ▼ 【追加】同期ボタンのローディング状態化
+    setSyncButtonLoading(true, 'pull');
 
     if (!isSilent) showToast('クラウドからデータを受信中...');
 
@@ -470,23 +478,21 @@ function syncPullGasCloud(isSilent = false) {
             return res.json();
         })
         .then(resData => {
+            setSyncButtonLoading(false, 'pull'); // ▼ 【追加】解除
             if (resData && resData.status === 'success' && resData.data) {
                 let remoteData = resData.data;
 
-                // Handle multiple levels of stringification if present
                 for (let i = 0; i < 3; i++) {
                     if (typeof remoteData === 'string') {
                         try { remoteData = JSON.parse(remoteData); } catch (e) { break; }
                     }
                 }
 
-                // Validate data integrity
                 if (remoteData && (typeof remoteData === 'object')) {
                     const currentGasUrl = state.teamInfo.gasApiUrl;
                     const currentGasSheetName = state.teamInfo.gasSheetName;
                     const currentGasAuthToken = state.teamInfo.gasAuthToken;
 
-                    // Direct state assignment from remote data
                     state.matches = remoteData.matches || [];
                     state.practices = remoteData.practices || [];
                     state.players = remoteData.players || [];
@@ -514,19 +520,58 @@ function syncPullGasCloud(isSilent = false) {
                     if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
 
                     if (!isSilent) showToast('クラウドから最新データを復元しました！');
-                    setSyncStateUI('success'); // 【追加】成功ステータス更新
+                    setSyncStateUI('success');
                     navigate(state.currentRoute || 'dashboard');
                     return remoteData;
                 }
             }
-            setSyncStateUI('error'); // 【追加】エラー更新
+            setSyncStateUI('error');
             throw new Error('有効なクラウドデータが見つかりませんでした');
         })
         .catch(err => {
+            setSyncButtonLoading(false, 'pull'); // ▼ 【追加】解除
             console.error('GAS Sync Pull Error Details:', err);
-            setSyncStateUI('error'); // 【追加】エラー更新
+            setSyncStateUI('error');
             if (!isSilent) alert(`クラウドからの復元に失敗しました:\n${err.message || err}`);
         });
+}
+
+// 同期処理中のボタン制御・スピナー切り替え用ヘルパー
+function setSyncButtonLoading(isLoading, mode = 'push') {
+    const btnPopoverSync = document.getElementById('btn-popover-sync-now');
+    const btnManualPush = document.getElementById('btn-manual-sync-push');
+    const btnManualPull = document.getElementById('btn-manual-sync-pull');
+
+    const buttons = [btnPopoverSync, btnManualPush, btnManualPull];
+
+    buttons.forEach(btn => {
+        if (!btn) return;
+        if (isLoading) {
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.style.cursor = 'wait';
+
+            // アイコンを回転スピナーに置換
+            const icon = btn.querySelector('i');
+            if (icon) {
+                icon.className = 'fa-solid fa-circle-notch fa-spin';
+            }
+        } else {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+
+            // 元のアイコンに戻す
+            const icon = btn.querySelector('i');
+            if (icon) {
+                if (btn === btnManualPush || (btn === btnPopoverSync && state.currentUserRole === 'coach')) {
+                    icon.className = 'fa-solid fa-cloud-arrow-up';
+                } else {
+                    icon.className = 'fa-solid fa-cloud-arrow-down';
+                }
+            }
+        }
+    });
 }
 
 // Show a fallback modal with the JSON text for environments where download is not available (iOS, file://)
@@ -1086,7 +1131,13 @@ function setupModals() {
     closeBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const overlay = e.target.closest('.modal-overlay');
-            if (overlay) overlay.classList.add('hidden');
+            if (overlay) {
+                overlay.classList.add('hidden');
+                // ← 【追加】ほかに開いているモーダルがなければスクロール固定を解除
+                if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                    document.body.classList.remove('modal-open');
+                }
+            }
         });
     });
 
@@ -1095,8 +1146,28 @@ function setupModals() {
         overlay.addEventListener('click', (e) => {
             if (e.target === overlay) {
                 overlay.classList.add('hidden');
+                // ← 【追加】背景クリック時も同様に判定
+                if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                    document.body.classList.remove('modal-open');
+                }
             }
         });
+    });
+
+    // Escキー押下時に最前面のモーダルを閉じるグローバルリスナー
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const openModals = Array.from(document.querySelectorAll('.modal-overlay:not(.hidden)'));
+            if (openModals.length > 0) {
+                const topModal = openModals[openModals.length - 1];
+                topModal.classList.add('hidden');
+
+                // ← 【追加】ほかに開いているモーダルがなければ背景スクロール固定を解除
+                if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                    document.body.classList.remove('modal-open');
+                }
+            }
+        }
     });
 
     const btnAddGoalRecord = document.getElementById('btn-add-goal-record');
@@ -1691,7 +1762,11 @@ function openModal(id) {
             else if (state.menuCategories.length > 0) catSel.value = state.menuCategories[0];
         }
     }
-    document.getElementById(id).classList.remove('hidden');
+    const modalEl = document.getElementById(id);
+    if (modalEl) {
+        modalEl.classList.remove('hidden');
+        document.body.classList.add('modal-open'); // ← 【追加】モーダルが開いたときに背面スクロールを固定
+    }
 }
 
 function openMatchModal(matchId = null) {
@@ -5817,10 +5892,31 @@ function initAnimation(params) {
     }
 
     // Right Side Panel Data Population & Toggle Handler
-    // 右パネルのトグル＆レスポンシブ自動制御
-    // 右パネルの連動制御ロジック
     const sidePanel = document.getElementById('anim-detail-side-panel');
     const sideToggleBtn = document.getElementById('anim-side-panel-toggle-btn');
+
+    // ▼ 【修正】右側パネルへのテーマ・オーガナイズ等のデータ反映処理を確実に行う
+    const sideFocus = document.getElementById('side-info-focus');
+    const sideOrganize = document.getElementById('side-info-organize');
+    const sideKeyfactor = document.getElementById('side-info-keyfactor');
+    const sideOptions = document.getElementById('side-info-options');
+
+    if (targetMenu) {
+        if (sideFocus) sideFocus.textContent = targetMenu.focus || targetMenu.name || '未設定';
+        if (sideOrganize) sideOrganize.textContent = targetMenu.organize || 'なし';
+        if (sideKeyfactor) sideKeyfactor.textContent = targetMenu.keyfactor || 'なし';
+        if (sideOptions) sideOptions.textContent = targetMenu.options || 'なし';
+    } else if (isFormationMode) {
+        if (sideFocus) sideFocus.textContent = 'フォーメーション作図';
+        if (sideOrganize) sideOrganize.textContent = 'なし';
+        if (sideKeyfactor) sideKeyfactor.textContent = 'なし';
+        if (sideOptions) sideOptions.textContent = 'なし';
+    } else {
+        if (sideFocus) sideFocus.textContent = 'テーマ・フォーカス未設定';
+        if (sideOrganize) sideOrganize.textContent = 'なし';
+        if (sideKeyfactor) sideKeyfactor.textContent = 'なし';
+        if (sideOptions) sideOptions.textContent = 'なし';
+    }
 
     if (sidePanel && sideToggleBtn) {
         // 画面サイズに応じた初期状態の判定関数
@@ -5841,7 +5937,6 @@ function initAnimation(params) {
 
         // 画面リサイズ時に自動追従
         window.addEventListener('resize', () => {
-            // 画面幅が1024pxをまたいだ際のスムーズ自動開閉
             if (window.innerWidth <= 1024 && !sidePanel.classList.contains('collapsed')) {
                 sidePanel.classList.add('collapsed');
                 sidePanel.classList.remove('open');
@@ -5851,7 +5946,7 @@ function initAnimation(params) {
             }
         });
 
-        // トグルボタンのクリック処理（1箇所に統一）
+        // トグルボタンのクリック処理
         sideToggleBtn.onclick = (e) => {
             e.stopPropagation();
             const isCollapsed = sidePanel.classList.contains('collapsed');
@@ -5859,11 +5954,11 @@ function initAnimation(params) {
             if (isCollapsed) {
                 sidePanel.classList.remove('collapsed');
                 sidePanel.classList.add('open');
-                delete sidePanel.dataset.userClosed; // ユーザーが手動で開いた状態
+                delete sidePanel.dataset.userClosed;
             } else {
                 sidePanel.classList.add('collapsed');
                 sidePanel.classList.remove('open');
-                sidePanel.dataset.userClosed = "true"; // ユーザーが手動で閉じたフラグ
+                sidePanel.dataset.userClosed = "true";
             }
         };
     }
@@ -6437,41 +6532,15 @@ function updateContextPopover() {
         return;
     }
 
-    // ⭕ 修正後：キャンバス自体の実表示サイズと比率から正確に計算する
-    const canvasRect = canvas.getBoundingClientRect();
-    // ポップオーバーの親要素（今回は #canvas-wrapper または .anim-canvas-area）を基準にする
-    const containerRect = popover.offsetParent ? popover.offsetParent.getBoundingClientRect() : canvasRect;
-
-    // 800x500の内部座標から、現在画面上の実サイズへのスケール比率
-    const scaleX = canvasRect.width / 800;
-    const scaleY = canvasRect.height / 500;
-
-    // コンテナ内での正確なピクセル位置を算出
-    const screenX = (objX * scaleX) + (canvasRect.left - containerRect.left);
-    const screenY = (objY * scaleY) + (canvasRect.top - containerRect.top);
-
-    popover.style.left = `${screenX}px`;
-    popover.style.top = `${screenY}px`;
-
-    // Smart flip: If object is near top of pitch, render popover BELOW the object so it never gets cut off!
-    if (screenY < 75 || objY < 80) {
-        popover.classList.add('popover-below');
-    } else {
-        popover.classList.remove('popover-below');
-    }
-
-    popover.classList.remove('hidden');
-
+    // 【重要】先に内容（選手コントロール等）の表示・非表示を確定させ、正確な幅が出る状態にする
     const playerControls = document.getElementById('popover-player-controls');
     if (playerControls) {
         if (selectedObject.type === 'player' || selectedObject.type === 'marker') {
             playerControls.style.display = 'flex';
-
             const numInput = document.getElementById('canvas-player-number');
             const numLabels = playerControls.querySelectorAll('.popover-label');
             if (numInput) numInput.style.display = (selectedObject.type === 'player') ? 'inline-block' : 'none';
             if (numLabels && numLabels[0]) numLabels[0].style.display = (selectedObject.type === 'player') ? 'inline-block' : 'none';
-
             if (selectedObject.type === 'player' && numInput) {
                 numInput.value = selectedObject.number || '';
             }
@@ -6495,7 +6564,51 @@ function updateContextPopover() {
         }
     }
 
+    const canvasRect = canvas.getBoundingClientRect();
+    const wrapper = document.getElementById('canvas-wrapper') || canvas.parentElement;
+    const wrapperRect = wrapper.getBoundingClientRect();
+
+    const scaleX = canvasRect.width / 800;
+    const scaleY = canvasRect.height / 500;
+
+    const objCenterX = (objX * scaleX) + (canvasRect.left - wrapperRect.left);
+    const objTopY = (objY * scaleY) + (canvasRect.top - wrapperRect.top);
+
+    // 1回目でも正確な幅を計算できるよう、一度 hidden を外して可視化（透明にするか、位置計算用に一時表示）
+    popover.style.visibility = 'hidden';
     popover.classList.remove('hidden');
+
+    const popWidth = popover.offsetWidth || (selectedObject.type === 'player' ? 260 : 180);
+    const popHeight = popover.offsetHeight || 50;
+
+    const isBelow = (objTopY < popHeight + 20 || objY < 80);
+    const topPos = isBelow ? (objTopY + 15) : (objTopY - popHeight - 12);
+
+    let leftPos = objCenterX - (popWidth / 2);
+    const padding = 10;
+    if (leftPos < padding) {
+        leftPos = padding;
+    } else if (leftPos + popWidth > wrapperRect.width - padding) {
+        leftPos = wrapperRect.width - popWidth - padding;
+    }
+
+    popover.style.transform = 'none';
+    popover.style.left = `${leftPos}px`;
+    popover.style.top = `${topPos}px`;
+    popover.style.visibility = 'visible'; // 計算完了後に表示を有効化
+
+    if (isBelow) {
+        popover.classList.add('popover-below');
+    } else {
+        popover.classList.remove('popover-below');
+    }
+
+    const arrow = popover.querySelector('.popover-arrow');
+    if (arrow) {
+        let arrowLeft = objCenterX - leftPos;
+        arrowLeft = Math.max(15, Math.min(popWidth - 15, arrowLeft));
+        arrow.style.left = `${arrowLeft}px`;
+    }
 }
 
 function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, template = 'full') {

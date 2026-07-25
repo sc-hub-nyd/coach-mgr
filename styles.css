@@ -2146,8 +2146,9 @@ body.drawing-mode .view-container {
 .anim-context-popover {
     position: absolute;
     z-index: 150;
-    transform: translate(-50%, -100%);
-    margin-top: -12px;
+    /* transformを削除し、JSから指定するleft/topを絶対的な基準にする */
+    transform: none !important;
+    margin-top: 0;
     transition: opacity 0.15s ease;
     pointer-events: auto;
 }
@@ -3077,6 +3078,13 @@ body.drawing-mode .main-content {
     background: #f1f5f9 !important;
     padding: 1rem !important;
     box-sizing: border-box !important;
+    /* ▼ パネル開閉時の滑らかな余白アニメーション */
+    transition: padding-right 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 右側パネルが展開されている時は、ピッチが隠れないように右側に余白を確保 */
+.anim-main-workspace:has(.anim-detail-side-panel:not(.collapsed)) .anim-canvas-area {
+    padding-right: 290px !important;
 }
 
 /* アスペクト比 8:5 を維持したまま、縦横どちらの限界にもはみ出さず最大化 */
@@ -3190,6 +3198,10 @@ body.drawing-mode .main-content {
 
     .anim-detail-side-panel.open {
         transform: translateX(0) !important;
+    }
+
+    .anim-main-workspace:has(.anim-detail-side-panel:not(.collapsed)) .anim-canvas-area {
+        padding-right: 1rem !important;
     }
 }
 
@@ -3409,4 +3421,55 @@ body.drawing-mode .main-content {
 .sync-status-text {
     font-size: 0.72rem;
     color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   No.1 スマホのタッチターゲット（Hitboxの拡張）
+   ========================================================== */
+@media screen and (max-width: 768px) {
+
+    /* 作図プレイヤーバーのボタン等のタッチ領域を上下左右に拡大（最小44px〜48px確保） */
+    .anim-player-bar .btn-xs,
+    .anim-player-bar button,
+    .dock-btn {
+        position: relative;
+    }
+
+    /* 疑似要素を用いて視覚的なサイズを変えずに見えないタップ領域を拡張 */
+    .anim-player-bar .btn-xs::after,
+    .dock-btn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 44px;
+        min-height: 44px;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+/* Modals */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+/* ▼ 【追加】モーダル表示中の背面スクロール固定用クラス */
+body.modal-open {
+    overflow: hidden !important;
 }
