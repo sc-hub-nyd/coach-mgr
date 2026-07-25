@@ -706,13 +706,12 @@
                     <button class="dock-btn tool-btn" data-tool="ball" data-tooltip="ボール (⚽)"><i
                             class="fa-solid fa-futbol"></i><span class="dock-text">ボール</span></button>
 
-                    <button class="dock-btn tool-btn" data-tool="line-move" data-tooltip="移動 (↗️)"><i
+                    <button class="dock-btn tool-btn" data-tool="line-move" data-tooltip="選手移動: 直線 (↗️)"><i
                             class="fa-solid fa-arrow-right"></i><span class="dock-text">移動</span></button>
-                    <button class="dock-btn tool-btn" data-tool="line-pass" data-tooltip="パス (➡️)"><i
-                            class="fa-solid fa-arrow-right-long" style="opacity:0.8;"></i><span
-                            class="dock-text">パス</span></button>
-                    <button class="dock-btn tool-btn" data-tool="line-dribble" data-tooltip="ドリブル (〰️)"><i
-                            class="fa-solid fa-water"></i><span class="dock-text">ドリブル</span></button>
+                    <button class="dock-btn tool-btn" data-tool="line-pass" data-tooltip="パス: 点線 (➡️)"><i
+                            class="fa-solid fa-ellipsis"></i><span class="dock-text">パス</span></button>
+                    <button class="dock-btn tool-btn" data-tool="line-dribble" data-tooltip="ドリブル: 曲線・ジグザグ (〰️)"><i
+                            class="fa-solid fa-wave-square"></i><span class="dock-text">ドリブル</span></button>
 
                     <button class="dock-btn tool-btn" data-tool="marker" data-tooltip="マーカー (🟠)"><i
                             class="fa-solid fa-circle" style="color:#f97316;"></i><span
@@ -737,8 +736,13 @@
 
                 <!-- 3. Pitch Canvas (100% True Full Bleed) -->
                 <div class="anim-canvas-area">
-                    <div class="canvas-wrapper" id="canvas-wrapper">
-                        <canvas id="pitch-canvas" width="800" height="500"></canvas>
+                    <div class="canvas-wrapper" id="canvas-wrapper" style="position: relative;">
+                        <!-- 下層：静的背景レイヤー (ピッチ線・白線用) -->
+                        <canvas id="pitch-bg-canvas" width="800" height="500"
+                            style="position: absolute; top:0; left:0; z-index: 1; pointer-events: none;"></canvas>
+                        <!-- 上層：動的オブジェクトレイヤー (選手・ボール・操作用) -->
+                        <canvas id="pitch-canvas" width="800" height="500"
+                            style="position: absolute; top:0; left:0; z-index: 2;"></canvas>
 
                         <!-- 4. Contextual Floating Popover Menu (Directly above/below selected object) -->
                         <div id="anim-context-popover" class="anim-context-popover hidden">
@@ -1704,7 +1708,7 @@
             </form>
         </div>
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="app.js?v=20"></script>
 </body>
 

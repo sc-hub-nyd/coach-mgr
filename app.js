@@ -76,6 +76,92 @@ let currentMatchPage = 1;
 let currentPracticePage = 1;
 const ITEMS_PER_PAGE = 10;
 
+// === フェーズ1-1: ミニピッチアニメーション最適化 (IntersectionObserver) ===
+const miniPitchObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        const canvas = entry.target;
+        if (entry.isIntersecting) {
+            startMiniPitchLoop(canvas);
+        } else {
+            stopMiniPitchLoop(canvas);
+        }
+    });
+}, { root: null, threshold: 0.1 });
+
+if (!window.miniPitchIntervalsMap) {
+    window.miniPitchIntervalsMap = new Map();
+}
+
+function startMiniPitchLoop(canvas) {
+    if (window.miniPitchIntervalsMap.has(canvas)) return;
+    const framesData = canvas._animationFrames;
+    const template = canvas._pitchTemplate || 'full';
+    if (!framesData || framesData.length <= 1) return;
+
+    let frameIdx = 0;
+    const ctx = canvas.getContext('2d');
+    drawPitchToCtx(framesData[frameIdx], canvas, ctx, template);
+
+    const intervalId = setInterval(() => {
+        frameIdx = (frameIdx + 1) % framesData.length;
+        drawPitchToCtx(framesData[frameIdx], canvas, ctx, template);
+    }, 1200);
+
+    window.miniPitchIntervalsMap.set(canvas, intervalId);
+}
+
+function stopMiniPitchLoop(canvas) {
+    if (window.miniPitchIntervalsMap.has(canvas)) {
+        clearInterval(window.miniPitchIntervalsMap.get(canvas));
+        window.miniPitchIntervalsMap.delete(canvas);
+    }
+}
+
+function clearAllMiniPitchIntervals() {
+    window.miniPitchIntervalsMap.forEach((intervalId, canvas) => {
+        clearInterval(intervalId);
+        miniPitchObserver.unobserve(canvas);
+    });
+    window.miniPitchIntervalsMap.clear();
+}
+
+// === フェーズ1-2: ダブルキャンバス用変数 ===
+let bgCanvas, bgCtx;
+
+// === フェーズ1: イベントリスナー参照管理変数 ===
+let boundListeners = {
+    canvasMouseDown: null,
+    canvasMouseMove: null,
+    canvasMouseUp: null,
+    canvasMouseLeave: null,
+    canvasDblClick: null,
+    canvasTouchStart: null,
+    canvasTouchMove: null,
+    canvasTouchEnd: null,
+    docKeyDown: null
+};
+
+// クリーンアップ専用関数
+function cleanupCanvasEvents() {
+    if (!canvas) return;
+
+    if (boundListeners.canvasMouseDown) canvas.removeEventListener('mousedown', boundListeners.canvasMouseDown);
+    if (boundListeners.canvasMouseMove) canvas.removeEventListener('mousemove', boundListeners.canvasMouseMove);
+    if (boundListeners.canvasMouseUp) canvas.removeEventListener('mouseup', boundListeners.canvasMouseUp);
+    if (boundListeners.canvasMouseLeave) canvas.removeEventListener('mouseleave', boundListeners.canvasMouseLeave);
+    if (boundListeners.canvasDblClick) canvas.removeEventListener('dblclick', boundListeners.canvasDblClick);
+    if (boundListeners.canvasTouchStart) canvas.removeEventListener('touchstart', boundListeners.canvasTouchStart);
+    if (boundListeners.canvasTouchMove) canvas.removeEventListener('touchmove', boundListeners.canvasTouchMove);
+    if (boundListeners.canvasTouchEnd) canvas.removeEventListener('touchend', boundListeners.canvasTouchEnd);
+
+    if (boundListeners.docKeyDown) {
+        document.removeEventListener('keydown', boundListeners.docKeyDown);
+    }
+
+    // 参照を初期化
+    Object.keys(boundListeners).forEach(key => boundListeners[key] = null);
+}
+
 // Security & Helper Functions
 function escapeHtml(str) {
     if (typeof str !== 'string') return str;
@@ -111,6 +197,72 @@ function decryptData(ciphertext) {
     }
 }
 
+// スコア入力欄を「ー」「＋」ボタン付きのカウンターにアップグレードする関数
+function setupScoreCounters() {
+    ['match-score-us', 'match-score-them', 'formation-score-us', 'formation-score-them'].forEach(id => {
+        const input = document.getElementById(id);
+        if (!input || input.parentNode.classList.contains('score-counter-wrapper')) return;
+
+        // ラッパー要素を作成
+        const wrapper = document.createElement('div');
+        wrapper.className = 'score-counter-wrapper';
+        wrapper.style = 'display: flex; align-items: center; gap: 0.3rem; width: 100%;';
+
+        input.parentNode.replaceChild(wrapper, input);
+        input.style.textAlign = 'center';
+        input.style.fontWeight = 'bold';
+
+        const btnMinus = document.createElement('button');
+        btnMinus.type = 'button';
+        btnMinus.className = 'btn btn-secondary';
+        btnMinus.innerHTML = '<i class="fa-solid fa-minus"></i>';
+        btnMinus.style = 'padding: 0.4rem 0.6rem; font-size: 0.8rem;';
+
+        const btnPlus = document.createElement('button');
+        btnPlus.type = 'button';
+        btnPlus.className = 'btn btn-secondary';
+        btnPlus.innerHTML = '<i class="fa-solid fa-plus"></i>';
+        btnPlus.style = 'padding: 0.4rem 0.6rem; font-size: 0.8rem;';
+
+        btnMinus.onclick = () => {
+            let val = parseInt(input.value, 10) || 0;
+            if (val > 0) {
+                input.value = val - 1;
+                input.dispatchEvent(new Event('input')); // 連動イベントを発火
+
+                // ⭐ 追加：得点（スコア）が減った時に、対応する得点者入力欄の最後の行を削除する
+                let targetContainerId = 'goal-records-list'; // 通常の試合編集モーダル
+                if (id === 'formation-score-us') {
+                    targetContainerId = 'period-goal-records-list'; // ピリオド編集モーダル
+                }
+
+                // ※相手チーム(them)の失点時は得点者入力欄がないため、自チーム(us)のIDのときのみ実行
+                if (id === 'match-score-us' || id === 'formation-score-us') {
+                    const container = document.getElementById(targetContainerId);
+                    if (container) {
+                        const rows = container.querySelectorAll('.goal-record-row');
+                        if (rows.length > 0) {
+                            // 一番下の行を削除
+                            rows[rows.length - 1].remove();
+                        }
+                    }
+                }
+            }
+        };
+
+        btnPlus.onclick = () => {
+            let val = parseInt(input.value, 10) || 0;
+            input.value = val + 1;
+            input.dispatchEvent(new Event('input')); // 連動イベントを発火
+        };
+
+        wrapper.appendChild(btnMinus);
+        wrapper.appendChild(input);
+        wrapper.appendChild(btnPlus);
+        input.style.flex = '1';
+    });
+}
+
 function getNendo(dateStr) {
     const d = new Date(dateStr);
     let year = d.getFullYear();
@@ -119,94 +271,105 @@ function getNendo(dateStr) {
 }
 
 // LocalStorage Logic
-function loadData() {
-    let saved = localStorage.getItem('coachMgrData');
-    if (saved) {
-        if (saved.startsWith('enc:')) {
-            saved = decryptData(saved.slice(4));
-        }
-        let parsed = null;
-        try {
-            parsed = JSON.parse(saved);
-        } catch (e) {
-            console.error('Failed to parse saved data:', e);
-        }
-        if (parsed) {
-            state.matches = parsed.matches || [];
-            state.practices = parsed.practices || [];
-            state.players = parsed.players || [];
-            state.menuLibrary = parsed.menuLibrary || [];
-            state.matchTypes = parsed.matchTypes || ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'];
-            state.menuCategories = parsed.menuCategories || ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'];
-            state.skillMetrics = parsed.skillMetrics || ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'];
-            state.positions = parsed.positions || ['GK', 'DF', 'MF', 'FW'];
-            state.positionsCat2 = parsed.positionsCat2 || ['CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH'];
-            state.teamInfo = parsed.teamInfo || { name: 'My Team', color: '#f23932', passcode: '7064' };
-            if (!state.teamInfo.passcode) state.teamInfo.passcode = '7064';
-            state.customFormations = parsed.customFormations || state.customFormations;
+async function loadData() {
+    try {
+        // IndexedDBからデータを取得
+        let saved = await localforage.getItem('coachMgrData');
+
+        // マイグレーション: IndexedDBが空でLocalStorageにデータがある場合（初回起動時）
+        if (!saved) {
+            const oldSaved = localStorage.getItem('coachMgrData');
+            if (oldSaved) {
+                saved = oldSaved;
+                await localforage.setItem('coachMgrData', saved);
+                localStorage.removeItem('coachMgrData'); // 以降はIndexedDBのみ使う
+            }
         }
 
-        // Migrate matches
-        state.matches.forEach(m => {
-            if (!m.playerFeedback) m.playerFeedback = [];
-            if (!m.formations) m.formations = [];
-            if (!m.type) m.type = 'リーグ戦';
-        });
-
-        // Migrate old practice data format if needed
-        state.practices = state.practices.map(p => {
-            if (p.focus) { // Old format detected
-                return {
-                    id: p.id,
-                    date: p.date,
-                    attendance: p.attendance,
-                    menus: [{ id: Date.now(), focus: p.focus, category: 'その他', frames: p.frames }]
-                };
+        if (saved) {
+            if (typeof saved === 'string' && saved.startsWith('enc:')) {
+                saved = decryptData(saved.slice(4));
             }
-            return p;
-        });
-
-        // Migrate menus to include category
-        state.menuLibrary.forEach(m => {
-            if (!m.category) {
-                if (m.focus.includes('ポゼッション')) m.category = 'ポゼッション';
-                else if (m.focus.includes('パス')) m.category = 'パス＆コントロール';
-                else if (m.focus.includes('シュート')) m.category = 'シュート';
-                else if (m.focus.includes('ゲーム') || m.focus.includes('戦')) m.category = 'ゲーム';
-                else m.category = 'その他';
+            let parsed = null;
+            try {
+                parsed = (typeof saved === 'string') ? JSON.parse(saved) : saved;
+            } catch (e) {
+                console.error('Failed to parse saved data:', e);
             }
-        });
-
-        state.practices.forEach(p => {
-            if (p.menus) {
-                p.menus.forEach(m => {
-                    if (!m.category) {
-                        if (m.focus.includes('ポゼッション')) m.category = 'ポゼッション';
-                        else if (m.focus.includes('パス')) m.category = 'パス＆コントロール';
-                        else if (m.focus.includes('シュート')) m.category = 'シュート';
-                        else if (m.focus.includes('ゲーム') || m.focus.includes('戦')) m.category = 'ゲーム';
-                        else m.category = 'その他';
-                    }
-                });
+            if (parsed) {
+                state.matches = parsed.matches || [];
+                state.practices = parsed.practices || [];
+                state.players = parsed.players || [];
+                state.menuLibrary = parsed.menuLibrary || [];
+                state.matchTypes = parsed.matchTypes || ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'];
+                state.menuCategories = parsed.menuCategories || ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'];
+                state.skillMetrics = parsed.skillMetrics || ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'];
+                state.positions = parsed.positions || ['GK', 'DF', 'MF', 'FW'];
+                state.positionsCat2 = parsed.positionsCat2 || ['CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH'];
+                state.teamInfo = parsed.teamInfo || { name: 'My Team', color: '#f23932', passcode: '7064' };
+                if (!state.teamInfo.passcode) state.teamInfo.passcode = '7064';
+                state.customFormations = parsed.customFormations || state.customFormations;
             }
-        });
 
-        // Migrate players to use history
-        state.players.forEach(p => {
-            if (p.skills && !p.history) {
-                p.history = [{ id: Date.now(), date: new Date().toISOString().split('T')[0], comment: '旧データ移行', skills: p.skills }];
-                delete p.skills;
-            }
-        });
-    } else {
-        state.matches = [];
-        state.practices = [];
-        state.players = [];
-        state.menuLibrary = [];
+            // Migrate matches
+            state.matches.forEach(m => {
+                if (!m.playerFeedback) m.playerFeedback = [];
+                if (!m.formations) m.formations = [];
+                if (!m.type) m.type = 'リーグ戦';
+            });
+
+            // Migrate old practice data format if needed
+            state.practices = state.practices.map(p => {
+                if (p.focus) {
+                    return {
+                        id: p.id,
+                        date: p.date,
+                        attendance: p.attendance,
+                        menus: [{ id: Date.now(), focus: p.focus, category: 'その他', frames: p.frames }]
+                    };
+                }
+                return p;
+            });
+
+            // Migrate menus to include category
+            state.menuLibrary.forEach(m => {
+                if (!m.category) {
+                    if (m.focus.includes('ポゼッション')) m.category = 'ポゼッション';
+                    else if (m.focus.includes('パス')) m.category = 'パス＆コントロール';
+                    else if (m.focus.includes('シュート')) m.category = 'シュート';
+                    else if (m.focus.includes('ゲーム') || m.focus.includes('戦')) m.category = 'ゲーム';
+                    else m.category = 'その他';
+                }
+            });
+
+            state.practices.forEach(p => {
+                if (p.menus) {
+                    p.menus.forEach(m => {
+                        if (!m.category) {
+                            if (m.focus.includes('ポゼッション')) m.category = 'ポゼッション';
+                            else if (m.focus.includes('パス')) m.category = 'パス＆コントロール';
+                            else if (m.focus.includes('シュート')) m.category = 'シュート';
+                            else if (m.focus.includes('ゲーム') || m.focus.includes('戦')) m.category = 'ゲーム';
+                            else m.category = 'その他';
+                        }
+                    });
+                }
+            });
+
+            // Migrate players to use history
+            state.players.forEach(p => {
+                if (p.skills && !p.history) {
+                    p.history = [{ id: Date.now(), date: new Date().toISOString().split('T')[0], comment: '旧データ移行', skills: p.skills }];
+                    delete p.skills;
+                }
+            });
+        }
+    } catch (e) {
+        console.error('Failed to load data:', e);
     }
 }
 
-function saveData() {
+async function saveData() {
     const jsonStr = JSON.stringify({
         matches: state.matches,
         practices: state.practices,
@@ -221,10 +384,9 @@ function saveData() {
         customFormations: state.customFormations
     });
 
-    // Store encrypted
-    localStorage.setItem('coachMgrData', 'enc:' + encryptData(jsonStr));
+    // localforage を使用して IndexedDB に保存
+    await localforage.setItem('coachMgrData', 'enc:' + encryptData(jsonStr));
 
-    // Auto sync to cloud ONLY if in coach mode and URL is configured (prevents background push on parent/view mode)
     if (state.currentUserRole === 'coach' && state.teamInfo && state.teamInfo.gasApiUrl) {
         syncPushGasCloud(true);
     }
@@ -405,9 +567,9 @@ const menuToggle = document.getElementById('menu-toggle');
 const sidebar = document.getElementById('sidebar');
 
 // Initialization
-function init() {
+async function init() {
     try {
-        loadData();
+        await loadData();
 
         // Check for URL query params (e.g. parent invite link)
         const urlParams = new URLSearchParams(window.location.search);
@@ -763,6 +925,7 @@ function initData() {
     if (btnExportSettings) btnExportSettings.onclick = handleExport;
     if (btnExportView) btnExportView.onclick = handleExport;
 
+    // --- ここから下が修正箇所（async を追加し、構文エラーを解消した正確な形） ---
     const handleImportFile = (file, inputEl) => {
         if (!file) return;
         if (!confirm('現在のデータがすべて上書きされます。インポートを実行してよろしいですか？')) {
@@ -770,18 +933,18 @@ function initData() {
             return;
         }
         const reader = new FileReader();
-        reader.onload = (evt) => {
+        reader.onload = async (evt) => {
             try {
                 const parsed = JSON.parse(evt.target.result);
                 if (!parsed.matches && !parsed.players && !parsed.practices) {
                     alert('有効なデータファイルではありません。エクスポートしたJSONファイルを選択してください。');
                     return;
                 }
-                localStorage.setItem('coachMgrData', JSON.stringify(parsed));
-                loadData();
+                await localforage.setItem('coachMgrData', JSON.stringify(parsed));
+                await loadData();
                 document.documentElement.style.setProperty('--primary', state.teamInfo.color);
                 const sidebarTitle = document.querySelector('.sidebar-header h2');
-                if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
+                if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name)}`;
                 showToast('データをインポートしました。ページを再読み込みします...');
                 setTimeout(() => location.reload(), 1500);
             } catch (err) {
@@ -790,6 +953,7 @@ function initData() {
         };
         reader.readAsText(file);
     };
+    // --- 修正ここまで ---
 
     const inputImportSettings = document.getElementById('input-import-data');
     if (inputImportSettings) {
@@ -803,7 +967,8 @@ function initData() {
 
     const btnAllClear = document.getElementById('btn-data-all-clear');
     if (btnAllClear) {
-        btnAllClear.onclick = () => {
+        // ▼ ここを async に変更します
+        btnAllClear.onclick = async () => {
             if (!confirm('【警告】入力済みのデータをすべて消去して初期化します。\nこの操作は取り消せません。よろしいですか？')) {
                 return;
             }
@@ -814,7 +979,10 @@ function initData() {
             state.practices = [];
             state.players = [];
             state.menuLibrary = [];
-            localStorage.removeItem('coachMgrData');
+
+            // ▼ ここを localforage.removeItem に変更し、await をつけます
+            await localforage.removeItem('coachMgrData');
+
             showToast('すべての入力データをクリアしました。');
             setTimeout(() => location.reload(), 1000);
         };
@@ -1471,6 +1639,7 @@ function setupModals() {
             e.target.reset();
         });
     }
+    setupScoreCounters();
 }
 
 function openModal(id) {
@@ -1964,6 +2133,7 @@ function initDashboard() {
     if (btnGoRanking) {
         btnGoRanking.onclick = () => openLeaderRankingModal();
     }
+
 }
 
 function openLeaderRankingModal() {
@@ -2377,9 +2547,9 @@ function openMatchDetail(id) {
                 const pname = p ? `${p.number} ${p.name}` : '不明な選手';
                 return `
                     <div class="feedback-box">
-    <strong style="color:var(--primary); font-size:0.9rem;">${escapeHtml(pname)}</strong>
-    <p style="margin-top:0.3rem; font-size:0.95rem; white-space:pre-wrap;">${escapeHtml(fb.comment)}</p>
-</div>
+                        <strong style="color:var(--primary); font-size:0.9rem;">${escapeHtml(pname)}</strong>
+                        <p style="margin-top:0.3rem; font-size:0.95rem; white-space:pre-wrap;">${escapeHtml(fb.comment)}</p>
+                    </div>
                 `;
             }).join('');
         } else {
@@ -2821,11 +2991,11 @@ function initPractices() {
                                                 </div>
                                             ` : ''}
                                         </div>
-                                        ${menu.organize ? `<div><strong><i class="fa-solid fa-users"></i> オーガナイズ</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${menu.organize}</div></div>` : ''}
-                                        ${menu.keyfactor ? `<div><strong><i class="fa-solid fa-key"></i> キーファクター</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${menu.keyfactor}</div></div>` : ''}
-                                        ${menu.videoUrl ? `<div><strong><i class="fa-brands fa-youtube" style="color:#ef4444;"></i> 参考動画</strong><div style="margin-top:0.15rem;"><a href="${menu.videoUrl}" target="_blank" rel="noopener noreferrer" style="color:#ef4444; text-decoration:underline; font-weight:bold; word-break:break-all;"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
-                                        ${menu.options ? `<div><strong><i class="fa-solid fa-sliders"></i> オプション</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${menu.options}</div></div>` : ''}
-                                    </div>
+                                        ${menu.organize ? `<div><strong><i class="fa-solid fa-users"></i> オーガナイズ</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${escapeHtml(menu.organize)}</div></div>` : ''}
+                                        ${menu.keyfactor ? `<div><strong><i class="fa-solid fa-key"></i> キーファクター</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${escapeHtml(menu.keyfacto)}</div></d)v>` : ''}
+                                        ${menu.videoUrl ? `<div><strong><i class="fa-brands fa-youtube" style="color:#ef4444;"></i> 参考動画</strong><div style="margin-top:0.15rem;"><a href="${escapeHtml(menu.videoUrl)}" target="_blank" rel="noopener noreferrer" style="color:#ef4444; text-decoration:underline; font-weight:bold; word-break:break-all;"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
+                                        ${menu.options ? `<div><strong><i class="fa-solid fa-sliders"></i> オプション</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${escapeHtml(menu.options)}</div></div)` : ''}))
+                                    </div>))
                                     ` : '<div style="padding:0 0.8rem 0.8rem 0.8rem; font-size:0.8rem; color:var(--text-secondary);">詳細説明はありません。</div>'}
                                 </details>
                             </li>
@@ -2889,27 +3059,32 @@ function initPractices() {
 
     // Draw practice mini pitches for displayed items
     setTimeout(() => {
+        const btnEmptyAdd = document.getElementById('btn-empty-add-practice');
+        if (btnEmptyAdd) {
+            btnEmptyAdd.onclick = () => {
+                const btnAdd = document.getElementById('btn-add-practice');
+                if (btnAdd) btnAdd.click();
+            };
+        }
+    }, 50);
+
+    clearAllMiniPitchIntervals();
+
+    // Draw practice mini pitches for displayed items
+    setTimeout(() => {
         displayedPractices.forEach(p => {
             if (p.menus && p.menus.length > 0) {
                 p.menus.forEach(menu => {
                     const mCanv = document.getElementById(`practice-mini-pitch-${p.id}-${menu.id}`);
                     if (mCanv) {
                         const mCtx = mCanv.getContext('2d');
-                        if (menu.frames && menu.frames.length > 0) {
-                            if (menu.frames.length > 1) {
-                                let frameIdx = 0;
-                                drawPitchToCtx(menu.frames[frameIdx], mCanv, mCtx, menu.pitchTemplate || 'full');
+                        mCanv._animationFrames = menu.frames || [];
+                        mCanv._pitchTemplate = menu.pitchTemplate || 'full';
 
-                                const intervalId = setInterval(() => {
-                                    frameIdx = (frameIdx + 1) % menu.frames.length;
-                                    drawPitchToCtx(menu.frames[frameIdx], mCanv, mCtx, menu.pitchTemplate || 'full');
-                                }, 1200);
-                                window.practiceMiniPitchIntervals.push(intervalId);
-                            } else {
-                                drawPitchToCtx(menu.frames[0], mCanv, mCtx, menu.pitchTemplate || 'full');
-                            }
-                        } else {
-                            drawPitchToCtx([], mCanv, mCtx, menu.pitchTemplate || 'full');
+                        drawPitchToCtx(menu.frames && menu.frames.length > 0 ? menu.frames[0] : [], mCanv, mCtx, menu.pitchTemplate || 'full');
+
+                        if (menu.frames && menu.frames.length > 1) {
+                            miniPitchObserver.observe(mCanv);
                         }
                     }
                 });
@@ -3709,33 +3884,20 @@ function initLibrary() {
     }
 
     // Clear old animation loops
-    if (window.libraryMiniPitchIntervals) {
-        window.libraryMiniPitchIntervals.forEach(clearInterval);
-    }
-    window.libraryMiniPitchIntervals = [];
+    clearAllMiniPitchIntervals();
 
-    // Draw library mini pitches (always draw, with fallback to empty pitch, loop animation if present)
     setTimeout(() => {
         filteredMenus.forEach(m => {
             const mCanv = document.getElementById(`library-mini-pitch-${m.id}`);
             if (mCanv) {
                 const mCtx = mCanv.getContext('2d');
-                if (m.frames && m.frames.length > 0) {
-                    if (m.frames.length > 1) {
-                        let frameIdx = 0;
-                        drawPitchToCtx(m.frames[frameIdx], mCanv, mCtx, m.pitchTemplate || 'full');
+                mCanv._animationFrames = m.frames || [];
+                mCanv._pitchTemplate = m.pitchTemplate || 'full';
 
-                        const intervalId = setInterval(() => {
-                            frameIdx = (frameIdx + 1) % m.frames.length;
-                            drawPitchToCtx(m.frames[frameIdx], mCanv, mCtx, m.pitchTemplate || 'full');
-                        }, 1200);
-                        window.libraryMiniPitchIntervals.push(intervalId);
-                    } else {
-                        drawPitchToCtx(m.frames[0], mCanv, mCtx, m.pitchTemplate || 'full');
-                    }
-                } else {
-                    // Draw a blank court template (fallback)
-                    drawPitchToCtx([], mCanv, mCtx, m.pitchTemplate || 'full');
+                drawPitchToCtx(m.frames && m.frames.length > 0 ? m.frames[0] : [], mCanv, mCtx, m.pitchTemplate || 'full');
+
+                if (m.frames && m.frames.length > 1) {
+                    miniPitchObserver.observe(mCanv);
                 }
             }
         });
@@ -5026,20 +5188,21 @@ function updateUndoRedoButtons() {
     }
 }
 
-function updateCanvasToolbar() {
-    const btnDelete = document.getElementById('tool-delete');
-    const btnRotate = document.getElementById('tool-rotate');
+// === 1. ツールバー・Popover制御関数（initAnimationより前、または呼び出し可能な位置に配置） ===
+function updateToolDockActive() {
+    const dockBtns = document.querySelectorAll('.anim-tool-dock .tool-btn, .canvas-toolbar .tool-btn');
+    dockBtns.forEach(btn => {
+        if (btn.dataset.tool === currentTool) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
 
-    if (btnDelete) {
-        btnDelete.disabled = !selectedObject;
-        btnDelete.style.opacity = selectedObject ? '1' : '0.5';
-    }
-    if (btnRotate) {
-        const canRotate = !!(selectedObject && (selectedObject.type === 'minigoal' || selectedObject.type === 'player'));
-        btnRotate.disabled = !canRotate;
-        btnRotate.style.opacity = canRotate ? '1' : '0.5';
-    }
-    updateUndoRedoButtons();
+function updateCanvasToolbar() {
+    updateContextPopover();
+    updateToolDockActive();
 }
 
 function handleCanvasKeyDown(e) {
@@ -5083,7 +5246,20 @@ let currentLibraryId = null;
 
 function initAnimation(params) {
     canvas = document.getElementById('pitch-canvas');
+    bgCanvas = document.getElementById('pitch-bg-canvas');
     if (!canvas) return;
+
+    cleanupCanvasEvents();
+
+    // 操作用キャンバスの基準解像度を固定
+    canvas.width = 800;
+    canvas.height = 500;
+
+    if (bgCanvas) {
+        bgCanvas.width = 800;
+        bgCanvas.height = 500;
+        bgCtx = bgCanvas.getContext('2d');
+    }
 
     currentPracticeId = params && params.practiceId ? params.practiceId : null;
     currentMenuId = params && params.menuId ? params.menuId : null;
@@ -5281,7 +5457,15 @@ function initAnimation(params) {
 
         newEl.addEventListener('click', (e) => {
             currentTool = tool;
+            // ⭐ 追加：別ツールや別オブジェクトの配置ボタンを押した時、選択状態を解除してメニューを閉じる
+            selectedObject = null;
+            const popover = document.getElementById('anim-context-popover');
+            if (popover) popover.classList.add('hidden');
             updateToolDockActive();
+            // ⭐ 選択解除を反映させるためにピッチ（キャンバス）を再描画する
+            if (typeof drawPitch === 'function') {
+                drawPitch(objects);
+            }
         });
     });
     currentTool = 'select';
@@ -5358,9 +5542,6 @@ function initAnimation(params) {
             }
         });
     }
-
-    document.removeEventListener('keydown', handleCanvasKeyDown);
-    document.addEventListener('keydown', handleCanvasKeyDown);
 
     const btnAdd = document.getElementById('anim-add-frame');
     const newBtnAdd = btnAdd.cloneNode(true);
@@ -5597,49 +5778,53 @@ function initAnimation(params) {
     }
 
     // Right Side Panel Data Population & Toggle Handler
+    // 右パネルのトグル＆レスポンシブ自動制御
+    // 右パネルの連動制御ロジック
     const sidePanel = document.getElementById('anim-detail-side-panel');
     const sideToggleBtn = document.getElementById('anim-side-panel-toggle-btn');
+
     if (sidePanel && sideToggleBtn) {
-        const sideFocus = document.getElementById('side-info-focus');
-        const sideOrg = document.getElementById('side-info-organize');
-        const sideKf = document.getElementById('side-info-keyfactor');
-        const sideOpt = document.getElementById('side-info-options');
+        // 画面サイズに応じた初期状態の判定関数
+        const updatePanelResponsiveState = () => {
+            if (window.innerWidth <= 1024) {
+                // 小さな画面：デフォルト折りたたみ
+                sidePanel.classList.add('collapsed');
+                sidePanel.classList.remove('open');
+            } else {
+                // 大画面：デフォルト表示
+                sidePanel.classList.remove('collapsed');
+                sidePanel.classList.add('open');
+            }
+        };
 
-        if (targetMenu) {
-            if (sideFocus) sideFocus.textContent = targetMenu.focus || targetMenu.name || '未設定';
-            if (sideOrg) sideOrg.textContent = targetMenu.organize || 'なし';
-            if (sideKf) sideKf.textContent = targetMenu.keyfactor || 'なし';
-            if (sideOpt) sideOpt.textContent = targetMenu.options || 'なし';
-        } else {
-            if (sideFocus) sideFocus.textContent = '未設定';
-            if (sideOrg) sideOrg.textContent = 'なし';
-            if (sideKf) sideKf.textContent = 'なし';
-            if (sideOpt) sideOpt.textContent = 'なし';
-        }
+        // 初期化実行
+        updatePanelResponsiveState();
 
-        // --- 右パネル初期化処理 ---
-        if (window.innerWidth <= 768) {
-            sidePanel.classList.remove('open');
-            const icon = sideToggleBtn.querySelector('i');
-            if (icon) icon.className = 'fa-solid fa-chevron-left';
-        } else {
-            sidePanel.classList.add('open');
-            const icon = sideToggleBtn.querySelector('i');
-            if (icon) icon.className = 'fa-solid fa-chevron-right';
-        }
+        // 画面リサイズ時に自動追従
+        window.addEventListener('resize', () => {
+            // 画面幅が1024pxをまたいだ際のスムーズ自動開閉
+            if (window.innerWidth <= 1024 && !sidePanel.classList.contains('collapsed')) {
+                sidePanel.classList.add('collapsed');
+                sidePanel.classList.remove('open');
+            } else if (window.innerWidth > 1024 && sidePanel.classList.contains('collapsed') && !sidePanel.dataset.userClosed) {
+                sidePanel.classList.remove('collapsed');
+                sidePanel.classList.add('open');
+            }
+        });
 
-        // ボタンタップ時の処理
+        // トグルボタンのクリック処理（1箇所に統一）
         sideToggleBtn.onclick = (e) => {
             e.stopPropagation();
-            const isOpen = sidePanel.classList.toggle('open');
+            const isCollapsed = sidePanel.classList.contains('collapsed');
 
-            const icon = sideToggleBtn.querySelector('i');
-            if (icon) {
-                if (isOpen) {
-                    icon.className = 'fa-solid fa-chevron-right';
-                } else {
-                    icon.className = 'fa-solid fa-chevron-left';
-                }
+            if (isCollapsed) {
+                sidePanel.classList.remove('collapsed');
+                sidePanel.classList.add('open');
+                delete sidePanel.dataset.userClosed; // ユーザーが手動で開いた状態
+            } else {
+                sidePanel.classList.add('collapsed');
+                sidePanel.classList.remove('open');
+                sidePanel.dataset.userClosed = "true"; // ユーザーが手動で閉じたフラグ
             }
         };
     }
@@ -5752,13 +5937,22 @@ function initAnimation(params) {
         });
     }
 
-    canvas.addEventListener('mousedown', handleMouseDown);
-    canvas.addEventListener('mousemove', handleMouseMove);
-    canvas.addEventListener('mouseup', handleMouseUp);
-    canvas.addEventListener('mouseleave', handleMouseUp);
-    canvas.addEventListener('dblclick', handleCanvasDblClick);
+    // ✅ 参照を保持して重複登録を防ぐ新しいコード
+    boundListeners.canvasMouseDown = handleMouseDown;
+    boundListeners.canvasMouseMove = handleMouseMove;
+    boundListeners.canvasMouseUp = handleMouseUp;
+    boundListeners.canvasMouseLeave = handleMouseUp;
+    boundListeners.canvasDblClick = handleCanvasDblClick;
+    boundListeners.docKeyDown = handleCanvasKeyDown;
 
-    // --- Touch support (mobile) ---
+    canvas.addEventListener('mousedown', boundListeners.canvasMouseDown);
+    canvas.addEventListener('mousemove', boundListeners.canvasMouseMove);
+    canvas.addEventListener('mouseup', boundListeners.canvasMouseUp);
+    canvas.addEventListener('mouseleave', boundListeners.canvasMouseLeave);
+    canvas.addEventListener('dblclick', boundListeners.canvasDblClick);
+    document.addEventListener('keydown', boundListeners.docKeyDown);
+
+    // タッチイベント対応
     function getTouchPos(touchEvent) {
         const rect = canvas.getBoundingClientRect();
         const touch = touchEvent.touches[0] || touchEvent.changedTouches[0];
@@ -5768,23 +5962,27 @@ function initAnimation(params) {
         };
     }
 
-    canvas.addEventListener('touchstart', (e) => {
+    boundListeners.canvasTouchStart = (e) => {
         e.preventDefault();
         const pos = getTouchPos(e);
         handleMouseDown({ clientX: pos.clientX, clientY: pos.clientY, button: 0 });
-    }, { passive: false });
+    };
 
-    canvas.addEventListener('touchmove', (e) => {
+    boundListeners.canvasTouchMove = (e) => {
         e.preventDefault();
         const pos = getTouchPos(e);
         handleMouseMove({ clientX: pos.clientX, clientY: pos.clientY });
-    }, { passive: false });
+    };
 
-    canvas.addEventListener('touchend', (e) => {
+    boundListeners.canvasTouchEnd = (e) => {
         e.preventDefault();
         const pos = getTouchPos(e);
         handleMouseUp({ clientX: pos.clientX, clientY: pos.clientY });
-    }, { passive: false });
+    };
+
+    canvas.addEventListener('touchstart', boundListeners.canvasTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', boundListeners.canvasTouchMove, { passive: false });
+    canvas.addEventListener('touchend', boundListeners.canvasTouchEnd, { passive: false });
 }
 
 let currentFrameIndex = -1;
@@ -5899,6 +6097,10 @@ function editFrameTitle() {
 function stopAnimation() {
     isPlaying = false;
     if (animReqId) cancelAnimationFrame(animReqId);
+
+    // ▼ ここを追加
+    cleanupCanvasEvents();
+
     if (frames.length > 0) {
         const lastFrame = frames[frames.length - 1];
         objects = JSON.parse(JSON.stringify(Array.isArray(lastFrame) ? lastFrame : (lastFrame.objects || [])));
@@ -6127,27 +6329,48 @@ function exportAnimationVideo() {
     }
 }
 
-function drawPitch(renderObjects) {
+// === 背景描画関数 ===
+function drawPitchBackground() {
+    bgCanvas = document.getElementById('pitch-bg-canvas');
+    if (!bgCanvas) return;
+    bgCtx = bgCanvas.getContext('2d');
+    if (!bgCtx) return;
+
+    // 高DPI(Retina)対応：800x500の比率（1600x1000）で内部解像度をくっきり固定
+    if (bgCanvas.width !== 1600 || bgCanvas.height !== 1000) {
+        bgCanvas.width = 1600;
+        bgCanvas.height = 1000;
+    }
+
     const templateEl = document.getElementById('canvas-pitch-template');
-    const template = templateEl ? templateEl.value : 'full';
-    drawPitchToCtx(renderObjects, canvas, ctx, template);
+    let template = templateEl && templateEl.value ? templateEl.value : 'full';
+    if (template === 'blank') {
+        template = 'full';
+    }
+
+    drawPitchToCtx([], bgCanvas, bgCtx, template);
+}
+
+// === 動的オブジェクト描画関数 ===
+function drawPitch(renderObjects) {
+    canvas = document.getElementById('pitch-canvas');
+    if (!canvas) return;
+    ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // 上層も全く同じ内部解像度（1600x1000）に固定
+    if (canvas.width !== 1600 || canvas.height !== 1000) {
+        canvas.width = 1600;
+        canvas.height = 1000;
+    }
+
+    // 1. 下層（ピッチ背景線）を描画
+    drawPitchBackground();
+
+    // 2. 上層（操作層）を描画
+    drawPitchToCtx(renderObjects, canvas, ctx, 'blank');
+
     updateCanvasToolbar();
-}
-
-function updateCanvasToolbar() {
-    updateContextPopover();
-    updateToolDockActive();
-}
-
-function updateToolDockActive() {
-    const dockBtns = document.querySelectorAll('.anim-tool-dock .tool-btn, .canvas-toolbar .tool-btn');
-    dockBtns.forEach(btn => {
-        if (btn.dataset.tool === currentTool) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
-    });
 }
 
 function updateContextPopover() {
@@ -6173,14 +6396,18 @@ function updateContextPopover() {
         return;
     }
 
+    // ⭕ 修正後：キャンバス自体の実表示サイズと比率から正確に計算する
     const canvasRect = canvas.getBoundingClientRect();
-    const wrapperRect = canvas.parentNode ? canvas.parentNode.getBoundingClientRect() : canvasRect;
+    // ポップオーバーの親要素（今回は #canvas-wrapper または .anim-canvas-area）を基準にする
+    const containerRect = popover.offsetParent ? popover.offsetParent.getBoundingClientRect() : canvasRect;
 
-    const scaleX = canvasRect.width / canvas.width;
-    const scaleY = canvasRect.height / canvas.height;
+    // 800x500の内部座標から、現在画面上の実サイズへのスケール比率
+    const scaleX = canvasRect.width / 800;
+    const scaleY = canvasRect.height / 500;
 
-    const screenX = (objX * scaleX) + (canvasRect.left - wrapperRect.left);
-    const screenY = (objY * scaleY) + (canvasRect.top - wrapperRect.top);
+    // コンテナ内での正確なピクセル位置を算出
+    const screenX = (objX * scaleX) + (canvasRect.left - containerRect.left);
+    const screenY = (objY * scaleY) + (canvasRect.top - containerRect.top);
 
     popover.style.left = `${screenX}px`;
     popover.style.top = `${screenY}px`;
@@ -6232,19 +6459,6 @@ function updateContextPopover() {
 
 function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, template = 'full') {
     const renderObjects = Array.isArray(renderObjectsInput) ? renderObjectsInput : ((renderObjectsInput && renderObjectsInput.objects) || []);
-    // Dynamic High-DPI / DPR Resolution Scaling to eliminate blurriness
-    if (targetCanvas.id === 'pitch-canvas') {
-        const rect = targetCanvas.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0) {
-            const dpr = Math.max(window.devicePixelRatio || 1, 2); // Ultra HD DPR scaling
-            const targetW = Math.round(rect.width * dpr);
-            const targetH = Math.round(rect.height * dpr);
-            if (targetCanvas.width !== targetW || targetCanvas.height !== targetH) {
-                targetCanvas.width = targetW;
-                targetCanvas.height = targetH;
-            }
-        }
-    }
 
     const w = targetCanvas.width;
     const h = targetCanvas.height;
@@ -6253,26 +6467,28 @@ function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, template = 
 
     targetCtx.save();
 
-    // Scale context from base 800x500 coordinate space to high-res canvas resolution!
+    // キャンバスの内部解像度（1600x1000等）に関わらず、すべての描画を800x500の標準座標空間に自動スケーリング
     const scaleX = w / 800;
     const scaleY = h / 500;
     targetCtx.scale(scaleX, scaleY);
 
-    // Background - modern grey-white
-    targetCtx.fillStyle = '#f1f5f9';
-    targetCtx.fillRect(0, 0, 800, 500);
-
-    // Proportions and Dimensions (Base 800x500 space, side margins fit goals completely)
+    // ピッチの外枠・余白座標（800x500基準）
     const pitchX = 24;
     const pitchY = 16;
     const pitchW = 800 - 48;
     const pitchH = 500 - 32;
 
-    targetCtx.strokeStyle = '#334155';
-    targetCtx.lineWidth = 1.5;
+    // ★ 上層描画('blank')以外の場合のみ背景塗りつぶしと外枠を描画
+    if (template !== 'blank') {
+        // 背景色（灰白色）
+        targetCtx.fillStyle = '#f1f5f9';
+        targetCtx.fillRect(0, 0, 800, 500);
 
-    // Outer boundary
-    targetCtx.strokeRect(pitchX, pitchY, pitchW, pitchH);
+        // 外枠線
+        targetCtx.strokeStyle = '#334155';
+        targetCtx.lineWidth = 1.5;
+        targetCtx.strokeRect(pitchX, pitchY, pitchW, pitchH);
+    }
 
     if (template === 'full' || template === 'grid') {
         const laneH = pitchH / 5;
@@ -7053,14 +7269,17 @@ function applyGridSnap(val, axis = 'x') {
     return val;
 }
 
-// 共通：クリック/タッチ座標をCanvas内部解像度に正確に変換する関数
+// マウス/タッチ座標をCanvasの標準座標(800x500)へ正確にマッピングする関数
 function getCanvasPos(e) {
-    if (!canvas) return { x: 0, y: 0 };
-    const rect = canvas.getBoundingClientRect();
+    const targetCanvas = document.getElementById('pitch-canvas') || canvas;
+    if (!targetCanvas) return { x: 0, y: 0 };
 
-    // イベントからクライアント座標を取得（マウス/タッチ両対応）
+    // DOM要素のサイズと位置を取得
+    const rect = targetCanvas.getBoundingClientRect();
+
     let clientX = e.clientX;
     let clientY = e.clientY;
+
     if (e.touches && e.touches.length > 0) {
         clientX = e.touches[0].clientX;
         clientY = e.touches[0].clientY;
@@ -7069,10 +7288,49 @@ function getCanvasPos(e) {
         clientY = e.changedTouches[0].clientY;
     }
 
-    // CSS上の表示サイズと内部解像度(width/height)の比率を計算して正確な座標を返す
+    // キャンバスの基準解像度 (800x500)
+    const intrinsicWidth = 800;
+    const intrinsicHeight = 500;
+    const intrinsicRatio = intrinsicWidth / intrinsicHeight;
+
+    // 現在のDOM要素(rect)の縦横比
+    const domRatio = rect.width / rect.height;
+
+    let renderedWidth = rect.width;
+    let renderedHeight = rect.height;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    // object-fit: contain または aspect-ratio によって生じる余白（レターボックス）を計算
+    if (domRatio > intrinsicRatio) {
+        // 横幅が余っている状態（左右に余白）
+        renderedWidth = rect.height * intrinsicRatio;
+        offsetX = (rect.width - renderedWidth) / 2;
+    } else if (domRatio < intrinsicRatio) {
+        // 縦幅が余っている状態（上下に余白）
+        renderedHeight = rect.width / intrinsicRatio;
+        offsetY = (rect.height - renderedHeight) / 2;
+    }
+
+    // 要素左上からのマウスの相対位置
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
+
+    // 余白を除いた、実際の描画領域内でのマウス位置
+    const xInRendered = mouseX - offsetX;
+    const yInRendered = mouseY - offsetY;
+
+    // 内部座標系 (800x500) への変換
+    // ※ 領域外（余白部分）をクリックした場合は、ピッチの端（0 または max）にクリップさせる
+    let finalX = (xInRendered / renderedWidth) * intrinsicWidth;
+    let finalY = (yInRendered / renderedHeight) * intrinsicHeight;
+
+    finalX = Math.max(0, Math.min(intrinsicWidth, finalX));
+    finalY = Math.max(0, Math.min(intrinsicHeight, finalY));
+
     return {
-        x: (clientX - rect.left) * (canvas.width / rect.width),
-        y: (clientY - rect.top) * (canvas.height / rect.height)
+        x: finalX,
+        y: finalY
     };
 }
 
@@ -7119,108 +7377,130 @@ function handleMouseDown(e) {
     let y = pos.y;
 
     if (currentTool === 'select') {
-        const prevSelected = selectedObject;
-        selectedObject = null;
+        let clickedObject = null;
         isResizing = false;
         resizeHandle = null;
 
-        // 1. Check resize handle hits for previously selected object first
-        if (prevSelected) {
-            if (prevSelected.type === 'minigoal') {
-                const scale = prevSelected.goalScale || 1.0;
-                const selR = (prevSelected.radius || 15) * scale + 6;
-                const s = 18; // Wide hit area for handle drag
-                if (Math.abs(x - (prevSelected.x - selR)) <= s && Math.abs(y - prevSelected.y) <= s) { isResizing = true; resizeHandle = 'goal-w'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
-                if (Math.abs(x - (prevSelected.x + selR)) <= s && Math.abs(y - prevSelected.y) <= s) { isResizing = true; resizeHandle = 'goal-e'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
-                if (Math.abs(x - prevSelected.x) <= s && Math.abs(y - (prevSelected.y - selR)) <= s) { isResizing = true; resizeHandle = 'goal-n'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
-                if (Math.abs(x - prevSelected.x) <= s && Math.abs(y - (prevSelected.y + selR)) <= s) { isResizing = true; resizeHandle = 'goal-s'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
-            } else if (prevSelected.type === 'rect' || prevSelected.type === 'circle') {
+        // 1. リサイズハンドル（四角や丸、ゴールの角）のヒット判定
+        if (selectedObject) {
+            if (selectedObject.type === 'minigoal') {
+                const scale = selectedObject.goalScale || 1.0;
+                const selR = (selectedObject.radius || 15) * scale + 6;
                 const s = 18;
-                if (Math.abs(x - prevSelected.x1) <= s && Math.abs(y - prevSelected.y1) <= s) { isResizing = true; resizeHandle = 'nw'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
-                if (Math.abs(x - prevSelected.x2) <= s && Math.abs(y - prevSelected.y1) <= s) { isResizing = true; resizeHandle = 'ne'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
-                if (Math.abs(x - prevSelected.x1) <= s && Math.abs(y - prevSelected.y2) <= s) { isResizing = true; resizeHandle = 'sw'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
-                if (Math.abs(x - prevSelected.x2) <= s && Math.abs(y - prevSelected.y2) <= s) { isResizing = true; resizeHandle = 'se'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
+                if (Math.abs(x - (selectedObject.x - selR)) <= s && Math.abs(y - selectedObject.y) <= s) { isResizing = true; resizeHandle = 'goal-w'; clickedObject = selectedObject; }
+                else if (Math.abs(x - (selectedObject.x + selR)) <= s && Math.abs(y - selectedObject.y) <= s) { isResizing = true; resizeHandle = 'goal-e'; clickedObject = selectedObject; }
+                else if (Math.abs(x - selectedObject.x) <= s && Math.abs(y - (selectedObject.y - selR)) <= s) { isResizing = true; resizeHandle = 'goal-n'; clickedObject = selectedObject; }
+                else if (Math.abs(x - selectedObject.x) <= s && Math.abs(y - (selectedObject.y + selR)) <= s) { isResizing = true; resizeHandle = 'goal-s'; clickedObject = selectedObject; }
+            } else if (selectedObject.type === 'rect' || selectedObject.type === 'circle') {
+                const s = 18;
+                if (Math.abs(x - selectedObject.x1) <= s && Math.abs(y - selectedObject.y1) <= s) { isResizing = true; resizeHandle = 'nw'; clickedObject = selectedObject; }
+                else if (Math.abs(x - selectedObject.x2) <= s && Math.abs(y - selectedObject.y1) <= s) { isResizing = true; resizeHandle = 'ne'; clickedObject = selectedObject; }
+                else if (Math.abs(x - selectedObject.x1) <= s && Math.abs(y - selectedObject.y2) <= s) { isResizing = true; resizeHandle = 'sw'; clickedObject = selectedObject; }
+                else if (Math.abs(x - selectedObject.x2) <= s && Math.abs(y - selectedObject.y2) <= s) { isResizing = true; resizeHandle = 'se'; clickedObject = selectedObject; }
             }
         }
 
-        // 2. Otherwise select or drag objects
-        for (let i = objects.length - 1; i >= 0; i--) {
-            const obj = objects[i];
+        // 2. ハンドルがヒットしていなければ、通常のオブジェクト検索
+        if (!clickedObject) {
+            for (let i = objects.length - 1; i >= 0; i--) {
+                const obj = objects[i];
 
-            if (obj.type === 'line' || obj.type === 'ladder') {
-                const A = x - obj.x1;
-                const B = y - obj.y1;
-                const C = obj.x2 - obj.x1;
-                const D = obj.y2 - obj.y1;
-                const dot = A * C + B * D;
-                const lenSq = C * C + D * D;
-                let param = -1;
-                if (lenSq !== 0) param = dot / lenSq;
-                let xx, yy;
-                if (param < 0) { xx = obj.x1; yy = obj.y1; }
-                else if (param > 1) { xx = obj.x2; yy = obj.y2; }
-                else { xx = obj.x1 + param * C; yy = obj.y1 + param * D; }
-                const dx = x - xx;
-                const dy = y - yy;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist <= 12) {
-                    draggedObject = obj;
-                    selectedObject = obj;
-                    startX = x; startY = y;
-                    break;
-                }
-            } else if (obj.type === 'rect' || obj.type === 'circle') {
-                const mx1 = Math.min(obj.x1, obj.x2);
-                const mx2 = Math.max(obj.x1, obj.x2);
-                const my1 = Math.min(obj.y1, obj.y2);
-                const my2 = Math.max(obj.y1, obj.y2);
-                if (x >= mx1 && x <= mx2 && y >= my1 && y <= my2) {
-                    draggedObject = obj;
-                    selectedObject = obj;
-                    startX = x; startY = y;
-                    break;
-                }
-            } else {
-                const dx = x - obj.x;
-                const dy = y - obj.y;
-                let isHit = false;
-                if (obj.type === 'text') {
-                    ctx.font = 'bold 14px Inter, sans-serif';
-                    const tw = ctx.measureText(obj.text || '').width;
-                    isHit = Math.abs(dx) <= tw / 2 + 5 && Math.abs(dy) <= 15;
-                } else if (obj.type === 'minigoal') {
-                    const scale = obj.goalScale || 1.0;
-                    const gw = 30 * scale;
-                    const gh = 15 * scale;
-                    isHit = Math.abs(dx) <= (gw / 2 + 10) && Math.abs(dy) <= (gh / 2 + 10);
-                } else {
-                    isHit = Math.sqrt(dx * dx + dy * dy) <= (obj.radius + 5);
-                }
-
-                if (isHit) {
-                    draggedObject = obj;
-                    selectedObject = obj;
-                    startX = x; startY = y;
-
-                    if (obj.type === 'player') {
-                        const elNum = document.getElementById('canvas-player-number');
-                        const elSel = document.getElementById('canvas-player-select');
-                        if (elNum) elNum.value = obj.number || '';
-                        if (elSel && obj.playerId) elSel.value = obj.playerId;
+                if (obj.type === 'line' || obj.type === 'ladder') {
+                    // ⭐ 修正：矢印・ラダーの線分に対して、クリック位置が近傍にあるか正確に判定
+                    const A = x - obj.x1;
+                    const B = y - obj.y1;
+                    const C = obj.x2 - obj.x1;
+                    const D = obj.y2 - obj.y1;
+                    const dot = A * C + B * D;
+                    const lenSq = C * C + D * D;
+                    let param = -1;
+                    if (lenSq !== 0) param = dot / lenSq;
+                    let xx, yy;
+                    if (param < 0) { xx = obj.x1; yy = obj.y1; }
+                    else if (param > 1) { xx = obj.x2; yy = obj.y2; }
+                    else { xx = obj.x1 + param * C; yy = obj.y1 + param * D; }
+                    const dist = Math.sqrt((x - xx) * (x - xx) + (y - yy) * (y - yy));
+                    if (dist <= 15) { // 判定の許容範囲を少し広げてクリックしやすくする
+                        clickedObject = obj;
+                        break;
                     }
-                    break;
+                } else if (obj.type === 'rect' || obj.type === 'circle') {
+                    // ⭐ 修正：四角・丸（楕円）の範囲内、または枠線近くをクリックしたときにヒットするように判定
+                    const mx1 = Math.min(obj.x1, obj.x2);
+                    const mx2 = Math.max(obj.x1, obj.x2);
+                    const my1 = Math.min(obj.y1, obj.y2);
+                    const my2 = Math.max(obj.y1, obj.y2);
+
+                    if (obj.type === 'rect') {
+                        // 四角形は内部または外枠の近く（±10px）でヒット
+                        if (x >= mx1 - 10 && x <= mx2 + 10 && y >= my1 - 10 && y <= my2 + 10) {
+                            clickedObject = obj;
+                            break;
+                        }
+                    } else if (obj.type === 'circle') {
+                        // 円（楕円）の数式にヒットするか判定
+                        const rx = (mx2 - mx1) / 2;
+                        const ry = (my2 - my1) / 2;
+                        const cx = mx1 + rx;
+                        const cy = my1 + ry;
+                        const normX = rx > 0 ? (x - cx) / rx : 0;
+                        const normY = ry > 0 ? (y - cy) / ry : 0;
+                        if (normX * normX + normY * normY <= 1.25) { // 少し余裕を持たせる
+                            clickedObject = obj;
+                            break;
+                        }
+                    }
+                } else {
+                    const dx = x - obj.x;
+                    const dy = y - obj.y;
+                    let isHit = false;
+                    if (obj.type === 'text') {
+                        ctx.font = 'bold 14px Inter, sans-serif';
+                        const tw = ctx.measureText(obj.text || '').width;
+                        isHit = Math.abs(dx) <= tw / 2 + 5 && Math.abs(dy) <= 15;
+                    } else if (obj.type === 'minigoal') {
+                        const scale = obj.goalScale || 1.0;
+                        isHit = Math.abs(dx) <= (15 * scale + 10) && Math.abs(dy) <= (7.5 * scale + 10);
+                    } else {
+                        isHit = Math.sqrt(dx * dx + dy * dy) <= (obj.radius + 5);
+                    }
+
+                    if (isHit) {
+                        clickedObject = obj;
+                        break;
+                    }
                 }
             }
         }
+
+        // 3. 最終的な選択状態の更新
+        selectedObject = clickedObject;
+        draggedObject = clickedObject;
+        startX = x; startY = y;
+
+        if (selectedObject && selectedObject.type === 'player') {
+            const elNum = document.getElementById('canvas-player-number');
+            const elSel = document.getElementById('canvas-player-select');
+            if (elNum) elNum.value = selectedObject.number || '';
+            if (elSel && selectedObject.playerId) elSel.value = selectedObject.playerId;
+        }
+
         drawPitch(objects);
-    } else if (currentTool && (currentTool.startsWith('line-') || currentTool === 'ladder')) {
+        return;
+    }
+
+    // ====================================================
+    // ⭐【ここから下：選択ツール以外の時（選手やボール等を置く処理）】
+    // ====================================================
+    if (currentTool && (currentTool.startsWith('line-') || currentTool === 'ladder')) {
         isDrawing = true;
         startX = applyGridSnap(x, 'x');
         startY = applyGridSnap(y, 'y');
     } else {
         selectedObject = null;
-        x = applyGridSnap(x, 'x');
-        y = applyGridSnap(y, 'y');
+        // ⭐ 修正：クリックした座標にスナップを適用し、そのまま正確にオブジェクトの中心（または基準点）にする
+        const targetX = applyGridSnap(x, 'x');
+        const targetY = applyGridSnap(y, 'y');
 
         let color, radius, type, number = '', playerId = '', playerName = '';
         const elPlayerNumber = document.getElementById('canvas-player-number');
@@ -7267,7 +7547,8 @@ function handleMouseDown(e) {
         if (currentTool === 'text') { color = '#000000'; radius = 0; type = 'text'; }
 
         if (type) {
-            const newObj = { id: objectIdCounter++, type, x, y, radius, color, number };
+            // ⭐ `targetX`, `targetY` を直接セットする
+            const newObj = { id: objectIdCounter++, type, x: targetX, y: targetY, radius, color, number };
             if (type === 'minigoal') {
                 newObj.sizeCategory = sizeCategory;
                 newObj.goalScale = goalScale;
@@ -7287,6 +7568,8 @@ function handleMouseDown(e) {
                             newObj.text = input.value;
                             objects.push(newObj);
                             selectedObject = newObj;
+                            currentTool = 'select';
+                            updateToolDockActive();
                             saveHistory();
                             drawPitch(objects);
                         }
@@ -7301,6 +7584,10 @@ function handleMouseDown(e) {
             }
             objects.push(newObj);
             selectedObject = newObj;
+
+            currentTool = 'select';
+            updateToolDockActive();
+
             saveHistory();
             drawPitch(objects);
 
@@ -7347,6 +7634,11 @@ function handleMouseMove(e) {
         drawPitch(objects);
     } else if (isDrawing && currentTool && (currentTool.startsWith('line-') || currentTool === 'ladder')) {
         drawPitch(objects);
+
+        // ⭐ 追加：プレビュー（下書き）を描画する前にも、キャンバスのスケールを標準の800x500基準に合わせる
+        ctx.save();
+        ctx.scale(canvas.width / 800, canvas.height / 500);
+
         if (currentTool === 'ladder') {
             drawLadder(startX, startY, applyGridSnap(x, 'x'), applyGridSnap(y, 'y'));
         } else if (currentTool === 'line-rect') {
@@ -7357,6 +7649,9 @@ function handleMouseMove(e) {
             const lType = currentTool.replace('line-', '');
             drawArrow(startX, startY, applyGridSnap(x, 'x'), applyGridSnap(y, 'y'), lType);
         }
+
+        // ⭐ 追加：描き終わったら元のスケールに戻す
+        ctx.restore();
     }
 }
 
@@ -7373,17 +7668,26 @@ function handleMouseUp(e) {
         const x = applyGridSnap(pos.x, 'x');
         const y = applyGridSnap(pos.y, 'y');
         if (Math.abs(x - startX) > 5 || Math.abs(y - startY) > 5) {
+            let newObj = null; // 変数を宣言
             if (currentTool === 'ladder') {
-                objects.push({ id: objectIdCounter++, type: 'ladder', x1: startX, y1: startY, x2: x, y2: y });
+                newObj = { id: objectIdCounter++, type: 'ladder', x1: startX, y1: startY, x2: x, y2: y };
             } else if (currentTool === 'line-rect') {
-                objects.push({ id: objectIdCounter++, type: 'rect', x1: startX, y1: startY, x2: x, y2: y });
+                newObj = { id: objectIdCounter++, type: 'rect', x1: startX, y1: startY, x2: x, y2: y };
             } else if (currentTool === 'line-circle') {
-                objects.push({ id: objectIdCounter++, type: 'circle', x1: startX, y1: startY, x2: x, y2: y });
+                newObj = { id: objectIdCounter++, type: 'circle', x1: startX, y1: startY, x2: x, y2: y };
             } else {
                 const lType = currentTool.replace('line-', '');
-                objects.push({ id: objectIdCounter++, type: 'line', lineType: lType, x1: startX, y1: startY, x2: x, y2: y });
+                newObj = { id: objectIdCounter++, type: 'line', lineType: lType, x1: startX, y1: startY, x2: x, y2: y };
             }
-            saveHistory();
+
+            if (newObj) {
+                objects.push(newObj);
+                // 描画した図形をそのまま選択状態にして、自動で選択ツールに戻す
+                selectedObject = newObj;
+                currentTool = 'select';
+                updateToolDockActive();
+                saveHistory();
+            }
         }
         isDrawing = false;
         drawPitch(objects);
