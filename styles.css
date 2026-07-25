@@ -3257,3 +3257,156 @@ body.drawing-mode .main-content {
         font-size: 0.8rem !important;
     }
 }
+
+/* GAS同期セクションのボタン崩れ防止対応 */
+.gas-actions-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    align-items: center !important;
+}
+
+.gas-actions-group {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    align-items: center !important;
+    margin-left: auto;
+}
+
+@media screen and (max-width: 768px) {
+    .gas-actions-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .gas-actions-group {
+        width: 100% !important;
+        margin-left: 0 !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.5rem !important;
+    }
+
+    .gas-actions-row>button,
+    .gas-actions-group>button,
+    .gas-actions-group>label {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        justify-content: center !important;
+        margin: 0 !important;
+    }
+}
+
+/* プレイヤーバーの折りたたみ状態 */
+.anim-player-bar.collapsed {
+    transform: translate(-50%, 0) !important;
+    bottom: 10px !important;
+    height: 36px !important;
+    width: 44px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 隠した時も「トグルボタン」だけは強制的に中央に表示させる */
+.anim-player-bar.collapsed #anim-timeline-toggle {
+    display: inline-flex !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+/* トグルボタン以外のすべてのグループ、区切り線、セレクトボックスを完全に非表示 */
+.anim-player-bar.collapsed .player-bar-group,
+.anim-player-bar.collapsed .player-bar-divider,
+.anim-player-bar.collapsed select {
+    display: none !important;
+}
+
+/* ==========================================================================
+   クラウド同期ステータスボタン & ポップオーバー
+   ========================================================================== */
+.sync-status-btn {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    font-size: 0.85rem !important;
+}
+
+/* 右下の小さな状態インジケーター（ポチ） */
+.sync-status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    /* 緑：最新状態 */
+    border: 1.5px solid #ffffff;
+    box-sizing: border-box;
+}
+
+.sync-status-dot.syncing {
+    background: #3b82f6;
+    /* 青：通信中 */
+}
+
+.sync-status-dot.error {
+    background: #ef4444;
+    /* 赤：エラー */
+}
+
+/* タップ時に表示するポップオーバー */
+.sync-popover {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 230px;
+    background: #ffffff;
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    padding: 0.8rem 1rem;
+    z-index: 2000;
+}
+
+.sync-popover.hidden {
+    display: none !important;
+}
+
+.sync-popover-header {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--surface-border);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.sync-time-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.2rem;
+}
+
+.sync-status-text {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+}

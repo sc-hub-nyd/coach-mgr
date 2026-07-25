@@ -44,10 +44,29 @@
                     <button class="btn btn-secondary topbar-btn" id="btn-toggle-role" title="モードを切り替えます">
                         <i class="fa-solid fa-right-left"></i><span>モード切替</span>
                     </button>
-                    <button class="btn btn-secondary topbar-btn" id="btn-topbar-sync" style="display:none;"
-                        title="クラウド手動同期">
-                        <i class="fa-solid fa-cloud-arrow-down"></i><span>クラウド同期</span>
-                    </button>
+                    <!-- ▼ コンパクトなクラウド同期ステータスボタン & ポップオーバー -->
+                    <div class="sync-status-wrapper" style="position:relative;">
+                        <button class="btn btn-secondary topbar-btn sync-status-btn" id="btn-topbar-sync-status"
+                            title="クラウド同期ステータス">
+                            <i class="fa-solid fa-cloud-arrow-down" id="sync-status-icon"></i>
+                            <span class="sync-status-dot" id="sync-status-dot"></span>
+                        </button>
+
+                        <!-- タップ時に開くステータスポップオーバー -->
+                        <div id="sync-popover" class="sync-popover hidden">
+                            <div class="sync-popover-header">
+                                <i class="fa-solid fa-cloud"></i> クラウド同期ステータス
+                            </div>
+                            <div class="sync-popover-body">
+                                <div class="sync-time-label">最終同期: <span id="sync-last-time">未実施</span></div>
+                                <div class="sync-status-text" id="sync-status-text">最新状態です</div>
+                                <button class="btn btn-primary btn-sm sync-action-btn" id="btn-popover-sync-now"
+                                    style="width:100%; margin-top:0.6rem; justify-content:center;">
+                                    <i class="fa-solid fa-cloud-arrow-down"></i> 手動同期を実行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </header>
 
@@ -784,6 +803,10 @@
 
                         <!-- 5. Floating Compact Player Bar Timeline (Centered Inside Pitch Canvas) -->
                         <footer class="anim-player-bar" id="anim-timeline-bar">
+                            <!-- Timeline Toggle Button -->
+                            <button class="btn btn-secondary btn-xs" id="anim-timeline-toggle" title="バーを隠す"
+                                style="padding:0 0.5rem; font-size:0.75rem; height:30px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center;"><i
+                                    class="fa-solid fa-chevron-down"></i></button>
                             <!-- Left Group: Play / Stop -->
                             <div class="player-bar-group player-bar-left">
                                 <button class="btn btn-primary btn-xs" id="anim-play" title="アニメーション再生"><i

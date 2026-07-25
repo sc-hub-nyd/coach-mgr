@@ -66,7 +66,7 @@ let state = {
     ],
     currentRoute: 'dashboard'
 };
-
+let lastSyncTimeStr = '未実施';
 let currentMatchNendo = 'all';
 let currentPracticeNendo = 'all';
 let currentPracticeMonth = 'all';
@@ -434,13 +434,16 @@ function syncPushGasCloud(isSilent = false) {
         .then(resData => {
             if (resData && resData.status === 'success') {
                 if (!isSilent) showToast('クラウドへの送信が完了しました！');
+                setSyncStateUI('success'); // 【追加】成功ステータス更新
                 return resData;
             } else {
+                setSyncStateUI('error'); // 【追加】エラー更新
                 throw new Error(resData.message || '同期エラー');
             }
         })
         .catch(err => {
             console.error('GAS Sync Push Error Details:', err);
+            setSyncStateUI('error'); // 【追加】エラー更新
             if (!isSilent) alert(`クラウド送信に失敗しました:\n${err.message || err}`);
         });
 }
@@ -511,14 +514,17 @@ function syncPullGasCloud(isSilent = false) {
                     if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
 
                     if (!isSilent) showToast('クラウドから最新データを復元しました！');
+                    setSyncStateUI('success'); // 【追加】成功ステータス更新
                     navigate(state.currentRoute || 'dashboard');
                     return remoteData;
                 }
             }
+            setSyncStateUI('error'); // 【追加】エラー更新
             throw new Error('有効なクラウドデータが見つかりませんでした');
         })
         .catch(err => {
             console.error('GAS Sync Pull Error Details:', err);
+            setSyncStateUI('error'); // 【追加】エラー更新
             if (!isSilent) alert(`クラウドからの復元に失敗しました:\n${err.message || err}`);
         });
 }
@@ -767,20 +773,53 @@ function updateRoleUI() {
         btnToggle.title = isCoach ? '保護者モードに切り替え' : 'コーチモードに切り替え';
     }
 
-    // 3. 同期ボタン（クラウド連携アイコン：コーチ＝送信 Up / 保護者＝受信 Down）
-    const btnTopbarSync = document.getElementById('btn-topbar-sync');
-    if (btnTopbarSync) {
-        const hasUrl = state.teamInfo && state.teamInfo.gasApiUrl;
-        btnTopbarSync.style.display = hasUrl ? 'inline-flex' : 'none';
+    // 3. 同期ボタン＆ポップオーバー制御
+    const btnSyncStatus = document.getElementById('btn-topbar-sync-status');
+    const syncPopover = document.getElementById('sync-popover');
+    const btnSyncNow = document.getElementById('btn-popover-sync-now');
+    const icon = document.getElementById('sync-status-icon');
+    const hasUrl = state.teamInfo && state.teamInfo.gasApiUrl;
 
+    if (btnSyncStatus) {
+        btnSyncStatus.style.display = hasUrl ? 'inline-flex' : 'none';
+
+        // 通信中でなければ、現在のモードに合わせてアイコン（☁️⬆️ または ☁️⬇️）をセット
+        if (icon && !icon.classList.contains('fa-spin')) {
+            icon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        }
+
+        // アイコンタップでポップオーバーを開閉
+        btnSyncStatus.onclick = (e) => {
+            e.stopPropagation();
+            if (syncPopover) syncPopover.classList.toggle('hidden');
+        };
+    }
+
+    // ポップオーバーの外側をタップした時に閉じる
+    document.addEventListener('click', (e) => {
+        if (syncPopover && !syncPopover.contains(e.target) && e.target !== btnSyncStatus) {
+            syncPopover.classList.add('hidden');
+        }
+    });
+
+    // ポップオーバー内の手動同期実行ボタン制御
+    if (btnSyncNow) {
         if (isCoach) {
-            btnTopbarSync.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> <span>クラウド同期</span>';
-            btnTopbarSync.title = '手動でクラウドへ最新データを送信';
-            btnTopbarSync.onclick = () => syncPushGasCloud(false);
+            btnSyncNow.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> 最新データを送信 (Push)';
+            btnSyncNow.onclick = () => {
+                setSyncStateUI('syncing');
+                syncPushGasCloud(false)
+                    .then(() => setSyncStateUI('success'))
+                    .catch(() => setSyncStateUI('error'));
+            };
         } else {
-            btnTopbarSync.innerHTML = '<i class="fa-solid fa-cloud-arrow-down"></i> <span>クラウド同期</span>';
-            btnTopbarSync.title = '手動でクラウドから最新データを取得';
-            btnTopbarSync.onclick = () => syncPullGasCloud(false);
+            btnSyncNow.innerHTML = '<i class="fa-solid fa-cloud-arrow-down"></i> クラウドから復元 (Pull)';
+            btnSyncNow.onclick = () => {
+                setSyncStateUI('syncing');
+                syncPullGasCloud(false)
+                    .then(() => setSyncStateUI('success'))
+                    .catch(() => setSyncStateUI('error'));
+            };
         }
     }
 
@@ -5851,7 +5890,12 @@ function initAnimation(params) {
         timelineToggleBtn.onclick = (e) => {
             e.stopPropagation();
             const isCollapsed = timelineBar.classList.toggle('collapsed');
-            timelineToggleBtn.textContent = isCollapsed ? '▲ 開く' : '▼ 隠す';
+            const icon = timelineToggleBtn.querySelector('i');
+            if (icon) {
+                // 閉じたときは上向き（fa-chevron-up）、開いたときは下向き（fa-chevron-down）にクラスを切り替え
+                icon.className = isCollapsed ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
+            }
+            timelineToggleBtn.title = isCollapsed ? 'バーを開く' : 'バーを隠す';
         };
     }
 
@@ -6344,9 +6388,6 @@ function drawPitchBackground() {
 
     const templateEl = document.getElementById('canvas-pitch-template');
     let template = templateEl && templateEl.value ? templateEl.value : 'full';
-    if (template === 'blank') {
-        template = 'full';
-    }
 
     drawPitchToCtx([], bgCanvas, bgCtx, template);
 }
@@ -7696,3 +7737,30 @@ function handleMouseUp(e) {
 
 // Start app
 document.addEventListener('DOMContentLoaded', init);
+
+// ===== 【追加】クラウド同期UIのステータス更新ヘルパー関数 =====
+function setSyncStateUI(status) {
+    const icon = document.getElementById('sync-status-icon');
+    const dot = document.getElementById('sync-status-dot');
+    const timeEl = document.getElementById('sync-last-time');
+    const textEl = document.getElementById('sync-status-text');
+    const isCoach = state.currentUserRole === 'coach';
+
+    if (status === 'syncing') {
+        if (icon) icon.className = 'fa-solid fa-rotate fa-spin'; // 🔄 ぐるぐる回転
+        if (dot) dot.className = 'sync-status-dot syncing';
+        if (textEl) textEl.textContent = '通信中...';
+    } else if (status === 'success') {
+        if (icon) icon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        if (dot) dot.className = 'sync-status-dot';
+
+        const now = new Date();
+        lastSyncTimeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        if (timeEl) timeEl.textContent = `本日 ${lastSyncTimeStr}`;
+        if (textEl) textEl.textContent = '最新状態です';
+    } else if (status === 'error') {
+        if (icon) icon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        if (dot) dot.className = 'sync-status-dot error';
+        if (textEl) textEl.textContent = '同期に失敗しました';
+    }
+}
