@@ -914,6 +914,10 @@ function navigate(route, params = null) {
     ctx = null;
     state.currentRoute = route;
 
+    // 💡【追加】画面遷移時は開いているモーダルを閉じ、スクロール固定を強制解除する
+    document.querySelectorAll('.modal-overlay').forEach(el => el.classList.add('hidden'));
+    document.body.classList.remove('modal-open');
+
     navLinks.forEach(link => {
         link.classList.toggle('active', link.dataset.route === route);
         if (link.dataset.route === route) {
@@ -1303,6 +1307,9 @@ function setupModals() {
 
         saveData();
         document.getElementById('modal-match').classList.add('hidden');
+        if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+            document.body.classList.remove('modal-open');
+        }
         navigate('matches');
 
         if (matchId) {
@@ -1344,6 +1351,9 @@ function setupModals() {
 
         saveData();
         document.getElementById('modal-practice').classList.add('hidden');
+        if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+            document.body.classList.remove('modal-open');
+        }
         navigate('practices');
         e.target.reset();
         document.getElementById('practice-edit-id').value = '';
@@ -1381,6 +1391,8 @@ function setupModals() {
         e.preventDefault();
         const practiceId = document.getElementById('menu-practice-id').value;
         const sourceId = document.getElementById('menu-library-source-id').value;
+        const focusVal = document.getElementById('menu-focus').value.trim();
+        const editId = document.getElementById('menu-edit-id') ? document.getElementById('menu-edit-id').value : '';
 
         let frames = null;
         let pitchTemplate = 'full';
@@ -1396,12 +1408,22 @@ function setupModals() {
             }
         }
 
+        // 💡【追加】新規作成時（ライブラリから既存を選択していない場合）、メニュー管理（ライブラリ）内に同じ名称が既に存在するか重複チェック
+        if (!sourceId && focusVal) {
+            const isDuplicate = state.menuLibrary.some(m => m.focus === focusVal && (!editId || m.id !== parseInt(editId)));
+
+            if (isDuplicate) {
+                const proceed = confirm(`「${focusVal}」という名称のメニューはすでにメニュー管理（ライブラリ）に存在します。\n重複して登録しますがよろしいですか？`);
+                if (!proceed) return; // 「いいえ」を選んだ場合は保存処理を中断
+            }
+        }
+
         const videoUrlInp = document.getElementById('menu-video-url');
         const videoUrlVal = videoUrlInp ? videoUrlInp.value.trim() : '';
 
         const newMenuObj = {
-            id: Date.now(),
-            focus: document.getElementById('menu-focus').value,
+            id: editId ? parseInt(editId) : Date.now(),
+            focus: focusVal,
             organize: document.getElementById('menu-organize').value,
             keyfactor: document.getElementById('menu-keyfactor').value,
             options: document.getElementById('menu-options').value,
@@ -1411,7 +1433,6 @@ function setupModals() {
             pitchTemplate: pitchTemplate
         };
 
-        const editId = document.getElementById('menu-edit-id') ? document.getElementById('menu-edit-id').value : '';
         if (editId) {
             let targetMenu = null;
             if (practiceId === 'library') {
@@ -1436,6 +1457,9 @@ function setupModals() {
                 saveData();
                 showToast('メニューを更新しました');
                 document.getElementById('modal-menu').classList.add('hidden');
+                if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                    document.body.classList.remove('modal-open');
+                }
 
                 const animView = document.getElementById('view-animation');
                 if (animView && animView.classList.contains('active')) {
@@ -1458,19 +1482,37 @@ function setupModals() {
             }
         }
 
+        // 💡【修正】練習画面で追加された場合でも、メニュー管理（ライブラリ）へ自動追加されるように連携
         if (practiceId === 'library') {
             state.menuLibrary.push(newMenuObj);
             saveData();
             showToast('ライブラリに保存しました');
             document.getElementById('modal-menu').classList.add('hidden');
+            if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                document.body.classList.remove('modal-open');
+            }
             navigate('library');
         } else {
             const practice = state.practices.find(p => p.id === parseInt(practiceId));
             if (practice) {
+                // 1. 各練習日のメニューリストに追加
                 practice.menus.push(newMenuObj);
+
+                // 2. メニュー管理（ライブラリ）側にも未登録であれば自動的に追加する
+                // （※ライブラリ側で同じIDや同じ名前の重複が気になる場合はここでプールできますが、今回は自動蓄積用にpushします）
+                if (!state.menuLibrary.some(m => m.id === newMenuObj.id)) {
+                    state.menuLibrary.push({
+                        ...newMenuObj,
+                        id: Date.now() // 新規ライブラリアイテムとしての固有ID
+                    });
+                }
+
                 saveData();
-                showToast('メニューを追加しました');
+                showToast('メニューを追加し、ライブラリにも保存しました');
                 document.getElementById('modal-menu').classList.add('hidden');
+                if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                    document.body.classList.remove('modal-open');
+                }
                 navigate('practices');
             }
         }
@@ -1498,6 +1540,9 @@ function setupModals() {
                     saveData();
                     showToast('選手情報を更新しました');
                     document.getElementById('modal-player').classList.add('hidden');
+                    if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                        document.body.classList.remove('modal-open');
+                    }
                     initPlayers();
                     openPlayerDetail(player.id); // Refresh detail modal
                 }
@@ -1526,6 +1571,9 @@ function setupModals() {
                 saveData();
                 showToast('選手を登録しました');
                 document.getElementById('modal-player').classList.add('hidden');
+                if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                    document.body.classList.remove('modal-open');
+                }
                 navigate('players');
             }
             e.target.reset();
@@ -1564,6 +1612,9 @@ function setupModals() {
                     saveData();
                     showToast(`${addedCount}件のフィードバックを保存しました`);
                     document.getElementById('modal-match-feedback').classList.add('hidden');
+                    if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                        document.body.classList.remove('modal-open');
+                    }
 
                     // Re-render detail view if open
                     const btnDetail = document.querySelector(`.btn-detail-match[data-id="${matchId}"]`);
@@ -1690,6 +1741,9 @@ function setupModals() {
                 saveData();
                 showToast('ピリオド(得点・フォーメーション)情報を保存しました');
                 document.getElementById('modal-formation').classList.add('hidden');
+                if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                    document.body.classList.remove('modal-open');
+                }
 
                 // Re-render detail view
                 openMatchDetail(matchId);
@@ -1739,6 +1793,9 @@ function setupModals() {
                 player.history.sort((a, b) => new Date(b.date) - new Date(a.date));
                 saveData();
                 document.getElementById('modal-player-assessment').classList.add('hidden');
+                if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                    document.body.classList.remove('modal-open');
+                }
 
                 // Refresh player detail view
                 openPlayerDetail(playerId);
