@@ -410,11 +410,11 @@ body.role-read-only #pd-tab-goals textarea {
         box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
     }
 
-    /* メインコンテンツの余もボトムナビの高さに合わせて調整 */
+    /* メインコンテンツの下部余白もコンパクトな高さに合わせて調整 */
     .main-content {
         margin-left: 0 !important;
         width: 100% !important;
-        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
     }
 
     .menu-toggle {
@@ -482,13 +482,12 @@ body.role-read-only #pd-tab-goals textarea {
     .bottom-nav {
         display: flex !important;
         position: fixed !important;
-        bottom: 12px !important;
-        /* 画面下部から少し浮かせて見切れを完全に防止 */
+        bottom: 10px !important;
         left: 12px !important;
         right: 12px !important;
         width: calc(100% - 24px) !important;
-        height: 60px !important;
-        /* 高さを少し持たせて余裕を確保 */
+        height: 45px !important;
+        /* 高さを低くコンパクトに変更 */
         flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
@@ -497,10 +496,10 @@ body.role-read-only #pd-tab-goals textarea {
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
         border: 1px solid var(--surface-border) !important;
-        border-radius: 16px !important;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+        border-radius: 14px !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
         box-sizing: border-box !important;
-        padding: 0 4px !important;
+        padding: 0 2px !important;
     }
 
     .bottom-nav .nav-item {
@@ -510,22 +509,25 @@ body.role-read-only #pd-tab-goals textarea {
         justify-content: center !important;
         flex: 1 !important;
         height: 100% !important;
-        gap: 3px !important;
-        padding: 0 !important;
+        gap: 4px !important;
+        /* アイコンと文字の間に適度な余白を持たせる */
+        padding: 4px 0 !important;
+        /* 上下の余白もバランスよく調整 */
         color: var(--text-secondary) !important;
         text-decoration: none !important;
-        border-radius: 10px !important;
+        border-radius: 8px !important;
         box-sizing: border-box !important;
     }
 
     .bottom-nav .nav-item i {
-        font-size: 1.15rem !important;
+        font-size: 1.05rem !important;
+        /* アイコンサイズも少しスリムに調整 */
         line-height: 1 !important;
         display: block !important;
     }
 
     .bottom-nav .nav-item span {
-        font-size: 0.62rem !important;
+        font-size: 0.6rem !important;
         line-height: 1 !important;
         white-space: nowrap !important;
         display: block !important;
