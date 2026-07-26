@@ -410,11 +410,11 @@ body.role-read-only #pd-tab-goals textarea {
         box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
     }
 
+    /* メインコンテンツの余もボトムナビの高さに合わせて調整 */
     .main-content {
         margin-left: 0 !important;
         width: 100% !important;
-        /* ボトムナビの高さ(56px) + セーフエリアの余白を確実に確保してコンテンツが隠れないようにする */
-        padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     }
 
     .menu-toggle {
@@ -482,21 +482,25 @@ body.role-read-only #pd-tab-goals textarea {
     .bottom-nav {
         display: flex !important;
         position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 56px !important;
+        bottom: 12px !important;
+        /* 画面下部から少し浮かせて見切れを完全に防止 */
+        left: 12px !important;
+        right: 12px !important;
+        width: calc(100% - 24px) !important;
+        height: 60px !important;
+        /* 高さを少し持たせて余裕を確保 */
         flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
         z-index: 900 !important;
-        /* 下部のホームインジケータ（バー）と完全に被らないようにパディングを固定 */
-        padding-bottom: env(safe-area-inset-bottom, 0px) !important;
         background: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
-        border-top: 1px solid var(--surface-border) !important;
+        border: 1px solid var(--surface-border) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
         box-sizing: border-box !important;
+        padding: 0 4px !important;
     }
 
     .bottom-nav .nav-item {
@@ -505,27 +509,26 @@ body.role-read-only #pd-tab-goals textarea {
         align-items: center !important;
         justify-content: center !important;
         flex: 1 !important;
-        /* 各項目の幅を均等に割り当て、文字のはみ出しを防ぐ */
         height: 100% !important;
-        gap: 2px !important;
-        padding: 2px 0 !important;
-        font-size: 0.65rem !important;
+        gap: 3px !important;
+        padding: 0 !important;
         color: var(--text-secondary) !important;
         text-decoration: none !important;
-        border-radius: 0 !important;
-        /* 角丸による位置ズレを解消 */
+        border-radius: 10px !important;
         box-sizing: border-box !important;
     }
 
     .bottom-nav .nav-item i {
-        font-size: 1.1rem !important;
+        font-size: 1.15rem !important;
         line-height: 1 !important;
+        display: block !important;
     }
 
     .bottom-nav .nav-item span {
         font-size: 0.62rem !important;
         line-height: 1 !important;
         white-space: nowrap !important;
+        display: block !important;
     }
 
     .bottom-nav .nav-item.active {
