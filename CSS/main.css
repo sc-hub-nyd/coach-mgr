@@ -1,0 +1,6 @@
+/* css/main.css */
+@import url('base.css');
+@import url('components.css');
+@import url('dashboard.css');
+@import url('tactical.css');
+@import url('drawing.css');
