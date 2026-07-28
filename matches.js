@@ -554,53 +554,74 @@ export function openMatchModal(matchId = null) {
  * 階層1: 試合詳細画面（画面ビューとしての初期化）
  */
 export function initMatchDetailView(matchId) {
+    // 1. 引数で渡ってこない場合は URL のクエリパラメータ等からも自動取得を試みる
     if (!matchId) {
-        navigate('matches');
-        return;
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramId = urlParams.get('matchId');
+        if (paramId) {
+            matchId = parseInt(paramId, 10);
+        }
     }
 
-    // ★ Number() に変換して型不一致による find エラーを防止
+    if (!matchId && state.matches.length > 0) {
+        matchId = state.matches[0].id;
+    }
+
     const m = state.matches.find(match => Number(match.id) === Number(matchId));
     if (!m) {
+        // データがまだロード中の可能性があるため、少し待ってから再試行するか一覧へ
+        if (state.matches.length === 0) {
+            // データロード待ちの間に呼ばれた場合の対策として少し遅延させる
+            setTimeout(() => initMatchDetailView(matchId), 100);
+            return;
+        }
         showToast('該当する試合データが見つかりません');
         navigate('matches');
         return;
     }
 
     currentMatchId = m.id;
+    const isCoach = state.currentUserRole === 'coach';
 
-    // ヘッダー情報（日付・種別・スコア）の反映
+    // ==========================================
+    // ★ 修正：実際のHTML（index.html）のIDに合わせる
+    // ==========================================
     const metaEl = document.getElementById('match-detail-meta');
-    if (metaEl) metaEl.textContent = `${m.date} | ${m.type}${m.tournament ? ` (${m.tournament})` : ''}`;
+    if (metaEl) {
+        metaEl.textContent = `${m.date || ''} | ${m.type || ''}${m.tournament ? ` (${m.tournament})` : ''}`;
+    }
 
     const titleEl = document.getElementById('match-detail-title');
-    if (titleEl) titleEl.innerHTML = `vs ${escapeHtml(m.opponent)} <span id="match-detail-score" style="color:var(--text-primary); font-weight:bold; margin-left:0.5rem;">${m.result ? `(${m.result})` : ''}</span>`;
+    if (titleEl) {
+        titleEl.textContent = `vs ${m.opponent || '対戦相手'}`;
+    }
 
+    // 試合テーマや総括の反映
     const themeEl = document.getElementById('match-detail-theme');
     if (themeEl) themeEl.textContent = m.theme || '未設定';
 
     const summaryEl = document.getElementById('match-detail-summary');
-    if (summaryEl) summaryEl.textContent = m.comments || m.summary || '記録なし';
+    if (summaryEl) summaryEl.textContent = m.comments || '記録なし';
 
-    // 「試合一覧に戻る」ボタン
-    const btnBack = document.getElementById('btn-back-to-matches');
-    if (btnBack) {
-        btnBack.onclick = () => navigate('matches');
+    // ★ 保護者モード時は「試合情報編集」「ピリオド追加」ボタンを非表示化
+    const btnEditMatch = document.getElementById('btn-edit-match');
+    if (btnEditMatch) {
+        btnEditMatch.style.display = isCoach ? 'inline-flex' : 'none';
+        btnEditMatch.onclick = () => openMatchModal(m.id);
+    }
+
+    const btnAddFormation = document.getElementById('btn-add-formation');
+    if (btnAddFormation) {
+        btnAddFormation.style.display = isCoach ? 'inline-flex' : 'none';
+        btnAddFormation.onclick = () => {
+            if (typeof window.editFormation === 'function') {
+                window.editFormation(m.id, null);
+            }
+        };
     }
 
     // ピリオドカードグリッドを描画
     renderPeriodGrid(m);
-
-    // 編集・追加ボタンのイベント登録
-    const btnEditMatch = document.getElementById('btn-edit-match');
-    if (btnEditMatch) btnEditMatch.onclick = () => openMatchModal(m.id);
-
-    const btnAddFormation = document.getElementById('btn-add-formation');
-    if (btnAddFormation) btnAddFormation.onclick = () => {
-        if (typeof window.editFormation === 'function') {
-            window.editFormation(m.id, null);
-        }
-    };
 }
 
 // 互換性のため、従来呼んでいた openMatchDetail を画面遷移ルーティングに置き換え
@@ -608,9 +629,10 @@ export function openMatchDetail(id) {
     navigate('match-detail', { matchId: id });
 }
 
-// 階層1: ピリオドカード（2行×3列対応グリッド）レンダリング処理
+// 階層1: 試合詳細画面のピリオドカード描画
 function renderPeriodGrid(m) {
     const grid = document.getElementById('match-period-grid');
+    const isCoach = state.currentUserRole === 'coach';
     if (!grid) return;
 
     if (!m.formations || m.formations.length === 0) {
@@ -623,67 +645,60 @@ function renderPeriodGrid(m) {
         const scoreThem = f.scoreThem !== undefined ? f.scoreThem : 0;
         const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="fa-brands fa-youtube" style="color:#ef4444;" title="動画あり"></i>' : '';
 
-        // 得失点・重要イベント抽出
-        const goalsHtml = (f.analysisMemos || []).filter(memo => memo.tag === '得点' || memo.tag === '失点' || memo.tag === 'チャンス').map(memo => {
-            const icon = memo.tag === '得点' ? '⚽' : (memo.tag === '失点' ? '⚠️' : '💡');
-            return `<div style="font-size:0.75rem; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${icon} ${memo.time} ${escapeHtml(memo.text)}</div>`;
-        }).join('') || '<div style="font-size:0.75rem; color:var(--text-secondary);">イベント記録なし</div>';
+        // 得失点・重要イベント抽出（最大3件）
+        const memoList = f.analysisMemos || [];
+        const goalsHtml = memoList.length > 0
+            ? memoList.slice(0, 3).map(memo => {
+                let icon = '💡';
+                if (memo.tag === '得点') icon = '⚽';
+                else if (memo.tag === '失点') icon = '⚠️';
+                else if (memo.tag === '課題/反省') icon = '📌';
+                return `<div style="font-size:0.75rem; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${icon} ${escapeHtml(memo.time || '00:00')} ${escapeHtml(memo.text || memo.tag)}</div>`;
+            }).join('')
+            : '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic;">タイムライン記録なし</div>';
 
         return `
-            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; gap:0.6rem; padding:0.8rem; margin:0; border:1px solid var(--surface-border);">
+            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; gap:0.8rem; padding:1rem; margin:0; border:1px solid var(--surface-border);">
                 <div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                        <strong style="font-size:0.95rem; color:var(--primary);">${escapeHtml(f.name || `${idx + 1}本目`)}</strong>
-                        <div style="display:flex; align-items:center; gap:0.4rem;">
+                    <!-- ヘッダー: 本数名・スコア・動画アイコン -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; border-bottom:1px solid var(--surface-border); padding-bottom:0.4rem;">
+                        <strong style="font-size:1rem; color:var(--primary);">${escapeHtml(f.name || `${idx + 1}本目`)}</strong>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
                             ${videoBadge}
-                            <span class="badge" style="background:var(--primary); color:#fff; font-weight:bold;">${scoreUs} - ${scoreThem}</span>
+                            <span class="badge" style="background:var(--primary); color:#fff; font-weight:bold; font-size:0.85rem;">${scoreUs} - ${scoreThem}</span>
                         </div>
                     </div>
                     
-                    <!-- 得失点サマリー -->
-                    <div style="background:rgba(0,0,0,0.02); padding:0.4rem; border-radius:4px; margin-bottom:0.5rem; display:flex; flex-direction:column; gap:0.15rem;">
+                    <!-- システム（陣形）のみ表示 -->
+                    <div style="display:flex; gap:0.4rem; margin-bottom:0.6rem;">
+                        <span class="badge" style="background:rgba(0,0,0,0.05); color:var(--text-primary); font-size:0.72rem;">陣形: ${escapeHtml(f.system || '未設定')}</span>
+                    </div>
+
+                    <!-- 重要イベントリスト -->
+                    <div style="background:rgba(0,0,0,0.02); padding:0.5rem; border-radius:6px; margin-bottom:0.6rem; display:flex; flex-direction:column; gap:0.25rem;">
                         ${goalsHtml}
                     </div>
 
-                    <!-- ミニフォーメーションピッチ -->
-                    <div style="width:100%; height:110px; background:#1e293b; border-radius:6px; overflow:hidden; position:relative; margin-bottom:0.5rem;">
-                        <canvas id="period-card-pitch-${f.id}" width="800" height="500" style="width:100%; height:100%; object-fit:contain; pointer-events:none;"></canvas>
-                        <span style="position:absolute; bottom:4px; right:6px; background:rgba(0,0,0,0.6); color:#fff; font-size:0.65rem; padding:0.1rem 0.3rem; border-radius:3px;">${f.system || '陣形未設定'}</span>
-                    </div>
-
-                    <!-- ピリオド総括（ワンラインハイライト） -->
-                    <div style="font-size:0.78rem; color:var(--text-primary); font-weight:500; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
-                        💡 ${escapeHtml(f.summary || f.reflection || '総括コメント未入力')}
+                    <!-- 総括メモ -->
+                    <div style="font-size:0.8rem; color:var(--text-primary); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+                        💬 ${escapeHtml(f.summary || f.reflection || '総括コメント未入力')}
                     </div>
                 </div>
 
                 <!-- アクションボタン -->
-                <div style="display:flex; gap:0.3rem; margin-top:0.4rem;">
-                    <button class="btn btn-primary btn-sm btn-open-analysis" data-index="${idx}" style="flex:1; justify-content:center; font-size:0.78rem; padding:0.3rem;"><i class="fa-solid fa-film"></i> ${idx + 1}本目を大画面分析 ➔</button>
-                    <button class="btn btn-secondary btn-sm btn-edit-period-card" data-id="${f.id}" style="padding:0.3rem 0.5rem;"><i class="fa-solid fa-pen"></i></button>
+                <div style="display:flex; gap:0.4rem; margin-top:0.2rem;">
+                    <button class="btn btn-primary btn-sm btn-open-analysis" data-index="${idx}" style="flex:1; justify-content:center; font-size:0.8rem; padding:0.4rem;"><i class="fa-solid fa-film"></i> 動画分析 ➔</button>
+                    <button class="btn btn-secondary btn-sm btn-edit-period-card" data-id="${f.id}" style="padding:0.4rem 0.6rem;" title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>
                 </div>
             </div>
         `;
     }).join('');
 
-    // ミニフォーメーションキャンバス描画
-    setTimeout(() => {
-        m.formations.forEach(f => {
-            const canvas = document.getElementById(`period-card-pitch-${f.id}`);
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                drawPitchToCtx(f.boardData || [], canvas, ctx, 'full');
-            }
-        });
-    }, 50);
-
     // イベントバインド
     grid.querySelectorAll('.btn-open-analysis').forEach(btn => {
         btn.onclick = (e) => {
             const periodIdx = parseInt(e.currentTarget.dataset.index, 10);
-            if (typeof openPeriodAnalysis === 'function') {
-                openPeriodAnalysis(m.id, periodIdx);
-            }
+            openPeriodAnalysis(m.id, periodIdx);
         };
     });
 
@@ -695,6 +710,18 @@ function renderPeriodGrid(m) {
             }
         };
     });
+    // カード内の編集ペンボタンはコーチモード時のみ表示
+    const editBtnHtml = isCoach
+        ? `<button class="btn btn-secondary btn-sm btn-edit-period-card" data-id="${f.id}" style="padding:0.4rem 0.6rem;" title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>`
+        : '';
+
+    return `
+        <!-- ... カード構造 ... -->
+        <div style="display:flex; gap:0.4rem; margin-top:0.2rem;">
+            <button class="btn btn-primary btn-sm btn-open-analysis" data-index="${idx}" style="flex:1; justify-content:center; font-size:0.8rem; padding:0.4rem;"><i class="fa-solid fa-film"></i> 大画面分析 ➔</button>
+            ${editBtnHtml}
+        </div>
+    `;
 }
 
 // ★ 追加: YouTubeプレーヤーを完全に停止・リセットするグローバル関数
@@ -714,47 +741,29 @@ window.stopAndCleanupYouTube = function () {
     }
 };
 
+// 階層2: 大画面分析の初期化（右上の編集ボタンの確実に接続 ＆ 最小幅15%まで可変対応）
 export function openPeriodAnalysis(matchId, periodIndex) {
     const match = state.matches.find(m => m.id === matchId);
+    const isCoach = state.currentUserRole === 'coach';
     if (!match || !match.formations || !match.formations[periodIndex]) return;
 
     currentMatchId = matchId;
     currentPeriodIndex = periodIndex;
     const period = match.formations[periodIndex];
 
-    // 1. 階層1（試合詳細モーダル）を一旦隠す
-    const matchDetailModal = document.getElementById('modal-match-detail');
-    if (matchDetailModal) matchDetailModal.classList.add('hidden');
-
-    // 2. 全画面分析ワークスペースを表示
     const periodAnalysisModal = document.getElementById('modal-period-analysis');
-    if (periodAnalysisModal) {
-        periodAnalysisModal.classList.remove('hidden');
-    }
+    if (periodAnalysisModal) periodAnalysisModal.classList.remove('hidden');
 
-    // ヘッダータイトル・スコアの反映
+    // タイトル設定
     const titleEl = document.getElementById('period-analysis-title');
     if (titleEl) {
         titleEl.textContent = `vs ${escapeHtml(match.opponent)} - ${period.name || `${periodIndex + 1}本目`} (${period.scoreUs || 0} - ${period.scoreThem || 0})`;
     }
 
-    // 「前へ / 次へ」ピリオド切替ボタン制御
-    const btnPrev = document.getElementById('btn-period-prev');
-    const btnNext = document.getElementById('btn-period-next');
-    if (btnPrev) {
-        btnPrev.disabled = periodIndex <= 0;
-        btnPrev.style.opacity = periodIndex <= 0 ? '0.5' : '1';
-        btnPrev.onclick = () => openPeriodAnalysis(matchId, periodIndex - 1);
-    }
-    if (btnNext) {
-        btnNext.disabled = periodIndex >= match.formations.length - 1;
-        btnNext.style.opacity = periodIndex >= match.formations.length - 1 ? '0.5' : '1';
-        btnNext.onclick = () => openPeriodAnalysis(matchId, periodIndex + 1);
-    }
-
-    // 「編集」ボタン制御
+    // 右上「編集」ボタンの表示制御
     const btnEdit = document.getElementById('btn-edit-period');
     if (btnEdit) {
+        btnEdit.style.display = isCoach ? 'inline-flex' : 'none';
         btnEdit.onclick = () => {
             if (typeof window.editFormation === 'function') {
                 window.editFormation(matchId, period.id);
@@ -762,60 +771,57 @@ export function openPeriodAnalysis(matchId, periodIndex) {
         };
     }
 
-    // 「戻る」ボタン制御：全画面ワークスペースを隠し、YouTubeを停止し、階層1へ復元
+    // 「前へ / 次へ」ナビボタン
+    const btnPrev = document.getElementById('btn-period-prev');
+    const btnNext = document.getElementById('btn-period-next');
+    if (btnPrev) {
+        btnPrev.disabled = periodIndex <= 0;
+        btnPrev.onclick = () => openPeriodAnalysis(matchId, periodIndex - 1);
+    }
+    if (btnNext) {
+        btnNext.disabled = periodIndex >= match.formations.length - 1;
+        btnNext.onclick = () => openPeriodAnalysis(matchId, periodIndex + 1);
+    }
+
+    // ★ 修正: 左上の「← 戻る」ボタン
     const btnBack = document.getElementById('btn-back-to-match-detail');
     if (btnBack) {
         btnBack.onclick = (e) => {
             e.preventDefault();
-            e.stopPropagation();
-
-            // ★ 追加: 音声が鳴り続けるのを防ぐためYouTubeを停止
             if (typeof window.stopAndCleanupYouTube === 'function') {
                 window.stopAndCleanupYouTube();
             }
-
-            if (periodAnalysisModal) {
-                periodAnalysisModal.classList.add('hidden');
-            }
-
+            if (periodAnalysisModal) periodAnalysisModal.classList.add('hidden');
             openMatchDetail(matchId);
         };
     }
-    /// 「イベント追加」ボタンのクリックイベント
+
+    // タイムライン「＋ 追加」ボタンの表示制御
     const btnAddTimelineEvent = document.getElementById('btn-add-timeline-event');
     if (btnAddTimelineEvent) {
+        btnAddTimelineEvent.style.display = isCoach ? 'inline-flex' : 'none';
         btnAddTimelineEvent.onclick = () => {
             let currentTimeStr = '00:00';
             if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
                 currentTimeStr = formatSeconds(ytPlayer.getCurrentTime());
             }
-
-            // 1. データの配列（period.analysisMemos）に新しいイベントを追加
-            if (!period.analysisMemos) {
-                period.analysisMemos = [];
-            }
-            period.analysisMemos.push({
-                time: currentTimeStr,
-                tag: 'チャンス',
-                text: ''
-            });
-
-            // 2. ローカルストレージ等へ即座に保存
+            if (!period.analysisMemos) period.analysisMemos = [];
+            period.analysisMemos.push({ time: currentTimeStr, tag: 'チャンス', text: '' });
             saveData();
-
-            // 3. タイムラインリストの表示を再描画して画面に反映させる
             renderPeriodTimelineList(period);
-
             showToast('タイムラインイベントを追加しました');
         };
     }
 
-    // タイムライン描画 & YouTubeプレイヤー設定 & リサイザー初期化
     renderPeriodTimelineList(period);
     const mainVideoUrl = (period.videoUrls && period.videoUrls.length > 0) ? period.videoUrls[0] : (period.videoUrl || '');
-    loadYouTubePlayer(mainVideoUrl, 'period-yt-player');
-    setupPeriodInfoResponsive(period);
-    initPeriodWorkspaceResizer();
+
+    // ★ 修正: モーダルが開いてDOMが確実に描画された後にプレーヤー等の初期化を実行する
+    setTimeout(() => {
+        loadYouTubePlayer(mainVideoUrl, 'period-yt-player');
+        setupPeriodInfoResponsive(period);
+        initPeriodWorkspaceResizer();
+    }, 50);
 }
 
 /**
@@ -878,48 +884,54 @@ function renderPeriodTimelineList(period) {
     const container = document.getElementById('period-timeline-list');
     if (!container) return;
 
+    const isCoach = state.currentUserRole === 'coach';
     const memos = period.analysisMemos || [];
+
     if (memos.length === 0) {
         container.innerHTML = `
             <div style="text-align:center; color:var(--text-secondary); padding:2rem 1rem; font-size:0.85rem;">
                 <i class="fa-regular fa-clock" style="font-size:1.5rem; margin-bottom:0.5rem; display:block; opacity:0.5;"></i>
-                タイムライン記録がありません。<br>「イベント追加」からメモを追加できます。
+                タイムライン記録がありません。
             </div>`;
         return;
     }
 
     container.innerHTML = memos.map((m, idx) => {
         const currentTag = m.tag || 'チャンス';
+        const disabledAttr = isCoach ? '' : 'disabled';
+        const deleteBtnHtml = isCoach
+            ? `<button type="button" class="btn btn-danger btn-sm btn-delete-memo" style="margin-left:auto; padding:0.15rem 0.4rem; font-size:0.75rem;" title="削除"><i class="fa-solid fa-trash-can"></i></button>`
+            : '';
+
         return `
             <div class="timeline-edit-row" data-index="${idx}" style="display:flex; flex-direction:column; gap:0.3rem; background:rgba(0,0,0,0.02); padding:0.5rem 0.6rem; border-radius:6px; border:1px solid var(--surface-border);">
                 <div style="display:flex; align-items:center; gap:0.4rem; width:100%;">
-                    <button type="button" class="btn btn-secondary btn-sm btn-seek-timestamp" data-time="${m.time || '00:00'}" style="padding:0.15rem 0.4rem; font-size:0.75rem; font-weight:bold; color:var(--primary); flex-shrink:0;">
+                    <!-- 秒数入力欄は廃止し、再生ボタン側に統合 -->
+                    <button type="button" class="btn btn-secondary btn-sm btn-seek-timestamp" data-time="${escapeHtml(m.time || '00:00')}" style="padding:0.2rem 0.5rem; font-size:0.75rem; font-weight:bold; color:var(--primary); flex-shrink:0;">
                         <i class="fa-solid fa-play"></i> ${escapeHtml(m.time || '00:00')}
                     </button>
-                    <input type="text" class="form-control memo-time-val" value="${escapeHtml(m.time || '00:00')}" style="width:65px; font-size:0.75rem; text-align:center; padding:0.2rem;" placeholder="00:00">
-                    <select class="form-control memo-tag-val" style="width:105px; font-size:0.75rem; padding:0.2rem; height:auto;">
-                        <option value="得点" ${currentTag === '得点' ? 'selected' : ''}>⚽得点</option>
-                        <option value="失点" ${currentTag === '失点' ? 'selected' : ''}>🥅失点</option>
-                        <option value="攻撃Good" ${currentTag === '攻撃Good' ? 'selected' : ''}>👌攻撃Good</option>
-                        <option value="攻撃修正" ${currentTag === '攻撃修正' ? 'selected' : ''}>⚠️攻撃修正</option>
-                        <option value="守備Good" ${currentTag === '守備Good' ? 'selected' : ''}>👌守備Good</option>
-                        <option value="守備修正" ${currentTag === '守備修正' ? 'selected' : ''}>⚠️守備修正</option>
-                        <option value="個人Good" ${currentTag === '個人Good' ? 'selected' : ''}>👌個人Good</option>
-                        <option value="個人修正" ${currentTag === '個人修正' ? 'selected' : ''}>⚠️個人修正</option>
+                    
+                    <select class="form-control memo-tag-val" ${disabledAttr} style="width:110px; font-size:0.75rem; padding:0.2rem; height:auto;">
+                        <option value="チャンス" ${currentTag === 'チャンス' ? 'selected' : ''}>💡 チャンス</option>
+                        <option value="得点" ${currentTag === '得点' ? 'selected' : ''}>⚽ 得点</option>
+                        <option value="失点" ${currentTag === '失点' ? 'selected' : ''}>⚠️ 失点</option>
+                        <option value="ビルドアップ" ${currentTag === 'ビルドアップ' ? 'selected' : ''}>ビルドアップ</option>
+                        <option value="課題/反省" ${currentTag === '課題/反省' ? 'selected' : ''}>📌 課題</option>
+                        <option value="メモ" ${currentTag === 'メモ' ? 'selected' : ''}>メモ</option>
                     </select>
-                    <button type="button" class="btn btn-danger btn-sm btn-delete-memo" style="margin-left:auto; padding:0.15rem 0.4rem; font-size:0.75rem;" title="削除"><i class="fa-solid fa-trash-can"></i></button>
+
+                    ${deleteBtnHtml}
                 </div>
                 <div>
-                    <input type="text" class="form-control memo-text-val" value="${escapeHtml(m.text || '')}" placeholder="メモ（例: 左サイドからの崩し）" style="width:100%; font-size:0.8rem; padding:0.25rem 0.4rem;">
+                    <input type="text" class="form-control memo-text-val" value="${escapeHtml(m.text || '')}" ${disabledAttr} placeholder="${isCoach ? 'メモ（例: 左サイドからの崩し）' : 'メモなし'}" style="width:100%; font-size:0.8rem; padding:0.25rem 0.4rem;">
                 </div>
             </div>
         `;
     }).join('');
 
-    // 各種入力変更イベントのバインド（入力するたびに自動保存されるようにする）
+    // イベントバインド（コーチモード時のみ）
     container.querySelectorAll('.timeline-edit-row').forEach(row => {
         const idx = parseInt(row.dataset.index, 10);
-        const timeInput = row.querySelector('.memo-time-val');
         const tagSelect = row.querySelector('.memo-tag-val');
         const textInput = row.querySelector('.memo-text-val');
         const btnDelete = row.querySelector('.btn-delete-memo');
@@ -927,26 +939,24 @@ function renderPeriodTimelineList(period) {
 
         const updateData = () => {
             if (period.analysisMemos[idx]) {
-                period.analysisMemos[idx].time = timeInput.value.trim();
                 period.analysisMemos[idx].tag = tagSelect.value;
                 period.analysisMemos[idx].text = textInput.value;
-                saveData(); // 変更を即時自動保存
+                saveData();
             }
         };
 
-        if (timeInput) timeInput.oninput = updateData;
-        if (tagSelect) tagSelect.onchange = updateData;
-        if (textInput) textInput.oninput = updateData;
+        if (tagSelect && isCoach) tagSelect.onchange = updateData;
+        if (textInput && isCoach) textInput.oninput = updateData;
 
         if (btnSeek) {
-            btnSeek.onclick = () => seekToVideoTime(timeInput.value);
+            btnSeek.onclick = () => seekToVideoTime(btnSeek.dataset.time);
         }
 
-        if (btnDelete) {
+        if (btnDelete && isCoach) {
             btnDelete.onclick = () => {
                 period.analysisMemos.splice(idx, 1);
                 saveData();
-                renderPeriodTimelineList(period); // リストを再描画して削除を反映
+                renderPeriodTimelineList(period);
                 showToast('イベントを削除しました');
             };
         }
@@ -954,7 +964,7 @@ function renderPeriodTimelineList(period) {
 }
 
 /**
- * 可変スプリットバー（ドラッグでの左右比率調整）制御
+ * 可変スプリットバー（ドラッグでの左右比率調整）制御の強力化
  */
 function initPeriodWorkspaceResizer() {
     const resizer = document.getElementById('period-workspace-resizer');
@@ -963,31 +973,51 @@ function initPeriodWorkspaceResizer() {
 
     if (!resizer || !videoCol || !container) return;
 
-    resizer.onmousedown = () => {
+    // タッチ・マウス両対応のドラッグ開始
+    const startResize = (e) => {
         isResizingWorkspace = true;
         document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none'; // テキスト選択を防止
         resizer.style.background = 'var(--primary)';
+
+        // ★ YouTube (iframe) がマウスイベントを横取りしないようにポインターイベントを無効化
+        if (videoCol) videoCol.style.pointerEvents = 'none';
     };
 
-    window.onmousemove = (e) => {
+    const doResize = (e) => {
         if (!isResizingWorkspace) return;
+
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const containerRect = container.getBoundingClientRect();
-        let newWidth = e.clientX - containerRect.left;
+        let newWidth = clientX - containerRect.left;
         let percentage = (newWidth / containerRect.width) * 100;
 
-        // 30% 〜 80% の範囲で動画エリア幅を可変
-        if (percentage >= 30 && percentage <= 80) {
+        // 動画幅を 50% から 92% (右タイムライン幅を最少 8% まで極小化) の範囲で調整
+        if (percentage >= 50 && percentage <= 92) {
             videoCol.style.flex = `0 0 ${percentage}%`;
         }
     };
 
-    window.onmouseup = () => {
+    const stopResize = () => {
         if (isResizingWorkspace) {
             isResizingWorkspace = false;
             document.body.style.cursor = 'default';
+            document.body.style.userSelect = '';
             resizer.style.background = 'var(--surface-border)';
+
+            // ★ 動画エリアのマウスイベントを復元
+            if (videoCol) videoCol.style.pointerEvents = 'auto';
         }
     };
+
+    resizer.onmousedown = startResize;
+    window.onmousemove = doResize;
+    window.onmouseup = stopResize;
+
+    // スマホ・タブレット用タッチイベント対応
+    resizer.ontouchstart = startResize;
+    window.ontouchmove = doResize;
+    window.ontouchend = stopResize;
 }
 
 /**
