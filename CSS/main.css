@@ -4,3 +4,25 @@
 @import url('dashboard.css');
 @import url('tactical.css');
 @import url('drawing.css');
+
+@keyframes timelinePulse {
+    0% {
+        border-color: var(--primary);
+        background: rgba(242, 57, 50, 0.15);
+    }
+
+    50% {
+        border-color: transparent;
+        background: rgba(242, 57, 50, 0.02);
+    }
+
+    100% {
+        border-color: var(--primary);
+        background: rgba(242, 57, 50, 0.15);
+    }
+}
+
+.timeline-highlight-active {
+    animation: timelinePulse 1.2s infinite ease-in-out;
+    border: 1.5px solid var(--primary) !important;
+}

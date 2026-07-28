@@ -1045,21 +1045,28 @@
 
     <!-- 階層2: ピリオド専用分析ワークスペース -->
     <div id="modal-period-analysis" class="period-analysis-fullscreen hidden">
-        <div class="period-analysis-container">
+        <div class="period-analysis-container" style="position: relative; overflow: hidden;">
 
             <!-- Header: 作図画面と同一のUI配置 -->
             <div
-                style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--surface-border); padding: 0.6rem 1rem; background: var(--card-bg); flex-shrink: 0;">
-                <!-- 左側: 戻る ＆ 前/次ナビ -->
+                style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--surface-border); padding: 0.6rem 1rem; background: var(--card-bg); flex-shrink: 0; z-index: 10;">
+                <!-- 左側: 戻る ＆ ピリオド遷移ナビ -->
                 <div style="display:flex; align-items:center; gap: 0.6rem;">
                     <button class="btn btn-secondary btn-sm" id="btn-back-to-match-detail" title="試合詳細へ戻る">
                         <i class="fa-solid fa-arrow-left"></i> 戻る
                     </button>
-                    <div style="display:flex; gap:0.2rem;">
-                        <button class="btn btn-secondary btn-xs" id="btn-period-prev" title="前のピリオド"><i
-                                class="fa-solid fa-chevron-left"></i></button>
-                        <button class="btn btn-secondary btn-xs" id="btn-period-next" title="次のピリオド"><i
-                                class="fa-solid fa-chevron-right"></i></button>
+                    <div
+                        style="display:flex; align-items:center; gap:0.3rem; background:rgba(0,0,0,0.03); padding:0.2rem 0.4rem; border-radius:6px; border:1px solid var(--surface-border);">
+                        <button class="btn btn-secondary btn-xs" id="btn-period-prev" title="前のピリオドへ"
+                            style="font-size:0.75rem; padding:0.2rem 0.4rem; height:auto;">
+                            <i class="fa-solid fa-chevron-left"></i> 前へ
+                        </button>
+                        <span id="current-period-name-indicator"
+                            style="font-size:0.75rem; font-weight:bold; color:var(--text-secondary); padding:0 0.3rem; white-space:nowrap;">1本目</span>
+                        <button class="btn btn-secondary btn-xs" id="btn-period-next" title="次のピリオドへ"
+                            style="font-size:0.75rem; padding:0.2rem 0.4rem; height:auto;">
+                            次へ <i class="fa-solid fa-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -1069,21 +1076,14 @@
                     vs 対戦相手 - 1本目 (0 - 0)
                 </h2>
 
-                <!-- 右側: 詳細情報 & 編集ボタン -->
-                <div style="display:flex; align-items:center; gap: 0.5rem;">
-                    <button class="btn btn-secondary btn-sm" id="btn-period-info-popover" style="display: none;">
-                        <i class="fa-solid fa-circle-info"></i> 配置・総括
-                    </button>
-                    <button class="btn btn-primary btn-sm" id="btn-edit-period">
-                        <i class="fa-solid fa-pen"></i> 編集
-                    </button>
+                <!-- 右側: ボタンは廃止し、スライドパネルのタブで開閉します -->
+                <div style="display:flex; align-items:center; gap: 0.5rem; position: relative;">
                 </div>
             </div>
 
             <!-- Main Workspace: 80%:20% 初期比率 -->
             <div id="period-workspace-container" style="display: flex; flex: 1; min-height: 0; position: relative;">
-
-                <!-- Left: YouTube Player (初期値80%) -->
+                <!-- Left: YouTube Player -->
                 <div id="period-workspace-video"
                     style="flex: 0 0 80%; display: flex; flex-direction: column; background: #000; overflow: hidden; min-width: 250px;">
                     <div
@@ -1098,7 +1098,7 @@
                     <div style="width: 2px; height: 24px; background: #94a3b8; border-radius: 1px;"></div>
                 </div>
 
-                <!-- Right: Timeline Area (最小幅制限を解除して限界まで動画を広げられるように修正) -->
+                <!-- Right: Timeline Area -->
                 <div id="period-workspace-timeline"
                     style="flex: 1; display: flex; flex-direction: column; background: var(--card-bg); border-left: none; min-width: 100px; overflow: hidden;">
                     <div
@@ -1114,26 +1114,24 @@
                         <!-- JSで動的注入 -->
                     </div>
                 </div>
-
             </div>
-        </div>
-    </div>
 
-    <!-- Match Feedback Form Modal (Bulk Input) -->
-    <div id="modal-match-feedback" class="modal-overlay hidden" style="z-index: 1001;">
-        <div class="modal" style="max-width:600px; max-height:80vh; overflow-y:auto;">
-            <h2 style="margin-bottom:1.5rem;">選手別コメントを一括入力</h2>
-            <form id="form-match-feedback">
-                <input type="hidden" id="feedback-match-id">
-                <p class="text-secondary" style="font-size:0.9rem; margin-bottom:1rem;">※コメントを入力した選手のみ保存されます。</p>
-                <div id="bulk-feedback-list" style="display:flex; flex-direction:column; gap:1rem;">
-                    <!-- Textareas for each player injected here -->
+            <!-- ★ スライド式サイドパネル（ドロワー） -->
+            <aside class="anim-detail-side-panel collapsed" id="period-info-side-panel">
+                <button class="side-panel-toggle-btn" id="period-info-side-toggle-btn" title="ピリオド情報パネルを開閉">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <div class="side-panel-header">
+                    <h4 id="period-side-panel-heading"
+                        style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.4rem;">
+                        <i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> ピリオド情報
+                    </h4>
                 </div>
-                <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
-                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                    <button type="submit" class="btn btn-primary">一括保存する</button>
+                <div class="side-panel-body" id="period-side-panel-body">
+                    <!-- JSで動的切り替え -->
                 </div>
-            </form>
+            </aside>
+
         </div>
     </div>
 
@@ -1167,13 +1165,23 @@
                     <div style="flex:1; text-align:center;">
                         <label style="font-size:0.75rem; margin-bottom:0.2rem; display:block;">自チーム得点</label>
                         <input type="number" id="formation-score-us" class="form-control" min="0" value="0"
-                            style="text-align:center;">
+                            style="text-align:center;" readonly>
                     </div>
                     <span style="font-weight:bold;">-</span>
                     <div style="flex:1; text-align:center;">
                         <label style="font-size:0.75rem; margin-bottom:0.2rem; display:block;">相手チーム得点</label>
                         <input type="number" id="formation-score-them" class="form-control" min="0" value="0"
-                            style="text-align:center;">
+                            style="text-align:center;" readonly>
+                    </div>
+                </div>
+
+                <!-- ▼ 追加: ピリオドごとの得点者・アシスト記録一覧コンテナ -->
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="font-size:0.8rem; margin-bottom:0.4rem; display:block;"><i class="fa-solid fa-futbol"
+                            style="color:var(--primary);"></i> 得点者・アシスト記録</label>
+                    <div id="period-goal-records-list"
+                        style="display:flex; flex-direction:column; gap:0.4rem; max-height:150px; overflow-y:auto; margin-bottom:0.5rem;">
+                        <!-- JSで動的に行が追加されます -->
                     </div>
                 </div>
 

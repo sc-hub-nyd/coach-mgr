@@ -597,11 +597,18 @@ export function initSettings() {
                     const role = rowEl.querySelector('.custom-node-role-select').value;
                     const cat2Val = rowEl.querySelector('.custom-node-cat2-select').value;
                     const label = cat2Val ? cat2Val : role;
+
+                    // ピッチ上のパーセンテージ位置（例: "50%"）から数値（0〜100）を抽出
+                    const xVal = parseFloat(node.left) || 50;
+                    const yVal = parseFloat(node.top) || 50;
+
                     return {
                         role,
                         label,
                         top: node.top,
-                        left: node.left
+                        left: node.left,
+                        x: xVal, // 画面描画用およびミニピッチ用のx座標
+                        y: yVal  // 画面描画用およびミニピッチ用のy座標
                     };
                 });
 

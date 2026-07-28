@@ -5,13 +5,11 @@ import { saveData, navigate, openModal } from './app.js';
 import { openPlayerDetail } from './players.js';
 import { drawPitchToCtx } from './drawing.js';
 
-// matches.js 冒頭の import 群の直下に追加
 let ytPlayer = null;
-
-// 追加: 階層2ワークスペースの制御用変数
 let currentMatchId = null;
 let currentPeriodIndex = 0;
 let isResizingWorkspace = false;
+let timelineInterval = null;
 
 // YouTube URLから11桁のIDを抽出
 function extractYouTubeId(url) {
@@ -66,21 +64,34 @@ export function loadYouTubePlayer(url, containerId = 'period-yt-player') {
         return;
     }
 
-    if (window.YT && window.YT.Player) {
-        if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
-            ytPlayer.loadVideoById(videoId);
-        } else {
-            ytPlayer = new window.YT.Player(containerId, {
-                width: '100%',
-                height: '100%',
-                videoId: videoId,
-                playerVars: { 'playsinline': 1, 'rel': 0, 'modestbranding': 1 }
-            });
-        }
-    } else {
-        // APIがまだ読み込まれていない場合のフォールバック
-        playerEl.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}?playsinline=1" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
+    if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+        ytPlayer.loadVideoById(videoId);
+        return;
     }
+
+    const initPlayer = () => {
+        if (window.YT && window.YT.Player) {
+            try {
+                ytPlayer = new window.YT.Player(containerId, {
+                    width: '100%',
+                    height: '100%',
+                    videoId: videoId,
+                    playerVars: { 'playsinline': 1, 'rel': 0, 'modestbranding': 1 }
+                });
+            } catch (e) {
+                console.error('YouTube Player initialization error:', e);
+                fallbackIframe();
+            }
+        } else {
+            fallbackIframe();
+        }
+    };
+
+    const fallbackIframe = () => {
+        playerEl.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}?playsinline=1" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
+    };
+
+    setTimeout(initPlayer, 150);
 }
 
 const formationCoords = {
@@ -174,7 +185,6 @@ export function addGoalRecordRow(scorerId = null, assistId = null, targetContain
     container.appendChild(div);
 }
 
-// ★ 追加: 分析メモ行を動的に追加する関数
 export function addAnalysisMemoRow(timeStr = '00:00', textVal = '', tagVal = 'ビルドアップ') {
     const container = document.getElementById('formation-analysis-memo-list');
     if (!container) return;
@@ -186,7 +196,6 @@ export function addAnalysisMemoRow(timeStr = '00:00', textVal = '', tagVal = '�
     div.style = 'display:flex; gap:0.3rem; align-items:center; width:100%; margin-bottom:0.3rem;';
 
     div.innerHTML = `
-        <!-- ★ 追加: タップでその時間へジャンプする再生ボタン -->
         <button type="button" class="btn btn-secondary btn-seek-video" style="padding:0.25rem 0.4rem; font-size:0.75rem; color:var(--primary);" title="このシーンへジャンプ">
             <i class="fa-solid fa-play"></i>
         </button>
@@ -202,7 +211,6 @@ export function addAnalysisMemoRow(timeStr = '00:00', textVal = '', tagVal = '�
         <button type="button" class="btn btn-danger" onclick="document.getElementById('${rowId}').remove()" style="padding:0.25rem 0.4rem; font-size:0.8rem;" title="削除"><i class="fa-solid fa-trash-can"></i></button>
     `;
 
-    // ★ 追加: ▶ ボタンを押したら入力欄の時間を取得してジャンプ
     const btnSeek = div.querySelector('.btn-seek-video');
     if (btnSeek) {
         btnSeek.onclick = () => {
@@ -229,41 +237,10 @@ export function addFormationVideoRow(urlVal = '') {
     container.appendChild(div);
 }
 
-// ★ ここに追加：ピリオドモーダル（#modal-formation）の＋ーボタン連動用
 function bindPeriodScoreButtons() {
     const modalForm = document.getElementById('modal-formation');
     if (!modalForm) return;
 
-    // ★ 追加: スマホ用タブ切り替え制御
-    const tabBtnAnalysis = document.getElementById('tab-btn-formation-analysis');
-    const tabBtnInfo = document.getElementById('tab-btn-formation-info');
-    const colLeft = document.getElementById('formation-tab-col-left');
-    const colRight = document.getElementById('formation-tab-col-right');
-
-    if (tabBtnAnalysis && tabBtnInfo && colLeft && colRight) {
-        tabBtnAnalysis.onclick = () => {
-            tabBtnAnalysis.classList.add('active');
-            tabBtnInfo.classList.remove('active');
-            colLeft.classList.remove('tab-hidden');
-            colRight.classList.add('tab-hidden');
-        };
-        tabBtnInfo.onclick = () => {
-            tabBtnInfo.classList.add('active');
-            tabBtnAnalysis.classList.remove('active');
-            colRight.classList.remove('tab-hidden');
-            colLeft.classList.add('tab-hidden');
-        };
-
-        // 初期状態は「動画・分析」タブを表示
-        if (window.innerWidth <= 768) {
-            tabBtnAnalysis.click();
-        } else {
-            colLeft.classList.remove('tab-hidden');
-            colRight.classList.remove('tab-hidden');
-        }
-    }
-
-    // 既存のスコア・キャプチャ・動画URL監視処理...
     const usInput = document.getElementById('formation-score-us');
     const usWrapper = usInput ? usInput.closest('.score-counter-wrapper') || usInput.parentElement : null;
     if (usWrapper) {
@@ -289,45 +266,6 @@ function bindPeriodScoreButtons() {
                 }
             };
         }
-    }
-
-    // ★ 追加: キャプチャボタンのイベント登録
-    const btnCapture = document.getElementById('btn-capture-timestamp');
-    if (btnCapture) {
-        btnCapture.onclick = () => {
-            if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') {
-                showToast('動画が再生準備できていません');
-                return;
-            }
-            const timeSec = ytPlayer.getCurrentTime();
-            const formatted = formatSeconds(timeSec);
-
-            // 専用の分析メモリストに行を新規追加
-            addAnalysisMemoRow(formatted, '');
-            showToast(`再生時間 (${formatted}) をキャプチャしました`);
-        };
-    }
-
-    // ★ 追加: 手動で分析メモを追加するボタンのイベント
-    const btnAddMemo = document.getElementById('btn-add-analysis-memo');
-    if (btnAddMemo) {
-        btnAddMemo.onclick = () => {
-            addAnalysisMemoRow('00:00', '');
-        };
-    }
-
-    // ★ 追加: 動画URL入力欄の変化を監視してプレーヤーを読み込み
-    const vList = document.getElementById('formation-video-list');
-    if (vList) {
-        const firstInput = vList.querySelector('.formation-video-input');
-        if (firstInput && firstInput.value) {
-            loadYouTubePlayer(firstInput.value);
-        }
-        vList.oninput = (e) => {
-            if (e.target && e.target.classList.contains('formation-video-input')) {
-                loadYouTubePlayer(e.target.value.trim());
-            }
-        };
     }
 }
 
@@ -394,9 +332,7 @@ export function renderFormationPitch(systemName, existingLineup = []) {
         const nodeEl = document.createElement('div');
         nodeEl.className = 'pitch-node';
 
-        // ★ フルコート座標 (top: 0%~100%) をハーフコート (上がセンターライン: 12%, 下がゴール: 88%) へマッピング
         const rawTop = parseFloat(coord.top) || 50;
-        // 0% (相手ゴール側) -> 12% (センターライン付近), 100% (自陣ゴール側) -> 88% (自陣ゴール前)
         const halfTop = 12 + (rawTop * 0.76);
 
         nodeEl.style.top = `${halfTop}%`;
@@ -441,7 +377,89 @@ export function renderFormationPitch(systemName, existingLineup = []) {
 
 export function openMatchModal(matchId = null) {
     const form = document.getElementById('form-match');
-    if (form) form.reset();
+    if (form) {
+        form.reset();
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const scoreUs = document.getElementById('match-score-us').value;
+            const scoreThem = document.getElementById('match-score-them').value;
+            let goodStr = document.getElementById('match-comments-good').value.trim();
+            let improveStr = document.getElementById('match-comments-improve').value.trim();
+            let commentsStr = '';
+            if (goodStr || improveStr) {
+                commentsStr = '【ポジティブ】\n' + goodStr + '\n\n【ネクストステップ】\n' + improveStr;
+            }
+
+            let resultStr = "";
+            if (scoreUs !== "" && scoreThem !== "") {
+                resultStr = `${scoreUs}-${scoreThem}`;
+            }
+
+            const goalRecords = [];
+            const rows = document.querySelectorAll('#goal-records-list .goal-record-row');
+            const scorersList = [];
+
+            rows.forEach(row => {
+                const scorerVal = row.querySelector('.goal-scorer-select')?.value;
+                const assistVal = row.querySelector('.goal-assist-select')?.value;
+                const scorerId = scorerVal ? parseInt(scorerVal, 10) : null;
+                const assistId = assistVal ? parseInt(assistVal, 10) : null;
+
+                goalRecords.push({ scorerId, assistId });
+
+                let text = '';
+                if (scorerId) {
+                    const sPlayer = state.players.find(p => p.id === scorerId);
+                    text += sPlayer ? `${sPlayer.name}` : '不明な選手';
+                } else {
+                    text += 'オウンゴール/その他';
+                }
+                if (assistId) {
+                    const aPlayer = state.players.find(p => p.id === assistId);
+                    text += aPlayer ? ` (アシスト:${aPlayer.name})` : '';
+                }
+                scorersList.push(text);
+            });
+            const scorersStr = scorersList.join(', ');
+
+            const editId = document.getElementById('match-edit-id').value;
+            if (editId) {
+                const match = state.matches.find(m => m.id === parseInt(editId, 10));
+                if (match) {
+                    match.date = document.getElementById('match-date').value;
+                    match.opponent = document.getElementById('match-opponent').value;
+                    match.type = document.getElementById('match-type').value;
+                    match.tournament = document.getElementById('match-tournament').value;
+                    match.result = resultStr;
+                    match.scorers = scorersStr;
+                    match.goalRecords = goalRecords;
+                    match.comments = commentsStr;
+                    saveData();
+                    showToast('試合情報を更新しました');
+                }
+            } else {
+                const newMatch = {
+                    id: Date.now(),
+                    date: document.getElementById('match-date').value,
+                    opponent: document.getElementById('match-opponent').value,
+                    type: document.getElementById('match-type').value,
+                    tournament: document.getElementById('match-tournament').value,
+                    result: resultStr,
+                    scorers: scorersStr,
+                    goalRecords: goalRecords,
+                    comments: commentsStr,
+                    playerFeedback: [],
+                    formations: []
+                };
+                state.matches.unshift(newMatch);
+                saveData();
+                showToast('試合を記録しました');
+            }
+
+            document.getElementById('modal-match').classList.add('hidden');
+            navigate('matches');
+        };
+    }
 
     const editIdEl = document.getElementById('match-edit-id');
     if (editIdEl) editIdEl.value = '';
@@ -511,7 +529,6 @@ export function openMatchModal(matchId = null) {
         }
     }
 
-    // ★ プラス・マイナスボタンと「得点・アシスト記録行」の連動登録
     const modalMatch = document.getElementById('modal-match');
     if (modalMatch) {
         const btnPlus = modalMatch.querySelector('.score-counter-wrapper .btn-score-plus');
@@ -550,11 +567,7 @@ export function openMatchModal(matchId = null) {
     openModal('modal-match');
 }
 
-/**
- * 階層1: 試合詳細画面（画面ビューとしての初期化）
- */
 export function initMatchDetailView(matchId) {
-    // 1. 引数で渡ってこない場合は URL のクエリパラメータ等からも自動取得を試みる
     if (!matchId) {
         const urlParams = new URLSearchParams(window.location.search);
         const paramId = urlParams.get('matchId');
@@ -569,9 +582,7 @@ export function initMatchDetailView(matchId) {
 
     const m = state.matches.find(match => Number(match.id) === Number(matchId));
     if (!m) {
-        // データがまだロード中の可能性があるため、少し待ってから再試行するか一覧へ
         if (state.matches.length === 0) {
-            // データロード待ちの間に呼ばれた場合の対策として少し遅延させる
             setTimeout(() => initMatchDetailView(matchId), 100);
             return;
         }
@@ -583,9 +594,17 @@ export function initMatchDetailView(matchId) {
     currentMatchId = m.id;
     const isCoach = state.currentUserRole === 'coach';
 
-    // ==========================================
-    // ★ 修正：実際のHTML（index.html）のIDに合わせる
-    // ==========================================
+    const btnBackToMatches = document.getElementById('btn-back-to-matches');
+    if (btnBackToMatches) {
+        btnBackToMatches.onclick = (e) => {
+            e.preventDefault();
+            if (typeof window.stopAndCleanupYouTube === 'function') {
+                window.stopAndCleanupYouTube();
+            }
+            navigate('matches');
+        };
+    }
+
     const metaEl = document.getElementById('match-detail-meta');
     if (metaEl) {
         metaEl.textContent = `${m.date || ''} | ${m.type || ''}${m.tournament ? ` (${m.tournament})` : ''}`;
@@ -596,14 +615,12 @@ export function initMatchDetailView(matchId) {
         titleEl.textContent = `vs ${m.opponent || '対戦相手'}`;
     }
 
-    // 試合テーマや総括の反映
     const themeEl = document.getElementById('match-detail-theme');
     if (themeEl) themeEl.textContent = m.theme || '未設定';
 
     const summaryEl = document.getElementById('match-detail-summary');
     if (summaryEl) summaryEl.textContent = m.comments || '記録なし';
 
-    // ★ 保護者モード時は「試合情報編集」「ピリオド追加」ボタンを非表示化
     const btnEditMatch = document.getElementById('btn-edit-match');
     if (btnEditMatch) {
         btnEditMatch.style.display = isCoach ? 'inline-flex' : 'none';
@@ -620,16 +637,13 @@ export function initMatchDetailView(matchId) {
         };
     }
 
-    // ピリオドカードグリッドを描画
     renderPeriodGrid(m);
 }
 
-// 互換性のため、従来呼んでいた openMatchDetail を画面遷移ルーティングに置き換え
 export function openMatchDetail(id) {
     navigate('match-detail', { matchId: id });
 }
 
-// 階層1: 試合詳細画面のピリオドカード描画
 function renderPeriodGrid(m) {
     const grid = document.getElementById('match-period-grid');
     const isCoach = state.currentUserRole === 'coach';
@@ -645,22 +659,42 @@ function renderPeriodGrid(m) {
         const scoreThem = f.scoreThem !== undefined ? f.scoreThem : 0;
         const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="fa-brands fa-youtube" style="color:#ef4444;" title="動画あり"></i>' : '';
 
-        // 得失点・重要イベント抽出（最大3件）
+        let goalDetailsHtml = '';
+        if (f.goalRecords && f.goalRecords.length > 0) {
+            goalDetailsHtml = f.goalRecords.map(r => {
+                let text = '';
+                if (r.scorerId) {
+                    const sPlayer = state.players.find(p => p.id === r.scorerId);
+                    text += sPlayer ? `${sPlayer.name}` : '選手';
+                } else {
+                    text += 'OG/その他';
+                }
+                if (r.assistId) {
+                    const aPlayer = state.players.find(p => p.id === r.assistId);
+                    text += aPlayer ? ` (A: ${aPlayer.name})` : '';
+                }
+                return `<div style="font-size:0.78rem; color:var(--text-primary); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">⚽ ${escapeHtml(text)}</div>`;
+            }).join('');
+        }
+
         const memoList = f.analysisMemos || [];
-        const goalsHtml = memoList.length > 0
-            ? memoList.slice(0, 3).map(memo => {
+        const memosHtml = memoList.length > 0
+            ? memoList.slice(0, 2).map(memo => {
                 let icon = '💡';
                 if (memo.tag === '得点') icon = '⚽';
                 else if (memo.tag === '失点') icon = '⚠️';
                 else if (memo.tag === '課題/反省') icon = '📌';
                 return `<div style="font-size:0.75rem; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${icon} ${escapeHtml(memo.time || '00:00')} ${escapeHtml(memo.text || memo.tag)}</div>`;
             }).join('')
-            : '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic;">タイムライン記録なし</div>';
+            : '';
+
+        const goalsHtml = (goalDetailsHtml || memosHtml)
+            ? `${goalDetailsHtml}${memosHtml}`
+            : '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic;">記録なし</div>';
 
         return `
             <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; gap:0.8rem; padding:1rem; margin:0; border:1px solid var(--surface-border);">
                 <div>
-                    <!-- ヘッダー: 本数名・スコア・動画アイコン -->
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; border-bottom:1px solid var(--surface-border); padding-bottom:0.4rem;">
                         <strong style="font-size:1rem; color:var(--primary);">${escapeHtml(f.name || `${idx + 1}本目`)}</strong>
                         <div style="display:flex; align-items:center; gap:0.5rem;">
@@ -669,32 +703,27 @@ function renderPeriodGrid(m) {
                         </div>
                     </div>
                     
-                    <!-- システム（陣形）のみ表示 -->
                     <div style="display:flex; gap:0.4rem; margin-bottom:0.6rem;">
                         <span class="badge" style="background:rgba(0,0,0,0.05); color:var(--text-primary); font-size:0.72rem;">陣形: ${escapeHtml(f.system || '未設定')}</span>
                     </div>
 
-                    <!-- 重要イベントリスト -->
                     <div style="background:rgba(0,0,0,0.02); padding:0.5rem; border-radius:6px; margin-bottom:0.6rem; display:flex; flex-direction:column; gap:0.25rem;">
                         ${goalsHtml}
                     </div>
 
-                    <!-- 総括メモ -->
                     <div style="font-size:0.8rem; color:var(--text-primary); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
                         💬 ${escapeHtml(f.summary || f.reflection || '総括コメント未入力')}
                     </div>
                 </div>
 
-                <!-- アクションボタン -->
                 <div style="display:flex; gap:0.4rem; margin-top:0.2rem;">
                     <button class="btn btn-primary btn-sm btn-open-analysis" data-index="${idx}" style="flex:1; justify-content:center; font-size:0.8rem; padding:0.4rem;"><i class="fa-solid fa-film"></i> 動画分析 ➔</button>
-                    <button class="btn btn-secondary btn-sm btn-edit-period-card" data-id="${f.id}" style="padding:0.4rem 0.6rem;" title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>
+                    ${isCoach ? `<button class="btn btn-secondary btn-sm btn-edit-period-card" data-id="${f.id}" style="padding:0.4rem 0.6rem;" title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>` : ''}
                 </div>
             </div>
         `;
     }).join('');
 
-    // イベントバインド
     grid.querySelectorAll('.btn-open-analysis').forEach(btn => {
         btn.onclick = (e) => {
             const periodIdx = parseInt(e.currentTarget.dataset.index, 10);
@@ -710,21 +739,8 @@ function renderPeriodGrid(m) {
             }
         };
     });
-    // カード内の編集ペンボタンはコーチモード時のみ表示
-    const editBtnHtml = isCoach
-        ? `<button class="btn btn-secondary btn-sm btn-edit-period-card" data-id="${f.id}" style="padding:0.4rem 0.6rem;" title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>`
-        : '';
-
-    return `
-        <!-- ... カード構造 ... -->
-        <div style="display:flex; gap:0.4rem; margin-top:0.2rem;">
-            <button class="btn btn-primary btn-sm btn-open-analysis" data-index="${idx}" style="flex:1; justify-content:center; font-size:0.8rem; padding:0.4rem;"><i class="fa-solid fa-film"></i> 大画面分析 ➔</button>
-            ${editBtnHtml}
-        </div>
-    `;
 }
 
-// ★ 追加: YouTubeプレーヤーを完全に停止・リセットするグローバル関数
 window.stopAndCleanupYouTube = function () {
     if (ytPlayer) {
         try {
@@ -741,7 +757,7 @@ window.stopAndCleanupYouTube = function () {
     }
 };
 
-// 階層2: 大画面分析の初期化（右上の編集ボタンの確実に接続 ＆ 最小幅15%まで可変対応）
+// 階層2: 大画面分析の初期化
 export function openPeriodAnalysis(matchId, periodIndex) {
     const match = state.matches.find(m => m.id === matchId);
     const isCoach = state.currentUserRole === 'coach';
@@ -754,24 +770,472 @@ export function openPeriodAnalysis(matchId, periodIndex) {
     const periodAnalysisModal = document.getElementById('modal-period-analysis');
     if (periodAnalysisModal) periodAnalysisModal.classList.remove('hidden');
 
-    // タイトル設定
     const titleEl = document.getElementById('period-analysis-title');
     if (titleEl) {
         titleEl.textContent = `vs ${escapeHtml(match.opponent)} - ${period.name || `${periodIndex + 1}本目`} (${period.scoreUs || 0} - ${period.scoreThem || 0})`;
     }
 
-    // 右上「編集」ボタンの表示制御
-    const btnEdit = document.getElementById('btn-edit-period');
-    if (btnEdit) {
-        btnEdit.style.display = isCoach ? 'inline-flex' : 'none';
-        btnEdit.onclick = () => {
-            if (typeof window.editFormation === 'function') {
-                window.editFormation(matchId, period.id);
+    // --- サイドパネルおよび要素の取得 ---
+    const sidePanel = document.getElementById('period-info-side-panel');
+    const sideToggleBtn = document.getElementById('period-info-side-toggle-btn');
+    const sideHeading = document.getElementById('period-side-panel-heading');
+    const sideBody = document.getElementById('period-side-panel-body');
+
+    // 画面を開き直したときは、サイドパネルを必ず「閉じた状態」に初期化
+    if (sidePanel) {
+        sidePanel.classList.add('collapsed');
+        sidePanel.classList.remove('open');
+    }
+    if (sideToggleBtn) {
+        const icon = sideToggleBtn.querySelector('i');
+        if (icon) icon.className = 'fa-solid fa-chevron-left';
+    }
+
+    // 既存のタイムライン監視タイマーをクリア
+    if (timelineInterval) {
+        clearInterval(timelineInterval);
+        timelineInterval = null;
+    }
+
+    // --- サイドパネル内のコンテンツを描画する関数 ---
+    const renderSidePanelContent = () => {
+        if (!sideBody) return;
+
+        if (isCoach) {
+            // コーチモード：編集フォーム（ミニピッチ付き）
+            if (sideHeading) sideHeading.innerHTML = '<i class="fa-solid fa-pen" style="color:var(--primary);"></i> ピリオド情報編集';
+
+            const systemOptions = state.customFormations.map(cf => `<option value="${cf.name}" ${period.system === cf.name ? 'selected' : ''}>${cf.name} (${cf.coords.length}人制)</option>`).join('');
+
+            // 1. 得点記録の行HTML生成
+            let goalRowsHtml = '';
+            if (period.goalRecords && period.goalRecords.length > 0) {
+                goalRowsHtml = period.goalRecords.map((r, rIdx) => {
+                    const sortedPlayers = [...state.players].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
+                    const scorerOpts = `<option value="">得点者なし/OG</option>` + sortedPlayers.map(p => `<option value="${p.id}" ${p.id === r.scorerId ? 'selected' : ''}>${p.number} ${p.name}</option>`).join('');
+                    const assistOpts = `<option value="">アシストなし</option>` + sortedPlayers.map(p => `<option value="${p.id}" ${p.id === r.assistId ? 'selected' : ''}>${p.number} ${p.name}</option>`).join('');
+
+                    return `
+                        <div class="side-goal-row" data-index="${rIdx}" style="display:flex; flex-direction:column; gap:0.25rem; background:rgba(0,0,0,0.02); padding:0.4rem; border-radius:6px; border:1px solid var(--surface-border); margin-bottom:0.3rem;">
+                            <div style="display:flex; gap:0.3rem; align-items:center;">
+                                <span style="font-size:0.7rem; font-weight:bold; color:var(--text-secondary); width:20px;">#${rIdx + 1}</span>
+                                <select class="form-control form-control-sm side-scorer-select" style="font-size:0.75rem; padding:0.2rem; flex:1;">${scorerOpts}</select>
+                                <button type="button" class="btn btn-danger btn-xs btn-remove-side-goal" style="padding:0.1rem 0.3rem; font-size:0.7rem;" title="この得点記録を削除"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                            <div style="display:flex; gap:0.3rem; align-items:center; padding-left:20px;">
+                                <select class="form-control form-control-sm side-assist-select" style="font-size:0.75rem; padding:0.2rem; flex:1;">${assistOpts}</select>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // 2. ミニピッチ図 ＆ ポジション配置ピン
+            const currentCustomForm = state.customFormations.find(cf => cf.name === period.system) || state.customFormations[0];
+            let pitchPinsHtml = '';
+            let posListHtml = '';
+
+            if (currentCustomForm && currentCustomForm.coords) {
+                if (!period.positions) period.positions = {};
+                const sortedPlayers = [...state.players].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
+
+                pitchPinsHtml = currentCustomForm.coords.map((c, pIdx) => {
+                    const posKey = `pos_${pIdx}_${c.role || 'pos'}`;
+                    const assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+                    const assignedPlayer = state.players.find(p => p.id == assignedPlayerId);
+                    const labelText = assignedPlayer ? (assignedPlayer.number ? `#${assignedPlayer.number}` : assignedPlayer.name.slice(0, 3)) : (c.role ? c.role.slice(0, 3) : `P${pIdx + 1}`);
+
+                    const leftPercent = (c.x !== undefined && !isNaN(c.x)) ? c.x : 50;
+                    const topPercent = (c.y !== undefined && !isNaN(c.y)) ? c.y : 50;
+
+                    return `
+                        <div class="side-pitch-pin" data-pos-key="${posKey}" style="position:absolute; left:${leftPercent}%; top:${topPercent}%; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; cursor:pointer; z-index:5;" title="${c.role || `ポジション${pIdx + 1}`}">
+                            <div style="width:26px; height:26px; background:var(--primary); color:#fff; border-radius:50%; font-size:0.65rem; font-weight:bold; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); border:1.5px solid #fff;">
+                                ${labelText}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                posListHtml = currentCustomForm.coords.map((c, pIdx) => {
+                    const posKey = `pos_${pIdx}_${c.role || 'pos'}`;
+                    const assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+                    const playerOpts = `<option value="">未割当</option>` + sortedPlayers.map(p => `<option value="${p.id}" ${p.id == assignedPlayerId ? 'selected' : ''}>${p.number ? `#${p.number}` : ''} ${p.name}</option>`).join('');
+
+                    return `
+                        <div class="side-position-row" data-pos-key="${posKey}" style="display:flex; align-items:center; gap:0.4rem; background:rgba(0,0,0,0.02); padding:0.3rem 0.4rem; border-radius:6px; border:1px solid var(--surface-border); margin-bottom:0.25rem;">
+                            <span style="font-size:0.72rem; font-weight:bold; color:var(--text-secondary); width:55px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${c.role || `P${pIdx + 1}`}">${c.role || `${pIdx + 1}`}</span>
+                            <select class="form-control form-control-sm side-pos-player-select" style="font-size:0.75rem; padding:0.15rem; flex:1;">${playerOpts}</select>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            sideBody.innerHTML = `
+                <div class="side-info-card">
+                    <span class="side-info-label">ピリオド名</span>
+                    <input type="text" id="side-form-name" class="form-control form-control-sm" value="${escapeHtml(period.name || '')}">
+                </div>
+                <div class="side-info-card">
+                    <span class="side-info-label">YouTube動画 URL</span>
+                    <input type="url" id="side-form-video" class="form-control form-control-sm" value="${escapeHtml((period.videoUrls && period.videoUrls[0]) || period.videoUrl || '')}" placeholder="https://youtu.be/...">
+                </div>
+                <div class="side-info-card">
+                    <span class="side-info-label">スコア (自 - 相手)</span>
+                    <div style="display:flex; align-items:center; justify-content:space-between; background:var(--card-bg); padding:0.3rem 0.5rem; border:1px solid var(--surface-border); border-radius:6px;">
+                        <div style="display:flex; align-items:center; gap:0.4rem;">
+                            <span style="font-size:0.8rem; font-weight:bold; color:var(--text-secondary);">自</span>
+                            <button type="button" class="btn btn-secondary btn-xs" id="btn-side-us-minus" style="padding:0.15rem 0.4rem;"><i class="fa-solid fa-minus"></i></button>
+                            <span id="side-score-us-display" style="font-weight:700; font-size:1.1rem; min-width:24px; text-align:center;">${period.scoreUs || 0}</span>
+                            <button type="button" class="btn btn-secondary btn-xs" id="btn-side-us-plus" style="padding:0.15rem 0.4rem;"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <span style="font-weight:bold; color:var(--text-secondary);">-</span>
+                        <div style="display:flex; align-items:center; gap:0.4rem;">
+                            <button type="button" class="btn btn-secondary btn-xs" id="btn-side-them-minus" style="padding:0.15rem 0.4rem;"><i class="fa-solid fa-minus"></i></button>
+                            <span id="side-score-them-display" style="font-weight:700; font-size:1.1rem; min-width:24px; text-align:center;">${period.scoreThem || 0}</span>
+                            <button type="button" class="btn btn-secondary btn-xs" id="btn-side-them-plus" style="padding:0.15rem 0.4rem;"><i class="fa-solid fa-plus"></i></button>
+                            <span style="font-size:0.8rem; font-weight:bold; color:var(--text-secondary);">相</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="side-info-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+                        <span class="side-info-label" style="margin:0;">得点者・アシスト記録</span>
+                        <button type="button" class="btn btn-primary btn-xs" id="btn-add-side-goal" style="font-size:0.68rem; padding:0.15rem 0.4rem;"><i class="fa-solid fa-plus"></i> 追加</button>
+                    </div>
+                    <div id="side-goal-records-container" style="display:flex; flex-direction:column; max-height:150px; overflow-y:auto;">
+                        ${goalRowsHtml || '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">得点記録なし</div>'}
+                    </div>
+                </div>
+                <div class="side-info-card">
+                    <span class="side-info-label">ピリオド総括</span>
+                    <textarea id="side-form-summary" class="form-control form-control-sm" rows="3">${escapeHtml(period.summary || period.reflection || '')}</textarea>
+                </div>
+                <div class="side-info-card">
+                    <span class="side-info-label">システム (陣形)</span>
+                    <select id="side-form-system" class="form-control form-control-sm">${systemOptions}</select>
+                </div>
+                <div class="side-info-card">
+                    <span class="side-info-label" style="margin-bottom:0.3rem;">ポジション配置（ミニピッチ図）</span>
+                    <div id="side-mini-pitch" style="position:relative; width:100%; height:260px; background: linear-gradient(to bottom, #2e7d32, #388e3c); border-radius:6px; border:1px solid var(--surface-border); overflow:hidden; margin-bottom:0.5rem; box-shadow:inset 0 0 10px rgba(0,0,0,0.2);">
+                        <div style="position:absolute; top:50%; left:0; width:100%; height:1px; background:rgba(255,255,255,0.4);"></div>
+                        <div style="position:absolute; top:50%; left:50%; width:60px; height:60px; border:1px solid rgba(255,255,255,0.4); border-radius:50%; transform:translate(-50%, -50%);"></div>
+                        <div style="position:absolute; top:0; left:30%; width:40%; height:12%; border:1px solid rgba(255,255,255,0.4); border-top:none;"></div>
+                        <div style="position:absolute; bottom:0; left:30%; width:40%; height:12%; border:1px solid rgba(255,255,255,0.4); border-bottom:none;"></div>
+                        ${pitchPinsHtml}
+                    </div>
+                    <div id="side-positions-container" style="display:flex; flex-direction:column; max-height:180px; overflow-y:auto;">
+                        ${posListHtml || '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">ポジション設定がありません</div>'}
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-side-save-period" style="width:100%; justify-content:center; margin-top:0.4rem;">
+                    <i class="fa-solid fa-save"></i> 変更を保存
+                </button>
+            `;
+
+            // --- 入力値の収集用ヘルパー関数 ---
+            const collectCurrentFormValues = () => {
+                const goalRecords = [];
+                sideBody.querySelectorAll('.side-goal-row').forEach(row => {
+                    const sVal = row.querySelector('.side-scorer-select').value;
+                    const aVal = row.querySelector('.side-assist-select').value;
+                    goalRecords.push({
+                        scorerId: sVal ? parseInt(sVal, 10) : null,
+                        assistId: aVal ? parseInt(aVal, 10) : null
+                    });
+                });
+
+                const positions = {};
+                sideBody.querySelectorAll('.side-position-row').forEach(row => {
+                    const posKey = row.dataset.posKey;
+                    const pVal = row.querySelector('.side-pos-player-select').value;
+                    if (pVal) {
+                        positions[posKey] = parseInt(pVal, 10);
+                    }
+                });
+
+                return {
+                    name: document.getElementById('side-form-name').value.trim(),
+                    system: document.getElementById('side-form-system').value,
+                    videoUrl: document.getElementById('side-form-video').value.trim(),
+                    scoreUs: period.scoreUs || 0,
+                    scoreThem: period.scoreThem || 0,
+                    summary: document.getElementById('side-form-summary').value.trim(),
+                    goalRecords: goalRecords,
+                    positions: positions
+                };
+            };
+
+            // ピンをクリックした際のフォーカス挙動
+            sideBody.querySelectorAll('.side-pitch-pin').forEach(pin => {
+                pin.onclick = (e) => {
+                    e.stopPropagation();
+                    const key = pin.dataset.posKey;
+                    const targetRow = sideBody.querySelector(`.side-position-row[data-pos-key="${key}"]`);
+                    if (targetRow) {
+                        const selectEl = targetRow.querySelector('.side-pos-player-select');
+                        if (selectEl) {
+                            selectEl.focus();
+                            targetRow.style.backgroundColor = 'rgba(37, 99, 235, 0.15)';
+                            setTimeout(() => { targetRow.style.backgroundColor = 'rgba(0,0,0,0.02)'; }, 1000);
+                        }
+                    }
+                };
+            });
+
+            // システム変更時に再描画
+            const systemSelect = document.getElementById('side-form-system');
+            if (systemSelect) {
+                systemSelect.onchange = (e) => {
+                    period.system = e.target.value;
+                    renderSidePanelContent();
+                };
+            }
+
+            // スコアカウンター等のイベント
+            const btnUsMinus = document.getElementById('btn-side-us-minus');
+            if (btnUsMinus) {
+                btnUsMinus.onclick = () => {
+                    if (period.scoreUs > 0) {
+                        period.scoreUs--;
+                        if (period.goalRecords && period.goalRecords.length > period.scoreUs) {
+                            period.goalRecords.pop();
+                        }
+                        renderSidePanelContent();
+                    }
+                };
+            }
+
+            const btnUsPlus = document.getElementById('btn-side-us-plus');
+            if (btnUsPlus) {
+                btnUsPlus.onclick = () => {
+                    period.scoreUs = (period.scoreUs || 0) + 1;
+                    if (!period.goalRecords) period.goalRecords = [];
+                    period.goalRecords.push({ scorerId: null, assistId: null });
+                    renderSidePanelContent();
+                };
+            }
+
+            const btnThemMinus = document.getElementById('btn-side-them-minus');
+            if (btnThemMinus) {
+                btnThemMinus.onclick = () => {
+                    if (period.scoreThem > 0) {
+                        period.scoreThem--;
+                        renderSidePanelContent();
+                    }
+                };
+            }
+
+            const btnThemPlus = document.getElementById('btn-side-them-plus');
+            if (btnThemPlus) {
+                btnThemPlus.onclick = () => {
+                    if (!period.scoreThem) period.scoreThem = 0;
+                    period.scoreThem++;
+                    renderSidePanelContent();
+                };
+            }
+
+            const btnAddGoal = document.getElementById('btn-add-side-goal');
+            if (btnAddGoal) {
+                btnAddGoal.onclick = () => {
+                    period.scoreUs = (period.scoreUs || 0) + 1;
+                    if (!period.goalRecords) period.goalRecords = [];
+                    period.goalRecords.push({ scorerId: null, assistId: null });
+                    renderSidePanelContent();
+                };
+            }
+
+            sideBody.querySelectorAll('.btn-remove-side-goal').forEach(btn => {
+                btn.onclick = (e) => {
+                    const rIdx = parseInt(e.currentTarget.closest('.side-goal-row').dataset.index, 10);
+                    if (period.goalRecords) {
+                        period.goalRecords.splice(rIdx, 1);
+                        period.scoreUs = Math.max(0, (period.scoreUs || 0) - 1);
+                        renderSidePanelContent();
+                    }
+                };
+            });
+
+            const btnSave = document.getElementById('btn-side-save-period');
+            if (btnSave) {
+                btnSave.onclick = () => {
+                    const finalData = collectCurrentFormValues();
+                    period.name = finalData.name;
+                    period.system = finalData.system;
+                    period.videoUrl = finalData.videoUrl;
+                    period.videoUrls = finalData.videoUrl ? [finalData.videoUrl] : [];
+                    period.scoreUs = finalData.scoreUs;
+                    period.scoreThem = finalData.scoreThem;
+                    period.summary = finalData.summary;
+                    period.goalRecords = finalData.goalRecords;
+                    period.positions = finalData.positions;
+
+                    let totalUs = 0, totalThem = 0;
+                    const allMatchGoalRecords = [];
+                    const scorersList = [];
+
+                    match.formations.forEach(f => {
+                        totalUs += (f.scoreUs || 0);
+                        totalThem += (f.scoreThem || 0);
+                        if (f.goalRecords) {
+                            allMatchGoalRecords.push(...f.goalRecords);
+                            f.goalRecords.forEach(r => {
+                                let txt = '';
+                                if (r.scorerId) {
+                                    const sp = state.players.find(p => p.id === r.scorerId);
+                                    txt += sp ? sp.name : '選手';
+                                } else {
+                                    txt += 'OG/その他';
+                                }
+                                if (r.assistId) {
+                                    const ap = state.players.find(p => p.id === r.assistId);
+                                    txt += ap ? ` (A:${ap.name})` : '';
+                                }
+                                scorersList.push(txt);
+                            });
+                        }
+                    });
+
+                    match.goalRecords = allMatchGoalRecords;
+                    match.scorers = scorersList.join(', ');
+                    match.result = `${totalUs}-${totalThem}`;
+
+                    saveData();
+                    showToast('ピリオド情報とポジション配置を保存しました');
+                    openPeriodAnalysis(matchId, periodIndex);
+                };
+            }
+        } else {
+            // 保護者モード：閲覧専用プレビュー（コーチモードと同じすべての情報を網羅）
+            if (sideHeading) sideHeading.innerHTML = '<i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> ピリオド情報';
+
+            const videoUrl = (period.videoUrls && period.videoUrls[0]) || period.videoUrl || '';
+
+            let goalDetailsHtml = '';
+            if (period.goalRecords && period.goalRecords.length > 0) {
+                goalDetailsHtml = period.goalRecords.map(r => {
+                    let text = '';
+                    if (r.scorerId) {
+                        const sPlayer = state.players.find(p => p.id === r.scorerId);
+                        text += sPlayer ? `${sPlayer.name}` : '選手';
+                    } else {
+                        text += 'OG/その他';
+                    }
+                    if (r.assistId) {
+                        const aPlayer = state.players.find(p => p.id === r.assistId);
+                        text += aPlayer ? ` (A: ${aPlayer.name})` : '';
+                    }
+                    return `<div style="font-size:0.8rem; color:var(--text-primary); font-weight:500;">⚽ ${escapeHtml(text)}</div>`;
+                }).join('');
+            }
+
+            // ミニピッチ図 ＆ ポジション配置の閲覧用HTML生成
+            const currentCustomForm = state.customFormations.find(cf => cf.name === period.system) || state.customFormations[0];
+            let pitchPinsHtml = '';
+            let posListHtml = '';
+
+            if (currentCustomForm && currentCustomForm.coords) {
+                if (!period.positions) period.positions = {};
+
+                pitchPinsHtml = currentCustomForm.coords.map((c, pIdx) => {
+                    const posKey = `pos_${pIdx}_${c.role || 'pos'}`;
+                    const assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+                    const assignedPlayer = state.players.find(p => p.id == assignedPlayerId);
+                    const labelText = assignedPlayer ? (assignedPlayer.number ? `#${assignedPlayer.number}` : assignedPlayer.name.slice(0, 3)) : (c.role ? c.role.slice(0, 3) : `P${pIdx + 1}`);
+
+                    const leftPercent = (c.x !== undefined && !isNaN(c.x)) ? c.x : 50;
+                    const topPercent = (c.y !== undefined && !isNaN(c.y)) ? c.y : 50;
+
+                    return `
+                        <div style="position:absolute; left:${leftPercent}%; top:${topPercent}%; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; z-index:5;" title="${c.role || `ポジション${pIdx + 1}`}">
+                            <div style="width:26px; height:26px; background:var(--primary); color:#fff; border-radius:50%; font-size:0.65rem; font-weight:bold; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); border:1.5px solid #fff;">
+                                ${labelText}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                posListHtml = currentCustomForm.coords.map((c, pIdx) => {
+                    const posKey = `pos_${pIdx}_${c.role || 'pos'}`;
+                    const assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+                    const assignedPlayer = state.players.find(p => p.id == assignedPlayerId);
+                    const playerName = assignedPlayer ? `${assignedPlayer.number ? `#${assignedPlayer.number} ` : ''}${assignedPlayer.name}` : '未割当';
+
+                    return `
+                        <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(0,0,0,0.02); padding:0.3rem 0.5rem; border-radius:6px; border:1px solid var(--surface-border); margin-bottom:0.25rem; font-size:0.8rem;">
+                            <span style="font-weight:bold; color:var(--text-secondary);">${escapeHtml(c.role || `${pIdx + 1}`)}</span>
+                            <span style="font-weight:600; color:var(--text-primary);">${escapeHtml(playerName)}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            sideBody.innerHTML = `
+                <div class="side-info-card">
+                    <span class="side-info-label">ピリオド名</span>
+                    <div class="side-info-val" style="font-weight:700;">${escapeHtml(period.name || '未設定')}</div>
+                </div>
+                <div class="side-info-card">
+                    <span class="side-info-label">YouTube動画 URL</span>
+                    <div class="side-info-val">
+                        ${videoUrl ? `<a href="${escapeHtml(videoUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--primary); text-decoration:underline; word-break:break-all;"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i> ${escapeHtml(videoUrl)}</a>` : '<span style="color:var(--text-secondary); font-style:italic;">URLなし</span>'}
+                    </div>
+                </div>
+                <div class="side-info-card">
+                    <span class="side-info-label">スコア (自 - 相手)</span>
+                    <div class="side-info-val" style="font-weight:700; color:var(--primary); font-size:1.1rem;">${period.scoreUs || 0} - ${period.scoreThem || 0}</div>
+                </div>
+                <div class="side-info-card">
+                    <span class="side-info-label" style="margin-bottom:0.3rem;">得点者・アシスト記録</span>
+                    ${goalDetailsHtml ? `<div style="display:flex; flex-direction:column; gap:0.2rem;">${goalDetailsHtml}</div>` : '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic;">得点記録なし</div>'}
+                </div>
+                <div class="side-info-card">
+                    <span class="side-info-label">ピリオド総括</span>
+                    <div class="side-info-val" style="white-space:pre-wrap;">${escapeHtml(period.summary || period.reflection || '総括コメントはありません。')}</div>
+                </div>
+                <div class="side-info-card">
+                    <span class="side-info-label">システム (陣形)</span>
+                    <div class="side-info-val" style="font-weight:700;">${escapeHtml(period.system || '未設定')}</div>
+                </div>
+                <div class="side-info-card">
+                    <span class="side-info-label" style="margin-bottom:0.3rem;">ポジション配置（ミニピッチ図）</span>
+                    <div style="position:relative; width:100%; height:260px; background: linear-gradient(to bottom, #2e7d32, #388e3c); border-radius:6px; border:1px solid var(--surface-border); overflow:hidden; margin-bottom:0.5rem; box-shadow:inset 0 0 10px rgba(0,0,0,0.2);">
+                        <div style="position:absolute; top:50%; left:0; width:100%; height:1px; background:rgba(255,255,255,0.4);"></div>
+                        <div style="position:absolute; top:50%; left:50%; width:60px; height:60px; border:1px solid rgba(255,255,255,0.4); border-radius:50%; transform:translate(-50%, -50%);"></div>
+                        <div style="position:absolute; top:0; left:30%; width:40%; height:12%; border:1px solid rgba(255,255,255,0.4); border-top:none;"></div>
+                        <div style="position:absolute; bottom:0; left:30%; width:40%; height:12%; border:1px solid rgba(255,255,255,0.4); border-bottom:none;"></div>
+                        ${pitchPinsHtml}
+                    </div>
+                    <div style="display:flex; flex-direction:column; max-height:180px; overflow-y:auto;">
+                        ${posListHtml || '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">ポジション設定がありません</div>'}
+                    </div>
+                </div>
+            `;
+        }
+    };
+
+    renderSidePanelContent();
+
+    // サイドパネル開閉トグル
+    if (sideToggleBtn && sidePanel) {
+        sideToggleBtn.onclick = (e) => {
+            e.stopPropagation();
+            renderSidePanelContent();
+            const isOpen = sidePanel.classList.toggle('open');
+            sidePanel.classList.toggle('collapsed', !isOpen);
+            const icon = sideToggleBtn.querySelector('i');
+            if (icon) {
+                icon.className = isOpen ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
             }
         };
     }
 
-    // 「前へ / 次へ」ナビボタン
+    // --- ピリオド遷移ナビ ---
+    const periodNameInd = document.getElementById('current-period-name-indicator');
+    if (periodNameInd) {
+        periodNameInd.textContent = period.name || `${periodIndex + 1}本目`;
+    }
+
     const btnPrev = document.getElementById('btn-period-prev');
     const btnNext = document.getElementById('btn-period-next');
     if (btnPrev) {
@@ -783,7 +1247,6 @@ export function openPeriodAnalysis(matchId, periodIndex) {
         btnNext.onclick = () => openPeriodAnalysis(matchId, periodIndex + 1);
     }
 
-    // ★ 修正: 左上の「← 戻る」ボタン
     const btnBack = document.getElementById('btn-back-to-match-detail');
     if (btnBack) {
         btnBack.onclick = (e) => {
@@ -791,12 +1254,19 @@ export function openPeriodAnalysis(matchId, periodIndex) {
             if (typeof window.stopAndCleanupYouTube === 'function') {
                 window.stopAndCleanupYouTube();
             }
+            if (timelineInterval) {
+                clearInterval(timelineInterval);
+                timelineInterval = null;
+            }
+            if (sidePanel) {
+                sidePanel.classList.add('collapsed');
+                sidePanel.classList.remove('open');
+            }
             if (periodAnalysisModal) periodAnalysisModal.classList.add('hidden');
             openMatchDetail(matchId);
         };
     }
 
-    // タイムライン「＋ 追加」ボタンの表示制御
     const btnAddTimelineEvent = document.getElementById('btn-add-timeline-event');
     if (btnAddTimelineEvent) {
         btnAddTimelineEvent.style.display = isCoach ? 'inline-flex' : 'none';
@@ -816,23 +1286,195 @@ export function openPeriodAnalysis(matchId, periodIndex) {
     renderPeriodTimelineList(period);
     const mainVideoUrl = (period.videoUrls && period.videoUrls.length > 0) ? period.videoUrls[0] : (period.videoUrl || '');
 
-    // ★ 修正: モーダルが開いてDOMが確実に描画された後にプレーヤー等の初期化を実行する
     setTimeout(() => {
         loadYouTubePlayer(mainVideoUrl, 'period-yt-player');
-        setupPeriodInfoResponsive(period);
         initPeriodWorkspaceResizer();
     }, 50);
+
+    // --- タイムライン再生連動・点滅ハイライト監視 ---
+    timelineInterval = setInterval(() => {
+        if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+        const currentTimeSec = ytPlayer.getCurrentTime();
+
+        document.querySelectorAll('.timeline-edit-row').forEach(row => {
+            const timeBtn = row.querySelector('.btn-seek-timestamp');
+            if (!timeBtn) return;
+            const targetSec = parseTimeToSeconds(timeBtn.dataset.time);
+
+            if (currentTimeSec >= targetSec && currentTimeSec <= targetSec + 2.5) {
+                row.classList.add('timeline-highlight-active');
+            } else {
+                row.classList.remove('timeline-highlight-active');
+            }
+        });
+    }, 500);
 }
 
 /**
- * ピリオド編集モーダルを開く処理 (グローバル関数 - 重複を削除して一本化)
+ * ピリオド編集モーダルを開く処理
  */
 window.editFormation = function (matchId, formationId = null) {
+    if (state.currentUserRole !== 'coach') {
+        showToast('保護者モードでは編集できません');
+        return;
+    }
+
     const match = state.matches.find(m => m.id === matchId);
     if (!match) return;
 
     const formFormation = document.getElementById('form-formation');
-    if (formFormation) formFormation.reset();
+    if (formFormation) {
+        formFormation.reset();
+        formFormation.onsubmit = (e) => {
+            e.preventDefault();
+
+            if (state.currentUserRole !== 'coach') {
+                showToast('保護者モードでは保存できません');
+                return;
+            }
+
+            const matchIdInput = document.getElementById('formation-match-id');
+            const rawMatchId = matchIdInput ? matchIdInput.value : null;
+            const targetMatchId = rawMatchId ? parseInt(rawMatchId, 10) : null;
+            const targetFormationId = document.getElementById('formation-id').value;
+            const targetMatch = state.matches.find(m => m.id === targetMatchId);
+
+            if (!targetMatch) {
+                showToast('エラー: 試合データが見つかりません');
+                return;
+            }
+
+            const name = document.getElementById('formation-name').value.trim();
+            const system = document.getElementById('formation-system-select').value;
+
+            const videoUrlInput = document.getElementById('formation-video-url');
+            const videoUrl = videoUrlInput ? videoUrlInput.value.trim() : '';
+
+            const nodes = document.querySelectorAll('#tactical-formation-pitch .pitch-node');
+            const lineup = [];
+            nodes.forEach(node => {
+                const playerId = node.dataset.playerId ? parseInt(node.dataset.playerId, 10) : null;
+                if (playerId) {
+                    lineup.push({
+                        playerId,
+                        role: node.dataset.role,
+                        roleLabel: node.dataset.label,
+                        roleIndex: parseInt(node.dataset.index, 10)
+                    });
+                }
+            });
+
+            const scoreUs = parseInt(document.getElementById('formation-score-us').value, 10) || 0;
+            const scoreThem = parseInt(document.getElementById('formation-score-them').value, 10) || 0;
+
+            const goalRecords = [];
+            const goalRows = document.querySelectorAll('#period-goal-records-list .goal-record-row');
+            goalRows.forEach(row => {
+                const scorerVal = row.querySelector('.goal-scorer-select')?.value;
+                const assistVal = row.querySelector('.goal-assist-select')?.value;
+                const scorerId = scorerVal ? parseInt(scorerVal, 10) : null;
+                const assistId = assistVal ? parseInt(assistVal, 10) : null;
+                goalRecords.push({ scorerId, assistId });
+            });
+
+            const analysisMemos = [];
+            const memoRows = document.querySelectorAll('#formation-analysis-memo-list .analysis-memo-row');
+            memoRows.forEach(row => {
+                const time = row.querySelector('.memo-time-input')?.value.trim() || '00:00';
+                const tag = row.querySelector('.memo-tag-select')?.value || 'チャンス';
+                const text = row.querySelector('.memo-text-input')?.value.trim() || '';
+                analysisMemos.push({ time, tag, text });
+            });
+
+            const summaryVal = document.getElementById('formation-summary-text')?.value.trim() || '';
+
+            let targetPeriodIndex = 0;
+
+            if (targetFormationId) {
+                const fIndex = targetMatch.formations.findIndex(f => f.id === parseInt(targetFormationId, 10));
+                if (fIndex !== -1) {
+                    targetPeriodIndex = fIndex;
+                    const formObj = targetMatch.formations[fIndex];
+                    formObj.name = name;
+                    formObj.system = system;
+                    formObj.scoreUs = scoreUs;
+                    formObj.scoreThem = scoreThem;
+                    formObj.goalRecords = goalRecords;
+                    formObj.videoUrl = videoUrl;
+                    formObj.videoUrls = videoUrl ? [videoUrl] : [];
+                    formObj.lineup = lineup;
+                    formObj.analysisMemos = analysisMemos;
+                    formObj.summary = summaryVal;
+                }
+            } else {
+                const newPeriod = {
+                    id: Date.now(),
+                    name,
+                    system,
+                    scoreUs,
+                    scoreThem,
+                    goalRecords,
+                    videoUrl,
+                    videoUrls: videoUrl ? [videoUrl] : [],
+                    lineup,
+                    analysisMemos,
+                    summary: summaryVal,
+                    boardData: []
+                };
+                if (!targetMatch.formations) targetMatch.formations = [];
+                targetMatch.formations.push(newPeriod);
+                targetPeriodIndex = targetMatch.formations.length - 1;
+            }
+
+            let totalUs = 0;
+            let totalThem = 0;
+            const allMatchGoalRecords = [];
+            const scorersList = [];
+
+            targetMatch.formations.forEach(f => {
+                totalUs += (f.scoreUs !== undefined ? f.scoreUs : 0);
+                totalThem += (f.scoreThem !== undefined ? f.scoreThem : 0);
+                if (f.goalRecords && f.goalRecords.length > 0) {
+                    allMatchGoalRecords.push(...f.goalRecords);
+
+                    f.goalRecords.forEach(r => {
+                        let text = '';
+                        if (r.scorerId) {
+                            const sPlayer = state.players.find(p => p.id === r.scorerId);
+                            text += sPlayer ? `${sPlayer.name}` : '不明な選手';
+                        } else {
+                            text += 'オウンゴール/その他';
+                        }
+                        if (r.assistId) {
+                            const aPlayer = state.players.find(p => p.id === r.assistId);
+                            text += aPlayer ? ` (アシスト:${aPlayer.name})` : '';
+                        }
+                        scorersList.push(text);
+                    });
+                }
+            });
+
+            targetMatch.goalRecords = allMatchGoalRecords;
+            targetMatch.scorers = scorersList.join(', ');
+            targetMatch.result = `${totalUs}-${totalThem}`;
+
+            saveData();
+            showToast('ピリオド情報を保存しました');
+
+            const modalFormation = document.getElementById('modal-formation');
+            if (modalFormation) modalFormation.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+
+            const periodAnalysisModal = document.getElementById('modal-period-analysis');
+            const isAnalysisOpen = periodAnalysisModal && !periodAnalysisModal.classList.contains('hidden');
+
+            if (isAnalysisOpen) {
+                openPeriodAnalysis(targetMatch.id, targetPeriodIndex);
+            } else {
+                initMatchDetailView(targetMatch.id);
+            }
+        };
+    }
 
     document.getElementById('formation-match-id').value = matchId;
     document.getElementById('formation-id').value = formationId || '';
@@ -841,6 +1483,9 @@ window.editFormation = function (matchId, formationId = null) {
     if (sysSelect) {
         sysSelect.innerHTML = state.customFormations.map(cf => `<option value="${cf.name}">${cf.name} (${cf.coords.length}人制)</option>`).join('');
     }
+
+    const periodGoalRecordsList = document.getElementById('period-goal-records-list');
+    if (periodGoalRecordsList) periodGoalRecordsList.innerHTML = '';
 
     let existingLineup = [];
     if (formationId) {
@@ -859,6 +1504,12 @@ window.editFormation = function (matchId, formationId = null) {
             if (summaryInput) summaryInput.value = f.summary || f.reflection || '';
 
             existingLineup = f.lineup || [];
+
+            if (periodGoalRecordsList && f.goalRecords && f.goalRecords.length > 0) {
+                f.goalRecords.forEach(r => {
+                    addGoalRecordRow(r.scorerId, r.assistId, 'period-goal-records-list');
+                });
+            }
         }
     } else {
         const nextIndex = (match.formations ? match.formations.length : 0) + 1;
@@ -874,12 +1525,10 @@ window.editFormation = function (matchId, formationId = null) {
         sysSelect.onchange = (e) => renderFormationPitch(e.target.value, []);
     }
 
+    bindPeriodScoreButtons();
     openModal('modal-formation');
 };
 
-/**
- * タイムライン（イベント・メモ一覧）描画
- */
 function renderPeriodTimelineList(period) {
     const container = document.getElementById('period-timeline-list');
     if (!container) return;
@@ -904,9 +1553,8 @@ function renderPeriodTimelineList(period) {
             : '';
 
         return `
-            <div class="timeline-edit-row" data-index="${idx}" style="display:flex; flex-direction:column; gap:0.3rem; background:rgba(0,0,0,0.02); padding:0.5rem 0.6rem; border-radius:6px; border:1px solid var(--surface-border);">
+            <div class="timeline-edit-row" data-index="${idx}" style="display:flex; flex-direction:column; gap:0.3rem; background:rgba(0,0,0,0.02); padding:0.5rem 0.6rem; border-radius:6px; border:1px solid var(--surface-border); transition: all 0.3s ease;">
                 <div style="display:flex; align-items:center; gap:0.4rem; width:100%;">
-                    <!-- 秒数入力欄は廃止し、再生ボタン側に統合 -->
                     <button type="button" class="btn btn-secondary btn-sm btn-seek-timestamp" data-time="${escapeHtml(m.time || '00:00')}" style="padding:0.2rem 0.5rem; font-size:0.75rem; font-weight:bold; color:var(--primary); flex-shrink:0;">
                         <i class="fa-solid fa-play"></i> ${escapeHtml(m.time || '00:00')}
                     </button>
@@ -929,7 +1577,6 @@ function renderPeriodTimelineList(period) {
         `;
     }).join('');
 
-    // イベントバインド（コーチモード時のみ）
     container.querySelectorAll('.timeline-edit-row').forEach(row => {
         const idx = parseInt(row.dataset.index, 10);
         const tagSelect = row.querySelector('.memo-tag-val');
@@ -963,9 +1610,6 @@ function renderPeriodTimelineList(period) {
     });
 }
 
-/**
- * 可変スプリットバー（ドラッグでの左右比率調整）制御の強力化
- */
 function initPeriodWorkspaceResizer() {
     const resizer = document.getElementById('period-workspace-resizer');
     const videoCol = document.getElementById('period-workspace-video');
@@ -973,14 +1617,12 @@ function initPeriodWorkspaceResizer() {
 
     if (!resizer || !videoCol || !container) return;
 
-    // タッチ・マウス両対応のドラッグ開始
     const startResize = (e) => {
         isResizingWorkspace = true;
         document.body.style.cursor = 'col-resize';
-        document.body.style.userSelect = 'none'; // テキスト選択を防止
+        document.body.style.userSelect = 'none';
         resizer.style.background = 'var(--primary)';
 
-        // ★ YouTube (iframe) がマウスイベントを横取りしないようにポインターイベントを無効化
         if (videoCol) videoCol.style.pointerEvents = 'none';
     };
 
@@ -992,7 +1634,6 @@ function initPeriodWorkspaceResizer() {
         let newWidth = clientX - containerRect.left;
         let percentage = (newWidth / containerRect.width) * 100;
 
-        // 動画幅を 50% から 92% (右タイムライン幅を最少 8% まで極小化) の範囲で調整
         if (percentage >= 50 && percentage <= 92) {
             videoCol.style.flex = `0 0 ${percentage}%`;
         }
@@ -1005,7 +1646,6 @@ function initPeriodWorkspaceResizer() {
             document.body.style.userSelect = '';
             resizer.style.background = 'var(--surface-border)';
 
-            // ★ 動画エリアのマウスイベントを復元
             if (videoCol) videoCol.style.pointerEvents = 'auto';
         }
     };
@@ -1014,65 +1654,9 @@ function initPeriodWorkspaceResizer() {
     window.onmousemove = doResize;
     window.onmouseup = stopResize;
 
-    // スマホ・タブレット用タッチイベント対応
     resizer.ontouchstart = startResize;
     window.ontouchmove = doResize;
     window.ontouchend = stopResize;
-}
-
-/**
- * レスポンシブ表示制御（PC: ポップオーバー / スマホ: アコーディオン）
- */
-function setupPeriodInfoResponsive(period) {
-    const isMobile = window.innerWidth <= 768;
-    const btnPopover = document.getElementById('btn-period-info-popover');
-    const accordion = document.getElementById('period-info-accordion');
-    const accordionContent = document.getElementById('period-info-accordion-content');
-    const popoverContent = document.getElementById('period-info-popover-content');
-
-    const infoHtml = `
-        <div style="font-size:0.85rem; margin-bottom:0.5rem;">
-            <strong style="color:var(--text-secondary);"><i class="fa-solid fa-chess-board"></i> システム:</strong>
-            <span class="badge" style="margin-left:0.3rem;">${escapeHtml(period.system || '未設定')}</span>
-        </div>
-        <div style="font-size:0.85rem;">
-            <strong style="color:var(--text-secondary); display:block; margin-bottom:0.2rem;"><i class="fa-solid fa-comment-dots"></i> ピリオド総括:</strong>
-            <div style="background:rgba(0,0,0,0.03); padding:0.5rem; border-radius:6px; border-left:3px solid var(--primary); white-space:pre-wrap; line-height:1.4;">${escapeHtml(period.summary || period.reflection || '総括コメントはありません。')}</div>
-        </div>
-    `;
-
-    if (isMobile) {
-        if (btnPopover) btnPopover.style.display = 'none';
-        if (popoverContent) popoverContent.style.display = 'none';
-        if (accordion) {
-            accordion.style.display = 'block';
-            if (accordionContent) accordionContent.innerHTML = infoHtml;
-        }
-    } else {
-        if (accordion) accordion.style.display = 'none';
-        if (btnPopover) {
-            btnPopover.style.display = 'inline-flex';
-            if (popoverContent) popoverContent.innerHTML = infoHtml;
-
-            btnPopover.onclick = (e) => {
-                e.stopPropagation();
-                const isHidden = popoverContent.style.display === 'none' || !popoverContent.style.display;
-                popoverContent.style.display = isHidden ? 'block' : 'none';
-                if (isHidden) {
-                    const rect = btnPopover.getBoundingClientRect();
-                    popoverContent.style.top = `${rect.bottom + 8}px`;
-                    popoverContent.style.right = `${window.innerWidth - rect.right}px`;
-                }
-            };
-
-            // 外側クリックでポップオーバーを閉じる
-            document.addEventListener('click', function closePopover(e) {
-                if (popoverContent && !popoverContent.contains(e.target) && e.target !== btnPopover) {
-                    popoverContent.style.display = 'none';
-                }
-            });
-        }
-    }
 }
 
 export function initMatches() {
@@ -1176,338 +1760,6 @@ export function initMatches() {
                 initMatches();
             };
         }
-    }
-
-    const formMatch = document.getElementById('form-match');
-    if (formMatch) {
-        formMatch.onsubmit = (e) => {
-            e.preventDefault();
-            const scoreUs = document.getElementById('match-score-us').value;
-            const scoreThem = document.getElementById('match-score-them').value;
-            let goodStr = document.getElementById('match-comments-good').value.trim();
-            let improveStr = document.getElementById('match-comments-improve').value.trim();
-            let commentsStr = '';
-            if (goodStr || improveStr) {
-                commentsStr = '【ポジティブ】\n' + goodStr + '\n\n【ネクストステップ】\n' + improveStr;
-            }
-
-            let resultStr = "";
-            if (scoreUs !== "" && scoreThem !== "") {
-                resultStr = `${scoreUs}-${scoreThem}`;
-            }
-
-            const goalRecords = [];
-            const rows = document.querySelectorAll('#goal-records-list .goal-record-row');
-            const scorersList = [];
-
-            rows.forEach(row => {
-                const scorerVal = row.querySelector('.goal-scorer-select').value;
-                const assistVal = row.querySelector('.goal-assist-select').value;
-                const scorerId = scorerVal ? parseInt(scorerVal, 10) : null;
-                const assistId = assistVal ? parseInt(assistVal, 10) : null;
-
-                goalRecords.push({ scorerId, assistId });
-
-                let text = '';
-                if (scorerId) {
-                    const sPlayer = state.players.find(p => p.id === scorerId);
-                    text += sPlayer ? `${sPlayer.name}` : '不明な選手';
-                } else {
-                    text += 'オウンゴール/その他';
-                }
-                if (assistId) {
-                    const aPlayer = state.players.find(p => p.id === assistId);
-                    text += aPlayer ? ` (アシスト:${aPlayer.name})` : '';
-                }
-                scorersList.push(text);
-            });
-            const scorersStr = scorersList.join(', ');
-
-            const matchId = document.getElementById('match-edit-id').value;
-            if (matchId) {
-                const match = state.matches.find(m => m.id === parseInt(matchId, 10));
-                if (match) {
-                    match.date = document.getElementById('match-date').value;
-                    match.opponent = document.getElementById('match-opponent').value;
-                    match.type = document.getElementById('match-type').value;
-                    match.tournament = document.getElementById('match-tournament').value;
-                    match.result = resultStr;
-                    match.scorers = scorersStr;
-                    match.goalRecords = goalRecords;
-                    match.comments = commentsStr;
-                    saveData();
-                    showToast('試合情報を更新しました');
-                }
-            } else {
-                const newMatch = {
-                    id: Date.now(),
-                    date: document.getElementById('match-date').value,
-                    opponent: document.getElementById('match-opponent').value,
-                    type: document.getElementById('match-type').value,
-                    tournament: document.getElementById('match-tournament').value,
-                    result: resultStr,
-                    scorers: scorersStr,
-                    goalRecords: goalRecords,
-                    comments: commentsStr,
-                    playerFeedback: [],
-                    formations: []
-                };
-                state.matches.unshift(newMatch);
-                saveData();
-                showToast('試合を記録しました');
-            }
-
-            document.getElementById('modal-match').classList.add('hidden');
-            navigate('matches');
-        };
-    }
-
-    // =================================------------------
-    // ステップ5: ピリオド編集モーダルの呼び出し ＆ 保存処理の強化
-    // =================================------------------
-
-    /**
-     * ピリオド編集モーダルを開く処理 (グローバル関数)
-     */
-    window.editFormation = function (matchId, formationId = null) {
-        const match = state.matches.find(m => m.id === matchId);
-        if (!match) return;
-
-        /**
-         * ピリオド編集モーダルを開く処理 (グローバル関数)
-         */
-        window.editFormation = function (matchId, formationId = null) {
-            const match = state.matches.find(m => m.id === matchId);
-            if (!match) return;
-
-            const formFormation = document.getElementById('form-formation');
-            if (formFormation) formFormation.reset();
-
-            // IDの保持
-            document.getElementById('formation-match-id').value = matchId;
-            document.getElementById('formation-id').value = formationId || '';
-
-            // システム（陣形）の選択肢を生成
-            const sysSelect = document.getElementById('formation-system-select');
-            if (sysSelect) {
-                sysSelect.innerHTML = state.customFormations.map(cf => `<option value="${cf.name}">${cf.name} (${cf.coords.length}人制)</option>`).join('');
-            }
-
-            let existingLineup = [];
-            if (formationId) {
-                // 既存ピリオドの編集時：元のデータをフォームにセット
-                const f = match.formations.find(item => item.id === formationId);
-                if (f) {
-                    document.getElementById('formation-name').value = f.name || '';
-                    if (sysSelect) sysSelect.value = f.system || '';
-
-                    const vUrlInput = document.getElementById('formation-video-url');
-                    if (vUrlInput) vUrlInput.value = (f.videoUrls && f.videoUrls.length > 0) ? f.videoUrls[0] : (f.videoUrl || '');
-
-                    document.getElementById('formation-score-us').value = f.scoreUs !== undefined ? f.scoreUs : 0;
-                    document.getElementById('formation-score-them').value = f.scoreThem !== undefined ? f.scoreThem : 0;
-
-                    const summaryInput = document.getElementById('formation-summary-text');
-                    if (summaryInput) summaryInput.value = f.summary || f.reflection || '';
-
-                    existingLineup = f.lineup || [];
-                }
-            } else {
-                // 新規ピリオド追加時：初期値を自動セット（例: 2本目）
-                const nextIndex = (match.formations ? match.formations.length : 0) + 1;
-                document.getElementById('formation-name').value = `${nextIndex}本目`;
-                document.getElementById('formation-score-us').value = 0;
-                document.getElementById('formation-score-them').value = 0;
-            }
-
-            // ハーフコート配置ピッチの描画
-            const selectedSys = (sysSelect && sysSelect.value) ? sysSelect.value : (state.customFormations[0]?.name || '3-3-1');
-            renderFormationPitch(selectedSys, existingLineup);
-
-            if (sysSelect) {
-                sysSelect.onchange = (e) => renderFormationPitch(e.target.value, []);
-            }
-
-            // モーダルを表示
-            openModal('modal-formation');
-        };
-
-        const formFormation = document.getElementById('form-formation');
-        if (formFormation) formFormation.reset();
-
-        document.getElementById('formation-match-id').value = matchId;
-        document.getElementById('formation-id').value = formationId || '';
-
-        // システム（陣形）の選択肢を生成
-        const sysSelect = document.getElementById('formation-system-select');
-        if (sysSelect) {
-            sysSelect.innerHTML = state.customFormations.map(cf => `<option value="${cf.name}">${cf.name} (${cf.coords.length}人制)</option>`).join('');
-        }
-
-        let existingLineup = [];
-        if (formationId) {
-            const f = match.formations.find(item => item.id === formationId);
-            if (f) {
-                document.getElementById('formation-name').value = f.name || '';
-                if (sysSelect) sysSelect.value = f.system || '';
-
-                const vUrlInput = document.getElementById('formation-video-url');
-                if (vUrlInput) vUrlInput.value = (f.videoUrls && f.videoUrls.length > 0) ? f.videoUrls[0] : (f.videoUrl || '');
-
-                document.getElementById('formation-score-us').value = f.scoreUs !== undefined ? f.scoreUs : 0;
-                document.getElementById('formation-score-them').value = f.scoreThem !== undefined ? f.scoreThem : 0;
-
-                const summaryInput = document.getElementById('formation-summary-text');
-                if (summaryInput) summaryInput.value = f.summary || f.reflection || '';
-
-                existingLineup = f.lineup || [];
-            }
-        } else {
-            // 新規作成時の初期値設定
-            const nextIndex = (match.formations ? match.formations.length : 0) + 1;
-            document.getElementById('formation-name').value = `${nextIndex}本目`;
-            document.getElementById('formation-score-us').value = 0;
-            document.getElementById('formation-score-them').value = 0;
-        }
-
-        // ハーフコート配置ピッチの描画
-        const selectedSys = (sysSelect && sysSelect.value) ? sysSelect.value : (state.customFormations[0]?.name || '3-3-1');
-        renderFormationPitch(selectedSys, existingLineup);
-
-        if (sysSelect) {
-            sysSelect.onchange = (e) => renderFormationPitch(e.target.value, []);
-        }
-
-        openModal('modal-formation');
-    };
-
-    // フォーム送信（保存）イベント
-    const formFormation = document.getElementById('form-formation');
-    if (formFormation) {
-        formFormation.onsubmit = (e) => {
-            e.preventDefault();
-            const matchId = parseInt(document.getElementById('formation-match-id').value, 10);
-            const formationId = document.getElementById('formation-id').value;
-            const match = state.matches.find(m => m.id === matchId);
-
-            if (match) {
-                const name = document.getElementById('formation-name').value.trim();
-                const system = document.getElementById('formation-system-select').value;
-
-                const videoUrlInput = document.getElementById('formation-video-url');
-                const videoUrl = videoUrlInput ? videoUrlInput.value.trim() : '';
-
-                const nodes = document.querySelectorAll('#tactical-formation-pitch .pitch-node');
-                const lineup = [];
-                nodes.forEach(node => {
-                    const playerId = node.dataset.playerId ? parseInt(node.dataset.playerId, 10) : null;
-                    if (playerId) {
-                        lineup.push({
-                            playerId,
-                            role: node.dataset.role,
-                            roleLabel: node.dataset.label,
-                            roleIndex: parseInt(node.dataset.index, 10)
-                        });
-                    }
-                });
-
-                const scoreUs = parseInt(document.getElementById('formation-score-us').value, 10) || 0;
-                const scoreThem = parseInt(document.getElementById('formation-score-them').value, 10) || 0;
-
-                const goalRecords = [];
-                const goalRows = document.querySelectorAll('#period-goal-records-list .goal-record-row');
-                goalRows.forEach(row => {
-                    const scorerVal = row.querySelector('.goal-scorer-select').value;
-                    const assistVal = row.querySelector('.goal-assist-select').value;
-                    const scorerId = scorerVal ? parseInt(scorerVal, 10) : null;
-                    const assistId = assistVal ? parseInt(assistVal, 10) : null;
-                    goalRecords.push({ scorerId, assistId });
-                });
-
-                // 分析メモ一覧の取得
-                const analysisMemos = [];
-                const memoRows = document.querySelectorAll('#formation-analysis-memo-list .analysis-memo-row');
-                memoRows.forEach(row => {
-                    const time = row.querySelector('.memo-time-input')?.value.trim() || '00:00';
-                    const tag = row.querySelector('.memo-tag-select')?.value || 'チャンス';
-                    const text = row.querySelector('.memo-text-input')?.value.trim() || '';
-                    analysisMemos.push({ time, tag, text });
-                });
-
-                const summaryVal = document.getElementById('formation-summary-text')?.value.trim() || '';
-
-                let targetPeriodIndex = 0;
-
-                if (formationId) {
-                    // 既存のピリオドを更新
-                    const fIndex = match.formations.findIndex(f => f.id === parseInt(formationId, 10));
-                    if (fIndex !== -1) {
-                        targetPeriodIndex = fIndex;
-                        const formObj = match.formations[fIndex];
-                        formObj.name = name;
-                        formObj.system = system;
-                        formObj.scoreUs = scoreUs;
-                        formObj.scoreThem = scoreThem;
-                        formObj.goalRecords = goalRecords;
-                        formObj.videoUrl = videoUrl;
-                        formObj.videoUrls = videoUrl ? [videoUrl] : [];
-                        formObj.lineup = lineup;
-                        formObj.analysisMemos = analysisMemos;
-                        formObj.summary = summaryVal;
-                    }
-                } else {
-                    // 新規ピリオドを追加
-                    const newPeriod = {
-                        id: Date.now(),
-                        name,
-                        system,
-                        scoreUs,
-                        scoreThem,
-                        goalRecords,
-                        videoUrl,
-                        videoUrls: videoUrl ? [videoUrl] : [],
-                        lineup,
-                        analysisMemos,
-                        summary: summaryVal,
-                        boardData: []
-                    };
-                    match.formations.push(newPeriod);
-                    targetPeriodIndex = match.formations.length - 1;
-                }
-
-                // 試合全体スコアの自動計算
-                let totalUs = 0;
-                let totalThem = 0;
-                const allMatchGoalRecords = [];
-
-                match.formations.forEach(f => {
-                    totalUs += (f.scoreUs !== undefined ? f.scoreUs : 0);
-                    totalThem += (f.scoreThem !== undefined ? f.scoreThem : 0);
-                    if (f.goalRecords && f.goalRecords.length > 0) {
-                        allMatchGoalRecords.push(...f.goalRecords);
-                    }
-                });
-
-                match.goalRecords = allMatchGoalRecords;
-                match.result = `${totalUs}-${totalThem}`;
-
-                // 保存およびモーダルの閉じる処理
-                saveData();
-                showToast('ピリオド情報を保存しました');
-                document.getElementById('modal-formation').classList.add('hidden');
-
-                const periodAnalysisModal = document.getElementById('modal-period-analysis');
-                const isAnalysisOpen = periodAnalysisModal && !periodAnalysisModal.classList.contains('hidden');
-
-                if (isAnalysisOpen) {
-                    // 階層2（大画面分析）が開いている場合は該当ピリオドを更新
-                    openPeriodAnalysis(matchId, targetPeriodIndex);
-                } else {
-                    // 階層1（試合詳細画面）を再描画
-                    initMatchDetailView(matchId);
-                }
-            }
-        };
     }
 
     const formMatchFeedback = document.getElementById('form-match-feedback');

@@ -229,7 +229,13 @@ export function syncPullGasCloud(isSilent = false) {
                     saveData();
                     if (!isSilent) showToast('クラウドから最新データを復元しました！');
                     setSyncStateUI('success');
-                    navigate(state.currentRoute || 'dashboard');
+
+                    // ★ 修正: すでにユーザーが別の画面（試合詳細など）にいる場合は、勝手に画面を強制遷移させない
+                    // 初回ロード時（dashboard）以外ならナビゲートを実行しない、または同期完了のトースト・表示更新のみにする
+                    if (!state.currentRoute || state.currentRoute === 'dashboard') {
+                        navigate('dashboard');
+                    }
+
                     return remoteData;
                 }
             }
@@ -360,7 +366,12 @@ function initDashboard() {
     const now = new Date();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
-    const completedMatches = state.matches.filter(m => m.result && /(\d+)\s*-\s*(\d+)/.test(m.result) && m.date <= todayStr);
+    // ★ 修正: スコアが存在し、かつ日付が必ず「今日（todayStr）以前」であるものだけに厳格に絞り込む
+    const completedMatches = state.matches.filter(m => {
+        if (!m.result || !/(\d+)\s*-\s*(\d+)/.test(m.result)) return false;
+        // 日付文字列を比較（YYYY-MM-DD形式なので文字列比較で正確に判定可能）
+        return m.date <= todayStr;
+    });
 
     let wins = 0, losses = 0, draws = 0;
     completedMatches.forEach(m => {
