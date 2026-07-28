@@ -486,7 +486,7 @@ body.role-read-only #pd-tab-goals textarea {
         left: 12px !important;
         right: 12px !important;
         width: calc(100% - 24px) !important;
-        height: 45px !important;
+        height: 48px !important;
         /* 高さを低くコンパクトに変更 */
         flex-direction: row !important;
         justify-content: space-around !important;

@@ -1,0 +1,660 @@
+// settings.js
+import { state } from './state.js';
+import { escapeHtml, showToast } from './utils.js';
+import { saveData, syncPushGasCloud, syncPullGasCloud, updateRoleUI, openModal, loadData } from './app.js';
+
+export function _showExportFallbackModal(jsonStr) {
+    const modal = document.getElementById('modal-export-fallback');
+    const textarea = document.getElementById('export-json-textarea');
+    const btnCopy = document.getElementById('btn-copy-export-json');
+    const successMsg = document.getElementById('export-copy-success');
+    if (!modal || !textarea) return;
+
+    textarea.value = jsonStr;
+    if (successMsg) successMsg.style.display = 'none';
+    modal.classList.remove('hidden');
+
+    if (btnCopy) {
+        btnCopy.onclick = () => {
+            textarea.select();
+            textarea.setSelectionRange(0, textarea.value.length);
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(jsonStr).then(() => {
+                        const msg = document.getElementById('export-copy-success');
+                        if (msg) { msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 2500); }
+                    });
+                } else {
+                    document.execCommand('copy');
+                    const msg = document.getElementById('export-copy-success');
+                    if (msg) { msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 2500); }
+                }
+            } catch (e) {
+                alert('コピーできませんでした。テキストを手動で選択してコピーしてください。');
+            }
+        };
+    }
+}
+
+export function initData() {
+    const btnExportSettings = document.getElementById('btn-export-data');
+    const btnExportView = document.getElementById('btn-data-view-export');
+
+    const handleExport = () => {
+        const dataStr = JSON.stringify({
+            matches: state.matches,
+            practices: state.practices,
+            players: state.players,
+            menuLibrary: state.menuLibrary,
+            matchTypes: state.matchTypes,
+            menuCategories: state.menuCategories,
+            skillMetrics: state.skillMetrics,
+            positions: state.positions,
+            positionsCat2: state.positionsCat2,
+            teamInfo: state.teamInfo,
+            customFormations: state.customFormations
+        }, null, 2);
+
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+        const filename = `coachMgrBackup_${dateStr}.json`;
+
+        try {
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 500);
+            showToast(`${filename} をダウンロードしました`);
+        } catch (err) {
+            _showExportFallbackModal(dataStr);
+        }
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            setTimeout(() => _showExportFallbackModal(dataStr), 300);
+        }
+    };
+
+    if (btnExportSettings) btnExportSettings.onclick = handleExport;
+    if (btnExportView) btnExportView.onclick = handleExport;
+
+    const handleImportFile = (file, inputEl) => {
+        if (!file) return;
+        if (!confirm('現在のデータがすべて上書きされます。インポートを実行してよろしいですか？')) {
+            if (inputEl) inputEl.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = async (evt) => {
+            try {
+                const parsed = JSON.parse(evt.target.result);
+                if (!parsed.matches && !parsed.players && !parsed.practices) {
+                    alert('有効なデータファイルではありません。エクスポートしたJSONファイルを選択してください。');
+                    return;
+                }
+                await localforage.setItem('coachMgrData', JSON.stringify(parsed));
+                await loadData();
+                document.documentElement.style.setProperty('--primary', state.teamInfo.color);
+                const sidebarTitle = document.querySelector('.sidebar-header h2');
+                if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name)}`;
+                showToast('データをインポートしました。ページを再読み込みします...');
+                setTimeout(() => location.reload(), 1500);
+            } catch (err) {
+                alert('ファイルの読み込みに失敗しました。有効なJSONファイルを選択してください。');
+            }
+        };
+        reader.readAsText(file);
+    };
+
+    const inputImportSettings = document.getElementById('input-import-data');
+    if (inputImportSettings) {
+        inputImportSettings.onchange = (e) => handleImportFile(e.target.files[0], inputImportSettings);
+    }
+
+    const inputImportView = document.getElementById('input-data-view-import');
+    if (inputImportView) {
+        inputImportView.onchange = (e) => handleImportFile(e.target.files[0], inputImportView);
+    }
+
+    const btnAllClear = document.getElementById('btn-data-all-clear');
+    if (btnAllClear) {
+        btnAllClear.onclick = async () => {
+            if (!confirm('【警告】入力済みのデータをすべて消去して初期化します。\nこの操作は取り消せません。よろしいですか？')) {
+                return;
+            }
+            if (!confirm('本当にすべてのデータを消去しますか？（最終確認）')) {
+                return;
+            }
+            state.matches = [];
+            state.practices = [];
+            state.players = [];
+            state.menuLibrary = [];
+
+            await localforage.removeItem('coachMgrData');
+
+            showToast('すべての入力データをクリアしました。');
+            setTimeout(() => location.reload(), 1000);
+        };
+    }
+}
+
+export function initSettings() {
+    const teamNameInput = document.getElementById('team-info-name');
+    const teamColorInput = document.getElementById('team-info-color');
+    const teamPasscodeInput = document.getElementById('team-info-passcode');
+
+    if (teamNameInput && teamColorInput) {
+        teamNameInput.value = state.teamInfo.name;
+        teamColorInput.value = state.teamInfo.color;
+        if (teamPasscodeInput) teamPasscodeInput.value = state.teamInfo.passcode || '7064';
+
+        const formTeamInfo = document.getElementById('form-team-info');
+        if (formTeamInfo) {
+            formTeamInfo.onsubmit = (e) => {
+                e.preventDefault();
+                state.teamInfo.name = document.getElementById('team-info-name').value;
+                state.teamInfo.color = document.getElementById('team-info-color').value;
+                const newPasscode = document.getElementById('team-info-passcode') ? document.getElementById('team-info-passcode').value.trim() : '';
+                if (newPasscode) {
+                    state.teamInfo.passcode = newPasscode;
+                }
+                saveData();
+                showToast('チーム基本情報を保存しました');
+                document.documentElement.style.setProperty('--primary', state.teamInfo.color);
+                const sidebarTitle = document.querySelector('.sidebar-header h2');
+                if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
+            };
+        }
+    }
+
+    const gasApiInput = document.getElementById('gas-api-url');
+    const gasSheetInput = document.getElementById('gas-sheet-name');
+    const gasAuthInput = document.getElementById('gas-auth-token');
+    if (gasApiInput) gasApiInput.value = state.teamInfo.gasApiUrl || '';
+    if (gasSheetInput) gasSheetInput.value = state.teamInfo.gasSheetName || '';
+    if (gasAuthInput) gasAuthInput.value = state.teamInfo.gasAuthToken || '';
+
+    const formGasSync = document.getElementById('form-gas-sync');
+    if (formGasSync) {
+        formGasSync.onsubmit = (e) => {
+            e.preventDefault();
+            const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
+            const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
+            const authVal = gasAuthInput ? gasAuthInput.value.trim() : '';
+            state.teamInfo.gasApiUrl = urlVal;
+            state.teamInfo.gasSheetName = sheetVal;
+            state.teamInfo.gasAuthToken = authVal;
+            saveData();
+            updateRoleUI();
+            showToast('クラウド同期設定を保存しました');
+        };
+    }
+
+    const btnPush = document.getElementById('btn-manual-sync-push');
+    if (btnPush) {
+        btnPush.onclick = () => {
+            const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
+            const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
+            const authVal = gasAuthInput ? gasAuthInput.value.trim() : '';
+            if (urlVal) state.teamInfo.gasApiUrl = urlVal;
+            state.teamInfo.gasSheetName = sheetVal;
+            state.teamInfo.gasAuthToken = authVal;
+            syncPushGasCloud(false);
+        };
+    }
+
+    const btnPull = document.getElementById('btn-manual-sync-pull');
+    if (btnPull) {
+        btnPull.onclick = () => {
+            const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
+            const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
+            if (urlVal) state.teamInfo.gasApiUrl = urlVal;
+            state.teamInfo.gasSheetName = sheetVal;
+            if (confirm('クラウドからデータを復元しますか？ローカルのデータは上書きされます。')) {
+                syncPullGasCloud(false);
+            }
+        };
+    }
+
+    const btnCopyInviteLink = document.getElementById('btn-copy-invite-link');
+    if (btnCopyInviteLink) {
+        btnCopyInviteLink.onclick = () => {
+            const urlVal = gasApiInput ? gasApiInput.value.trim() : (state.teamInfo.gasApiUrl || '');
+            const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : (state.teamInfo.gasSheetName || '');
+            const authVal = gasAuthInput ? gasAuthInput.value.trim() : (state.teamInfo.gasAuthToken || '');
+
+            if (!urlVal) {
+                alert('Web API URL が設定されていません。入力して保存した後に実行してください。');
+                return;
+            }
+
+            const baseUrl = window.location.origin + window.location.pathname;
+            const params = new URLSearchParams();
+            params.set('apiUrl', urlVal);
+            if (sheetVal) params.set('sheetName', sheetVal);
+            if (authVal) params.set('authToken', authVal);
+
+            const inviteUrl = `${baseUrl}?${params.toString()}`;
+
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(inviteUrl).then(() => {
+                        showToast('保護者用設定リンクをクリップボードにコピーしました！LINE等で送付してください。');
+                    });
+                } else {
+                    prompt('以下の招待用URLをコピーして保護者に共有してください:', inviteUrl);
+                }
+            } catch (e) {
+                prompt('以下の招待用URLをコピーして保護者に共有してください:', inviteUrl);
+            }
+        };
+    }
+
+    function renderList(listId, stateArray, itemLabelFunc = (x) => x) {
+        const list = document.getElementById(listId);
+        if (!list) return;
+        list.innerHTML = stateArray.map((item, index) => {
+            const isCustomForm = listId === 'custom-formation-list';
+            const editBtnClass = isCustomForm ? 'btn-edit-custom-formation' : 'btn-edit-master-item';
+            const editBtn = `<button type="button" class="btn btn-secondary ${editBtnClass}" data-list="${listId}" data-index="${index}" style="padding:0.2rem 0.5rem; margin-right:0.3rem;"><i class="fa-solid fa-pen"></i> 編集</button>`;
+            return `
+                <li style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>${itemLabelFunc(item)}</span>
+                    <div>
+                        ${editBtn}
+                        <button type="button" class="btn btn-danger btn-delete-item" data-list="${listId}" data-index="${index}" style="padding:0.2rem 0.5rem;"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </li>
+            `;
+        }).join('');
+    }
+
+    renderList('match-type-list', state.matchTypes);
+    renderList('menu-category-list', state.menuCategories);
+    renderList('skill-metric-list', state.skillMetrics);
+    renderList('position-list', state.positions);
+    renderList('position-cat2-list', state.positionsCat2);
+    renderList('custom-formation-list', state.customFormations, (item) => `${item.name} (${item.coords.length}人制)`);
+
+    document.querySelectorAll('.btn-edit-master-item').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const listId = e.currentTarget.dataset.list;
+            const idx = parseInt(e.currentTarget.dataset.index, 10);
+            let currentVal = '';
+            let targetArray = null;
+
+            if (listId === 'match-type-list') targetArray = state.matchTypes;
+            else if (listId === 'menu-category-list') targetArray = state.menuCategories;
+            else if (listId === 'skill-metric-list') targetArray = state.skillMetrics;
+            else if (listId === 'position-list') targetArray = state.positions;
+            else if (listId === 'position-cat2-list') targetArray = state.positionsCat2;
+
+            if (!targetArray) return;
+            currentVal = targetArray[idx];
+
+            const newVal = prompt('名称を編集してください:', currentVal);
+            if (newVal !== null && newVal.trim() !== '' && newVal.trim() !== currentVal) {
+                const trimmed = newVal.trim();
+                const oldVal = targetArray[idx];
+                targetArray[idx] = trimmed;
+
+                if (listId === 'match-type-list') {
+                    state.matches.forEach(m => { if (m.type === oldVal) m.type = trimmed; });
+                } else if (listId === 'menu-category-list') {
+                    state.practices.forEach(p => {
+                        if (p.menus) p.menus.forEach(m => { if (m.category === oldVal) m.category = trimmed; });
+                    });
+                    state.menuLibrary.forEach(m => { if (m.category === oldVal) m.category = trimmed; });
+                } else if (listId === 'position-list' || listId === 'position-cat2-list') {
+                    state.players.forEach(p => {
+                        if (Array.isArray(p.position)) {
+                            p.position = p.position.map(pos => pos === oldVal ? trimmed : pos);
+                        } else if (p.position === oldVal) {
+                            p.position = trimmed;
+                        }
+                    });
+                }
+
+                saveData();
+                initSettings();
+            }
+        });
+    });
+
+    document.querySelectorAll('.btn-delete-item').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const listId = e.currentTarget.dataset.list;
+            const idx = parseInt(e.currentTarget.dataset.index, 10);
+
+            let label = "";
+            let inUse = false;
+
+            if (listId === 'match-type-list') {
+                label = state.matchTypes[idx];
+                inUse = state.matches.some(m => m.type === label);
+            } else if (listId === 'menu-category-list') {
+                label = state.menuCategories[idx];
+                inUse = state.practices.some(p => p.menus.some(m => m.category === label)) ||
+                    state.menuLibrary.some(m => m.category === label);
+            } else if (listId === 'skill-metric-list') {
+                label = state.skillMetrics[idx];
+                inUse = state.players.some(p => p.history && p.history.some(h => h.skills && h.skills.length > idx));
+            } else if (listId === 'position-list') {
+                label = state.positions[idx];
+                inUse = state.players.some(p => {
+                    const posList = Array.isArray(p.position) ? p.position : [p.position];
+                    return posList.includes(label);
+                });
+            } else if (listId === 'position-cat2-list') {
+                label = state.positionsCat2[idx];
+                inUse = state.players.some(p => {
+                    const posList = Array.isArray(p.position) ? p.position : [p.position];
+                    return posList.includes(label);
+                });
+            } else if (listId === 'custom-formation-list') {
+                label = state.customFormations[idx].name;
+                inUse = state.matches.some(m => m.formations && m.formations.some(f => f.system === label));
+            }
+
+            if (inUse) {
+                if (!confirm(`「${label}」は現在使用中、または関連するデータが存在します。本当に削除しますか？\n(削除すると過去のデータの一部が表示されなくなる可能性があります)`)) {
+                    return;
+                }
+            } else {
+                if (!confirm(`「${label}」を削除しますか？`)) {
+                    return;
+                }
+            }
+
+            if (listId === 'match-type-list') state.matchTypes.splice(idx, 1);
+            if (listId === 'menu-category-list') state.menuCategories.splice(idx, 1);
+            if (listId === 'skill-metric-list') state.skillMetrics.splice(idx, 1);
+            if (listId === 'position-list') state.positions.splice(idx, 1);
+            if (listId === 'position-cat2-list') state.positionsCat2.splice(idx, 1);
+            if (listId === 'custom-formation-list') state.customFormations.splice(idx, 1);
+
+            saveData();
+            initSettings();
+        });
+    });
+
+    const openCustomFormationModal = (editIndex = null) => {
+        const form = document.getElementById('form-custom-formation');
+        if (form) form.reset();
+
+        const titleEl = document.querySelector('#modal-custom-formation h2');
+        if (titleEl) {
+            titleEl.innerHTML = editIndex !== null
+                ? `<i class="fa-solid fa-street-view"></i> カスタムフォーメーション編集`
+                : `<i class="fa-solid fa-street-view"></i> カスタムフォーメーション作成`;
+        }
+
+        const pitchCanvas = document.getElementById('custom-formation-pitch-canvas');
+        if (pitchCanvas) pitchCanvas.querySelectorAll('.pitch-node').forEach(n => n.remove());
+
+        const editorList = document.getElementById('custom-formation-nodes-editor-list');
+        if (editorList) editorList.innerHTML = `<p class="text-secondary" style="font-size:0.85rem; font-style:italic;">ピッチをクリックしてポジションを追加してください。</p>`;
+
+        const selectCount = document.getElementById('custom-formation-player-count');
+        const maxCountLabel = document.getElementById('custom-formation-max-count');
+
+        let placedNodes = [];
+
+        const drawAndBindNode = (node) => {
+            const nodeEl = document.createElement('div');
+            nodeEl.className = 'pitch-node';
+            nodeEl.id = `custom-pitch-node-${node.index}`;
+            nodeEl.style.top = node.top;
+            nodeEl.style.left = node.left;
+            nodeEl.style.cursor = 'grab';
+            nodeEl.innerHTML = `
+                <span class="pitch-node-role" id="custom-pitch-node-label-span-${node.index}">${node.label}</span>
+                <span class="pitch-node-number" id="custom-pitch-node-role-span-${node.index}" style="font-size:0.6rem;">${node.role}</span>
+            `;
+            if (pitchCanvas) pitchCanvas.appendChild(nodeEl);
+
+            if (placedNodes.length === 1 && editorList) {
+                editorList.innerHTML = '';
+            }
+
+            const cat1Roles = (state.positions && state.positions.length > 0) ? state.positions : ['GK', 'DF', 'MF', 'FW'];
+            const cat2Roles = (state.positionsCat2 && state.positionsCat2.length > 0) ? state.positionsCat2 : ['CB', 'SB', 'CH', 'SH', 'ST', 'WG'];
+
+            const cat1Options = cat1Roles.map(r => `<option value="${r}" ${node.role === r ? 'selected' : ''}>${r}</option>`).join('');
+            const cat2Options = `<option value="">(選択なし)</option>` + cat2Roles.map(r => `<option value="${r}" ${node.label === r ? 'selected' : ''}>${r}</option>`).join('');
+
+            const row = document.createElement('div');
+            row.className = 'custom-formation-node-row';
+            row.id = `custom-node-editor-row-${node.index}`;
+            row.style = 'display:flex; gap:0.4rem; align-items:center; margin-bottom:0.4rem;';
+            row.innerHTML = `
+                <strong style="font-size:0.8rem; min-width:20px;">#${node.index + 1}</strong>
+                <select class="form-control custom-node-role-select" title="カテゴリ1" style="font-size:0.8rem; padding:0.2rem 0.4rem; height:auto; flex:1;">
+                    ${cat1Options}
+                </select>
+                <select class="form-control custom-node-cat2-select" title="カテゴリ2" style="font-size:0.8rem; padding:0.2rem 0.4rem; height:auto; flex:1;">
+                    ${cat2Options}
+                </select>
+            `;
+
+            const roleSelect = row.querySelector('.custom-node-role-select');
+            const cat2Select = row.querySelector('.custom-node-cat2-select');
+
+            const updateNodeLabels = () => {
+                const c1 = roleSelect.value;
+                const c2 = cat2Select.value;
+                node.role = c1;
+                node.label = c2 ? c2 : c1;
+
+                const spanLabel = document.getElementById(`custom-pitch-node-label-span-${node.index}`);
+                const spanRole = document.getElementById(`custom-pitch-node-role-span-${node.index}`);
+                if (spanLabel) spanLabel.textContent = node.label;
+                if (spanRole) spanRole.textContent = node.role;
+            };
+
+            if (roleSelect) roleSelect.onchange = updateNodeLabels;
+            if (cat2Select) cat2Select.onchange = updateNodeLabels;
+
+            if (editorList) editorList.appendChild(row);
+
+            let isDragging = false;
+
+            const handleStart = (e) => {
+                isDragging = true;
+                nodeEl.style.cursor = 'grabbing';
+                e.stopPropagation();
+                e.preventDefault();
+            };
+
+            const handleMove = (e) => {
+                if (!isDragging || !pitchCanvas) return;
+                const rect = pitchCanvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+
+                let leftPercent = Math.round((x / rect.width) * 100);
+                let topPercent = Math.round((y / rect.height) * 100);
+                leftPercent = Math.max(0, Math.min(100, leftPercent));
+                topPercent = Math.max(0, Math.min(100, topPercent));
+
+                nodeEl.style.left = `${leftPercent}%`;
+                nodeEl.style.top = `${topPercent}%`;
+                node.left = `${leftPercent}%`;
+                node.top = `${topPercent}%`;
+            };
+
+            const handleEnd = () => {
+                if (isDragging) {
+                    isDragging = false;
+                    nodeEl.style.cursor = 'grab';
+                }
+            };
+
+            nodeEl.addEventListener('mousedown', handleStart);
+            window.addEventListener('mousemove', handleMove);
+            window.addEventListener('mouseup', handleEnd);
+
+            nodeEl.addEventListener('touchstart', handleStart, { passive: false });
+            window.addEventListener('touchmove', handleMove, { passive: false });
+            window.addEventListener('touchend', handleEnd);
+        };
+
+        if (editIndex !== null) {
+            const formObj = state.customFormations[editIndex];
+            const nameInp = document.getElementById('custom-formation-name');
+            if (nameInp) nameInp.value = formObj.name;
+            if (selectCount) selectCount.value = formObj.coords.length;
+            if (maxCountLabel) maxCountLabel.textContent = formObj.coords.length;
+
+            formObj.coords.forEach((coord, i) => {
+                const node = {
+                    index: i,
+                    top: coord.top,
+                    left: coord.left,
+                    label: coord.label,
+                    role: coord.role
+                };
+                placedNodes.push(node);
+                drawAndBindNode(node);
+            });
+        } else if (maxCountLabel && selectCount) {
+            maxCountLabel.textContent = selectCount.value;
+        }
+
+        const clearBoard = () => {
+            placedNodes = [];
+            if (pitchCanvas) pitchCanvas.querySelectorAll('.pitch-node').forEach(n => n.remove());
+            if (editorList) editorList.innerHTML = `<p class="text-secondary" style="font-size:0.85rem; font-style:italic;">ピッチをクリックしてポジションを追加してください。</p>`;
+        };
+
+        if (selectCount) {
+            selectCount.onchange = () => {
+                if (maxCountLabel) maxCountLabel.textContent = selectCount.value;
+                clearBoard();
+            };
+        }
+
+        const btnClearAll = document.getElementById('btn-custom-formation-clear-all');
+        if (btnClearAll) btnClearAll.onclick = clearBoard;
+
+        if (pitchCanvas) {
+            pitchCanvas.onclick = (e) => {
+                if (e.target.closest('.pitch-node')) return;
+
+                const maxCount = selectCount ? parseInt(selectCount.value, 10) : 8;
+                if (placedNodes.length >= maxCount) {
+                    alert(`ポジションは最大 ${maxCount} 箇所まで設定可能です。`);
+                    return;
+                }
+
+                const rect = pitchCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const leftPercent = Math.round((x / rect.width) * 100);
+                const topPercent = Math.round((y / rect.height) * 100);
+
+                const nodeIndex = placedNodes.length;
+                const defaultLabel = nodeIndex === 0 ? 'GK' : `P${nodeIndex}`;
+                const defaultRole = nodeIndex === 0 ? 'GK' : 'DF';
+
+                const newNode = {
+                    index: nodeIndex,
+                    top: `${topPercent}%`,
+                    left: `${leftPercent}%`,
+                    label: defaultLabel,
+                    role: defaultRole
+                };
+
+                placedNodes.push(newNode);
+                drawAndBindNode(newNode);
+            };
+        }
+
+        const formCustomForm = document.getElementById('form-custom-formation');
+        if (formCustomForm) {
+            formCustomForm.onsubmit = (e) => {
+                e.preventDefault();
+                const nameInp = document.getElementById('custom-formation-name');
+                const name = nameInp ? nameInp.value.trim() : '';
+                const maxCount = selectCount ? parseInt(selectCount.value, 10) : 8;
+
+                if (placedNodes.length !== maxCount) {
+                    alert(`指定された人数（${maxCount}人）分のポジションを設定してください。（現在: ${placedNodes.length}箇所）`);
+                    return;
+                }
+
+                const finalCoords = placedNodes.map(node => {
+                    const rowEl = document.getElementById(`custom-node-editor-row-${node.index}`);
+                    const role = rowEl.querySelector('.custom-node-role-select').value;
+                    const cat2Val = rowEl.querySelector('.custom-node-cat2-select').value;
+                    const label = cat2Val ? cat2Val : role;
+                    return {
+                        role,
+                        label,
+                        top: node.top,
+                        left: node.left
+                    };
+                });
+
+                if (editIndex !== null) {
+                    state.customFormations[editIndex] = { name, coords: finalCoords };
+                    showToast(`フォーメーション「${name}」を更新しました`);
+                } else {
+                    state.customFormations.push({ name, coords: finalCoords });
+                    showToast(`フォーメーション「${name}」を登録しました`);
+                }
+
+                saveData();
+                const customModal = document.getElementById('modal-custom-formation');
+                if (customModal) customModal.classList.add('hidden');
+                initSettings();
+            };
+        }
+
+        openModal('modal-custom-formation');
+    };
+
+    const btnAddCustomForm = document.getElementById('btn-add-custom-formation');
+    if (btnAddCustomForm) {
+        btnAddCustomForm.onclick = () => openCustomFormationModal();
+    }
+
+    document.querySelectorAll('.btn-edit-custom-formation').forEach(btn => {
+        btn.onclick = (e) => {
+            const index = parseInt(e.currentTarget.dataset.index, 10);
+            openCustomFormationModal(index);
+        };
+    });
+
+    function setupAddForm(formId, inputId, stateArray) {
+        const form = document.getElementById(formId);
+        if (!form) return;
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const inputEl = document.getElementById(inputId);
+            const newVal = inputEl ? inputEl.value.trim() : '';
+            if (newVal && !stateArray.includes(newVal)) {
+                stateArray.push(newVal);
+                saveData();
+                initSettings();
+            }
+        };
+    }
+
+    setupAddForm('form-add-match-type', 'new-match-type', state.matchTypes);
+    setupAddForm('form-add-menu-category', 'new-menu-category', state.menuCategories);
+    setupAddForm('form-add-skill-metric', 'new-skill-metric', state.skillMetrics);
+    setupAddForm('form-add-position', 'new-position', state.positions);
+    setupAddForm('form-add-position-cat2', 'new-position-cat2', state.positionsCat2);
+
+    initData();
+}
