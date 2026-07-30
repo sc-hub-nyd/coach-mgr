@@ -48,6 +48,7 @@ export function initData() {
             menuLibrary: state.menuLibrary,
             matchTypes: state.matchTypes,
             menuCategories: state.menuCategories,
+            analysisTags: state.analysisTags,
             skillMetrics: state.skillMetrics,
             positions: state.positions,
             positionsCat2: state.positionsCat2,
@@ -277,6 +278,7 @@ export function initSettings() {
 
     renderList('match-type-list', state.matchTypes);
     renderList('menu-category-list', state.menuCategories);
+    renderList('analysis-tag-list', state.analysisTags);
     renderList('skill-metric-list', state.skillMetrics);
     renderList('position-list', state.positions);
     renderList('position-cat2-list', state.positionsCat2);
@@ -291,6 +293,7 @@ export function initSettings() {
 
             if (listId === 'match-type-list') targetArray = state.matchTypes;
             else if (listId === 'menu-category-list') targetArray = state.menuCategories;
+            else if (listId === 'analysis-tag-list') targetArray = state.analysisTags;
             else if (listId === 'skill-metric-list') targetArray = state.skillMetrics;
             else if (listId === 'position-list') targetArray = state.positions;
             else if (listId === 'position-cat2-list') targetArray = state.positionsCat2;
@@ -318,6 +321,14 @@ export function initSettings() {
                         } else if (p.position === oldVal) {
                             p.position = trimmed;
                         }
+                    });
+                } else if (listId === 'analysis-tag-list') {
+                    state.matches.forEach(m => {
+                        if (m.formations) m.formations.forEach(f => {
+                            if (f.analysisMemos) f.analysisMemos.forEach(memo => {
+                                if (memo.tag === oldVal) memo.tag = trimmed;
+                            });
+                        });
                     });
                 }
 
@@ -357,6 +368,9 @@ export function initSettings() {
                     const posList = Array.isArray(p.position) ? p.position : [p.position];
                     return posList.includes(label);
                 });
+            } else if (listId === 'analysis-tag-list') {
+                label = state.analysisTags[idx];
+                inUse = state.matches.some(m => m.formations && m.formations.some(f => f.analysisMemos && f.analysisMemos.some(memo => memo.tag === label)));
             } else if (listId === 'custom-formation-list') {
                 label = state.customFormations[idx].name;
                 inUse = state.matches.some(m => m.formations && m.formations.some(f => f.system === label));
@@ -377,6 +391,7 @@ export function initSettings() {
             if (listId === 'skill-metric-list') state.skillMetrics.splice(idx, 1);
             if (listId === 'position-list') state.positions.splice(idx, 1);
             if (listId === 'position-cat2-list') state.positionsCat2.splice(idx, 1);
+            if (listId === 'analysis-tag-list') state.analysisTags.splice(idx, 1);
             if (listId === 'custom-formation-list') state.customFormations.splice(idx, 1);
 
             saveData();
@@ -662,6 +677,7 @@ export function initSettings() {
     setupAddForm('form-add-skill-metric', 'new-skill-metric', state.skillMetrics);
     setupAddForm('form-add-position', 'new-position', state.positions);
     setupAddForm('form-add-position-cat2', 'new-position-cat2', state.positionsCat2);
+    setupAddForm('form-add-analysis-tag', 'new-analysis-tag', state.analysisTags);
 
     initData();
 }

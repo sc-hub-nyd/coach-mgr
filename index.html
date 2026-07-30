@@ -37,6 +37,7 @@
         <main class="main-content">
             <header class="topbar">
                 <button id="menu-toggle" class="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                <button id="topbar-back" class="btn btn-secondary btn-sm hidden" style="padding:0.25rem 0.6rem; font-size:0.8rem; margin-right:0.5rem;"><i class="fa-solid fa-arrow-left"></i> 戻る</button>
                 <div class="topbar-title" id="topbar-title">ダッシュボード</div>
                 <div style="display:flex; align-items:center; gap:0.4rem;">
                     <div id="user-role-badge" class="topbar-badge"
@@ -84,7 +85,7 @@
             <nav class="bottom-nav" id="bottom-nav">
                 <a href="#" class="nav-item active" data-route="dashboard">
                     <i class="fa-solid fa-chart-line"></i>
-                    <span>ダッシュ</span>
+                    <span>ダッシュボード</span>
                 </a>
                 <a href="#" class="nav-item" data-route="matches">
                     <i class="fa-solid fa-trophy"></i>
@@ -146,7 +147,7 @@
             <div class="dashboard-left-column">
 
                 <!-- Card 1: W-L-D Stats + Team Leaders -->
-                <div class="card"
+                <div class="card dash-stats-card"
                     style="padding: 1rem 1.2rem; margin: 0; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
                     <div
                         style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem; border-bottom:1px solid var(--surface-border); padding-bottom:0.35rem;">
@@ -216,7 +217,7 @@
                 </div>
 
                 <!-- Card 2: Recent Match Results -->
-                <div class="card"
+                <div class="card dash-matches-card"
                     style="padding: 1rem 1.2rem; margin: 0; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
                     <div
                         style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem; border-bottom:1px solid var(--surface-border); padding-bottom:0.35rem;">
@@ -235,8 +236,8 @@
 
             <!-- Right Column: Schedule Manager -->
             <div class="dashboard-right-column">
-                <div class="card"
-                    style="padding: 1rem 1.2rem; height:100%; display:flex; flex-direction:column; box-sizing:border-box; margin: 0;">
+                <div class="card dash-schedule-card"
+                    style="padding: 1rem 1.2rem; display:flex; flex-direction:column; box-sizing:border-box; margin: 0;">
                     <div
                         style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--surface-border); padding-bottom:0.35rem; margin-bottom:0.7rem; flex-shrink:0;">
                         <h3 style="font-size:0.95rem; color:var(--primary); font-weight:600; margin:0;"><i
@@ -251,28 +252,26 @@
                         </div>
                     </div>
 
-                    <div style="display:flex; flex-direction:column; gap:0.7rem; flex:1; min-height:0;">
+                    <div style="display:flex; flex-direction:column; gap:0.7rem;">
                         <!-- Upcoming -->
-                        <div class="glass"
-                            style="padding:0.7rem 0.8rem; border-radius:10px; display:flex; flex-direction:column; flex:1; min-height:0;">
+                        <div style="display:flex; flex-direction:column; padding:0.2rem 0;">
                             <h4
                                 style="font-size:0.8rem; color:var(--primary); font-weight:600; border-bottom:1px solid var(--surface-border); padding-bottom:0.2rem; margin:0 0 0.4rem 0; flex-shrink:0;">
                                 <i class="fa-solid fa-hourglass-half"></i> 今後の予定
                             </h4>
-                            <div id="dash-upcoming-schedule-content"
-                                style="display:flex; flex-direction:column; gap:0.4rem; overflow-y:auto; flex:1;">
+                            <div id="dash-upcoming-schedule-content" class="dash-horizontal-grid"
+                                style="gap:0.5rem; flex:1;">
                             </div>
                         </div>
 
                         <!-- Past History -->
-                        <div class="glass"
-                            style="padding:0.7rem 0.8rem; border-radius:10px; display:flex; flex-direction:column; flex:1; min-height:0;">
+                        <div style="display:flex; flex-direction:column; padding:0.2rem 0;">
                             <h4
                                 style="font-size:0.8rem; color:var(--text-secondary); font-weight:600; border-bottom:1px solid var(--surface-border); padding-bottom:0.2rem; margin:0 0 0.4rem 0; flex-shrink:0;">
                                 <i class="fa-solid fa-clock-rotate-left"></i> 直近の履歴 (3件)
                             </h4>
-                            <div id="dash-past-schedule-content"
-                                style="display:flex; flex-direction:column; gap:0.4rem; overflow-y:auto; flex:1;">
+                            <div id="dash-past-schedule-content" class="dash-horizontal-grid"
+                                style="gap:0.5rem; flex:1;">
                             </div>
                         </div>
                     </div>
@@ -300,18 +299,14 @@
         <div
             style="display:flex; flex-direction:column; gap:1.2rem; max-width:1100px; margin:0 auto; padding-bottom:2rem;">
 
-            <!-- ヘッダー（戻るボタン ＆ タイトル） -->
+            <!-- ヘッダー（タイトル） -->
             <div
                 style="display:flex; justify-content:space-between; align-items:center; background:var(--card-bg); padding:1rem 1.5rem; border-radius:var(--border-radius); border:1px solid var(--surface-border);">
-                <div style="display:flex; align-items:center; gap:1rem;">
-                    <button class="btn btn-secondary btn-sm" id="btn-back-to-matches"><i
-                            class="fa-solid fa-arrow-left"></i> 試合一覧に戻る</button>
-                    <div>
-                        <div style="font-size:0.8rem; color:var(--text-secondary);" id="match-detail-meta">日付 | 大会・種別
-                        </div>
-                        <h2 style="margin:0; font-size:1.25rem; color:var(--primary);" id="match-detail-title">vs 対戦相手
-                        </h2>
+                <div>
+                    <div style="font-size:0.8rem; color:var(--text-secondary);" id="match-detail-meta">日付 | 大会・種別
                     </div>
+                    <h2 style="margin:0; font-size:1.25rem; color:var(--primary);" id="match-detail-title">vs 対戦相手
+                    </h2>
                 </div>
                 <div style="display:flex; gap:0.5rem;">
                     <button class="btn btn-secondary btn-sm" id="btn-edit-match"><i class="fa-solid fa-pen"></i>
@@ -320,13 +315,23 @@
             </div>
 
             <!-- 試合テーマ・総括 -->
-            <div class="card" style="padding:1rem 1.2rem; margin:0;">
-                <div style="margin-bottom: 0.4rem;"><strong style="font-size:0.85rem; color:var(--text-primary);"><i
+            <div class="card" style="padding:1rem 1.2rem; margin:0; display:flex; flex-direction:column; gap:0.5rem;">
+                <div><strong style="font-size:0.85rem; color:var(--text-primary);"><i
                             class="fa-solid fa-bullseye" style="color:var(--primary);"></i> 試合テーマ:</strong> <span
                         id="match-detail-theme" style="font-size:0.85rem;">未設定</span></div>
                 <div><strong style="font-size:0.85rem; color:var(--text-primary);"><i class="fa-solid fa-comment-dots"
                             style="color:#3b82f6;"></i> 試合総括:</strong> <span id="match-detail-summary"
                         style="font-size:0.85rem; white-space: pre-wrap;">記録なし</span></div>
+                <div style="border-top:1px solid var(--surface-border); padding-top:0.5rem; margin-top:0.25rem;">
+                    <details class="practice-attendance-details" style="width: 100%; cursor: pointer;">
+                        <summary style="font-weight:600; font-size:0.8rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.3rem; outline:none; list-style:none; user-select:none;">
+                            <i class="fa-solid fa-chevron-down" style="font-size:0.7rem; color:var(--text-secondary); transition:transform 0.2s;"></i>
+                            <span id="match-detail-attendance-summary">参加者 (0/0)</span>
+                        </summary>
+                        <div id="match-detail-attendance-roster-display" style="display:flex; flex-wrap:wrap; gap:0.25rem; padding:0.4rem; border-radius:8px; background:rgba(0,0,0,0.02); margin-top:0.25rem; max-height:100px; overflow-y:auto; box-sizing:border-box;">
+                        </div>
+                    </details>
+                </div>
             </div>
 
             <!-- ピリオド一覧セクション -->
@@ -540,6 +545,22 @@
                         </form>
                     </div>
                     <ul id="position-cat2-list" class="sl-list"></ul>
+                </div>
+            </div>
+
+            <!-- Section: 動画分析タグ -->
+            <div class="sl-section">
+                <div class="sl-section-label"><i class="fa-solid fa-tags"></i> 動画分析タグ</div>
+                <div class="sl-section-body">
+                    <div class="sl-row sl-add-row">
+                        <form id="form-add-analysis-tag" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
+                            <input type="text" id="new-analysis-tag" class="sl-input"
+                                placeholder="新しい動画分析タグを入力 (例: チャンス, ピンチ)" required>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i>
+                                追加</button>
+                        </form>
+                    </div>
+                    <ul id="analysis-tag-list" class="sl-list"></ul>
                 </div>
             </div>
 
@@ -767,38 +788,38 @@
 
                 <!-- Region 2: Left Icon Dock (Width ~50px, Restored All Tools, Vertical Scroll) -->
                 <nav class="anim-tool-dock" id="anim-tool-dock">
-                    <button class="dock-btn tool-btn active" data-tool="select" data-tooltip="選択 (👆)"><i
+                    <button class="dock-btn tool-btn active" data-tool="select" data-tooltip="選択 (👆)" title="選択 (👆)"><i
                             class="fa-solid fa-hand-pointer"></i><span class="dock-text">選択</span></button>
-                    <button class="dock-btn tool-btn" data-tool="player" data-tooltip="選手配置 (👤)"><i
+                    <button class="dock-btn tool-btn" data-tool="player" data-tooltip="選手配置 (👤)" title="選手配置 (👤)"><i
                             class="fa-solid fa-user-plus"></i><span class="dock-text">選手</span></button>
-                    <button class="dock-btn tool-btn" data-tool="ball" data-tooltip="ボール (⚽)"><i
+                    <button class="dock-btn tool-btn" data-tool="ball" data-tooltip="ボール (⚽)" title="ボール (⚽)"><i
                             class="fa-solid fa-futbol"></i><span class="dock-text">ボール</span></button>
-
-                    <button class="dock-btn tool-btn" data-tool="line-move" data-tooltip="選手移動: 直線 (↗️)"><i
+ 
+                    <button class="dock-btn tool-btn" data-tool="line-move" data-tooltip="選手移動: 直線 (↗️)" title="選手移動: 直線 (↗️)"><i
                             class="fa-solid fa-arrow-right"></i><span class="dock-text">移動</span></button>
-                    <button class="dock-btn tool-btn" data-tool="line-pass" data-tooltip="パス: 点線 (➡️)"><i
+                    <button class="dock-btn tool-btn" data-tool="line-pass" data-tooltip="パス: 点線 (➡️)" title="パス: 点線 (➡️)"><i
                             class="fa-solid fa-ellipsis"></i><span class="dock-text">パス</span></button>
-                    <button class="dock-btn tool-btn" data-tool="line-dribble" data-tooltip="ドリブル: 曲線・ジグザグ (〰️)"><i
+                    <button class="dock-btn tool-btn" data-tool="line-dribble" data-tooltip="ドリブル: 曲線・ジグザグ (〰️)" title="ドリブル: 曲線・ジグザグ (〰️)"><i
                             class="fa-solid fa-wave-square"></i><span class="dock-text">ドリブル</span></button>
-
-                    <button class="dock-btn tool-btn" data-tool="marker" data-tooltip="マーカー (🟠)"><i
+ 
+                    <button class="dock-btn tool-btn" data-tool="marker" data-tooltip="マーカー (🟠)" title="マーカー (🟠)"><i
                             class="fa-solid fa-circle" style="color:#f97316;"></i><span
                             class="dock-text">マーカー</span></button>
-                    <button class="dock-btn tool-btn" data-tool="cone" data-tooltip="コーン (🔺)"><i
+                    <button class="dock-btn tool-btn" data-tool="cone" data-tooltip="コーン (🔺)" title="コーン (🔺)"><i
                             class="fa-solid fa-caret-up" style="color:#facc15;"></i><span
                             class="dock-text">コーン</span></button>
-                    <button class="dock-btn tool-btn" data-tool="ladder" data-tooltip="ラダー (🪜)"><i
+                    <button class="dock-btn tool-btn" data-tool="ladder" data-tooltip="ラダー (🪜)" title="ラダー (🪜)"><i
                             class="fa-solid fa-bars" style="transform: rotate(90deg);"></i><span
                             class="dock-text">ラダー</span></button>
-                    <button class="dock-btn tool-btn" data-tool="minigoal" data-tooltip="ミニゴール (🥅)"><span
+                    <button class="dock-btn tool-btn" data-tool="minigoal" data-tooltip="ミニゴール (🥅)" title="ミニゴール (🥅)"><span
                             style="display:inline-block; width:10px; height:6px; border:2px solid currentColor; border-bottom:none;"></span><span
                             class="dock-text">ゴール</span></button>
-
-                    <button class="dock-btn tool-btn" data-tool="line-rect" data-tooltip="四角エリア (🔲)"><i
+ 
+                    <button class="dock-btn tool-btn" data-tool="line-rect" data-tooltip="四角エリア (🔲)" title="四角エリア (🔲)"><i
                             class="fa-regular fa-square"></i><span class="dock-text">四角</span></button>
-                    <button class="dock-btn tool-btn" data-tool="line-circle" data-tooltip="円エリア (⭕)"><i
+                    <button class="dock-btn tool-btn" data-tool="line-circle" data-tooltip="円エリア (⭕)" title="円エリア (⭕)"><i
                             class="fa-regular fa-circle"></i><span class="dock-text">円</span></button>
-                    <button class="dock-btn tool-btn" data-tool="text" data-tooltip="文字 (🔤)"><i
+                    <button class="dock-btn tool-btn" data-tool="text" data-tooltip="文字 (🔤)" title="文字 (🔤)"><i
                             class="fa-solid fa-font"></i><span class="dock-text">文字</span></button>
                 </nav>
 
@@ -840,6 +861,13 @@
                                     <select id="canvas-player-select" class="form-control hidden"></select>
                                 </div>
 
+                                <div id="popover-text-controls" class="popover-group" style="display:none; align-items:center; gap:0.4rem;">
+                                    <label style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); display:flex; align-items:center; gap:0.3rem; margin:0; cursor:pointer; user-select:none;">
+                                        <input type="checkbox" id="canvas-text-bg-opaque" style="width:14px; height:14px; margin:0; accent-color:var(--primary);">
+                                        <span>背景を白にする</span>
+                                    </label>
+                                </div>
+ 
                                 <div class="popover-actions">
                                     <button class="btn btn-secondary btn-xs" id="tool-rotate" title="向きを回転"><i
                                             class="fa-solid fa-rotate-right"></i> 回転</button>
@@ -1000,7 +1028,8 @@
 
     <!-- Match Form Modal -->
     <div id="modal-match" class="modal-overlay hidden">
-        <div class="modal">
+        <div class="modal" style="position:relative;">
+            <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.5rem;">試合を追加</h2>
             <form id="form-match">
                 <input type="hidden" id="match-edit-id" value="">
@@ -1035,6 +1064,13 @@
                     <textarea id="match-comments-improve" class="form-control" rows="2"
                         placeholder="ネガティブトランジションの遅さ..."></textarea>
                 </div>
+                <div class="form-group">
+                    <label>参加メンバー（名簿） <span class="badge-optional">任意</span></label>
+                    <div id="match-attendance-roster"
+                        style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 0.8rem 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <!-- Checkboxes populated dynamically -->
+                    </div>
+                </div>
                 <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
                     <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
                     <button type="submit" class="btn btn-primary">保存する</button>
@@ -1048,13 +1084,25 @@
         <div class="period-analysis-container" style="position: relative; overflow: hidden;">
 
             <!-- Header: 作図画面と同一のUI配置 -->
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--surface-border); padding: 0.6rem 1rem; background: var(--card-bg); flex-shrink: 0; z-index: 10;">
-                <!-- 左側: 戻る ＆ ピリオド遷移ナビ -->
-                <div style="display:flex; align-items:center; gap: 0.6rem;">
+            <div class="period-analysis-header"
+                style="display:flex; justify-content:space-between; align-items:center; height:var(--header-height); min-height:var(--header-height); box-sizing:border-box; border-bottom: 1px solid var(--surface-border); padding: 0 1rem; background: var(--card-bg); flex-shrink: 0; z-index: 10;">
+                <!-- 左側: 戻る -->
+                <div class="period-analysis-header-left" style="display:flex; align-items:center; gap: 0.6rem;">
                     <button class="btn btn-secondary btn-sm" id="btn-back-to-match-detail" title="試合詳細へ戻る">
                         <i class="fa-solid fa-arrow-left"></i> 戻る
                     </button>
+                </div>
+
+                <!-- 中央: ピリオドタイトル -->
+                <div class="period-analysis-header-center">
+                    <h2 style="margin:0; font-size:1.05rem; font-weight:700; color:var(--text-primary); text-align:center;"
+                        id="period-analysis-title">
+                        vs 対戦相手 - 1本目 (0 - 0)
+                    </h2>
+                </div>
+
+                <!-- 右側: ピリオド遷移ナビ -->
+                <div class="period-analysis-header-right" style="display:flex; align-items:center; gap: 0.5rem; position: relative;">
                     <div
                         style="display:flex; align-items:center; gap:0.3rem; background:rgba(0,0,0,0.03); padding:0.2rem 0.4rem; border-radius:6px; border:1px solid var(--surface-border);">
                         <button class="btn btn-secondary btn-xs" id="btn-period-prev" title="前のピリオドへ"
@@ -1068,16 +1116,6 @@
                             次へ <i class="fa-solid fa-chevron-right"></i>
                         </button>
                     </div>
-                </div>
-
-                <!-- 中央: ピリオドタイトル -->
-                <h2 style="margin:0; font-size:1.05rem; font-weight:700; color:var(--text-primary); text-align:center;"
-                    id="period-analysis-title">
-                    vs 対戦相手 - 1本目 (0 - 0)
-                </h2>
-
-                <!-- 右側: ボタンは廃止し、スライドパネルのタブで開閉します -->
-                <div style="display:flex; align-items:center; gap: 0.5rem; position: relative;">
                 </div>
             </div>
 
@@ -1114,30 +1152,31 @@
                         <!-- JSで動的注入 -->
                     </div>
                 </div>
-            </div>
 
-            <!-- ★ スライド式サイドパネル（ドロワー） -->
-            <aside class="anim-detail-side-panel collapsed" id="period-info-side-panel">
-                <button class="side-panel-toggle-btn" id="period-info-side-toggle-btn" title="ピリオド情報パネルを開閉">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                <div class="side-panel-header">
-                    <h4 id="period-side-panel-heading"
-                        style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.4rem;">
-                        <i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> ピリオド情報
-                    </h4>
-                </div>
-                <div class="side-panel-body" id="period-side-panel-body">
-                    <!-- JSで動的切り替え -->
-                </div>
-            </aside>
+                <!-- ★ スライド式サイドパネル（ドロワー） -->
+                <aside class="anim-detail-side-panel collapsed" id="period-info-side-panel">
+                    <button class="side-panel-toggle-btn" id="period-info-side-toggle-btn" title="ピリオド情報パネルを開閉">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <div class="side-panel-header">
+                        <h4 id="period-side-panel-heading"
+                            style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.4rem;">
+                            <i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> ピリオド情報
+                        </h4>
+                    </div>
+                    <div class="side-panel-body" id="period-side-panel-body">
+                        <!-- JSで動的切り替え -->
+                    </div>
+                </aside>
+            </div>
 
         </div>
     </div>
 
     <!-- コンテキスト維持型: ピリオド情報編集モーダル (既存を軽量化して上書き) -->
     <div id="modal-formation" class="modal-overlay hidden" style="z-index: 1030;">
-        <div class="modal" style="max-width: 600px; width: 95%;">
+        <div class="modal" style="max-width: 600px; width: 95%; position:relative;">
+            <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.2rem; font-size:1.2rem;" id="formation-modal-title"><i
                     class="fa-solid fa-pen"></i> ピリオド情報を編集</h2>
             <form id="form-formation">
@@ -1232,7 +1271,8 @@
 
     <!-- Practice Form Modal -->
     <div id="modal-practice" class="modal-overlay hidden">
-        <div class="modal">
+        <div class="modal" style="position:relative;">
+            <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 id="practice-modal-title" style="margin-bottom:1.5rem;">練習日を追加</h2>
             <form id="form-practice">
                 <input type="hidden" id="practice-edit-id">
@@ -1257,7 +1297,8 @@
 
     <!-- Menu Form Modal -->
     <div id="modal-menu" class="modal-overlay hidden">
-        <div class="modal">
+        <div class="modal" style="position:relative;">
+            <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.5rem;">練習メニューを追加</h2>
             <div class="form-group"
                 style="margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--surface-border);">
@@ -1331,9 +1372,27 @@
         </div>
     </div>
 
+    <!-- Practice Animation Preview Modal -->
+    <div id="modal-practice-anim-preview" class="modal-overlay hidden" style="z-index: 3000;">
+        <div class="modal" style="max-width: 600px; width: 95%; padding: 1.2rem; border-radius: 16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
+                <h3 id="anim-preview-title" style="margin:0; font-size:1.05rem; font-weight:700; color:var(--text-primary);">メニュー名</h3>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-close-anim-preview" style="padding:0.25rem 0.5rem; min-width:auto; height:32px;"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div style="width:100%; aspect-ratio: 800/500; background:#1e293b; border-radius:12px; overflow:hidden; position:relative; margin-bottom:0.8rem; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);">
+                <canvas id="practice-preview-canvas" width="800" height="500" style="width:100%; height:100%; object-fit:contain;"></canvas>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:center; gap:0.8rem;">
+                <button class="btn btn-primary btn-sm" id="btn-preview-play-toggle" style="padding:0.4rem 1rem; font-size:0.85rem; border-radius:9999px; min-width:110px;"><i class="fa-solid fa-play"></i> 再生</button>
+                <span id="preview-frame-indicator" style="font-size:0.85rem; font-weight:bold; color:var(--text-secondary);">1 / 1</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Player Form Modal -->
     <div id="modal-player" class="modal-overlay hidden">
-        <div class="modal">
+        <div class="modal" style="position:relative;">
+            <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 id="player-modal-title" style="margin-bottom:1.5rem;">選手を登録</h2>
             <form id="form-player">
                 <input type="hidden" id="player-edit-id">
@@ -1403,7 +1462,8 @@
 
     <!-- Player Detail View Modal -->
     <div id="modal-player-detail" class="modal-overlay hidden">
-        <div class="modal" style="max-width: 800px; width: 90%;">
+        <div class="modal" style="max-width: 800px; width: 90%; position:relative;">
+            <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <div class="modal-header-detail">
                 <div class="modal-header-detail-left">
                     <div id="pd-number" class="player-number">10</div>
@@ -1537,7 +1597,8 @@
 
     <!-- Player Assessment Form Modal -->
     <div id="modal-player-assessment" class="modal-overlay hidden" style="z-index: 1001;">
-        <div class="modal">
+        <div class="modal" style="position:relative;">
+            <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 id="assessment-modal-title" style="margin-bottom:1rem;">新しいスキル評価を記録</h2>
 
             <!-- Skill Level Guide Box -->
@@ -1585,7 +1646,8 @@
 
     <!-- Text Input Form Modal -->
     <div id="modal-text-input" class="modal-overlay hidden" style="z-index: 1001;">
-        <div class="modal" style="max-width:400px;">
+        <div class="modal" style="max-width:400px; position:relative;">
+            <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.5rem;">文字を入力</h2>
             <form id="form-text-input">
                 <div class="form-group">
@@ -1603,7 +1665,8 @@
 
     <!-- Scene Title Input Modal -->
     <div id="modal-scene-title" class="modal-overlay hidden" style="z-index: 1001;">
-        <div class="modal" style="max-width:400px;">
+        <div class="modal" style="max-width:400px; position:relative;">
+            <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.5rem;" id="scene-title-modal-heading">シーン見出しの編集</h2>
             <form id="form-scene-title">
                 <div class="form-group">
@@ -1624,7 +1687,8 @@
 
     <!-- Library Assign Modal -->
     <div id="modal-assign-practice" class="modal-overlay hidden" style="z-index: 1001;">
-        <div class="modal" style="max-width: 450px;">
+        <div class="modal" style="max-width: 450px; position:relative;">
+            <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.5rem;"><i class="fa-solid fa-calendar-plus"></i> 練習日にアサイン</h2>
             <input type="hidden" id="assign-menu-id">
             <p class="text-secondary" style="font-size:0.85rem; margin-bottom:1rem;">アサイン先の練習日を選択してください：</p>
@@ -1642,7 +1706,8 @@
 
     <!-- Custom Formation Visual Creator Modal -->
     <div id="modal-custom-formation" class="modal-overlay hidden" style="z-index: 1001;">
-        <div class="modal" style="max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto;">
+        <div class="modal" style="max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto; position:relative;">
+            <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.5rem;"><i class="fa-solid fa-street-view"></i> カスタムフォーメーション作成</h2>
             <form id="form-custom-formation">
                 <div class="form-group" style="display:flex; gap:1rem; margin-bottom:1rem;">

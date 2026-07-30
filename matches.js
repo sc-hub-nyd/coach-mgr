@@ -11,6 +11,21 @@ let currentPeriodIndex = 0;
 let isResizingWorkspace = false;
 let timelineInterval = null;
 
+let periodSideClickOutsideHandler = null;
+let periodSideKeyDownHandler = null;
+
+function cleanupPeriodSideEvents() {
+    if (periodSideClickOutsideHandler) {
+        document.removeEventListener('click', periodSideClickOutsideHandler);
+        document.removeEventListener('touchstart', periodSideClickOutsideHandler);
+        periodSideClickOutsideHandler = null;
+    }
+    if (periodSideKeyDownHandler) {
+        document.removeEventListener('keydown', periodSideKeyDownHandler);
+        periodSideKeyDownHandler = null;
+    }
+}
+
 // YouTube URLから11桁のIDを抽出
 function extractYouTubeId(url) {
     if (!url) return null;
@@ -195,17 +210,15 @@ export function addAnalysisMemoRow(timeStr = '00:00', textVal = '', tagVal = '�
     div.className = 'analysis-memo-row';
     div.style = 'display:flex; gap:0.3rem; align-items:center; width:100%; margin-bottom:0.3rem;';
 
+    const tagOptions = (state.analysisTags || []).map(t => `<option value="${escapeHtml(t)}" ${tagVal === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('');
+
     div.innerHTML = `
         <button type="button" class="btn btn-secondary btn-seek-video" style="padding:0.25rem 0.4rem; font-size:0.75rem; color:var(--primary);" title="このシーンへジャンプ">
             <i class="fa-solid fa-play"></i>
         </button>
         <input type="text" class="form-control memo-time-input" value="${timeStr}" placeholder="00:00" style="width:60px; text-align:center; font-weight:bold; font-size:0.8rem; padding:0.25rem 0.2rem;">
         <select class="form-control memo-tag-select" style="width:100px; font-size:0.75rem; padding:0.25rem 0.3rem;">
-            <option value="ビルドアップ" ${tagVal === 'ビルドアップ' ? 'selected' : ''}>ビルドアップ</option>
-            <option value="チャンス" ${tagVal === 'チャンス' ? 'selected' : ''}>チャンス</option>
-            <option value="守備/プレス" ${tagVal === '守備/プレス' ? 'selected' : ''}>守備/プレス</option>
-            <option value="セットプレー" ${tagVal === 'セットプレー' ? 'selected' : ''}>セットプレー</option>
-            <option value="課題/反省" ${tagVal === '課題/反省' ? 'selected' : ''}>課題/反省</option>
+            ${tagOptions}
         </select>
         <input type="text" class="form-control memo-text-input" value="${escapeHtml(textVal)}" placeholder="メモ（例: 左展開からクロス）" style="flex:1; font-size:0.8rem; padding:0.25rem 0.4rem;">
         <button type="button" class="btn btn-danger" onclick="document.getElementById('${rowId}').remove()" style="padding:0.25rem 0.4rem; font-size:0.8rem;" title="削除"><i class="fa-solid fa-trash-can"></i></button>
@@ -375,6 +388,32 @@ export function renderFormationPitch(systemName, existingLineup = []) {
     };
 }
 
+export function renderMatchRoster(selectedPlayerIds = []) {
+    const container = document.getElementById('match-attendance-roster');
+    if (!container) return;
+
+    if (!state.players || state.players.length === 0) {
+        container.innerHTML = '<p class="text-secondary" style="font-size:0.85rem; margin:0;">登録されている選手がいません。「選手一覧」から選手を登録してください。</p>';
+        return;
+    }
+
+    const sortedPlayers = [...state.players].sort((a, b) => {
+        const numA = parseInt(a.number, 10) || 0;
+        const numB = parseInt(b.number, 10) || 0;
+        return numA - numB;
+    });
+
+    container.innerHTML = sortedPlayers.map(p => {
+        const isChecked = (selectedPlayerIds && selectedPlayerIds.includes(p.id)) ? 'checked' : '';
+        return `
+            <label style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; cursor:pointer; padding:0.3rem 0; user-select:none;">
+                <input type="checkbox" value="${p.id}" ${isChecked} style="width:18px; height:18px; accent-color:var(--primary); cursor:pointer; margin:0; display:inline-block; opacity:1; visibility:visible;">
+                <span style="color:var(--text-primary); font-weight:500;">${p.number}. ${escapeHtml(p.name)}</span>
+            </label>
+        `;
+    }).join('');
+}
+
 export function openMatchModal(matchId = null) {
     const form = document.getElementById('form-match');
     if (form) {
@@ -422,6 +461,8 @@ export function openMatchModal(matchId = null) {
             });
             const scorersStr = scorersList.join(', ');
 
+            const presentPlayerIds = Array.from(document.querySelectorAll('#match-attendance-roster input[type="checkbox"]:checked')).map(cb => parseInt(cb.value, 10));
+
             const editId = document.getElementById('match-edit-id').value;
             if (editId) {
                 const match = state.matches.find(m => m.id === parseInt(editId, 10));
@@ -434,6 +475,7 @@ export function openMatchModal(matchId = null) {
                     match.scorers = scorersStr;
                     match.goalRecords = goalRecords;
                     match.comments = commentsStr;
+                    match.presentPlayerIds = presentPlayerIds;
                     saveData();
                     showToast('試合情報を更新しました');
                 }
@@ -449,7 +491,8 @@ export function openMatchModal(matchId = null) {
                     goalRecords: goalRecords,
                     comments: commentsStr,
                     playerFeedback: [],
-                    formations: []
+                    formations: [],
+                    presentPlayerIds: presentPlayerIds
                 };
                 state.matches.unshift(newMatch);
                 saveData();
@@ -526,7 +569,13 @@ export function openMatchModal(matchId = null) {
             if (impEl) impEl.value = improve;
 
             if (title) title.textContent = '試合情報を編集';
+
+            const activeIds = m.presentPlayerIds || [];
+            renderMatchRoster(activeIds);
         }
+    } else {
+        const allPlayerIds = state.players.map(p => p.id);
+        renderMatchRoster(allPlayerIds);
     }
 
     const modalMatch = document.getElementById('modal-match');
@@ -620,6 +669,22 @@ export function initMatchDetailView(matchId) {
 
     const summaryEl = document.getElementById('match-detail-summary');
     if (summaryEl) summaryEl.textContent = m.comments || '記録なし';
+
+    const detailRosterDisplay = document.getElementById('match-detail-attendance-roster-display');
+    const detailAttendanceSummary = document.getElementById('match-detail-attendance-summary');
+    if (detailRosterDisplay && detailAttendanceSummary) {
+        const attendeesHtml = m.presentPlayerIds && m.presentPlayerIds.length > 0
+            ? state.players.filter(pl => m.presentPlayerIds.includes(pl.id)).map(pl => `
+                <span style="display:inline-flex; align-items:center; background:#f1f5f9; border:1px solid #e2e8f0; color:#334155; font-size:0.7rem; font-weight:600; padding:0.15rem 0.4rem; border-radius:9999px; gap:0.25rem; white-space:nowrap;">
+                    ${pl.number ? `<span style="background:var(--primary); color:#ffffff; font-size:0.55rem; width:14px; height:14px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0;">${pl.number}</span>` : ''}
+                    <span style="flex-shrink:0;">${escapeHtml(pl.name)}</span>
+                </span>
+            `).join('')
+            : '<span style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">メンバー登録がありません</span>';
+        
+        detailRosterDisplay.innerHTML = attendeesHtml;
+        detailAttendanceSummary.textContent = `参加者 (${m.presentPlayerIds ? `${m.presentPlayerIds.length}/${state.players.length}` : `0/${state.players.length}`})`;
+    }
 
     const btnEditMatch = document.getElementById('btn-edit-match');
     if (btnEditMatch) {
@@ -759,6 +824,8 @@ window.stopAndCleanupYouTube = function () {
 
 // 階層2: 大画面分析の初期化
 export function openPeriodAnalysis(matchId, periodIndex) {
+    cleanupPeriodSideEvents();
+
     const match = state.matches.find(m => m.id === matchId);
     const isCoach = state.currentUserRole === 'coach';
     if (!match || !match.formations || !match.formations[periodIndex]) return;
@@ -768,11 +835,17 @@ export function openPeriodAnalysis(matchId, periodIndex) {
     const period = match.formations[periodIndex];
 
     const periodAnalysisModal = document.getElementById('modal-period-analysis');
-    if (periodAnalysisModal) periodAnalysisModal.classList.remove('hidden');
+    if (periodAnalysisModal) {
+        periodAnalysisModal.classList.remove('hidden');
+        document.body.classList.add('modal-open');
+    }
 
     const titleEl = document.getElementById('period-analysis-title');
     if (titleEl) {
         titleEl.textContent = `vs ${escapeHtml(match.opponent)} - ${period.name || `${periodIndex + 1}本目`} (${period.scoreUs || 0} - ${period.scoreThem || 0})`;
+        titleEl.title = titleEl.textContent;
+        titleEl.style.cursor = 'pointer';
+        titleEl.onclick = () => showToast(titleEl.textContent);
     }
 
     // --- サイドパネルおよび要素の取得 ---
@@ -785,10 +858,6 @@ export function openPeriodAnalysis(matchId, periodIndex) {
     if (sidePanel) {
         sidePanel.classList.add('collapsed');
         sidePanel.classList.remove('open');
-    }
-    if (sideToggleBtn) {
-        const icon = sideToggleBtn.querySelector('i');
-        if (icon) icon.className = 'fa-solid fa-chevron-left';
     }
 
     // 既存のタイムライン監視タイマーをクリア
@@ -976,9 +1045,10 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         const selectEl = targetRow.querySelector('.side-pos-player-select');
                         if (selectEl) {
                             selectEl.focus();
-                            targetRow.style.backgroundColor = 'rgba(37, 99, 235, 0.15)';
-                            setTimeout(() => { targetRow.style.backgroundColor = 'rgba(0,0,0,0.02)'; }, 1000);
                         }
+                        targetRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        targetRow.style.backgroundColor = 'rgba(37, 99, 235, 0.15)';
+                        setTimeout(() => { targetRow.style.backgroundColor = 'rgba(0,0,0,0.02)'; }, 1000);
                     }
                 };
             });
@@ -1147,22 +1217,22 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     const topPercent = (c.y !== undefined && !isNaN(c.y)) ? c.y : 50;
 
                     return `
-                        <div style="position:absolute; left:${leftPercent}%; top:${topPercent}%; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; z-index:5;" title="${c.role || `ポジション${pIdx + 1}`}">
+                        <div class="side-pitch-pin" data-pos-key="${posKey}" style="position:absolute; left:${leftPercent}%; top:${topPercent}%; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; cursor:pointer; z-index:5;" title="${c.role || `ポジション${pIdx + 1}`}">
                             <div style="width:26px; height:26px; background:var(--primary); color:#fff; border-radius:50%; font-size:0.65rem; font-weight:bold; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); border:1.5px solid #fff;">
                                 ${labelText}
                             </div>
                         </div>
                     `;
                 }).join('');
-
+ 
                 posListHtml = currentCustomForm.coords.map((c, pIdx) => {
                     const posKey = `pos_${pIdx}_${c.role || 'pos'}`;
                     const assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
                     const assignedPlayer = state.players.find(p => p.id == assignedPlayerId);
                     const playerName = assignedPlayer ? `${assignedPlayer.number ? `#${assignedPlayer.number} ` : ''}${assignedPlayer.name}` : '未割当';
-
+ 
                     return `
-                        <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(0,0,0,0.02); padding:0.3rem 0.5rem; border-radius:6px; border:1px solid var(--surface-border); margin-bottom:0.25rem; font-size:0.8rem;">
+                        <div class="side-position-row" data-pos-key="${posKey}" style="display:flex; align-items:center; justify-content:space-between; background:rgba(0,0,0,0.02); padding:0.3rem 0.5rem; border-radius:6px; border:1px solid var(--surface-border); margin-bottom:0.25rem; font-size:0.8rem;">
                             <span style="font-weight:bold; color:var(--text-secondary);">${escapeHtml(c.role || `${pIdx + 1}`)}</span>
                             <span style="font-weight:600; color:var(--text-primary);">${escapeHtml(playerName)}</span>
                         </div>
@@ -1211,6 +1281,20 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     </div>
                 </div>
             `;
+
+            // ピンをクリックした際のフォーカス・ハイライト挙動
+            sideBody.querySelectorAll('.side-pitch-pin').forEach(pin => {
+                pin.onclick = (e) => {
+                    e.stopPropagation();
+                    const key = pin.dataset.posKey;
+                    const targetRow = sideBody.querySelector(`.side-position-row[data-pos-key="${key}"]`);
+                    if (targetRow) {
+                        targetRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        targetRow.style.backgroundColor = 'rgba(37, 99, 235, 0.15)';
+                        setTimeout(() => { targetRow.style.backgroundColor = 'rgba(0,0,0,0.02)'; }, 1000);
+                    }
+                };
+            });
         }
     };
 
@@ -1223,11 +1307,34 @@ export function openPeriodAnalysis(matchId, periodIndex) {
             renderSidePanelContent();
             const isOpen = sidePanel.classList.toggle('open');
             sidePanel.classList.toggle('collapsed', !isOpen);
-            const icon = sideToggleBtn.querySelector('i');
-            if (icon) {
-                icon.className = isOpen ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
+        };
+
+        // click / touch outside to close sidebar
+        periodSideClickOutsideHandler = (e) => {
+            if (sidePanel.classList.contains('open')) {
+                if (!sidePanel.contains(e.target) && !sideToggleBtn.contains(e.target)) {
+                    sidePanel.classList.remove('open');
+                    sidePanel.classList.add('collapsed');
+                }
             }
         };
+        setTimeout(() => {
+            if (periodSideClickOutsideHandler) {
+                document.addEventListener('click', periodSideClickOutsideHandler);
+                document.addEventListener('touchstart', periodSideClickOutsideHandler);
+            }
+        }, 0);
+
+        // Escape key to close sidebar
+        periodSideKeyDownHandler = (e) => {
+            if (e.key === 'Escape') {
+                if (sidePanel.classList.contains('open')) {
+                    sidePanel.classList.remove('open');
+                    sidePanel.classList.add('collapsed');
+                }
+            }
+        };
+        document.addEventListener('keydown', periodSideKeyDownHandler);
     }
 
     // --- ピリオド遷移ナビ ---
@@ -1251,6 +1358,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
     if (btnBack) {
         btnBack.onclick = (e) => {
             e.preventDefault();
+            cleanupPeriodSideEvents();
             if (typeof window.stopAndCleanupYouTube === 'function') {
                 window.stopAndCleanupYouTube();
             }
@@ -1262,7 +1370,10 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 sidePanel.classList.add('collapsed');
                 sidePanel.classList.remove('open');
             }
-            if (periodAnalysisModal) periodAnalysisModal.classList.add('hidden');
+            if (periodAnalysisModal) {
+                periodAnalysisModal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+            }
             openMatchDetail(matchId);
         };
     }
@@ -1276,7 +1387,8 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 currentTimeStr = formatSeconds(ytPlayer.getCurrentTime());
             }
             if (!period.analysisMemos) period.analysisMemos = [];
-            period.analysisMemos.push({ time: currentTimeStr, tag: 'チャンス', text: '' });
+            const defaultTag = (state.analysisTags && state.analysisTags.length > 0) ? state.analysisTags[0] : 'メモ';
+            period.analysisMemos.push({ time: currentTimeStr, tag: defaultTag, text: '' });
             saveData();
             renderPeriodTimelineList(period);
             showToast('タイムラインイベントを追加しました');
@@ -1546,11 +1658,12 @@ function renderPeriodTimelineList(period) {
     }
 
     container.innerHTML = memos.map((m, idx) => {
-        const currentTag = m.tag || 'チャンス';
+        const currentTag = m.tag || (state.analysisTags && state.analysisTags[0]) || 'メモ';
         const disabledAttr = isCoach ? '' : 'disabled';
         const deleteBtnHtml = isCoach
             ? `<button type="button" class="btn btn-danger btn-sm btn-delete-memo" style="margin-left:auto; padding:0.15rem 0.4rem; font-size:0.75rem;" title="削除"><i class="fa-solid fa-trash-can"></i></button>`
             : '';
+        const tagOptionHtml = (state.analysisTags || []).map(t => `<option value="${escapeHtml(t)}" ${currentTag === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('');
 
         return `
             <div class="timeline-edit-row" data-index="${idx}" style="display:flex; flex-direction:column; gap:0.3rem; background:rgba(0,0,0,0.02); padding:0.5rem 0.6rem; border-radius:6px; border:1px solid var(--surface-border); transition: all 0.3s ease;">
@@ -1558,14 +1671,9 @@ function renderPeriodTimelineList(period) {
                     <button type="button" class="btn btn-secondary btn-sm btn-seek-timestamp" data-time="${escapeHtml(m.time || '00:00')}" style="padding:0.2rem 0.5rem; font-size:0.75rem; font-weight:bold; color:var(--primary); flex-shrink:0;">
                         <i class="fa-solid fa-play"></i> ${escapeHtml(m.time || '00:00')}
                     </button>
-                    
+
                     <select class="form-control memo-tag-val" ${disabledAttr} style="width:110px; font-size:0.75rem; padding:0.2rem; height:auto;">
-                        <option value="チャンス" ${currentTag === 'チャンス' ? 'selected' : ''}>💡 チャンス</option>
-                        <option value="得点" ${currentTag === '得点' ? 'selected' : ''}>⚽ 得点</option>
-                        <option value="失点" ${currentTag === '失点' ? 'selected' : ''}>⚠️ 失点</option>
-                        <option value="ビルドアップ" ${currentTag === 'ビルドアップ' ? 'selected' : ''}>ビルドアップ</option>
-                        <option value="課題/反省" ${currentTag === '課題/反省' ? 'selected' : ''}>📌 課題</option>
-                        <option value="メモ" ${currentTag === 'メモ' ? 'selected' : ''}>メモ</option>
+                        ${tagOptionHtml}
                     </select>
 
                     ${deleteBtnHtml}
@@ -1709,6 +1817,15 @@ export function initMatches() {
                 const isCompleted = !!matchScore;
                 const resultText = isCompleted ? `${matchScore[1]}-${matchScore[2]}` : '<span style="font-weight:normal; color:var(--text-secondary); font-size:0.9rem;">試合予定</span>';
 
+                const attendeesHtml = m.presentPlayerIds && m.presentPlayerIds.length > 0
+                    ? state.players.filter(pl => m.presentPlayerIds.includes(pl.id)).map(pl => `
+                        <span style="display:inline-flex; align-items:center; background:#f1f5f9; border:1px solid #e2e8f0; color:#334155; font-size:0.7rem; font-weight:600; padding:0.15rem 0.4rem; border-radius:9999px; gap:0.25rem; white-space:nowrap;">
+                            ${pl.number ? `<span style="background:var(--primary); color:#ffffff; font-size:0.55rem; width:14px; height:14px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0;">${pl.number}</span>` : ''}
+                            <span style="flex-shrink:0;">${escapeHtml(pl.name)}</span>
+                        </span>
+                    `).join('')
+                    : '<span style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">メンバー登録がありません</span>';
+
                 const actionBtns = isCoach ? `
                     <button class="btn btn-secondary btn-detail-match" data-id="${m.id}"><i class="fa-solid fa-circle-info"></i> 詳細</button>
                     <button class="btn btn-danger btn-delete-match" data-id="${m.id}"><i class="fa-solid fa-trash"></i></button>
@@ -1722,10 +1839,21 @@ export function initMatches() {
                             <div>
                                 <div class="match-card-date"><i class="fa-regular fa-calendar"></i> ${m.date} | ${m.type}${m.tournament ? ` (${m.tournament})` : ''}</div>
                                 <div class="match-card-opponent">vs ${escapeHtml(m.opponent)}</div>
+                                <div class="text-secondary" style="font-size:0.8rem; margin-top:0.4rem;">
+                                    <details class="practice-attendance-details" style="width: 100%; cursor: pointer;">
+                                        <summary style="font-weight:600; font-size:0.8rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.3rem; outline:none; list-style:none; user-select:none;">
+                                            <i class="fa-solid fa-chevron-down" style="font-size:0.7rem; color:var(--text-secondary); transition:transform 0.2s;"></i>
+                                            <span>参加者 (${m.presentPlayerIds ? `${m.presentPlayerIds.length}/${state.players.length}` : `0/${state.players.length}`})</span>
+                                        </summary>
+                                        <div style="display:flex; flex-wrap:wrap; gap:0.25rem; padding:0.4rem; border-radius:8px; background:rgba(0,0,0,0.02); margin-top:0.25rem; max-height:100px; overflow-y:auto; box-sizing:border-box;">
+                                            ${attendeesHtml}
+                                        </div>
+                                    </details>
+                                </div>
                             </div>
                             <div class="match-card-result">${resultText}</div>
                         </div>
-                        <div class="match-card-actions">
+                        <div class="match-card-actions" style="margin-top:0.8rem;">
                             ${actionBtns}
                         </div>
                     </div>

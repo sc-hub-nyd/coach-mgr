@@ -71,12 +71,14 @@ body.drawing-mode .bottom-nav {
 /* Header */
 .anim-header {
     /* Layout */
-    height: 50px;
+    height: var(--header-height);
+    min-height: var(--header-height);
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 1rem;
+    box-sizing: border-box;
     z-index: 2000 !important;
     /* Design */
     background: #ffffff;
@@ -85,11 +87,20 @@ body.drawing-mode .bottom-nav {
 }
 
 .anim-header-left,
-.anim-header-center,
 .anim-header-right {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.35rem;
+    flex-shrink: 0;
+}
+
+.anim-header-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+    padding: 0 0.5rem;
 }
 
 .anim-menu-title-icon {
@@ -98,19 +109,24 @@ body.drawing-mode .bottom-nav {
 
 .anim-editable-title {
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--text-primary);
     padding: 2px 8px;
     border-radius: 6px;
-    border: 1px dashed transparent;
+    border: none;
     transition: all 0.15s ease;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+    display: inline-block;
 }
 
 .anim-editable-title:hover,
 .anim-editable-title:focus {
-    background: rgba(0, 0, 0, 0.04);
-    border-color: var(--primary);
+    background: transparent;
+    border-color: transparent;
     outline: none;
 }
 
@@ -787,10 +803,10 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         transform: translateX(0) !important;
     }
 
-    #anim-side-panel-toggle-btn {
+    .side-panel-toggle-btn {
         position: absolute !important;
         left: -32px !important;
-        top: 12px !important;
+        top: 10px !important;
         width: 32px !important;
         height: 40px !important;
         z-index: 600 !important;
@@ -804,7 +820,8 @@ screen and (max-width: 1024px) and (orientation: landscape) {
     }
 
     .anim-header {
-        height: 42px !important;
+        height: var(--header-height) !important;
+        min-height: var(--header-height) !important;
         padding: 0 0.5rem !important;
     }
 
@@ -982,35 +999,44 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         padding: 0 0.1rem !important;
     }
 
-    .anim-header {
-        height: auto !important;
-        min-height: 48px !important;
-        flex-wrap: wrap !important;
-        padding: 0.5rem !important;
-        gap: 0.4rem !important;
+    .period-analysis-header {
+        height: var(--header-height) !important;
+        min-height: var(--header-height) !important;
+        display: flex !important;
+        flex-direction: row !important;
+        padding: 0 0.5rem !important;
+        align-items: center !important;
+        justify-content: space-between !important;
     }
 
-    .anim-header-left,
-    .anim-header-center,
-    .anim-header-right {
-        flex-wrap: wrap !important;
-        max-width: 100% !important;
-        gap: 0.25rem !important;
+    .period-analysis-header-left,
+    .period-analysis-header-center,
+    .period-analysis-header-right {
+        width: auto !important;
+        flex: none !important;
+        display: flex !important;
     }
 
-    .anim-editable-title {
+    .period-analysis-header-center h2 {
         font-size: 0.85rem !important;
-        max-width: 120px !important;
+        text-align: center !important;
+        margin: 0 auto !important;
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
-        padding: 2px 4px !important;
+        max-width: 150px !important;
     }
 
     #tool-undo span,
     #tool-redo span,
-    #anim-settings-btn span {
+    #anim-settings-btn span,
+    #tool-save-anim span {
         display: none !important;
+    }
+
+    .anim-editable-title {
+        max-width: 110px !important;
+        font-size: 0.85rem !important;
     }
 
     .view-container {

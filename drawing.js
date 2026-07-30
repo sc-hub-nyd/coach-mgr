@@ -35,7 +35,9 @@ let boundListeners = {
     canvasTouchStart: null,
     canvasTouchMove: null,
     canvasTouchEnd: null,
-    docKeyDown: null
+    docKeyDown: null,
+    docKeyUp: null,
+    docClickOutside: null
 };
 
 export function cleanupCanvasEvents() {
@@ -51,6 +53,13 @@ export function cleanupCanvasEvents() {
 
     if (boundListeners.docKeyDown) {
         document.removeEventListener('keydown', boundListeners.docKeyDown);
+    }
+    if (boundListeners.docKeyUp) {
+        document.removeEventListener('keyup', boundListeners.docKeyUp);
+    }
+    if (boundListeners.docClickOutside) {
+        document.removeEventListener('click', boundListeners.docClickOutside);
+        document.removeEventListener('touchstart', boundListeners.docClickOutside);
     }
 
     Object.keys(boundListeners).forEach(key => boundListeners[key] = null);
@@ -290,26 +299,36 @@ function playAnimation() {
         const currentFrame = Array.isArray(rawCurrent) ? rawCurrent : ((rawCurrent && rawCurrent.objects) || []);
         const nextFrame = Array.isArray(rawNext) ? rawNext : ((rawNext && rawNext.objects) || []);
 
-        const isStaticType = (type) => ['line', 'ladder', 'rect', 'cone', 'marker', 'minigoal'].includes(type);
-
         const interpolatedObjects = currentFrame.map(obj1 => {
-            if (isStaticType(obj1.type)) return obj1;
             const obj2 = nextFrame.find(o => o.id === obj1.id);
             if (!obj2) return obj1;
 
             const p = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
 
-            return {
-                ...obj1,
-                x: obj1.x + (obj2.x - obj1.x) * p,
-                y: obj1.y + (obj2.y - obj1.y) * p
-            };
+            if (typeof obj1.x !== 'undefined' && typeof obj1.y !== 'undefined') {
+                return {
+                    ...obj1,
+                    x: obj1.x + (obj2.x - obj1.x) * p,
+                    y: obj1.y + (obj2.y - obj1.y) * p
+                };
+            } else if (typeof obj1.x1 !== 'undefined') {
+                const res = {
+                    ...obj1,
+                    x1: obj1.x1 + (obj2.x1 - obj1.x1) * p,
+                    y1: obj1.y1 + (obj2.y1 - obj1.y1) * p,
+                    x2: obj1.x2 + (obj2.x2 - obj1.x2) * p,
+                    y2: obj1.y2 + (obj2.y2 - obj1.y2) * p
+                };
+                if (typeof obj1.cx !== 'undefined' && typeof obj2.cx !== 'undefined') {
+                    res.cx = obj1.cx + (obj2.cx - obj1.cx) * p;
+                    res.cy = obj1.cy + (obj2.cy - obj1.cy) * p;
+                }
+                return res;
+            }
+            return obj1;
         });
 
-        const staticObjs = currentFrame.filter(o => isStaticType(o.type));
-        const drawList = [...interpolatedObjects.filter(o => !isStaticType(o.type)), ...staticObjs];
-
-        drawPitch(drawList);
+        drawPitch(interpolatedObjects);
         animReqId = requestAnimationFrame(animate);
     }
 
@@ -416,19 +435,36 @@ export function exportAnimationVideo() {
                 const rawNext = frames[currentFrameIdx + 1];
                 const currentFrame = Array.isArray(rawCurrent) ? rawCurrent : ((rawCurrent && rawCurrent.objects) || []);
                 const nextFrame = Array.isArray(rawNext) ? rawNext : ((rawNext && rawNext.objects) || []);
-                const isStaticType = (type) => ['line', 'ladder', 'rect', 'cone', 'marker', 'minigoal'].includes(type);
-
                 const interpolatedObjects = currentFrame.map(obj1 => {
-                    if (isStaticType(obj1.type)) return obj1;
                     const obj2 = nextFrame.find(o => o.id === obj1.id);
                     if (!obj2) return obj1;
+
                     const p = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
-                    return { ...obj1, x: obj1.x + (obj2.x - obj1.x) * p, y: obj1.y + (obj2.y - obj1.y) * p };
+
+                    if (typeof obj1.x !== 'undefined' && typeof obj1.y !== 'undefined') {
+                        return {
+                            ...obj1,
+                            x: obj1.x + (obj2.x - obj1.x) * p,
+                            y: obj1.y + (obj2.y - obj1.y) * p
+                        };
+                    } else if (typeof obj1.x1 !== 'undefined') {
+                        const res = {
+                            ...obj1,
+                            x1: obj1.x1 + (obj2.x1 - obj1.x1) * p,
+                            y1: obj1.y1 + (obj2.y1 - obj1.y1) * p,
+                            x2: obj1.x2 + (obj2.x2 - obj1.x2) * p,
+                            y2: obj1.y2 + (obj2.y2 - obj1.y2) * p
+                        };
+                        if (typeof obj1.cx !== 'undefined' && typeof obj2.cx !== 'undefined') {
+                            res.cx = obj1.cx + (obj2.cx - obj1.cx) * p;
+                            res.cy = obj1.cy + (obj2.cy - obj1.cy) * p;
+                        }
+                        return res;
+                    }
+                    return obj1;
                 });
 
-                const staticObjs = currentFrame.filter(o => isStaticType(o.type));
-                const drawList = [...interpolatedObjects.filter(o => !isStaticType(o.type)), ...staticObjs];
-                drawPitch(drawList);
+                drawPitch(interpolatedObjects);
             } else {
                 drawPitch(objects);
                 if (elapsed >= 2000) {
@@ -479,6 +515,11 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
         targetCtx.strokeStyle = '#334155';
         targetCtx.lineWidth = 1.5;
         targetCtx.strokeRect(pitchX, pitchY, pitchW, pitchH);
+    } else {
+        if (targetCanvas.id !== 'pitch-canvas') {
+            targetCtx.fillStyle = '#ffffff';
+            targetCtx.fillRect(0, 0, 800, 500);
+        }
     }
 
     if (template === 'full' || template === 'grid') {
@@ -737,11 +778,18 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
     renderObjects.forEach(obj => {
         if (obj.type === 'line') {
-            drawArrowToCtx(obj.x1, obj.y1, obj.x2, obj.y2, obj.lineType || 'pass', targetCtx);
+            drawArrowToCtx(obj.x1, obj.y1, obj.x2, obj.y2, obj.lineType || 'pass', targetCtx, obj.cx, obj.cy);
             if (typeof selectedObject !== 'undefined' && selectedObject === obj) {
                 targetCtx.fillStyle = 'var(--primary)';
                 targetCtx.beginPath(); targetCtx.arc(obj.x1, obj.y1, 5, 0, Math.PI * 2); targetCtx.fill();
                 targetCtx.beginPath(); targetCtx.arc(obj.x2, obj.y2, 5, 0, Math.PI * 2); targetCtx.fill();
+                
+                const cx = typeof obj.cx !== 'undefined' ? obj.cx : (obj.x1 + obj.x2) / 2;
+                const cy = typeof obj.cy !== 'undefined' ? obj.cy : (obj.y1 + obj.y2) / 2;
+                targetCtx.beginPath(); targetCtx.arc(cx, cy, 6, 0, Math.PI * 2); targetCtx.fill();
+                targetCtx.strokeStyle = '#ffffff';
+                targetCtx.lineWidth = 1.5;
+                targetCtx.stroke();
             }
         } else if (obj.type === 'ladder') {
             drawLadderToCtx(obj.x1, obj.y1, obj.x2, obj.y2, targetCtx);
@@ -753,9 +801,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
         } else if (obj.type === 'rect') {
             targetCtx.strokeStyle = 'rgba(51, 65, 85, 0.7)';
             targetCtx.lineWidth = 1.5;
-            targetCtx.setLineDash([4, 4]);
             targetCtx.strokeRect(Math.min(obj.x1, obj.x2), Math.min(obj.y1, obj.y2), Math.abs(obj.x2 - obj.x1), Math.abs(obj.y2 - obj.y1));
-            targetCtx.setLineDash([]);
 
             if (typeof selectedObject !== 'undefined' && selectedObject === obj) {
                 targetCtx.fillStyle = 'var(--primary)';
@@ -860,14 +906,21 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             const gh = 15 * scale;
             const hw = gw / 2;
 
-            targetCtx.strokeStyle = '#334155';
-            targetCtx.lineWidth = Math.max(2, 2.5 * scale);
-            targetCtx.strokeRect(-hw, -gh * 0.66, gw, gh);
-
+            // Draw net frame (back, left, right walls)
+            targetCtx.strokeStyle = '#64748b';
+            targetCtx.lineWidth = Math.max(1.5, 2 * scale);
             targetCtx.beginPath();
-            targetCtx.lineWidth = 1;
-            targetCtx.strokeStyle = 'rgba(51, 65, 85, 0.4)';
-            const gridStepX = 6 * scale;
+            targetCtx.moveTo(-hw, gh * 0.33);
+            targetCtx.lineTo(-hw, -gh * 0.66);
+            targetCtx.lineTo(hw, -gh * 0.66);
+            targetCtx.lineTo(hw, gh * 0.33);
+            targetCtx.stroke();
+
+            // Draw net grid
+            targetCtx.beginPath();
+            targetCtx.lineWidth = 0.8 * scale;
+            targetCtx.strokeStyle = 'rgba(100, 116, 139, 0.4)';
+            const gridStepX = 5 * scale;
             for (let nx = -hw + gridStepX; nx < hw; nx += gridStepX) {
                 targetCtx.moveTo(nx, -gh * 0.66);
                 targetCtx.lineTo(nx, gh * 0.33);
@@ -878,6 +931,22 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
                 targetCtx.lineTo(hw, ny);
             }
             targetCtx.stroke();
+
+            // Draw faint goal line
+            targetCtx.strokeStyle = '#cbd5e1';
+            targetCtx.lineWidth = 1;
+            targetCtx.beginPath();
+            targetCtx.moveTo(-hw, gh * 0.33);
+            targetCtx.lineTo(hw, gh * 0.33);
+            targetCtx.stroke();
+
+            // Draw goal posts (at front corners)
+            targetCtx.fillStyle = '#475569';
+            targetCtx.beginPath();
+            targetCtx.arc(-hw, gh * 0.33, Math.max(2, 3 * scale), 0, Math.PI * 2);
+            targetCtx.arc(hw, gh * 0.33, Math.max(2, 3 * scale), 0, Math.PI * 2);
+            targetCtx.fill();
+
             targetCtx.restore();
 
             if (typeof selectedObject !== 'undefined' && selectedObject === obj) {
@@ -906,11 +975,24 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             targetCtx.translate(obj.x, obj.y);
             if (obj.angle) targetCtx.rotate((obj.angle * Math.PI) / 180);
 
-            targetCtx.fillStyle = obj.color || '#000000';
+            const txt = obj.text || '';
             targetCtx.font = 'bold 14px Inter, sans-serif';
+
+            if (obj.bgOpaque) {
+                const tw = targetCtx.measureText(txt).width;
+                targetCtx.fillStyle = '#ffffff';
+                targetCtx.strokeStyle = '#cbd5e1';
+                targetCtx.lineWidth = 1;
+                targetCtx.beginPath();
+                targetCtx.roundRect(-tw / 2 - 6, -12, tw + 12, 24, 6);
+                targetCtx.fill();
+                targetCtx.stroke();
+            }
+
+            targetCtx.fillStyle = obj.color || '#000000';
             targetCtx.textAlign = 'center';
             targetCtx.textBaseline = 'middle';
-            targetCtx.fillText(obj.text || '', 0, 0);
+            targetCtx.fillText(txt, 0, 0);
             targetCtx.restore();
 
             if (typeof selectedObject !== 'undefined' && selectedObject === obj) {
@@ -1057,7 +1139,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 }
 
 // プレビュー描画ヘルパー
-function drawArrow(x1, y1, x2, y2, lineType) { drawArrowToCtx(x1, y1, x2, y2, lineType, ctx); }
+function drawArrow(x1, y1, x2, y2, lineType, cx, cy) { drawArrowToCtx(x1, y1, x2, y2, lineType, ctx, cx, cy); }
 function drawLadder(x1, y1, x2, y2) { drawLadderToCtx(x1, y1, x2, y2, ctx); }
 function drawRectPreview(x1, y1, x2, y2) {
     ctx.strokeStyle = 'rgba(51, 65, 85, 0.7)';
@@ -1129,8 +1211,13 @@ function updateContextPopover() {
         objX = selectedObject.x;
         objY = selectedObject.y;
     } else if (typeof selectedObject.x1 !== 'undefined') {
-        objX = (selectedObject.x1 + selectedObject.x2) / 2;
-        objY = Math.min(selectedObject.y1, selectedObject.y2);
+        if (typeof selectedObject.cx !== 'undefined' && typeof selectedObject.cy !== 'undefined') {
+            objX = selectedObject.cx;
+            objY = Math.min(selectedObject.y1, selectedObject.y2, selectedObject.cy);
+        } else {
+            objX = (selectedObject.x1 + selectedObject.x2) / 2;
+            objY = Math.min(selectedObject.y1, selectedObject.y2);
+        }
     }
 
     if (typeof objX === 'undefined' || typeof objY === 'undefined') {
@@ -1169,6 +1256,24 @@ function updateContextPopover() {
         }
     }
 
+    const textControls = document.getElementById('popover-text-controls');
+    if (textControls) {
+        if (selectedObject.type === 'text') {
+            textControls.style.display = 'flex';
+            const bgOpaqueInput = document.getElementById('canvas-text-bg-opaque');
+            if (bgOpaqueInput) {
+                bgOpaqueInput.checked = !!selectedObject.bgOpaque;
+                bgOpaqueInput.onchange = (ev) => {
+                    selectedObject.bgOpaque = ev.target.checked;
+                    saveHistory();
+                    drawPitch(objects);
+                };
+            }
+        } else {
+            textControls.style.display = 'none';
+        }
+    }
+
     const canvasRect = canvas.getBoundingClientRect();
     const wrapper = document.getElementById('canvas-wrapper') || canvas.parentElement;
     const wrapperRect = wrapper.getBoundingClientRect();
@@ -1185,8 +1290,32 @@ function updateContextPopover() {
     const popWidth = popover.offsetWidth || (selectedObject.type === 'player' ? 260 : 180);
     const popHeight = popover.offsetHeight || 50;
 
-    const isBelow = (objTopY < popHeight + 20 || objY < 80);
-    const topPos = isBelow ? (objTopY + 15) : (objTopY - popHeight - 12);
+    // オブジェクトの種類に応じた画面表示上の半径・高さを算出
+    let objectRadiusInPixels = 16 * scaleY;
+    if (selectedObject.type === 'player') {
+        objectRadiusInPixels = (selectedObject.radius || 16) * scaleY;
+    } else if (selectedObject.type === 'ball') {
+        objectRadiusInPixels = 8 * scaleY;
+    } else if (selectedObject.type === 'marker') {
+        objectRadiusInPixels = 8 * scaleY;
+    } else if (selectedObject.type === 'cone') {
+        objectRadiusInPixels = 12 * scaleY;
+    } else if (selectedObject.type === 'minigoal') {
+        let scale = selectedObject.goalScale || 1.0;
+        if (!selectedObject.goalScale) {
+            if (selectedObject.sizeCategory === 'small') scale = 0.7;
+            else if (selectedObject.sizeCategory === 'large') scale = 1.6;
+            else if (selectedObject.sizeCategory === 'full') scale = 2.4;
+        }
+        objectRadiusInPixels = (15 * scale) * scaleY;
+    } else if (selectedObject.type === 'text') {
+        objectRadiusInPixels = 12 * scaleY;
+    } else {
+        objectRadiusInPixels = 10 * scaleY;
+    }
+
+    const isBelow = (objTopY - objectRadiusInPixels < popHeight + 25 || objY < 80);
+    const topPos = isBelow ? (objTopY + objectRadiusInPixels + 12) : (objTopY - objectRadiusInPixels - popHeight - 12);
 
     let leftPos = objCenterX - (popWidth / 2);
     const padding = 10;
@@ -1215,11 +1344,14 @@ function updateContextPopover() {
     }
 }
 
-function drawArrowToCtx(x1, y1, x2, y2, lineType, targetCtx) {
+function drawArrowToCtx(x1, y1, x2, y2, lineType, targetCtx, cx, cy) {
     const headlen = 10;
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    const angle = Math.atan2(dy, dx);
+    const actualCx = typeof cx !== 'undefined' ? cx : (x1 + x2) / 2;
+    const actualCy = typeof cy !== 'undefined' ? cy : (y1 + y2) / 2;
+
+    const midX = (x1 + x2) / 2;
+    const midY = (y1 + y2) / 2;
+    const isCurved = Math.sqrt((actualCx - midX) * (actualCx - midX) + (actualCy - midY) * (actualCy - midY)) > 1.5;
     const color = '#334155';
 
     targetCtx.beginPath();
@@ -1228,24 +1360,54 @@ function drawArrowToCtx(x1, y1, x2, y2, lineType, targetCtx) {
         targetCtx.strokeStyle = color;
         targetCtx.lineWidth = 2;
         targetCtx.setLineDash([]);
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const steps = Math.floor(dist / 10);
-        targetCtx.moveTo(x1, y1);
-        if (steps > 0) {
+        if (isCurved) {
+            const steps = 30;
+            let lastX = x1;
+            let lastY = y1;
+            targetCtx.moveTo(x1, y1);
             for (let i = 1; i <= steps; i++) {
-                const px = x1 + (dx / steps) * i;
-                const py = y1 + (dy / steps) * i;
-                const perpX = -dy / dist * (i % 2 === 0 ? 5 : -5);
-                const perpY = dx / dist * (i % 2 === 0 ? 5 : -5);
-                if (i === steps) targetCtx.lineTo(x2, y2);
-                else targetCtx.lineTo(px + perpX, py + perpY);
+                const t = i / steps;
+                const px = (1 - t) * (1 - t) * x1 + 2 * (1 - t) * t * actualCx + t * t * x2;
+                const py = (1 - t) * (1 - t) * y1 + 2 * (1 - t) * t * actualCy + t * t * y2;
+                const dx = px - lastX;
+                const dy = py - lastY;
+                const len = Math.sqrt(dx * dx + dy * dy);
+                if (len > 0) {
+                    const perpX = -dy / len * (i % 2 === 0 ? 4 : -4);
+                    const perpY = dx / len * (i % 2 === 0 ? 4 : -4);
+                    if (i === steps) targetCtx.lineTo(x2, y2);
+                    else targetCtx.lineTo(px + perpX, py + perpY);
+                }
+                lastX = px;
+                lastY = py;
             }
         } else {
-            targetCtx.lineTo(x2, y2);
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const steps = Math.floor(dist / 10);
+            targetCtx.moveTo(x1, y1);
+            if (steps > 0) {
+                for (let i = 1; i <= steps; i++) {
+                    const px = x1 + (dx / steps) * i;
+                    const py = y1 + (dy / steps) * i;
+                    const perpX = -dy / dist * (i % 2 === 0 ? 5 : -5);
+                    const perpY = dx / dist * (i % 2 === 0 ? 5 : -5);
+                    if (i === steps) targetCtx.lineTo(x2, y2);
+                    else targetCtx.lineTo(px + perpX, py + perpY);
+                }
+            } else {
+                targetCtx.lineTo(x2, y2);
+            }
         }
     } else {
-        targetCtx.moveTo(x1, y1);
-        targetCtx.lineTo(x2, y2);
+        if (isCurved) {
+            targetCtx.moveTo(x1, y1);
+            targetCtx.quadraticCurveTo(actualCx, actualCy, x2, y2);
+        } else {
+            targetCtx.moveTo(x1, y1);
+            targetCtx.lineTo(x2, y2);
+        }
         targetCtx.strokeStyle = color;
         targetCtx.lineWidth = (lineType === 'move') ? 2 : 3;
         if (lineType === 'pass') targetCtx.setLineDash([5, 5]);
@@ -1255,6 +1417,7 @@ function drawArrowToCtx(x1, y1, x2, y2, lineType, targetCtx) {
     targetCtx.stroke();
     targetCtx.setLineDash([]);
 
+    const angle = Math.atan2(y2 - actualCy, x2 - actualCx);
     targetCtx.beginPath();
     targetCtx.moveTo(x2, y2);
     targetCtx.lineTo(x2 - headlen * Math.cos(angle - Math.PI / 6), y2 - headlen * Math.sin(angle - Math.PI / 6));
@@ -1422,6 +1585,8 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         } else {
             titleEl.textContent = 'テーマ・フォーカス未設定';
         }
+        titleEl.title = titleEl.textContent;
+        titleEl.onclick = () => showToast(titleEl.textContent);
     }
 
     // ★ 右側詳細パネルの情報反映＆開閉トグル復元
@@ -1445,17 +1610,110 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             if (sideOpt) sideOpt.textContent = 'なし';
         }
 
-        if (window.innerWidth <= 768) sidePanel.classList.remove('open');
-        else sidePanel.classList.add('open');
+        sidePanel.classList.remove('open');
+        sidePanel.classList.add('collapsed');
 
         sideToggleBtn.onclick = (e) => {
             e.stopPropagation();
             const isOpen = sidePanel.classList.toggle('open');
-            const icon = sideToggleBtn.querySelector('i');
-            if (icon) {
-                icon.className = isOpen ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
+            sidePanel.classList.toggle('collapsed', !isOpen);
+        };
+
+        // click / touch outside to close sidebar
+        const closeSidebarOutside = (e) => {
+            if (sidePanel.classList.contains('open')) {
+                if (!sidePanel.contains(e.target) && !sideToggleBtn.contains(e.target)) {
+                    sidePanel.classList.remove('open');
+                    sidePanel.classList.add('collapsed');
+                }
             }
         };
+        boundListeners.docClickOutside = closeSidebarOutside;
+        setTimeout(() => {
+            if (boundListeners.docClickOutside) {
+                document.addEventListener('click', closeSidebarOutside);
+                document.addEventListener('touchstart', closeSidebarOutside);
+            }
+        }, 0);
+
+        // Keyboard shortcuts and Escape key
+        let arrowMoving = false;
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                if (sidePanel.classList.contains('open')) {
+                    sidePanel.classList.remove('open');
+                    sidePanel.classList.add('collapsed');
+                }
+            }
+
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return;
+            }
+
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                if (selectedObject) {
+                    e.preventDefault();
+                    objects = objects.filter(o => o.id !== selectedObject.id);
+                    selectedObject = null;
+                    saveHistory();
+                    drawPitch(objects);
+                    const popover = document.getElementById('anim-context-popover');
+                    if (popover) popover.classList.add('hidden');
+                }
+            }
+
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key.toLowerCase() === 'z') {
+                    e.preventDefault();
+                    undoHistory();
+                } else if (e.key.toLowerCase() === 'y') {
+                    e.preventDefault();
+                    redoHistory();
+                }
+            }
+
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                if (selectedObject && !isPlaying) {
+                    e.preventDefault();
+                    const step = e.shiftKey ? 5 : 1;
+                    let dx = 0; let dy = 0;
+                    if (e.key === 'ArrowUp') dy = -step;
+                    if (e.key === 'ArrowDown') dy = step;
+                    if (e.key === 'ArrowLeft') dx = -step;
+                    if (e.key === 'ArrowRight') dx = step;
+
+                    if (typeof selectedObject.x !== 'undefined' && typeof selectedObject.y !== 'undefined') {
+                        selectedObject.x += dx;
+                        selectedObject.y += dy;
+                    }
+                    if (typeof selectedObject.x1 !== 'undefined') {
+                        selectedObject.x1 += dx; selectedObject.y1 += dy;
+                        selectedObject.x2 += dx; selectedObject.y2 += dy;
+                    }
+                    if (typeof selectedObject.cx !== 'undefined' && typeof selectedObject.cy !== 'undefined') {
+                        selectedObject.cx += dx;
+                        selectedObject.cy += dy;
+                    }
+                    drawPitch(objects);
+                    updateContextPopover();
+                    arrowMoving = true;
+                }
+            }
+        };
+
+        const handleKeyUp = (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                if (arrowMoving) {
+                    arrowMoving = false;
+                    saveHistory();
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+        boundListeners.docKeyDown = handleKeyDown;
+        boundListeners.docKeyUp = handleKeyUp;
     }
 
     // 設定ポップオーバー開閉
@@ -1706,6 +1964,16 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                         }
                         menu.frames = JSON.parse(JSON.stringify(frames));
                         menu.pitchTemplate = pitchTemplateVal;
+                        
+                        // Sync drawing back to library menu if linked
+                        if (menu.librarySourceId) {
+                            const libMenu = state.menuLibrary.find(m => m.id === menu.librarySourceId);
+                            if (libMenu) {
+                                libMenu.frames = JSON.parse(JSON.stringify(frames));
+                                libMenu.pitchTemplate = pitchTemplateVal;
+                            }
+                        }
+
                         if (window.saveData) window.saveData();
                         showToast('作図を保存しました');
                         if (typeof navigateFunc === 'function') navigateFunc('practices');
@@ -1725,6 +1993,19 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                     }
                     libMenu.frames = JSON.parse(JSON.stringify(frames));
                     libMenu.pitchTemplate = pitchTemplateVal;
+                    
+                    // Sync drawing forward to all assigned practice menus
+                    state.practices.forEach(p => {
+                        if (p.menus) {
+                            p.menus.forEach(pm => {
+                                if (pm.librarySourceId === libMenu.id) {
+                                    pm.frames = JSON.parse(JSON.stringify(frames));
+                                    pm.pitchTemplate = pitchTemplateVal;
+                                }
+                            });
+                        }
+                    });
+
                     if (window.saveData) window.saveData();
                     showToast('作図を保存しました');
                     if (typeof navigateFunc === 'function') navigateFunc('library');
@@ -1774,12 +2055,58 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                     if (Math.abs(x - prevSelected.x2) <= s && Math.abs(y - prevSelected.y1) <= s) { isResizing = true; resizeHandle = 'ne'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
                     if (Math.abs(x - prevSelected.x1) <= s && Math.abs(y - prevSelected.y2) <= s) { isResizing = true; resizeHandle = 'sw'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
                     if (Math.abs(x - prevSelected.x2) <= s && Math.abs(y - prevSelected.y2) <= s) { isResizing = true; resizeHandle = 'se'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
+                } else if (prevSelected.type === 'line' || prevSelected.type === 'ladder') {
+                    const s = 18;
+                    if (Math.abs(x - prevSelected.x1) <= s && Math.abs(y - prevSelected.y1) <= s) {
+                        isResizing = true;
+                        resizeHandle = 'pt1';
+                        draggedObject = prevSelected;
+                        selectedObject = prevSelected;
+                        drawPitch(objects);
+                        return;
+                    }
+                    if (Math.abs(x - prevSelected.x2) <= s && Math.abs(y - prevSelected.y2) <= s) {
+                        isResizing = true;
+                        resizeHandle = 'pt2';
+                        draggedObject = prevSelected;
+                        selectedObject = prevSelected;
+                        drawPitch(objects);
+                        return;
+                    }
+                    if (prevSelected.type === 'line') {
+                        const cx = typeof prevSelected.cx !== 'undefined' ? prevSelected.cx : (prevSelected.x1 + prevSelected.x2) / 2;
+                        const cy = typeof prevSelected.cy !== 'undefined' ? prevSelected.cy : (prevSelected.y1 + prevSelected.y2) / 2;
+                        if (Math.abs(x - cx) <= s && Math.abs(y - cy) <= s) {
+                            isResizing = true;
+                            resizeHandle = 'line-curve';
+                            draggedObject = prevSelected;
+                            selectedObject = prevSelected;
+                            drawPitch(objects);
+                            return;
+                        }
+                    }
                 }
             }
 
             for (let i = objects.length - 1; i >= 0; i--) {
                 const obj = objects[i];
-                if (obj.type === 'line' || obj.type === 'ladder') {
+                if (obj.type === 'line') {
+                    let minDist = Infinity;
+                    const cx = typeof obj.cx !== 'undefined' ? obj.cx : (obj.x1 + obj.x2) / 2;
+                    const cy = typeof obj.cy !== 'undefined' ? obj.cy : (obj.y1 + obj.y2) / 2;
+                    for (let t = 0; t <= 1; t += 0.1) {
+                        const px = (1 - t) * (1 - t) * obj.x1 + 2 * (1 - t) * t * cx + t * t * obj.x2;
+                        const py = (1 - t) * (1 - t) * obj.y1 + 2 * (1 - t) * t * cy + t * t * obj.y2;
+                        const dist = Math.sqrt((x - px) * (x - px) + (y - py) * (y - py));
+                        if (dist < minDist) minDist = dist;
+                    }
+                    if (minDist <= 12) {
+                        draggedObject = obj;
+                        selectedObject = obj;
+                        startX = x; startY = y;
+                        break;
+                    }
+                } else if (obj.type === 'ladder') {
                     const A = x - obj.x1;
                     const B = y - obj.y1;
                     const C = obj.x2 - obj.x1;
@@ -1879,8 +2206,11 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                                 newObj.text = input.value;
                                 objects.push(newObj);
                                 selectedObject = newObj;
+                                currentTool = 'select';
+                                updateToolDockActive();
                                 saveHistory();
                                 drawPitch(objects);
+                                updateContextPopover();
                             }
                             modal.classList.add('hidden');
                         };
@@ -1922,6 +2252,31 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 if (resizeHandle === 'ne') { draggedObject.x2 = applyGridSnap(x); draggedObject.y1 = applyGridSnap(y); }
                 if (resizeHandle === 'sw') { draggedObject.x1 = applyGridSnap(x); draggedObject.y2 = applyGridSnap(y); }
                 if (resizeHandle === 'se') { draggedObject.x2 = applyGridSnap(x); draggedObject.y2 = applyGridSnap(y); }
+            } else if (isResizing && (draggedObject.type === 'line' || draggedObject.type === 'ladder')) {
+                const snapX = applyGridSnap(x);
+                const snapY = applyGridSnap(y);
+                if (resizeHandle === 'pt1') {
+                    const dx = snapX - draggedObject.x1;
+                    const dy = snapY - draggedObject.y1;
+                    draggedObject.x1 = snapX;
+                    draggedObject.y1 = snapY;
+                    if (draggedObject.type === 'line' && typeof draggedObject.cx !== 'undefined') {
+                        draggedObject.cx += dx / 2;
+                        draggedObject.cy += dy / 2;
+                    }
+                } else if (resizeHandle === 'pt2') {
+                    const dx = snapX - draggedObject.x2;
+                    const dy = snapY - draggedObject.y2;
+                    draggedObject.x2 = snapX;
+                    draggedObject.y2 = snapY;
+                    if (draggedObject.type === 'line' && typeof draggedObject.cx !== 'undefined') {
+                        draggedObject.cx += dx / 2;
+                        draggedObject.cy += dy / 2;
+                    }
+                } else if (resizeHandle === 'line-curve') {
+                    draggedObject.cx = snapX;
+                    draggedObject.cy = snapY;
+                }
             } else if (draggedObject.type === 'rect' || draggedObject.type === 'circle') {
                 const dx = applyGridSnap(x) - applyGridSnap(startX);
                 const dy = applyGridSnap(y) - applyGridSnap(startY);
@@ -1933,6 +2288,10 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 const dy = applyGridSnap(y) - applyGridSnap(startY);
                 draggedObject.x1 += dx; draggedObject.x2 += dx;
                 draggedObject.y1 += dy; draggedObject.y2 += dy;
+                if (draggedObject.type === 'line' && typeof draggedObject.cx !== 'undefined') {
+                    draggedObject.cx += dx;
+                    draggedObject.cy += dy;
+                }
                 startX = x; startY = y;
             } else {
                 draggedObject.x = applyGridSnap(x);
@@ -1967,15 +2326,30 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             const x = applyGridSnap(pos.x);
             const y = applyGridSnap(pos.y);
             if (Math.abs(x - startX) > 5 || Math.abs(y - startY) > 5) {
+                let newObj = null;
                 if (currentTool === 'ladder') {
-                    objects.push({ id: objectIdCounter++, type: 'ladder', x1: startX, y1: startY, x2: x, y2: y });
+                    newObj = { id: objectIdCounter++, type: 'ladder', x1: startX, y1: startY, x2: x, y2: y };
                 } else if (currentTool === 'line-rect') {
-                    objects.push({ id: objectIdCounter++, type: 'rect', x1: startX, y1: startY, x2: x, y2: y });
+                    newObj = { id: objectIdCounter++, type: 'rect', x1: startX, y1: startY, x2: x, y2: y };
                 } else if (currentTool === 'line-circle') {
-                    objects.push({ id: objectIdCounter++, type: 'circle', x1: startX, y1: startY, x2: x, y2: y });
+                    newObj = { id: objectIdCounter++, type: 'circle', x1: startX, y1: startY, x2: x, y2: y };
                 } else {
                     const lType = currentTool.replace('line-', '');
-                    objects.push({ id: objectIdCounter++, type: 'line', lineType: lType, x1: startX, y1: startY, x2: x, y2: y });
+                    newObj = {
+                        id: objectIdCounter++,
+                        type: 'line',
+                        lineType: lType,
+                        x1: startX,
+                        y1: startY,
+                        x2: x,
+                        y2: y,
+                        cx: (startX + x) / 2,
+                        cy: (startY + y) / 2
+                    };
+                }
+                if (newObj) {
+                    objects.push(newObj);
+                    selectedObject = newObj;
                 }
                 saveHistory();
             }
@@ -1983,6 +2357,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             currentTool = 'select';
             updateToolDockActive();
             drawPitch(objects);
+            updateContextPopover();
         }
     };
 

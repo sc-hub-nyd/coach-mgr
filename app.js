@@ -88,6 +88,7 @@ export async function loadData() {
                 state.menuLibrary = parsed.menuLibrary || [];
                 state.matchTypes = parsed.matchTypes || ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'];
                 state.menuCategories = parsed.menuCategories || ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'];
+                state.analysisTags = parsed.analysisTags || ['チャンス', '得点', '失点', 'ビルドアップ', '課題/反省', 'メモ'];
                 state.skillMetrics = parsed.skillMetrics || ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'];
                 state.positions = parsed.positions || ['GK', 'DF', 'MF', 'FW'];
                 state.positionsCat2 = parsed.positionsCat2 || ['CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH'];
@@ -109,6 +110,7 @@ export async function saveData() {
         menuLibrary: state.menuLibrary,
         matchTypes: state.matchTypes,
         menuCategories: state.menuCategories,
+        analysisTags: state.analysisTags,
         skillMetrics: state.skillMetrics,
         positions: state.positions,
         positionsCat2: state.positionsCat2,
@@ -469,18 +471,16 @@ function initDashboard() {
                     resultLabel = '負け';
                     badgeClass = 'loss';
                 }
-
                 const displayScore = match ? `${us} - ${them}` : m.result;
-
                 return `
-                    <div class="glass" style="display:flex; flex-direction:column; justify-content:space-between; padding:0.8rem 1rem; border-radius:12px; cursor:pointer; min-height:115px;" onclick="openMatchDetail(${m.id})">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.3rem;">
-                            <span class="schedule-badge ${badgeClass}" style="background:${bgStyle}; color:${colorStyle}; font-weight:bold;">${resultLabel}</span>
-                            <span style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date}</span>
+                    <div class="glass dash-mini-card" onclick="openMatchDetail(${m.id})" style="cursor:pointer;">
+                        <div class="dash-mini-card-header">
+                            <span class="schedule-badge ${badgeClass}" style="background:${bgStyle}; color:${colorStyle}; font-weight:bold; font-size:0.6rem; padding:0.1rem 0.3rem;">${resultLabel}</span>
+                            <span class="dash-mini-card-date">${m.date}</span>
                         </div>
-                        <div style="font-size:0.9rem; font-weight:bold; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">vs ${m.opponent}</div>
-                        <div style="font-size:0.75rem; color:var(--text-secondary);">${m.type}</div>
-                        <div style="font-size:1.25rem; font-weight:bold; color:var(--primary); text-align:right;">${displayScore}</div>
+                        <div class="dash-mini-card-title">vs ${escapeHtml(m.opponent)}</div>
+                        <div class="dash-mini-card-sub">${m.type}</div>
+                        <div class="dash-mini-card-score">${displayScore}</div>
                     </div>
                 `;
             }).join('');
@@ -538,40 +538,35 @@ function initDashboard() {
             upcomingContent.innerHTML = upcomingEvents.map(e => {
                 if (e.type === 'practice') {
                     return `
-                        <div class="schedule-item">
-                            <div class="schedule-item-info">
-                                <div class="schedule-item-details">
-                                    <div class="schedule-item-meta"><span class="schedule-badge practice">練習</span> <span>${e.date}</span></div>
-                                    <div class="schedule-item-title">${e.title}</div>
-                                    <div class="schedule-item-desc">${e.desc}</div>
-                                </div>
+                        <div class="glass dash-mini-card">
+                            <div class="dash-mini-card-header">
+                                <span class="schedule-badge practice" style="font-size:0.6rem; padding:0.1rem 0.3rem;">練習</span>
                             </div>
-                            <div class="schedule-item-actions">
-                                <button class="btn btn-secondary btn-sm btn-dash-edit-prac" data-id="${e.id}" style="padding:0.25rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-pen"></i> 編集</button>
-                                <button class="btn btn-secondary btn-sm" onclick="navigate('practices')" style="padding:0.25rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-chevron-right"></i> 詳細</button>
+                            <div class="dash-mini-card-title">${e.date}</div>
+                            <div class="dash-mini-card-actions">
+                                <button class="btn btn-secondary btn-sm btn-dash-edit-prac" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="編集"><i class="fa-solid fa-pen"></i></button>
+                                <button class="btn btn-secondary btn-sm" onclick="navigate('practices', { date: '${e.date}' })" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="詳細"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
                     `;
                 } else {
                     return `
-                        <div class="schedule-item">
-                            <div class="schedule-item-info">
-                                <div class="schedule-item-details">
-                                    <div class="schedule-item-meta"><span class="schedule-badge match">試合予定</span> <span>${e.date}</span></div>
-                                    <div class="schedule-item-title">${e.title}</div>
-                                    <div class="schedule-item-desc">${e.desc}</div>
-                                </div>
+                        <div class="glass dash-mini-card">
+                            <div class="dash-mini-card-header">
+                                <span class="schedule-badge match" style="font-size:0.6rem; padding:0.1rem 0.3rem;">試合</span>
+                                <span class="dash-mini-card-date">${e.date}</span>
                             </div>
-                            <div class="schedule-item-actions">
-                                <button class="btn btn-primary btn-sm btn-dash-score-match" data-id="${e.id}" style="padding:0.25rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-square-poll-horizontal"></i> 結果入力</button>
-                                <button class="btn btn-secondary btn-sm btn-dash-edit-match" data-id="${e.id}" style="padding:0.25rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-pen"></i> 編集</button>
+                            <div class="dash-mini-card-title">${e.title}</div>
+                            <div class="dash-mini-card-actions">
+                                <button class="btn btn-primary btn-sm btn-dash-score-match" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="結果入力"><i class="fa-solid fa-square-poll-horizontal"></i></button>
+                                <button class="btn btn-secondary btn-sm btn-dash-edit-match" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="編集"><i class="fa-solid fa-pen"></i></button>
                             </div>
                         </div>
                     `;
                 }
             }).join('');
         } else {
-            upcomingContent.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-secondary); font-size:0.85rem;">今後の予定はありません。</div>`;
+            upcomingContent.innerHTML = `<div style="text-align:center; padding:1.5rem; background:rgba(0,0,0,0.02); border-radius:12px; border:1px dashed var(--surface-border); width: 100%;">今後の予定はありません。</div>`;
         }
     }
 
@@ -582,45 +577,39 @@ function initDashboard() {
             pastContent.innerHTML = recentPast.map(e => {
                 if (e.type === 'practice') {
                     return `
-                        <div class="schedule-item" style="opacity:0.95;">
-                            <div class="schedule-item-info">
-                                <div class="schedule-item-details">
-                                    <div class="schedule-item-meta"><span class="schedule-badge practice" style="opacity:0.8;">練習日履歴</span> <span>${e.date}</span></div>
-                                    <div class="schedule-item-title" style="color:var(--text-secondary);">${e.title}</div>
-                                    <div class="schedule-item-desc">${e.desc}</div>
-                                </div>
+                        <div class="glass dash-mini-card" style="opacity:0.9;">
+                            <div class="dash-mini-card-header">
+                                <span class="schedule-badge practice" style="opacity:0.8; font-size:0.6rem; padding:0.1rem 0.3rem;">練習</span>
                             </div>
-                            <div class="schedule-item-actions">
-                                <span style="font-size:0.75rem; color:var(--text-secondary); margin-right:0.3rem;"><i class="fa-solid fa-users"></i> ${e.attendance || ''}</span>
-                                <button class="btn btn-secondary btn-sm" onclick="navigate('practices')" style="padding:0.25rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-chevron-right"></i> 詳細</button>
+                            <div class="dash-mini-card-title">${e.date}</div>
+                            ${e.attendance ? `<div class="dash-mini-card-sub"><i class="fa-solid fa-users" style="font-size:0.6rem;"></i> ${e.attendance}</div>` : ''}
+                            <div class="dash-mini-card-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="navigate('practices', { date: '${e.date}' })" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="詳細"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
                     `;
                 } else {
-                    const resultText = e.hasResult ? `<span style="font-weight:bold; color:var(--primary); font-size:0.85rem;">${e.result}</span>` : `<span style="color:#f59e0b; font-size:0.75rem; font-weight:bold;">結果未入力</span>`;
+                    const resultText = e.hasResult
+                        ? `<div class="dash-mini-card-score">${e.result}</div>`
+                        : `<div style="color:#f59e0b; font-size:0.62rem; font-weight:bold; margin-top:0.1rem;">未入力</div>`;
                     const actionBtn = e.hasResult
-                        ? `<button class="btn btn-secondary btn-sm" onclick="openMatchDetail(${e.id})" style="padding:0.25rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-circle-info"></i> 詳細</button>`
-                        : `<button class="btn btn-primary btn-sm btn-dash-score-match" data-id="${e.id}" style="padding:0.25rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-square-poll-horizontal"></i> 結果入力</button>`;
-
+                        ? `<button class="btn btn-secondary btn-sm" onclick="openMatchDetail(${e.id})" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="詳細"><i class="fa-solid fa-circle-info"></i></button>`
+                        : `<button class="btn btn-primary btn-sm btn-dash-score-match" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="結果入力"><i class="fa-solid fa-square-poll-horizontal"></i></button>`;
                     return `
-                        <div class="schedule-item" style="opacity:0.95;">
-                            <div class="schedule-item-info">
-                                <div class="schedule-item-details">
-                                    <div class="schedule-item-meta"><span class="schedule-badge match" style="opacity:0.8;">試合履歴</span> <span>${e.date}</span></div>
-                                    <div class="schedule-item-title" style="color:var(--text-secondary);">${e.title}</div>
-                                    <div class="schedule-item-desc">${e.desc}</div>
-                                </div>
+                        <div class="glass dash-mini-card" style="opacity:0.9;">
+                            <div class="dash-mini-card-header">
+                                <span class="schedule-badge match" style="opacity:0.8; font-size:0.6rem; padding:0.1rem 0.3rem;">試合</span>
+                                <span class="dash-mini-card-date">${e.date}</span>
                             </div>
-                            <div class="schedule-item-actions">
-                                <div style="margin-right:0.4rem; text-align:right;">${resultText}</div>
-                                ${actionBtn}
-                            </div>
+                            <div class="dash-mini-card-title">${e.title}</div>
+                            ${resultText}
+                            <div class="dash-mini-card-actions">${actionBtn}</div>
                         </div>
                     `;
                 }
             }).join('');
         } else {
-            pastContent.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-secondary); font-size:0.85rem;">過去の履歴はありません。</div>`;
+            pastContent.innerHTML = `<div style="text-align:center; padding:1.5rem; background:rgba(0,0,0,0.02); border-radius:12px; border:1px dashed var(--surface-border); width: 100%;">過去の履歴はありません。</div>`;
         }
     }
 
@@ -809,6 +798,19 @@ export function updateRoleUI() {
             e.stopPropagation();
             if (syncPopover) syncPopover.classList.toggle('hidden');
         };
+
+        // ポップオーバーの外側をクリックしたら閉じる（一度だけ登録）
+        const wrapper = document.querySelector('.sync-status-wrapper');
+        if (wrapper && !wrapper._outsideClickBound) {
+            wrapper._outsideClickBound = true;
+            document.addEventListener('click', (e) => {
+                if (syncPopover && !syncPopover.classList.contains('hidden')) {
+                    if (!wrapper.contains(e.target)) {
+                        syncPopover.classList.add('hidden');
+                    }
+                }
+            });
+        }
     }
 
     if (btnSyncNow) {
@@ -858,18 +860,33 @@ export function updateRoleUI() {
 
 export function navigate(route, params = null) {
     cleanupCanvasEvents();
-    // ★ 追加: 画面遷移時にYouTube音声を停止・破棄する
+    // 画面遷移時にYouTube音声を停止・破棄する
     if (typeof window.stopAndCleanupYouTube === 'function') {
         window.stopAndCleanupYouTube();
     }
+    // 画面遷移時にクラウド同期ポップオーバーを閉じる
+    const syncPopoverOnNav = document.getElementById('sync-popover');
+    if (syncPopoverOnNav) syncPopoverOnNav.classList.add('hidden');
+
     state.currentRoute = route;
 
     document.querySelectorAll('.modal-overlay').forEach(el => el.classList.add('hidden'));
     document.body.classList.remove('modal-open');
 
     const topbarTitle = document.getElementById('topbar-title');
+    const topbarBack = document.getElementById('topbar-back');
     const navLinks = document.querySelectorAll('.nav-links li');
     const bottomNavLinks = document.querySelectorAll('.bottom-nav .nav-item');
+
+    if (topbarBack) {
+        if (route === 'match-detail') {
+            topbarBack.classList.remove('hidden');
+            topbarBack.onclick = () => navigate('matches');
+        } else {
+            topbarBack.classList.add('hidden');
+            topbarBack.onclick = null;
+        }
+    }
 
     navLinks.forEach(link => {
         const isActive = link.dataset.route === route || (route === 'match-detail' && link.dataset.route === 'matches');
@@ -895,7 +912,19 @@ export function navigate(route, params = null) {
         viewContainer.appendChild(template.content.cloneNode(true));
 
         if (route === 'dashboard') initDashboard();
-        if (route === 'practices') initPractices(miniPitchObserver);
+        if (route === 'practices') {
+            if (params && params.date) {
+                const parts = params.date.split('-');
+                if (parts.length === 3) {
+                    const year = parseInt(parts[0], 10);
+                    const monthNum = parseInt(parts[1], 10);
+                    const nendo = (monthNum >= 4) ? year : year - 1;
+                    uiState.currentPracticeNendo = String(nendo);
+                    uiState.currentPracticeMonth = parts[1];
+                }
+            }
+            initPractices(miniPitchObserver);
+        }
         if (route === 'matches') initMatches();
         // ★ IDを数値型(parseInt)にキャストして確実に渡す
         if (route === 'match-detail') {

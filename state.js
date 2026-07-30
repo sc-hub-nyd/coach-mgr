@@ -7,6 +7,7 @@ export const state = {
     menuLibrary: [],
     matchTypes: ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'],
     menuCategories: ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'],
+    analysisTags: ['チャンス', '得点', '失点', 'ビルドアップ', '課題/反省', 'メモ'],
     skillMetrics: ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'],
     positions: ['GK', 'DF', 'MF', 'FW'],
     positionsCat2: ['CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH'],

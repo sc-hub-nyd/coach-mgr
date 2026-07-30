@@ -198,6 +198,7 @@
     text-overflow: ellipsis;
 }
 
+
 .top-scorers-ol {
     margin: 0;
     padding-left: 0.9rem;
@@ -619,9 +620,9 @@
 
 #dash-upcoming-schedule-content,
 #dash-past-schedule-content {
-    max-height: 190px;
-    overflow-y: auto;
-    padding-right: 4px;
+    max-height: none !important;
+    overflow-y: visible !important;
+    padding-right: 0 !important;
 }
 
 #dash-upcoming-schedule-content::-webkit-scrollbar,
@@ -836,16 +837,30 @@ summary {
 /* Dashboard Responsive */
 @media (max-width: 1024px) {
     .dashboard-grid-container {
-        grid-template-columns: 1fr;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1.2rem !important;
+    }
+    .dashboard-left-column,
+    .dashboard-right-column {
+        display: contents !important;
+    }
+    .dash-stats-card {
+        order: 1 !important;
+    }
+    .dash-schedule-card {
+        order: 2 !important;
+    }
+    .dash-matches-card {
+        order: 3 !important;
     }
 }
-
 @media (max-width: 900px) {
 
     #dash-recent-matches,
     .recent-matches-grid,
     .dash-horizontal-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+        grid-template-columns: 1fr !important;
     }
 }
 
@@ -869,3 +884,93 @@ summary {
         padding: 1rem !important;
     }
 }
+
+/* ===== Dashboard Mini Card (スマホ3列グリッド用) ===== */
+.dash-mini-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.45rem 0.5rem;
+    border-radius: 10px;
+    gap: 0.2rem;
+    min-height: 0;
+    cursor: default;
+    box-sizing: border-box;
+}
+
+.dash-mini-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.2rem;
+    margin-bottom: 0.1rem;
+}
+
+.dash-mini-card-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-clamp: 1;
+    -webkit-line-clamp: 1;
+}
+
+.dash-mini-card-date {
+    font-size: 0.62rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.dash-mini-card-sub {
+    font-size: 0.62rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dash-mini-card-score {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--primary);
+    text-align: right;
+    margin-top: 0.1rem;
+}
+
+.dash-mini-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.15rem;
+    gap: 0.2rem;
+}
+
+.dash-mini-card-actions {
+    display: flex;
+    gap: 0.2rem;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    margin-top: 0.2rem;
+}
+
+/* スマホ: ダッシュボードカードの内側間隔を詰める */
+@media (max-width: 640px) {
+    .dash-stats-card,
+    .dash-matches-card,
+    .dash-schedule-card {
+        padding: 0.7rem 0.85rem !important;
+    }
+
+    /* 今後の予定・直近の履歴・直近の試合結果を3列グリッドに */
+    #dash-upcoming-schedule-content,
+    #dash-past-schedule-content,
+    #dash-matches-content {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.4rem !important;
+    }
+}
+
