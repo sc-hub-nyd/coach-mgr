@@ -1164,15 +1164,23 @@ function drawCirclePreview(x1, y1, x2, y2) {
     ctx.setLineDash([]);
 }
 
+function getHiDPIScale() {
+    return Math.max(window.devicePixelRatio || 1, 2);
+}
+
 function drawPitchBackground() {
     bgCanvas = document.getElementById('pitch-bg-canvas');
     if (!bgCanvas) return;
     bgCtx = bgCanvas.getContext('2d');
     if (!bgCtx) return;
 
-    if (bgCanvas.width !== 800 || bgCanvas.height !== 500) {
-        bgCanvas.width = 800;
-        bgCanvas.height = 500;
+    const dpr = getHiDPIScale();
+    const targetW = 800 * dpr;
+    const targetH = 500 * dpr;
+
+    if (bgCanvas.width !== targetW || bgCanvas.height !== targetH) {
+        bgCanvas.width = targetW;
+        bgCanvas.height = targetH;
     }
 
     const templateEl = document.getElementById('canvas-pitch-template');
@@ -1187,9 +1195,13 @@ export function drawPitch(renderObjects) {
     ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    if (canvas.width !== 800 || canvas.height !== 500) {
-        canvas.width = 800;
-        canvas.height = 500;
+    const dpr = getHiDPIScale();
+    const targetW = 800 * dpr;
+    const targetH = 500 * dpr;
+
+    if (canvas.width !== targetW || canvas.height !== targetH) {
+        canvas.width = targetW;
+        canvas.height = targetH;
     }
 
     drawPitchBackground();
@@ -1499,12 +1511,13 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
 
     cleanupCanvasEvents();
 
-    canvas.width = 800;
-    canvas.height = 500;
+    const dpr = getHiDPIScale();
+    canvas.width = 800 * dpr;
+    canvas.height = 500 * dpr;
 
     if (bgCanvas) {
-        bgCanvas.width = 800;
-        bgCanvas.height = 500;
+        bgCanvas.width = 800 * dpr;
+        bgCanvas.height = 500 * dpr;
         bgCtx = bgCanvas.getContext('2d');
     }
 

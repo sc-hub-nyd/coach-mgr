@@ -356,6 +356,21 @@ body.role-read-only #data-export-card {
     display: none !important;
 }
 
+/* ダッシュボード ウィジェット: コーチ専用要素 (保護者モードで非表示) */
+body.role-read-only .coach-only,
+body.role-read-only #dash-alert-banner,
+body.role-read-only #dash-schedule-btn-group,
+body.role-read-only #dash-coach-row {
+    display: none !important;
+}
+
+/* ダッシュボード ウィジェット: 保護者専用要素 (コーチモードで非表示) */
+body:not(.role-read-only) .parent-only,
+body:not(.role-read-only) #dash-myplayer-banner {
+    display: none !important;
+}
+
+
 body.role-read-only #pd-tab-goals textarea {
     pointer-events: none;
     background-color: rgba(0, 0, 0, 0.02);

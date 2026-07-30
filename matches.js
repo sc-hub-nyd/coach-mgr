@@ -27,11 +27,13 @@ function cleanupPeriodSideEvents() {
 }
 
 // YouTube URLから11桁のIDを抽出
+// YouTube URLから11桁のIDを抽出
 function extractYouTubeId(url) {
-    if (!url) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    if (!url || typeof url !== 'string') return null;
+    const cleanUrl = url.trim();
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|live\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = cleanUrl.match(regExp);
+    return (match && match[2] && match[2].length === 11) ? match[2] : null;
 }
 
 // 秒数を 「MM:SS」形式に変換
@@ -71,42 +73,44 @@ export function seekToVideoTime(timeStr) {
 // YouTubeプレーヤーの読み込み/切り替え
 export function loadYouTubePlayer(url, containerId = 'period-yt-player') {
     const videoId = extractYouTubeId(url);
-    const playerEl = document.getElementById(containerId);
+
+    // 既存のプレイヤーインスタンスがあればクリーンアップ（DOM は触らない）
+    if (ytPlayer) {
+        try {
+            if (typeof ytPlayer.destroy === 'function') ytPlayer.destroy();
+        } catch (e) {
+            // ignore
+        }
+        ytPlayer = null;
+    }
+
+    // ターゲットコンテナを取得（無ければ親要素の中に再作成）
+    let playerEl = document.getElementById(containerId);
+    if (!playerEl) {
+        const wrapper = document.getElementById('period-yt-wrapper') || document.getElementById('period-workspace-video');
+        if (wrapper) {
+            wrapper.innerHTML = `<div id="${containerId}" style="width:100%; height:100%;"></div>`;
+            playerEl = document.getElementById(containerId);
+        }
+    }
+
     if (!playerEl) return;
 
     if (!videoId) {
-        playerEl.innerHTML = '<div style="color:#fff; text-align:center; padding:2rem;">YouTube URLが設定されていません</div>';
+        playerEl.innerHTML = '<div style="color:#fff; text-align:center; padding:2rem; font-size:0.9rem;"><i class="fa-brands fa-youtube" style="font-size:2rem; color:#ef4444; margin-bottom:0.5rem; display:block;"></i>YouTube URLが設定されていないか、正しい形式ではありません</div>';
         return;
     }
 
-    if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
-        ytPlayer.loadVideoById(videoId);
-        return;
-    }
-
-    const initPlayer = () => {
-        if (window.YT && window.YT.Player) {
-            try {
-                ytPlayer = new window.YT.Player(containerId, {
-                    width: '100%',
-                    height: '100%',
-                    videoId: videoId,
-                    playerVars: { 'playsinline': 1, 'rel': 0, 'modestbranding': 1 }
-                });
-            } catch (e) {
-                console.error('YouTube Player initialization error:', e);
-                fallbackIframe();
-            }
-        } else {
-            fallbackIframe();
-        }
-    };
-
-    const fallbackIframe = () => {
-        playerEl.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}?playsinline=1" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
-    };
-
-    setTimeout(initPlayer, 150);
+    // 純粋な iframe 埋め込み（YT.Player APIの再アタッチはしない）
+    // ※ YT.Player を既存 iframe にアタッチすると Chromium でクラッシュ（×_×）するため除外
+    playerEl.innerHTML = `<iframe
+        width="100%" height="100%"
+        src="https://www.youtube.com/embed/${videoId}?playsinline=1&rel=0&modestbranding=1"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        style="width:100%; height:100%; border:none; display:block;">
+    </iframe>`;
 }
 
 const formationCoords = {
@@ -422,12 +426,8 @@ export function openMatchModal(matchId = null) {
             e.preventDefault();
             const scoreUs = document.getElementById('match-score-us').value;
             const scoreThem = document.getElementById('match-score-them').value;
-            let goodStr = document.getElementById('match-comments-good').value.trim();
-            let improveStr = document.getElementById('match-comments-improve').value.trim();
-            let commentsStr = '';
-            if (goodStr || improveStr) {
-                commentsStr = '【ポジティブ】\n' + goodStr + '\n\n【ネクストステップ】\n' + improveStr;
-            }
+            const themeStr = document.getElementById('match-theme').value.trim();
+            const summaryStr = document.getElementById('match-summary').value.trim();
 
             let resultStr = "";
             if (scoreUs !== "" && scoreThem !== "") {
@@ -474,7 +474,8 @@ export function openMatchModal(matchId = null) {
                     match.result = resultStr;
                     match.scorers = scorersStr;
                     match.goalRecords = goalRecords;
-                    match.comments = commentsStr;
+                    match.theme = themeStr;
+                    match.comments = summaryStr;
                     match.presentPlayerIds = presentPlayerIds;
                     saveData();
                     showToast('試合情報を更新しました');
@@ -489,7 +490,8 @@ export function openMatchModal(matchId = null) {
                     result: resultStr,
                     scorers: scorersStr,
                     goalRecords: goalRecords,
-                    comments: commentsStr,
+                    theme: themeStr,
+                    comments: summaryStr,
                     playerFeedback: [],
                     formations: [],
                     presentPlayerIds: presentPlayerIds
@@ -500,7 +502,13 @@ export function openMatchModal(matchId = null) {
             }
 
             document.getElementById('modal-match').classList.add('hidden');
-            navigate('matches');
+            if (editId) {
+                // 既存の編集の場合は、試合詳細に留まって最新データで再描画
+                initMatchDetailView(parseInt(editId, 10));
+            } else {
+                // 新規作成の場合は、一覧へ遷移
+                navigate('matches');
+            }
         };
     }
 
@@ -551,22 +559,11 @@ export function openMatchModal(matchId = null) {
                 });
             }
 
-            let good = '';
-            let improve = '';
-            if (m.comments) {
-                const parts = m.comments.split('【ネクストステップ】');
-                if (parts.length > 1) {
-                    good = parts[0].replace('【ポジティブ】', '').trim();
-                    improve = parts[1].trim();
-                } else {
-                    good = m.comments.replace('【ポジティブ】', '').trim();
-                }
-            }
-            const goodEl = document.getElementById('match-comments-good');
-            if (goodEl) goodEl.value = good;
+            const themeEl = document.getElementById('match-theme');
+            if (themeEl) themeEl.value = m.theme || '';
 
-            const impEl = document.getElementById('match-comments-improve');
-            if (impEl) impEl.value = improve;
+            const summaryEl = document.getElementById('match-summary');
+            if (summaryEl) summaryEl.value = m.comments || '';
 
             if (title) title.textContent = '試合情報を編集';
 
@@ -654,6 +651,20 @@ export function initMatchDetailView(matchId) {
         };
     }
 
+    const dateInput = document.getElementById('match-detail-date-input');
+    const opponentInput = document.getElementById('match-detail-opponent-input');
+    const typeSelect = document.getElementById('match-detail-type-select');
+    const tournamentInput = document.getElementById('match-detail-tournament-input');
+
+    if (dateInput) dateInput.value = m.date || '';
+    if (opponentInput) opponentInput.value = m.opponent || '';
+    if (tournamentInput) tournamentInput.value = m.tournament || '';
+
+    if (typeSelect) {
+        typeSelect.innerHTML = state.matchTypes.map(t => `<option value="${t}" ${m.type === t ? 'selected' : ''}>${t}</option>`).join('');
+    }
+
+    // 保護者モード用のテキスト表示更新
     const metaEl = document.getElementById('match-detail-meta');
     if (metaEl) {
         metaEl.textContent = `${m.date || ''} | ${m.type || ''}${m.tournament ? ` (${m.tournament})` : ''}`;
@@ -664,15 +675,39 @@ export function initMatchDetailView(matchId) {
         titleEl.textContent = `vs ${m.opponent || '対戦相手'}`;
     }
 
-    const themeEl = document.getElementById('match-detail-theme');
-    if (themeEl) themeEl.textContent = m.theme || '未設定';
+    const themeText = document.getElementById('match-detail-theme-text');
+    const themeInput = document.getElementById('match-detail-theme-input');
+    const summaryText = document.getElementById('match-detail-summary-text');
+    const summaryInput = document.getElementById('match-detail-summary-input');
 
-    const summaryEl = document.getElementById('match-detail-summary');
-    if (summaryEl) summaryEl.textContent = m.comments || '記録なし';
+    if (themeText) themeText.textContent = m.theme || '未設定';
+    if (themeInput) themeInput.value = m.theme || '';
 
+    let goodStr = '';
+    let improveStr = '';
+    if (m.comments) {
+        const parts = m.comments.split('【ネクストステップ】');
+        if (parts.length > 1) {
+            goodStr = parts[0].replace('【ポジティブ】', '').trim();
+            improveStr = parts[1].trim();
+        } else {
+            goodStr = m.comments.replace('【ポジティブ】', '').trim();
+        }
+    }
+
+    if (summaryText) summaryText.textContent = m.comments || '記録なし';
+    if (summaryInput) summaryInput.value = m.comments || '';
+
+    // 出欠表示とインライン編集
     const detailRosterDisplay = document.getElementById('match-detail-attendance-roster-display');
+    const detailRosterEdit = document.getElementById('match-detail-attendance-roster-edit');
     const detailAttendanceSummary = document.getElementById('match-detail-attendance-summary');
-    if (detailRosterDisplay && detailAttendanceSummary) {
+
+    if (detailAttendanceSummary) {
+        detailAttendanceSummary.textContent = `参加者 (${m.presentPlayerIds ? `${m.presentPlayerIds.length}/${state.players.length}` : `0/${state.players.length}`})`;
+    }
+
+    if (detailRosterDisplay) {
         const attendeesHtml = m.presentPlayerIds && m.presentPlayerIds.length > 0
             ? state.players.filter(pl => m.presentPlayerIds.includes(pl.id)).map(pl => `
                 <span style="display:inline-flex; align-items:center; background:#f1f5f9; border:1px solid #e2e8f0; color:#334155; font-size:0.7rem; font-weight:600; padding:0.15rem 0.4rem; border-radius:9999px; gap:0.25rem; white-space:nowrap;">
@@ -683,13 +718,51 @@ export function initMatchDetailView(matchId) {
             : '<span style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">メンバー登録がありません</span>';
         
         detailRosterDisplay.innerHTML = attendeesHtml;
-        detailAttendanceSummary.textContent = `参加者 (${m.presentPlayerIds ? `${m.presentPlayerIds.length}/${state.players.length}` : `0/${state.players.length}`})`;
     }
 
-    const btnEditMatch = document.getElementById('btn-edit-match');
-    if (btnEditMatch) {
-        btnEditMatch.style.display = isCoach ? 'inline-flex' : 'none';
-        btnEditMatch.onclick = () => openMatchModal(m.id);
+    // コーチ用出欠チェックボックス一覧の描画
+    if (detailRosterEdit) {
+        const activeIds = m.presentPlayerIds || [];
+        const sortedPlayers = [...state.players].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
+        detailRosterEdit.innerHTML = sortedPlayers.map(p => {
+            const isChecked = activeIds.includes(p.id) ? 'checked' : '';
+            return `
+                <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.78rem; cursor:pointer; background:#fff; padding:0.3rem 0.5rem; border-radius:6px; border:1px solid var(--surface-border); user-select:none; margin:0;">
+                    <input type="checkbox" class="inline-match-attendance-checkbox" value="${p.id}" ${isChecked} style="margin:0; width:14px; height:14px; cursor:pointer;">
+                    <span style="font-weight:700; color:var(--primary);">${p.number || '—'}</span>
+                    <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</span>
+                </label>
+            `;
+        }).join('');
+    }
+
+    // インラインフォームの送信（保存）イベント
+    const formInline = document.getElementById('form-match-detail-inline');
+    if (formInline) {
+        formInline.onsubmit = (e) => {
+            e.preventDefault();
+            if (state.currentUserRole !== 'coach') {
+                showToast('保護者モードでは保存できません');
+                return;
+            }
+
+            // 出欠チェックボックスの収集
+            const checkedBoxes = formInline.querySelectorAll('.inline-match-attendance-checkbox:checked');
+            const presentPlayerIds = Array.from(checkedBoxes).map(cb => parseInt(cb.value, 10));
+
+            // テーマと総括・基本情報の更新
+            m.date = dateInput ? dateInput.value : m.date;
+            m.opponent = opponentInput ? opponentInput.value.trim() : m.opponent;
+            m.type = typeSelect ? typeSelect.value : m.type;
+            m.tournament = tournamentInput ? tournamentInput.value.trim() : m.tournament;
+            m.theme = themeInput ? themeInput.value.trim() : '';
+            m.comments = summaryInput ? summaryInput.value.trim() : '';
+            m.presentPlayerIds = presentPlayerIds;
+
+            saveData();
+            showToast('試合基本情報・テーマ・総括・出欠情報を保存しました');
+            initMatchDetailView(m.id);
+        };
     }
 
     const btnAddFormation = document.getElementById('btn-add-formation');
@@ -819,6 +892,10 @@ window.stopAndCleanupYouTube = function () {
             console.error('YouTube cleanup error:', e);
         }
         ytPlayer = null;
+    }
+    const wrapper = document.getElementById('period-yt-wrapper');
+    if (wrapper) {
+        wrapper.innerHTML = '<div id="period-yt-player" style="width:100%; height:100%;"></div>';
     }
 };
 
@@ -1312,7 +1389,11 @@ export function openPeriodAnalysis(matchId, periodIndex) {
         // click / touch outside to close sidebar
         periodSideClickOutsideHandler = (e) => {
             if (sidePanel.classList.contains('open')) {
-                if (!sidePanel.contains(e.target) && !sideToggleBtn.contains(e.target)) {
+                // セレクトボックスの選択肢などをクリックした際に閉じないよう、いくつかの要素を除外
+                const isInsideSidebar = sidePanel.contains(e.target);
+                const isToggleBtn = sideToggleBtn.contains(e.target);
+                const isOptionOrPicker = e.target.closest('#formation-player-picker') || e.target.closest('.modal-overlay') || e.target.tagName === 'OPTION';
+                if (!isInsideSidebar && !isToggleBtn && !isOptionOrPicker) {
                     sidePanel.classList.remove('open');
                     sidePanel.classList.add('collapsed');
                 }

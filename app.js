@@ -1,6 +1,6 @@
 // app.js - エントリーポイント
 import { state, uiState } from './state.js';
-import { escapeHtml, encryptData, decryptData, showToast, setupScoreCounters } from './utils.js';
+import { escapeHtml, encryptData, decryptData, showToast, setupScoreCounters, getNendo } from './utils.js';
 import { initPractices, openPracticeModal, renderPracticeRoster } from './practices.js';
 import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView } from './matches.js'; // ★ 1行にまとめる
 import { initPlayers, openPlayerDetail } from './players.js';
@@ -84,6 +84,9 @@ export async function loadData() {
             if (parsed) {
                 state.matches = parsed.matches || [];
                 state.practices = parsed.practices || [];
+                // 日付の新しい順 (降順) に並び替え
+                state.matches.sort((a, b) => b.date.localeCompare(a.date));
+                state.practices.sort((a, b) => b.date.localeCompare(a.date));
                 state.players = parsed.players || [];
                 state.menuLibrary = parsed.menuLibrary || [];
                 state.matchTypes = parsed.matchTypes || ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'];
@@ -103,6 +106,10 @@ export async function loadData() {
 }
 
 export async function saveData() {
+    // 保存前に日付の新しい順（降順）にソートを確定する
+    state.matches.sort((a, b) => b.date.localeCompare(a.date));
+    state.practices.sort((a, b) => b.date.localeCompare(a.date));
+
     const jsonStr = JSON.stringify({
         matches: state.matches,
         practices: state.practices,
@@ -276,11 +283,23 @@ export function openModal(id) {
     }
 }
 
-function openLeaderRankingModal() {
+export function openLeaderRankingModal() {
+    window.openLeaderRankingModal = openLeaderRankingModal;
     const scorerCounts = {};
     const assistCounts = {};
     state.matches.forEach(m => {
-        if (m.goalRecords) {
+        // ピリオド別（formations）の得点記録がある場合はそちらを優先（重複集計防止）
+        if (m.formations && m.formations.length > 0) {
+            m.formations.forEach(f => {
+                if (f.goalRecords) {
+                    f.goalRecords.forEach(r => {
+                        if (r.scorerId) scorerCounts[r.scorerId] = (scorerCounts[r.scorerId] || 0) + 1;
+                        if (r.assistId) assistCounts[r.assistId] = (assistCounts[r.assistId] || 0) + 1;
+                    });
+                }
+            });
+        } else if (m.goalRecords) {
+            // フォーメーションが無い古い試合データ等のためのフォールバック
             m.goalRecords.forEach(r => {
                 if (r.scorerId) scorerCounts[r.scorerId] = (scorerCounts[r.scorerId] || 0) + 1;
                 if (r.assistId) assistCounts[r.assistId] = (assistCounts[r.assistId] || 0) + 1;
@@ -298,31 +317,184 @@ function openLeaderRankingModal() {
         .filter(x => x.p)
         .sort((a, b) => b.count - a.count || ((parseInt(a.p.number) || 0) - (parseInt(b.p.number) || 0)));
 
-    const renderRankingItem = (item, idx) => {
+    const renderRankingItem = (item, idx, unit = '') => {
         return `
             <div style="display:flex; align-items:baseline; margin-bottom:0.3rem; cursor:pointer;" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
                 <span style="width:1.6rem; font-weight:bold; color:var(--text-secondary); text-align:right; margin-right:0.4rem; flex-shrink:0;">${idx + 1}.</span>
-                <span style="flex:1;"><strong>${item.p.number} ${item.p.name}</strong> (${item.count})</span>
+                <span style="flex:1;"><strong>${item.p.number} ${item.p.name}</strong> (${item.count}${unit})</span>
             </div>
         `;
     };
 
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // 出席率の集計 (過去1ヶ月間)
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+    const oneMonthAgoStr = `${oneMonthAgo.getFullYear()}-${String(oneMonthAgo.getMonth() + 1).padStart(2, '0')}-${String(oneMonthAgo.getDate()).padStart(2, '0')}`;
+
+    const recentPractices = state.practices.filter(p => p.date >= oneMonthAgoStr && p.date <= todayStr);
+    const recentMatches = state.matches.filter(m => m.date >= oneMonthAgoStr && m.date <= todayStr);
+    const totalRecentEvents = recentPractices.length + recentMatches.length;
+
+    const attendanceCount = {};
+    recentPractices.forEach(p => (p.presentPlayerIds || []).forEach(id => { attendanceCount[id] = (attendanceCount[id]||0)+1; }));
+    recentMatches.forEach(m   => (m.presentPlayerIds  || []).forEach(id => { attendanceCount[id] = (attendanceCount[id]||0)+1; }));
+
+    const allAttendance = state.players.map(p => {
+        const count = attendanceCount[p.id] || 0;
+        const pct = totalRecentEvents > 0 ? Math.round((count / totalRecentEvents) * 100) : 0;
+        return { p, count, pct };
+    }).sort((a, b) => b.pct - a.pct || b.count - a.count || (parseInt(a.p.number,10)||0) - (parseInt(b.p.number,10)||0));
+
+    // UIパーツ取得
     const elRankingScorers = document.getElementById('ranking-scorers-list');
     if (elRankingScorers) {
         elRankingScorers.innerHTML = allScorers.length > 0
-            ? allScorers.map((item, idx) => renderRankingItem(item, idx)).join('')
+            ? allScorers.map((item, idx) => renderRankingItem(item, idx, '')).join('')
             : '<div style="color:var(--text-secondary); font-size:0.85rem; padding:0.5rem 0;">得点記録がありません。</div>';
     }
 
     const elRankingAssists = document.getElementById('ranking-assists-list');
     if (elRankingAssists) {
         elRankingAssists.innerHTML = allAssists.length > 0
-            ? allAssists.map((item, idx) => renderRankingItem(item, idx)).join('')
+            ? allAssists.map((item, idx) => renderRankingItem(item, idx, '')).join('')
             : '<div style="color:var(--text-secondary); font-size:0.85rem; padding:0.5rem 0;">アシスト記録がありません。</div>';
+    }
+
+    const elRankingAttendance = document.getElementById('ranking-attendance-list');
+    if (elRankingAttendance) {
+        elRankingAttendance.innerHTML = totalRecentEvents > 0 && allAttendance.some(item => item.count > 0)
+            ? allAttendance.map((item, idx) => `
+                <div style="display:flex; align-items:baseline; margin-bottom:0.3rem; cursor:pointer;" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
+                    <span style="width:1.6rem; font-weight:bold; color:var(--text-secondary); text-align:right; margin-right:0.4rem; flex-shrink:0;">${idx + 1}.</span>
+                    <span style="flex:1;"><strong>${item.p.number} ${item.p.name}</strong></span>
+                    <span style="font-weight:700; color:var(--primary);">${item.pct}%</span>
+                </div>
+            `).join('')
+            : '<div style="color:var(--text-secondary); font-size:0.85rem; padding:0.5rem 0;">過去1ヶ月の出席データがありません。</div>';
+    }
+
+    // 保護者モードかコーチモードかに応じてモーダルの表示カラム数を制御
+    const gridCols = document.getElementById('leader-ranking-grid-cols');
+    if (gridCols) {
+        const isCoach = state.currentUserRole === 'coach';
+        if (isCoach) {
+            gridCols.style.gridTemplateColumns = '1fr 1fr 1fr';
+            // 出席率カラムコンテナを表示する
+            if (gridCols.children[2]) gridCols.children[2].style.display = 'block';
+        } else {
+            gridCols.style.gridTemplateColumns = '1fr 1fr';
+            // 出席率カラムコンテナを非表示にする
+            if (gridCols.children[2]) gridCols.children[2].style.display = 'none';
+        }
     }
 
     openModal('modal-leader-ranking');
 }
+
+export function openSeasonRecordModal() {
+    window.openSeasonRecordModal = openSeasonRecordModal;
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const currentNendo = getNendo(todayStr);
+
+    // 有効なスコアがある完了した全試合
+    const completedMatches = state.matches.filter(m => {
+        return m.result && /([\d]+)\s*-\s*([\d]+)/.test(m.result) && m.date <= todayStr;
+    });
+
+    // ── 1. 試合種別ごとの成績 (今年度) ──
+    const thisYearMatches = completedMatches.filter(m => getNendo(m.date) === currentNendo);
+    const typeStats = {}; // { 公式戦: { win, loss, draw, goals, concede } }
+
+    thisYearMatches.forEach(m => {
+        const type = m.type || '未分類';
+        if (!typeStats[type]) {
+            typeStats[type] = { win: 0, loss: 0, draw: 0, goals: 0, concede: 0 };
+        }
+        const mt = m.result.match(/([\d]+)\s*-\s*([\d]+)/);
+        if (mt) {
+            const us = parseInt(mt[1], 10);
+            const them = parseInt(mt[2], 10);
+            typeStats[type].goals += us;
+            typeStats[type].concede += them;
+            if (us > them) typeStats[type].win++;
+            else if (us < them) typeStats[type].loss++;
+            else typeStats[type].draw++;
+        }
+    });
+
+    const elTypesList = document.getElementById('season-detail-types-list');
+    if (elTypesList) {
+        const typeKeys = Object.keys(typeStats);
+        elTypesList.innerHTML = typeKeys.length > 0
+            ? typeKeys.map(type => {
+                const stat = typeStats[type];
+                const total = stat.win + stat.loss + stat.draw;
+                const winRate = total > 0 ? Math.round((stat.win / total) * 100) : 0;
+                return `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.02); padding:0.4rem 0.6rem; border-radius:6px; font-size:0.8rem; border:1px solid var(--surface-border);">
+                        <span style="font-weight:700; color:var(--text-primary);">${escapeHtml(type)}</span>
+                        <div style="text-align:right;">
+                            <span style="font-weight:600; color:var(--primary);">${stat.win}勝</span>
+                            <span style="color:var(--text-secondary); margin-left:0.2rem;">${stat.loss}敗 ${stat.draw}分</span>
+                            <span style="font-size:0.75rem; color:var(--text-secondary); margin-left:0.4rem;">(得失: ${stat.goals}-${stat.concede} / 勝率: ${winRate}%)</span>
+                        </div>
+                    </div>
+                `;
+            }).join('')
+            : '<div style="color:var(--text-secondary); font-size:0.8rem; font-style:italic;">今年度の試合データがありません。</div>';
+    }
+
+    // ── 2. 過去年度の成績推移 ──
+    const yearStats = {}; // { 2025: { win, loss, draw, goals, concede } }
+    completedMatches.forEach(m => {
+        const year = getNendo(m.date);
+        if (!yearStats[year]) {
+            yearStats[year] = { win: 0, loss: 0, draw: 0, goals: 0, concede: 0 };
+        }
+        const mt = m.result.match(/([\d]+)\s*-\s*([\d]+)/);
+        if (mt) {
+            const us = parseInt(mt[1], 10);
+            const them = parseInt(mt[2], 10);
+            yearStats[year].goals += us;
+            yearStats[year].concede += them;
+            if (us > them) yearStats[year].win++;
+            else if (us < them) yearStats[year].loss++;
+            else yearStats[year].draw++;
+        }
+    });
+
+    const elYearsList = document.getElementById('season-detail-years-list');
+    if (elYearsList) {
+        const sortedYears = Object.keys(yearStats).sort((a, b) => b - a); // 降順
+        elYearsList.innerHTML = sortedYears.length > 0
+            ? sortedYears.map(year => {
+                const stat = yearStats[year];
+                const total = stat.win + stat.loss + stat.draw;
+                const winRate = total > 0 ? Math.round((stat.win / total) * 100) : 0;
+                const isCurrent = parseInt(year, 10) === currentNendo;
+                return `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:${isCurrent ? 'rgba(242,57,50,0.04)' : 'rgba(0,0,0,0.01)'}; padding:0.4rem 0.6rem; border-radius:6px; font-size:0.8rem; border:1px solid ${isCurrent ? 'var(--primary)' : 'var(--surface-border)'};">
+                        <span style="font-weight:700; color:${isCurrent ? 'var(--primary)' : 'var(--text-primary)'};">${year}年度 ${isCurrent ? '<span style="font-size:0.7rem; font-weight:normal;">(今年度)</span>' : ''}</span>
+                        <div style="text-align:right;">
+                            <span style="font-weight:600; color:${isCurrent ? 'var(--primary)' : 'var(--text-primary)'};">${stat.win}勝</span>
+                            <span style="color:var(--text-secondary); margin-left:0.2rem;">${stat.loss}敗 ${stat.draw}分</span>
+                            <span style="font-size:0.75rem; color:var(--text-secondary); margin-left:0.4rem;">(得失: ${stat.goals}-${stat.concede} / 勝率: ${winRate}%)</span>
+                        </div>
+                    </div>
+                `;
+            }).join('')
+            : '<div style="color:var(--text-secondary); font-size:0.8rem; font-style:italic;">試合履歴データがありません。</div>';
+    }
+
+    openModal('modal-season-record-detail');
+}
+
 
 function setupModals() {
     const closeBtns = document.querySelectorAll('.btn-close-modal');
@@ -337,7 +509,6 @@ function setupModals() {
             }
         });
     });
-
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', (e) => {
             if (e.target === overlay) {
@@ -367,278 +538,614 @@ function setupModals() {
 function initDashboard() {
     const now = new Date();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const isCoach = state.currentUserRole === 'coach';
 
-    // ★ 修正: スコアが存在し、かつ日付が必ず「今日（todayStr）以前」であるものだけに厳格に絞り込む
+    // ── コーチ専用要素の表示制御 ──
+    document.querySelectorAll('.coach-only').forEach(el => {
+        if (isCoach) {
+            el.style.removeProperty('display');
+        } else {
+            el.style.setProperty('display', 'none', 'important');
+        }
+    });
+
+    // ── 保護者専用要素の表示制御と「マイ選手」ロジック ──
+    const myPlayerBanner = document.getElementById('dash-myplayer-banner');
+    const myPlayerSelect = document.getElementById('dash-myplayer-select');
+    const myPlayerContent = document.getElementById('dash-myplayer-content');
+
+    if (!isCoach && myPlayerBanner) {
+        myPlayerBanner.style.removeProperty('display');
+
+        // セレクトボックスに選手一覧をセット
+        if (myPlayerSelect) {
+            const savedPlayerId = localStorage.getItem('coachMgrMyPlayerId') || '';
+            myPlayerSelect.innerHTML = '<option value="">-- 我が子を選択 --</option>' + 
+                state.players.map(p => `<option value="${p.id}" ${savedPlayerId === String(p.id) ? 'selected' : ''}>${p.number} ${escapeHtml(p.name)}</option>`).join('');
+
+            const renderMyPlayerStats = (playerId) => {
+                if (!playerId || !myPlayerContent) {
+                    myPlayerContent.innerHTML = '<div class="dash-no-data">上のセレクトボックスからマイ選手を設定してください</div>';
+                    return;
+                }
+                const player = state.players.find(p => p.id === parseInt(playerId, 10));
+                if (!player) {
+                    myPlayerContent.innerHTML = '<div class="dash-no-data">選手が見つかりません</div>';
+                    return;
+                }
+
+                // 過去1ヶ月の出席率
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+                const oneMonthAgoStr = `${oneMonthAgo.getFullYear()}-${String(oneMonthAgo.getMonth() + 1).padStart(2, '0')}-${String(oneMonthAgo.getDate()).padStart(2, '0')}`;
+
+                const recentPracs = state.practices.filter(p => p.date >= oneMonthAgoStr && p.date <= todayStr);
+                const recentMatches = state.matches.filter(m => m.date >= oneMonthAgoStr && m.date <= todayStr);
+                const totalEvents = recentPracs.length + recentMatches.length;
+
+                let presentCount = 0;
+                recentPracs.forEach(p => { if ((p.presentPlayerIds || []).includes(player.id)) presentCount++; });
+                recentMatches.forEach(m => { if ((m.presentPlayerIds || []).includes(player.id)) presentCount++; });
+                const attendancePct = totalEvents > 0 ? Math.round((presentCount / totalEvents) * 100) : 0;
+
+                // 通算得点・アシスト
+                let goals = 0;
+                let assists = 0;
+                state.matches.forEach(m => {
+                    if (m.formations && m.formations.length > 0) {
+                        m.formations.forEach(f => {
+                            (f.goalRecords || []).forEach(r => {
+                                if (r.scorerId === player.id) goals++;
+                                if (r.assistId === player.id) assists++;
+                            });
+                        });
+                    } else {
+                        (m.goalRecords || []).forEach(r => {
+                            if (r.scorerId === player.id) goals++;
+                            if (r.assistId === player.id) assists++;
+                        });
+                    }
+                });
+
+                // 直近のポジティブ評価 (1on1評価やフィードバック)
+                let latestFeedback = '登録された直近の評価コメントはありません';
+                if (player.oneOnOnes && player.oneOnOnes.length > 0) {
+                    const sortedOneOnOnes = [...player.oneOnOnes].sort((a,b) => b.date.localeCompare(a.date));
+                    latestFeedback = sortedOneOnOnes[0].note || latestFeedback;
+                }
+
+                myPlayerContent.innerHTML = `
+                    <div class="dash-myplayer-metric-box">
+                        <span style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-solid fa-users"></i> 過去1ヶ月の出席率</span>
+                        <div class="dash-myplayer-metric-val">${attendancePct}% <span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">(${presentCount}/${totalEvents}回)</span></div>
+                    </div>
+                    <div class="dash-myplayer-metric-box">
+                        <span style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-solid fa-fire" style="color:#ef4444;"></i> 通算スタッツ</span>
+                        <div class="dash-myplayer-metric-val">${goals} <span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">得点</span> / ${assists} <span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">アシスト</span></div>
+                    </div>
+                    <div class="dash-myplayer-comment-box">
+                        <strong><i class="fa-solid fa-comment-dots"></i> 指導者からの最新フィードバック・成長記録:</strong>
+                        <div style="margin-top:0.3rem; color:var(--text-primary); font-style:italic;">"${latestFeedback}"</div>
+                    </div>
+                `;
+            };
+
+            myPlayerSelect.onchange = (e) => {
+                const pid = e.target.value;
+                localStorage.setItem('coachMgrMyPlayerId', pid);
+                renderMyPlayerStats(pid);
+            };
+
+            // 初回ロード表示
+            renderMyPlayerStats(savedPlayerId);
+        }
+    } else if (myPlayerBanner) {
+        myPlayerBanner.style.setProperty('display', 'none', 'important');
+    }
+
+    // ── 練習＆試合「相関分析」ロジック ──
+    const correlationContent = document.getElementById('dash-correlation-content');
+    if (correlationContent) {
+        // 過去の試合データ(結果あり)
+        const scoredMatches = state.matches.filter(m => m.result && /([\d]+)\s*-\s*([\d]+)/.test(m.result));
+        if (scoredMatches.length > 0) {
+            // テーマごとの試合成績を集計
+            // 練習メニューでフォーカスされたカテゴリ
+            const themeResults = {}; // { 'ポゼッション': { win: 0, total: 0 } }
+            
+            // 直近の練習メニューとその日付をマッピング
+            const pracMap = {}; // { 'YYYY-MM-DD': [focuses] }
+            state.practices.forEach(p => {
+                if (p.menus && p.menus.length > 0) {
+                    pracMap[p.date] = p.menus.map(mn => mn.focus).filter(Boolean);
+                }
+            });
+
+            scoredMatches.forEach(m => {
+                const mt = m.result.match(/([\d]+)\s*-\s*([\d]+)/);
+                if (mt) {
+                    const us = parseInt(mt[1], 10), them = parseInt(mt[2], 10);
+                    const isWin = us > them;
+                    
+                    // 試合日以前の直近1週間の練習テーマを探す
+                    const matchDate = new Date(m.date);
+                    const themesSeen = new Set();
+                    
+                    for (let i = 1; i <= 7; i++) {
+                        const checkDate = new Date(matchDate);
+                        checkDate.setDate(checkDate.getDate() - i);
+                        const checkDateStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
+                        if (pracMap[checkDateStr]) {
+                            pracMap[checkDateStr].forEach(t => themesSeen.add(t));
+                        }
+                    }
+
+                    themesSeen.forEach(theme => {
+                        if (!themeResults[theme]) themeResults[theme] = { win: 0, total: 0 };
+                        themeResults[theme].total++;
+                        if (isWin) themeResults[theme].win++;
+                    });
+                }
+            });
+
+            const correlationItems = Object.entries(themeResults)
+                .map(([theme, data]) => {
+                    const winPct = data.total > 0 ? Math.round((data.win / data.total) * 100) : 0;
+                    return { theme, winPct, total: data.total };
+                })
+                .sort((a, b) => b.winPct - a.winPct)
+                .slice(0, 3);
+
+            if (correlationItems.length > 0) {
+                correlationContent.innerHTML = correlationItems.map(item => {
+                    let trendClass = 'neutral';
+                    let trendIcon = 'fa-minus';
+                    let trendLabel = '普通';
+                    if (item.winPct >= 65) {
+                        trendClass = 'up';
+                        trendIcon = 'fa-trending-up';
+                        trendLabel = '相関高(好調)';
+                    } else if (item.winPct <= 35) {
+                        trendClass = 'down';
+                        trendIcon = 'fa-trending-down';
+                        trendLabel = '改善必要';
+                    }
+                    return `
+                        <div class="dash-correlation-row">
+                            <div style="font-weight:600;">${escapeHtml(item.theme)} <span style="font-weight:normal; font-size:0.7rem; color:var(--text-secondary);">(${item.total}試合前練習)</span></div>
+                            <div class="dash-correlation-trend ${trendClass}">
+                                <i class="fa-solid ${trendIcon}"></i> 勝率 ${item.winPct}% (${trendLabel})
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                correlationContent.innerHTML = '<div class="dash-no-data" style="padding:0.5rem 0;">直前1週間にテーマ練習のある試合履歴が不足しています</div>';
+            }
+        } else {
+            correlationContent.innerHTML = '<div class="dash-no-data" style="padding:0.5rem 0;">相関分析に必要な試合データがありません</div>';
+        }
+    }
+
+    // ── 選手コンディション・出場時間平準化アラート ──
+    const playtimeContent = document.getElementById('dash-playtime-content');
+    if (playtimeContent) {
+        // 直近5試合を抽出
+        const recent5Matches = state.matches
+            .filter(m => m.date <= todayStr && m.result)
+            .sort((a,b) => b.date.localeCompare(a.date))
+            .slice(0, 5);
+
+        if (recent5Matches.length > 0) {
+            // 各選手の出場ピリオド数を集計する
+            const playerPlayTimes = {}; // { playerId: count }
+            state.players.forEach(p => { playerPlayTimes[p.id] = 0; });
+
+            let totalPeriods = 0;
+            recent5Matches.forEach(m => {
+                if (m.formations && m.formations.length > 0) {
+                    m.formations.forEach(f => {
+                        totalPeriods++;
+                        // 該当ピリオドに配置されているメンバーをチェック
+                        if (f.coords) {
+                            f.coords.forEach(coord => {
+                                if (coord.playerId) {
+                                    playerPlayTimes[coord.playerId] = (playerPlayTimes[coord.playerId] || 0) + 1;
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+            // プレイヤーごとの出場割合を算出
+            const playRateList = state.players.map(p => {
+                const count = playerPlayTimes[p.id] || 0;
+                const pct = totalPeriods > 0 ? Math.round((count / totalPeriods) * 100) : 0;
+                return { p, count, pct };
+            }).sort((a, b) => a.pct - b.pct); // 低い順(アラート対象)
+
+            // 出場時間が特に少ない（20%以下）選手、または下位3名を表示
+            const alertPlayers = playRateList.slice(0, 3);
+            if (alertPlayers.length > 0 && totalPeriods > 0) {
+                playtimeContent.innerHTML = alertPlayers.map(item => `
+                    <div class="dash-playtime-row">
+                        <div style="font-weight:600; width:5rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.p.number} ${escapeHtml(item.p.name)}</div>
+                        <div class="dash-playtime-bar-outer">
+                            <div class="dash-playtime-bar-inner" style="width: ${item.pct}%;"></div>
+                        </div>
+                        <div style="font-weight:700; color:${item.pct} < 30 ? 'var(--primary)' : 'var(--text-secondary)';">${item.pct}% <span style="font-size:0.68rem; font-weight:normal;">(${item.count}/${totalPeriods}P)</span></div>
+                    </div>
+                `).join('');
+            } else {
+                playtimeContent.innerHTML = '<div class="dash-no-data" style="padding:0.5rem 0;">フォーメーション登録データがありません</div>';
+            }
+        } else {
+            playtimeContent.innerHTML = '<div class="dash-no-data" style="padding:0.5rem 0;">出場時間の集計対象となる最近の試合データがありません</div>';
+        }
+    }
+
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ROW 1: アラートバナー（コーチ専用）
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const alertBanner = document.getElementById('dash-alert-banner');
+    const alertText   = document.getElementById('dash-alert-text');
+    const alertAction = document.getElementById('dash-alert-action');
+    if (isCoach && alertBanner) {
+        // ピリオド（formations）が未登録の過去試合を検出
+        const pendingMatches = state.matches.filter(m => {
+            if (!m.date || m.date > todayStr) return false; // 未来の試合は対象外
+            return !m.formations || m.formations.length === 0; // ピリオド未登録
+        });
+        if (pendingMatches.length > 0) {
+            alertBanner.style.removeProperty('display'); // coach-only で表示されるよう inline style を除去
+            if (alertText) alertText.textContent = `ピリオドが未登録の試合が ${pendingMatches.length} 件あります`;
+            if (alertAction) {
+                alertAction.onclick = () => {
+                    // 最初の未登録試合の詳細を開く
+                    const firstPending = pendingMatches.sort((a, b) => b.date.localeCompare(a.date))[0];
+                    if (firstPending) openMatchDetail(firstPending.id);
+                    else navigate('matches');
+                };
+            }
+        } else {
+            alertBanner.style.setProperty('display', 'none', 'important');
+        }
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ROW 2-left: 次の予定カード
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const allFutureEvents = [];
+    state.practices.forEach(p => allFutureEvents.push({
+        type: 'practice', date: p.date, id: p.id, title: '練習'
+    }));
+    state.matches.forEach(m => allFutureEvents.push({
+        type: 'match', date: m.date, id: m.id,
+        title: `vs ${m.opponent || '対戦相手'}`,
+        subType: m.type, tournament: m.tournament
+    }));
+
+    const nextEvent = allFutureEvents
+        .filter(e => e.date >= todayStr)
+        .sort((a, b) => a.date.localeCompare(b.date))[0];
+
+    const nextEventContent = document.getElementById('dash-next-event-content');
+    const nextEventCard    = document.getElementById('dash-next-event-card');
+    if (nextEventContent) {
+        if (nextEvent) {
+            const dateObj    = new Date(nextEvent.date + 'T00:00:00');
+            const dayNames   = ['日', '月', '火', '水', '木', '金', '土'];
+            const dateLabel  = `${nextEvent.date.replace(/-/g, '/')} (${dayNames[dateObj.getDay()]})`;
+            const todayObj   = new Date(todayStr + 'T00:00:00');
+            const diffDays   = Math.round((dateObj - todayObj) / (1000 * 60 * 60 * 24));
+            const countdownLabel = diffDays === 0 ? '今日！' : diffDays === 1 ? '明日' : `あと${diffDays}日`;
+            const typeClass  = nextEvent.type === 'match' ? 'match' : 'practice';
+            const typeLabel  = nextEvent.type === 'match' ? '試合' : '練習';
+            const subLine    = nextEvent.subType
+                ? nextEvent.subType + (nextEvent.tournament ? ` (${nextEvent.tournament})` : '')
+                : '';
+
+            nextEventContent.innerHTML = `
+                <span class="dash-next-event-type ${typeClass}">${typeLabel}</span>
+                <div class="dash-next-event-title">${escapeHtml(nextEvent.title)}</div>
+                <div class="dash-next-event-date">${dateLabel}${subLine ? ' · ' + escapeHtml(subLine) : ''}</div>
+                <span class="dash-next-event-countdown">${countdownLabel}</span>
+            `;
+            if (nextEventCard) {
+                nextEventCard.style.cursor = 'pointer';
+                nextEventCard.onclick = () => nextEvent.type === 'match'
+                    ? openMatchDetail(nextEvent.id)
+                    : navigate('practices', { date: nextEvent.date });
+            }
+        } else {
+            nextEventContent.innerHTML = '<div class="dash-no-data">予定はありません</div>';
+        }
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ROW 2-right: 今季成績カード
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // 今年度（今日の日付基準の年度）を求める
+    const currentNendo = getNendo(todayStr);
+
     const completedMatches = state.matches.filter(m => {
-        if (!m.result || !/(\d+)\s*-\s*(\d+)/.test(m.result)) return false;
-        // 日付文字列を比較（YYYY-MM-DD形式なので文字列比較で正確に判定可能）
+        if (!m.result || !(/([\d]+)\s*-\s*([\d]+)/.test(m.result))) return false;
         return m.date <= todayStr;
     });
 
-    let wins = 0, losses = 0, draws = 0;
-    completedMatches.forEach(m => {
-        const match = m.result.match(/(\d+)\s*-\s*(\d+)/);
-        if (match) {
-            const us = parseInt(match[1], 10);
-            const them = parseInt(match[2], 10);
+    // 今年度の試合のみ抽出
+    const thisYearMatches = completedMatches.filter(m => getNendo(m.date) === currentNendo);
+
+    let wins = 0, losses = 0, draws = 0, totalGoals = 0, totalConceded = 0;
+    thisYearMatches.forEach(m => {
+        const mt = m.result.match(/([\d]+)\s*-\s*([\d]+)/);
+        if (mt) {
+            const us = parseInt(mt[1], 10), them = parseInt(mt[2], 10);
+            totalGoals += us; totalConceded += them;
             if (us > them) wins++;
             else if (us < them) losses++;
             else draws++;
         }
     });
 
-    const dbRecord = document.getElementById('dash-db-record');
-    const dbRecordBar = document.getElementById('dash-db-record-bar');
+
     const winRate = (wins + losses + draws) > 0 ? Math.round((wins / (wins + losses + draws)) * 100) : 0;
+    const setEl   = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML  = val; };
 
-    if (dbRecord) dbRecord.innerHTML = `${wins}勝 ${losses}敗 ${draws}分 <span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary); margin-left:0.25rem;">(勝率:${winRate}%)</span>`;
-    if (dbRecordBar) dbRecordBar.style.width = `${winRate}%`;
-
+    setEl('dash-record-win',   wins);
+    setEl('dash-record-loss',  losses);
+    setEl('dash-record-draw',  draws);
+    setHtml('dash-record-goals',   `<i class="fa-solid fa-futbol"></i> 得点: ${totalGoals}`);
+    setHtml('dash-record-concede', `<i class="fa-solid fa-shield-halved"></i> 失点: ${totalConceded}`);
+    setEl('dash-db-record', `勝率 ${winRate}%`);
+    const elBar = document.getElementById('dash-db-record-bar');
+    if (elBar) elBar.style.width = `${winRate}%`;
     const cardMatches = document.getElementById('dash-card-matches');
-    if (cardMatches) cardMatches.onclick = () => navigate('matches');
+    if (cardMatches) cardMatches.onclick = () => openSeasonRecordModal();
 
-    const btnGoMatches = document.getElementById('dash-btn-go-matches');
-    if (btnGoMatches) btnGoMatches.onclick = () => navigate('matches');
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ROW 3: 直近フォームバー
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const formBar = document.getElementById('dash-form-bar');
+    if (formBar) {
+        const recentMatches = [...completedMatches]
+            .sort((a, b) => b.date.localeCompare(a.date))
+            .slice(0, 7);
+        if (recentMatches.length > 0) {
+            formBar.innerHTML = recentMatches.map(m => {
+                const mt   = m.result.match(/([\d]+)\s*-\s*([\d]+)/);
+                const us   = mt ? parseInt(mt[1], 10) : 0;
+                const them = mt ? parseInt(mt[2], 10) : 0;
+                let cls = 'draw', label = '分';
+                if (us > them)      { cls = 'win';  label = '勝'; }
+                else if (us < them) { cls = 'loss'; label = '負'; }
+                const oppShort = (m.opponent || '').replace(/AFC|SFC|FC|SC/gi, '').trim().slice(0, 4) || 'vs';
+                return `
+                    <div class="dash-form-item" title="${escapeHtml(m.opponent)} ${m.result}" onclick="openMatchDetail(${m.id})">
+                        <div class="dash-form-badge-lg ${cls}">${label}</div>
+                        <div class="dash-form-score">${us}-${them}</div>
+                        <div class="dash-form-opponent">${escapeHtml(oppShort)}</div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            formBar.innerHTML = '<div class="dash-no-data">試合記録がありません</div>';
+        }
+    }
 
-    const btnGoPlayers = document.getElementById('dash-btn-go-players');
-    if (btnGoPlayers) btnGoPlayers.onclick = () => openLeaderRankingModal();
-
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ROW 4: 得点 / アシストランキング
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     const scorerCounts = {};
     const assistCounts = {};
     state.matches.forEach(m => {
-        if (m.goalRecords) {
-            m.goalRecords.forEach(r => {
+        if (m.formations && m.formations.length > 0) {
+            m.formations.forEach(f => {
+                (f.goalRecords || []).forEach(r => {
+                    if (r.scorerId) scorerCounts[r.scorerId] = (scorerCounts[r.scorerId] || 0) + 1;
+                    if (r.assistId) assistCounts[r.assistId] = (assistCounts[r.assistId] || 0) + 1;
+                });
+            });
+        } else {
+            (m.goalRecords || []).forEach(r => {
                 if (r.scorerId) scorerCounts[r.scorerId] = (scorerCounts[r.scorerId] || 0) + 1;
                 if (r.assistId) assistCounts[r.assistId] = (assistCounts[r.assistId] || 0) + 1;
             });
         }
     });
 
-    const topScorers = Object.entries(scorerCounts)
-        .map(([id, count]) => ({ p: state.players.find(pl => pl.id === parseInt(id, 10)), count }))
-        .filter(x => x.p)
-        .sort((a, b) => b.count - a.count || ((parseInt(a.p.number, 10) || 0) - (parseInt(b.p.number, 10) || 0)))
-        .slice(0, 3);
+    const medals = ['🥇', '🥈', '🥉'];
+    const renderRankList = (counts, unit, containerId) => {
+        const el = document.getElementById(containerId);
+        if (!el) return;
+        const top = Object.entries(counts)
+            .map(([id, count]) => ({ p: state.players.find(pl => pl.id === parseInt(id, 10)), count }))
+            .filter(x => x.p)
+            .sort((a, b) => b.count - a.count || (parseInt(a.p.number,10)||0) - (parseInt(b.p.number,10)||0))
+            .slice(0, 3);
+        el.innerHTML = top.length > 0
+            ? top.map((item, idx) => `
+                <div class="dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                    <span class="dash-rank-medal">${medals[idx] || (idx+1)+'.'}</span>
+                    <span class="dash-rank-name">${item.p.number} ${escapeHtml(item.p.name)}</span>
+                    <span class="dash-rank-count">${item.count}<span class="dash-rank-count-unit">${unit}</span></span>
+                </div>
+            `).join('')
+            : '<div class="dash-no-data">記録なし</div>';
+    };
+    renderRankList(scorerCounts, '得点', 'dash-top-scorers');
+    renderRankList(assistCounts, 'A',   'dash-top-assists');
 
-    const topAssists = Object.entries(assistCounts)
-        .map(([id, count]) => ({ p: state.players.find(pl => pl.id === parseInt(id, 10)), count }))
-        .filter(x => x.p)
-        .sort((a, b) => b.count - a.count || ((parseInt(a.p.number, 10) || 0) - (parseInt(b.p.number, 10) || 0)))
-        .slice(0, 3);
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ROW 5: スケジュールリスト
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const scheduleList = document.getElementById('dash-schedule-list');
+    if (scheduleList) {
+        const allEvents = [];
+        state.practices.forEach(p => allEvents.push({
+            type: 'practice', date: p.date, id: p.id, title: '練習',
+            sub: p.menus && p.menus.length > 0 ? p.menus.map(mn => mn.focus).join(', ') : '',
+            attendance: p.presentPlayerIds ? `${p.presentPlayerIds.length}/${state.players.length}名` : null
+        }));
+        state.matches.forEach(m => {
+            const hasResult = m.result && /([\d]+)\s*-\s*([\d]+)/.test(m.result);
+            let resultCls = 'tbd', resultLabel = '未入力';
+            if (hasResult) {
+                const mt = m.result.match(/([\d]+)\s*-\s*([\d]+)/);
+                const us = parseInt(mt[1],10), them = parseInt(mt[2],10);
+                if (us > them)      { resultCls = 'win';  resultLabel = `${us}-${them} 勝`; }
+                else if (us < them) { resultCls = 'loss'; resultLabel = `${us}-${them} 負`; }
+                else                { resultCls = 'draw'; resultLabel = `${us}-${them} 分`; }
+            }
+            allEvents.push({
+                type: 'match', date: m.date, id: m.id,
+                title: `vs ${m.opponent || '対戦相手'}`,
+                sub: m.type + (m.tournament ? ` (${m.tournament})` : ''),
+                hasResult, resultCls, resultLabel
+            });
+        });
 
-    const renderDashLeaderItem = (item, idx) => `
-        <div style="display:flex; align-items:baseline; margin-bottom:0.25rem; cursor:pointer;" onclick="openPlayerDetail(${item.p.id})">
-            <span style="width:1.1rem; font-weight:bold; color:var(--text-secondary); text-align:right; margin-right:0.25rem; flex-shrink:0; font-size:0.7rem;">${idx + 1}.</span>
-            <span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><strong>${item.p.number} ${item.p.name}</strong> (${item.count})</span>
-        </div>
-    `;
+        const futureEvents  = allEvents.filter(e => e.date >= todayStr).sort((a,b) => a.date.localeCompare(b.date)).slice(0, 5);
+        const pastEvents    = allEvents.filter(e => e.date  < todayStr).sort((a,b) => b.date.localeCompare(a.date)).slice(0, 3);
+        const displayEvents = [...futureEvents, ...pastEvents];
 
-    const elTopScorers = document.getElementById('dash-top-scorers');
-    if (elTopScorers) {
-        elTopScorers.innerHTML = topScorers.length > 0
-            ? topScorers.map((item, idx) => renderDashLeaderItem(item, idx)).join('')
-            : '<div style="color:var(--text-secondary); font-size:0.72rem; padding:0.25rem 0;">得点記録なし</div>';
-    }
+        if (displayEvents.length > 0) {
+            const dayNames = ['日','月','火','水','木','金','土'];
+            scheduleList.innerHTML = displayEvents.map(e => {
+                const isPast    = e.date < todayStr;
+                const dateObj   = new Date(e.date + 'T00:00:00');
+                const dateLabel = `${e.date.replace(/-/g,'/')} (${dayNames[dateObj.getDay()]})`;
 
-    const elTopAssists = document.getElementById('dash-top-assists');
-    if (elTopAssists) {
-        elTopAssists.innerHTML = topAssists.length > 0
-            ? topAssists.map((item, idx) => renderDashLeaderItem(item, idx)).join('')
-            : '<div style="color:var(--text-secondary); font-size:0.72rem; padding:0.25rem 0;">アシスト記録なし</div>';
-    }
+                const rightHtml = e.type === 'match'
+                    ? `<span class="dash-schedule-result-badge ${e.resultCls}">${escapeHtml(e.resultLabel)}</span>`
+                    : (e.attendance ? `<span style="font-size:0.7rem; color:var(--text-secondary);"><i class="fa-solid fa-users"></i> ${e.attendance}</span>` : '');
 
-    const matchesContent = document.getElementById('dash-matches-content');
-    if (matchesContent) {
-        if (completedMatches.length > 0) {
-            const sortedMatches = [...completedMatches].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
-            matchesContent.innerHTML = sortedMatches.map(m => {
-                const match = m.result.match(/(\d+)\s*-\s*(\d+)/);
-                let us = 0, them = 0;
-                if (match) {
-                    us = parseInt(match[1], 10);
-                    them = parseInt(match[2], 10);
+                let actionsHtml = '';
+                if (isCoach) {
+                    if (e.type === 'practice') {
+                        actionsHtml = `
+                            <button class="btn btn-secondary btn-sm dash-sch-edit-prac" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px;" title="編集"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-secondary btn-sm" onclick="navigate('practices', { date: '${e.date}' })" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px;"><i class="fa-solid fa-chevron-right"></i></button>
+                        `;
+                    } else {
+                        actionsHtml = `
+                            <button class="btn btn-secondary btn-sm dash-sch-edit-match" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px;" title="編集"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-secondary btn-sm" onclick="openMatchDetail(${e.id})" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px;"><i class="fa-solid fa-circle-info"></i></button>
+                        `;
+                    }
+                } else {
+                    const dest = e.type === 'match' ? `openMatchDetail(${e.id})` : `navigate('practices', { date: '${e.date}' })`;
+                    actionsHtml = `<button class="btn btn-secondary btn-sm" onclick="${dest}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px;"><i class="fa-solid fa-chevron-right"></i></button>`;
                 }
-                let resultLabel = '引分';
-                let badgeClass = 'draw';
-                let bgStyle = 'rgba(100,116,139,0.15)';
-                let colorStyle = '#475569';
-                if (us > them) {
-                    resultLabel = '勝ち';
-                    badgeClass = 'win';
-                    bgStyle = 'var(--primary)';
-                    colorStyle = '#ffffff';
-                } else if (us < them) {
-                    resultLabel = '負け';
-                    badgeClass = 'loss';
-                }
-                const displayScore = match ? `${us} - ${them}` : m.result;
+
                 return `
-                    <div class="glass dash-mini-card" onclick="openMatchDetail(${m.id})" style="cursor:pointer;">
-                        <div class="dash-mini-card-header">
-                            <span class="schedule-badge ${badgeClass}" style="background:${bgStyle}; color:${colorStyle}; font-weight:bold; font-size:0.6rem; padding:0.1rem 0.3rem;">${resultLabel}</span>
-                            <span class="dash-mini-card-date">${m.date}</span>
+                    <div class="dash-schedule-row${isPast ? ' past' : ''}">
+                        <div class="dash-schedule-icon ${e.type}">
+                            <i class="fa-solid ${e.type === 'match' ? 'fa-futbol' : 'fa-whistle'}"></i>
                         </div>
-                        <div class="dash-mini-card-title">vs ${escapeHtml(m.opponent)}</div>
-                        <div class="dash-mini-card-sub">${m.type}</div>
-                        <div class="dash-mini-card-score">${displayScore}</div>
+                        <div class="dash-schedule-info">
+                            <div class="dash-schedule-row-title">${escapeHtml(e.title)}</div>
+                            <div class="dash-schedule-row-sub">${dateLabel}${e.sub ? ' · ' + escapeHtml(e.sub) : ''}</div>
+                        </div>
+                        <div class="dash-schedule-row-right">
+                            ${rightHtml}
+                            <div class="dash-schedule-row-actions">${actionsHtml}</div>
+                        </div>
                     </div>
                 `;
             }).join('');
+
+            scheduleList.querySelectorAll('.dash-sch-edit-prac').forEach(btn => {
+                btn.onclick = ev => { ev.stopPropagation(); openPracticeModal(parseInt(btn.dataset.id, 10)); };
+            });
+            scheduleList.querySelectorAll('.dash-sch-edit-match').forEach(btn => {
+                btn.onclick = ev => { ev.stopPropagation(); openMatchModal(parseInt(btn.dataset.id, 10)); };
+            });
         } else {
-            matchesContent.innerHTML = `
-                <div class="text-secondary" style="text-align:center; padding:1.5rem; background:rgba(0,0,0,0.02); border-radius:12px; border:1px dashed var(--surface-border); grid-column: 1 / -1; width: 100%;">
-                    試合記録がありません。<br>
-                    <button class="btn btn-primary" id="dash-btn-add-first-match" style="margin-top:0.8rem; font-size:0.8rem; padding:0.4rem 0.8rem;"><i class="fa-solid fa-plus"></i> 最初の試合を記録</button>
-                </div>
-            `;
-            const btnAddFirst = document.getElementById('dash-btn-add-first-match');
-            if (btnAddFirst) {
-                btnAddFirst.onclick = () => {
-                    navigate('matches');
-                    setTimeout(() => {
-                        const btnAdd = document.getElementById('btn-add-match');
-                        if (btnAdd) btnAdd.click();
-                    }, 50);
-                };
-            }
+            scheduleList.innerHTML = '<div class="dash-no-data" style="text-align:center; padding:1rem 0;">練習・試合の予定がありません</div>';
         }
     }
 
-    const allEvents = [];
-    state.practices.forEach(p => {
-        allEvents.push({
-            type: 'practice',
-            date: p.date,
-            id: p.id,
-            title: '練習日',
-            desc: p.menus && p.menus.length > 0 ? p.menus.map(m => m.focus).join(', ') : 'メニュー未登録',
-            attendance: p.presentPlayerIds ? `${p.presentPlayerIds.length}/${state.players.length}` : p.attendance
-        });
-    });
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ROW 5: コーチ専用 — 出席率ランキング & 練習テーマ
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    if (isCoach) {
+        // 過去1ヶ月（30日前まで）の基準日を計算
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+        const oneMonthAgoStr = `${oneMonthAgo.getFullYear()}-${String(oneMonthAgo.getMonth() + 1).padStart(2, '0')}-${String(oneMonthAgo.getDate()).padStart(2, '0')}`;
 
-    state.matches.forEach(m => {
-        const hasResult = m.result && /(\d+)\s*-\s*(\d+)/.test(m.result);
-        allEvents.push({
-            type: 'match',
-            date: m.date,
-            id: m.id,
-            title: `vs ${m.opponent}`,
-            desc: `${m.type}${m.tournament ? ` (${m.tournament})` : ''}`,
-            hasResult: hasResult,
-            result: m.result
-        });
-    });
+        const recentPractices = state.practices.filter(p => p.date >= oneMonthAgoStr && p.date <= todayStr);
+        const recentMatches = state.matches.filter(m => m.date >= oneMonthAgoStr && m.date <= todayStr);
+        const totalRecentEvents = recentPractices.length + recentMatches.length;
 
-    const upcomingEvents = allEvents.filter(e => e.date >= todayStr).sort((a, b) => new Date(a.date) - new Date(b.date));
-    const pastEvents = allEvents.filter(e => e.date < todayStr).sort((a, b) => new Date(b.date) - new Date(a.date));
+        const attendanceCount = {};
+        recentPractices.forEach(p => (p.presentPlayerIds || []).forEach(id => { attendanceCount[id] = (attendanceCount[id]||0)+1; }));
+        recentMatches.forEach(m   => (m.presentPlayerIds  || []).forEach(id => { attendanceCount[id] = (attendanceCount[id]||0)+1; }));
 
-    const upcomingContent = document.getElementById('dash-upcoming-schedule-content');
-    if (upcomingContent) {
-        if (upcomingEvents.length > 0) {
-            upcomingContent.innerHTML = upcomingEvents.map(e => {
-                if (e.type === 'practice') {
+        const attendanceRankEl = document.getElementById('dash-attendance-rank');
+        if (attendanceRankEl) {
+            const top = state.players.map(p => {
+                const count = attendanceCount[p.id] || 0;
+                const pct = totalRecentEvents > 0 ? Math.round((count / totalRecentEvents) * 100) : 0;
+                return { p, count, pct };
+            }).sort((a, b) => b.pct - a.pct || b.count - a.count || (parseInt(a.p.number,10)||0) - (parseInt(b.p.number,10)||0))
+              .slice(0, 3);
+
+            attendanceRankEl.innerHTML = totalRecentEvents > 0 && top.some(item => item.count > 0)
+                ? top.map((item, idx) => `
+                    <div class="dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                        <span class="dash-rank-medal">${medals[idx]||(idx+1)+'.'}</span>
+                        <span class="dash-rank-name">${item.p.number} ${escapeHtml(item.p.name)}</span>
+                        <span class="dash-rank-count">${item.pct}<span class="dash-rank-count-unit">%</span></span>
+                    </div>
+                `).join('')
+                : '<div class="dash-no-data">過去1ヶ月の出席記録なし</div>';
+        }
+
+        const practiceFocusEl = document.getElementById('dash-recent-practice-focus');
+        if (practiceFocusEl) {
+            const displayPractices = [...state.practices]
+                .filter(p => p.date <= todayStr)
+                .sort((a,b) => b.date.localeCompare(a.date))
+                .slice(0, 3);
+            practiceFocusEl.innerHTML = displayPractices.length > 0
+                ? displayPractices.map(p => {
+                    const focuses = p.menus && p.menus.length > 0
+                        ? p.menus.map(mn => escapeHtml(mn.focus)).join(' / ')
+                        : 'メニュー未記録';
                     return `
-                        <div class="glass dash-mini-card">
-                            <div class="dash-mini-card-header">
-                                <span class="schedule-badge practice" style="font-size:0.6rem; padding:0.1rem 0.3rem;">練習</span>
-                            </div>
-                            <div class="dash-mini-card-title">${e.date}</div>
-                            <div class="dash-mini-card-actions">
-                                <button class="btn btn-secondary btn-sm btn-dash-edit-prac" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="編集"><i class="fa-solid fa-pen"></i></button>
-                                <button class="btn btn-secondary btn-sm" onclick="navigate('practices', { date: '${e.date}' })" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="詳細"><i class="fa-solid fa-chevron-right"></i></button>
+                        <div class="dash-rank-item" onclick="event.stopPropagation(); navigate('practices', { date: '${p.date}' })">
+                            <span class="dash-rank-medal" style="font-size:0.75rem;">📅</span>
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-size:0.72rem; color:var(--text-secondary);">${p.date}</div>
+                                <div style="font-size:0.78rem; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${focuses}</div>
                             </div>
                         </div>
                     `;
-                } else {
-                    return `
-                        <div class="glass dash-mini-card">
-                            <div class="dash-mini-card-header">
-                                <span class="schedule-badge match" style="font-size:0.6rem; padding:0.1rem 0.3rem;">試合</span>
-                                <span class="dash-mini-card-date">${e.date}</span>
-                            </div>
-                            <div class="dash-mini-card-title">${e.title}</div>
-                            <div class="dash-mini-card-actions">
-                                <button class="btn btn-primary btn-sm btn-dash-score-match" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="結果入力"><i class="fa-solid fa-square-poll-horizontal"></i></button>
-                                <button class="btn btn-secondary btn-sm btn-dash-edit-match" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="編集"><i class="fa-solid fa-pen"></i></button>
-                            </div>
-                        </div>
-                    `;
-                }
-            }).join('');
-        } else {
-            upcomingContent.innerHTML = `<div style="text-align:center; padding:1.5rem; background:rgba(0,0,0,0.02); border-radius:12px; border:1px dashed var(--surface-border); width: 100%;">今後の予定はありません。</div>`;
+                }).join('')
+                : '<div class="dash-no-data">練習記録なし</div>';
         }
     }
 
-    const pastContent = document.getElementById('dash-past-schedule-content');
-    if (pastContent) {
-        const recentPast = pastEvents.slice(0, 3);
-        if (recentPast.length > 0) {
-            pastContent.innerHTML = recentPast.map(e => {
-                if (e.type === 'practice') {
-                    return `
-                        <div class="glass dash-mini-card" style="opacity:0.9;">
-                            <div class="dash-mini-card-header">
-                                <span class="schedule-badge practice" style="opacity:0.8; font-size:0.6rem; padding:0.1rem 0.3rem;">練習</span>
-                            </div>
-                            <div class="dash-mini-card-title">${e.date}</div>
-                            ${e.attendance ? `<div class="dash-mini-card-sub"><i class="fa-solid fa-users" style="font-size:0.6rem;"></i> ${e.attendance}</div>` : ''}
-                            <div class="dash-mini-card-actions">
-                                <button class="btn btn-secondary btn-sm" onclick="navigate('practices', { date: '${e.date}' })" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="詳細"><i class="fa-solid fa-chevron-right"></i></button>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    const resultText = e.hasResult
-                        ? `<div class="dash-mini-card-score">${e.result}</div>`
-                        : `<div style="color:#f59e0b; font-size:0.62rem; font-weight:bold; margin-top:0.1rem;">未入力</div>`;
-                    const actionBtn = e.hasResult
-                        ? `<button class="btn btn-secondary btn-sm" onclick="openMatchDetail(${e.id})" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="詳細"><i class="fa-solid fa-circle-info"></i></button>`
-                        : `<button class="btn btn-primary btn-sm btn-dash-score-match" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px; min-width:auto;" title="結果入力"><i class="fa-solid fa-square-poll-horizontal"></i></button>`;
-                    return `
-                        <div class="glass dash-mini-card" style="opacity:0.9;">
-                            <div class="dash-mini-card-header">
-                                <span class="schedule-badge match" style="opacity:0.8; font-size:0.6rem; padding:0.1rem 0.3rem;">試合</span>
-                                <span class="dash-mini-card-date">${e.date}</span>
-                            </div>
-                            <div class="dash-mini-card-title">${e.title}</div>
-                            ${resultText}
-                            <div class="dash-mini-card-actions">${actionBtn}</div>
-                        </div>
-                    `;
-                }
-            }).join('');
-        } else {
-            pastContent.innerHTML = `<div style="text-align:center; padding:1.5rem; background:rgba(0,0,0,0.02); border-radius:12px; border:1px dashed var(--surface-border); width: 100%;">過去の履歴はありません。</div>`;
-        }
-    }
 
-    const btnDashAddPrac = document.getElementById('dash-btn-add-practice');
-    if (btnDashAddPrac) btnDashAddPrac.onclick = () => openPracticeModal(null);
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ボタンイベント設定
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const btnGoMatches = document.getElementById('dash-btn-go-matches');
+    const btnGoPlayers = document.getElementById('dash-btn-go-players');
+    const btnAddPrac   = document.getElementById('dash-btn-add-practice');
+    const btnAddMatch  = document.getElementById('dash-btn-add-match');
 
-    const btnDashAddMatch = document.getElementById('dash-btn-add-match');
-    if (btnDashAddMatch) btnDashAddMatch.onclick = () => openMatchModal(null);
-
-    document.querySelectorAll('.btn-dash-edit-prac').forEach(btn => {
-        btn.onclick = (e) => {
-            e.stopPropagation();
-            openPracticeModal(parseInt(btn.dataset.id, 10));
-        };
-    });
-    document.querySelectorAll('.btn-dash-edit-match').forEach(btn => {
-        btn.onclick = (e) => {
-            e.stopPropagation();
-            openMatchModal(parseInt(btn.dataset.id, 10));
-        };
-    });
-    // ★ 修正: ダッシュボードの結果入力ボタンはモーダルではなく試合詳細モーダルを開く
-    document.querySelectorAll('.btn-dash-score-match').forEach(btn => {
-        btn.onclick = (e) => {
-            e.stopPropagation();
-            openMatchDetail(parseInt(btn.dataset.id, 10));
-        };
-    });
+    if (btnGoMatches) btnGoMatches.onclick = () => navigate('matches');
+    if (btnGoPlayers) btnGoPlayers.onclick = () => openLeaderRankingModal();
+    if (btnAddPrac)   btnAddPrac.onclick   = () => openPracticeModal(null);
+    if (btnAddMatch)  btnAddMatch.onclick  = () => openMatchModal(null);
 }
+
 
 function setupEventListeners() {
     const sidebar = document.getElementById('sidebar');
@@ -856,6 +1363,11 @@ export function updateRoleUI() {
     } else {
         document.body.classList.add('role-read-only');
     }
+
+    // ロール切り替え完了後、現在ダッシュボード表示中なら即時再描画（ウィジェット切り替え）
+    if (uiState.currentRoute === 'dashboard') {
+        initDashboard();
+    }
 }
 
 export function navigate(route, params = null) {
@@ -869,6 +1381,7 @@ export function navigate(route, params = null) {
     if (syncPopoverOnNav) syncPopoverOnNav.classList.add('hidden');
 
     state.currentRoute = route;
+    uiState.currentRoute = route;
 
     document.querySelectorAll('.modal-overlay').forEach(el => el.classList.add('hidden'));
     document.body.classList.remove('modal-open');
@@ -911,6 +1424,18 @@ export function navigate(route, params = null) {
         viewContainer.innerHTML = '';
         viewContainer.appendChild(template.content.cloneNode(true));
 
+        // 画面遷移時はスクロール位置をトップにリセット
+        viewContainer.scrollTop = 0;
+        window.scrollTo(0, 0);
+
+        // 画面遷移のたびに各フィルタリング情報を初期状態にリセット
+        uiState.currentMatchNendo = 'all';
+        uiState.currentMatchPage = 1;
+        uiState.currentPracticeNendo = 'all';
+        uiState.currentPracticeMonth = 'all';
+        uiState.currentPracticePage = 1;
+        uiState.currentLibraryCategory = 'all';
+
         if (route === 'dashboard') initDashboard();
         if (route === 'practices') {
             if (params && params.date) {
@@ -942,6 +1467,10 @@ export function navigate(route, params = null) {
 }
 
 async function init() {
+    window.openLeaderRankingModal = openLeaderRankingModal;
+    window.openSeasonRecordModal = openSeasonRecordModal;
+    window.openPlayerDetail = openPlayerDetail;
+    window.navigate = navigate;
     await loadData();
 
     const urlParams = new URLSearchParams(window.location.search);
