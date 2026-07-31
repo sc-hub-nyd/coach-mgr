@@ -575,7 +575,7 @@ function setupModals() {
             if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
                 document.body.classList.remove('modal-open');
             }
-            showToast('チーム重点課題・強化テーマを保存しました！');
+            showToast('チーム強化テーマを保存しました！');
             initDashboard();
         };
     }
@@ -737,7 +737,7 @@ function initDashboard() {
         } else {
             teamFocusContent.innerHTML = `
                 <div class="dash-no-data" style="padding:1rem 0;">
-                    チームの重点課題・強化テーマが未設定です<br>
+                    チーム強化テーマが未設定です<br>
                     <button class="btn btn-secondary btn-sm coach-only" id="dash-btn-set-focus-empty" onclick="openTeamFocusModal()" style="margin-top:0.5rem; font-size:0.75rem;">
                         <i class="fa-solid fa-plus"></i> テーマを設定する
                     </button>

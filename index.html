@@ -207,16 +207,16 @@
                 </div>
             </div>
 
-            <!-- ROW 3.5: 今週のチーム重点課題・強化テーマ ＋ 出場時間アラート (コーチ専用・2カラム) -->
+            <!-- ROW 3.5: チーム強化テーマ ＋ 出場時間アラート (コーチ専用・2カラム) -->
             <div class="dash-row-2 coach-only">
-                <!-- チーム重点課題・強化テーマ -->
+                <!-- チーム強化テーマ -->
                 <div class="card dash-rank-card">
-                    <div class="dash-widget-label" style="justify-content: space-between; width: 100%;">
-                        <span><i class="fa-solid fa-bullseye" style="color:#a855f7;"></i> チーム重点課題・強化テーマ</span>
-                        <button class="btn btn-secondary btn-sm coach-only" id="dash-btn-edit-focus" onclick="openTeamFocusModal()" style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px;"><i class="fa-solid fa-pen"></i> 編集</button>
+                    <div class="dash-widget-label" style="justify-content: space-between; align-items: center; width: 100%; flex-wrap: nowrap; gap: 0.4rem;">
+                        <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><i class="fa-solid fa-bullseye" style="color:#a855f7;"></i> チーム強化テーマ</span>
+                        <button class="btn btn-secondary btn-sm coach-only" id="dash-btn-edit-focus" onclick="openTeamFocusModal()" style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px; flex-shrink: 0; white-space: nowrap;"><i class="fa-solid fa-pen"></i> 編集</button>
                     </div>
                     <div id="dash-team-focus-content" style="display:flex; flex-direction:column; gap:0.6rem;">
-                        <div class="dash-no-data">重点テーマが設定されていません</div>
+                        <div class="dash-no-data">チーム強化テーマが未設定です</div>
                     </div>
                 </div>
                 <!-- 選手コンディション・出場時間管理 -->
@@ -2115,7 +2115,7 @@
     <div id="modal-edit-team-focus" class="modal-overlay hidden" style="z-index: 1002;">
         <div class="modal" style="max-width:500px; width:92%;">
             <button class="btn-close-modal" onclick="document.getElementById('modal-edit-team-focus').classList.add('hidden')" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
-            <h2 style="margin-bottom:0.4rem; font-size:1.2rem; color:var(--primary);"><i class="fa-solid fa-bullseye"></i> チーム重点課題・強化テーマの設定</h2>
+            <h2 style="margin-bottom:0.4rem; font-size:1.2rem; color:var(--primary);"><i class="fa-solid fa-bullseye"></i> チーム強化テーマの設定</h2>
             <p class="text-secondary" style="font-size:0.8rem; margin-bottom:1.2rem;">チーム全体で共有・意識する目標や強化ポイントを設定します。</p>
 
             <form id="form-edit-team-focus">
