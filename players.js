@@ -993,4 +993,264 @@ export function initPlayers() {
             openPlayerCSVImportModal();
         });
     }
+
+    // Setup View Switcher Tabs
+    const tabsContainer = document.getElementById('player-view-tabs');
+    if (tabsContainer) {
+        tabsContainer.querySelectorAll('.player-view-tab').forEach(tab => {
+            tab.onclick = (e) => {
+                const targetView = e.currentTarget.dataset.view;
+
+                tabsContainer.querySelectorAll('.player-view-tab').forEach(t => {
+                    t.classList.remove('active');
+                    t.style.background = 'transparent';
+                    t.style.color = 'var(--text-secondary)';
+                    t.style.fontWeight = '600';
+                    t.style.boxShadow = 'none';
+                });
+
+                e.currentTarget.classList.add('active');
+                e.currentTarget.style.background = 'var(--surface-color)';
+                e.currentTarget.style.color = 'var(--text-primary)';
+                e.currentTarget.style.fontWeight = '700';
+                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+
+                document.querySelectorAll('.player-subview').forEach(view => {
+                    view.classList.add('hidden');
+                });
+
+                if (targetView === 'cards') {
+                    document.getElementById('player-grid')?.classList.remove('hidden');
+                } else if (targetView === 'heatmap') {
+                    document.getElementById('player-view-heatmap')?.classList.remove('hidden');
+                    renderSkillHeatmap();
+                } else if (targetView === 'position') {
+                    document.getElementById('player-view-position')?.classList.remove('hidden');
+                    renderPositionSimulator();
+                } else if (targetView === 'participation') {
+                    document.getElementById('player-view-participation')?.classList.remove('hidden');
+                    renderParticipationGraph();
+                }
+            };
+        });
+    }
+}
+
+export function renderSkillHeatmap() {
+    const container = document.getElementById('player-view-heatmap');
+    if (!container) return;
+
+    if (!state.players || state.players.length === 0) {
+        container.innerHTML = '<div class="card" style="padding:2rem; text-align:center;">選手が登録されていません</div>';
+        return;
+    }
+
+    const metrics = state.skillMetrics || ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'];
+
+    const rowsHTML = state.players.map(p => {
+        const skills = (p.history && p.history.length > 0) ? (p.history[0].data ? p.history[0].data.skills : p.history[0].skills) : null;
+        const positions = (Array.isArray(p.position) ? p.position : [p.position]).filter(Boolean).join(', ');
+        
+        let avg = '-';
+        if (skills && skills.length > 0) {
+            const sum = skills.reduce((a, b) => a + (b || 0), 0);
+            avg = (sum / skills.length).toFixed(1);
+        }
+
+        const skillCells = metrics.map((m, idx) => {
+            const val = skills ? (skills[idx] || 0) : 0;
+            const lvlClass = val > 0 ? `heatmap-lvl-${val}` : 'heatmap-lvl-0';
+            return `<td class="${lvlClass}">${val > 0 ? `Lv ${val}` : '-'}</td>`;
+        }).join('');
+
+        return `
+            <tr>
+                <td style="text-align:left; font-weight:bold; cursor:pointer; color:var(--primary);" onclick="openPlayerDetail(${p.id})">
+                    <span class="badge" style="background:var(--primary); color:white; padding:0.15rem 0.4rem; border-radius:12px; margin-right:0.4rem; font-size:0.75rem;">${p.number}</span>
+                    ${escapeHtml(p.name)}
+                </td>
+                <td style="color:var(--text-secondary); font-size:0.8rem;">${positions || '-'}</td>
+                ${skillCells}
+                <td style="font-weight:bold; background:rgba(0,0,0,0.02);">${avg !== '-' ? `Lv ${avg}` : '-'}</td>
+            </tr>
+        `;
+    }).join('');
+
+    container.innerHTML = `
+        <div class="skill-heatmap-container">
+            <h3 style="margin-top:0; margin-bottom:1rem; font-size:1.1rem; display:flex; align-items:center; gap:0.5rem;">
+                <i class="fa-solid fa-table-cells" style="color:#2563eb;"></i> 全選手スキルヒートマップ
+            </h3>
+            <table class="skill-heatmap-table">
+                <thead>
+                    <tr>
+                        <th style="text-align:left;">選手</th>
+                        <th>ポジション</th>
+                        ${metrics.map(m => `<th>${m}</th>`).join('')}
+                        <th>平均</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rowsHTML}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+let currentPosFilter = 'ALL';
+
+export function renderPositionSimulator() {
+    const container = document.getElementById('player-view-position');
+    if (!container) return;
+
+    const positionsList = ['ALL', 'FW', 'MF', 'DF', 'GK'];
+
+    let filtered = state.players.filter(p => {
+        if (currentPosFilter === 'ALL') return true;
+        const posArr = Array.isArray(p.position) ? p.position : [p.position];
+        return posArr.some(pos => pos && pos.toUpperCase().includes(currentPosFilter));
+    });
+
+    const playersWithData = filtered.map(p => {
+        let goals = 0, assists = 0;
+        state.matches.forEach(m => {
+            if (m.goalRecords) {
+                m.goalRecords.forEach(r => {
+                    if (r.scorerId === p.id) goals++;
+                    if (r.assistId === p.id) assists++;
+                });
+            }
+        });
+
+        const skills = (p.history && p.history.length > 0) ? (p.history[0].data ? p.history[0].data.skills : p.history[0].skills) : null;
+        let avg = 0;
+        if (skills && skills.length > 0) {
+            avg = skills.reduce((a, b) => a + (b || 0), 0) / skills.length;
+        }
+
+        return { ...p, goals, assists, skillAvg: avg, skills };
+    });
+
+    playersWithData.sort((a, b) => b.skillAvg - a.skillAvg);
+
+    const filterBtnsHTML = positionsList.map(pos => `
+        <button type="button" class="btn btn-sm ${currentPosFilter === pos ? 'btn-primary' : 'btn-secondary'}" data-pos="${pos}" style="font-size:0.8rem; padding:0.3rem 0.8rem;">
+            ${pos === 'ALL' ? '全ポジション' : pos}
+        </button>
+    `).join('');
+
+    const cardsHTML = playersWithData.length > 0 ? playersWithData.map(p => `
+        <div class="dash-card" style="background:var(--surface-color); border:1px solid var(--surface-border); border-radius:12px; padding:1rem; box-shadow:0 2px 6px rgba(0,0,0,0.03); cursor:pointer;" onclick="openPlayerDetail(${p.id})">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span style="background:var(--primary); color:white; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.85rem;">${p.number}</span>
+                    <strong style="font-size:1rem;">${escapeHtml(p.name)}</strong>
+                </div>
+                <span class="badge" style="background:rgba(0,0,0,0.04); color:var(--text-secondary); font-size:0.75rem;">${(Array.isArray(p.position) ? p.position : [p.position]).join(', ')}</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:0.8rem; background:rgba(0,0,0,0.02); padding:0.5rem; border-radius:8px;">
+                <div>平均スキル: <strong style="color:var(--primary);">Lv ${p.skillAvg ? p.skillAvg.toFixed(1) : '-'}</strong></div>
+                <div>得点/アシスト: <strong>${p.goals} / ${p.assists}</strong></div>
+            </div>
+        </div>
+    `).join('') : '<p class="text-secondary" style="grid-column:1/-1; text-align:center;">該当する選手がいません。</p>';
+
+    container.innerHTML = `
+        <div style="background:var(--surface-color); border:1px solid var(--surface-border); border-radius:12px; padding:1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem;">
+                <h3 style="margin:0; font-size:1.1rem; display:flex; align-items:center; gap:0.5rem;">
+                    <i class="fa-solid fa-person-running" style="color:#16a34a;"></i> ポジション適性・比較シミュレーター
+                </h3>
+                <div id="pos-sim-filter-group" style="display:flex; gap:0.4rem;">
+                    ${filterBtnsHTML}
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:1rem;">
+                ${cardsHTML}
+            </div>
+        </div>
+    `;
+
+    container.querySelectorAll('#pos-sim-filter-group button').forEach(btn => {
+        btn.onclick = (e) => {
+            currentPosFilter = e.currentTarget.dataset.pos;
+            renderPositionSimulator();
+        };
+    });
+}
+
+export function renderParticipationGraph() {
+    const container = document.getElementById('player-view-participation');
+    if (!container) return;
+
+    const totalMatches = state.matches.length;
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+    const oneMonthAgoStr = `${oneMonthAgo.getFullYear()}-${String(oneMonthAgo.getMonth() + 1).padStart(2, '0')}-${String(oneMonthAgo.getDate()).padStart(2, '0')}`;
+
+    const recentPracs = state.practices.filter(p => p.date >= oneMonthAgoStr && p.date <= todayStr);
+    const recentMatches = state.matches.filter(m => m.date >= oneMonthAgoStr && m.date <= todayStr);
+    const totalEvents = recentPracs.length + recentMatches.length;
+
+    const playersStats = state.players.map(p => {
+        let matchCount = 0, goals = 0, assists = 0;
+        state.matches.forEach(m => {
+            if ((m.presentPlayerIds || []).includes(p.id)) matchCount++;
+            if (m.goalRecords) {
+                m.goalRecords.forEach(r => {
+                    if (r.scorerId === p.id) goals++;
+                    if (r.assistId === p.id) assists++;
+                });
+            }
+        });
+
+        let presentCount = 0;
+        recentPracs.forEach(prac => { if ((prac.presentPlayerIds || []).includes(p.id)) presentCount++; });
+        recentMatches.forEach(m => { if ((m.presentPlayerIds || []).includes(p.id)) presentCount++; });
+        const attPct = totalEvents > 0 ? Math.round((presentCount / totalEvents) * 100) : 0;
+        const matchPct = totalMatches > 0 ? Math.round((matchCount / totalMatches) * 100) : 0;
+
+        return { ...p, matchCount, matchPct, goals, assists, attPct };
+    });
+
+    playersStats.sort((a, b) => b.matchCount - a.matchCount);
+
+    const rowsHTML = playersStats.map(p => `
+        <div style="background:var(--surface-color); border:1px solid var(--surface-border); border-radius:10px; padding:0.8rem 1rem; display:grid; grid-template-columns: 180px 1fr 120px; gap:1rem; align-items:center;">
+            <div style="display:flex; align-items:center; gap:0.6rem; cursor:pointer;" onclick="openPlayerDetail(${p.id})">
+                <span style="background:var(--primary); color:white; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.8rem;">${p.number}</span>
+                <div>
+                    <strong style="font-size:0.9rem; color:var(--text-primary); display:block;">${escapeHtml(p.name)}</strong>
+                    <span style="font-size:0.75rem; color:var(--text-secondary);">${(Array.isArray(p.position) ? p.position : [p.position]).join(', ')}</span>
+                </div>
+            </div>
+            <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.2rem;">
+                    <span>試合参加: <strong>${p.matchCount}試合 (${p.matchPct}%)</strong></span>
+                    <span>30日出席率: <strong>${p.attPct}%</strong></span>
+                </div>
+                <div class="stat-bar-outer">
+                    <div class="stat-bar-inner" style="width:${p.matchPct}%; background:linear-gradient(90deg, #3b82f6, #9333ea);"></div>
+                </div>
+            </div>
+            <div style="display:flex; gap:0.8rem; justify-content:flex-end; font-size:0.8rem;">
+                <span title="得点"><i class="fa-solid fa-futbol" style="color:var(--primary);"></i> <strong>${p.goals}</strong></span>
+                <span title="アシスト"><i class="fa-solid fa-shoe-prints" style="color:#22c55e; transform:rotate(45deg);"></i> <strong>${p.assists}</strong></span>
+            </div>
+        </div>
+    `).join('');
+
+    container.innerHTML = `
+        <div style="background:var(--surface-color); border:1px solid var(--surface-border); border-radius:12px; padding:1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+            <h3 style="margin-top:0; margin-bottom:1rem; font-size:1.1rem; display:flex; align-items:center; gap:0.5rem;">
+                <i class="fa-solid fa-chart-column" style="color:#9333ea;"></i> 試合出場機会＆スタッツ比較
+            </h3>
+            <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                ${rowsHTML}
+            </div>
+        </div>
+    `;
 }

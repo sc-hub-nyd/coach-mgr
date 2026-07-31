@@ -1464,3 +1464,60 @@ summary {
 @media (max-width: 380px) {
     .dash-row-2 { grid-template-columns: 1fr; }
 }
+
+/* --- 選手横断分析ビュー (Skill Heatmap, Position, Participation) --- */
+.skill-heatmap-container {
+    overflow-x: auto;
+    background: var(--surface-color);
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.skill-heatmap-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 4px;
+    font-size: 0.85rem;
+}
+
+.skill-heatmap-table th {
+    padding: 0.6rem 0.8rem;
+    background: rgba(0,0,0,0.03);
+    color: var(--text-secondary);
+    font-weight: 700;
+    text-align: center;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.skill-heatmap-table td {
+    padding: 0.5rem 0.6rem;
+    text-align: center;
+    border-radius: 6px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.heatmap-lvl-0 { background: rgba(148,163,184,0.1); color: #94a3b8; }
+.heatmap-lvl-1 { background: rgba(239,68,68,0.12);  color: #dc2626; }
+.heatmap-lvl-2 { background: rgba(249,115,22,0.15); color: #ea580c; }
+.heatmap-lvl-3 { background: rgba(234,179,8,0.18);  color: #ca8a04; }
+.heatmap-lvl-4 { background: rgba(34,197,94,0.22);  color: #16a34a; }
+.heatmap-lvl-5 { background: rgba(37,99,235,0.25);  color: #1d4ed8; font-size: 0.95rem; }
+
+.stat-bar-outer {
+    background: rgba(0,0,0,0.05);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    width: 100%;
+    margin-top: 0.25rem;
+}
+
+.stat-bar-inner {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
