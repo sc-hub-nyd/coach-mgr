@@ -207,13 +207,16 @@
                 </div>
             </div>
 
-            <!-- ROW 3.5: 練習＆試合「相関分析」＋ 出場時間アラート (コーチ専用・2カラム) -->
+            <!-- ROW 3.5: 今週のチーム重点課題・強化テーマ ＋ 出場時間アラート (コーチ専用・2カラム) -->
             <div class="dash-row-2 coach-only">
-                <!-- 練習テーマと勝敗の相関分析 -->
+                <!-- チーム重点課題・強化テーマ -->
                 <div class="card dash-rank-card">
-                    <div class="dash-widget-label"><i class="fa-solid fa-chart-pie" style="color:#a855f7;"></i> 練習・勝敗の相関分析</div>
-                    <div id="dash-correlation-content" style="display:flex; flex-direction:column; gap:0.5rem;">
-                        <div class="dash-no-data">分析データが不足しています</div>
+                    <div class="dash-widget-label" style="justify-content: space-between; width: 100%;">
+                        <span><i class="fa-solid fa-bullseye" style="color:#a855f7;"></i> チーム重点課題・強化テーマ</span>
+                        <button class="btn btn-secondary btn-sm coach-only" id="dash-btn-edit-focus" onclick="openTeamFocusModal()" style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px;"><i class="fa-solid fa-pen"></i> 編集</button>
+                    </div>
+                    <div id="dash-team-focus-content" style="display:flex; flex-direction:column; gap:0.6rem;">
+                        <div class="dash-no-data">重点テーマが設定されていません</div>
                     </div>
                 </div>
                 <!-- 選手コンディション・出場時間管理 -->
@@ -284,16 +287,58 @@
     </template>
 
     <template id="tpl-matches">
-        <div class="header-actions">
-            <div class="filter-box">
-                <i class="fa-solid fa-filter" style="color:var(--text-secondary);"></i>
-                <select id="filter-nendo-match">
-                    <option value="all">すべての年度</option>
-                </select>
+        <div class="filter-bar-container">
+            <div class="filter-main-row">
+                <div class="filter-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" id="input-match-search" placeholder="試合をキーワード検索..." class="form-control filter-search-input">
+                </div>
+                <div class="filter-btn-group">
+                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-matches" title="絞り込み条件">
+                        <i class="fa-solid fa-sliders"></i> 絞り込み<span class="filter-count-badge hidden" id="badge-filter-matches">0</span>
+                    </button>
+                    <button class="btn btn-secondary" id="btn-sort-match" title="日付昇順/降順切り替え" style="padding:0.4rem 0.65rem;">
+                        <i class="fa-solid fa-arrow-down-wide-short"></i>
+                    </button>
+                    <button class="btn btn-primary" id="btn-add-match"><i class="fa-solid fa-plus"></i> 追加</button>
+                </div>
             </div>
-            <button class="btn btn-primary" id="btn-add-match"><i class="fa-solid fa-plus"></i>追加</button>
+            <!-- Active Filter Tags Bar -->
+            <div class="active-tags-bar hidden" id="active-tags-matches"></div>
+            <!-- Accordion Filter Panel -->
+            <div class="filter-accordion-panel hidden" id="filter-accordion-matches">
+                <div class="filter-accordion-grid">
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-calendar-days"></i> 対象年度</label>
+                        <select id="filter-nendo-match" class="form-control"></select>
+                    </div>
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-trophy"></i> 試合種別</label>
+                        <select id="filter-type-match" class="form-control"></select>
+                    </div>
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-user-group"></i> 対戦相手</label>
+                        <select id="filter-opponent-match" class="form-control"></select>
+                    </div>
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-futbol"></i> 勝敗結果</label>
+                        <select id="filter-result-match" class="form-control">
+                            <option value="all">すべての勝敗</option>
+                            <option value="win">勝利 (Win)</option>
+                            <option value="loss">敗北 (Loss)</option>
+                            <option value="draw">引き分け (Draw)</option>
+                            <option value="upcoming">試合予定</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-accordion-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-matches" style="font-size:0.75rem; padding:0.2rem 0.6rem;">
+                        <i class="fa-solid fa-rotate-left"></i> 条件をリセット
+                    </button>
+                </div>
+            </div>
         </div>
-        <div id="match-list" style="display:flex; flex-direction:column; gap:1.5rem; margin-top:1.5rem;">
+        <div id="match-list" style="display:flex; flex-direction:column; gap:1.5rem;">
             <!-- Grouped by month cards injected here -->
         </div>
     </template>
@@ -395,20 +440,52 @@
         </div>
     </template>
     <template id="tpl-practices">
-        <div class="header-actions">
-            <div class="filter-box">
-                <i class="fa-solid fa-filter" style="color:var(--text-secondary);"></i>
-                <select id="filter-nendo-practice">
-                    <option value="all">すべての年度</option>
-                </select>
-                <select id="filter-month-practice"
-                    style="margin-left:0.5rem; border-left:1px solid var(--surface-border); padding-left:0.5rem;">
-                    <option value="all">すべての月</option>
-                </select>
+        <div class="filter-bar-container">
+            <div class="filter-main-row">
+                <div class="filter-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" id="input-practice-search" placeholder="練習・メモをキーワード検索..." class="form-control filter-search-input">
+                </div>
+                <div class="filter-btn-group">
+                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-practices" title="絞り込み条件">
+                        <i class="fa-solid fa-sliders"></i> 絞り込み<span class="filter-count-badge hidden" id="badge-filter-practices">0</span>
+                    </button>
+                    <button class="btn btn-secondary" id="btn-sort-practice" title="日付昇順/降順切り替え" style="padding:0.4rem 0.65rem;">
+                        <i class="fa-solid fa-arrow-down-wide-short"></i>
+                    </button>
+                    <button class="btn btn-primary" id="btn-add-practice"><i class="fa-solid fa-plus"></i> 追加</button>
+                </div>
             </div>
-            <button class="btn btn-primary" id="btn-add-practice"><i class="fa-solid fa-plus"></i>追加</button>
+            <!-- Active Filter Tags Bar -->
+            <div class="active-tags-bar hidden" id="active-tags-practices"></div>
+            <!-- Accordion Filter Panel -->
+            <div class="filter-accordion-panel hidden" id="filter-accordion-practices">
+                <div class="filter-accordion-grid">
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-calendar-days"></i> 対象年度</label>
+                        <select id="filter-nendo-practice" class="form-control"></select>
+                    </div>
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-calendar-minus"></i> 実施月</label>
+                        <select id="filter-month-practice" class="form-control"></select>
+                    </div>
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-bullseye"></i> 練習カテゴリ</label>
+                        <select id="filter-category-practice" class="form-control"></select>
+                    </div>
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-user-check"></i> 参加選手</label>
+                        <select id="filter-player-practice" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="filter-accordion-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-practices" style="font-size:0.75rem; padding:0.2rem 0.6rem;">
+                        <i class="fa-solid fa-rotate-left"></i> 条件をリセット
+                    </button>
+                </div>
+            </div>
         </div>
-        <div id="practice-list" style="display:flex; flex-direction:column; gap:1.5rem; margin-top:1.5rem;">
+        <div id="practice-list" style="display:flex; flex-direction:column; gap:1.5rem;">
             <!-- Grouped by date cards injected here -->
         </div>
     </template>
@@ -429,17 +506,65 @@
     </template>
 
     <template id="tpl-library">
-        <div class="header-actions">
-            <div class="filter-box">
-                <i class="fa-solid fa-filter" style="color:var(--text-secondary);"></i>
-                <select id="filter-library-category">
-                    <option value="all">すべてのカテゴリ</option>
-                </select>
+        <div class="filter-bar-container">
+            <div class="filter-main-row">
+                <div class="filter-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" id="input-library-search" placeholder="メニューをキーワード検索..." class="form-control filter-search-input">
+                </div>
+                <div class="filter-btn-group">
+                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-library" title="絞り込み条件">
+                        <i class="fa-solid fa-sliders"></i> 絞り込み<span class="filter-count-badge hidden" id="badge-filter-library">0</span>
+                    </button>
+                    <button class="btn btn-primary" id="btn-add-library-menu"><i class="fa-solid fa-plus"></i> 追加</button>
+                </div>
             </div>
-            <button class="btn btn-primary" id="btn-add-library-menu"><i class="fa-solid fa-plus"></i>
-                追加</button>
+            <!-- Active Filter Tags Bar -->
+            <div class="active-tags-bar hidden" id="active-tags-library"></div>
+            <!-- Accordion Filter Panel -->
+            <div class="filter-accordion-panel hidden" id="filter-accordion-library">
+                <div class="filter-accordion-grid">
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-bullseye"></i> 練習カテゴリ</label>
+                        <select id="filter-library-category" class="form-control"></select>
+                    </div>
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-photo-film"></i> メディアの有無</label>
+                        <select id="filter-library-media" class="form-control">
+                            <option value="all">すべてのメディア</option>
+                            <option value="anim">作図アニメあり</option>
+                            <option value="video">参考動画あり</option>
+                            <option value="any">作図/動画いずれかあり</option>
+                        </select>
+                    </div>
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-list-check"></i> アサイン状態</label>
+                        <select id="filter-library-assigned" class="form-control">
+                            <option value="all">すべてのアサイン状態</option>
+                            <option value="frequent">🔥 よく使う定番 (5回以上)</option>
+                            <option value="assigned">練習アサイン実績あり</option>
+                            <option value="unassigned">未アサイン (ストック)</option>
+                        </select>
+                    </div>
+                    <div class="filter-accordion-item">
+                        <label><i class="fa-solid fa-star"></i> ★評価（関心度）</label>
+                        <select id="filter-library-rating" class="form-control">
+                            <option value="all">すべての評価 (★)</option>
+                            <option value="5">★★★★★ (★5のみ)</option>
+                            <option value="4">★★★★☆ 以上 (★4+)</option>
+                            <option value="3">★★★☆☆ 以上 (★3+)</option>
+                            <option value="rated">評価登録あり</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-accordion-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-library" style="font-size:0.75rem; padding:0.2rem 0.6rem;">
+                        <i class="fa-solid fa-rotate-left"></i> 条件をリセット
+                    </button>
+                </div>
+            </div>
         </div>
-        <div id="library-list" style="display:flex; flex-direction:column; gap:1.5rem; margin-top:1.5rem;">
+        <div id="library-list" style="display:flex; flex-direction:column; gap:1.5rem;">
             <!-- Library items grouped by category injected here -->
         </div>
     </template>
@@ -1169,7 +1294,7 @@
                 <!-- Left: YouTube Player -->
                 <div id="period-workspace-video"
                     style="flex: 0 0 80%; display: flex; flex-direction: column; background: #000; overflow: hidden; min-width: 250px;">
-                    <div id="period-yt-wrapper"
+                    <div
                         style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #000;">
                         <div id="period-yt-player" style="width: 100%; height: 100%;"></div>
                     </div>
@@ -1981,6 +2106,39 @@
                         onclick="document.getElementById('modal-import-players-csv').classList.add('hidden')">キャンセル</button>
                     <button type="submit" class="btn btn-primary" id="btn-submit-csv-import"><i
                             class="fa-solid fa-upload"></i> 一括登録する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Team Focus & Challenge -->
+    <div id="modal-edit-team-focus" class="modal-overlay hidden" style="z-index: 1002;">
+        <div class="modal" style="max-width:500px; width:92%;">
+            <button class="btn-close-modal" onclick="document.getElementById('modal-edit-team-focus').classList.add('hidden')" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
+            <h2 style="margin-bottom:0.4rem; font-size:1.2rem; color:var(--primary);"><i class="fa-solid fa-bullseye"></i> チーム重点課題・強化テーマの設定</h2>
+            <p class="text-secondary" style="font-size:0.8rem; margin-bottom:1.2rem;">チーム全体で共有・意識する目標や強化ポイントを設定します。</p>
+
+            <form id="form-edit-team-focus">
+                <div class="form-group" style="margin-bottom:0.9rem;">
+                    <label style="font-size:0.85rem; font-weight:700; margin-bottom:0.3rem;">メイン強化テーマ <span class="badge-required">必須</span></label>
+                    <input type="text" id="input-focus-main-theme" class="form-control" placeholder="例: ハイプレスからのショートカウンター＆素早い切り替え" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0.9rem;">
+                    <label style="font-size:0.85rem; font-weight:700; margin-bottom:0.3rem;">意識するポイント (1〜3項目)</label>
+                    <input type="text" id="input-focus-point-1" class="form-control" placeholder="ポイント1: 例) 相手ボランチへのファーストDFの限定" style="margin-bottom:0.4rem;">
+                    <input type="text" id="input-focus-point-2" class="form-control" placeholder="ポイント2: 例) ボール奪取後のファーストパスの精度向上" style="margin-bottom:0.4rem;">
+                    <input type="text" id="input-focus-point-3" class="form-control" placeholder="ポイント3: 例) 奪われた瞬間の3秒間の即時奪還">
+                </div>
+                <div class="form-group" style="margin-bottom:1.2rem;">
+                    <label style="font-size:0.85rem; font-weight:700; margin-bottom:0.3rem;">対象期間・補足メモ</label>
+                    <input type="text" id="input-focus-note" class="form-control" placeholder="例: 今週〜次節公式戦(8/10)まで">
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:0.75rem;">
+                    <button type="button" class="btn btn-secondary" id="btn-clear-team-focus" style="color:#ef4444; border-color:#fca5a5;"><i class="fa-solid fa-trash-can"></i> テーマをクリア</button>
+                    <div style="display:flex; gap:0.5rem;">
+                        <button type="button" class="btn btn-secondary btn-close-modal" onclick="document.getElementById('modal-edit-team-focus').classList.add('hidden')">キャンセル</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> 設定を保存する</button>
+                    </div>
                 </div>
             </form>
         </div>

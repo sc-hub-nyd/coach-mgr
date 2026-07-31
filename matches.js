@@ -27,13 +27,11 @@ function cleanupPeriodSideEvents() {
 }
 
 // YouTube URLから11桁のIDを抽出
-// YouTube URLから11桁のIDを抽出
 function extractYouTubeId(url) {
-    if (!url || typeof url !== 'string') return null;
-    const cleanUrl = url.trim();
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|live\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = cleanUrl.match(regExp);
-    return (match && match[2] && match[2].length === 11) ? match[2] : null;
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
 }
 
 // 秒数を 「MM:SS」形式に変換
@@ -73,44 +71,42 @@ export function seekToVideoTime(timeStr) {
 // YouTubeプレーヤーの読み込み/切り替え
 export function loadYouTubePlayer(url, containerId = 'period-yt-player') {
     const videoId = extractYouTubeId(url);
-
-    // 既存のプレイヤーインスタンスがあればクリーンアップ（DOM は触らない）
-    if (ytPlayer) {
-        try {
-            if (typeof ytPlayer.destroy === 'function') ytPlayer.destroy();
-        } catch (e) {
-            // ignore
-        }
-        ytPlayer = null;
-    }
-
-    // ターゲットコンテナを取得（無ければ親要素の中に再作成）
-    let playerEl = document.getElementById(containerId);
-    if (!playerEl) {
-        const wrapper = document.getElementById('period-yt-wrapper') || document.getElementById('period-workspace-video');
-        if (wrapper) {
-            wrapper.innerHTML = `<div id="${containerId}" style="width:100%; height:100%;"></div>`;
-            playerEl = document.getElementById(containerId);
-        }
-    }
-
+    const playerEl = document.getElementById(containerId);
     if (!playerEl) return;
 
     if (!videoId) {
-        playerEl.innerHTML = '<div style="color:#fff; text-align:center; padding:2rem; font-size:0.9rem;"><i class="fa-brands fa-youtube" style="font-size:2rem; color:#ef4444; margin-bottom:0.5rem; display:block;"></i>YouTube URLが設定されていないか、正しい形式ではありません</div>';
+        playerEl.innerHTML = '<div style="color:#fff; text-align:center; padding:2rem;">YouTube URLが設定されていません</div>';
         return;
     }
 
-    // 純粋な iframe 埋め込み（YT.Player APIの再アタッチはしない）
-    // ※ YT.Player を既存 iframe にアタッチすると Chromium でクラッシュ（×_×）するため除外
-    playerEl.innerHTML = `<iframe
-        width="100%" height="100%"
-        src="https://www.youtube.com/embed/${videoId}?playsinline=1&rel=0&modestbranding=1"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-        style="width:100%; height:100%; border:none; display:block;">
-    </iframe>`;
+    if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+        ytPlayer.loadVideoById(videoId);
+        return;
+    }
+
+    const initPlayer = () => {
+        if (window.YT && window.YT.Player) {
+            try {
+                ytPlayer = new window.YT.Player(containerId, {
+                    width: '100%',
+                    height: '100%',
+                    videoId: videoId,
+                    playerVars: { 'playsinline': 1, 'rel': 0, 'modestbranding': 1 }
+                });
+            } catch (e) {
+                console.error('YouTube Player initialization error:', e);
+                fallbackIframe();
+            }
+        } else {
+            fallbackIframe();
+        }
+    };
+
+    const fallbackIframe = () => {
+        playerEl.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}?playsinline=1" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
+    };
+
+    setTimeout(initPlayer, 150);
 }
 
 const formationCoords = {
@@ -892,10 +888,6 @@ window.stopAndCleanupYouTube = function () {
             console.error('YouTube cleanup error:', e);
         }
         ytPlayer = null;
-    }
-    const wrapper = document.getElementById('period-yt-wrapper');
-    if (wrapper) {
-        wrapper.innerHTML = '<div id="period-yt-player" style="width:100%; height:100%;"></div>';
     }
 };
 
@@ -1849,35 +1841,268 @@ function initPeriodWorkspaceResizer() {
 }
 
 export function initMatches() {
-    let currentMatchNendo = uiState.currentMatchNendo;
+    let currentMatchNendo = uiState.currentMatchNendo || 'all';
+    let currentMatchOpponent = uiState.currentMatchOpponent || 'all';
+    let currentMatchType = uiState.currentMatchType || 'all';
+    let currentMatchResult = uiState.currentMatchResult || 'all';
+    let currentMatchSearch = (uiState.currentMatchSearch || '').toLowerCase().trim();
+    let matchSortOrder = uiState.matchSortOrder || 'desc';
     let currentMatchPage = uiState.currentMatchPage;
     const ITEMS_PER_PAGE = uiState.ITEMS_PER_PAGE;
     const isCoach = state.currentUserRole === 'coach';
 
-    const matchNendos = [...new Set(state.matches.map(m => getNendo(m.date)))].sort((a, b) => b - a);
-    const filterSelect = document.getElementById('filter-nendo-match');
-    if (filterSelect) {
-        let options = '<option value="all">すべての年度</option>';
-        matchNendos.forEach(y => {
-            options += `<option value="${y}" ${currentMatchNendo === String(y) ? 'selected' : ''}>${y}年度</option>`;
-        });
-        filterSelect.innerHTML = options;
+    // ── Search Input ──
+    const searchInput = document.getElementById('input-match-search');
+    if (searchInput) {
+        searchInput.value = uiState.currentMatchSearch || '';
+        searchInput.oninput = (e) => {
+            uiState.currentMatchSearch = e.target.value;
+            uiState.currentMatchPage = 1;
+            initMatches();
+        };
+    }
 
-        filterSelect.onchange = (e) => {
+    // ── Populate Accordion Selects ──
+    const matchNendos = [...new Set(state.matches.map(m => getNendo(m.date)))].sort((a, b) => b - a);
+    const filterNendoSelect = document.getElementById('filter-nendo-match');
+    if (filterNendoSelect) {
+        let options = '<option value="all">すべての年度</option>';
+        matchNendos.forEach(y => { options += `<option value="${y}" ${currentMatchNendo === String(y) ? 'selected' : ''}>${y}年度</option>`; });
+        filterNendoSelect.innerHTML = options;
+        filterNendoSelect.onchange = (e) => {
             uiState.currentMatchNendo = e.target.value;
             uiState.currentMatchPage = 1;
             initMatches();
         };
     }
 
-    const filteredMatches = currentMatchNendo === 'all'
-        ? state.matches
-        : state.matches.filter(m => String(getNendo(m.date)) === currentMatchNendo);
+    const availableTypes = [...new Set([...(state.matchTypes || []), ...state.matches.map(m => m.type).filter(Boolean)])];
+    const filterTypeSelect = document.getElementById('filter-type-match');
+    if (filterTypeSelect) {
+        let options = '<option value="all">すべての種別</option>';
+        availableTypes.forEach(t => { options += `<option value="${escapeHtml(t)}" ${currentMatchType === t ? 'selected' : ''}>${escapeHtml(t)}</option>`; });
+        filterTypeSelect.innerHTML = options;
+        filterTypeSelect.onchange = (e) => {
+            uiState.currentMatchType = e.target.value;
+            uiState.currentMatchPage = 1;
+            initMatches();
+        };
+    }
+
+    const opponents = [...new Set(state.matches.map(m => m.opponent).filter(Boolean))].sort();
+    const filterOpponentSelect = document.getElementById('filter-opponent-match');
+    if (filterOpponentSelect) {
+        let options = '<option value="all">すべての対戦相手</option>';
+        opponents.forEach(opp => { options += `<option value="${escapeHtml(opp)}" ${currentMatchOpponent === opp ? 'selected' : ''}>${escapeHtml(opp)}</option>`; });
+        filterOpponentSelect.innerHTML = options;
+        filterOpponentSelect.onchange = (e) => {
+            uiState.currentMatchOpponent = e.target.value;
+            uiState.currentMatchPage = 1;
+            initMatches();
+        };
+    }
+
+    const filterResultSelect = document.getElementById('filter-result-match');
+    if (filterResultSelect) {
+        filterResultSelect.value = currentMatchResult;
+        filterResultSelect.onchange = (e) => {
+            uiState.currentMatchResult = e.target.value;
+            uiState.currentMatchPage = 1;
+            initMatches();
+        };
+    }
+
+    // ── Active Filter Badge, Button State & Tag Chips ──
+    let activeFilterCount = 0;
+    const activeTagsContainer = document.getElementById('active-tags-matches');
+    let activeTagsHtml = '<span class="active-tag-label">絞り込み中:</span>';
+
+    if (currentMatchNendo !== 'all') {
+        activeFilterCount++;
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="nendo">${currentMatchNendo}年度 <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+    if (currentMatchType !== 'all') {
+        activeFilterCount++;
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="type">${escapeHtml(currentMatchType)} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+    if (currentMatchOpponent !== 'all') {
+        activeFilterCount++;
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="opponent">vs ${escapeHtml(currentMatchOpponent)} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+    if (currentMatchResult !== 'all') {
+        activeFilterCount++;
+        const resultMap = { win: '勝利', loss: '敗北', draw: '引き分け', upcoming: '試合予定' };
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="result">${resultMap[currentMatchResult] || currentMatchResult} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+
+    if (activeTagsContainer) {
+        if (activeFilterCount > 0) {
+            activeTagsContainer.innerHTML = activeTagsHtml;
+            activeTagsContainer.classList.remove('hidden');
+            activeTagsContainer.querySelectorAll('.active-tag-chip').forEach(chip => {
+                chip.onclick = () => {
+                    const key = chip.dataset.clearKey;
+                    if (key === 'nendo') uiState.currentMatchNendo = 'all';
+                    if (key === 'type') uiState.currentMatchType = 'all';
+                    if (key === 'opponent') uiState.currentMatchOpponent = 'all';
+                    if (key === 'result') uiState.currentMatchResult = 'all';
+                    uiState.currentMatchPage = 1;
+                    initMatches();
+                };
+            });
+        } else {
+            activeTagsContainer.innerHTML = '';
+            activeTagsContainer.classList.add('hidden');
+        }
+    }
+
+    const btnToggle = document.getElementById('btn-toggle-filter-matches');
+    const badgeEl = document.getElementById('badge-filter-matches');
+    if (btnToggle) {
+        btnToggle.classList.toggle('active-filter', activeFilterCount > 0);
+        btnToggle.onclick = () => {
+            const accordion = document.getElementById('filter-accordion-matches');
+            if (accordion) accordion.classList.toggle('hidden');
+        };
+    }
+    if (badgeEl) {
+        badgeEl.textContent = activeFilterCount;
+        badgeEl.classList.toggle('hidden', activeFilterCount === 0);
+    }
+
+    const btnReset = document.getElementById('btn-reset-filter-matches');
+    if (btnReset) {
+        btnReset.onclick = () => {
+            uiState.currentMatchNendo = 'all';
+            uiState.currentMatchType = 'all';
+            uiState.currentMatchOpponent = 'all';
+            uiState.currentMatchResult = 'all';
+            uiState.currentMatchPage = 1;
+            initMatches();
+        };
+    }
+
+    const btnSort = document.getElementById('btn-sort-match');
+    if (btnSort) {
+        const isDesc = matchSortOrder === 'desc';
+        btnSort.innerHTML = `<i class="fa-solid ${isDesc ? 'fa-arrow-down-wide-short' : 'fa-arrow-up-wide-short'}"></i>`;
+        btnSort.title = isDesc ? '新しい順 (クリックで古い順へ)' : '古い順 (クリックで新しい順へ)';
+        btnSort.onclick = () => {
+            uiState.matchSortOrder = matchSortOrder === 'desc' ? 'asc' : 'desc';
+            uiState.currentMatchPage = 1;
+            initMatches();
+        };
+    }
+
+    const getMatchStatus = (m) => {
+        const matchScore = m.result ? m.result.match(/(\d+)\s*-\s*(\d+)/) : null;
+        if (!matchScore) return 'upcoming';
+        const us = parseInt(matchScore[1], 10);
+        const them = parseInt(matchScore[2], 10);
+        if (us > them) return 'win';
+        if (us < them) return 'loss';
+        return 'draw';
+    };
+
+    const filteredMatches = state.matches.filter(m => {
+        const matchNendo = currentMatchNendo === 'all' || String(getNendo(m.date)) === currentMatchNendo;
+        const matchOpponent = currentMatchOpponent === 'all' || m.opponent === currentMatchOpponent;
+        const matchType = currentMatchType === 'all' || m.type === currentMatchType;
+
+        let matchResult = true;
+        if (currentMatchResult !== 'all') {
+            matchResult = getMatchStatus(m) === currentMatchResult;
+        }
+
+        let matchKeyword = true;
+        if (currentMatchSearch) {
+            const attendeeNames = (m.presentPlayerIds || []).map(id => {
+                const p = state.players.find(pl => pl.id === id);
+                return p ? p.name : '';
+            }).join(' ');
+
+            const targetText = [
+                m.opponent,
+                m.tournament,
+                m.type,
+                m.theme,
+                m.summary,
+                m.date,
+                m.result,
+                attendeeNames
+            ].filter(Boolean).join(' ').toLowerCase();
+
+            matchKeyword = targetText.includes(currentMatchSearch);
+        }
+
+        return matchNendo && matchOpponent && matchType && matchResult && matchKeyword;
+    }).sort((a, b) => {
+        return matchSortOrder === 'asc'
+            ? a.date.localeCompare(b.date)
+            : b.date.localeCompare(a.date);
+    });
 
     const displayedMatches = filteredMatches.slice(0, currentMatchPage * ITEMS_PER_PAGE);
 
     const matchList = document.getElementById('match-list');
     if (matchList) {
+        let h2hHtml = '';
+        if (currentMatchOpponent !== 'all') {
+            const allMatchesAgainstOpp = state.matches.filter(m => m.opponent === currentMatchOpponent);
+            let wins = 0, losses = 0, draws = 0, gf = 0, ga = 0;
+
+            allMatchesAgainstOpp.forEach(m => {
+                const matchScore = m.result ? m.result.match(/(\d+)\s*-\s*(\d+)/) : null;
+                if (matchScore) {
+                    const us = parseInt(matchScore[1], 10);
+                    const them = parseInt(matchScore[2], 10);
+                    gf += us;
+                    ga += them;
+                    if (us > them) wins++;
+                    else if (us < them) losses++;
+                    else draws++;
+                }
+            });
+
+            const diff = gf - ga;
+            const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
+
+            h2hHtml = `
+                <div class="card opponent-h2h-card" style="padding:1rem 1.2rem; background:linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.03) 100%); border:1px solid rgba(59, 130, 246, 0.2); border-radius:12px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:0.8rem;">
+                    <div style="display:flex; align-items:center; gap:0.6rem;">
+                        <div style="width:38px; height:38px; border-radius:50%; background:var(--primary); color:#ffffff; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">対戦相手 通算成績</div>
+                            <div style="font-weight:700; font-size:1.1rem; color:var(--text-primary);">vs ${escapeHtml(currentMatchOpponent)}</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:1.2rem; flex-wrap:wrap;">
+                        <div style="text-align:center;">
+                            <div style="font-size:0.7rem; color:var(--text-secondary);">通算対戦</div>
+                            <div style="font-weight:700; font-size:1.05rem;">${allMatchesAgainstOpp.length}試合</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="font-size:0.7rem; color:var(--text-secondary);">勝敗内訳</div>
+                            <div style="font-weight:700; font-size:1.05rem;">
+                                <span style="color:#22c55e;">${wins}勝</span> 
+                                <span style="color:#ef4444;">${losses}敗</span> 
+                                <span style="color:#eab308;">${draws}分</span>
+                            </div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="font-size:0.7rem; color:var(--text-secondary);">総得失点</div>
+                            <div style="font-weight:700; font-size:1.05rem;">
+                                <span style="color:var(--primary);">${gf}</span> / <span style="color:var(--text-secondary);">${ga}</span>
+                                <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:normal;">(${diffStr})</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         const grouped = {};
         displayedMatches.forEach(m => {
             const ym = m.date.substring(0, 7).replace('-', '年') + '月';
@@ -1885,7 +2110,9 @@ export function initMatches() {
             grouped[ym].push(m);
         });
 
-        const sortedMonths = Object.keys(grouped).sort().reverse();
+        const sortedMonths = matchSortOrder === 'asc'
+            ? Object.keys(grouped).sort()
+            : Object.keys(grouped).sort().reverse();
         let html = '';
         sortedMonths.forEach(month => {
             html += `
@@ -1954,13 +2181,15 @@ export function initMatches() {
             `;
         }
 
-        matchList.innerHTML = html || `
+        const emptyHtml = `
             <div class="card" style="padding:3rem 2rem; text-align:center; border: 1.5px dashed var(--surface-border); display:flex; flex-direction:column; align-items:center; gap:1rem; width:100%; box-sizing:border-box;">
                 <div style="font-size:3rem; color:var(--text-secondary); opacity:0.6;"><i class="fa-solid fa-trophy"></i></div>
-                <h3 style="font-size:1.15rem; margin:0; color:var(--text-primary); font-weight:600;">まだ試合記録がありません</h3>
+                <h3 style="font-size:1.15rem; margin:0; color:var(--text-primary); font-weight:600;">該当する試合記録がありません</h3>
                 <button class="btn btn-primary" id="btn-empty-add-match" style="margin-top:0.5rem; display:${isCoach ? 'inline-block' : 'none'};"><i class="fa-solid fa-plus"></i> 最初の試合を追加</button>
             </div>
         `;
+
+        matchList.innerHTML = h2hHtml + (html || emptyHtml);
 
         const btnLoadMoreMatches = document.getElementById('btn-load-more-matches');
         if (btnLoadMoreMatches) {

@@ -496,6 +496,25 @@ export function openSeasonRecordModal() {
 }
 
 
+
+
+export function openTeamFocusModal() {
+    const focus = state.teamFocus || {};
+    const inputMain = document.getElementById('input-focus-main-theme');
+    const inputPt1 = document.getElementById('input-focus-point-1');
+    const inputPt2 = document.getElementById('input-focus-point-2');
+    const inputPt3 = document.getElementById('input-focus-point-3');
+    const inputNote = document.getElementById('input-focus-note');
+
+    if (inputMain) inputMain.value = focus.mainTheme || '';
+    if (inputPt1) inputPt1.value = (focus.points && focus.points[0]) || '';
+    if (inputPt2) inputPt2.value = (focus.points && focus.points[1]) || '';
+    if (inputPt3) inputPt3.value = (focus.points && focus.points[2]) || '';
+    if (inputNote) inputNote.value = focus.note || '';
+
+    openModal('modal-edit-team-focus');
+}
+
 function setupModals() {
     const closeBtns = document.querySelectorAll('.btn-close-modal');
     closeBtns.forEach(btn => {
@@ -531,6 +550,49 @@ function setupModals() {
             }
         }
     });
+
+    const formFocus = document.getElementById('form-edit-team-focus');
+    if (formFocus) {
+        formFocus.onsubmit = (e) => {
+            e.preventDefault();
+            const mainTheme = document.getElementById('input-focus-main-theme')?.value.trim() || '';
+            const pt1 = document.getElementById('input-focus-point-1')?.value.trim() || '';
+            const pt2 = document.getElementById('input-focus-point-2')?.value.trim() || '';
+            const pt3 = document.getElementById('input-focus-point-3')?.value.trim() || '';
+            const note = document.getElementById('input-focus-note')?.value.trim() || '';
+
+            const points = [pt1, pt2, pt3].filter(Boolean);
+
+            state.teamFocus = {
+                mainTheme,
+                points,
+                note,
+                updatedAt: new Date().toISOString()
+            };
+
+            saveData();
+            document.getElementById('modal-edit-team-focus')?.classList.add('hidden');
+            if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                document.body.classList.remove('modal-open');
+            }
+            showToast('チーム重点課題・強化テーマを保存しました！');
+            initDashboard();
+        };
+    }
+
+    const btnClearFocus = document.getElementById('btn-clear-team-focus');
+    if (btnClearFocus) {
+        btnClearFocus.onclick = () => {
+            state.teamFocus = { mainTheme: '', points: [], note: '', updatedAt: '' };
+            saveData();
+            document.getElementById('modal-edit-team-focus')?.classList.add('hidden');
+            if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+                document.body.classList.remove('modal-open');
+            }
+            showToast('チーム重点テーマをクリアしました');
+            initDashboard();
+        };
+    }
 
     setupScoreCounters();
 }
@@ -643,88 +705,51 @@ function initDashboard() {
         myPlayerBanner.style.setProperty('display', 'none', 'important');
     }
 
-    // ── 練習＆試合「相関分析」ロジック ──
-    const correlationContent = document.getElementById('dash-correlation-content');
-    if (correlationContent) {
-        // 過去の試合データ(結果あり)
-        const scoredMatches = state.matches.filter(m => m.result && /([\d]+)\s*-\s*([\d]+)/.test(m.result));
-        if (scoredMatches.length > 0) {
-            // テーマごとの試合成績を集計
-            // 練習メニューでフォーカスされたカテゴリ
-            const themeResults = {}; // { 'ポゼッション': { win: 0, total: 0 } }
-            
-            // 直近の練習メニューとその日付をマッピング
-            const pracMap = {}; // { 'YYYY-MM-DD': [focuses] }
-            state.practices.forEach(p => {
-                if (p.menus && p.menus.length > 0) {
-                    pracMap[p.date] = p.menus.map(mn => mn.focus).filter(Boolean);
-                }
-            });
+    // ── チーム重点課題・強化テーマ ロジック ──
+    const teamFocusContent = document.getElementById('dash-team-focus-content');
+    const btnEditFocus = document.getElementById('dash-btn-edit-focus');
 
-            scoredMatches.forEach(m => {
-                const mt = m.result.match(/([\d]+)\s*-\s*([\d]+)/);
-                if (mt) {
-                    const us = parseInt(mt[1], 10), them = parseInt(mt[2], 10);
-                    const isWin = us > them;
-                    
-                    // 試合日以前の直近1週間の練習テーマを探す
-                    const matchDate = new Date(m.date);
-                    const themesSeen = new Set();
-                    
-                    for (let i = 1; i <= 7; i++) {
-                        const checkDate = new Date(matchDate);
-                        checkDate.setDate(checkDate.getDate() - i);
-                        const checkDateStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
-                        if (pracMap[checkDateStr]) {
-                            pracMap[checkDateStr].forEach(t => themesSeen.add(t));
-                        }
-                    }
-
-                    themesSeen.forEach(theme => {
-                        if (!themeResults[theme]) themeResults[theme] = { win: 0, total: 0 };
-                        themeResults[theme].total++;
-                        if (isWin) themeResults[theme].win++;
-                    });
-                }
-            });
-
-            const correlationItems = Object.entries(themeResults)
-                .map(([theme, data]) => {
-                    const winPct = data.total > 0 ? Math.round((data.win / data.total) * 100) : 0;
-                    return { theme, winPct, total: data.total };
-                })
-                .sort((a, b) => b.winPct - a.winPct)
-                .slice(0, 3);
-
-            if (correlationItems.length > 0) {
-                correlationContent.innerHTML = correlationItems.map(item => {
-                    let trendClass = 'neutral';
-                    let trendIcon = 'fa-minus';
-                    let trendLabel = '普通';
-                    if (item.winPct >= 65) {
-                        trendClass = 'up';
-                        trendIcon = 'fa-trending-up';
-                        trendLabel = '相関高(好調)';
-                    } else if (item.winPct <= 35) {
-                        trendClass = 'down';
-                        trendIcon = 'fa-trending-down';
-                        trendLabel = '改善必要';
-                    }
-                    return `
-                        <div class="dash-correlation-row">
-                            <div style="font-weight:600;">${escapeHtml(item.theme)} <span style="font-weight:normal; font-size:0.7rem; color:var(--text-secondary);">(${item.total}試合前練習)</span></div>
-                            <div class="dash-correlation-trend ${trendClass}">
-                                <i class="fa-solid ${trendIcon}"></i> 勝率 ${item.winPct}% (${trendLabel})
+    if (teamFocusContent) {
+        const focus = state.teamFocus || {};
+        if (focus.mainTheme) {
+            let pointsHtml = '';
+            if (focus.points && focus.points.filter(Boolean).length > 0) {
+                pointsHtml = `
+                    <div style="display:flex; flex-direction:column; gap:0.25rem; margin-top:0.2rem;">
+                        ${focus.points.filter(Boolean).map((pt, idx) => `
+                            <div style="font-size:0.78rem; color:var(--text-primary); display:flex; align-items:flex-start; gap:0.35rem;">
+                                <span style="background:var(--primary); color:#fff; font-size:0.65rem; font-weight:700; width:16px; height:16px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">${idx + 1}</span>
+                                <span>${escapeHtml(pt)}</span>
                             </div>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                correlationContent.innerHTML = '<div class="dash-no-data" style="padding:0.5rem 0;">直前1週間にテーマ練習のある試合履歴が不足しています</div>';
+                        `).join('')}
+                    </div>
+                `;
             }
+
+            teamFocusContent.innerHTML = `
+                <div style="background:rgba(168,85,247,0.08); border-left:3px solid #a855f7; border-radius:6px; padding:0.6rem 0.8rem;">
+                    <div style="font-size:0.7rem; font-weight:700; color:#a855f7; margin-bottom:0.15rem;">🔥 強化テーマ</div>
+                    <div style="font-size:0.88rem; font-weight:700; color:var(--text-primary); line-height:1.35;">${escapeHtml(focus.mainTheme)}</div>
+                </div>
+                ${pointsHtml}
+                ${focus.note ? `<div style="font-size:0.72rem; color:var(--text-secondary); margin-top:0.2rem; text-align:right;"><i class="fa-solid fa-clock"></i> ${escapeHtml(focus.note)}</div>` : ''}
+            `;
         } else {
-            correlationContent.innerHTML = '<div class="dash-no-data" style="padding:0.5rem 0;">相関分析に必要な試合データがありません</div>';
+            teamFocusContent.innerHTML = `
+                <div class="dash-no-data" style="padding:1rem 0;">
+                    チームの重点課題・強化テーマが未設定です<br>
+                    <button class="btn btn-secondary btn-sm coach-only" id="dash-btn-set-focus-empty" onclick="openTeamFocusModal()" style="margin-top:0.5rem; font-size:0.75rem;">
+                        <i class="fa-solid fa-plus"></i> テーマを設定する
+                    </button>
+                </div>
+            `;
+            const btnEmpty = document.getElementById('dash-btn-set-focus-empty');
+            if (btnEmpty) btnEmpty.onclick = () => openTeamFocusModal();
         }
+    }
+
+    if (btnEditFocus) {
+        btnEditFocus.onclick = () => openTeamFocusModal();
     }
 
     // ── 選手コンディション・出場時間平準化アラート ──
@@ -774,7 +799,7 @@ function initDashboard() {
                         <div class="dash-playtime-bar-outer">
                             <div class="dash-playtime-bar-inner" style="width: ${item.pct}%;"></div>
                         </div>
-                        <div style="font-weight:700; color:${item.pct} < 30 ? 'var(--primary)' : 'var(--text-secondary)';">${item.pct}% <span style="font-size:0.68rem; font-weight:normal;">(${item.count}/${totalPeriods}P)</span></div>
+                        <div style="font-weight:700; color:${item.pct < 30 ? 'var(--primary)' : 'var(--text-secondary)'};">${item.pct}% <span style="font-size:0.68rem; font-weight:normal;">(${item.count}/${totalPeriods}P)</span></div>
                     </div>
                 `).join('');
             } else {
@@ -1467,11 +1492,16 @@ export function navigate(route, params = null) {
 }
 
 async function init() {
-    window.openLeaderRankingModal = openLeaderRankingModal;
-    window.openSeasonRecordModal = openSeasonRecordModal;
-    window.openPlayerDetail = openPlayerDetail;
-    window.navigate = navigate;
-    await loadData();
+    try {
+        window.openLeaderRankingModal = openLeaderRankingModal;
+        window.openSeasonRecordModal = openSeasonRecordModal;
+        window.openPlayerDetail = openPlayerDetail;
+        window.openTeamFocusModal = openTeamFocusModal;
+        window.navigate = navigate;
+        await loadData();
+    } catch (e) {
+        console.error('loadData error in init:', e);
+    }
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramApiUrl = urlParams.get('apiUrl');
@@ -1480,6 +1510,7 @@ async function init() {
 
     let isFromInviteLink = false;
     if (paramApiUrl) {
+        if (!state.teamInfo) state.teamInfo = {};
         state.teamInfo.gasApiUrl = paramApiUrl;
         if (paramAuthToken) state.teamInfo.gasAuthToken = paramAuthToken;
         if (paramSheetName) state.teamInfo.gasSheetName = paramSheetName;
@@ -1494,9 +1525,11 @@ async function init() {
     setupEventListeners();
     setupModals();
 
-    document.documentElement.style.setProperty('--primary', state.teamInfo.color);
+    if (state.teamInfo && state.teamInfo.color) {
+        document.documentElement.style.setProperty('--primary', state.teamInfo.color);
+    }
     const sidebarTitle = document.querySelector('.sidebar-header h2');
-    if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name)}`;
+    if (sidebarTitle && state.teamInfo) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name || 'My Team')}`;
 
     navigate('dashboard');
 
@@ -1506,7 +1539,11 @@ async function init() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 
 window.saveData = saveData;
 window.navigate = navigate;
@@ -1514,5 +1551,7 @@ window.openMatchDetail = openMatchDetail;
 window.openPlayerDetail = openPlayerDetail;
 window.openPracticeModal = openPracticeModal;
 window.openMatchModal = openMatchModal;
+window.openModal = openModal;
 window.renderPracticeRoster = renderPracticeRoster;
 window.initMatchDetailView = initMatchDetailView;
+window.openTeamFocusModal = openTeamFocusModal;

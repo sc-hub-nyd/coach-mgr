@@ -65,21 +65,34 @@ export function openPracticeModal(practiceId = null) {
 }
 
 export function initPractices(miniPitchObserver) {
-    let currentPracticeNendo = uiState.currentPracticeNendo;
-    let currentPracticeMonth = uiState.currentPracticeMonth;
+    let currentPracticeNendo = uiState.currentPracticeNendo || 'all';
+    let currentPracticeMonth = uiState.currentPracticeMonth || 'all';
+    let currentPracticeCategory = uiState.currentPracticeCategory || 'all';
+    let currentPracticePlayer = uiState.currentPracticePlayer || 'all';
+    let currentPracticeSearch = (uiState.currentPracticeSearch || '').toLowerCase().trim();
+    let practiceSortOrder = uiState.practiceSortOrder || 'desc';
     let currentPracticePage = uiState.currentPracticePage;
     const ITEMS_PER_PAGE = uiState.ITEMS_PER_PAGE;
 
-    const practiceNendos = [...new Set(state.practices.map(p => getNendo(p.date)))].sort((a, b) => b - a);
-    const filterSelect = document.getElementById('filter-nendo-practice');
-    if (filterSelect) {
-        let options = '<option value="all">すべての年度</option>';
-        practiceNendos.forEach(y => {
-            options += `<option value="${y}" ${currentPracticeNendo === String(y) ? 'selected' : ''}>${y}年度</option>`;
-        });
-        filterSelect.innerHTML = options;
+    // ── Search Input ──
+    const searchInput = document.getElementById('input-practice-search');
+    if (searchInput) {
+        searchInput.value = uiState.currentPracticeSearch || '';
+        searchInput.oninput = (e) => {
+            uiState.currentPracticeSearch = e.target.value;
+            uiState.currentPracticePage = 1;
+            initPractices(miniPitchObserver);
+        };
+    }
 
-        filterSelect.onchange = (e) => {
+    // ── Populate Accordion Selects ──
+    const practiceNendos = [...new Set(state.practices.map(p => getNendo(p.date)))].sort((a, b) => b - a);
+    const filterNendoSelect = document.getElementById('filter-nendo-practice');
+    if (filterNendoSelect) {
+        let options = '<option value="all">すべての年度</option>';
+        practiceNendos.forEach(y => { options += `<option value="${y}" ${currentPracticeNendo === String(y) ? 'selected' : ''}>${y}年度</option>`; });
+        filterNendoSelect.innerHTML = options;
+        filterNendoSelect.onchange = (e) => {
             uiState.currentPracticeNendo = e.target.value;
             uiState.currentPracticeMonth = 'all';
             uiState.currentPracticePage = 1;
@@ -100,9 +113,116 @@ export function initPractices(miniPitchObserver) {
             options += `<option value="${mStr}" ${currentPracticeMonth === mStr ? 'selected' : ''}>${m}月</option>`;
         });
         filterMonthSelect.innerHTML = options;
-
         filterMonthSelect.onchange = (e) => {
             uiState.currentPracticeMonth = e.target.value;
+            uiState.currentPracticePage = 1;
+            initPractices(miniPitchObserver);
+        };
+    }
+
+    const filterCategorySelect = document.getElementById('filter-category-practice');
+    if (filterCategorySelect) {
+        let options = '<option value="all">すべてのカテゴリ</option>';
+        (state.menuCategories || []).forEach(cat => { options += `<option value="${escapeHtml(cat)}" ${currentPracticeCategory === cat ? 'selected' : ''}>${escapeHtml(cat)}</option>`; });
+        filterCategorySelect.innerHTML = options;
+        filterCategorySelect.onchange = (e) => {
+            uiState.currentPracticeCategory = e.target.value;
+            uiState.currentPracticePage = 1;
+            initPractices(miniPitchObserver);
+        };
+    }
+
+    const filterPlayerSelect = document.getElementById('filter-player-practice');
+    if (filterPlayerSelect) {
+        const sortedPlayers = [...state.players].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
+        let options = '<option value="all">すべての参加選手</option>';
+        sortedPlayers.forEach(p => { options += `<option value="${p.id}" ${currentPracticePlayer === String(p.id) ? 'selected' : ''}>${p.number ? `${p.number}. ` : ''}${escapeHtml(p.name)}</option>`; });
+        filterPlayerSelect.innerHTML = options;
+        filterPlayerSelect.onchange = (e) => {
+            uiState.currentPracticePlayer = e.target.value;
+            uiState.currentPracticePage = 1;
+            initPractices(miniPitchObserver);
+        };
+    }
+
+    // ── Active Filter Badge, Button State & Tag Chips ──
+    let activeFilterCount = 0;
+    const activeTagsContainer = document.getElementById('active-tags-practices');
+    let activeTagsHtml = '<span class="active-tag-label">絞り込み中:</span>';
+
+    if (currentPracticeNendo !== 'all') {
+        activeFilterCount++;
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="nendo">${currentPracticeNendo}年度 <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+    if (currentPracticeMonth !== 'all') {
+        activeFilterCount++;
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="month">${parseInt(currentPracticeMonth, 10)}月 <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+    if (currentPracticeCategory !== 'all') {
+        activeFilterCount++;
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="category">${escapeHtml(currentPracticeCategory)} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+    if (currentPracticePlayer !== 'all') {
+        activeFilterCount++;
+        const targetPlayer = state.players.find(p => String(p.id) === currentPracticePlayer);
+        const playerName = targetPlayer ? targetPlayer.name : currentPracticePlayer;
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="player">${escapeHtml(playerName)} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+
+    if (activeTagsContainer) {
+        if (activeFilterCount > 0) {
+            activeTagsContainer.innerHTML = activeTagsHtml;
+            activeTagsContainer.classList.remove('hidden');
+            activeTagsContainer.querySelectorAll('.active-tag-chip').forEach(chip => {
+                chip.onclick = () => {
+                    const key = chip.dataset.clearKey;
+                    if (key === 'nendo') uiState.currentPracticeNendo = 'all';
+                    if (key === 'month') uiState.currentPracticeMonth = 'all';
+                    if (key === 'category') uiState.currentPracticeCategory = 'all';
+                    if (key === 'player') uiState.currentPracticePlayer = 'all';
+                    uiState.currentPracticePage = 1;
+                    initPractices(miniPitchObserver);
+                };
+            });
+        } else {
+            activeTagsContainer.innerHTML = '';
+            activeTagsContainer.classList.add('hidden');
+        }
+    }
+
+    const btnToggle = document.getElementById('btn-toggle-filter-practices');
+    const badgeEl = document.getElementById('badge-filter-practices');
+    if (btnToggle) {
+        btnToggle.classList.toggle('active-filter', activeFilterCount > 0);
+        btnToggle.onclick = () => {
+            const accordion = document.getElementById('filter-accordion-practices');
+            if (accordion) accordion.classList.toggle('hidden');
+        };
+    }
+    if (badgeEl) {
+        badgeEl.textContent = activeFilterCount;
+        badgeEl.classList.toggle('hidden', activeFilterCount === 0);
+    }
+
+    const btnReset = document.getElementById('btn-reset-filter-practices');
+    if (btnReset) {
+        btnReset.onclick = () => {
+            uiState.currentPracticeNendo = 'all';
+            uiState.currentPracticeMonth = 'all';
+            uiState.currentPracticeCategory = 'all';
+            uiState.currentPracticePlayer = 'all';
+            uiState.currentPracticePage = 1;
+            initPractices(miniPitchObserver);
+        };
+    }
+
+    const btnSort = document.getElementById('btn-sort-practice');
+    if (btnSort) {
+        const isDesc = practiceSortOrder === 'desc';
+        btnSort.innerHTML = `<i class="fa-solid ${isDesc ? 'fa-arrow-down-wide-short' : 'fa-arrow-up-wide-short'}"></i>`;
+        btnSort.title = isDesc ? '新しい順 (クリックで古い順へ)' : '古い順 (クリックで新しい順へ)';
+        btnSort.onclick = () => {
+            uiState.practiceSortOrder = practiceSortOrder === 'desc' ? 'asc' : 'desc';
             uiState.currentPracticePage = 1;
             initPractices(miniPitchObserver);
         };
@@ -111,7 +231,41 @@ export function initPractices(miniPitchObserver) {
     const filteredPractices = state.practices.filter(p => {
         const matchNendo = currentPracticeNendo === 'all' || String(getNendo(p.date)) === currentPracticeNendo;
         const matchMonth = currentPracticeMonth === 'all' || p.date.substring(5, 7) === currentPracticeMonth;
-        return matchNendo && matchMonth;
+
+        let matchCategory = true;
+        if (currentPracticeCategory !== 'all') {
+            matchCategory = (p.menus || []).some(mn => mn.category === currentPracticeCategory || (mn.focus && mn.focus.includes(currentPracticeCategory)));
+        }
+
+        let matchPlayer = true;
+        if (currentPracticePlayer !== 'all') {
+            const playerIdNum = parseInt(currentPracticePlayer, 10);
+            matchPlayer = (p.presentPlayerIds || []).includes(playerIdNum);
+        }
+
+        let matchKeyword = true;
+        if (currentPracticeSearch) {
+            const attendeeNames = (p.presentPlayerIds || []).map(id => {
+                const pl = state.players.find(x => x.id === id);
+                return pl ? pl.name : '';
+            }).join(' ');
+
+            const menuTexts = (p.menus || []).map(mn => [mn.focus, mn.organize, mn.keyfactor, mn.options, mn.category, mn.reflection].filter(Boolean).join(' ')).join(' ');
+
+            const targetText = [
+                p.date,
+                menuTexts,
+                attendeeNames
+            ].filter(Boolean).join(' ').toLowerCase();
+
+            matchKeyword = targetText.includes(currentPracticeSearch);
+        }
+
+        return matchNendo && matchMonth && matchCategory && matchPlayer && matchKeyword;
+    }).sort((a, b) => {
+        return practiceSortOrder === 'asc'
+            ? a.date.localeCompare(b.date)
+            : b.date.localeCompare(a.date);
     });
 
     const elPractices = document.getElementById('dash-practices');
@@ -129,7 +283,9 @@ export function initPractices(miniPitchObserver) {
         grouped[ym].push(p);
     });
 
-    const sortedMonths = Object.keys(grouped).sort().reverse();
+    const sortedMonths = practiceSortOrder === 'asc'
+        ? Object.keys(grouped).sort()
+        : Object.keys(grouped).sort().reverse();
     let html = '';
     sortedMonths.forEach(month => {
         html += `
@@ -230,14 +386,15 @@ ${(menu.organize || menu.keyfactor || menu.options || menu.videoUrl || menu.fram
     }
 
     if (sortedMonths.length === 0) {
+        const isSearchActive = !!currentPracticeSearch || currentPracticeCategory !== 'all' || currentPracticePlayer !== 'all' || currentPracticeNendo !== 'all' || currentPracticeMonth !== 'all';
         html = `
             <div class="card" style="padding:3rem 2rem; text-align:center; border: 1.5px dashed var(--surface-border); display:flex; flex-direction:column; align-items:center; gap:1rem; width:100%; box-sizing:border-box;">
-                <div style="font-size:3rem; color:var(--text-secondary); opacity:0.6;"><i class="fa-solid fa-calendar-check"></i></div>
-                <h3 style="font-size:1.15rem; margin:0; color:var(--text-primary); font-weight:600;">まだ練習管理がありません</h3>
-                <p style="font-size:0.85rem; color:var(--text-secondary); max-width:340px; margin:0; line-height:1.4;">
-                    日々の練習日を作成し、テーマに応じたトレーニングメニューのアサインや、戦術ボードでの作図を行いましょう。
+                <div style="font-size:3rem; color:var(--text-secondary); opacity:0.6;"><i class="fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-calendar-check'}"></i></div>
+                <h3 style="font-size:1.15rem; margin:0; color:var(--text-primary); font-weight:600;">${isSearchActive ? '該当する練習記録がありません' : 'まだ練習記録がありません'}</h3>
+                <p style="font-size:0.85rem; color:var(--text-secondary); max-width:360px; margin:0; line-height:1.4;">
+                    ${isSearchActive ? '検索キーワードまたは絞り込み条件（年度・月・カテゴリ・参加選手）を変更してお試しください。' : '日々の練習日を作成し、テーマに応じたトレーニングメニューのアサインや、戦術ボードでの作図を行いましょう。'}
                 </p>
-                <button class="btn btn-primary" id="btn-empty-add-practice" style="margin-top:0.5rem;"><i class="fa-solid fa-plus"></i> 最初の練習日を追加</button>
+                ${!isSearchActive ? `<button class="btn btn-primary" id="btn-empty-add-practice" style="margin-top:0.5rem;"><i class="fa-solid fa-plus"></i> 最初の練習日を追加</button>` : ''}
             </div>
         `;
     }

@@ -77,29 +77,195 @@ export function openAssignPracticeModal(menuId) {
 }
 
 export function initLibrary(miniPitchObserver) {
-    let currentLibraryCategory = uiState.currentLibraryCategory;
+    let currentLibraryCategory = uiState.currentLibraryCategory || 'all';
+    let currentLibraryMedia = uiState.currentLibraryMedia || 'all';
+    let currentLibraryAssigned = uiState.currentLibraryAssigned || 'all';
+    let currentLibraryRating = uiState.currentLibraryRating || 'all';
+    let currentLibrarySearch = (uiState.currentLibrarySearch || '').toLowerCase().trim();
     const isCoach = state.currentUserRole === 'coach';
 
-    const filterSelect = document.getElementById('filter-library-category');
-    if (filterSelect) {
-        filterSelect.innerHTML = '<option value="all">すべてのカテゴリ</option>' + state.menuCategories.map(c => `<option value="${c}">${c}</option>`).join('');
-        if (state.menuCategories.includes(currentLibraryCategory) || currentLibraryCategory === 'all') {
-            filterSelect.value = currentLibraryCategory;
-        } else {
-            uiState.currentLibraryCategory = 'all';
-            currentLibraryCategory = 'all';
-            filterSelect.value = 'all';
-        }
+    // ── Search Input ──
+    const searchInput = document.getElementById('input-library-search');
+    if (searchInput) {
+        searchInput.value = uiState.currentLibrarySearch || '';
+        searchInput.oninput = (e) => {
+            uiState.currentLibrarySearch = e.target.value;
+            initLibrary(miniPitchObserver);
+        };
+    }
 
-        filterSelect.onchange = (e) => {
+    // ── Populate Accordion Selects ──
+    const filterCategorySelect = document.getElementById('filter-library-category');
+    if (filterCategorySelect) {
+        let options = '<option value="all">すべてのカテゴリ</option>';
+        (state.menuCategories || []).forEach(cat => { options += `<option value="${escapeHtml(cat)}" ${currentLibraryCategory === cat ? 'selected' : ''}>${escapeHtml(cat)}</option>`; });
+        filterCategorySelect.innerHTML = options;
+        filterCategorySelect.onchange = (e) => {
             uiState.currentLibraryCategory = e.target.value;
             initLibrary(miniPitchObserver);
         };
     }
 
-    const filteredMenus = currentLibraryCategory === 'all'
-        ? state.menuLibrary
-        : state.menuLibrary.filter(m => m.category === currentLibraryCategory);
+    const filterMediaSelect = document.getElementById('filter-library-media');
+    if (filterMediaSelect) {
+        filterMediaSelect.value = currentLibraryMedia;
+        filterMediaSelect.onchange = (e) => {
+            uiState.currentLibraryMedia = e.target.value;
+            initLibrary(miniPitchObserver);
+        };
+    }
+
+    const filterAssignedSelect = document.getElementById('filter-library-assigned');
+    if (filterAssignedSelect) {
+        filterAssignedSelect.value = currentLibraryAssigned;
+        filterAssignedSelect.onchange = (e) => {
+            uiState.currentLibraryAssigned = e.target.value;
+            initLibrary(miniPitchObserver);
+        };
+    }
+
+    const filterRatingSelect = document.getElementById('filter-library-rating');
+    if (filterRatingSelect) {
+        filterRatingSelect.value = currentLibraryRating;
+        filterRatingSelect.onchange = (e) => {
+            uiState.currentLibraryRating = e.target.value;
+            initLibrary(miniPitchObserver);
+        };
+    }
+
+    // ── Active Filter Badge, Button State & Tag Chips ──
+    let activeFilterCount = 0;
+    const activeTagsContainer = document.getElementById('active-tags-library');
+    let activeTagsHtml = '<span class="active-tag-label">絞り込み中:</span>';
+
+    if (currentLibraryCategory !== 'all') {
+        activeFilterCount++;
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="category">${escapeHtml(currentLibraryCategory)} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+    if (currentLibraryMedia !== 'all') {
+        activeFilterCount++;
+        const mediaMap = { anim: '作図アニメあり', video: '参考動画あり', any: '作図/動画あり' };
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="media">${mediaMap[currentLibraryMedia] || currentLibraryMedia} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+    if (currentLibraryAssigned !== 'all') {
+        activeFilterCount++;
+        const assignMap = { frequent: 'よく使う (5回以上)', assigned: 'アサイン済み', unassigned: '未アサイン' };
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="assigned">${assignMap[currentLibraryAssigned] || currentLibraryAssigned} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+    if (currentLibraryRating !== 'all') {
+        activeFilterCount++;
+        const ratingMap = { '5': '★5のみ', '4': '★4以上', '3': '★3以上', rated: '評価あり' };
+        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="rating">${ratingMap[currentLibraryRating] || `★${currentLibraryRating}`} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+    }
+
+    if (activeTagsContainer) {
+        if (activeFilterCount > 0) {
+            activeTagsContainer.innerHTML = activeTagsHtml;
+            activeTagsContainer.classList.remove('hidden');
+            activeTagsContainer.querySelectorAll('.active-tag-chip').forEach(chip => {
+                chip.onclick = () => {
+                    const key = chip.dataset.clearKey;
+                    if (key === 'category') uiState.currentLibraryCategory = 'all';
+                    if (key === 'media') uiState.currentLibraryMedia = 'all';
+                    if (key === 'assigned') uiState.currentLibraryAssigned = 'all';
+                    if (key === 'rating') uiState.currentLibraryRating = 'all';
+                    initLibrary(miniPitchObserver);
+                };
+            });
+        } else {
+            activeTagsContainer.innerHTML = '';
+            activeTagsContainer.classList.add('hidden');
+        }
+    }
+
+    const btnToggle = document.getElementById('btn-toggle-filter-library');
+    const badgeEl = document.getElementById('badge-filter-library');
+    if (btnToggle) {
+        btnToggle.classList.toggle('active-filter', activeFilterCount > 0);
+        btnToggle.onclick = () => {
+            const accordion = document.getElementById('filter-accordion-library');
+            if (accordion) accordion.classList.toggle('hidden');
+        };
+    }
+    if (badgeEl) {
+        badgeEl.textContent = activeFilterCount;
+        badgeEl.classList.toggle('hidden', activeFilterCount === 0);
+    }
+
+    const btnReset = document.getElementById('btn-reset-filter-library');
+    if (btnReset) {
+        btnReset.onclick = () => {
+            uiState.currentLibraryCategory = 'all';
+            uiState.currentLibraryMedia = 'all';
+            uiState.currentLibraryAssigned = 'all';
+            uiState.currentLibraryRating = 'all';
+            initLibrary(miniPitchObserver);
+        };
+    }
+
+    const menuAssignCountMap = {};
+    (state.practices || []).forEach(p => {
+        (p.menus || []).forEach(pm => {
+            if (pm.libraryId) {
+                menuAssignCountMap[pm.libraryId] = (menuAssignCountMap[pm.libraryId] || 0) + 1;
+            }
+            if (pm.focus) {
+                menuAssignCountMap[pm.focus] = (menuAssignCountMap[pm.focus] || 0) + 1;
+            }
+        });
+    });
+
+    const isAssigned = (m) => (menuAssignCountMap[m.id] || 0) > 0 || (menuAssignCountMap[m.focus] || 0) > 0;
+    const getAssignCount = (m) => (menuAssignCountMap[m.id] || 0) + (m.focus && m.focus !== String(m.id) ? (menuAssignCountMap[m.focus] || 0) : 0);
+
+    const filteredMenus = state.menuLibrary.filter(m => {
+        const matchCategory = currentLibraryCategory === 'all' || m.category === currentLibraryCategory;
+
+        let matchMedia = true;
+        if (currentLibraryMedia === 'anim') {
+            matchMedia = !!(m.frames && m.frames.length > 0);
+        } else if (currentLibraryMedia === 'video') {
+            matchMedia = !!m.videoUrl;
+        } else if (currentLibraryMedia === 'any') {
+            matchMedia = !!(m.frames && m.frames.length > 0) || !!m.videoUrl;
+        }
+
+        let matchAssigned = true;
+        if (currentLibraryAssigned === 'frequent') {
+            matchAssigned = getAssignCount(m) >= 5;
+        } else if (currentLibraryAssigned === 'assigned') {
+            matchAssigned = isAssigned(m);
+        } else if (currentLibraryAssigned === 'unassigned') {
+            matchAssigned = !isAssigned(m);
+        }
+
+        let matchRating = true;
+        const rating = m.engagement || 0;
+        if (currentLibraryRating === '5') {
+            matchRating = rating === 5;
+        } else if (currentLibraryRating === '4') {
+            matchRating = rating >= 4;
+        } else if (currentLibraryRating === '3') {
+            matchRating = rating >= 3;
+        } else if (currentLibraryRating === 'rated') {
+            matchRating = rating > 0;
+        }
+
+        let matchKeyword = true;
+        if (currentLibrarySearch) {
+            const targetText = [
+                m.focus,
+                m.organize,
+                m.keyfactor,
+                m.options,
+                m.category,
+                m.reflection
+            ].filter(Boolean).join(' ').toLowerCase();
+            matchKeyword = targetText.includes(currentLibrarySearch);
+        }
+
+        return matchCategory && matchMedia && matchAssigned && matchRating && matchKeyword;
+    });
 
     const elLibrary = document.getElementById('dash-library');
     if (elLibrary) elLibrary.textContent = filteredMenus.length + '個';
@@ -124,14 +290,15 @@ export function initLibrary(miniPitchObserver) {
     });
 
     if (filteredMenus.length === 0) {
+        const isSearchActive = !!currentLibrarySearch || currentLibraryCategory !== 'all' || currentLibraryMedia !== 'all' || currentLibraryAssigned !== 'all' || currentLibraryRating !== 'all';
         libraryList.innerHTML = `
             <div class="card" style="padding:3rem 2rem; text-align:center; border: 1.5px dashed var(--surface-border); display:flex; flex-direction:column; align-items:center; gap:1rem; width:100%; box-sizing:border-box;">
-                <div style="font-size:3rem; color:var(--text-secondary); opacity:0.6;"><i class="fa-solid fa-book"></i></div>
-                <h3 style="font-size:1.15rem; margin:0; color:var(--text-primary); font-weight:600;">メニューライブラリが空です</h3>
-                <p style="font-size:0.85rem; color:var(--text-secondary); max-width:340px; margin:0; line-height:1.4;">
-                    練習のテーマ、オーガナイズ、キーファクターをライブラリ化し、戦術ボードで作図しておくことで、いつでも練習日へコピーして計画を立てられます。
+                <div style="font-size:3rem; color:var(--text-secondary); opacity:0.6;"><i class="fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-book'}"></i></div>
+                <h3 style="font-size:1.15rem; margin:0; color:var(--text-primary); font-weight:600;">${isSearchActive ? '該当する練習メニューが見つかりません' : 'メニューライブラリが空です'}</h3>
+                <p style="font-size:0.85rem; color:var(--text-secondary); max-width:360px; margin:0; line-height:1.4;">
+                    ${isSearchActive ? '検索キーワードまたは絞り込み条件（カテゴリ・メディア・アサイン・評価）を変更してお試しください。' : '練習のテーマ、オーガナイズ、キーファクターをライブラリ化し、戦術ボードで作図しておくことで、いつでも練習日へコピーして計画を立てられます。'}
                 </p>
-                <button class="btn btn-primary" id="btn-empty-add-library" style="margin-top:0.5rem; display:${isCoach ? 'inline-block' : 'none'};"><i class="fa-solid fa-plus"></i> 最初のライブラリ作成</button>
+                ${!isSearchActive ? `<button class="btn btn-primary" id="btn-empty-add-library" style="margin-top:0.5rem; display:${isCoach ? 'inline-block' : 'none'};"><i class="fa-solid fa-plus"></i> 最初のライブラリ作成</button>` : ''}
             </div>
         `;
     } else {
