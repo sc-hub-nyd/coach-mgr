@@ -1,6 +1,6 @@
 // library.js
 import { state, uiState } from './state.js';
-import { escapeHtml, showToast } from './utils.js';
+import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
 import { navigate, openModal } from './app.js';
 import { drawPitchToCtx } from './drawing.js';
 
@@ -16,12 +16,12 @@ export function openAssignPracticeModal(menuId) {
     if (state.practices.length > 0) {
         const sortedPractices = [...state.practices].sort((a, b) => new Date(b.date) - new Date(a.date));
         practicesList.innerHTML = sortedPractices.map(p => `
-            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.03); padding:0.6rem; border-radius:8px; border:1px solid var(--surface-border);">
+            <div class="u-ext-178" >
                 <div>
                     <strong><i class="fa-regular fa-calendar"></i> ${p.date}</strong>
-                    <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.15rem;"><i class="fa-solid fa-users"></i> ${p.attendance} | メニュー数: ${p.menus.length}</div>
+                    <div class="u-ext-179" ><i class="fa-solid fa-users"></i> ${p.attendance} | メニュー数: ${p.menus.length}</div>
                 </div>
-                <button class="btn btn-primary btn-execute-assign" data-pid="${p.id}" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i class="fa-solid fa-check"></i> アサイン</button>
+                <button class="u-ext-180 btn btn-primary btn-execute-assign" data-pid="${p.id}" ><i class="fa-solid fa-check"></i> アサイン</button>
             </div>
         `).join('');
 
@@ -62,7 +62,7 @@ export function openAssignPracticeModal(menuId) {
             };
         });
     } else {
-        practicesList.innerHTML = '<p class="text-secondary" style="font-size:0.85rem; text-align:center; padding:1rem;">練習予定・記録がありません。</p>';
+        practicesList.innerHTML = '<p class="u-ext-181 text-secondary" >練習予定・記録がありません。</p>';
     }
 
     const btnAddPractice = document.getElementById('btn-assign-add-practice');
@@ -292,10 +292,10 @@ export function initLibrary(miniPitchObserver) {
     if (filteredMenus.length === 0) {
         const isSearchActive = !!currentLibrarySearch || currentLibraryCategory !== 'all' || currentLibraryMedia !== 'all' || currentLibraryAssigned !== 'all' || currentLibraryRating !== 'all';
         libraryList.innerHTML = `
-            <div class="card" style="padding:3rem 2rem; text-align:center; border: 1.5px dashed var(--surface-border); display:flex; flex-direction:column; align-items:center; gap:1rem; width:100%; box-sizing:border-box;">
-                <div style="font-size:3rem; color:var(--text-secondary); opacity:0.6;"><i class="fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-book'}"></i></div>
-                <h3 style="font-size:1.15rem; margin:0; color:var(--text-primary); font-weight:600;">${isSearchActive ? '該当する練習メニューが見つかりません' : 'メニューライブラリが空です'}</h3>
-                <p style="font-size:0.85rem; color:var(--text-secondary); max-width:360px; margin:0; line-height:1.4;">
+            <div class="u-ext-144 card" >
+                <div class="u-ext-145" ><i class="fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-book'}"></i></div>
+                <h3 class="u-ext-146" >${isSearchActive ? '該当する練習メニューが見つかりません' : 'メニューライブラリが空です'}</h3>
+                <p class="u-ext-169" >
                     ${isSearchActive ? '検索キーワードまたは絞り込み条件（カテゴリ・メディア・アサイン・評価）を変更してお試しください。' : '練習のテーマ、オーガナイズ、キーファクターをライブラリ化し、戦術ボードで作図しておくことで、いつでも練習日へコピーして計画を立てられます。'}
                 </p>
                 ${!isSearchActive ? `<button class="btn btn-primary" id="btn-empty-add-library" style="margin-top:0.5rem; display:${isCoach ? 'inline-block' : 'none'};"><i class="fa-solid fa-plus"></i> 最初のライブラリ作成</button>` : ''}
@@ -306,50 +306,50 @@ export function initLibrary(miniPitchObserver) {
             const menus = grouped[cat];
             const cardsHtml = menus.map(m => {
                 const actionBtns = isCoach ? `
-                    <button class="btn btn-secondary btn-assign-library" data-id="${m.id}" style="padding:0.2rem 0.4rem; font-size:0.8rem;" title="練習日にアサイン"><i class="fa-solid fa-calendar-plus"></i></button>
-                    <button class="btn btn-secondary btn-edit-library" data-id="${m.id}" style="padding:0.2rem 0.4rem; font-size:0.8rem;" title="編集"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn btn-secondary btn-anim-library" data-id="${m.id}" style="padding:0.2rem 0.4rem; font-size:0.8rem;" title="${m.frames && m.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
-                    <button class="btn btn-danger btn-delete-library" data-id="${m.id}" style="padding:0.2rem 0.4rem; font-size:0.8rem;"><i class="fa-solid fa-trash"></i></button>
+                    <button class="u-ext-182 btn btn-secondary btn-assign-library" data-id="${m.id}"  title="練習日にアサイン"><i class="fa-solid fa-calendar-plus"></i></button>
+                    <button class="u-ext-182 btn btn-secondary btn-edit-library" data-id="${m.id}"  title="編集"><i class="fa-solid fa-pen"></i></button>
+                    <button class="u-ext-182 btn btn-secondary btn-anim-library" data-id="${m.id}"  title="${m.frames && m.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
+                    <button class="u-ext-182 btn btn-danger btn-delete-library" data-id="${m.id}" ><i class="fa-solid fa-trash"></i></button>
                 ` : `
-                    <button class="btn btn-secondary btn-anim-library" data-id="${m.id}" style="padding:0.2rem 0.4rem; font-size:0.8rem;" title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
+                    <button class="u-ext-182 btn btn-secondary btn-anim-library" data-id="${m.id}"  title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
                 `;
 
                 return `
-                <div class="card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between; gap:1rem; min-height: auto;">
+                <div class="u-ext-183 card" >
                     <div>
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:0.5rem;">
-                            <span class="badge" style="background:rgba(242, 57, 50, 0.15); color:var(--primary); font-weight:600; padding:0.25rem 0.5rem; border-radius:6px; margin:0; font-size:0.75rem;">${cat}</span>
-                            <div style="display:flex; gap:0.3rem;">
+                        <div class="u-ext-184" >
+                            <span class="u-ext-185 badge" >${cat}</span>
+                            <div class="u-ext-156" >
                                 ${actionBtns}
                             </div>
                         </div>
-                        <div style="font-size:1.15rem; font-weight:bold; color:var(--text-primary); line-height:1.3; margin-bottom:0.8rem;">
+                        <div class="u-ext-186" >
                             ${escapeHtml(m.focus)}
-                            ${m.engagement ? `<span style="color:#f59e0b; font-size:0.85rem; margin-left:0.4rem;">${'★'.repeat(m.engagement)}${'☆'.repeat(5 - m.engagement)}</span>` : ''}
+                            ${m.engagement ? `<span class="u-ext-187" >${'★'.repeat(m.engagement)}${'☆'.repeat(5 - m.engagement)}</span>` : ''}
                         </div>
 
-                        <div class="library-canvas-wrapper" style="width:100%; height:140px; background:#1e293b; border-radius:8px; overflow:hidden; position:relative; margin-bottom:0.8rem; cursor:pointer;" onclick="navigate('animation', { libraryId: ${m.id} })">
-                            <canvas id="library-mini-pitch-${m.id}" width="800" height="500" style="width:100%; height:100%; object-fit:contain; pointer-events:none;"></canvas>
-                            <div class="canvas-hover-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s; color:#fff; font-size:0.9rem; font-weight:bold; pointer-events:none;">
-                            <i class="fa-solid fa-person-running" style="margin-right:0.3rem;"></i> 作図画面を開く
+                        <div class="u-ext-188 library-canvas-wrapper"  onclick="navigate('animation', { libraryId: ${m.id} })">
+                            <canvas class="u-ext-160" id="library-mini-pitch-${m.id}" width="800" height="500" ></canvas>
+                            <div class="u-ext-189 canvas-hover-overlay" >
+                            <i class="u-ext-190 fa-solid fa-person-running" ></i> 作図画面を開く
                         </div>
                         ${m.frames && m.frames.length > 1 ? `
-                            <div style="position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.6); color:#fff; font-size:0.65rem; padding:0.15rem 0.35rem; border-radius:4px; font-weight:bold; pointer-events:none; display:flex; align-items:center; gap:0.2rem;">
-                                <span style="display:inline-block; width:6px; height:6px; background:#ef4444; border-radius:50%; animation: pulse 1.5s infinite;"></span>ANIM
+                            <div class="u-ext-161" >
+                                <span class="u-ext-162" ></span>ANIM
                             </div>
                         ` : ''}
                     </div>
 
-                    <details class="library-card-details" style="background:rgba(0,0,0,0.02); border:1px solid var(--surface-border); border-radius:8px; cursor:pointer;">
-                        <summary style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.8rem; font-size:0.85rem; font-weight:bold; color:var(--text-secondary); list-style:none; outline:none; box-sizing:border-box;">
-                            <i class="fa-solid fa-chevron-down" style="font-size:0.75rem; color:var(--text-secondary); transition:transform 0.2s;"></i> 詳細を表示
+                    <details class="u-ext-191 library-card-details" >
+                        <summary class="u-ext-192" >
+                            <i class="u-ext-154 fa-solid fa-chevron-down" ></i> 詳細を表示
                         </summary>
-                        <div style="padding:0.8rem; border-top:1px solid rgba(0,0,0,0.05); font-size:0.85rem; display:flex; flex-direction:column; gap:0.5rem; color:var(--text-secondary); cursor:default;" onclick="event.stopPropagation();">
-                            ${m.organize ? `<div><strong style="color:var(--text-secondary); font-size:0.8rem;"><i class="fa-solid fa-users"></i> オーガナイズ</strong><div style="white-space:pre-wrap; margin-top:0.1rem; line-height:1.3;">${escapeHtml(m.organize)}</div></div>` : ''}
-                            ${m.keyfactor ? `<div><strong style="color:var(--text-secondary); font-size:0.8rem;"><i class="fa-solid fa-key"></i> キーファクター</strong><div style="white-space:pre-wrap; margin-top:0.1rem; line-height:1.3;">${escapeHtml(m.keyfactor)}</div></div>` : ''}
-                            ${m.videoUrl ? `<div><strong style="color:var(--text-secondary); font-size:0.8rem;"><i class="fa-brands fa-youtube" style="color:#ef4444;"></i> 参考動画</strong><div style="margin-top:0.1rem;"><a href="${escapeHtml(m.videoUrl)}" target="_blank" rel="noopener noreferrer" style="color:#ef4444; text-decoration:underline; font-weight:bold; word-break:break-all;"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
-                            ${m.options ? `<div><strong style="color:var(--text-secondary); font-size:0.8rem;"><i class="fa-solid fa-plus"></i> オプション</strong><div style="white-space:pre-wrap; margin-top:0.1rem; line-height:1.3;">${escapeHtml(m.options)}</div></div>` : ''}
-                            ${m.reflection ? `<div><strong style="color:var(--primary); font-size:0.8rem;"><i class="fa-solid fa-clipboard-user"></i> 指導者の振り返り・メモ</strong><div style="white-space:pre-wrap; margin-top:0.1rem; line-height:1.3; background:rgba(242,57,50,0.04); padding:0.4rem 0.6rem; border-radius:6px; border-left:3px solid var(--primary); color:var(--text-primary);">${escapeHtml(m.reflection)}</div></div>` : ''}
+                        <div class="u-ext-193"  onclick="event.stopPropagation();">
+                            ${m.organize ? `<div><strong class="u-ext-194" ><i class="fa-solid fa-users"></i> オーガナイズ</strong><div class="u-ext-195" >${escapeHtml(m.organize)}</div></div>` : ''}
+                            ${m.keyfactor ? `<div><strong class="u-ext-194" ><i class="fa-solid fa-key"></i> キーファクター</strong><div class="u-ext-195" >${escapeHtml(m.keyfactor)}</div></div>` : ''}
+                            ${m.videoUrl ? `<div><strong class="u-ext-194" ><i class="u-ext-16 fa-brands fa-youtube" ></i> 参考動画</strong><div class="u-ext-196" ><a class="u-ext-165" href="${escapeHtml(m.videoUrl)}" target="_blank" rel="noopener noreferrer" ><i class="u-ext-33 fa-solid fa-arrow-up-right-from-square" ></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
+                            ${m.options ? `<div><strong class="u-ext-194" ><i class="fa-solid fa-plus"></i> オプション</strong><div class="u-ext-195" >${escapeHtml(m.options)}</div></div>` : ''}
+                            ${m.reflection ? `<div><strong class="u-ext-197" ><i class="fa-solid fa-clipboard-user"></i> 指導者の振り返り・メモ</strong><div class="u-ext-198" >${escapeHtml(m.reflection)}</div></div>` : ''}
                         </div>
                     </details>
                 </div>
@@ -357,9 +357,9 @@ export function initLibrary(miniPitchObserver) {
             }).join('');
 
             return `
-            <div class="category-section" style="margin-bottom:2rem;">
-                <h3 style="margin-bottom: 1rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; display:inline-block; font-size: 1.15rem; font-weight:600;">
-                    ${cat} <span class="text-secondary" style="font-size:0.85rem; font-weight:normal; margin-left:0.5rem;">(${menus.length}件)</span>
+            <div class="u-ext-199 category-section" >
+                <h3 class="u-ext-200" >
+                    ${cat} <span class="u-ext-201 text-secondary" >(${menus.length}件)</span>
                 </h3>
                 <div class="library-grid">
                     ${cardsHtml}
@@ -440,8 +440,9 @@ export function initLibrary(miniPitchObserver) {
     });
 
     document.querySelectorAll('.btn-delete-library').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            if (confirm('このライブラリを削除しますか？')) {
+        btn.addEventListener('click', async (e) => {
+            const proceed = await showCustomConfirm('このライブラリを削除しますか？', 'ライブラリの削除', { okText: '削除する', type: 'danger' });
+            if (proceed) {
                 const id = parseInt(e.currentTarget.dataset.id);
                 state.menuLibrary = state.menuLibrary.filter(m => m.id !== id);
                 showToast('削除しました');

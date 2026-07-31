@@ -1,21 +1,23 @@
 /* css/drawing.css */
 
-/* Drawing Workspace Layout overrides */
-body:has(.anim-app-container) .topbar,
-body.drawing-mode .topbar {
+/* -------------------------------------------
+   Override Default App Layout for Drawing Mode
+   ------------------------------------------- */
+body[data-route="animation"] .topbar,
+body[data-route="animation"] .global-header {
     display: none !important;
 }
 
-body:has(.anim-app-container) .view-container,
-body.drawing-mode .view-container {
+body[data-route="animation"] .view-container,
+body[data-route="animation"] #view-container {
     padding: 0 !important;
     overflow: hidden !important;
 }
 
-body:has(.anim-app-container) .sidebar,
-body.drawing-mode .sidebar,
-body:has(.anim-app-container) .sidebar-overlay,
-body.drawing-mode .sidebar-overlay {
+body[data-route="animation"] .sidebar,
+body[data-route="animation"] #sidebar,
+body[data-route="animation"] .sidebar-overlay {
+    /* Completely disable sidebar in drawing mode */
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
@@ -23,8 +25,8 @@ body.drawing-mode .sidebar-overlay {
     transform: translateX(-100%) !important;
 }
 
-body:has(.anim-app-container) .main-content,
-body.drawing-mode .main-content {
+body[data-route="animation"] .main-content {
+    /* Main content should take full width without sidebar padding */
     margin-left: 0 !important;
     padding-bottom: 0 !important;
     width: 100% !important;
@@ -32,8 +34,8 @@ body.drawing-mode .main-content {
     padding-left: 0 !important;
 }
 
-body:has(.anim-app-container) .bottom-nav,
-body.drawing-mode .bottom-nav {
+body[data-route="animation"] .bottom-nav {
+    /* Hide bottom nav on mobile in drawing mode */
     display: none !important;
 }
 
@@ -49,7 +51,7 @@ body.drawing-mode .bottom-nav {
     position: relative;
     overflow: hidden;
     /* Design */
-    background: #f1f5f9 !important;
+    background: #f1f5f9;
 }
 
 .animation-container {
@@ -65,7 +67,7 @@ body.drawing-mode .bottom-nav {
     width: 100%;
     position: relative;
     overflow: hidden;
-    background: #f1f5f9 !important;
+    background: #f1f5f9;
 }
 
 /* Header */
@@ -79,7 +81,7 @@ body.drawing-mode .bottom-nav {
     justify-content: space-between;
     padding: 0 1rem;
     box-sizing: border-box;
-    z-index: 2000 !important;
+    z-index: 2000;
     /* Design */
     background: #ffffff;
     border-bottom: 1px solid var(--surface-border);
@@ -142,7 +144,7 @@ body.drawing-mode .bottom-nav {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    z-index: 3000 !important;
+    z-index: 3000;
     /* Design */
     background: #ffffff;
     border: 1px solid var(--surface-border);
@@ -151,7 +153,7 @@ body.drawing-mode .bottom-nav {
 }
 
 .anim-settings-popover.hidden {
-    display: none !important;
+    display: none;
 }
 
 /* Tool Dock */
@@ -208,20 +210,20 @@ body.drawing-mode .bottom-nav {
 }
 
 .dock-btn.active {
-    background: var(--primary) !important;
-    color: #ffffff !important;
-    border-color: var(--primary) !important;
-    box-shadow: none !important;
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+    box-shadow: none;
 }
 
 .dock-btn.active i,
 .dock-btn.active span:not(.dock-text) {
-    display: none !important;
+    display: none;
 }
 
 .dock-btn.active .dock-text {
-    display: block !important;
-    color: #ffffff !important;
+    display: block;
+    color: #ffffff;
 }
 
 .dock-btn[data-tooltip]::after {
@@ -297,38 +299,38 @@ body.drawing-mode .bottom-nav {
 /* Canvas Area */
 .anim-canvas-area {
     /* Layout */
-    flex: 1 !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    overflow: hidden !important;
-    position: relative !important;
-    padding: 1rem !important;
-    box-sizing: border-box !important;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    padding: 1rem;
+    box-sizing: border-box;
     /* Design */
-    background: #f1f5f9 !important;
-    transition: padding-right 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    background: #f1f5f9;
+    transition: padding-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .anim-main-workspace:has(.anim-detail-side-panel:not(.collapsed)) .anim-canvas-area {
-    padding-right: 290px !important;
+    padding-right: 290px;
 }
 
 .canvas-wrapper {
     /* Layout */
-    position: relative !important;
-    width: 100% !important;
-    height: 100% !important;
-    max-width: calc((100vh - 70px) * (8 / 5)) !important;
-    max-height: calc(100vw * (5 / 8)) !important;
-    aspect-ratio: 8 / 5 !important;
-    margin: auto !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: calc((100vh - 70px) * (8 / 5));
+    max-height: calc(100vw * (5 / 8));
+    aspect-ratio: 8 / 5;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
     /* Design */
     background: #4ade80;
@@ -337,81 +339,81 @@ body.drawing-mode .bottom-nav {
 }
 
 .canvas-wrapper canvas {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    box-sizing: border-box !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    box-sizing: border-box;
     border-radius: 8px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-    touch-action: none !important;
+    touch-action: none;
     cursor: crosshair;
 }
 
 #pitch-bg-canvas {
-    background: #f1f5f9 !important;
-    z-index: 10 !important;
-    pointer-events: none !important;
+    background: #f1f5f9;
+    z-index: 10;
+    pointer-events: none;
 }
 
 #pitch-canvas {
-    background: transparent !important;
-    z-index: 20 !important;
-    pointer-events: auto !important;
+    background: transparent;
+    z-index: 20;
+    pointer-events: auto;
 }
 
 /* Side Panel */
 .anim-detail-side-panel {
     /* Layout */
-    width: 280px !important;
-    flex-shrink: 0 !important;
-    height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    position: absolute !important;
-    top: 0 !important;
-    right: 0 !important;
-    z-index: 500 !important;
-    transform: translateX(0) !important;
+    width: 280px;
+    flex-shrink: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 500;
+    transform: translateX(0);
     /* Design */
-    background: #ffffff !important;
-    border-left: 1px solid var(--surface-border) !important;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.08) !important;
+    background: #ffffff;
+    border-left: 1px solid var(--surface-border);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.08);
 }
 
 .anim-detail-side-panel.collapsed {
-    transform: translateX(100%) !important;
+    transform: translateX(100%);
 }
 
 .side-panel-toggle-btn {
-    position: absolute !important;
-    top: 70px !important;
-    left: -32px !important;
-    width: 32px !important;
-    height: 40px !important;
-    background: #ffffff !important;
-    border: 1px solid var(--surface-border) !important;
-    border-right: none !important;
-    border-radius: 8px 0 0 8px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    color: var(--text-secondary) !important;
-    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.05) !important;
-    z-index: 510 !important;
+    position: absolute;
+    top: 70px;
+    left: -32px;
+    width: 32px;
+    height: 40px;
+    background: #ffffff;
+    border: 1px solid var(--surface-border);
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.05);
+    z-index: 510;
 }
 
 .side-panel-toggle-btn i {
-    transform: rotate(0deg) !important;
-    transition: transform 0.3s ease !important;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
 }
 
 .anim-detail-side-panel.collapsed .side-panel-toggle-btn i {
-    transform: rotate(180deg) !important;
+    transform: rotate(180deg);
 }
 
 .side-panel-header {
@@ -448,30 +450,30 @@ body.drawing-mode .bottom-nav {
     font-size: 0.85rem;
     color: var(--text-primary);
     line-height: 1.4;
-    white-space: normal !important;
+    white-space: normal;
     /* pre-wrap から変更して強制的に通常の折り返しにする */
-    word-break: break-all !important;
+    word-break: break-all;
     /* 文字の途中でも強制的に折り返す */
-    overflow-wrap: break-word !important;
+    overflow-wrap: break-word;
     /* 単語の途中で折り返す */
-    max-width: 100% !important;
+    max-width: 100%;
     /* 親の幅を超えないように制限 */
-    box-sizing: border-box !important;
+    box-sizing: border-box;
 }
 
 /* URLなどのリンク要素が含まれている場合の対策 */
 .side-info-val a {
-    display: inline-block !important;
-    max-width: 100% !important;
-    word-break: break-all !important;
-    overflow-wrap: break-word !important;
+    display: inline-block;
+    max-width: 100%;
+    word-break: break-all;
+    overflow-wrap: break-word;
 }
 
 /* Context Popover */
 .anim-context-popover {
     position: absolute;
     z-index: 150;
-    transform: none !important;
+    transform: none;
     margin-top: 0;
     transition: opacity 0.15s ease;
     pointer-events: auto;
@@ -483,7 +485,7 @@ body.drawing-mode .bottom-nav {
 }
 
 .anim-context-popover.hidden {
-    display: none !important;
+    display: none;
 }
 
 .popover-content {
@@ -642,70 +644,70 @@ body.drawing-mode .bottom-nav {
 }
 
 .anim-player-bar #anim-play {
-    background: #10b981 !important;
-    border-color: #10b981 !important;
-    color: #ffffff !important;
+    background: #10b981;
+    border-color: #10b981;
+    color: #ffffff;
 }
 
 .anim-player-bar #anim-play:hover {
-    background: #059669 !important;
+    background: #059669;
 }
 
 .anim-player-bar.collapsed {
-    transform: translate(-50%, 0) !important;
-    bottom: 10px !important;
-    height: 36px !important;
-    width: 44px !important;
-    padding: 0 !important;
-    justify-content: center !important;
-    background: rgba(255, 255, 255, 0.95) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    transform: translate(-50%, 0);
+    bottom: 10px;
+    height: 36px;
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .anim-player-bar.collapsed #anim-timeline-toggle {
-    display: inline-flex !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
-    justify-content: center !important;
-    align-items: center !important;
-    padding: 0 !important;
-    background: transparent !important;
-    border: none !important;
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    background: transparent;
+    border: none;
 }
 
 .anim-player-bar.collapsed .player-bar-group,
 .anim-player-bar.collapsed .player-bar-divider,
 .anim-player-bar.collapsed select {
-    display: none !important;
+    display: none;
 }
 
 /* Sync Status Buttons in Settings */
 .gas-actions-row {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-    align-items: center !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
 }
 
 .gas-actions-group {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-    align-items: center !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
     margin-left: auto;
 }
 
 .sync-status-btn {
-    width: 32px !important;
-    height: 32px !important;
-    padding: 0 !important;
-    border-radius: 50% !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    position: relative !important;
-    font-size: 0.85rem !important;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 0.85rem;
 }
 
 .sync-status-dot {
@@ -742,7 +744,7 @@ body.drawing-mode .bottom-nav {
 }
 
 .sync-popover.hidden {
-    display: none !important;
+    display: none;
 }
 
 .sync-popover-header {
@@ -772,87 +774,87 @@ body.drawing-mode .bottom-nav {
 /* Drawing Responsive */
 @media (max-width: 1024px) {
     .anim-detail-side-panel {
-        transform: translateX(100%) !important;
+        transform: translateX(100%);
     }
 
     .anim-detail-side-panel.open {
-        transform: translateX(0) !important;
+        transform: translateX(0);
     }
 
     .anim-main-workspace:has(.anim-detail-side-panel:not(.collapsed)) .anim-canvas-area {
-        padding-right: 1rem !important;
+        padding-right: 1rem;
     }
 }
 
 @media screen and (max-height: 500px) and (orientation: landscape),
 screen and (max-width: 1024px) and (orientation: landscape) {
     .anim-detail-side-panel {
-        position: absolute !important;
-        top: 0 !important;
-        right: 0 !important;
-        width: 280px !important;
-        max-width: 80% !important;
-        height: 100% !important;
-        z-index: 500 !important;
-        background: #ffffff !important;
-        transform: translateX(100%) !important;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 280px;
+        max-width: 80%;
+        height: 100%;
+        z-index: 500;
+        background: #ffffff;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .anim-detail-side-panel.open {
-        transform: translateX(0) !important;
+        transform: translateX(0);
     }
 
     .side-panel-toggle-btn {
-        position: absolute !important;
-        left: -32px !important;
-        top: 10px !important;
-        width: 32px !important;
-        height: 40px !important;
-        z-index: 600 !important;
-        background: #ffffff !important;
-        border: 1px solid #e5e7eb !important;
-        border-right: none !important;
-        border-radius: 8px 0 0 8px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+        position: absolute;
+        left: -32px;
+        top: 10px;
+        width: 32px;
+        height: 40px;
+        z-index: 600;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-right: none;
+        border-radius: 8px 0 0 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .anim-header {
-        height: var(--header-height) !important;
-        min-height: var(--header-height) !important;
-        padding: 0 0.5rem !important;
+        height: var(--header-height);
+        min-height: var(--header-height);
+        padding: 0 0.5rem;
     }
 
     .anim-header .btn-sm {
-        height: 28px !important;
-        padding: 0 0.4rem !important;
-        font-size: 0.7rem !important;
+        height: 28px;
+        padding: 0 0.4rem;
+        font-size: 0.7rem;
     }
 
     .anim-player-bar {
-        bottom: 6px !important;
-        height: 34px !important;
-        width: 96% !important;
-        max-width: 520px !important;
-        padding: 0 6px !important;
-        gap: 0.2rem !important;
+        bottom: 6px;
+        height: 34px;
+        width: 96%;
+        max-width: 520px;
+        padding: 0 6px;
+        gap: 0.2rem;
     }
 
     .player-bar-divider {
-        display: none !important;
+        display: none;
     }
 
     .anim-player-bar .btn-xs {
-        height: 26px !important;
-        padding: 0 0.35rem !important;
-        font-size: 0.65rem !important;
+        height: 26px;
+        padding: 0 0.35rem;
+        font-size: 0.65rem;
     }
 
     .anim-player-bar select#anim-frame-select {
-        height: 26px !important;
-        font-size: 0.68rem !important;
+        height: 26px;
+        font-size: 0.68rem;
     }
 }
 
@@ -860,8 +862,8 @@ screen and (max-width: 1024px) and (orientation: landscape) {
 @media (max-width: 768px) {
 
     .anim-app-container {
-        height: 100vh !important;
-        height: 100dvh !important;
+        height: 100vh;
+        height: 100dvh;
     }
 
     /* ==========================================
@@ -869,53 +871,53 @@ screen and (max-width: 1024px) and (orientation: landscape) {
           ⇒ 横並び（左ツール / 右ピッチ）を維持
        ========================================== */
     .anim-main-workspace:has(.anim-tool-dock) {
-        flex-direction: row !important;
-        height: 100% !important;
-        overflow: hidden !important;
+        flex-direction: row;
+        height: 100%;
+        overflow: hidden;
     }
 
     .anim-main-workspace:has(.anim-tool-dock) .anim-tool-dock {
-        width: 44px !important;
-        padding: 0.25rem 0 !important;
-        gap: 0.25rem !important;
+        width: 44px;
+        padding: 0.25rem 0;
+        gap: 0.25rem;
     }
 
     .anim-main-workspace:has(.anim-tool-dock) .anim-canvas-area {
-        flex: 1 !important;
-        width: auto !important;
-        height: 100% !important;
-        padding: 0.25rem !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        overflow: hidden !important;
+        flex: 1;
+        width: auto;
+        height: 100%;
+        padding: 0.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
     }
 
     .anim-main-workspace:has(.anim-tool-dock) .canvas-wrapper {
-        width: 100% !important;
-        height: 100% !important;
-        max-width: calc((100vh - 60px) * (8 / 5)) !important;
-        max-height: calc((100vw - 50px) * (5 / 8)) !important;
-        aspect-ratio: 8 / 5 !important;
-        margin: auto !important;
+        width: 100%;
+        height: 100%;
+        max-width: calc((100vh - 60px) * (8 / 5));
+        max-height: calc((100vw - 50px) * (5 / 8));
+        aspect-ratio: 8 / 5;
+        margin: auto;
     }
 
     .anim-main-workspace:has(.anim-tool-dock) .anim-detail-side-panel {
-        position: absolute !important;
-        top: 0 !important;
-        right: 0 !important;
-        width: 280px !important;
-        max-width: 80% !important;
-        height: 100% !important;
-        z-index: 500 !important;
-        background: #ffffff !important;
-        transform: translateX(100%) !important;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.25) !important;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 280px;
+        max-width: 80%;
+        height: 100%;
+        z-index: 500;
+        background: #ffffff;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.25);
     }
 
     .anim-main-workspace:has(.anim-tool-dock) .anim-detail-side-panel.open {
-        transform: translateX(0) !important;
+        transform: translateX(0);
     }
 
 
@@ -924,43 +926,43 @@ screen and (max-width: 1024px) and (orientation: landscape) {
           ⇒ 上下に縦並び（上が動画 / 下がタイムライン）
        ========================================== */
     .anim-main-workspace:not(:has(.anim-tool-dock)) {
-        flex-direction: column !important;
-        height: auto !important;
-        min-height: 100dvh !important;
-        overflow-y: auto !important;
+        flex-direction: column;
+        height: auto;
+        min-height: 100dvh;
+        overflow-y: auto;
     }
 
     .anim-main-workspace:not(:has(.anim-tool-dock)) .anim-canvas-area {
-        width: 100% !important;
-        height: auto !important;
-        min-height: 250px !important;
-        flex: none !important;
-        padding: 0.5rem !important;
+        width: 100%;
+        height: auto;
+        min-height: 250px;
+        flex: none;
+        padding: 0.5rem;
     }
 
     .anim-main-workspace:not(:has(.anim-tool-dock)) .anim-detail-side-panel {
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        height: auto !important;
-        max-height: none !important;
-        transform: none !important;
-        border-left: none !important;
-        border-top: 1px solid var(--surface-border) !important;
-        box-shadow: none !important;
-        flex-shrink: 0 !important;
+        position: relative;
+        top: auto;
+        right: auto;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: none;
+        transform: none;
+        border-left: none;
+        border-top: 1px solid var(--surface-border);
+        box-shadow: none;
+        flex-shrink: 0;
     }
 
     .anim-main-workspace:not(:has(.anim-tool-dock)) .anim-detail-side-panel.collapsed,
     .anim-main-workspace:not(:has(.anim-tool-dock)) .anim-detail-side-panel.open {
-        transform: none !important;
+        transform: none;
     }
 
     .anim-main-workspace:not(:has(.anim-tool-dock)) .side-panel-toggle-btn,
     .anim-main-workspace:not(:has(.anim-tool-dock)) #anim-side-panel-toggle-btn {
-        display: none !important;
+        display: none;
     }
 
 
@@ -968,78 +970,78 @@ screen and (max-width: 1024px) and (orientation: landscape) {
        3. 共通設定（ヘッダー・プレイヤーバー等）
        ========================================== */
     .anim-player-bar {
-        bottom: 8px !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 98% !important;
-        max-width: 100% !important;
-        height: 38px !important;
-        padding: 0 4px !important;
-        gap: 0.15rem !important;
-        justify-content: space-around !important;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 98%;
+        max-width: 100%;
+        height: 38px;
+        padding: 0 4px;
+        gap: 0.15rem;
+        justify-content: space-around;
     }
 
     .player-bar-divider {
-        display: none !important;
+        display: none;
     }
 
     .anim-player-bar .btn-xs {
-        height: 28px !important;
-        padding: 0 0.3rem !important;
-        font-size: 0.65rem !important;
-        gap: 0.1rem !important;
-        min-width: auto !important;
+        height: 28px;
+        padding: 0 0.3rem;
+        font-size: 0.65rem;
+        gap: 0.1rem;
+        min-width: auto;
     }
 
     .anim-player-bar select#anim-frame-select {
-        height: 28px !important;
-        min-width: 70px !important;
-        max-width: 90px !important;
-        font-size: 0.68rem !important;
-        padding: 0 0.1rem !important;
+        height: 28px;
+        min-width: 70px;
+        max-width: 90px;
+        font-size: 0.68rem;
+        padding: 0 0.1rem;
     }
 
     .period-analysis-header {
-        height: var(--header-height) !important;
-        min-height: var(--header-height) !important;
-        display: flex !important;
-        flex-direction: row !important;
-        padding: 0 0.5rem !important;
-        align-items: center !important;
-        justify-content: space-between !important;
+        height: var(--header-height);
+        min-height: var(--header-height);
+        display: flex;
+        flex-direction: row;
+        padding: 0 0.5rem;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .period-analysis-header-left,
     .period-analysis-header-center,
     .period-analysis-header-right {
-        width: auto !important;
-        flex: none !important;
-        display: flex !important;
+        width: auto;
+        flex: none;
+        display: flex;
     }
 
     .period-analysis-header-center h2 {
-        font-size: 0.85rem !important;
-        text-align: center !important;
-        margin: 0 auto !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        max-width: 150px !important;
+        font-size: 0.85rem;
+        text-align: center;
+        margin: 0 auto;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
     }
 
     #tool-undo span,
     #tool-redo span,
     #anim-settings-btn span,
     #tool-save-anim span {
-        display: none !important;
+        display: none;
     }
 
     .anim-editable-title {
-        max-width: 110px !important;
-        font-size: 0.85rem !important;
+        max-width: 110px;
+        font-size: 0.85rem;
     }
 
     .view-container {
-        padding: 0.5rem !important;
+        padding: 0.5rem;
     }
 }

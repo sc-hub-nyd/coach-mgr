@@ -1,6 +1,6 @@
 // players.js
 import { state } from './state.js';
-import { escapeHtml, showToast } from './utils.js';
+import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
 import { saveData, navigate, openModal } from './app.js';
 
 export function drawRadarChart(canvasId, skills, prevSkills = null) {
@@ -136,9 +136,10 @@ export function render1on1List(p) {
         `).join('');
 
         listEl.querySelectorAll('.btn-delete-1on1').forEach(btn => {
-            btn.onclick = (e) => {
+            btn.onclick = async (e) => {
                 e.stopPropagation();
-                if (confirm('この面談記録を削除しますか？')) {
+                const proceed = await showCustomConfirm('この面談記録を削除しますか？', '面談記録の削除', { okText: '削除する', type: 'danger' });
+                if (proceed) {
                     const plId = parseInt(e.currentTarget.dataset.playerId, 10);
                     const noteId = parseInt(e.currentTarget.dataset.noteId, 10);
                     const player = state.players.find(pl => pl.id === plId);
@@ -341,9 +342,10 @@ export function openPlayerDetail(id) {
     });
 
     document.querySelectorAll('.btn-delete-assessment').forEach(btn => {
-        btn.onclick = (e) => {
+        btn.onclick = async (e) => {
             const hId = parseInt(e.currentTarget.dataset.historyId, 10);
-            if (confirm('この過去の評価記録を削除しますか？')) {
+            const proceed = await showCustomConfirm('この過去の評価記録を削除しますか？', '評価記録の削除', { okText: '削除する', type: 'danger' });
+            if (proceed) {
                 p.history = p.history.filter(h => h.id !== hId);
                 saveData();
                 showToast('評価を削除しました');
@@ -448,8 +450,9 @@ export function openPlayerDetail(id) {
 
     const btnDel = document.getElementById('btn-delete-player-detail');
     if (btnDel) {
-        btnDel.onclick = () => {
-            if (confirm('この選手を削除しますか？')) {
+        btnDel.onclick = async () => {
+            const proceed = await showCustomConfirm('この選手を削除しますか？', '選手の削除', { okText: '削除する', type: 'danger' });
+            if (proceed) {
                 state.players = state.players.filter(pl => pl.id !== p.id);
                 saveData();
                 showToast('削除しました');

@@ -104,3 +104,64 @@ export function setupScoreCounters() {
         input.style.flex = '1';
     });
 }
+
+export function showCustomConfirm(message, title = '確認', options = {}) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('modal-global-confirm');
+        if (!modal) {
+            // Fallback to standard confirm if modal elements don't exist
+            resolve(window.confirm(message));
+            return;
+        }
+
+        const titleEl = document.getElementById('global-confirm-title');
+        const msgEl = document.getElementById('global-confirm-message');
+        const iconEl = document.getElementById('global-confirm-icon');
+        const btnCancel = document.getElementById('global-confirm-btn-cancel');
+        const btnOk = document.getElementById('global-confirm-btn-ok');
+
+        if (titleEl) titleEl.textContent = title;
+        if (msgEl) msgEl.textContent = message;
+
+        // Custom icon configurations if specified in options (e.g. alert or trash icon)
+        if (iconEl) {
+            let iconHtml = '<i class="fa-solid fa-triangle-exclamation"></i>';
+            if (options.type === 'danger') {
+                iconHtml = '<i class="fa-solid fa-trash-can"></i>';
+                iconEl.style.background = 'rgba(239, 68, 68, 0.08)';
+                iconEl.style.color = '#ef4444';
+            } else {
+                iconEl.style.background = 'rgba(242, 57, 50, 0.08)';
+                iconEl.style.color = 'var(--primary)';
+            }
+            iconEl.innerHTML = iconHtml;
+        }
+
+        if (btnOk && options.okText) btnOk.textContent = options.okText;
+        else if (btnOk) btnOk.textContent = '実行する';
+
+        if (btnCancel && options.cancelText) btnCancel.textContent = options.cancelText;
+        else if (btnCancel) btnCancel.textContent = 'キャンセル';
+
+        const handleOk = () => {
+            cleanup();
+            resolve(true);
+        };
+
+        const handleCancel = () => {
+            cleanup();
+            resolve(false);
+        };
+
+        const cleanup = () => {
+            modal.classList.add('hidden');
+            btnOk.removeEventListener('click', handleOk);
+            btnCancel.removeEventListener('click', handleCancel);
+        };
+
+        btnOk.addEventListener('click', handleOk);
+        btnCancel.addEventListener('click', handleCancel);
+
+        modal.classList.remove('hidden');
+    });
+}

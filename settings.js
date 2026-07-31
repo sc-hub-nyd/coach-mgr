@@ -1,6 +1,6 @@
 // settings.js
 import { state } from './state.js';
-import { escapeHtml, showToast } from './utils.js';
+import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
 import { saveData, syncPushGasCloud, syncPullGasCloud, updateRoleUI, openModal, loadData } from './app.js';
 
 export function _showExportFallbackModal(jsonStr) {
@@ -85,9 +85,10 @@ export function initData() {
     if (btnExportSettings) btnExportSettings.onclick = handleExport;
     if (btnExportView) btnExportView.onclick = handleExport;
 
-    const handleImportFile = (file, inputEl) => {
+    const handleImportFile = async (file, inputEl) => {
         if (!file) return;
-        if (!confirm('現在のデータがすべて上書きされます。インポートを実行してよろしいですか？')) {
+        const proceed = await showCustomConfirm('現在のデータがすべて上書きされます。インポートを実行してよろしいですか？', 'データのインポート', { okText: 'インポートする' });
+        if (!proceed) {
             if (inputEl) inputEl.value = '';
             return;
         }
@@ -115,21 +116,23 @@ export function initData() {
 
     const inputImportSettings = document.getElementById('input-import-data');
     if (inputImportSettings) {
-        inputImportSettings.onchange = (e) => handleImportFile(e.target.files[0], inputImportSettings);
+        inputImportSettings.onchange = async (e) => await handleImportFile(e.target.files[0], inputImportSettings);
     }
 
     const inputImportView = document.getElementById('input-data-view-import');
     if (inputImportView) {
-        inputImportView.onchange = (e) => handleImportFile(e.target.files[0], inputImportView);
+        inputImportView.onchange = async (e) => await handleImportFile(e.target.files[0], inputImportView);
     }
 
     const btnAllClear = document.getElementById('btn-data-all-clear');
     if (btnAllClear) {
         btnAllClear.onclick = async () => {
-            if (!confirm('【警告】入力済みのデータをすべて消去して初期化します。\nこの操作は取り消せません。よろしいですか？')) {
+            const proceed1 = await showCustomConfirm('【警告】入力済みのデータをすべて消去して初期化します。\nこの操作は取り消せません。よろしいですか？', 'データの初期化（警告）', { okText: '消去する', type: 'danger' });
+            if (!proceed1) {
                 return;
             }
-            if (!confirm('本当にすべてのデータを消去しますか？（最終確認）')) {
+            const proceed2 = await showCustomConfirm('本当にすべてのデータを消去しますか？（最終確認）', 'データの初期化（最終確認）', { okText: '本当に消去する', type: 'danger' });
+            if (!proceed2) {
                 return;
             }
             state.matches = [];
@@ -212,12 +215,13 @@ export function initSettings() {
 
     const btnPull = document.getElementById('btn-manual-sync-pull');
     if (btnPull) {
-        btnPull.onclick = () => {
+        btnPull.onclick = async () => {
             const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
             const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
             if (urlVal) state.teamInfo.gasApiUrl = urlVal;
             state.teamInfo.gasSheetName = sheetVal;
-            if (confirm('クラウドからデータを復元しますか？ローカルのデータは上書きされます。')) {
+            const proceed = await showCustomConfirm('クラウドからデータを復元しますか？ローカルのデータは上書きされます。', 'クラウドからの復元', { okText: '復元する' });
+            if (proceed) {
                 syncPullGasCloud(false);
             }
         };
@@ -263,13 +267,13 @@ export function initSettings() {
         list.innerHTML = stateArray.map((item, index) => {
             const isCustomForm = listId === 'custom-formation-list';
             const editBtnClass = isCustomForm ? 'btn-edit-custom-formation' : 'btn-edit-master-item';
-            const editBtn = `<button type="button" class="btn btn-secondary ${editBtnClass}" data-list="${listId}" data-index="${index}" style="padding:0.2rem 0.5rem; margin-right:0.3rem;"><i class="fa-solid fa-pen"></i> 編集</button>`;
+            const editBtn = `<button type="button" class="u-ext-171 btn btn-secondary ${editBtnClass}" data-list="${listId}" data-index="${index}" ><i class="fa-solid fa-pen"></i> 編集</button>`;
             return `
-                <li style="display:flex; justify-content:space-between; align-items:center;">
+                <li class="u-ext-172" >
                     <span>${itemLabelFunc(item)}</span>
                     <div>
                         ${editBtn}
-                        <button type="button" class="btn btn-danger btn-delete-item" data-list="${listId}" data-index="${index}" style="padding:0.2rem 0.5rem;"><i class="fa-solid fa-trash"></i></button>
+                        <button type="button" class="u-ext-173 btn btn-danger btn-delete-item" data-list="${listId}" data-index="${index}" ><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </li>
             `;
@@ -339,7 +343,7 @@ export function initSettings() {
     });
 
     document.querySelectorAll('.btn-delete-item').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
             const listId = e.currentTarget.dataset.list;
             const idx = parseInt(e.currentTarget.dataset.index, 10);
 
@@ -377,11 +381,13 @@ export function initSettings() {
             }
 
             if (inUse) {
-                if (!confirm(`「${label}」は現在使用中、または関連するデータが存在します。本当に削除しますか？\n(削除すると過去のデータの一部が表示されなくなる可能性があります)`)) {
+                const proceed = await showCustomConfirm(`「${label}」は現在使用中、または関連するデータが存在します。本当に削除しますか？\n(削除すると過去のデータの一部が表示されなくなる可能性があります)`, '項目の削除', { okText: '削除する', type: 'danger' });
+                if (!proceed) {
                     return;
                 }
             } else {
-                if (!confirm(`「${label}」を削除しますか？`)) {
+                const proceed = await showCustomConfirm(`「${label}」を削除しますか？`, '項目の削除', { okText: '削除する', type: 'danger' });
+                if (!proceed) {
                     return;
                 }
             }
@@ -414,7 +420,7 @@ export function initSettings() {
         if (pitchCanvas) pitchCanvas.querySelectorAll('.pitch-node').forEach(n => n.remove());
 
         const editorList = document.getElementById('custom-formation-nodes-editor-list');
-        if (editorList) editorList.innerHTML = `<p class="text-secondary" style="font-size:0.85rem; font-style:italic;">ピッチをクリックしてポジションを追加してください。</p>`;
+        if (editorList) editorList.innerHTML = `<p class="u-ext-174 text-secondary" >ピッチをクリックしてポジションを追加してください。</p>`;
 
         const selectCount = document.getElementById('custom-formation-player-count');
         const maxCountLabel = document.getElementById('custom-formation-max-count');
@@ -430,7 +436,7 @@ export function initSettings() {
             nodeEl.style.cursor = 'grab';
             nodeEl.innerHTML = `
                 <span class="pitch-node-role" id="custom-pitch-node-label-span-${node.index}">${node.label}</span>
-                <span class="pitch-node-number" id="custom-pitch-node-role-span-${node.index}" style="font-size:0.6rem;">${node.role}</span>
+                <span class="u-ext-175 pitch-node-number" id="custom-pitch-node-role-span-${node.index}" >${node.role}</span>
             `;
             if (pitchCanvas) pitchCanvas.appendChild(nodeEl);
 
@@ -449,11 +455,11 @@ export function initSettings() {
             row.id = `custom-node-editor-row-${node.index}`;
             row.style = 'display:flex; gap:0.4rem; align-items:center; margin-bottom:0.4rem;';
             row.innerHTML = `
-                <strong style="font-size:0.8rem; min-width:20px;">#${node.index + 1}</strong>
-                <select class="form-control custom-node-role-select" title="カテゴリ1" style="font-size:0.8rem; padding:0.2rem 0.4rem; height:auto; flex:1;">
+                <strong class="u-ext-176" >#${node.index + 1}</strong>
+                <select class="u-ext-177 form-control custom-node-role-select" title="カテゴリ1" >
                     ${cat1Options}
                 </select>
-                <select class="form-control custom-node-cat2-select" title="カテゴリ2" style="font-size:0.8rem; padding:0.2rem 0.4rem; height:auto; flex:1;">
+                <select class="u-ext-177 form-control custom-node-cat2-select" title="カテゴリ2" >
                     ${cat2Options}
                 </select>
             `;
@@ -548,7 +554,7 @@ export function initSettings() {
         const clearBoard = () => {
             placedNodes = [];
             if (pitchCanvas) pitchCanvas.querySelectorAll('.pitch-node').forEach(n => n.remove());
-            if (editorList) editorList.innerHTML = `<p class="text-secondary" style="font-size:0.85rem; font-style:italic;">ピッチをクリックしてポジションを追加してください。</p>`;
+            if (editorList) editorList.innerHTML = `<p class="u-ext-174 text-secondary" >ピッチをクリックしてポジションを追加してください。</p>`;
         };
 
         if (selectCount) {

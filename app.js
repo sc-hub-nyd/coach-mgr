@@ -85,8 +85,8 @@ export async function loadData() {
                 state.matches = parsed.matches || [];
                 state.practices = parsed.practices || [];
                 // 日付の新しい順 (降順) に並び替え
-                state.matches.sort((a, b) => b.date.localeCompare(a.date));
-                state.practices.sort((a, b) => b.date.localeCompare(a.date));
+                state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
+                state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
                 state.players = parsed.players || [];
                 state.menuLibrary = parsed.menuLibrary || [];
                 state.matchTypes = parsed.matchTypes || ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'];
@@ -107,8 +107,8 @@ export async function loadData() {
 
 export async function saveData() {
     // 保存前に日付の新しい順（降順）にソートを確定する
-    state.matches.sort((a, b) => b.date.localeCompare(a.date));
-    state.practices.sort((a, b) => b.date.localeCompare(a.date));
+    state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
+    state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
 
     const jsonStr = JSON.stringify({
         matches: state.matches,
@@ -319,9 +319,9 @@ export function openLeaderRankingModal() {
 
     const renderRankingItem = (item, idx, unit = '') => {
         return `
-            <div style="display:flex; align-items:baseline; margin-bottom:0.3rem; cursor:pointer;" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
-                <span style="width:1.6rem; font-weight:bold; color:var(--text-secondary); text-align:right; margin-right:0.4rem; flex-shrink:0;">${idx + 1}.</span>
-                <span style="flex:1;"><strong>${item.p.number} ${item.p.name}</strong> (${item.count}${unit})</span>
+            <div class="u-ext-1"  onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
+                <span class="u-ext-2" >${idx + 1}.</span>
+                <span class="u-ext-3" ><strong>${item.p.number} ${item.p.name}</strong> (${item.count}${unit})</span>
             </div>
         `;
     };
@@ -355,27 +355,27 @@ export function openLeaderRankingModal() {
     if (elRankingScorers) {
         elRankingScorers.innerHTML = allScorers.length > 0
             ? allScorers.map((item, idx) => renderRankingItem(item, idx, '')).join('')
-            : '<div style="color:var(--text-secondary); font-size:0.85rem; padding:0.5rem 0;">得点記録がありません。</div>';
+            : '<div class="u-ext-4" >得点記録がありません。</div>';
     }
 
     const elRankingAssists = document.getElementById('ranking-assists-list');
     if (elRankingAssists) {
         elRankingAssists.innerHTML = allAssists.length > 0
             ? allAssists.map((item, idx) => renderRankingItem(item, idx, '')).join('')
-            : '<div style="color:var(--text-secondary); font-size:0.85rem; padding:0.5rem 0;">アシスト記録がありません。</div>';
+            : '<div class="u-ext-4" >アシスト記録がありません。</div>';
     }
 
     const elRankingAttendance = document.getElementById('ranking-attendance-list');
     if (elRankingAttendance) {
         elRankingAttendance.innerHTML = totalRecentEvents > 0 && allAttendance.some(item => item.count > 0)
             ? allAttendance.map((item, idx) => `
-                <div style="display:flex; align-items:baseline; margin-bottom:0.3rem; cursor:pointer;" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
-                    <span style="width:1.6rem; font-weight:bold; color:var(--text-secondary); text-align:right; margin-right:0.4rem; flex-shrink:0;">${idx + 1}.</span>
-                    <span style="flex:1;"><strong>${item.p.number} ${item.p.name}</strong></span>
-                    <span style="font-weight:700; color:var(--primary);">${item.pct}%</span>
+                <div class="u-ext-1"  onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
+                    <span class="u-ext-2" >${idx + 1}.</span>
+                    <span class="u-ext-3" ><strong>${item.p.number} ${item.p.name}</strong></span>
+                    <span class="u-ext-5" >${item.pct}%</span>
                 </div>
             `).join('')
-            : '<div style="color:var(--text-secondary); font-size:0.85rem; padding:0.5rem 0;">過去1ヶ月の出席データがありません。</div>';
+            : '<div class="u-ext-4" >過去1ヶ月の出席データがありません。</div>';
     }
 
     // 保護者モードかコーチモードかに応じてモーダルの表示カラム数を制御
@@ -437,17 +437,17 @@ export function openSeasonRecordModal() {
                 const total = stat.win + stat.loss + stat.draw;
                 const winRate = total > 0 ? Math.round((stat.win / total) * 100) : 0;
                 return `
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.02); padding:0.4rem 0.6rem; border-radius:6px; font-size:0.8rem; border:1px solid var(--surface-border);">
-                        <span style="font-weight:700; color:var(--text-primary);">${escapeHtml(type)}</span>
-                        <div style="text-align:right;">
-                            <span style="font-weight:600; color:var(--primary);">${stat.win}勝</span>
-                            <span style="color:var(--text-secondary); margin-left:0.2rem;">${stat.loss}敗 ${stat.draw}分</span>
-                            <span style="font-size:0.75rem; color:var(--text-secondary); margin-left:0.4rem;">(得失: ${stat.goals}-${stat.concede} / 勝率: ${winRate}%)</span>
+                    <div class="u-ext-6" >
+                        <span class="u-ext-7" >${escapeHtml(type)}</span>
+                        <div class="u-ext-8" >
+                            <span class="u-ext-9" >${stat.win}勝</span>
+                            <span class="u-ext-10" >${stat.loss}敗 ${stat.draw}分</span>
+                            <span class="u-ext-11" >(得失: ${stat.goals}-${stat.concede} / 勝率: ${winRate}%)</span>
                         </div>
                     </div>
                 `;
             }).join('')
-            : '<div style="color:var(--text-secondary); font-size:0.8rem; font-style:italic;">今年度の試合データがありません。</div>';
+            : '<div class="u-ext-12" >今年度の試合データがありません。</div>';
     }
 
     // ── 2. 過去年度の成績推移 ──
@@ -480,16 +480,16 @@ export function openSeasonRecordModal() {
                 const isCurrent = parseInt(year, 10) === currentNendo;
                 return `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:${isCurrent ? 'rgba(242,57,50,0.04)' : 'rgba(0,0,0,0.01)'}; padding:0.4rem 0.6rem; border-radius:6px; font-size:0.8rem; border:1px solid ${isCurrent ? 'var(--primary)' : 'var(--surface-border)'};">
-                        <span style="font-weight:700; color:${isCurrent ? 'var(--primary)' : 'var(--text-primary)'};">${year}年度 ${isCurrent ? '<span style="font-size:0.7rem; font-weight:normal;">(今年度)</span>' : ''}</span>
-                        <div style="text-align:right;">
+                        <span style="font-weight:700; color:${isCurrent ? 'var(--primary)' : 'var(--text-primary)'};">${year}年度 ${isCurrent ? '<span class="u-ext-13" >(今年度)</span>' : ''}</span>
+                        <div class="u-ext-8" >
                             <span style="font-weight:600; color:${isCurrent ? 'var(--primary)' : 'var(--text-primary)'};">${stat.win}勝</span>
-                            <span style="color:var(--text-secondary); margin-left:0.2rem;">${stat.loss}敗 ${stat.draw}分</span>
-                            <span style="font-size:0.75rem; color:var(--text-secondary); margin-left:0.4rem;">(得失: ${stat.goals}-${stat.concede} / 勝率: ${winRate}%)</span>
+                            <span class="u-ext-10" >${stat.loss}敗 ${stat.draw}分</span>
+                            <span class="u-ext-11" >(得失: ${stat.goals}-${stat.concede} / 勝率: ${winRate}%)</span>
                         </div>
                     </div>
                 `;
             }).join('')
-            : '<div style="color:var(--text-secondary); font-size:0.8rem; font-style:italic;">試合履歴データがありません。</div>';
+            : '<div class="u-ext-12" >試合履歴データがありません。</div>';
     }
 
     openModal('modal-season-record-detail');
@@ -672,22 +672,22 @@ function initDashboard() {
                 // 直近のポジティブ評価 (1on1評価やフィードバック)
                 let latestFeedback = '登録された直近の評価コメントはありません';
                 if (player.oneOnOnes && player.oneOnOnes.length > 0) {
-                    const sortedOneOnOnes = [...player.oneOnOnes].sort((a,b) => b.date.localeCompare(a.date));
+                    const sortedOneOnOnes = [...player.oneOnOnes].sort((a,b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
                     latestFeedback = sortedOneOnOnes[0].note || latestFeedback;
                 }
 
                 myPlayerContent.innerHTML = `
                     <div class="dash-myplayer-metric-box">
-                        <span style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-solid fa-users"></i> 過去1ヶ月の出席率</span>
-                        <div class="dash-myplayer-metric-val">${attendancePct}% <span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">(${presentCount}/${totalEvents}回)</span></div>
+                        <span class="u-ext-14" ><i class="fa-solid fa-users"></i> 過去1ヶ月の出席率</span>
+                        <div class="dash-myplayer-metric-val">${attendancePct}% <span class="u-ext-15" >(${presentCount}/${totalEvents}回)</span></div>
                     </div>
                     <div class="dash-myplayer-metric-box">
-                        <span style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-solid fa-fire" style="color:#ef4444;"></i> 通算スタッツ</span>
-                        <div class="dash-myplayer-metric-val">${goals} <span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">得点</span> / ${assists} <span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">アシスト</span></div>
+                        <span class="u-ext-14" ><i class="u-ext-16 fa-solid fa-fire" ></i> 通算スタッツ</span>
+                        <div class="dash-myplayer-metric-val">${goals} <span class="u-ext-15" >得点</span> / ${assists} <span class="u-ext-15" >アシスト</span></div>
                     </div>
                     <div class="dash-myplayer-comment-box">
                         <strong><i class="fa-solid fa-comment-dots"></i> 指導者からの最新フィードバック・成長記録:</strong>
-                        <div style="margin-top:0.3rem; color:var(--text-primary); font-style:italic;">"${latestFeedback}"</div>
+                        <div class="u-ext-17" >"${latestFeedback}"</div>
                     </div>
                 `;
             };
@@ -715,10 +715,10 @@ function initDashboard() {
             let pointsHtml = '';
             if (focus.points && focus.points.filter(Boolean).length > 0) {
                 pointsHtml = `
-                    <div style="display:flex; flex-direction:column; gap:0.25rem; margin-top:0.2rem;">
+                    <div class="u-ext-18" >
                         ${focus.points.filter(Boolean).map((pt, idx) => `
-                            <div style="font-size:0.78rem; color:var(--text-primary); display:flex; align-items:flex-start; gap:0.35rem;">
-                                <span style="background:var(--primary); color:#fff; font-size:0.65rem; font-weight:700; width:16px; height:16px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">${idx + 1}</span>
+                            <div class="u-ext-19" >
+                                <span class="u-ext-20" >${idx + 1}</span>
                                 <span>${escapeHtml(pt)}</span>
                             </div>
                         `).join('')}
@@ -727,18 +727,18 @@ function initDashboard() {
             }
 
             teamFocusContent.innerHTML = `
-                <div style="background:rgba(168,85,247,0.08); border-left:3px solid #a855f7; border-radius:6px; padding:0.6rem 0.8rem;">
-                    <div style="font-size:0.7rem; font-weight:700; color:#a855f7; margin-bottom:0.15rem;">🔥 強化テーマ</div>
-                    <div style="font-size:0.88rem; font-weight:700; color:var(--text-primary); line-height:1.35;">${escapeHtml(focus.mainTheme)}</div>
+                <div class="u-ext-21" >
+                    <div class="u-ext-22" >🔥 強化テーマ</div>
+                    <div class="u-ext-23" >${escapeHtml(focus.mainTheme)}</div>
                 </div>
                 ${pointsHtml}
-                ${focus.note ? `<div style="font-size:0.72rem; color:var(--text-secondary); margin-top:0.2rem; text-align:right;"><i class="fa-solid fa-clock"></i> ${escapeHtml(focus.note)}</div>` : ''}
+                ${focus.note ? `<div class="u-ext-24" ><i class="fa-solid fa-clock"></i> ${escapeHtml(focus.note)}</div>` : ''}
             `;
         } else {
             teamFocusContent.innerHTML = `
-                <div class="dash-no-data" style="padding:1rem 0;">
+                <div class="u-ext-25 dash-no-data" >
                     チーム強化テーマが未設定です<br>
-                    <button class="btn btn-secondary btn-sm coach-only" id="dash-btn-set-focus-empty" onclick="openTeamFocusModal()" style="margin-top:0.5rem; font-size:0.75rem;">
+                    <button class="u-ext-26 btn btn-secondary btn-sm coach-only" id="dash-btn-set-focus-empty" onclick="openTeamFocusModal()" >
                         <i class="fa-solid fa-plus"></i> テーマを設定する
                     </button>
                 </div>
@@ -757,8 +757,8 @@ function initDashboard() {
     if (playtimeContent) {
         // 直近5試合を抽出
         const recent5Matches = state.matches
-            .filter(m => m.date <= todayStr && m.result)
-            .sort((a,b) => b.date.localeCompare(a.date))
+            .filter(m => m && m.date && m.date <= todayStr && m.result)
+            .sort((a,b) => ((b && b.date) || '').localeCompare((a && a.date) || ''))
             .slice(0, 5);
 
         if (recent5Matches.length > 0) {
@@ -795,18 +795,18 @@ function initDashboard() {
             if (alertPlayers.length > 0 && totalPeriods > 0) {
                 playtimeContent.innerHTML = alertPlayers.map(item => `
                     <div class="dash-playtime-row">
-                        <div style="font-weight:600; width:5rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.p.number} ${escapeHtml(item.p.name)}</div>
+                        <div class="u-ext-27" >${item.p.number} ${escapeHtml(item.p.name)}</div>
                         <div class="dash-playtime-bar-outer">
                             <div class="dash-playtime-bar-inner" style="width: ${item.pct}%;"></div>
                         </div>
-                        <div style="font-weight:700; color:${item.pct < 30 ? 'var(--primary)' : 'var(--text-secondary)'};">${item.pct}% <span style="font-size:0.68rem; font-weight:normal;">(${item.count}/${totalPeriods}P)</span></div>
+                        <div style="font-weight:700; color:${item.pct < 30 ? 'var(--primary)' : 'var(--text-secondary)'};">${item.pct}% <span class="u-ext-28" >(${item.count}/${totalPeriods}P)</span></div>
                     </div>
                 `).join('');
             } else {
-                playtimeContent.innerHTML = '<div class="dash-no-data" style="padding:0.5rem 0;">フォーメーション登録データがありません</div>';
+                playtimeContent.innerHTML = '<div class="u-ext-29 dash-no-data" >フォーメーション登録データがありません</div>';
             }
         } else {
-            playtimeContent.innerHTML = '<div class="dash-no-data" style="padding:0.5rem 0;">出場時間の集計対象となる最近の試合データがありません</div>';
+            playtimeContent.innerHTML = '<div class="u-ext-29 dash-no-data" >出場時間の集計対象となる最近の試合データがありません</div>';
         }
     }
 
@@ -829,7 +829,7 @@ function initDashboard() {
             if (alertAction) {
                 alertAction.onclick = () => {
                     // 最初の未登録試合の詳細を開く
-                    const firstPending = pendingMatches.sort((a, b) => b.date.localeCompare(a.date))[0];
+                    const firstPending = pendingMatches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''))[0];
                     if (firstPending) openMatchDetail(firstPending.id);
                     else navigate('matches');
                 };
@@ -853,8 +853,8 @@ function initDashboard() {
     }));
 
     const nextEvent = allFutureEvents
-        .filter(e => e.date >= todayStr)
-        .sort((a, b) => a.date.localeCompare(b.date))[0];
+        .filter(e => e && e.date && e.date >= todayStr)
+        .sort((a, b) => ((a && a.date) || '').localeCompare((b && b.date) || ''))[0];
 
     const nextEventContent = document.getElementById('dash-next-event-content');
     const nextEventCard    = document.getElementById('dash-next-event-card');
@@ -1033,8 +1033,8 @@ function initDashboard() {
             });
         });
 
-        const futureEvents  = allEvents.filter(e => e.date >= todayStr).sort((a,b) => a.date.localeCompare(b.date)).slice(0, 5);
-        const pastEvents    = allEvents.filter(e => e.date  < todayStr).sort((a,b) => b.date.localeCompare(a.date)).slice(0, 3);
+        const futureEvents  = allEvents.filter(e => e && e.date && e.date >= todayStr).sort((a,b) => ((a && a.date) || '').localeCompare((b && b.date) || '')).slice(0, 5);
+        const pastEvents    = allEvents.filter(e => e && e.date && e.date  < todayStr).sort((a,b) => ((b && b.date) || '').localeCompare((a && a.date) || '')).slice(0, 3);
         const displayEvents = [...futureEvents, ...pastEvents];
 
         if (displayEvents.length > 0) {
@@ -1046,24 +1046,24 @@ function initDashboard() {
 
                 const rightHtml = e.type === 'match'
                     ? `<span class="dash-schedule-result-badge ${e.resultCls}">${escapeHtml(e.resultLabel)}</span>`
-                    : (e.attendance ? `<span style="font-size:0.7rem; color:var(--text-secondary);"><i class="fa-solid fa-users"></i> ${e.attendance}</span>` : '');
+                    : (e.attendance ? `<span class="u-ext-30" ><i class="fa-solid fa-users"></i> ${e.attendance}</span>` : '');
 
                 let actionsHtml = '';
                 if (isCoach) {
                     if (e.type === 'practice') {
                         actionsHtml = `
-                            <button class="btn btn-secondary btn-sm dash-sch-edit-prac" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px;" title="編集"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn btn-secondary btn-sm" onclick="navigate('practices', { date: '${e.date}' })" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px;"><i class="fa-solid fa-chevron-right"></i></button>
+                            <button class="u-ext-31 btn btn-secondary btn-sm dash-sch-edit-prac" data-id="${e.id}"  title="編集"><i class="fa-solid fa-pen"></i></button>
+                            <button class="u-ext-31 btn btn-secondary btn-sm" onclick="navigate('practices', { date: '${e.date}' })" ><i class="fa-solid fa-chevron-right"></i></button>
                         `;
                     } else {
                         actionsHtml = `
-                            <button class="btn btn-secondary btn-sm dash-sch-edit-match" data-id="${e.id}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px;" title="編集"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn btn-secondary btn-sm" onclick="openMatchDetail(${e.id})" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px;"><i class="fa-solid fa-circle-info"></i></button>
+                            <button class="u-ext-31 btn btn-secondary btn-sm dash-sch-edit-match" data-id="${e.id}"  title="編集"><i class="fa-solid fa-pen"></i></button>
+                            <button class="u-ext-31 btn btn-secondary btn-sm" onclick="openMatchDetail(${e.id})" ><i class="fa-solid fa-circle-info"></i></button>
                         `;
                     }
                 } else {
                     const dest = e.type === 'match' ? `openMatchDetail(${e.id})` : `navigate('practices', { date: '${e.date}' })`;
-                    actionsHtml = `<button class="btn btn-secondary btn-sm" onclick="${dest}" style="padding:0.1rem 0.3rem; font-size:0.62rem; height:20px;"><i class="fa-solid fa-chevron-right"></i></button>`;
+                    actionsHtml = `<button class="u-ext-31 btn btn-secondary btn-sm" onclick="${dest}" ><i class="fa-solid fa-chevron-right"></i></button>`;
                 }
 
                 return `
@@ -1090,7 +1090,7 @@ function initDashboard() {
                 btn.onclick = ev => { ev.stopPropagation(); openMatchModal(parseInt(btn.dataset.id, 10)); };
             });
         } else {
-            scheduleList.innerHTML = '<div class="dash-no-data" style="text-align:center; padding:1rem 0;">練習・試合の予定がありません</div>';
+            scheduleList.innerHTML = '<div class="u-ext-32 dash-no-data" >練習・試合の予定がありません</div>';
         }
     }
 
@@ -1134,8 +1134,8 @@ function initDashboard() {
         const practiceFocusEl = document.getElementById('dash-recent-practice-focus');
         if (practiceFocusEl) {
             const displayPractices = [...state.practices]
-                .filter(p => p.date <= todayStr)
-                .sort((a,b) => b.date.localeCompare(a.date))
+                .filter(p => p && p.date && p.date <= todayStr)
+                .sort((a,b) => ((b && b.date) || '').localeCompare((a && a.date) || ''))
                 .slice(0, 3);
             practiceFocusEl.innerHTML = displayPractices.length > 0
                 ? displayPractices.map(p => {
@@ -1144,10 +1144,10 @@ function initDashboard() {
                         : 'メニュー未記録';
                     return `
                         <div class="dash-rank-item" onclick="event.stopPropagation(); navigate('practices', { date: '${p.date}' })">
-                            <span class="dash-rank-medal" style="font-size:0.75rem;">📅</span>
-                            <div style="flex:1; min-width:0;">
-                                <div style="font-size:0.72rem; color:var(--text-secondary);">${p.date}</div>
-                                <div style="font-size:0.78rem; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${focuses}</div>
+                            <span class="u-ext-33 dash-rank-medal" >📅</span>
+                            <div class="u-ext-34" >
+                                <div class="u-ext-35" >${p.date}</div>
+                                <div class="u-ext-36" >${focuses}</div>
                             </div>
                         </div>
                     `;
@@ -1410,6 +1410,7 @@ export function navigate(route, params = null) {
 
     document.querySelectorAll('.modal-overlay').forEach(el => el.classList.add('hidden'));
     document.body.classList.remove('modal-open');
+    document.body.setAttribute('data-route', route);
 
     const topbarTitle = document.getElementById('topbar-title');
     const topbarBack = document.getElementById('topbar-back');
@@ -1461,7 +1462,13 @@ export function navigate(route, params = null) {
         uiState.currentPracticePage = 1;
         uiState.currentLibraryCategory = 'all';
 
-        if (route === 'dashboard') initDashboard();
+        if (route === 'dashboard') {
+            try {
+                initDashboard();
+            } catch (err) {
+                console.error('initDashboard error:', err);
+            }
+        }
         if (route === 'practices') {
             if (params && params.date) {
                 const parts = params.date.split('-');

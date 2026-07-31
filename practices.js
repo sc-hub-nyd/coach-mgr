@@ -1,6 +1,6 @@
 // practices.js
 import { state, uiState } from './state.js';
-import { escapeHtml, getNendo, showToast } from './utils.js';
+import { escapeHtml, getNendo, showToast, showCustomConfirm } from './utils.js';
 import { saveData, navigate, openModal, clearAllMiniPitchIntervals } from './app.js';
 import { drawPitchToCtx } from './drawing.js';
 
@@ -9,7 +9,7 @@ export function renderPracticeRoster(selectedPlayerIds = []) {
     if (!container) return;
 
     if (!state.players || state.players.length === 0) {
-        container.innerHTML = '<p class="text-secondary" style="font-size:0.85rem; margin:0;">登録されている選手がいません。「選手一覧」から選手を登録してください。</p>';
+        container.innerHTML = '<p class="text-secondary empty-state-text">登録されている選手がいません。「選手一覧」から選手を登録してください。</p>';
         return;
     }
 
@@ -22,9 +22,9 @@ export function renderPracticeRoster(selectedPlayerIds = []) {
     container.innerHTML = sortedPlayers.map(p => {
         const isChecked = (selectedPlayerIds && selectedPlayerIds.includes(p.id)) ? 'checked' : '';
         return `
-            <label style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; cursor:pointer; padding:0.3rem 0; user-select:none;">
-                <input type="checkbox" value="${p.id}" ${isChecked} style="width:18px; height:18px; accent-color:var(--primary); cursor:pointer; margin:0; display:inline-block; opacity:1; visibility:visible;">
-                <span style="color:var(--text-primary); font-weight:500;">${p.number}. ${escapeHtml(p.name)}</span>
+            <label class="roster-checkbox-label">
+                <input type="checkbox" value="${p.id}" ${isChecked} class="roster-checkbox">
+                <span class="roster-player-name">${p.number}. ${escapeHtml(p.name)}</span>
             </label>
         `;
     }).join('');
@@ -297,76 +297,76 @@ export function initPractices(miniPitchObserver) {
             const isCoach = state.currentUserRole === 'coach';
             const attendeesHtml = p.presentPlayerIds && p.presentPlayerIds.length > 0
                 ? state.players.filter(pl => p.presentPlayerIds.includes(pl.id)).map(pl => `
-                    <span style="display:inline-flex; align-items:center; background:#f1f5f9; border:1px solid #e2e8f0; color:#334155; font-size:0.7rem; font-weight:600; padding:0.15rem 0.4rem; border-radius:9999px; gap:0.25rem; white-space:nowrap;">
-                        ${pl.number ? `<span style="background:var(--primary); color:#ffffff; font-size:0.55rem; width:14px; height:14px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0;">${pl.number}</span>` : ''}
-                        <span style="flex-shrink:0;">${escapeHtml(pl.name)}</span>
+                    <span class="u-ext-54" >
+                        ${pl.number ? `<span class="u-ext-55" >${pl.number}</span>` : ''}
+                        <span class="u-ext-56" >${escapeHtml(pl.name)}</span>
                     </span>
                 `).join('')
-                : '<span style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">出席登録がありません</span>';
+                : '<span class="u-ext-57" >出席登録がありません</span>';
 
             html += `
                 <div class="card practice-card">
                     <div class="practice-card-header">
-                        <div style="flex:1;">
+                        <div class="u-ext-3" >
                             <div class="practice-card-header-title"><i class="fa-regular fa-calendar"></i> ${p.date}</div>
-                            <div class="text-secondary" style="font-size:0.8rem; margin-top:0.25rem;">
-                                <details class="practice-attendance-details" style="width: 100%; cursor: pointer;">
-                                    <summary style="font-weight:600; font-size:0.8rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.3rem; outline:none; list-style:none; user-select:none;">
-                                        <i class="fa-solid fa-chevron-down" style="font-size:0.7rem; color:var(--text-secondary); transition:transform 0.2s;"></i>
+                            <div class="u-ext-147 text-secondary" >
+                                <details class="u-ext-137 practice-attendance-details" >
+                                    <summary class="u-ext-138" >
+                                        <i class="u-ext-139 fa-solid fa-chevron-down" ></i>
                                         <span>参加者 (${p.presentPlayerIds ? `${p.presentPlayerIds.length}/${state.players.length}` : p.attendance})</span>
                                     </summary>
-                                    <div style="display:flex; flex-wrap:wrap; gap:0.25rem; padding:0.4rem; border-radius:8px; background:rgba(0,0,0,0.02); margin-top:0.25rem; max-height:100px; overflow-y:auto; box-sizing:border-box;">
+                                    <div class="u-ext-140" >
                                         ${attendeesHtml}
                                     </div>
                                 </details>
                             </div>
                         </div>
                         ${isCoach ? `
-                        <div style="display:flex; gap:0.3rem; align-self: flex-start;">
-                            <button class="btn btn-primary btn-add-menu" data-id="${p.id}" style="padding:0.4rem 0.6rem; font-size:0.8rem;" title="メニュー追加"><i class="fa-solid fa-plus"></i></button>
-                            <button class="btn btn-secondary btn-edit-practice" data-id="${p.id}" style="padding:0.4rem 0.6rem; font-size:0.8rem;" title="練習日詳細を編集"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn btn-danger btn-delete-practice" data-id="${p.id}" style="padding:0.4rem 0.6rem; font-size:0.8rem;"><i class="fa-solid fa-trash"></i></button>
+                        <div class="u-ext-148" >
+                            <button class="u-ext-149 btn btn-primary btn-add-menu" data-id="${p.id}"  title="メニュー追加"><i class="fa-solid fa-plus"></i></button>
+                            <button class="u-ext-149 btn btn-secondary btn-edit-practice" data-id="${p.id}"  title="練習日詳細を編集"><i class="fa-solid fa-pen"></i></button>
+                            <button class="u-ext-149 btn btn-danger btn-delete-practice" data-id="${p.id}" ><i class="fa-solid fa-trash"></i></button>
                         </div>
                         ` : ''}
                     </div>
                     <ul class="practice-card-menu-list">
                         ${p.menus.length > 0 ? p.menus.map(menu => `
-                            <li class="practice-menu-item" style="padding: 0; border: none; list-style: none; margin-bottom: 0.5rem;">
-                                <details class="practice-menu-details" style="background: rgba(0, 0, 0, 0.03); border: 1px solid var(--surface-border); border-radius: 12px; cursor: pointer; width: 100%;">
-                                    <summary class="practice-menu-item-header" style="display:flex; justify-content:space-between; align-items:center; padding:0.8rem; list-style:none; outline:none; box-sizing:border-box;">
-    <span class="practice-menu-item-title" style="display:inline-flex; align-items:center; gap:0.5rem; font-size:0.95rem; font-weight:bold; color:var(--primary);">
-        <i class="fa-solid fa-chevron-down" style="font-size:0.75rem; color:var(--text-secondary); transition:transform 0.2s;"></i>
+                            <li class="u-ext-150 practice-menu-item" >
+                                <details class="u-ext-151 practice-menu-details" >
+                                    <summary class="u-ext-152 practice-menu-item-header" >
+    <span class="u-ext-153 practice-menu-item-title" >
+        <i class="u-ext-154 fa-solid fa-chevron-down" ></i>
         ${escapeHtml(menu.focus)}
-        ${menu.engagement ? `<span style="color:#f59e0b; font-size:0.8rem; margin-left:0.3rem;">${'★'.repeat(menu.engagement)}${'☆'.repeat(5 - menu.engagement)}</span>` : ''}
+        ${menu.engagement ? `<span class="u-ext-155" >${'★'.repeat(menu.engagement)}${'☆'.repeat(5 - menu.engagement)}</span>` : ''}
     </span>
     ${isCoach ? `
-    <div style="display:flex; gap:0.3rem;" onclick="event.stopPropagation();">
-        <button class="btn btn-secondary btn-edit-menu" data-pid="${p.id}" data-mid="${menu.id}" style="padding:0.3rem; font-size:0.8rem;" title="編集"><i class="fa-solid fa-pen"></i></button>
-        <button class="btn btn-secondary btn-anim-practice" data-pid="${p.id}" data-mid="${menu.id}" style="padding:0.3rem; font-size:0.8rem;" title="作図"><i class="fa-solid fa-person-running"></i></button>
-        <button class="btn btn-danger btn-delete-menu" data-pid="${p.id}" data-mid="${menu.id}" style="padding:0.3rem; font-size:0.8rem;"><i class="fa-solid fa-times"></i></button>
+    <div class="u-ext-156"  onclick="event.stopPropagation();">
+        <button class="u-ext-157 btn btn-secondary btn-edit-menu" data-pid="${p.id}" data-mid="${menu.id}"  title="編集"><i class="fa-solid fa-pen"></i></button>
+        <button class="u-ext-157 btn btn-secondary btn-anim-practice" data-pid="${p.id}" data-mid="${menu.id}"  title="作図"><i class="fa-solid fa-person-running"></i></button>
+        <button class="u-ext-157 btn btn-danger btn-delete-menu" data-pid="${p.id}" data-mid="${menu.id}" ><i class="fa-solid fa-times"></i></button>
     </div>
     ` : ''}
 </summary>
 ${(menu.organize || menu.keyfactor || menu.options || menu.videoUrl || menu.frames || menu.reflection) ? `
-<div class="practice-menu-item-details" style="padding:0 0.8rem 0.8rem 0.8rem; border-top:1px solid rgba(0,0,0,0.05); font-size:0.85rem; color:var(--text-secondary); display:flex; flex-direction:column; gap:0.5rem; margin-top:0.4rem;">
-    <div class="practice-canvas-wrapper btn-open-anim-preview" data-pid="${p.id}" data-mid="${menu.id}" style="width:100%; height:140px; background:#1e293b; border-radius:8px; overflow:hidden; position:relative; margin-top:0.25rem; cursor:pointer;" onclick="event.stopPropagation();" title="クリックして作図アニメーションを拡大表示">
-        <canvas id="practice-mini-pitch-${p.id}-${menu.id}" width="800" height="500" style="width:100%; height:100%; object-fit:contain; pointer-events:none;"></canvas>
+<div class="u-ext-158 practice-menu-item-details" >
+    <div class="u-ext-159 practice-canvas-wrapper btn-open-anim-preview" data-pid="${p.id}" data-mid="${menu.id}"  onclick="event.stopPropagation();" title="クリックして作図アニメーションを拡大表示">
+        <canvas class="u-ext-160" id="practice-mini-pitch-${p.id}-${menu.id}" width="800" height="500" ></canvas>
         ${menu.frames && menu.frames.length > 0 ? `
-            <div style="position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.6); color:#fff; font-size:0.65rem; padding:0.15rem 0.35rem; border-radius:4px; font-weight:bold; pointer-events:none; display:flex; align-items:center; gap:0.2rem;">
-                <span style="display:inline-block; width:6px; height:6px; background:#ef4444; border-radius:50%; animation: pulse 1.5s infinite;"></span>${menu.frames.length > 1 ? 'ANIM' : 'ZOOM'}
+            <div class="u-ext-161" >
+                <span class="u-ext-162" ></span>${menu.frames.length > 1 ? 'ANIM' : 'ZOOM'}
             </div>
         ` : ''}
     </div>
-    ${menu.organize ? `<div><strong><i class="fa-solid fa-users"></i> オーガナイズ</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${escapeHtml(menu.organize)}</div></div>` : ''}
-    ${menu.keyfactor ? `<div><strong><i class="fa-solid fa-key"></i> キーファクター</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${escapeHtml(menu.keyfactor)}</div></div>` : ''}
-    ${menu.videoUrl ? `<div><strong><i class="fa-brands fa-youtube" style="color:#ef4444;"></i> 参考動画</strong><div style="margin-top:0.15rem;"><a href="${escapeHtml(menu.videoUrl)}" target="_blank" rel="noopener noreferrer" style="color:#ef4444; text-decoration:underline; font-weight:bold; word-break:break-all;"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
-    ${menu.options ? `<div><strong><i class="fa-solid fa-sliders"></i> オプション</strong><div style="white-space:pre-wrap; margin-top:0.15rem;">${escapeHtml(menu.options)}</div></div>` : ''}
-    ${menu.reflection ? `<div><strong style="color:var(--primary);"><i class="fa-solid fa-clipboard-user"></i> 指導者の振り返り・メモ</strong><div style="white-space:pre-wrap; margin-top:0.15rem; background:rgba(242,57,50,0.04); padding:0.5rem; border-radius:6px; border-left:3px solid var(--primary); color:var(--text-primary);">${escapeHtml(menu.reflection)}</div></div>` : ''}
+    ${menu.organize ? `<div><strong><i class="fa-solid fa-users"></i> オーガナイズ</strong><div class="u-ext-163" >${escapeHtml(menu.organize)}</div></div>` : ''}
+    ${menu.keyfactor ? `<div><strong><i class="fa-solid fa-key"></i> キーファクター</strong><div class="u-ext-163" >${escapeHtml(menu.keyfactor)}</div></div>` : ''}
+    ${menu.videoUrl ? `<div><strong><i class="u-ext-16 fa-brands fa-youtube" ></i> 参考動画</strong><div class="u-ext-164" ><a class="u-ext-165" href="${escapeHtml(menu.videoUrl)}" target="_blank" rel="noopener noreferrer" ><i class="u-ext-33 fa-solid fa-arrow-up-right-from-square" ></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
+    ${menu.options ? `<div><strong><i class="fa-solid fa-sliders"></i> オプション</strong><div class="u-ext-163" >${escapeHtml(menu.options)}</div></div>` : ''}
+    ${menu.reflection ? `<div><strong class="u-ext-77" ><i class="fa-solid fa-clipboard-user"></i> 指導者の振り返り・メモ</strong><div class="u-ext-166" >${escapeHtml(menu.reflection)}</div></div>` : ''}
 </div>
-` : '<div style="padding:0 0.8rem 0.8rem 0.8rem; font-size:0.8rem; color:var(--text-secondary);">詳細説明はありません。</div>'}
+` : '<div class="u-ext-167" >詳細説明はありません。</div>'}
                                 </details>
                             </li>
-                        `).join('') : '<li class="text-secondary" style="font-style:italic; border-bottom:none; padding:0.5rem 0; list-style:none;">メニューなし</li>'}
+                        `).join('') : '<li class="u-ext-168 text-secondary" >メニューなし</li>'}
                     </ul>
                 </div>
             `;
@@ -377,8 +377,8 @@ ${(menu.organize || menu.keyfactor || menu.options || menu.videoUrl || menu.fram
     if (filteredPractices.length > displayedPractices.length) {
         const remaining = filteredPractices.length - displayedPractices.length;
         html += `
-            <div style="text-align:center; margin: 1.5rem 0 1rem 0;">
-                <button class="btn btn-secondary" id="btn-load-more-practices" style="padding: 0.6rem 2rem; font-size: 0.9rem; border-radius: 9999px; display:inline-flex; align-items:center; gap:0.4rem; font-weight:600;">
+            <div class="u-ext-142" >
+                <button class="u-ext-143 btn btn-secondary" id="btn-load-more-practices" >
                     <i class="fa-solid fa-angle-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredPractices.length} 件)
                 </button>
             </div>
@@ -388,13 +388,13 @@ ${(menu.organize || menu.keyfactor || menu.options || menu.videoUrl || menu.fram
     if (sortedMonths.length === 0) {
         const isSearchActive = !!currentPracticeSearch || currentPracticeCategory !== 'all' || currentPracticePlayer !== 'all' || currentPracticeNendo !== 'all' || currentPracticeMonth !== 'all';
         html = `
-            <div class="card" style="padding:3rem 2rem; text-align:center; border: 1.5px dashed var(--surface-border); display:flex; flex-direction:column; align-items:center; gap:1rem; width:100%; box-sizing:border-box;">
-                <div style="font-size:3rem; color:var(--text-secondary); opacity:0.6;"><i class="fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-calendar-check'}"></i></div>
-                <h3 style="font-size:1.15rem; margin:0; color:var(--text-primary); font-weight:600;">${isSearchActive ? '該当する練習記録がありません' : 'まだ練習記録がありません'}</h3>
-                <p style="font-size:0.85rem; color:var(--text-secondary); max-width:360px; margin:0; line-height:1.4;">
+            <div class="u-ext-144 card" >
+                <div class="u-ext-145" ><i class="fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-calendar-check'}"></i></div>
+                <h3 class="u-ext-146" >${isSearchActive ? '該当する練習記録がありません' : 'まだ練習記録がありません'}</h3>
+                <p class="u-ext-169" >
                     ${isSearchActive ? '検索キーワードまたは絞り込み条件（年度・月・カテゴリ・参加選手）を変更してお試しください。' : '日々の練習日を作成し、テーマに応じたトレーニングメニューのアサインや、戦術ボードでの作図を行いましょう。'}
                 </p>
-                ${!isSearchActive ? `<button class="btn btn-primary" id="btn-empty-add-practice" style="margin-top:0.5rem;"><i class="fa-solid fa-plus"></i> 最初の練習日を追加</button>` : ''}
+                ${!isSearchActive ? `<button class="u-ext-170 btn btn-primary" id="btn-empty-add-practice" ><i class="fa-solid fa-plus"></i> 最初の練習日を追加</button>` : ''}
             </div>
         `;
     }
@@ -682,8 +682,9 @@ ${(menu.organize || menu.keyfactor || menu.options || menu.videoUrl || menu.fram
     });
 
     document.querySelectorAll('.btn-delete-practice').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            if (confirm('この日の練習記録をすべて削除しますか？')) {
+        btn.addEventListener('click', async (e) => {
+            const proceed = await showCustomConfirm('この日の練習記録をすべて削除しますか？', '練習記録の削除', { okText: '削除する', type: 'danger' });
+            if (proceed) {
                 const id = parseInt(e.currentTarget.dataset.id, 10);
                 state.practices = state.practices.filter(p => p.id !== id);
                 saveData();
@@ -693,8 +694,9 @@ ${(menu.organize || menu.keyfactor || menu.options || menu.videoUrl || menu.fram
     });
 
     document.querySelectorAll('.btn-delete-menu').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            if (confirm('この練習メニューを削除しますか？')) {
+        btn.addEventListener('click', async (e) => {
+            const proceed = await showCustomConfirm('この練習メニューを削除しますか？', 'メニューの削除', { okText: '削除する', type: 'danger' });
+            if (proceed) {
                 const pid = parseInt(e.currentTarget.dataset.pid, 10);
                 const mid = parseInt(e.currentTarget.dataset.mid, 10);
                 const practice = state.practices.find(p => p.id === pid);

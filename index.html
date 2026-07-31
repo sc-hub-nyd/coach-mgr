@@ -2143,6 +2143,21 @@
             </form>
         </div>
     </div>
+    <!-- Global Custom Confirm Modal -->
+    <div id="modal-global-confirm" class="modal-overlay hidden" style="z-index: 10000;">
+        <div class="modal confirm-modal-content">
+            <div class="confirm-modal-icon" id="global-confirm-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="confirm-modal-title" id="global-confirm-title">確認</h3>
+            <p class="confirm-modal-message" id="global-confirm-message"></p>
+            <div class="confirm-modal-actions">
+                <button id="global-confirm-btn-cancel" class="btn btn-secondary confirm-btn-cancel">キャンセル</button>
+                <button id="global-confirm-btn-ok" class="btn btn-primary confirm-btn-ok">実行する</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script type="module" src="app.js?v=20"></script>
 </body>

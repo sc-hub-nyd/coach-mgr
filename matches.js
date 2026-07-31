@@ -1,6 +1,6 @@
 // matches.js
 import { state, uiState } from './state.js';
-import { escapeHtml, getNendo, showToast } from './utils.js';
+import { escapeHtml, getNendo, showToast, showCustomConfirm } from './utils.js';
 import { saveData, navigate, openModal } from './app.js';
 import { openPlayerDetail } from './players.js';
 import { drawPitchToCtx } from './drawing.js';
@@ -75,7 +75,40 @@ export function loadYouTubePlayer(url, containerId = 'period-yt-player') {
     if (!playerEl) return;
 
     if (!videoId) {
-        playerEl.innerHTML = '<div style="color:#fff; text-align:center; padding:2rem;">YouTube URLが設定されていません</div>';
+        playerEl.innerHTML = `
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:2rem; gap:1rem; color:#fff; text-align:center; background:#0f172a;">
+                <i class="fa-brands fa-youtube" style="font-size:3.2rem; color:#ef4444;"></i>
+                <div style="font-weight:700; font-size:1.05rem; color:#f8fafc;">YouTube動画 URLが未設定です</div>
+                <p style="font-size:0.8rem; color:#94a3b8; margin:0; max-width:400px; line-height:1.4;">試合動画のURL（YouTube）を入力すると、ここで再生およびタイムライン分析が行えます。（保護者・指導者ともに追加・保存が可能です）</p>
+                <div style="display:flex; gap:0.5rem; max-width:480px; width:92%; margin-top:0.3rem;">
+                    <input type="url" id="quick-yt-url-input" class="form-control" placeholder="https://www.youtube.com/watch?v=..." style="font-size:0.85rem; background:#1e293b; color:#fff; border-color:#334155;">
+                    <button type="button" class="btn btn-primary" id="quick-yt-url-save-btn" style="white-space:nowrap; font-weight:600; padding:0.4rem 0.9rem;"><i class="fa-solid fa-plus"></i> 動画を追加</button>
+                </div>
+            </div>
+        `;
+
+        const btnQuickAdd = playerEl.querySelector('#quick-yt-url-save-btn');
+        if (btnQuickAdd) {
+            btnQuickAdd.onclick = () => {
+                const inputEl = playerEl.querySelector('#quick-yt-url-input');
+                const newUrl = inputEl ? inputEl.value.trim() : '';
+                if (!newUrl) {
+                    showToast('YouTubeのURLを入力してください');
+                    return;
+                }
+                const match = state.matches.find(m => m.id === currentMatchId);
+                if (match && match.formations && match.formations[currentPeriodIndex]) {
+                    const p = match.formations[currentPeriodIndex];
+                    p.videoUrl = newUrl;
+                    p.videoUrls = [newUrl];
+                    saveData();
+                    showToast('YouTube動画を追加しました！');
+                    loadYouTubePlayer(newUrl, containerId);
+                    const sideInput = document.getElementById('side-form-video') || document.getElementById('side-form-video-parent');
+                    if (sideInput) sideInput.value = newUrl;
+                }
+            };
+        }
         return;
     }
 
@@ -103,7 +136,7 @@ export function loadYouTubePlayer(url, containerId = 'period-yt-player') {
     };
 
     const fallbackIframe = () => {
-        playerEl.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}?playsinline=1" frameborder="0" allowfullscreen style="width:100%; height:100%;"></iframe>`;
+        playerEl.innerHTML = `<iframe class="u-ext-38" width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}?playsinline=1" frameborder="0" allowfullscreen ></iframe>`;
     };
 
     setTimeout(initPlayer, 150);
@@ -187,15 +220,15 @@ export function addGoalRecordRow(scorerId = null, assistId = null, targetContain
     div.className = 'goal-record-row';
     div.style = 'display:flex; gap:0.4rem; align-items:center; width:100%; font-size:0.8rem;';
     div.innerHTML = `
-        <span style="min-width:3rem; text-align:right; font-size:0.78rem; color:var(--text-secondary); flex-shrink:0;">得点:</span>
-        <select class="form-control goal-scorer-select" style="flex:1; min-width:0; padding:0.25rem 0.4rem; font-size:0.8rem; height:auto;">
+        <span class="u-ext-39" >得点:</span>
+        <select class="u-ext-40 form-control goal-scorer-select" >
             ${scorerOptions}
         </select>
-        <span style="min-width:3.6rem; text-align:right; font-size:0.78rem; color:var(--text-secondary); flex-shrink:0;">アシスト:</span>
-        <select class="form-control goal-assist-select" style="flex:1; min-width:0; padding:0.25rem 0.4rem; font-size:0.8rem; height:auto;">
+        <span class="u-ext-41" >アシスト:</span>
+        <select class="u-ext-40 form-control goal-assist-select" >
             ${assistOptions}
         </select>
-        <button type="button" class="btn btn-danger" onclick="document.getElementById('${rowId}').remove()" style="padding:0.25rem 0.45rem; font-size:0.8rem; flex-shrink:0;" title="削除"><i class="fa-solid fa-trash-can"></i></button>
+        <button type="button" class="u-ext-42 btn btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash-can"></i></button>
     `;
     container.appendChild(div);
 }
@@ -213,15 +246,15 @@ export function addAnalysisMemoRow(timeStr = '00:00', textVal = '', tagVal = '�
     const tagOptions = (state.analysisTags || []).map(t => `<option value="${escapeHtml(t)}" ${tagVal === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('');
 
     div.innerHTML = `
-        <button type="button" class="btn btn-secondary btn-seek-video" style="padding:0.25rem 0.4rem; font-size:0.75rem; color:var(--primary);" title="このシーンへジャンプ">
+        <button type="button" class="u-ext-43 btn btn-secondary btn-seek-video"  title="このシーンへジャンプ">
             <i class="fa-solid fa-play"></i>
         </button>
-        <input type="text" class="form-control memo-time-input" value="${timeStr}" placeholder="00:00" style="width:60px; text-align:center; font-weight:bold; font-size:0.8rem; padding:0.25rem 0.2rem;">
-        <select class="form-control memo-tag-select" style="width:100px; font-size:0.75rem; padding:0.25rem 0.3rem;">
+        <input type="text" class="u-ext-44 form-control memo-time-input" value="${timeStr}" placeholder="00:00" >
+        <select class="u-ext-45 form-control memo-tag-select" >
             ${tagOptions}
         </select>
-        <input type="text" class="form-control memo-text-input" value="${escapeHtml(textVal)}" placeholder="メモ（例: 左展開からクロス）" style="flex:1; font-size:0.8rem; padding:0.25rem 0.4rem;">
-        <button type="button" class="btn btn-danger" onclick="document.getElementById('${rowId}').remove()" style="padding:0.25rem 0.4rem; font-size:0.8rem;" title="削除"><i class="fa-solid fa-trash-can"></i></button>
+        <input type="text" class="u-ext-46 form-control memo-text-input" value="${escapeHtml(textVal)}" placeholder="メモ（例: 左展開からクロス）" >
+        <button type="button" class="u-ext-47 btn btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash-can"></i></button>
     `;
 
     const btnSeek = div.querySelector('.btn-seek-video');
@@ -244,8 +277,8 @@ export function addFormationVideoRow(urlVal = '') {
     div.className = 'formation-video-row';
     div.style = 'display:flex; gap:0.5rem; align-items:center; width:100%;';
     div.innerHTML = `
-        <input type="url" class="form-control formation-video-input" value="${urlVal}" placeholder="https://www.youtube.com/watch?v=... または https://youtu.be/..." style="flex:1; font-size:0.85rem; padding:0.3rem 0.6rem;">
-        <button type="button" class="btn btn-danger" onclick="document.getElementById('${rowId}').remove()" style="padding:0.25rem 0.5rem; font-size:0.85rem;" title="削除"><i class="fa-solid fa-trash"></i></button>
+        <input type="url" class="u-ext-48 form-control formation-video-input" value="${urlVal}" placeholder="https://www.youtube.com/watch?v=... または https://youtu.be/..." >
+        <button type="button" class="u-ext-49 btn btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash"></i></button>
     `;
     container.appendChild(div);
 }
@@ -393,7 +426,7 @@ export function renderMatchRoster(selectedPlayerIds = []) {
     if (!container) return;
 
     if (!state.players || state.players.length === 0) {
-        container.innerHTML = '<p class="text-secondary" style="font-size:0.85rem; margin:0;">登録されている選手がいません。「選手一覧」から選手を登録してください。</p>';
+        container.innerHTML = '<p class="u-ext-50 text-secondary" >登録されている選手がいません。「選手一覧」から選手を登録してください。</p>';
         return;
     }
 
@@ -406,9 +439,9 @@ export function renderMatchRoster(selectedPlayerIds = []) {
     container.innerHTML = sortedPlayers.map(p => {
         const isChecked = (selectedPlayerIds && selectedPlayerIds.includes(p.id)) ? 'checked' : '';
         return `
-            <label style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; cursor:pointer; padding:0.3rem 0; user-select:none;">
-                <input type="checkbox" value="${p.id}" ${isChecked} style="width:18px; height:18px; accent-color:var(--primary); cursor:pointer; margin:0; display:inline-block; opacity:1; visibility:visible;">
-                <span style="color:var(--text-primary); font-weight:500;">${p.number}. ${escapeHtml(p.name)}</span>
+            <label class="u-ext-51" >
+                <input class="u-ext-52" type="checkbox" value="${p.id}" ${isChecked} >
+                <span class="u-ext-53" >${p.number}. ${escapeHtml(p.name)}</span>
             </label>
         `;
     }).join('');
@@ -706,12 +739,12 @@ export function initMatchDetailView(matchId) {
     if (detailRosterDisplay) {
         const attendeesHtml = m.presentPlayerIds && m.presentPlayerIds.length > 0
             ? state.players.filter(pl => m.presentPlayerIds.includes(pl.id)).map(pl => `
-                <span style="display:inline-flex; align-items:center; background:#f1f5f9; border:1px solid #e2e8f0; color:#334155; font-size:0.7rem; font-weight:600; padding:0.15rem 0.4rem; border-radius:9999px; gap:0.25rem; white-space:nowrap;">
-                    ${pl.number ? `<span style="background:var(--primary); color:#ffffff; font-size:0.55rem; width:14px; height:14px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0;">${pl.number}</span>` : ''}
-                    <span style="flex-shrink:0;">${escapeHtml(pl.name)}</span>
+                <span class="u-ext-54" >
+                    ${pl.number ? `<span class="u-ext-55" >${pl.number}</span>` : ''}
+                    <span class="u-ext-56" >${escapeHtml(pl.name)}</span>
                 </span>
             `).join('')
-            : '<span style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">メンバー登録がありません</span>';
+            : '<span class="u-ext-57" >メンバー登録がありません</span>';
         
         detailRosterDisplay.innerHTML = attendeesHtml;
     }
@@ -723,10 +756,10 @@ export function initMatchDetailView(matchId) {
         detailRosterEdit.innerHTML = sortedPlayers.map(p => {
             const isChecked = activeIds.includes(p.id) ? 'checked' : '';
             return `
-                <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.78rem; cursor:pointer; background:#fff; padding:0.3rem 0.5rem; border-radius:6px; border:1px solid var(--surface-border); user-select:none; margin:0;">
-                    <input type="checkbox" class="inline-match-attendance-checkbox" value="${p.id}" ${isChecked} style="margin:0; width:14px; height:14px; cursor:pointer;">
-                    <span style="font-weight:700; color:var(--primary);">${p.number || '—'}</span>
-                    <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</span>
+                <label class="u-ext-58" >
+                    <input type="checkbox" class="u-ext-59 inline-match-attendance-checkbox" value="${p.id}" ${isChecked} >
+                    <span class="u-ext-5" >${p.number || '—'}</span>
+                    <span class="u-ext-60"  title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</span>
                 </label>
             `;
         }).join('');
@@ -784,14 +817,14 @@ function renderPeriodGrid(m) {
     if (!grid) return;
 
     if (!m.formations || m.formations.length === 0) {
-        grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:2rem; color:var(--text-secondary); background:rgba(0,0,0,0.02); border-radius:8px; border:1px dashed var(--surface-border);">ピリオドが登録されていません。「＋ ピリオド追加」から作成してください。</div>';
+        grid.innerHTML = '<div class="u-ext-61" >ピリオドが登録されていません。「＋ ピリオド追加」から作成してください。</div>';
         return;
     }
 
     grid.innerHTML = m.formations.map((f, idx) => {
         const scoreUs = f.scoreUs !== undefined ? f.scoreUs : 0;
         const scoreThem = f.scoreThem !== undefined ? f.scoreThem : 0;
-        const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="fa-brands fa-youtube" style="color:#ef4444;" title="動画あり"></i>' : '';
+        const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="u-ext-16 fa-brands fa-youtube"  title="動画あり"></i>' : '';
 
         let goalDetailsHtml = '';
         if (f.goalRecords && f.goalRecords.length > 0) {
@@ -807,7 +840,7 @@ function renderPeriodGrid(m) {
                     const aPlayer = state.players.find(p => p.id === r.assistId);
                     text += aPlayer ? ` (A: ${aPlayer.name})` : '';
                 }
-                return `<div style="font-size:0.78rem; color:var(--text-primary); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">⚽ ${escapeHtml(text)}</div>`;
+                return `<div class="u-ext-62" >⚽ ${escapeHtml(text)}</div>`;
             }).join('');
         }
 
@@ -818,41 +851,41 @@ function renderPeriodGrid(m) {
                 if (memo.tag === '得点') icon = '⚽';
                 else if (memo.tag === '失点') icon = '⚠️';
                 else if (memo.tag === '課題/反省') icon = '📌';
-                return `<div style="font-size:0.75rem; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${icon} ${escapeHtml(memo.time || '00:00')} ${escapeHtml(memo.text || memo.tag)}</div>`;
+                return `<div class="u-ext-63" >${icon} ${escapeHtml(memo.time || '00:00')} ${escapeHtml(memo.text || memo.tag)}</div>`;
             }).join('')
             : '';
 
         const goalsHtml = (goalDetailsHtml || memosHtml)
             ? `${goalDetailsHtml}${memosHtml}`
-            : '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic;">記録なし</div>';
+            : '<div class="u-ext-64" >記録なし</div>';
 
         return `
-            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; gap:0.8rem; padding:1rem; margin:0; border:1px solid var(--surface-border);">
+            <div class="u-ext-65 card" >
                 <div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; border-bottom:1px solid var(--surface-border); padding-bottom:0.4rem;">
-                        <strong style="font-size:1rem; color:var(--primary);">${escapeHtml(f.name || `${idx + 1}本目`)}</strong>
-                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <div class="u-ext-66" >
+                        <strong class="u-ext-67" >${escapeHtml(f.name || `${idx + 1}本目`)}</strong>
+                        <div class="u-ext-68" >
                             ${videoBadge}
-                            <span class="badge" style="background:var(--primary); color:#fff; font-weight:bold; font-size:0.85rem;">${scoreUs} - ${scoreThem}</span>
+                            <span class="u-ext-69 badge" >${scoreUs} - ${scoreThem}</span>
                         </div>
                     </div>
                     
-                    <div style="display:flex; gap:0.4rem; margin-bottom:0.6rem;">
-                        <span class="badge" style="background:rgba(0,0,0,0.05); color:var(--text-primary); font-size:0.72rem;">陣形: ${escapeHtml(f.system || '未設定')}</span>
+                    <div class="u-ext-70" >
+                        <span class="u-ext-71 badge" >陣形: ${escapeHtml(f.system || '未設定')}</span>
                     </div>
 
-                    <div style="background:rgba(0,0,0,0.02); padding:0.5rem; border-radius:6px; margin-bottom:0.6rem; display:flex; flex-direction:column; gap:0.25rem;">
+                    <div class="u-ext-72" >
                         ${goalsHtml}
                     </div>
 
-                    <div style="font-size:0.8rem; color:var(--text-primary); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+                    <div class="u-ext-73" >
                         💬 ${escapeHtml(f.summary || f.reflection || '総括コメント未入力')}
                     </div>
                 </div>
 
-                <div style="display:flex; gap:0.4rem; margin-top:0.2rem;">
-                    <button class="btn btn-primary btn-sm btn-open-analysis" data-index="${idx}" style="flex:1; justify-content:center; font-size:0.8rem; padding:0.4rem;"><i class="fa-solid fa-film"></i> 動画分析 ➔</button>
-                    ${isCoach ? `<button class="btn btn-secondary btn-sm btn-edit-period-card" data-id="${f.id}" style="padding:0.4rem 0.6rem;" title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>` : ''}
+                <div class="u-ext-74" >
+                    <button class="u-ext-75 btn btn-primary btn-sm btn-open-analysis" data-index="${idx}" ><i class="fa-solid fa-film"></i> 動画分析 ➔</button>
+                    ${isCoach ? `<button class="u-ext-76 btn btn-secondary btn-sm btn-edit-period-card" data-id="${f.id}"  title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>` : ''}
                 </div>
             </div>
         `;
@@ -941,7 +974,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
         if (isCoach) {
             // コーチモード：編集フォーム（ミニピッチ付き）
-            if (sideHeading) sideHeading.innerHTML = '<i class="fa-solid fa-pen" style="color:var(--primary);"></i> ピリオド情報編集';
+            if (sideHeading) sideHeading.innerHTML = '<i class="u-ext-77 fa-solid fa-pen" ></i> ピリオド情報編集';
 
             const systemOptions = state.customFormations.map(cf => `<option value="${cf.name}" ${period.system === cf.name ? 'selected' : ''}>${cf.name} (${cf.coords.length}人制)</option>`).join('');
 
@@ -954,14 +987,14 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     const assistOpts = `<option value="">アシストなし</option>` + sortedPlayers.map(p => `<option value="${p.id}" ${p.id === r.assistId ? 'selected' : ''}>${p.number} ${p.name}</option>`).join('');
 
                     return `
-                        <div class="side-goal-row" data-index="${rIdx}" style="display:flex; flex-direction:column; gap:0.25rem; background:rgba(0,0,0,0.02); padding:0.4rem; border-radius:6px; border:1px solid var(--surface-border); margin-bottom:0.3rem;">
-                            <div style="display:flex; gap:0.3rem; align-items:center;">
-                                <span style="font-size:0.7rem; font-weight:bold; color:var(--text-secondary); width:20px;">#${rIdx + 1}</span>
-                                <select class="form-control form-control-sm side-scorer-select" style="font-size:0.75rem; padding:0.2rem; flex:1;">${scorerOpts}</select>
-                                <button type="button" class="btn btn-danger btn-xs btn-remove-side-goal" style="padding:0.1rem 0.3rem; font-size:0.7rem;" title="この得点記録を削除"><i class="fa-solid fa-trash"></i></button>
+                        <div class="u-ext-78 side-goal-row" data-index="${rIdx}" >
+                            <div class="u-ext-79" >
+                                <span class="u-ext-80" >#${rIdx + 1}</span>
+                                <select class="u-ext-81 form-control form-control-sm side-scorer-select" >${scorerOpts}</select>
+                                <button type="button" class="u-ext-82 btn btn-danger btn-xs btn-remove-side-goal"  title="この得点記録を削除"><i class="fa-solid fa-trash"></i></button>
                             </div>
-                            <div style="display:flex; gap:0.3rem; align-items:center; padding-left:20px;">
-                                <select class="form-control form-control-sm side-assist-select" style="font-size:0.75rem; padding:0.2rem; flex:1;">${assistOpts}</select>
+                            <div class="u-ext-83" >
+                                <select class="u-ext-81 form-control form-control-sm side-assist-select" >${assistOpts}</select>
                             </div>
                         </div>
                     `;
@@ -988,7 +1021,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
                     return `
                         <div class="side-pitch-pin" data-pos-key="${posKey}" style="position:absolute; left:${leftPercent}%; top:${topPercent}%; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; cursor:pointer; z-index:5;" title="${c.role || `ポジション${pIdx + 1}`}">
-                            <div style="width:26px; height:26px; background:var(--primary); color:#fff; border-radius:50%; font-size:0.65rem; font-weight:bold; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); border:1.5px solid #fff;">
+                            <div class="u-ext-84" >
                                 ${labelText}
                             </div>
                         </div>
@@ -1001,9 +1034,9 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     const playerOpts = `<option value="">未割当</option>` + sortedPlayers.map(p => `<option value="${p.id}" ${p.id == assignedPlayerId ? 'selected' : ''}>${p.number ? `#${p.number}` : ''} ${p.name}</option>`).join('');
 
                     return `
-                        <div class="side-position-row" data-pos-key="${posKey}" style="display:flex; align-items:center; gap:0.4rem; background:rgba(0,0,0,0.02); padding:0.3rem 0.4rem; border-radius:6px; border:1px solid var(--surface-border); margin-bottom:0.25rem;">
-                            <span style="font-size:0.72rem; font-weight:bold; color:var(--text-secondary); width:55px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${c.role || `P${pIdx + 1}`}">${c.role || `${pIdx + 1}`}</span>
-                            <select class="form-control form-control-sm side-pos-player-select" style="font-size:0.75rem; padding:0.15rem; flex:1;">${playerOpts}</select>
+                        <div class="u-ext-85 side-position-row" data-pos-key="${posKey}" >
+                            <span class="u-ext-86"  title="${c.role || `P${pIdx + 1}`}">${c.role || `${pIdx + 1}`}</span>
+                            <select class="u-ext-87 form-control form-control-sm side-pos-player-select" >${playerOpts}</select>
                         </div>
                     `;
                 }).join('');
@@ -1020,29 +1053,29 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 </div>
                 <div class="side-info-card">
                     <span class="side-info-label">スコア (自 - 相手)</span>
-                    <div style="display:flex; align-items:center; justify-content:space-between; background:var(--card-bg); padding:0.3rem 0.5rem; border:1px solid var(--surface-border); border-radius:6px;">
-                        <div style="display:flex; align-items:center; gap:0.4rem;">
-                            <span style="font-size:0.8rem; font-weight:bold; color:var(--text-secondary);">自</span>
-                            <button type="button" class="btn btn-secondary btn-xs" id="btn-side-us-minus" style="padding:0.15rem 0.4rem;"><i class="fa-solid fa-minus"></i></button>
-                            <span id="side-score-us-display" style="font-weight:700; font-size:1.1rem; min-width:24px; text-align:center;">${period.scoreUs || 0}</span>
-                            <button type="button" class="btn btn-secondary btn-xs" id="btn-side-us-plus" style="padding:0.15rem 0.4rem;"><i class="fa-solid fa-plus"></i></button>
+                    <div class="u-ext-88" >
+                        <div class="u-ext-89" >
+                            <span class="u-ext-90" >自</span>
+                            <button type="button" class="u-ext-91 btn btn-secondary btn-xs" id="btn-side-us-minus" ><i class="fa-solid fa-minus"></i></button>
+                            <span class="u-ext-92" id="side-score-us-display" >${period.scoreUs || 0}</span>
+                            <button type="button" class="u-ext-91 btn btn-secondary btn-xs" id="btn-side-us-plus" ><i class="fa-solid fa-plus"></i></button>
                         </div>
-                        <span style="font-weight:bold; color:var(--text-secondary);">-</span>
-                        <div style="display:flex; align-items:center; gap:0.4rem;">
-                            <button type="button" class="btn btn-secondary btn-xs" id="btn-side-them-minus" style="padding:0.15rem 0.4rem;"><i class="fa-solid fa-minus"></i></button>
-                            <span id="side-score-them-display" style="font-weight:700; font-size:1.1rem; min-width:24px; text-align:center;">${period.scoreThem || 0}</span>
-                            <button type="button" class="btn btn-secondary btn-xs" id="btn-side-them-plus" style="padding:0.15rem 0.4rem;"><i class="fa-solid fa-plus"></i></button>
-                            <span style="font-size:0.8rem; font-weight:bold; color:var(--text-secondary);">相</span>
+                        <span class="u-ext-93" >-</span>
+                        <div class="u-ext-89" >
+                            <button type="button" class="u-ext-91 btn btn-secondary btn-xs" id="btn-side-them-minus" ><i class="fa-solid fa-minus"></i></button>
+                            <span class="u-ext-92" id="side-score-them-display" >${period.scoreThem || 0}</span>
+                            <button type="button" class="u-ext-91 btn btn-secondary btn-xs" id="btn-side-them-plus" ><i class="fa-solid fa-plus"></i></button>
+                            <span class="u-ext-90" >相</span>
                         </div>
                     </div>
                 </div>
                 <div class="side-info-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
-                        <span class="side-info-label" style="margin:0;">得点者・アシスト記録</span>
-                        <button type="button" class="btn btn-primary btn-xs" id="btn-add-side-goal" style="font-size:0.68rem; padding:0.15rem 0.4rem;"><i class="fa-solid fa-plus"></i> 追加</button>
+                    <div class="u-ext-94" >
+                        <span class="u-ext-95 side-info-label" >得点者・アシスト記録</span>
+                        <button type="button" class="u-ext-96 btn btn-primary btn-xs" id="btn-add-side-goal" ><i class="fa-solid fa-plus"></i> 追加</button>
                     </div>
-                    <div id="side-goal-records-container" style="display:flex; flex-direction:column; max-height:150px; overflow-y:auto;">
-                        ${goalRowsHtml || '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">得点記録なし</div>'}
+                    <div class="u-ext-97" id="side-goal-records-container" >
+                        ${goalRowsHtml || '<div class="u-ext-57" >得点記録なし</div>'}
                     </div>
                 </div>
                 <div class="side-info-card">
@@ -1054,19 +1087,19 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     <select id="side-form-system" class="form-control form-control-sm">${systemOptions}</select>
                 </div>
                 <div class="side-info-card">
-                    <span class="side-info-label" style="margin-bottom:0.3rem;">ポジション配置（ミニピッチ図）</span>
-                    <div id="side-mini-pitch" style="position:relative; width:100%; height:260px; background: linear-gradient(to bottom, #2e7d32, #388e3c); border-radius:6px; border:1px solid var(--surface-border); overflow:hidden; margin-bottom:0.5rem; box-shadow:inset 0 0 10px rgba(0,0,0,0.2);">
-                        <div style="position:absolute; top:50%; left:0; width:100%; height:1px; background:rgba(255,255,255,0.4);"></div>
-                        <div style="position:absolute; top:50%; left:50%; width:60px; height:60px; border:1px solid rgba(255,255,255,0.4); border-radius:50%; transform:translate(-50%, -50%);"></div>
-                        <div style="position:absolute; top:0; left:30%; width:40%; height:12%; border:1px solid rgba(255,255,255,0.4); border-top:none;"></div>
-                        <div style="position:absolute; bottom:0; left:30%; width:40%; height:12%; border:1px solid rgba(255,255,255,0.4); border-bottom:none;"></div>
+                    <span class="u-ext-98 side-info-label" >ポジション配置（ミニピッチ図）</span>
+                    <div class="u-ext-99" id="side-mini-pitch" >
+                        <div class="u-ext-100" ></div>
+                        <div class="u-ext-101" ></div>
+                        <div class="u-ext-102" ></div>
+                        <div class="u-ext-103" ></div>
                         ${pitchPinsHtml}
                     </div>
-                    <div id="side-positions-container" style="display:flex; flex-direction:column; max-height:180px; overflow-y:auto;">
-                        ${posListHtml || '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">ポジション設定がありません</div>'}
+                    <div class="u-ext-104" id="side-positions-container" >
+                        ${posListHtml || '<div class="u-ext-57" >ポジション設定がありません</div>'}
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary btn-sm" id="btn-side-save-period" style="width:100%; justify-content:center; margin-top:0.4rem;">
+                <button type="button" class="u-ext-105 btn btn-primary btn-sm" id="btn-side-save-period" >
                     <i class="fa-solid fa-save"></i> 変更を保存
                 </button>
             `;
@@ -1246,7 +1279,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
             }
         } else {
             // 保護者モード：閲覧専用プレビュー（コーチモードと同じすべての情報を網羅）
-            if (sideHeading) sideHeading.innerHTML = '<i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> ピリオド情報';
+            if (sideHeading) sideHeading.innerHTML = '<i class="u-ext-77 fa-solid fa-circle-info" ></i> ピリオド情報';
 
             const videoUrl = (period.videoUrls && period.videoUrls[0]) || period.videoUrl || '';
 
@@ -1264,7 +1297,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         const aPlayer = state.players.find(p => p.id === r.assistId);
                         text += aPlayer ? ` (A: ${aPlayer.name})` : '';
                     }
-                    return `<div style="font-size:0.8rem; color:var(--text-primary); font-weight:500;">⚽ ${escapeHtml(text)}</div>`;
+                    return `<div class="u-ext-106" >⚽ ${escapeHtml(text)}</div>`;
                 }).join('');
             }
 
@@ -1287,7 +1320,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
                     return `
                         <div class="side-pitch-pin" data-pos-key="${posKey}" style="position:absolute; left:${leftPercent}%; top:${topPercent}%; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; cursor:pointer; z-index:5;" title="${c.role || `ポジション${pIdx + 1}`}">
-                            <div style="width:26px; height:26px; background:var(--primary); color:#fff; border-radius:50%; font-size:0.65rem; font-weight:bold; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.4); border:1.5px solid #fff;">
+                            <div class="u-ext-84" >
                                 ${labelText}
                             </div>
                         </div>
@@ -1301,9 +1334,9 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     const playerName = assignedPlayer ? `${assignedPlayer.number ? `#${assignedPlayer.number} ` : ''}${assignedPlayer.name}` : '未割当';
  
                     return `
-                        <div class="side-position-row" data-pos-key="${posKey}" style="display:flex; align-items:center; justify-content:space-between; background:rgba(0,0,0,0.02); padding:0.3rem 0.5rem; border-radius:6px; border:1px solid var(--surface-border); margin-bottom:0.25rem; font-size:0.8rem;">
-                            <span style="font-weight:bold; color:var(--text-secondary);">${escapeHtml(c.role || `${pIdx + 1}`)}</span>
-                            <span style="font-weight:600; color:var(--text-primary);">${escapeHtml(playerName)}</span>
+                        <div class="u-ext-107 side-position-row" data-pos-key="${posKey}" >
+                            <span class="u-ext-93" >${escapeHtml(c.role || `${pIdx + 1}`)}</span>
+                            <span class="u-ext-108" >${escapeHtml(playerName)}</span>
                         </div>
                     `;
                 }).join('');
@@ -1312,44 +1345,58 @@ export function openPeriodAnalysis(matchId, periodIndex) {
             sideBody.innerHTML = `
                 <div class="side-info-card">
                     <span class="side-info-label">ピリオド名</span>
-                    <div class="side-info-val" style="font-weight:700;">${escapeHtml(period.name || '未設定')}</div>
+                    <div class="u-ext-109 side-info-val" >${escapeHtml(period.name || '未設定')}</div>
                 </div>
                 <div class="side-info-card">
-                    <span class="side-info-label">YouTube動画 URL</span>
-                    <div class="side-info-val">
-                        ${videoUrl ? `<a href="${escapeHtml(videoUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--primary); text-decoration:underline; word-break:break-all;"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i> ${escapeHtml(videoUrl)}</a>` : '<span style="color:var(--text-secondary); font-style:italic;">URLなし</span>'}
+                    <span class="side-info-label"><i class="fa-brands fa-youtube" style="color:#ef4444;"></i> YouTube動画 URL</span>
+                    <div style="display:flex; gap:0.4rem; align-items:center; margin-top:0.3rem;">
+                        <input type="url" id="side-form-video-parent" class="form-control form-control-sm" value="${escapeHtml(videoUrl)}" placeholder="https://youtu.be/..." style="flex:1;">
+                        <button type="button" class="btn btn-primary btn-xs" id="btn-save-video-parent" style="padding:0.25rem 0.55rem; font-size:0.75rem; white-space:nowrap; font-weight:600;"><i class="fa-solid fa-save"></i> 保存</button>
                     </div>
                 </div>
                 <div class="side-info-card">
                     <span class="side-info-label">スコア (自 - 相手)</span>
-                    <div class="side-info-val" style="font-weight:700; color:var(--primary); font-size:1.1rem;">${period.scoreUs || 0} - ${period.scoreThem || 0}</div>
+                    <div class="u-ext-112 side-info-val" >${period.scoreUs || 0} - ${period.scoreThem || 0}</div>
                 </div>
                 <div class="side-info-card">
-                    <span class="side-info-label" style="margin-bottom:0.3rem;">得点者・アシスト記録</span>
-                    ${goalDetailsHtml ? `<div style="display:flex; flex-direction:column; gap:0.2rem;">${goalDetailsHtml}</div>` : '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic;">得点記録なし</div>'}
+                    <span class="u-ext-98 side-info-label" >得点者・アシスト記録</span>
+                    ${goalDetailsHtml ? `<div class="u-ext-113" >${goalDetailsHtml}</div>` : '<div class="u-ext-64" >得点記録なし</div>'}
                 </div>
                 <div class="side-info-card">
                     <span class="side-info-label">ピリオド総括</span>
-                    <div class="side-info-val" style="white-space:pre-wrap;">${escapeHtml(period.summary || period.reflection || '総括コメントはありません。')}</div>
+                    <div class="u-ext-114 side-info-val" >${escapeHtml(period.summary || period.reflection || '総括コメントはありません。')}</div>
                 </div>
                 <div class="side-info-card">
                     <span class="side-info-label">システム (陣形)</span>
-                    <div class="side-info-val" style="font-weight:700;">${escapeHtml(period.system || '未設定')}</div>
+                    <div class="u-ext-109 side-info-val" >${escapeHtml(period.system || '未設定')}</div>
                 </div>
                 <div class="side-info-card">
-                    <span class="side-info-label" style="margin-bottom:0.3rem;">ポジション配置（ミニピッチ図）</span>
-                    <div style="position:relative; width:100%; height:260px; background: linear-gradient(to bottom, #2e7d32, #388e3c); border-radius:6px; border:1px solid var(--surface-border); overflow:hidden; margin-bottom:0.5rem; box-shadow:inset 0 0 10px rgba(0,0,0,0.2);">
-                        <div style="position:absolute; top:50%; left:0; width:100%; height:1px; background:rgba(255,255,255,0.4);"></div>
-                        <div style="position:absolute; top:50%; left:50%; width:60px; height:60px; border:1px solid rgba(255,255,255,0.4); border-radius:50%; transform:translate(-50%, -50%);"></div>
-                        <div style="position:absolute; top:0; left:30%; width:40%; height:12%; border:1px solid rgba(255,255,255,0.4); border-top:none;"></div>
-                        <div style="position:absolute; bottom:0; left:30%; width:40%; height:12%; border:1px solid rgba(255,255,255,0.4); border-bottom:none;"></div>
+                    <span class="u-ext-98 side-info-label" >ポジション配置（ミニピッチ図）</span>
+                    <div class="u-ext-99" >
+                        <div class="u-ext-100" ></div>
+                        <div class="u-ext-101" ></div>
+                        <div class="u-ext-102" ></div>
+                        <div class="u-ext-103" ></div>
                         ${pitchPinsHtml}
                     </div>
-                    <div style="display:flex; flex-direction:column; max-height:180px; overflow-y:auto;">
-                        ${posListHtml || '<div style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">ポジション設定がありません</div>'}
+                    <div class="u-ext-104" >
+                        ${posListHtml || '<div class="u-ext-57" >ポジション設定がありません</div>'}
                     </div>
                 </div>
             `;
+
+            const btnSaveParentVideo = sideBody.querySelector('#btn-save-video-parent');
+            if (btnSaveParentVideo) {
+                btnSaveParentVideo.onclick = () => {
+                    const inputEl = sideBody.querySelector('#side-form-video-parent');
+                    const newUrl = inputEl ? inputEl.value.trim() : '';
+                    period.videoUrl = newUrl;
+                    period.videoUrls = newUrl ? [newUrl] : [];
+                    saveData();
+                    showToast('YouTube動画URLを保存しました');
+                    loadYouTubePlayer(newUrl, 'period-yt-player');
+                };
+            }
 
             // ピンをクリックした際のフォーカス・ハイライト挙動
             sideBody.querySelectorAll('.side-pitch-pin').forEach(pin => {
@@ -1723,8 +1770,8 @@ function renderPeriodTimelineList(period) {
 
     if (memos.length === 0) {
         container.innerHTML = `
-            <div style="text-align:center; color:var(--text-secondary); padding:2rem 1rem; font-size:0.85rem;">
-                <i class="fa-regular fa-clock" style="font-size:1.5rem; margin-bottom:0.5rem; display:block; opacity:0.5;"></i>
+            <div class="u-ext-115" >
+                <i class="u-ext-116 fa-regular fa-clock" ></i>
                 タイムライン記録がありません。
             </div>`;
         return;
@@ -1734,25 +1781,25 @@ function renderPeriodTimelineList(period) {
         const currentTag = m.tag || (state.analysisTags && state.analysisTags[0]) || 'メモ';
         const disabledAttr = isCoach ? '' : 'disabled';
         const deleteBtnHtml = isCoach
-            ? `<button type="button" class="btn btn-danger btn-sm btn-delete-memo" style="margin-left:auto; padding:0.15rem 0.4rem; font-size:0.75rem;" title="削除"><i class="fa-solid fa-trash-can"></i></button>`
+            ? `<button type="button" class="u-ext-117 btn btn-danger btn-sm btn-delete-memo"  title="削除"><i class="fa-solid fa-trash-can"></i></button>`
             : '';
         const tagOptionHtml = (state.analysisTags || []).map(t => `<option value="${escapeHtml(t)}" ${currentTag === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('');
 
         return `
-            <div class="timeline-edit-row" data-index="${idx}" style="display:flex; flex-direction:column; gap:0.3rem; background:rgba(0,0,0,0.02); padding:0.5rem 0.6rem; border-radius:6px; border:1px solid var(--surface-border); transition: all 0.3s ease;">
-                <div style="display:flex; align-items:center; gap:0.4rem; width:100%;">
-                    <button type="button" class="btn btn-secondary btn-sm btn-seek-timestamp" data-time="${escapeHtml(m.time || '00:00')}" style="padding:0.2rem 0.5rem; font-size:0.75rem; font-weight:bold; color:var(--primary); flex-shrink:0;">
+            <div class="u-ext-118 timeline-edit-row" data-index="${idx}" >
+                <div class="u-ext-119" >
+                    <button type="button" class="u-ext-120 btn btn-secondary btn-sm btn-seek-timestamp" data-time="${escapeHtml(m.time || '00:00')}" >
                         <i class="fa-solid fa-play"></i> ${escapeHtml(m.time || '00:00')}
                     </button>
 
-                    <select class="form-control memo-tag-val" ${disabledAttr} style="width:110px; font-size:0.75rem; padding:0.2rem; height:auto;">
+                    <select class="u-ext-121 form-control memo-tag-val" ${disabledAttr} >
                         ${tagOptionHtml}
                     </select>
 
                     ${deleteBtnHtml}
                 </div>
                 <div>
-                    <input type="text" class="form-control memo-text-val" value="${escapeHtml(m.text || '')}" ${disabledAttr} placeholder="${isCoach ? 'メモ（例: 左サイドからの崩し）' : 'メモなし'}" style="width:100%; font-size:0.8rem; padding:0.25rem 0.4rem;">
+                    <input type="text" class="u-ext-122 form-control memo-text-val" value="${escapeHtml(m.text || '')}" ${disabledAttr} placeholder="${isCoach ? 'メモ（例: 左サイドからの崩し）' : 'メモなし'}" >
                 </div>
             </div>
         `;
@@ -2068,34 +2115,34 @@ export function initMatches() {
             const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
 
             h2hHtml = `
-                <div class="card opponent-h2h-card" style="padding:1rem 1.2rem; background:linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.03) 100%); border:1px solid rgba(59, 130, 246, 0.2); border-radius:12px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:0.8rem;">
-                    <div style="display:flex; align-items:center; gap:0.6rem;">
-                        <div style="width:38px; height:38px; border-radius:50%; background:var(--primary); color:#ffffff; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;">
+                <div class="u-ext-123 card opponent-h2h-card" >
+                    <div class="u-ext-124" >
+                        <div class="u-ext-125" >
                             <i class="fa-solid fa-shield-halved"></i>
                         </div>
                         <div>
-                            <div style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">対戦相手 通算成績</div>
-                            <div style="font-weight:700; font-size:1.1rem; color:var(--text-primary);">vs ${escapeHtml(currentMatchOpponent)}</div>
+                            <div class="u-ext-126" >対戦相手 通算成績</div>
+                            <div class="u-ext-127" >vs ${escapeHtml(currentMatchOpponent)}</div>
                         </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:1.2rem; flex-wrap:wrap;">
-                        <div style="text-align:center;">
-                            <div style="font-size:0.7rem; color:var(--text-secondary);">通算対戦</div>
-                            <div style="font-weight:700; font-size:1.05rem;">${allMatchesAgainstOpp.length}試合</div>
+                    <div class="u-ext-128" >
+                        <div class="u-ext-129" >
+                            <div class="u-ext-30" >通算対戦</div>
+                            <div class="u-ext-130" >${allMatchesAgainstOpp.length}試合</div>
                         </div>
-                        <div style="text-align:center;">
-                            <div style="font-size:0.7rem; color:var(--text-secondary);">勝敗内訳</div>
-                            <div style="font-weight:700; font-size:1.05rem;">
-                                <span style="color:#22c55e;">${wins}勝</span> 
-                                <span style="color:#ef4444;">${losses}敗</span> 
-                                <span style="color:#eab308;">${draws}分</span>
+                        <div class="u-ext-129" >
+                            <div class="u-ext-30" >勝敗内訳</div>
+                            <div class="u-ext-130" >
+                                <span class="u-ext-131" >${wins}勝</span> 
+                                <span class="u-ext-16" >${losses}敗</span> 
+                                <span class="u-ext-132" >${draws}分</span>
                             </div>
                         </div>
-                        <div style="text-align:center;">
-                            <div style="font-size:0.7rem; color:var(--text-secondary);">総得失点</div>
-                            <div style="font-weight:700; font-size:1.05rem;">
-                                <span style="color:var(--primary);">${gf}</span> / <span style="color:var(--text-secondary);">${ga}</span>
-                                <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:normal;">(${diffStr})</span>
+                        <div class="u-ext-129" >
+                            <div class="u-ext-30" >総得失点</div>
+                            <div class="u-ext-130" >
+                                <span class="u-ext-77" >${gf}</span> / <span class="u-ext-133" >${ga}</span>
+                                <span class="u-ext-134" >(${diffStr})</span>
                             </div>
                         </div>
                     </div>
@@ -2123,16 +2170,16 @@ export function initMatches() {
             grouped[month].forEach(m => {
                 const matchScore = m.result ? m.result.match(/(\d+)\s*-\s*(\d+)/) : null;
                 const isCompleted = !!matchScore;
-                const resultText = isCompleted ? `${matchScore[1]}-${matchScore[2]}` : '<span style="font-weight:normal; color:var(--text-secondary); font-size:0.9rem;">試合予定</span>';
+                const resultText = isCompleted ? `${matchScore[1]}-${matchScore[2]}` : '<span class="u-ext-135" >試合予定</span>';
 
                 const attendeesHtml = m.presentPlayerIds && m.presentPlayerIds.length > 0
                     ? state.players.filter(pl => m.presentPlayerIds.includes(pl.id)).map(pl => `
-                        <span style="display:inline-flex; align-items:center; background:#f1f5f9; border:1px solid #e2e8f0; color:#334155; font-size:0.7rem; font-weight:600; padding:0.15rem 0.4rem; border-radius:9999px; gap:0.25rem; white-space:nowrap;">
-                            ${pl.number ? `<span style="background:var(--primary); color:#ffffff; font-size:0.55rem; width:14px; height:14px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0;">${pl.number}</span>` : ''}
-                            <span style="flex-shrink:0;">${escapeHtml(pl.name)}</span>
+                        <span class="u-ext-54" >
+                            ${pl.number ? `<span class="u-ext-55" >${pl.number}</span>` : ''}
+                            <span class="u-ext-56" >${escapeHtml(pl.name)}</span>
                         </span>
                     `).join('')
-                    : '<span style="font-size:0.75rem; color:var(--text-secondary); font-style:italic; padding:0.2rem 0;">メンバー登録がありません</span>';
+                    : '<span class="u-ext-57" >メンバー登録がありません</span>';
 
                 const actionBtns = isCoach ? `
                     <button class="btn btn-secondary btn-detail-match" data-id="${m.id}"><i class="fa-solid fa-circle-info"></i> 詳細</button>
@@ -2147,13 +2194,13 @@ export function initMatches() {
                             <div>
                                 <div class="match-card-date"><i class="fa-regular fa-calendar"></i> ${m.date} | ${m.type}${m.tournament ? ` (${m.tournament})` : ''}</div>
                                 <div class="match-card-opponent">vs ${escapeHtml(m.opponent)}</div>
-                                <div class="text-secondary" style="font-size:0.8rem; margin-top:0.4rem;">
-                                    <details class="practice-attendance-details" style="width: 100%; cursor: pointer;">
-                                        <summary style="font-weight:600; font-size:0.8rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.3rem; outline:none; list-style:none; user-select:none;">
-                                            <i class="fa-solid fa-chevron-down" style="font-size:0.7rem; color:var(--text-secondary); transition:transform 0.2s;"></i>
+                                <div class="u-ext-136 text-secondary" >
+                                    <details class="u-ext-137 practice-attendance-details" >
+                                        <summary class="u-ext-138" >
+                                            <i class="u-ext-139 fa-solid fa-chevron-down" ></i>
                                             <span>参加者 (${m.presentPlayerIds ? `${m.presentPlayerIds.length}/${state.players.length}` : `0/${state.players.length}`})</span>
                                         </summary>
-                                        <div style="display:flex; flex-wrap:wrap; gap:0.25rem; padding:0.4rem; border-radius:8px; background:rgba(0,0,0,0.02); margin-top:0.25rem; max-height:100px; overflow-y:auto; box-sizing:border-box;">
+                                        <div class="u-ext-140" >
                                             ${attendeesHtml}
                                         </div>
                                     </details>
@@ -2161,7 +2208,7 @@ export function initMatches() {
                             </div>
                             <div class="match-card-result">${resultText}</div>
                         </div>
-                        <div class="match-card-actions" style="margin-top:0.8rem;">
+                        <div class="u-ext-141 match-card-actions" >
                             ${actionBtns}
                         </div>
                     </div>
@@ -2173,8 +2220,8 @@ export function initMatches() {
         if (filteredMatches.length > displayedMatches.length) {
             const remaining = filteredMatches.length - displayedMatches.length;
             html += `
-                <div style="text-align:center; margin: 1.5rem 0 1rem 0;">
-                    <button class="btn btn-secondary" id="btn-load-more-matches" style="padding: 0.6rem 2rem; font-size: 0.9rem; border-radius: 9999px; display:inline-flex; align-items:center; gap:0.4rem; font-weight:600;">
+                <div class="u-ext-142" >
+                    <button class="u-ext-143 btn btn-secondary" id="btn-load-more-matches" >
                         <i class="fa-solid fa-angle-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredMatches.length} 件)
                     </button>
                 </div>
@@ -2182,9 +2229,9 @@ export function initMatches() {
         }
 
         const emptyHtml = `
-            <div class="card" style="padding:3rem 2rem; text-align:center; border: 1.5px dashed var(--surface-border); display:flex; flex-direction:column; align-items:center; gap:1rem; width:100%; box-sizing:border-box;">
-                <div style="font-size:3rem; color:var(--text-secondary); opacity:0.6;"><i class="fa-solid fa-trophy"></i></div>
-                <h3 style="font-size:1.15rem; margin:0; color:var(--text-primary); font-weight:600;">該当する試合記録がありません</h3>
+            <div class="u-ext-144 card" >
+                <div class="u-ext-145" ><i class="fa-solid fa-trophy"></i></div>
+                <h3 class="u-ext-146" >該当する試合記録がありません</h3>
                 <button class="btn btn-primary" id="btn-empty-add-match" style="margin-top:0.5rem; display:${isCoach ? 'inline-block' : 'none'};"><i class="fa-solid fa-plus"></i> 最初の試合を追加</button>
             </div>
         `;
@@ -2260,8 +2307,9 @@ export function initMatches() {
     });
 
     document.querySelectorAll('.btn-delete-match').forEach(btn => {
-        btn.onclick = (e) => {
-            if (confirm('この試合記録を削除しますか？')) {
+        btn.onclick = async (e) => {
+            const proceed = await showCustomConfirm('この試合記録を削除しますか？', '試合記録の削除', { okText: '削除する', type: 'danger' });
+            if (proceed) {
                 const id = parseInt(e.currentTarget.dataset.id, 10);
                 state.matches = state.matches.filter(m => m.id !== id);
                 saveData();

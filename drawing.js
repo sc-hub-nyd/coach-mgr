@@ -1,6 +1,6 @@
 // drawing.js
 import { state } from './state.js';
-import { showToast } from './utils.js';
+import { showToast, showCustomConfirm } from './utils.js';
 
 let canvas, ctx;
 let bgCanvas, bgCtx;
@@ -26,6 +26,8 @@ let currentMenuId = null;
 let currentMatchId = null;
 let currentFormationId = null;
 let currentLibraryId = null;
+
+let isDirty = false;
 
 let boundListeners = {
     canvasMouseDown: null,
@@ -67,6 +69,7 @@ export function cleanupCanvasEvents() {
 
 function saveHistory() {
     if (isPlaying) return;
+    isDirty = true;
     historyStack.push(JSON.parse(JSON.stringify(objects)));
     if (historyStack.length > 30) historyStack.shift();
     redoStack = [];
@@ -188,6 +191,7 @@ function selectFrame(index) {
 function deleteFrame(index) {
     if (isPlaying) return;
     if (index >= 0 && index < frames.length) {
+        isDirty = true;
         frames.splice(index, 1);
         if (frames.length > 0) {
             currentFrameIndex = Math.min(index, frames.length - 1);
@@ -205,6 +209,7 @@ function deleteFrame(index) {
 }
 
 function addFrame() {
+    isDirty = true;
     const insertIdx = (currentFrameIndex >= 0 && currentFrameIndex < frames.length) ? currentFrameIndex + 1 : frames.length;
     frames.splice(insertIdx, 0, { objects: JSON.parse(JSON.stringify(objects)), title: '' });
     currentFrameIndex = insertIdx;
@@ -1139,16 +1144,35 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 }
 
 // プレビュー描画ヘルパー
-function drawArrow(x1, y1, x2, y2, lineType, cx, cy) { drawArrowToCtx(x1, y1, x2, y2, lineType, ctx, cx, cy); }
-function drawLadder(x1, y1, x2, y2) { drawLadderToCtx(x1, y1, x2, y2, ctx); }
+function drawArrow(x1, y1, x2, y2, lineType, cx, cy) {
+    ctx.save();
+    const dpr = getHiDPIScale();
+    ctx.scale(dpr, dpr);
+    drawArrowToCtx(x1, y1, x2, y2, lineType, ctx, cx, cy);
+    ctx.restore();
+}
+function drawLadder(x1, y1, x2, y2) {
+    ctx.save();
+    const dpr = getHiDPIScale();
+    ctx.scale(dpr, dpr);
+    drawLadderToCtx(x1, y1, x2, y2, ctx);
+    ctx.restore();
+}
 function drawRectPreview(x1, y1, x2, y2) {
+    ctx.save();
+    const dpr = getHiDPIScale();
+    ctx.scale(dpr, dpr);
     ctx.strokeStyle = 'rgba(51, 65, 85, 0.7)';
     ctx.lineWidth = 1.5;
     ctx.setLineDash([4, 4]);
     ctx.strokeRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1));
     ctx.setLineDash([]);
+    ctx.restore();
 }
 function drawCirclePreview(x1, y1, x2, y2) {
+    ctx.save();
+    const dpr = getHiDPIScale();
+    ctx.scale(dpr, dpr);
     const rx = Math.abs(x2 - x1) / 2;
     const ry = Math.abs(y2 - y1) / 2;
     const cx = Math.min(x1, x2) + rx;
@@ -1162,6 +1186,7 @@ function drawCirclePreview(x1, y1, x2, y2) {
     ctx.setLineDash([4, 4]);
     ctx.stroke();
     ctx.setLineDash([]);
+    ctx.restore();
 }
 
 function getHiDPIScale() {
@@ -1568,6 +1593,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
     isPlaying = false;
     historyStack = [];
     saveHistory();
+    isDirty = false;
 
     // ★ 保存されたピッチテンプレートの初期読込 & Reflect
     let savedTemplate = 'full';
@@ -1585,7 +1611,10 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
     const templateSel = document.getElementById('canvas-pitch-template');
     if (templateSel) {
         templateSel.value = savedTemplate;
-        templateSel.onchange = () => drawPitch(objects);
+        templateSel.onchange = () => {
+            isDirty = true;
+            drawPitch(objects);
+        };
     }
 
     // テーマタイトルの反映
@@ -1956,6 +1985,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                     if (formObj) {
                         formObj.boardData = JSON.parse(JSON.stringify(objects));
                         formObj.pitchTemplate = pitchTemplateVal;
+                        isDirty = false;
                         if (window.saveData) window.saveData();
                         showToast('フォーメーションを保存しました');
                         if (typeof navigateFunc === 'function') navigateFunc('matches');
@@ -1987,6 +2017,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                             }
                         }
 
+                        isDirty = false;
                         if (window.saveData) window.saveData();
                         showToast('作図を保存しました');
                         if (typeof navigateFunc === 'function') navigateFunc('practices');
@@ -2019,6 +2050,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                         }
                     });
 
+                    isDirty = false;
                     if (window.saveData) window.saveData();
                     showToast('作図を保存しました');
                     if (typeof navigateFunc === 'function') navigateFunc('library');
@@ -2029,7 +2061,13 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
 
     const btnBack = document.getElementById('anim-back');
     if (btnBack) {
-        btnBack.onclick = () => {
+        btnBack.onclick = async () => {
+            if (isDirty) {
+                const proceed = await showCustomConfirm('変更内容が保存されていません。編集を破棄して戻りますか？', '未保存の変更', { okText: '戻る', type: 'danger' });
+                if (!proceed) {
+                    return;
+                }
+            }
             if (isFormationMode) {
                 if (typeof navigateFunc === 'function') navigateFunc('matches');
             } else if (isLibraryMode) {
