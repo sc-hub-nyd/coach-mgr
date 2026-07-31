@@ -346,34 +346,34 @@
         <div
             style="display:flex; flex-direction:column; gap:1.2rem; max-width:1100px; margin:0 auto; padding-bottom:2rem;">
 
-            <!-- ヘッダー（タイトル・基本情報） -->
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; background:var(--card-bg); padding:1rem 1.5rem; border-radius:var(--border-radius); border:1px solid var(--surface-border);">
-                <!-- 保護者モード用表示 -->
-                <div class="parent-only">
-                    <div style="font-size:0.8rem; color:var(--text-secondary);" id="match-detail-meta">日付 | 大会・種別</div>
-                    <h2 style="margin:0; font-size:1.25rem; color:var(--primary);" id="match-detail-title">vs 対戦相手</h2>
+            <!-- 試合概要 ＆ スコアサマリー ヒーローバナー -->
+            <div class="card" style="padding:0.6rem 1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem; border-left:4px solid var(--primary);">
+                <div>
+                    <div style="font-size:0.75rem; color:var(--text-secondary);" id="match-detail-meta">日付 | 大会・種別</div>
+                    <h2 style="margin:0; font-size:1.2rem; font-weight:700; color:var(--text-primary);" id="match-detail-title">vs 対戦相手</h2>
                 </div>
-                <!-- コーチモード用直接入力（ヘッダー部とフォームを連動するためフォームの最上部に配置） -->
-                <div class="coach-only" style="width:100%;">
-                    <div style="font-size:0.8rem; font-weight:bold; color:var(--text-primary); margin-bottom:0.5rem;"><i class="fa-solid fa-pen"></i> 試合基本情報</div>
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:0.6rem;">
-                        <div style="display:flex; flex-direction:column; gap:0.2rem;">
-                            <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">日付 <span class="badge-required" style="padding:0.1rem 0.25rem;">必須</span></label>
-                            <input type="date" id="match-detail-date-input" class="form-control" style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;" required form="form-match-detail-inline">
-                        </div>
-                        <div style="display:flex; flex-direction:column; gap:0.2rem;">
-                            <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">対戦相手 <span class="badge-required" style="padding:0.1rem 0.25rem;">必須</span></label>
-                            <input type="text" id="match-detail-opponent-input" class="form-control" placeholder="例: FC東京U-12" style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;" required form="form-match-detail-inline">
-                        </div>
-                        <div style="display:flex; flex-direction:column; gap:0.2rem;">
-                            <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">試合種別</label>
-                            <select id="match-detail-type-select" class="form-control" style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;" form="form-match-detail-inline"></select>
-                        </div>
-                        <div style="display:flex; flex-direction:column; gap:0.2rem;">
-                            <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">大会名・リーグ名</label>
-                            <input type="text" id="match-detail-tournament-input" class="form-control" placeholder="例: 三多摩大会（任意）" style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;" form="form-match-detail-inline">
-                        </div>
+                <div id="match-detail-score-box"></div>
+            </div>
+
+            <!-- コーチモード用 試合基本情報 編集エリア -->
+            <div class="card coach-only" style="padding:1.2rem; display:flex; flex-direction:column; gap:0.6rem;">
+                <div style="font-size:0.85rem; font-weight:bold; color:var(--text-primary);"><i class="fa-solid fa-pen"></i> 試合基本情報</div>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:0.6rem;">
+                    <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                        <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">日付 <span class="badge-required" style="padding:0.1rem 0.25rem;">必須</span></label>
+                        <input type="date" id="match-detail-date-input" class="form-control" style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;" required form="form-match-detail-inline">
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                        <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">対戦相手 <span class="badge-required" style="padding:0.1rem 0.25rem;">必須</span></label>
+                        <input type="text" id="match-detail-opponent-input" class="form-control" placeholder="例: FC東京U-12" style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;" required form="form-match-detail-inline">
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                        <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">試合種別</label>
+                        <select id="match-detail-type-select" class="form-control" style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;" form="form-match-detail-inline"></select>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                        <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">大会名・リーグ名</label>
+                        <input type="text" id="match-detail-tournament-input" class="form-control" placeholder="例: 三多摩大会（任意）" style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;" form="form-match-detail-inline">
                     </div>
                 </div>
             </div>
@@ -491,11 +491,6 @@
     </template>
 
     <template id="tpl-players">
-        <div class="dashboard-grid" id="player-summary-cards"
-            style="margin-bottom:1.5rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-            <!-- Rendered dynamically by role in initPlayers() -->
-        </div>
-
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
             <!-- Cross-sectional Analysis View Switcher Tabs -->
             <div class="player-view-tabs" id="player-view-tabs" style="display:flex; gap:0.4rem; background:rgba(0,0,0,0.03); padding:0.3rem; border-radius:10px; border:1px solid var(--surface-border); flex-wrap:wrap;">
@@ -504,9 +499,6 @@
                 </button>
                 <button type="button" class="btn btn-sm player-view-tab" data-view="heatmap" style="font-size:0.8rem; padding:0.4rem 0.8rem; border-radius:8px; border:none; background:transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
                     <i class="fa-solid fa-table-cells" style="color:#2563eb;"></i> スキルヒートマップ
-                </button>
-                <button type="button" class="btn btn-sm player-view-tab" data-view="position" style="font-size:0.8rem; padding:0.4rem 0.8rem; border-radius:8px; border:none; background:transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
-                    <i class="fa-solid fa-person-running" style="color:#16a34a;"></i> ポジション起用比較
                 </button>
                 <button type="button" class="btn btn-sm player-view-tab" data-view="participation" style="font-size:0.8rem; padding:0.4rem 0.8rem; border-radius:8px; border:none; background:transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
                     <i class="fa-solid fa-chart-column" style="color:#9333ea;"></i> 出場＆スタッツ比較
@@ -529,12 +521,7 @@
             <!-- Heatmap table injected here -->
         </div>
 
-        <!-- View 3: Position Fitness Simulator -->
-        <div class="player-subview hidden" id="player-view-position">
-            <!-- Position fitness simulator injected here -->
-        </div>
-
-        <!-- View 4: Participation & Stats Comparison -->
+        <!-- View 3: Participation & Stats Comparison -->
         <div class="player-subview hidden" id="player-view-participation">
             <!-- Participation & Stats bars injected here -->
         </div>
@@ -1378,12 +1365,17 @@
         </div>
     </div>
 
-    <!-- コンテキスト維持型: ピリオド情報編集モーダル (既存を軽量化して上書き) -->
+    <!-- コンテキスト維持型: ピリオド情報編集モーダル (軽量化版 ボトムシート) -->
     <div id="modal-formation" class="modal-overlay hidden" style="z-index: 1030;">
-        <div class="modal" style="max-width: 600px; width: 95%; position:relative;">
+        <div class="bottom-sheet-modal" style="max-width: 600px; width: 100%; position:relative;">
             <button type="button" class="btn-close-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
-            <h2 style="margin-bottom:1.2rem; font-size:1.2rem;" id="formation-modal-title"><i
-                    class="fa-solid fa-pen"></i> ピリオド情報を編集</h2>
+            <h2 style="margin-bottom:0.5rem; font-size:1.1rem;" id="formation-modal-title"><i class="fa-solid fa-pen"></i> ピリオド情報を編集</h2>
+            
+            <!-- 前ピリオドの配置をコピーボタン (JavaScriptで動的表示制御) -->
+            <button type="button" id="btn-copy-prev-period" class="btn btn-outline btn-sm" style="width:100%; margin-bottom:1rem; display:none;">
+                <i class="fa-solid fa-copy"></i> 前ピリオドの陣形・配置をコピー
+            </button>
+
             <form id="form-formation">
                 <input type="hidden" id="formation-match-id">
                 <input type="hidden" id="formation-id">
@@ -1399,48 +1391,12 @@
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 1rem;">
-                    <label style="font-size:0.8rem;">YouTube動画 URL <span class="badge-optional">任意</span></label>
-                    <input type="url" id="formation-video-url" class="form-control" placeholder="https://youtu.be/...">
-                </div>
-
-                <div
-                    style="display:flex; gap:0.5rem; align-items:center; background:rgba(0,0,0,0.02); padding:0.5rem; border-radius:6px; margin-bottom: 1rem; border: 1px solid var(--surface-border);">
-                    <div style="flex:1; text-align:center;">
-                        <label style="font-size:0.75rem; margin-bottom:0.2rem; display:block;">自チーム得点</label>
-                        <input type="number" id="formation-score-us" class="form-control" min="0" value="0"
-                            style="text-align:center;" readonly>
-                    </div>
-                    <span style="font-weight:bold;">-</span>
-                    <div style="flex:1; text-align:center;">
-                        <label style="font-size:0.75rem; margin-bottom:0.2rem; display:block;">相手チーム得点</label>
-                        <input type="number" id="formation-score-them" class="form-control" min="0" value="0"
-                            style="text-align:center;" readonly>
-                    </div>
-                </div>
-
-                <!-- ▼ 追加: ピリオドごとの得点者・アシスト記録一覧コンテナ -->
-                <div class="form-group" style="margin-bottom: 1rem;">
-                    <label style="font-size:0.8rem; margin-bottom:0.4rem; display:block;"><i class="fa-solid fa-futbol"
-                            style="color:var(--primary);"></i> 得点者・アシスト記録</label>
-                    <div id="period-goal-records-list"
-                        style="display:flex; flex-direction:column; gap:0.4rem; max-height:150px; overflow-y:auto; margin-bottom:0.5rem;">
-                        <!-- JSで動的に行が追加されます -->
-                    </div>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 1rem;">
-                    <label style="font-size:0.8rem;">ピリオド総括 <span class="badge-optional">任意</span></label>
-                    <textarea id="formation-summary-text" class="form-control" rows="2"
-                        placeholder="例: ビルドアップは良かったが、フィニッシュの精度に課題"></textarea>
-                </div>
-
-                <!-- 配置図の編集エリア -->
-                <div class="form-group" style="margin-bottom: 1.5rem;">
+                <!-- 配置図の編集エリア (通常ピリオド) -->
+                <div id="modal-formation-pitch-container" class="form-group" style="margin-bottom: 1.5rem;">
                     <label style="font-size:0.8rem; margin-bottom:0.4rem; display:block;"><i
                             class="fa-solid fa-street-view"></i> ポジション配置 (ハーフコート)</label>
                     <div class="tactical-pitch pitch-half-bottom" id="tactical-formation-pitch"
-                        style="max-height: 180px;">
+                        style="max-width: 320px; margin: 0 auto;">
                         <div class="penalty-area-bottom"></div>
                         <div class="goal-area-bottom"></div>
                         <div class="penalty-arc-bottom"></div>
@@ -1448,6 +1404,16 @@
                         <div class="corner-arc-bl"></div>
                         <div class="corner-arc-br"></div>
                         <!-- nodes injected dynamically -->
+                    </div>
+
+                    <!-- U-1: クイック配置UI -->
+                    <div id="formation-quick-assign-container" style="margin-top:0.5rem; padding:0.5rem; background:rgba(0,0,0,0.02); border-radius:8px; border:1px solid var(--surface-border);">
+                        <div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.4rem;">
+                            <i class="fa-solid fa-hand-pointer" style="color:var(--primary);"></i> <b>クイック配置:</b> ①選手をタップ ➔ ②ポジション枠をタップ
+                        </div>
+                        <div id="formation-quick-assign-roster" style="display:flex; gap:0.4rem; overflow-x:auto; padding-bottom:0.2rem; align-items:center;">
+                            <!-- JSで動的生成 -->
+                        </div>
                     </div>
 
                     <!-- Floating player picker overlay -->
@@ -1466,9 +1432,30 @@
                     </div>
                 </div>
 
-                <div style="display:flex; justify-content:flex-end; gap:0.8rem;">
-                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                    <button type="submit" class="btn btn-primary">保存する</button>
+                <!-- PK戦専用のキッカー・結果入力エリア -->
+                <div id="pk-shootout-container" style="display:none; margin-bottom: 1.5rem; background:rgba(0,0,0,0.02); padding:0.8rem; border-radius:12px; border:1px solid var(--surface-border);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
+                        <label style="font-size:0.85rem; font-weight:700; color:var(--primary); margin:0; display:flex; align-items:center; gap:0.4rem;">
+                            <i class="fa-solid fa-bullseye"></i> PK戦 キッカー記録 (3人制＋サドンデス)
+                        </label>
+                        <span id="pk-summary-badge" class="badge" style="background:var(--primary); color:#fff; font-size:0.8rem; padding:0.25rem 0.6rem; border-radius:12px;">PK 0 - 0</span>
+                    </div>
+                    
+                    <div id="pk-kickers-list" style="display:flex; flex-direction:column; gap:0.6rem; max-height:240px; overflow-y:auto; padding-right:0.2rem;">
+                        <!-- JSでキッカー行（1本目, 2本目, 3本目, 4本目...）を生成 -->
+                    </div>
+
+                    <button type="button" id="btn-add-pk-kicker" class="btn btn-secondary btn-sm" style="width:100%; margin-top:0.8rem; font-size:0.8rem;">
+                        <i class="fa-solid fa-plus"></i> サドンデス枠を追加
+                    </button>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <button type="button" class="btn btn-danger btn-sm" id="btn-delete-formation-modal" style="display:none;"><i class="fa-solid fa-trash"></i> 削除</button>
+                    <div style="display:flex; gap:0.8rem; margin-left:auto;">
+                        <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
+                        <button type="submit" class="btn btn-primary">保存する</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -1940,18 +1927,11 @@
                     <div>
                         <label style="font-weight:bold; margin-bottom:0.5rem; display:block;">ピッチをクリックして配置を設定（最大 <span
                                 id="custom-formation-max-count">8</span> 箇所）</label>
-                        <div class="tactical-pitch" id="custom-formation-pitch-canvas" style="cursor:crosshair;">
-                            <div class="penalty-area-top"></div>
-                            <div class="goal-area-top"></div>
-                            <div class="penalty-arc-top"></div>
-                            <div class="penalty-spot-top"></div>
+                        <div class="tactical-pitch pitch-half-bottom" id="custom-formation-pitch-canvas" style="cursor:crosshair; max-width: 320px;">
                             <div class="penalty-area-bottom"></div>
                             <div class="goal-area-bottom"></div>
                             <div class="penalty-arc-bottom"></div>
                             <div class="penalty-spot-bottom"></div>
-                            <div class="center-spot"></div>
-                            <div class="corner-arc-tl"></div>
-                            <div class="corner-arc-tr"></div>
                             <div class="corner-arc-bl"></div>
                             <div class="corner-arc-br"></div>
                             <!-- visual nodes placed by user -->

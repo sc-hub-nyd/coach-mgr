@@ -317,9 +317,11 @@ export function initLibrary(miniPitchObserver) {
                 return `
                 <div class="u-ext-183 card" >
                     <div>
-                        <div class="u-ext-184" >
-                            <span class="u-ext-185 badge" >${cat}</span>
-                            <div class="u-ext-156" >
+                        <div class="library-card-header" style="display:flex; flex-direction:column; gap:0.3rem; margin-bottom:0.4rem;">
+                            <div>
+                                <span class="u-ext-185 badge" >${cat}</span>
+                            </div>
+                            <div class="u-ext-156 library-card-actions" style="display:flex; justify-content:flex-end; gap:0.25rem; width:100%;">
                                 ${actionBtns}
                             </div>
                         </div>

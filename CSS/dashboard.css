@@ -283,25 +283,28 @@
     color: var(--text-primary) !important;
 }
 
+.match-card-bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px solid var(--surface-border);
+}
+
 .match-card-actions {
     position: static !important;
     display: flex !important;
     justify-content: flex-end !important;
     align-items: center !important;
     gap: 0.4rem !important;
-    margin-top: 0.4rem !important;
-    width: 100% !important;
+    margin-top: 0 !important;
 }
 
 .match-card-actions .btn,
 .match-card-actions button {
     flex-shrink: 0 !important;
-}
-
-.match-card-date,
-.match-card span,
-.match-card div {
-    white-space: nowrap !important;
 }
 
 /* Practice Cards */
@@ -317,8 +320,8 @@
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--surface-border);
-    padding-bottom: 0.8rem;
-    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .practice-card-header-title {
@@ -335,28 +338,59 @@
 }
 
 .practice-menu-item {
-    border-radius: 12px;
-    margin-bottom: 0.5rem;
+    border-radius: 10px;
+    margin-bottom: 0.4rem;
     background: rgba(0, 0, 0, 0.03);
     display: block;
-    padding: 0.8rem;
+    padding: 0.55rem 0.65rem;
     border-bottom: none;
     border: 1px solid var(--surface-border);
 }
 
+.no-practice-menu {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 0.4rem 0.5rem;
+    list-style: none;
+}
+
 .practice-menu-item-header {
     display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    align-items: stretch;
+    width: 100%;
+}
+
+.practice-menu-title-block {
+    display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+    width: 100%;
+    gap: 0.3rem;
 }
 
 .practice-menu-item-title {
-    font-size: 1rem;
+    font-size: 0.92rem;
     font-weight: bold;
     color: var(--primary);
-    line-height: 1.3;
+    line-height: 1.35;
     flex: 1;
-    margin-right: 0.5rem;
+    word-break: break-word;
+}
+
+.practice-menu-actions-block {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.3rem;
+    width: 100%;
+    margin-top: 0.15rem;
+}
+
+.practice-menu-actions-block .btn {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.72rem;
 }
 
 .practice-menu-item-details {
@@ -424,6 +458,98 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .library-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem !important;
+    }
+    
+    .match-card, 
+    .practice-card,
+    .library-grid .card {
+        padding: 0.55rem 0.65rem !important;
+        border-radius: 10px;
+        min-height: auto !important;
+    }
+
+    .match-card-header {
+        flex-direction: column !important;
+        gap: 0.2rem !important;
+        align-items: flex-start !important;
+    }
+    
+    .match-card-date {
+        font-size: 0.7rem !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        line-height: 1.25 !important;
+    }
+    
+    .match-card-opponent {
+        font-size: 0.88rem !important;
+        margin: 0.1rem 0 !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        line-height: 1.25 !important;
+    }
+    
+    .match-card-bottom-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        margin-top: 0.25rem !important;
+        padding-top: 0.25rem !important;
+        border-top: 1px solid var(--surface-border) !important;
+    }
+
+    .match-card-result {
+        font-size: 0.92rem !important;
+        margin-top: 0 !important;
+    }
+    
+    .match-card-actions {
+        gap: 0.25rem !important;
+        margin-top: 0 !important;
+    }
+    
+    .match-card-actions .btn {
+        padding: 0.2rem 0.4rem !important;
+        font-size: 0.7rem !important;
+    }
+
+    .practice-card-header {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        gap: 0.25rem !important;
+        padding-bottom: 0.3rem !important;
+        margin-bottom: 0.3rem !important;
+    }
+
+    .practice-card-actions {
+        flex-shrink: 0 !important;
+        display: flex !important;
+        gap: 0.25rem !important;
+    }
+
+    .practice-card-header-title {
+        font-size: 0.82rem;
+    }
+
+    .practice-menu-item {
+        padding: 0.35rem 0.45rem;
+        border-radius: 8px;
+        margin-bottom: 0.3rem;
+    }
+    
+    .practice-menu-item-title,
+    .no-practice-menu {
+        font-size: 0.8rem;
+    }
 }
 
 .library-canvas-wrapper:hover .canvas-hover-overlay {
@@ -1468,36 +1594,102 @@ summary {
 /* --- 選手横断分析ビュー (Skill Heatmap, Position, Participation) --- */
 .skill-heatmap-container {
     overflow-x: auto;
-    background: var(--surface-color);
-    border: 1px solid var(--surface-border);
-    border-radius: 12px;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
 }
 
 .skill-heatmap-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 4px;
-    font-size: 0.85rem;
+    border-spacing: 3px;
+    font-size: 0.8rem;
+    table-layout: fixed;
 }
 
 .skill-heatmap-table th {
-    padding: 0.6rem 0.8rem;
+    padding: 0.4rem 0.2rem;
     background: rgba(0,0,0,0.03);
     color: var(--text-secondary);
     font-weight: 700;
     text-align: center;
     border-radius: 6px;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.2;
+    vertical-align: middle;
 }
 
 .skill-heatmap-table td {
-    padding: 0.5rem 0.6rem;
+    padding: 0.4rem 0.2rem;
     text-align: center;
     border-radius: 6px;
     font-weight: 700;
     transition: all 0.2s ease;
+    white-space: nowrap;
+    vertical-align: middle;
+    overflow: hidden;
+}
+
+.heatmap-name-col {
+    width: 72px;
+    min-width: 72px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left !important;
+}
+
+.heatmap-player-num {
+    display: inline-block;
+    width: 18px;
+    text-align: right;
+    margin-right: 0.3rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.heatmap-pos-col {
+    width: 56px;
+    min-width: 56px;
+    white-space: normal !important;
+    word-break: break-all;
+    line-height: 1.15;
+    font-size: 0.72rem !important;
+}
+
+.heatmap-skill-col {
+    width: 52px;
+    min-width: 52px;
+}
+
+@media (max-width: 640px) {
+    .skill-heatmap-table {
+        font-size: 0.7rem;
+    }
+    .skill-heatmap-table th, 
+    .skill-heatmap-table td {
+        padding: 0.3rem 0.1rem;
+    }
+    
+    .heatmap-name-col {
+        width: 64px;
+        min-width: 64px;
+    }
+    
+    .heatmap-pos-col {
+        width: 48px;
+        min-width: 48px;
+        font-size: 0.65rem !important;
+    }
+    
+    .heatmap-skill-col {
+        width: 44px;
+        min-width: 44px;
+    }
+    
+    .skill-heatmap-container {
+        padding: 0.8rem !important;
+        overflow-x: auto;
+    }
 }
 
 .heatmap-lvl-0 { background: rgba(148,163,184,0.1); color: #94a3b8; }

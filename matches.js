@@ -364,6 +364,46 @@ export function openFormationPlayerPicker(nodeEl) {
     };
 }
 
+let activeQuickAssignPlayerId = null;
+
+export function renderQuickAssignRoster() {
+    const container = document.getElementById('formation-quick-assign-roster');
+    if (!container) return;
+
+    const sorted = [...state.players].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
+
+    container.innerHTML = sorted.map(p => `
+        <button type="button" class="btn btn-sm btn-secondary btn-outline-primary btn-quick-assign-player" data-id="${p.id}" style="border-radius:20px; white-space:nowrap; padding:0.25rem 0.6rem; font-size:0.75rem;">
+            ${p.number} ${p.name}
+        </button>
+    `).join('');
+
+    container.querySelectorAll('.btn-quick-assign-player').forEach(btn => {
+        btn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const pid = btn.dataset.id;
+
+            // Remove active from all
+            container.querySelectorAll('.btn-quick-assign-player').forEach(b => {
+                b.classList.remove('btn-primary');
+                b.classList.add('btn-secondary', 'btn-outline-primary');
+            });
+
+            if (activeQuickAssignPlayerId === pid) {
+                // Toggle off
+                activeQuickAssignPlayerId = null;
+            } else {
+                // Toggle on
+                activeQuickAssignPlayerId = pid;
+                btn.classList.remove('btn-secondary', 'btn-outline-primary');
+                btn.classList.add('btn-primary');
+            }
+        };
+    });
+}
+
 export function renderFormationPitch(systemName, existingLineup = []) {
     const pitch = document.getElementById('tactical-formation-pitch');
     if (!pitch) return;
@@ -378,11 +418,11 @@ export function renderFormationPitch(systemName, existingLineup = []) {
         const nodeEl = document.createElement('div');
         nodeEl.className = 'pitch-node';
 
-        const rawTop = parseFloat(coord.top) || 50;
-        const halfTop = 12 + (rawTop * 0.76);
+        const nodeTop = coord.top !== undefined ? (typeof coord.top === 'number' ? `${coord.top}%` : coord.top) : (coord.y !== undefined ? `${coord.y}%` : '50%');
+        const nodeLeft = coord.left !== undefined ? (typeof coord.left === 'number' ? `${coord.left}%` : coord.left) : (coord.x !== undefined ? `${coord.x}%` : '50%');
 
-        nodeEl.style.top = `${halfTop}%`;
-        nodeEl.style.left = coord.left;
+        nodeEl.style.top = nodeTop;
+        nodeEl.style.left = nodeLeft;
 
         nodeEl.dataset.index = index;
         nodeEl.dataset.role = coord.role;
@@ -409,7 +449,26 @@ export function renderFormationPitch(systemName, existingLineup = []) {
 
         nodeEl.onclick = (e) => {
             e.stopPropagation();
-            openFormationPlayerPicker(nodeEl);
+            if (activeQuickAssignPlayerId) {
+                const p = state.players.find(pl => pl.id == activeQuickAssignPlayerId);
+                if (p) {
+                    nodeEl.dataset.playerId = p.id;
+                    nodeEl.innerHTML = `
+                        <span class="pitch-node-role">${nodeEl.dataset.label}</span>
+                        <span class="pitch-node-number">${p.number}</span>
+                        <div class="pitch-node-name">${p.number} ${p.name}</div>
+                    `;
+                    // Reset active quick assign player
+                    const activeBtn = document.querySelector(`.btn-quick-assign-player[data-id="${activeQuickAssignPlayerId}"]`);
+                    if (activeBtn) {
+                        activeBtn.classList.remove('btn-primary');
+                        activeBtn.classList.add('btn-secondary', 'btn-outline-primary');
+                    }
+                    activeQuickAssignPlayerId = null;
+                }
+            } else {
+                openFormationPlayerPicker(nodeEl);
+            }
         };
 
         pitch.appendChild(nodeEl);
@@ -474,7 +533,6 @@ export function openMatchModal(matchId = null) {
                 const assistId = assistVal ? parseInt(assistVal, 10) : null;
 
                 goalRecords.push({ scorerId, assistId });
-
                 let text = '';
                 if (scorerId) {
                     const sPlayer = state.players.find(p => p.id === scorerId);
@@ -492,6 +550,11 @@ export function openMatchModal(matchId = null) {
 
             const presentPlayerIds = Array.from(document.querySelectorAll('#match-attendance-roster input[type="checkbox"]:checked')).map(cb => parseInt(cb.value, 10));
 
+            const pkUsInput = document.getElementById('match-pk-us');
+            const pkThemInput = document.getElementById('match-pk-them');
+            const pkUs = (pkUsInput && pkUsInput.value !== '') ? parseInt(pkUsInput.value, 10) : null;
+            const pkThem = (pkThemInput && pkThemInput.value !== '') ? parseInt(pkThemInput.value, 10) : null;
+
             const editId = document.getElementById('match-edit-id').value;
             if (editId) {
                 const match = state.matches.find(m => m.id === parseInt(editId, 10));
@@ -500,6 +563,8 @@ export function openMatchModal(matchId = null) {
                     match.opponent = document.getElementById('match-opponent').value;
                     match.type = document.getElementById('match-type').value;
                     match.tournament = document.getElementById('match-tournament').value;
+                    match.pkUs = pkUs;
+                    match.pkThem = pkThem;
                     match.result = resultStr;
                     match.scorers = scorersStr;
                     match.goalRecords = goalRecords;
@@ -517,6 +582,8 @@ export function openMatchModal(matchId = null) {
                     type: document.getElementById('match-type').value,
                     tournament: document.getElementById('match-tournament').value,
                     result: resultStr,
+                    pkUs: pkUs,
+                    pkThem: pkThem,
                     scorers: scorersStr,
                     goalRecords: goalRecords,
                     theme: themeStr,
@@ -572,15 +639,20 @@ export function openMatchModal(matchId = null) {
 
             const scoreUsEl = document.getElementById('match-score-us');
             const scoreThemEl = document.getElementById('match-score-them');
-
             if (m.result && m.result.includes('-')) {
-                const scores = m.result.split('-');
+                const mainScore = m.result.split(' ')[0];
+                const scores = mainScore.split('-');
                 if (scoreUsEl) scoreUsEl.value = scores[0];
                 if (scoreThemEl) scoreThemEl.value = scores[1];
             } else {
-                if (scoreUsEl) scoreUsEl.value = '';
-                if (scoreThemEl) scoreThemEl.value = '';
+                if (scoreUsEl) scoreUsEl.value = m.scoreUs !== undefined ? m.scoreUs : '';
+                if (scoreThemEl) scoreThemEl.value = m.scoreThem !== undefined ? m.scoreThem : '';
             }
+
+            const pkUsEl = document.getElementById('match-pk-us');
+            const pkThemEl = document.getElementById('match-pk-them');
+            if (pkUsEl) pkUsEl.value = (m.pkUs !== undefined && m.pkUs !== null) ? m.pkUs : '';
+            if (pkThemEl) pkThemEl.value = (m.pkThem !== undefined && m.pkThem !== null) ? m.pkThem : '';
 
             if (goalRecordsList && m.goalRecords && m.goalRecords.length > 0) {
                 m.goalRecords.forEach(r => {
@@ -640,6 +712,52 @@ export function openMatchModal(matchId = null) {
     if (matchDetailModal) matchDetailModal.classList.add('hidden');
 
     openModal('modal-match');
+}
+
+export function getMatchStatus(m) {
+    if (!m || !m.result) return 'upcoming';
+
+    if (m.pkUs !== undefined && m.pkUs !== null && m.pkThem !== undefined && m.pkThem !== null) {
+        if (m.pkUs > m.pkThem) return 'win';
+        if (m.pkUs < m.pkThem) return 'loss';
+    }
+
+    const pkMatch = m.result.match(/\(PK\s*(\d+)\s*-\s*(\d+)\)/i);
+    if (pkMatch) {
+        const pUs = parseInt(pkMatch[1], 10);
+        const pThem = parseInt(pkMatch[2], 10);
+        if (pUs > pThem) return 'win';
+        if (pUs < pThem) return 'loss';
+    }
+
+    const matchScore = m.result.match(/(\d+)\s*-\s*(\d+)/);
+    if (!matchScore) return 'upcoming';
+    const us = parseInt(matchScore[1], 10);
+    const them = parseInt(matchScore[2], 10);
+    if (us > them) return 'win';
+    if (us < them) return 'loss';
+    return 'draw';
+}
+
+export function renderMatchScoreHeaderBadge(m) {
+    const status = getMatchStatus(m);
+    let badgeHtml = '';
+    if (status === 'win') {
+        badgeHtml = '<span class="badge" style="background:var(--primary); color:#fff; font-size:0.75rem; padding:0.2rem 0.5rem; font-weight:700; border-radius:4px;"><i class="fa-solid fa-trophy"></i> WIN</span>';
+    } else if (status === 'loss') {
+        badgeHtml = '<span class="badge" style="background:#64748b; color:#fff; font-size:0.75rem; padding:0.2rem 0.5rem; font-weight:700; border-radius:4px;"><i class="fa-solid fa-xmark"></i> LOSE</span>';
+    } else if (status === 'draw') {
+        badgeHtml = '<span class="badge" style="background:#f59e0b; color:#fff; font-size:0.75rem; padding:0.2rem 0.5rem; font-weight:700; border-radius:4px;"><i class="fa-solid fa-handshake"></i> DRAW</span>';
+    }
+
+    const resultStr = m.result || `${m.scoreUs || 0}-${m.scoreThem || 0}`;
+
+    return `
+        <div style="display:inline-flex; align-items:center; gap:0.5rem;">
+            ${badgeHtml}
+            <span style="font-size:1.2rem; font-weight:800; color:var(--text-primary);">${escapeHtml(resultStr)}</span>
+        </div>
+    `;
 }
 
 export function initMatchDetailView(matchId) {
@@ -704,6 +822,9 @@ export function initMatchDetailView(matchId) {
         titleEl.textContent = `vs ${m.opponent || '対戦相手'}`;
     }
 
+    const scoreBox = document.getElementById('match-detail-score-box');
+    if (scoreBox) scoreBox.innerHTML = renderMatchScoreHeaderBadge(m);
+
     const themeText = document.getElementById('match-detail-theme-text');
     const themeInput = document.getElementById('match-detail-theme-input');
     const summaryText = document.getElementById('match-detail-summary-text');
@@ -745,7 +866,7 @@ export function initMatchDetailView(matchId) {
                 </span>
             `).join('')
             : '<span class="u-ext-57" >メンバー登録がありません</span>';
-        
+
         detailRosterDisplay.innerHTML = attendeesHtml;
     }
 
@@ -807,6 +928,109 @@ export function initMatchDetailView(matchId) {
     renderPeriodGrid(m);
 }
 
+export function recalculateMatchResult(match) {
+    if (!match) return;
+    if (!match.formations) match.formations = [];
+
+    let totalUs = 0;
+    let totalThem = 0;
+    let pkUs = null;
+    let pkThem = null;
+
+    const allMatchGoalRecords = [];
+    const scorersList = [];
+
+    match.formations.forEach(f => {
+        const isPkPeriod = f.name && (f.name.trim() === 'PK戦' || f.name.toLowerCase().includes('pk'));
+        if (isPkPeriod) {
+            pkUs = (f.scoreUs !== undefined && f.scoreUs !== null) ? parseInt(f.scoreUs, 10) : 0;
+            pkThem = (f.scoreThem !== undefined && f.scoreThem !== null) ? parseInt(f.scoreThem, 10) : 0;
+        } else {
+            totalUs += (f.scoreUs || 0);
+            totalThem += (f.scoreThem || 0);
+        }
+
+        if (f.goalRecords) {
+            allMatchGoalRecords.push(...f.goalRecords);
+            f.goalRecords.forEach(r => {
+                let txt = '';
+                if (r.scorerId) {
+                    const sp = state.players.find(p => p.id === r.scorerId);
+                    txt += sp ? sp.name : '選手';
+                } else {
+                    txt += 'OG/その他';
+                }
+                if (r.assistId) {
+                    const ap = state.players.find(p => p.id === r.assistId);
+                    txt += ap ? ` (A:${ap.name})` : '';
+                }
+                scorersList.push(txt);
+            });
+        }
+    });
+
+    match.goalRecords = allMatchGoalRecords;
+    match.scorers = scorersList.join(', ');
+    match.scoreUs = totalUs;
+    match.scoreThem = totalThem;
+    match.pkUs = pkUs;
+    match.pkThem = pkThem;
+
+    if (pkUs !== null && pkThem !== null && !isNaN(pkUs) && !isNaN(pkThem)) {
+        match.result = `${totalUs}-${totalThem} (PK ${pkUs}-${pkThem})`;
+    } else {
+        match.result = `${totalUs}-${totalThem}`;
+    }
+}
+
+export async function deletePeriod(matchId, periodId) {
+    if (state.currentUserRole !== 'coach') {
+        showToast('保護者モードでは削除できません');
+        return;
+    }
+    const match = state.matches.find(m => m.id === matchId);
+    if (!match || !match.formations) return;
+
+    const targetIndex = match.formations.findIndex(f => f.id === periodId);
+    if (targetIndex === -1) return;
+
+    const periodName = match.formations[targetIndex].name || `${targetIndex + 1}本目`;
+
+    const proceed = await showCustomConfirm(
+        `ピリオド「${periodName}」を削除してもよろしいですか？`,
+        'ピリオドの削除',
+        { okText: '削除する', type: 'danger' }
+    );
+    if (!proceed) return;
+
+    match.formations.splice(targetIndex, 1);
+
+    recalculateMatchResult(match);
+
+    saveData();
+    showToast(`「${periodName}」を削除しました`);
+
+    const modalFormation = document.getElementById('modal-formation');
+    if (modalFormation && !modalFormation.classList.contains('hidden')) {
+        modalFormation.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+    }
+
+    initMatchDetailView(matchId);
+
+    const periodAnalysisModal = document.getElementById('modal-period-analysis');
+    if (periodAnalysisModal && !periodAnalysisModal.classList.contains('hidden')) {
+        if (match.formations.length > 0) {
+            const nextIdx = Math.min(targetIndex, match.formations.length - 1);
+            openPeriodAnalysis(matchId, nextIdx);
+        } else {
+            periodAnalysisModal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        }
+    }
+}
+window.deletePeriod = deletePeriod;
+
 export function openMatchDetail(id) {
     navigate('match-detail', { matchId: id });
 }
@@ -824,10 +1048,22 @@ function renderPeriodGrid(m) {
     grid.innerHTML = m.formations.map((f, idx) => {
         const scoreUs = f.scoreUs !== undefined ? f.scoreUs : 0;
         const scoreThem = f.scoreThem !== undefined ? f.scoreThem : 0;
-        const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="u-ext-16 fa-brands fa-youtube"  title="動画あり"></i>' : '';
+        const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="u-ext-16 fa-brands fa-youtube" title="動画あり"></i>' : '';
+        const isPkPeriod = f.name && (f.name.trim() === 'PK戦' || f.name.toLowerCase().includes('pk'));
 
         let goalDetailsHtml = '';
-        if (f.goalRecords && f.goalRecords.length > 0) {
+        if (isPkPeriod && f.pkKickerRecords && f.pkKickerRecords.length > 0) {
+            goalDetailsHtml = f.pkKickerRecords.map((k, kIdx) => {
+                const p = state.players.find(pl => pl.id === k.kickerId);
+                const nameStr = p ? `${p.number ? `${p.number}. ` : ''}${escapeHtml(p.name)}` : 'キッカー未登録';
+                const usMark = k.isUsGoal === true ? '<b style="color:var(--success);">○</b>' : (k.isUsGoal === false ? '<b style="color:var(--danger);">✕</b>' : '-');
+                const themMark = k.isThemGoal === true ? '<b style="color:var(--success);">○</b>' : (k.isThemGoal === false ? '<b style="color:var(--danger);">✕</b>' : '-');
+                return `<div class="u-ext-62" style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                    <span>${kIdx + 1}本目: ${nameStr} (${usMark})</span>
+                    <span>相手: (${themMark})</span>
+                </div>`;
+            }).join('');
+        } else if (f.goalRecords && f.goalRecords.length > 0) {
             goalDetailsHtml = f.goalRecords.map(r => {
                 let text = '';
                 if (r.scorerId) {
@@ -859,6 +1095,10 @@ function renderPeriodGrid(m) {
             ? `${goalDetailsHtml}${memosHtml}`
             : '<div class="u-ext-64" >記録なし</div>';
 
+        const systemBadge = isPkPeriod
+            ? `<span class="badge" style="background:var(--primary); color:#fff;">PK戦 (キッカー順)</span>`
+            : `<span class="u-ext-71 badge">陣形: ${escapeHtml(f.system || '未設定')}</span>`;
+
         return `
             <div class="u-ext-65 card" >
                 <div>
@@ -866,12 +1106,12 @@ function renderPeriodGrid(m) {
                         <strong class="u-ext-67" >${escapeHtml(f.name || `${idx + 1}本目`)}</strong>
                         <div class="u-ext-68" >
                             ${videoBadge}
-                            <span class="u-ext-69 badge" >${scoreUs} - ${scoreThem}</span>
+                            <span class="u-ext-69 badge" >${isPkPeriod ? 'PK ' : ''}${scoreUs} - ${scoreThem}</span>
                         </div>
                     </div>
                     
                     <div class="u-ext-70" >
-                        <span class="u-ext-71 badge" >陣形: ${escapeHtml(f.system || '未設定')}</span>
+                        ${systemBadge}
                     </div>
 
                     <div class="u-ext-72" >
@@ -885,7 +1125,10 @@ function renderPeriodGrid(m) {
 
                 <div class="u-ext-74" >
                     <button class="u-ext-75 btn btn-primary btn-sm btn-open-analysis" data-index="${idx}" ><i class="fa-solid fa-film"></i> 動画分析 ➔</button>
-                    ${isCoach ? `<button class="u-ext-76 btn btn-secondary btn-sm btn-edit-period-card" data-id="${f.id}"  title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>` : ''}
+                    ${isCoach ? `
+                        <button class="u-ext-76 btn btn-secondary btn-sm btn-edit-period-card" data-id="${f.id}" title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-danger btn-sm btn-delete-period-card" data-id="${f.id}" title="ピリオド削除"><i class="fa-solid fa-trash"></i></button>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -904,6 +1147,14 @@ function renderPeriodGrid(m) {
             if (typeof window.editFormation === 'function') {
                 window.editFormation(m.id, formId);
             }
+        };
+    });
+
+    grid.querySelectorAll('.btn-delete-period-card').forEach(btn => {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            const formId = parseInt(e.currentTarget.dataset.id, 10);
+            deletePeriod(m.id, formId);
         };
     });
 }
@@ -972,6 +1223,204 @@ export function openPeriodAnalysis(matchId, periodIndex) {
     const renderSidePanelContent = () => {
         if (!sideBody) return;
 
+        const isPkPeriod = checkIsPkPeriod(period.name);
+
+        if (isPkPeriod) {
+            if (isCoach) {
+                if (sideHeading) sideHeading.innerHTML = '<i class="fa-solid fa-bullseye" style="color:var(--primary);"></i> PK戦情報編集';
+
+                let sidePkKickers = period.pkKickerRecords ? JSON.parse(JSON.stringify(period.pkKickerRecords)) : [];
+                if (sidePkKickers.length === 0) {
+                    sidePkKickers = [
+                        { index: 1, kickerId: null, isUsGoal: null, isThemGoal: null },
+                        { index: 2, kickerId: null, isUsGoal: null, isThemGoal: null },
+                        { index: 3, kickerId: null, isUsGoal: null, isThemGoal: null }
+                    ];
+                }
+
+                const renderSidePkRows = () => {
+                    let usCount = 0;
+                    let themCount = 0;
+                    const playerOptionsHtml = '<option value="">(キッカーを選択)</option>' +
+                        state.players.map(p => `<option value="${p.id}">${p.number ? `${p.number}. ` : ''}${escapeHtml(p.name)}</option>`).join('');
+
+                    const rowsHtml = sidePkKickers.map((k, idx) => {
+                        if (k.isUsGoal === true) usCount++;
+                        if (k.isThemGoal === true) themCount++;
+                        const isSudden = idx >= 3;
+                        const labelText = isSudden ? `${idx + 1}本目 (サドンデス)` : `${idx + 1}本目`;
+
+                        return `
+                            <div class="side-pk-row" data-idx="${idx}">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="font-size:0.75rem; font-weight:bold;">${labelText}</span>
+                                    ${isSudden ? `<button type="button" class="btn-side-remove-pk" data-idx="${idx}" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.7rem;"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                </div>
+                                <select class="form-control form-control-sm side-pk-kicker-select" data-idx="${idx}" style="font-size:0.75rem; margin-bottom:0.2rem;">
+                                    ${playerOptionsHtml}
+                                </select>
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <div style="display:flex; align-items:center; gap:0.2rem;">
+                                        <span style="font-size:0.7rem; color:var(--text-secondary);">自:</span>
+                                        <button type="button" class="btn btn-xs side-pk-btn-us ${k.isUsGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true" style="padding:0.1rem 0.3rem; font-size:0.7rem;">○</button>
+                                        <button type="button" class="btn btn-xs side-pk-btn-us ${k.isUsGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false" style="padding:0.1rem 0.3rem; font-size:0.7rem;">✕</button>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:0.2rem;">
+                                        <span style="font-size:0.7rem; color:var(--text-secondary);">相:</span>
+                                        <button type="button" class="btn btn-xs side-pk-btn-them ${k.isThemGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true" style="padding:0.1rem 0.3rem; font-size:0.7rem;">○</button>
+                                        <button type="button" class="btn btn-xs side-pk-btn-them ${k.isThemGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false" style="padding:0.1rem 0.3rem; font-size:0.7rem;">✕</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    const containerEl = document.getElementById('side-pk-rows-container');
+                    if (containerEl) {
+                        containerEl.innerHTML = rowsHtml;
+                        containerEl.querySelectorAll('.side-pk-kicker-select').forEach(sel => {
+                            const idx = parseInt(sel.dataset.idx, 10);
+                            if (sidePkKickers[idx] && sidePkKickers[idx].kickerId) sel.value = sidePkKickers[idx].kickerId;
+                            sel.onchange = (e) => { sidePkKickers[idx].kickerId = e.target.value ? parseInt(e.target.value, 10) : null; };
+                        });
+                        containerEl.querySelectorAll('.side-pk-btn-us').forEach(btn => {
+                            btn.onclick = () => {
+                                const idx = parseInt(btn.dataset.idx, 10);
+                                const val = btn.dataset.val === 'true';
+                                sidePkKickers[idx].isUsGoal = (sidePkKickers[idx].isUsGoal === val) ? null : val;
+                                renderSidePkRows();
+                            };
+                        });
+                        containerEl.querySelectorAll('.side-pk-btn-them').forEach(btn => {
+                            btn.onclick = () => {
+                                const idx = parseInt(btn.dataset.idx, 10);
+                                const val = btn.dataset.val === 'true';
+                                sidePkKickers[idx].isThemGoal = (sidePkKickers[idx].isThemGoal === val) ? null : val;
+                                renderSidePkRows();
+                            };
+                        });
+                        containerEl.querySelectorAll('.btn-side-remove-pk').forEach(btn => {
+                            btn.onclick = () => {
+                                const idx = parseInt(btn.dataset.idx, 10);
+                                sidePkKickers.splice(idx, 1);
+                                renderSidePkRows();
+                            };
+                        });
+                    }
+
+                    const badgeEl = document.getElementById('side-pk-score-badge');
+                    if (badgeEl) badgeEl.textContent = `PK ${usCount} - ${themCount}`;
+                };
+
+                sideBody.innerHTML = `
+                    <div class="side-info-card">
+                        <span class="side-info-label">ピリオド名</span>
+                        <input type="text" id="side-form-name" class="form-control form-control-sm" value="${escapeHtml(period.name || 'PK戦')}">
+                    </div>
+                    <div class="side-info-card">
+                        <span class="side-info-label">YouTube動画 URL</span>
+                        <input type="url" id="side-form-video" class="form-control form-control-sm" value="${escapeHtml((period.videoUrls && period.videoUrls[0]) || period.videoUrl || '')}" placeholder="https://youtu.be/...">
+                    </div>
+                    <div class="side-info-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                            <span class="side-info-label" style="margin:0;"><i class="fa-solid fa-bullseye"></i> PKキッカー記録</span>
+                            <span id="side-pk-score-badge" class="badge" style="background:var(--primary); color:#fff; font-size:0.75rem;">PK 0 - 0</span>
+                        </div>
+                        <div id="side-pk-rows-container" style="max-height:220px; overflow-y:auto; margin-bottom:0.4rem;"></div>
+                        <button type="button" class="btn btn-secondary btn-xs" id="btn-side-add-pk" style="width:100%;">
+                            <i class="fa-solid fa-plus"></i> サドンデス枠を追加
+                        </button>
+                    </div>
+                    <div class="side-info-card">
+                        <span class="side-info-label">ピリオド総括</span>
+                        <textarea id="side-form-summary" class="form-control form-control-sm" rows="3">${escapeHtml(period.summary || period.reflection || '')}</textarea>
+                    </div>
+                    <div style="margin-top:0.6rem;">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-side-save-period" style="width:100%; margin:0;">
+                            <i class="fa-solid fa-save"></i> 変更を保存
+                        </button>
+                    </div>
+                `;
+
+                renderSidePkRows();
+
+                document.getElementById('btn-side-add-pk').onclick = () => {
+                    sidePkKickers.push({
+                        index: sidePkKickers.length + 1,
+                        kickerId: null,
+                        isUsGoal: null,
+                        isThemGoal: null
+                    });
+                    renderSidePkRows();
+                };
+
+                document.getElementById('btn-side-save-period').onclick = () => {
+                    let usCount = 0;
+                    let themCount = 0;
+                    sidePkKickers.forEach(k => {
+                        if (k.isUsGoal === true) usCount++;
+                        if (k.isThemGoal === true) themCount++;
+                    });
+
+                    period.name = document.getElementById('side-form-name').value.trim();
+                    period.system = 'PK戦';
+                    period.scoreUs = usCount;
+                    period.scoreThem = themCount;
+                    period.pkKickerRecords = JSON.parse(JSON.stringify(sidePkKickers));
+                    period.summary = document.getElementById('side-form-summary').value.trim();
+
+                    const videoUrlVal = document.getElementById('side-form-video').value.trim();
+                    period.videoUrl = videoUrlVal;
+                    period.videoUrls = videoUrlVal ? [videoUrlVal] : [];
+
+                    recalculateMatchResult(match);
+                    saveData();
+                    showToast('PK戦情報を保存しました');
+
+                    const titleEl = document.getElementById('period-analysis-title');
+                    if (titleEl) {
+                        titleEl.textContent = `vs ${escapeHtml(match.opponent)} - ${period.name} (PK ${period.scoreUs} - ${period.scoreThem})`;
+                    }
+                };
+
+                return;
+            } else {
+                // 保護者モード: PK戦閲覧
+                if (sideHeading) sideHeading.innerHTML = '<i class="fa-solid fa-bullseye" style="color:var(--primary);"></i> PK戦情報';
+                const pkRows = period.pkKickerRecords || [];
+                const rowsHtml = pkRows.map((k, idx) => {
+                    const p = state.players.find(pl => pl.id === k.kickerId);
+                    const nameStr = p ? `${p.number ? `${p.number}. ` : ''}${escapeHtml(p.name)}` : '未登録';
+                    const usMark = k.isUsGoal === true ? '<b style="color:var(--success);">○</b>' : (k.isUsGoal === false ? '<b style="color:var(--danger);">✕</b>' : '-');
+                    const themMark = k.isThemGoal === true ? '<b style="color:var(--success);">○</b>' : (k.isThemGoal === false ? '<b style="color:var(--danger);">✕</b>' : '-');
+                    return `<div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:0.25rem 0; border-bottom:1px dashed var(--surface-border);">
+                        <span>${idx + 1}本目: ${nameStr} (${usMark})</span>
+                        <span>相手: (${themMark})</span>
+                    </div>`;
+                }).join('') || '<div style="font-size:0.8rem; color:var(--text-secondary);">記録なし</div>';
+
+                sideBody.innerHTML = `
+                    <div class="side-info-card">
+                        <span class="side-info-label">ピリオド名</span>
+                        <div style="font-size:0.9rem; font-weight:bold;">${escapeHtml(period.name || 'PK戦')}</div>
+                    </div>
+                    <div class="side-info-card">
+                        <span class="side-info-label">スコア</span>
+                        <div style="font-size:1.1rem; font-weight:bold; color:var(--primary);">PK ${period.scoreUs || 0} - ${period.scoreThem || 0}</div>
+                    </div>
+                    <div class="side-info-card">
+                        <span class="side-info-label"><i class="fa-solid fa-bullseye"></i> キッカー記録</span>
+                        <div style="margin-top:0.4rem;">${rowsHtml}</div>
+                    </div>
+                    <div class="side-info-card">
+                        <span class="side-info-label">ピリオド総括</span>
+                        <div style="font-size:0.85rem; color:var(--text-primary); white-space:pre-wrap;">${escapeHtml(period.summary || period.reflection || 'コメントなし')}</div>
+                    </div>
+                `;
+                return;
+            }
+        }
+
         if (isCoach) {
             // コーチモード：編集フォーム（ミニピッチ付き）
             if (sideHeading) sideHeading.innerHTML = '<i class="u-ext-77 fa-solid fa-pen" ></i> ピリオド情報編集';
@@ -1016,11 +1465,13 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     const assignedPlayer = state.players.find(p => p.id == assignedPlayerId);
                     const labelText = assignedPlayer ? (assignedPlayer.number ? `#${assignedPlayer.number}` : assignedPlayer.name.slice(0, 3)) : (c.role ? c.role.slice(0, 3) : `P${pIdx + 1}`);
 
-                    const leftPercent = (c.x !== undefined && !isNaN(c.x)) ? c.x : 50;
-                    const topPercent = (c.y !== undefined && !isNaN(c.y)) ? c.y : 50;
+                    const rawLeft = c.left !== undefined ? c.left : (c.x !== undefined ? `${c.x}%` : '50%');
+                    const rawTop = c.top !== undefined ? c.top : (c.y !== undefined ? `${c.y}%` : '50%');
+                    const leftStr = typeof rawLeft === 'number' ? `${rawLeft}%` : rawLeft;
+                    const topStr = typeof rawTop === 'number' ? `${rawTop}%` : rawTop;
 
                     return `
-                        <div class="side-pitch-pin" data-pos-key="${posKey}" style="position:absolute; left:${leftPercent}%; top:${topPercent}%; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; cursor:pointer; z-index:5;" title="${c.role || `ポジション${pIdx + 1}`}">
+                        <div class="side-pitch-pin" data-pos-key="${posKey}" style="position:absolute; left:${leftStr}; top:${topStr}; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; cursor:pointer; z-index:5;" title="${c.role || `ポジション${pIdx + 1}`}">
                             <div class="u-ext-84" >
                                 ${labelText}
                             </div>
@@ -1088,20 +1539,24 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 </div>
                 <div class="side-info-card">
                     <span class="u-ext-98 side-info-label" >ポジション配置（ミニピッチ図）</span>
-                    <div class="u-ext-99" id="side-mini-pitch" >
-                        <div class="u-ext-100" ></div>
-                        <div class="u-ext-101" ></div>
-                        <div class="u-ext-102" ></div>
-                        <div class="u-ext-103" ></div>
+                    <div class="tactical-pitch pitch-half-bottom" id="side-mini-pitch" style="max-width: 320px; width: 100%; margin: 0 auto 0.5rem;">
+                        <div class="penalty-area-bottom"></div>
+                        <div class="goal-area-bottom"></div>
+                        <div class="penalty-arc-bottom"></div>
+                        <div class="penalty-spot-bottom"></div>
+                        <div class="corner-arc-bl"></div>
+                        <div class="corner-arc-br"></div>
                         ${pitchPinsHtml}
                     </div>
                     <div class="u-ext-104" id="side-positions-container" >
                         ${posListHtml || '<div class="u-ext-57" >ポジション設定がありません</div>'}
                     </div>
                 </div>
-                <button type="button" class="u-ext-105 btn btn-primary btn-sm" id="btn-side-save-period" >
-                    <i class="fa-solid fa-save"></i> 変更を保存
-                </button>
+                <div style="margin-top:0.6rem;">
+                    <button type="button" class="u-ext-105 btn btn-primary btn-sm" id="btn-side-save-period" style="width:100%; margin:0;">
+                        <i class="fa-solid fa-save"></i> 変更を保存
+                    </button>
+                </div>
             `;
 
             // --- 入力値の収集用ヘルパー関数 ---
@@ -1242,35 +1697,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     period.goalRecords = finalData.goalRecords;
                     period.positions = finalData.positions;
 
-                    let totalUs = 0, totalThem = 0;
-                    const allMatchGoalRecords = [];
-                    const scorersList = [];
-
-                    match.formations.forEach(f => {
-                        totalUs += (f.scoreUs || 0);
-                        totalThem += (f.scoreThem || 0);
-                        if (f.goalRecords) {
-                            allMatchGoalRecords.push(...f.goalRecords);
-                            f.goalRecords.forEach(r => {
-                                let txt = '';
-                                if (r.scorerId) {
-                                    const sp = state.players.find(p => p.id === r.scorerId);
-                                    txt += sp ? sp.name : '選手';
-                                } else {
-                                    txt += 'OG/その他';
-                                }
-                                if (r.assistId) {
-                                    const ap = state.players.find(p => p.id === r.assistId);
-                                    txt += ap ? ` (A:${ap.name})` : '';
-                                }
-                                scorersList.push(txt);
-                            });
-                        }
-                    });
-
-                    match.goalRecords = allMatchGoalRecords;
-                    match.scorers = scorersList.join(', ');
-                    match.result = `${totalUs}-${totalThem}`;
+                    recalculateMatchResult(match);
 
                     saveData();
                     showToast('ピリオド情報とポジション配置を保存しました');
@@ -1326,13 +1753,13 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         </div>
                     `;
                 }).join('');
- 
+
                 posListHtml = currentCustomForm.coords.map((c, pIdx) => {
                     const posKey = `pos_${pIdx}_${c.role || 'pos'}`;
                     const assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
                     const assignedPlayer = state.players.find(p => p.id == assignedPlayerId);
                     const playerName = assignedPlayer ? `${assignedPlayer.number ? `#${assignedPlayer.number} ` : ''}${assignedPlayer.name}` : '未割当';
- 
+
                     return `
                         <div class="u-ext-107 side-position-row" data-pos-key="${posKey}" >
                             <span class="u-ext-93" >${escapeHtml(c.role || `${pIdx + 1}`)}</span>
@@ -1428,6 +1855,9 @@ export function openPeriodAnalysis(matchId, periodIndex) {
         // click / touch outside to close sidebar
         periodSideClickOutsideHandler = (e) => {
             if (sidePanel.classList.contains('open')) {
+                // DOM変更で要素が接続解除された場合（+ - ボタンクリック等で再描画された場合）は閉じない
+                if (!e.target || !e.target.isConnected) return;
+
                 // セレクトボックスの選択肢などをクリックした際に閉じないよう、いくつかの要素を除外
                 const isInsideSidebar = sidePanel.contains(e.target);
                 const isToggleBtn = sideToggleBtn.contains(e.target);
@@ -1542,6 +1972,152 @@ export function openPeriodAnalysis(matchId, periodIndex) {
     }, 500);
 }
 
+function suggestNextPeriodName(prevName, defaultIndex) {
+    if (!prevName) return `${defaultIndex}本目`;
+    const trimmed = prevName.trim();
+
+    if (trimmed === '前半') return '後半';
+    if (trimmed === '後半') return 'PK戦';
+
+    const matchHon = trimmed.match(/^(\d+)本目$/);
+    if (matchHon) {
+        return `${parseInt(matchHon[1], 10) + 1}本目`;
+    }
+
+    const matchQ = trimmed.match(/^(.*?)(\d+)(Q|クォーター)$/i);
+    if (matchQ) {
+        return `${matchQ[1]}${parseInt(matchQ[2], 10) + 1}${matchQ[3]}`;
+    }
+
+    const matchTrailingNum = trimmed.match(/^(.*?)(\d+)$/);
+    if (matchTrailingNum) {
+        return `${matchTrailingNum[1]}${parseInt(matchTrailingNum[2], 10) + 1}`;
+    }
+
+    return `${defaultIndex}本目`;
+}
+
+let currentPkKickers = [];
+
+function checkIsPkPeriod(name) {
+    return !!(name && (name.trim() === 'PK戦' || name.toLowerCase().includes('pk')));
+}
+
+function renderPkShootoutEditor() {
+    const listEl = document.getElementById('pk-kickers-list');
+    const badgeEl = document.getElementById('pk-summary-badge');
+    if (!listEl) return;
+
+    let usGoalCount = 0;
+    let themGoalCount = 0;
+
+    const playerOptionsHtml = '<option value="">(キッカーを選択)</option>' +
+        state.players.map(p => `<option value="${p.id}">${p.number ? `${p.number}. ` : ''}${escapeHtml(p.name)}</option>`).join('');
+
+    listEl.innerHTML = currentPkKickers.map((k, idx) => {
+        if (k.isUsGoal === true) usGoalCount++;
+        if (k.isThemGoal === true) themGoalCount++;
+
+        const isSuddenDeath = idx >= 3;
+        const labelText = isSuddenDeath ? `${idx + 1}本目 (サドンデス)` : `${idx + 1}本目`;
+
+        return `
+            <div class="pk-kicker-row" data-idx="${idx}">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.8rem; font-weight:bold; color:var(--text-primary);">${labelText}</span>
+                    ${isSuddenDeath ? `<button type="button" class="btn-remove-pk-row" data-idx="${idx}" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.75rem;"><i class="fa-solid fa-trash"></i> 削除</button>` : ''}
+                </div>
+                <div style="display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap;">
+                    <div style="flex:1.5; min-width:140px;">
+                        <select class="form-control form-control-sm pk-kicker-select" data-idx="${idx}" style="font-size:0.78rem;">
+                            ${playerOptionsHtml}
+                        </select>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.3rem;">
+                        <span style="font-size:0.75rem; color:var(--text-secondary);">自:</span>
+                        <button type="button" class="btn btn-sm pk-btn-us ${k.isUsGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true" style="padding:0.15rem 0.4rem; font-size:0.75rem;">○ 成功</button>
+                        <button type="button" class="btn btn-sm pk-btn-us ${k.isUsGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false" style="padding:0.15rem 0.4rem; font-size:0.75rem;">✕ 失敗</button>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.3rem;">
+                        <span style="font-size:0.75rem; color:var(--text-secondary);">相手:</span>
+                        <button type="button" class="btn btn-sm pk-btn-them ${k.isThemGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true" style="padding:0.15rem 0.4rem; font-size:0.75rem;">○ 成功</button>
+                        <button type="button" class="btn btn-sm pk-btn-them ${k.isThemGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false" style="padding:0.15rem 0.4rem; font-size:0.75rem;">✕ 失敗</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    listEl.querySelectorAll('.pk-kicker-select').forEach(sel => {
+        const idx = parseInt(sel.dataset.idx, 10);
+        if (currentPkKickers[idx] && currentPkKickers[idx].kickerId) {
+            sel.value = currentPkKickers[idx].kickerId;
+        }
+        sel.onchange = (e) => {
+            currentPkKickers[idx].kickerId = e.target.value ? parseInt(e.target.value, 10) : null;
+        };
+    });
+
+    listEl.querySelectorAll('.pk-btn-us').forEach(btn => {
+        btn.onclick = () => {
+            const idx = parseInt(btn.dataset.idx, 10);
+            const val = btn.dataset.val === 'true';
+            currentPkKickers[idx].isUsGoal = (currentPkKickers[idx].isUsGoal === val) ? null : val;
+            renderPkShootoutEditor();
+        };
+    });
+
+    listEl.querySelectorAll('.pk-btn-them').forEach(btn => {
+        btn.onclick = () => {
+            const idx = parseInt(btn.dataset.idx, 10);
+            const val = btn.dataset.val === 'true';
+            currentPkKickers[idx].isThemGoal = (currentPkKickers[idx].isThemGoal === val) ? null : val;
+            renderPkShootoutEditor();
+        };
+    });
+
+    listEl.querySelectorAll('.btn-remove-pk-row').forEach(btn => {
+        btn.onclick = () => {
+            const idx = parseInt(btn.dataset.idx, 10);
+            currentPkKickers.splice(idx, 1);
+            renderPkShootoutEditor();
+        };
+    });
+
+    if (badgeEl) {
+        badgeEl.textContent = `PK ${usGoalCount} - ${themGoalCount}`;
+    }
+}
+
+function updatePeriodModalMode() {
+    const nameVal = document.getElementById('formation-name')?.value || '';
+    const isPk = checkIsPkPeriod(nameVal);
+
+    const pitchContainer = document.getElementById('modal-formation-pitch-container');
+    const sysSelect = document.getElementById('formation-system-select');
+    const sysGroup = sysSelect ? sysSelect.closest('.form-group') : null;
+    const pkContainer = document.getElementById('pk-shootout-container');
+
+    if (isPk) {
+        if (pitchContainer) pitchContainer.style.display = 'none';
+        if (sysGroup) sysGroup.style.display = 'none';
+        if (pkContainer) pkContainer.style.display = 'block';
+
+        if (!currentPkKickers || currentPkKickers.length === 0) {
+            currentPkKickers = [
+                { index: 1, kickerId: null, isUsGoal: null, isThemGoal: null },
+                { index: 2, kickerId: null, isUsGoal: null, isThemGoal: null },
+                { index: 3, kickerId: null, isUsGoal: null, isThemGoal: null }
+            ];
+        }
+        renderPkShootoutEditor();
+    } else {
+        if (pitchContainer) pitchContainer.style.display = 'block';
+        if (sysGroup) sysGroup.style.display = 'block';
+        if (pkContainer) pkContainer.style.display = 'none';
+    }
+}
+
 /**
  * ピリオド編集モーダルを開く処理
  */
@@ -1578,47 +2154,33 @@ window.editFormation = function (matchId, formationId = null) {
 
             const name = document.getElementById('formation-name').value.trim();
             const system = document.getElementById('formation-system-select').value;
+            const isPk = checkIsPkPeriod(name);
 
-            const videoUrlInput = document.getElementById('formation-video-url');
-            const videoUrl = videoUrlInput ? videoUrlInput.value.trim() : '';
+            let scoreUs = 0;
+            let scoreThem = 0;
+            let lineup = [];
+            let pkKickerRecords = [];
 
-            const nodes = document.querySelectorAll('#tactical-formation-pitch .pitch-node');
-            const lineup = [];
-            nodes.forEach(node => {
-                const playerId = node.dataset.playerId ? parseInt(node.dataset.playerId, 10) : null;
-                if (playerId) {
-                    lineup.push({
-                        playerId,
-                        role: node.dataset.role,
-                        roleLabel: node.dataset.label,
-                        roleIndex: parseInt(node.dataset.index, 10)
-                    });
-                }
-            });
-
-            const scoreUs = parseInt(document.getElementById('formation-score-us').value, 10) || 0;
-            const scoreThem = parseInt(document.getElementById('formation-score-them').value, 10) || 0;
-
-            const goalRecords = [];
-            const goalRows = document.querySelectorAll('#period-goal-records-list .goal-record-row');
-            goalRows.forEach(row => {
-                const scorerVal = row.querySelector('.goal-scorer-select')?.value;
-                const assistVal = row.querySelector('.goal-assist-select')?.value;
-                const scorerId = scorerVal ? parseInt(scorerVal, 10) : null;
-                const assistId = assistVal ? parseInt(assistVal, 10) : null;
-                goalRecords.push({ scorerId, assistId });
-            });
-
-            const analysisMemos = [];
-            const memoRows = document.querySelectorAll('#formation-analysis-memo-list .analysis-memo-row');
-            memoRows.forEach(row => {
-                const time = row.querySelector('.memo-time-input')?.value.trim() || '00:00';
-                const tag = row.querySelector('.memo-tag-select')?.value || 'チャンス';
-                const text = row.querySelector('.memo-text-input')?.value.trim() || '';
-                analysisMemos.push({ time, tag, text });
-            });
-
-            const summaryVal = document.getElementById('formation-summary-text')?.value.trim() || '';
+            if (isPk) {
+                currentPkKickers.forEach(k => {
+                    if (k.isUsGoal === true) scoreUs++;
+                    if (k.isThemGoal === true) scoreThem++;
+                });
+                pkKickerRecords = JSON.parse(JSON.stringify(currentPkKickers));
+            } else {
+                const nodes = document.querySelectorAll('#tactical-formation-pitch .pitch-node');
+                nodes.forEach(node => {
+                    const playerId = node.dataset.playerId ? parseInt(node.dataset.playerId, 10) : null;
+                    if (playerId) {
+                        lineup.push({
+                            playerId,
+                            role: node.dataset.role,
+                            roleLabel: node.dataset.label,
+                            roleIndex: parseInt(node.dataset.index, 10)
+                        });
+                    }
+                });
+            }
 
             let targetPeriodIndex = 0;
 
@@ -1628,29 +2190,28 @@ window.editFormation = function (matchId, formationId = null) {
                     targetPeriodIndex = fIndex;
                     const formObj = targetMatch.formations[fIndex];
                     formObj.name = name;
-                    formObj.system = system;
-                    formObj.scoreUs = scoreUs;
-                    formObj.scoreThem = scoreThem;
-                    formObj.goalRecords = goalRecords;
-                    formObj.videoUrl = videoUrl;
-                    formObj.videoUrls = videoUrl ? [videoUrl] : [];
+                    formObj.system = isPk ? 'PK戦' : system;
                     formObj.lineup = lineup;
-                    formObj.analysisMemos = analysisMemos;
-                    formObj.summary = summaryVal;
+                    if (isPk) {
+                        formObj.scoreUs = scoreUs;
+                        formObj.scoreThem = scoreThem;
+                        formObj.pkKickerRecords = pkKickerRecords;
+                    }
                 }
             } else {
                 const newPeriod = {
                     id: Date.now(),
                     name,
-                    system,
-                    scoreUs,
-                    scoreThem,
-                    goalRecords,
-                    videoUrl,
-                    videoUrls: videoUrl ? [videoUrl] : [],
+                    system: isPk ? 'PK戦' : system,
+                    scoreUs: isPk ? scoreUs : 0,
+                    scoreThem: isPk ? scoreThem : 0,
+                    goalRecords: [],
+                    pkKickerRecords: isPk ? pkKickerRecords : [],
+                    videoUrl: '',
+                    videoUrls: [],
                     lineup,
-                    analysisMemos,
-                    summary: summaryVal,
+                    analysisMemos: [],
+                    summary: '',
                     boardData: []
                 };
                 if (!targetMatch.formations) targetMatch.formations = [];
@@ -1658,37 +2219,7 @@ window.editFormation = function (matchId, formationId = null) {
                 targetPeriodIndex = targetMatch.formations.length - 1;
             }
 
-            let totalUs = 0;
-            let totalThem = 0;
-            const allMatchGoalRecords = [];
-            const scorersList = [];
-
-            targetMatch.formations.forEach(f => {
-                totalUs += (f.scoreUs !== undefined ? f.scoreUs : 0);
-                totalThem += (f.scoreThem !== undefined ? f.scoreThem : 0);
-                if (f.goalRecords && f.goalRecords.length > 0) {
-                    allMatchGoalRecords.push(...f.goalRecords);
-
-                    f.goalRecords.forEach(r => {
-                        let text = '';
-                        if (r.scorerId) {
-                            const sPlayer = state.players.find(p => p.id === r.scorerId);
-                            text += sPlayer ? `${sPlayer.name}` : '不明な選手';
-                        } else {
-                            text += 'オウンゴール/その他';
-                        }
-                        if (r.assistId) {
-                            const aPlayer = state.players.find(p => p.id === r.assistId);
-                            text += aPlayer ? ` (アシスト:${aPlayer.name})` : '';
-                        }
-                        scorersList.push(text);
-                    });
-                }
-            });
-
-            targetMatch.goalRecords = allMatchGoalRecords;
-            targetMatch.scorers = scorersList.join(', ');
-            targetMatch.result = `${totalUs}-${totalThem}`;
+            recalculateMatchResult(targetMatch);
 
             saveData();
             showToast('ピリオド情報を保存しました');
@@ -1711,44 +2242,70 @@ window.editFormation = function (matchId, formationId = null) {
     document.getElementById('formation-match-id').value = matchId;
     document.getElementById('formation-id').value = formationId || '';
 
+    const nameInput = document.getElementById('formation-name');
+    if (nameInput) {
+        nameInput.oninput = updatePeriodModalMode;
+    }
+
+    const btnAddPk = document.getElementById('btn-add-pk-kicker');
+    if (btnAddPk) {
+        btnAddPk.onclick = () => {
+            currentPkKickers.push({
+                index: currentPkKickers.length + 1,
+                kickerId: null,
+                isUsGoal: null,
+                isThemGoal: null
+            });
+            renderPkShootoutEditor();
+        };
+    }
+
     const sysSelect = document.getElementById('formation-system-select');
     if (sysSelect) {
         sysSelect.innerHTML = state.customFormations.map(cf => `<option value="${cf.name}">${cf.name} (${cf.coords.length}人制)</option>`).join('');
     }
 
-    const periodGoalRecordsList = document.getElementById('period-goal-records-list');
-    if (periodGoalRecordsList) periodGoalRecordsList.innerHTML = '';
-
     let existingLineup = [];
+    const btnCopy = document.getElementById('btn-copy-prev-period');
+    const btnDeleteModal = document.getElementById('btn-delete-formation-modal');
+
     if (formationId) {
+        if (btnCopy) btnCopy.style.display = 'none';
+        if (btnDeleteModal) {
+            btnDeleteModal.style.display = 'inline-flex';
+            btnDeleteModal.onclick = () => deletePeriod(matchId, formationId);
+        }
         const f = match.formations.find(item => item.id === formationId);
         if (f) {
             document.getElementById('formation-name').value = f.name || '';
             if (sysSelect) sysSelect.value = f.system || '';
-
-            const vUrlInput = document.getElementById('formation-video-url');
-            if (vUrlInput) vUrlInput.value = (f.videoUrls && f.videoUrls.length > 0) ? f.videoUrls[0] : (f.videoUrl || '');
-
-            document.getElementById('formation-score-us').value = f.scoreUs !== undefined ? f.scoreUs : 0;
-            document.getElementById('formation-score-them').value = f.scoreThem !== undefined ? f.scoreThem : 0;
-
-            const summaryInput = document.getElementById('formation-summary-text');
-            if (summaryInput) summaryInput.value = f.summary || f.reflection || '';
-
             existingLineup = f.lineup || [];
-
-            if (periodGoalRecordsList && f.goalRecords && f.goalRecords.length > 0) {
-                f.goalRecords.forEach(r => {
-                    addGoalRecordRow(r.scorerId, r.assistId, 'period-goal-records-list');
-                });
-            }
+            currentPkKickers = f.pkKickerRecords ? JSON.parse(JSON.stringify(f.pkKickerRecords)) : [];
         }
     } else {
+        if (btnDeleteModal) btnDeleteModal.style.display = 'none';
+        const lastPeriod = (match.formations && match.formations.length > 0) ? match.formations[match.formations.length - 1] : null;
         const nextIndex = (match.formations ? match.formations.length : 0) + 1;
-        document.getElementById('formation-name').value = `${nextIndex}本目`;
-        document.getElementById('formation-score-us').value = 0;
-        document.getElementById('formation-score-them').value = 0;
+        document.getElementById('formation-name').value = suggestNextPeriodName(lastPeriod ? lastPeriod.name : '', nextIndex);
+        currentPkKickers = [];
+
+        if (btnCopy) {
+            if (lastPeriod) {
+                btnCopy.style.display = 'block';
+                btnCopy.onclick = () => {
+                    const prevPeriod = match.formations[match.formations.length - 1];
+                    if (sysSelect) sysSelect.value = prevPeriod.system || '';
+                    existingLineup = prevPeriod.lineup ? JSON.parse(JSON.stringify(prevPeriod.lineup)) : [];
+                    renderFormationPitch(sysSelect ? sysSelect.value : prevPeriod.system, existingLineup);
+                    showToast('前ピリオドの配置をコピーしました');
+                };
+            } else {
+                btnCopy.style.display = 'none';
+            }
+        }
     }
+
+    updatePeriodModalMode();
 
     const selectedSys = (sysSelect && sysSelect.value) ? sysSelect.value : (state.customFormations[0]?.name || '3-3-1');
     renderFormationPitch(selectedSys, existingLineup);
@@ -1756,6 +2313,9 @@ window.editFormation = function (matchId, formationId = null) {
     if (sysSelect) {
         sysSelect.onchange = (e) => renderFormationPitch(e.target.value, []);
     }
+
+    activeQuickAssignPlayerId = null;
+    renderQuickAssignRoster();
 
     bindPeriodScoreButtons();
     openModal('modal-formation');
@@ -1888,6 +2448,8 @@ function initPeriodWorkspaceResizer() {
 }
 
 export function initMatches() {
+    state.matches.forEach(m => recalculateMatchResult(m));
+
     let currentMatchNendo = uiState.currentMatchNendo || 'all';
     let currentMatchOpponent = uiState.currentMatchOpponent || 'all';
     let currentMatchType = uiState.currentMatchType || 'all';
@@ -2042,7 +2604,22 @@ export function initMatches() {
     }
 
     const getMatchStatus = (m) => {
-        const matchScore = m.result ? m.result.match(/(\d+)\s*-\s*(\d+)/) : null;
+        if (!m || !m.result) return 'upcoming';
+
+        if (m.pkUs !== undefined && m.pkUs !== null && m.pkThem !== undefined && m.pkThem !== null) {
+            if (m.pkUs > m.pkThem) return 'win';
+            if (m.pkUs < m.pkThem) return 'loss';
+        }
+
+        const pkMatch = m.result.match(/\(PK\s*(\d+)\s*-\s*(\d+)\)/i);
+        if (pkMatch) {
+            const pUs = parseInt(pkMatch[1], 10);
+            const pThem = parseInt(pkMatch[2], 10);
+            if (pUs > pThem) return 'win';
+            if (pUs < pThem) return 'loss';
+        }
+
+        const matchScore = m.result.match(/(\d+)\s*-\s*(\d+)/);
         if (!matchScore) return 'upcoming';
         const us = parseInt(matchScore[1], 10);
         const them = parseInt(matchScore[2], 10);
@@ -2168,9 +2745,8 @@ export function initMatches() {
                     <div class="library-grid">
             `;
             grouped[month].forEach(m => {
-                const matchScore = m.result ? m.result.match(/(\d+)\s*-\s*(\d+)/) : null;
-                const isCompleted = !!matchScore;
-                const resultText = isCompleted ? `${matchScore[1]}-${matchScore[2]}` : '<span class="u-ext-135" >試合予定</span>';
+                const isCompleted = !!(m.result && m.result.trim());
+                const resultText = isCompleted ? escapeHtml(m.result) : '<span class="u-ext-135" >試合予定</span>';
 
                 const attendeesHtml = m.presentPlayerIds && m.presentPlayerIds.length > 0
                     ? state.players.filter(pl => m.presentPlayerIds.includes(pl.id)).map(pl => `
@@ -2206,10 +2782,12 @@ export function initMatches() {
                                     </details>
                                 </div>
                             </div>
-                            <div class="match-card-result">${resultText}</div>
                         </div>
-                        <div class="u-ext-141 match-card-actions" >
-                            ${actionBtns}
+                        <div class="match-card-bottom-row">
+                            <div class="match-card-result">${resultText}</div>
+                            <div class="match-card-actions">
+                                ${actionBtns}
+                            </div>
                         </div>
                     </div>
                 `;

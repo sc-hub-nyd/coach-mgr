@@ -2,7 +2,7 @@
 import { state, uiState } from './state.js';
 import { escapeHtml, encryptData, decryptData, showToast, setupScoreCounters, getNendo } from './utils.js';
 import { initPractices, openPracticeModal, renderPracticeRoster } from './practices.js';
-import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView } from './matches.js'; // ★ 1行にまとめる
+import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus } from './matches.js'; // ★ 1行にまとめる
 import { initPlayers, openPlayerDetail, drawRadarChart } from './players.js';
 import { initLibrary } from './library.js';
 import { initSettings, initData } from './settings.js';
@@ -416,15 +416,15 @@ export function openSeasonRecordModal() {
         if (!typeStats[type]) {
             typeStats[type] = { win: 0, loss: 0, draw: 0, goals: 0, concede: 0 };
         }
-        const mt = m.result.match(/([\d]+)\s*-\s*([\d]+)/);
+        const status = getMatchStatus(m);
+        if (status === 'win') typeStats[type].win++;
+        else if (status === 'loss') typeStats[type].loss++;
+        else if (status === 'draw') typeStats[type].draw++;
+
+        const mt = m.result ? m.result.match(/([\d]+)\s*-\s*([\d]+)/) : null;
         if (mt) {
-            const us = parseInt(mt[1], 10);
-            const them = parseInt(mt[2], 10);
-            typeStats[type].goals += us;
-            typeStats[type].concede += them;
-            if (us > them) typeStats[type].win++;
-            else if (us < them) typeStats[type].loss++;
-            else typeStats[type].draw++;
+            typeStats[type].goals += parseInt(mt[1], 10);
+            typeStats[type].concede += parseInt(mt[2], 10);
         }
     });
 
@@ -457,15 +457,15 @@ export function openSeasonRecordModal() {
         if (!yearStats[year]) {
             yearStats[year] = { win: 0, loss: 0, draw: 0, goals: 0, concede: 0 };
         }
-        const mt = m.result.match(/([\d]+)\s*-\s*([\d]+)/);
+        const status = getMatchStatus(m);
+        if (status === 'win') yearStats[year].win++;
+        else if (status === 'loss') yearStats[year].loss++;
+        else if (status === 'draw') yearStats[year].draw++;
+
+        const mt = m.result ? m.result.match(/([\d]+)\s*-\s*([\d]+)/) : null;
         if (mt) {
-            const us = parseInt(mt[1], 10);
-            const them = parseInt(mt[2], 10);
-            yearStats[year].goals += us;
-            yearStats[year].concede += them;
-            if (us > them) yearStats[year].win++;
-            else if (us < them) yearStats[year].loss++;
-            else yearStats[year].draw++;
+            yearStats[year].goals += parseInt(mt[1], 10);
+            yearStats[year].concede += parseInt(mt[2], 10);
         }
     });
 
@@ -707,6 +707,25 @@ function initDashboard() {
                 const currentSkills = player.history && player.history.length > 0 ? (player.history[0].data ? player.history[0].data.skills : player.history[0].skills) : [0, 0, 0, 0, 0, 0];
                 const prevSkills = player.history && player.history.length > 1 ? (player.history[1].data ? player.history[1].data.skills : player.history[1].skills) : null;
 
+                // U-2: 最新フィードバックの抽出
+                const latestFeedbackItem = timeline.find(t => t.type === 'match' || t.type === 'assessment');
+                let latestFeedbackHTML = '';
+                if (latestFeedbackItem) {
+                    const labelStr = latestFeedbackItem.type === 'match' ? '試合評価' : 'スキル評価';
+                    latestFeedbackHTML = `
+                        <div style="margin-top:0.6rem; margin-bottom:0.6rem; background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(59,130,246,0.08)); border-left:4px solid var(--primary); border-radius:8px; padding:0.8rem 1rem;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                                <span style="font-size:0.78rem; font-weight:700; color:var(--primary);"><i class="fa-solid fa-comment-dots"></i> コーチからの最新フィードバック</span>
+                                <span style="font-size:0.7rem; color:var(--text-secondary);">${latestFeedbackItem.date} (${labelStr})</span>
+                            </div>
+                            <p style="font-size:0.85rem; font-weight:600; color:var(--text-primary); margin:0; line-height:1.4;">
+                                ${escapeHtml(latestFeedbackItem.comment).replace(/\\n/g, '<br>')}
+                            </p>
+                        </div>
+                    `;
+                }
+
+
                 myPlayerContent.innerHTML = `
                     <div class="dash-myplayer-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.2rem 0; margin-bottom:0.2rem;">
                         <div style="display:flex; align-items:center; gap:0.6rem;">
@@ -729,6 +748,8 @@ function initDashboard() {
                         </div>
                     </div>
 
+                    ${latestFeedbackHTML}
+
                     <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.2rem;">
                         <!-- Radar Chart Accordion -->
                         <details id="dash-details-radar" style="flex:1; min-width:160px; background:rgba(0,0,0,0.015); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem;">
@@ -743,16 +764,6 @@ function initDashboard() {
                                     <span style="display:flex; align-items:center;"><span style="display:inline-block; width:8px; height:8px; background:rgba(242,57,50,0.6); border:1px solid #f23932; margin-right:4px; border-radius:50%;"></span>最新</span>
                                     ${prevSkills ? `<span style="display:flex; align-items:center;"><span style="display:inline-block; width:8px; height:8px; background:rgba(148,163,184,0.3); border:2px dashed #64748b; margin-right:4px; border-radius:50%;"></span>前回</span>` : ''}
                                 </div>
-                            </div>
-                        </details>
-
-                        <!-- History Accordion -->
-                        <details style="flex:1; min-width:160px; background:rgba(0,0,0,0.015); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem;">
-                            <summary style="cursor:pointer; font-size:0.8rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; outline:none; user-select:none;">
-                                <span><i class="fa-solid fa-clock-rotate-left" style="color:var(--primary);"></i> 成長履歴</span>
-                            </summary>
-                            <div style="overflow-y: auto; max-height:180px; padding-right:0.3rem; margin-top:0.4rem; font-size:0.78rem;">
-                                ${timelineHTML}
                             </div>
                         </details>
 
@@ -1012,16 +1023,17 @@ function initDashboard() {
 
     let wins = 0, losses = 0, draws = 0, totalGoals = 0, totalConceded = 0;
     thisYearMatches.forEach(m => {
-        const mt = m.result.match(/([\d]+)\s*-\s*([\d]+)/);
+        const status = getMatchStatus(m);
+        if (status === 'win') wins++;
+        else if (status === 'loss') losses++;
+        else if (status === 'draw') draws++;
+
+        const mt = m.result ? m.result.match(/([\d]+)\s*-\s*([\d]+)/) : null;
         if (mt) {
-            const us = parseInt(mt[1], 10), them = parseInt(mt[2], 10);
-            totalGoals += us; totalConceded += them;
-            if (us > them) wins++;
-            else if (us < them) losses++;
-            else draws++;
+            totalGoals += parseInt(mt[1], 10);
+            totalConceded += parseInt(mt[2], 10);
         }
     });
-
 
     const winRate = (wins + losses + draws) > 0 ? Math.round((wins / (wins + losses + draws)) * 100) : 0;
     const setEl   = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
@@ -1048,12 +1060,13 @@ function initDashboard() {
             .slice(0, 7);
         if (recentMatches.length > 0) {
             formBar.innerHTML = recentMatches.map(m => {
-                const mt   = m.result.match(/([\d]+)\s*-\s*([\d]+)/);
+                const mt   = m.result ? m.result.match(/([\d]+)\s*-\s*([\d]+)/) : null;
                 const us   = mt ? parseInt(mt[1], 10) : 0;
                 const them = mt ? parseInt(mt[2], 10) : 0;
+                const status = getMatchStatus(m);
                 let cls = 'draw', label = '分';
-                if (us > them)      { cls = 'win';  label = '勝'; }
-                else if (us < them) { cls = 'loss'; label = '負'; }
+                if (status === 'win')      { cls = 'win';  label = '勝'; }
+                else if (status === 'loss') { cls = 'loss'; label = '負'; }
                 const oppShort = (m.opponent || '').replace(/AFC|SFC|FC|SC/gi, '').trim().slice(0, 4) || 'vs';
                 return `
                     <div class="dash-form-item" title="${escapeHtml(m.opponent)} ${m.result}" onclick="openMatchDetail(${m.id})">

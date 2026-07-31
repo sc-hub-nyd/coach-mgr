@@ -729,69 +729,6 @@ export function openPlayerCSVImportModal() {
 }
 
 export function initPlayers() {
-    const summaryCardsContainer = document.getElementById('player-summary-cards');
-    if (summaryCardsContainer) {
-        const totalPlayers = state.players.length;
-
-        const posCounts = { FW: 0, MF: 0, DF: 0, GK: 0 };
-        state.players.forEach(p => {
-            const positions = Array.isArray(p.position) ? p.position : [p.position];
-            positions.forEach(pos => {
-                if (pos) {
-                    const u = pos.toUpperCase();
-                    if (u.includes('FW')) posCounts.FW++;
-                    else if (u.includes('MF')) posCounts.MF++;
-                    else if (u.includes('DF')) posCounts.DF++;
-                    else if (u.includes('GK')) posCounts.GK++;
-                }
-            });
-        });
-
-        let totalSkillAvg = 0;
-        let evaluatedCount = 0;
-
-        state.players.forEach(p => {
-            if (p.history && p.history.length > 0) {
-                evaluatedCount++;
-                const skills = p.history[0].skills || [0, 0, 0, 0, 0, 0];
-                const sum = skills.reduce((a, b) => a + (b || 0), 0);
-                const avg = skills.length > 0 ? sum / skills.length : 0;
-                totalSkillAvg += avg;
-            }
-        });
-
-        const teamAvgSkill = evaluatedCount > 0 ? (totalSkillAvg / evaluatedCount).toFixed(1) : '-';
-
-        summaryCardsContainer.innerHTML = `
-            <div class="card stat-card" style="padding:0.75rem 1rem;">
-                <div class="stat-icon" style="background:rgba(242,57,50,0.1); color:var(--primary);"><i class="fa-solid fa-users"></i></div>
-                <div class="stat-info">
-                    <h3 style="font-size:0.75rem;">チームの仲間</h3>
-                    <p style="font-size:1.15rem;">${totalPlayers}名</p>
-                </div>
-            </div>
-            <div class="card stat-card" style="padding:0.75rem 1rem;">
-                <div class="stat-icon" style="background:rgba(59,130,246,0.1); color:#2563eb;"><i class="fa-solid fa-layer-group"></i></div>
-                <div class="stat-info">
-                    <h3 style="font-size:0.75rem;">ポジション内訳</h3>
-                    <div style="font-size:0.72rem; font-weight:bold; color:var(--text-primary); margin-top:0.2rem; display:flex; gap:0.35rem; flex-wrap:wrap;">
-                        <span style="color:#ef4444;">FW:${posCounts.FW}</span>
-                        <span style="color:#3b82f6;">MF:${posCounts.MF}</span>
-                        <span style="color:#22c55e;">DF:${posCounts.DF}</span>
-                        <span style="color:#eab308;">GK:${posCounts.GK}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="card stat-card" style="padding:0.75rem 1rem;">
-                <div class="stat-icon" style="background:rgba(34,197,94,0.1); color:#16a34a;"><i class="fa-solid fa-chart-line"></i></div>
-                <div class="stat-info">
-                    <h3 style="font-size:0.75rem;">チーム平均スキル</h3>
-                    <p style="font-size:1.15rem;">Lv ${teamAvgSkill} <span style="font-size:0.7rem; font-weight:normal; color:var(--text-secondary);">/ 5.0</span></p>
-                </div>
-            </div>
-        `;
-    }
-
     const playerGrid = document.getElementById('player-grid');
     if (!playerGrid) return;
 
@@ -1024,9 +961,6 @@ export function initPlayers() {
                 } else if (targetView === 'heatmap') {
                     document.getElementById('player-view-heatmap')?.classList.remove('hidden');
                     renderSkillHeatmap();
-                } else if (targetView === 'position') {
-                    document.getElementById('player-view-position')?.classList.remove('hidden');
-                    renderPositionSimulator();
                 } else if (targetView === 'participation') {
                     document.getElementById('player-view-participation')?.classList.remove('hidden');
                     renderParticipationGraph();
@@ -1035,6 +969,8 @@ export function initPlayers() {
         });
     }
 }
+
+let currentHeatmapPosFilter = 'ALL';
 
 export function renderSkillHeatmap() {
     const container = document.getElementById('player-view-heatmap');
@@ -1045,11 +981,43 @@ export function renderSkillHeatmap() {
         return;
     }
 
+    const positionsList = ['ALL', 'FW', 'MF', 'DF', 'GK'];
+
+    let filteredPlayers = state.players.filter(p => {
+        if (currentHeatmapPosFilter === 'ALL') return true;
+        const posArr = Array.isArray(p.position) ? p.position : [p.position];
+        return posArr.some(pos => pos && pos.toUpperCase().includes(currentHeatmapPosFilter));
+    });
+
+    const filterBtnsHTML = positionsList.map(pos => `
+        <button type="button" class="btn btn-sm ${currentHeatmapPosFilter === pos ? 'btn-primary' : 'btn-secondary'}" data-pos="${pos}" style="font-size:0.8rem; padding:0.25rem 0.65rem;">
+            ${pos === 'ALL' ? '全ポジション' : pos}
+        </button>
+    `).join('');
+
     const metrics = state.skillMetrics || ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'];
 
-    const rowsHTML = state.players.map(p => {
+    const cat1List = (state.positions || ['GK', 'DF', 'MF', 'FW']).map(pos => pos.toUpperCase());
+    const cat2ToCat1Map = {
+        'CB': 'DF', 'SB': 'DF',
+        'CH': 'MF', 'SH': 'MF', 'OH': 'MF', 'DH': 'MF',
+        'ST': 'FW', 'WG': 'FW'
+    };
+
+    const rowsHTML = filteredPlayers.length > 0 ? filteredPlayers.map(p => {
         const skills = (p.history && p.history.length > 0) ? (p.history[0].data ? p.history[0].data.skills : p.history[0].skills) : null;
-        const positions = (Array.isArray(p.position) ? p.position : [p.position]).filter(Boolean).join(', ');
+        
+        const rawPositions = (Array.isArray(p.position) ? p.position : [p.position]).filter(Boolean);
+        let cat1Positions = rawPositions
+            .map(pos => {
+                const u = pos.toUpperCase();
+                if (cat1List.includes(u)) return u;
+                if (cat2ToCat1Map[u]) return cat2ToCat1Map[u];
+                return null;
+            })
+            .filter(Boolean);
+        cat1Positions = [...new Set(cat1Positions)];
+        const positions = cat1Positions.join('/');
         
         let avg = '-';
         if (skills && skills.length > 0) {
@@ -1060,34 +1028,40 @@ export function renderSkillHeatmap() {
         const skillCells = metrics.map((m, idx) => {
             const val = skills ? (skills[idx] || 0) : 0;
             const lvlClass = val > 0 ? `heatmap-lvl-${val}` : 'heatmap-lvl-0';
-            return `<td class="${lvlClass}">${val > 0 ? `Lv ${val}` : '-'}</td>`;
+            return `<td class="${lvlClass} heatmap-skill-col">${val > 0 ? `Lv ${val}` : '-'}</td>`;
         }).join('');
+        
+        const avgContent = avg !== '-' ? `Lv ${avg}` : '-';
 
         return `
             <tr>
-                <td style="text-align:left; font-weight:bold; cursor:pointer; color:var(--primary);" onclick="openPlayerDetail(${p.id})">
-                    <span class="badge" style="background:var(--primary); color:white; padding:0.15rem 0.4rem; border-radius:12px; margin-right:0.4rem; font-size:0.75rem;">${p.number}</span>
-                    ${escapeHtml(p.name)}
+                <td class="heatmap-name-col" style="text-align:left; font-weight:bold; cursor:pointer; color:var(--primary);" onclick="openPlayerDetail(${p.id})">
+                    <span class="heatmap-player-num">${p.number}</span><span class="heatmap-player-name">${escapeHtml(p.name)}</span>
                 </td>
-                <td style="color:var(--text-secondary); font-size:0.8rem;">${positions || '-'}</td>
+                <td class="heatmap-pos-col" style="color:var(--text-secondary); font-size:0.75rem;">${positions || '-'}</td>
                 ${skillCells}
-                <td style="font-weight:bold; background:rgba(0,0,0,0.02);">${avg !== '-' ? `Lv ${avg}` : '-'}</td>
+                <td class="heatmap-skill-col" style="font-weight:bold; background:rgba(0,0,0,0.02);">${avgContent}</td>
             </tr>
         `;
-    }).join('');
+    }).join('') : `<tr><td colspan="${metrics.length + 3}" style="text-align:center; padding:1.5rem; color:var(--text-secondary);">該当するポジションの選手がいません。</td></tr>`;
 
     container.innerHTML = `
-        <div class="skill-heatmap-container">
-            <h3 style="margin-top:0; margin-bottom:1rem; font-size:1.1rem; display:flex; align-items:center; gap:0.5rem;">
-                <i class="fa-solid fa-table-cells" style="color:#2563eb;"></i> 全選手スキルヒートマップ
-            </h3>
+        <div class="card skill-heatmap-container" style="padding:1.5rem; overflow-x:auto; margin-bottom:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.8rem; margin-bottom:1.2rem;">
+                <h3 style="margin:0; font-size:1.1rem; display:flex; align-items:center; gap:0.5rem;">
+                    <i class="fa-solid fa-table-cells" style="color:#2563eb;"></i> 全選手スキルヒートマップ
+                </h3>
+                <div id="heatmap-pos-filter-group" style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                    ${filterBtnsHTML}
+                </div>
+            </div>
             <table class="skill-heatmap-table">
                 <thead>
                     <tr>
-                        <th style="text-align:left;">選手</th>
-                        <th>ポジション</th>
-                        ${metrics.map(m => `<th>${m}</th>`).join('')}
-                        <th>平均</th>
+                        <th class="heatmap-name-col" style="text-align:left;">選手</th>
+                        <th class="heatmap-pos-col">POS</th>
+                        ${metrics.map(m => `<th class="heatmap-skill-col heatmap-skill-col-header">${escapeHtml(m)}</th>`).join('')}
+                        <th class="heatmap-skill-col heatmap-skill-col-header">平均</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1096,86 +1070,11 @@ export function renderSkillHeatmap() {
             </table>
         </div>
     `;
-}
 
-let currentPosFilter = 'ALL';
-
-export function renderPositionSimulator() {
-    const container = document.getElementById('player-view-position');
-    if (!container) return;
-
-    const positionsList = ['ALL', 'FW', 'MF', 'DF', 'GK'];
-
-    let filtered = state.players.filter(p => {
-        if (currentPosFilter === 'ALL') return true;
-        const posArr = Array.isArray(p.position) ? p.position : [p.position];
-        return posArr.some(pos => pos && pos.toUpperCase().includes(currentPosFilter));
-    });
-
-    const playersWithData = filtered.map(p => {
-        let goals = 0, assists = 0;
-        state.matches.forEach(m => {
-            if (m.goalRecords) {
-                m.goalRecords.forEach(r => {
-                    if (r.scorerId === p.id) goals++;
-                    if (r.assistId === p.id) assists++;
-                });
-            }
-        });
-
-        const skills = (p.history && p.history.length > 0) ? (p.history[0].data ? p.history[0].data.skills : p.history[0].skills) : null;
-        let avg = 0;
-        if (skills && skills.length > 0) {
-            avg = skills.reduce((a, b) => a + (b || 0), 0) / skills.length;
-        }
-
-        return { ...p, goals, assists, skillAvg: avg, skills };
-    });
-
-    playersWithData.sort((a, b) => b.skillAvg - a.skillAvg);
-
-    const filterBtnsHTML = positionsList.map(pos => `
-        <button type="button" class="btn btn-sm ${currentPosFilter === pos ? 'btn-primary' : 'btn-secondary'}" data-pos="${pos}" style="font-size:0.8rem; padding:0.3rem 0.8rem;">
-            ${pos === 'ALL' ? '全ポジション' : pos}
-        </button>
-    `).join('');
-
-    const cardsHTML = playersWithData.length > 0 ? playersWithData.map(p => `
-        <div class="dash-card" style="background:var(--surface-color); border:1px solid var(--surface-border); border-radius:12px; padding:1rem; box-shadow:0 2px 6px rgba(0,0,0,0.03); cursor:pointer;" onclick="openPlayerDetail(${p.id})">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
-                <div style="display:flex; align-items:center; gap:0.5rem;">
-                    <span style="background:var(--primary); color:white; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.85rem;">${p.number}</span>
-                    <strong style="font-size:1rem;">${escapeHtml(p.name)}</strong>
-                </div>
-                <span class="badge" style="background:rgba(0,0,0,0.04); color:var(--text-secondary); font-size:0.75rem;">${(Array.isArray(p.position) ? p.position : [p.position]).join(', ')}</span>
-            </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:0.8rem; background:rgba(0,0,0,0.02); padding:0.5rem; border-radius:8px;">
-                <div>平均スキル: <strong style="color:var(--primary);">Lv ${p.skillAvg ? p.skillAvg.toFixed(1) : '-'}</strong></div>
-                <div>得点/アシスト: <strong>${p.goals} / ${p.assists}</strong></div>
-            </div>
-        </div>
-    `).join('') : '<p class="text-secondary" style="grid-column:1/-1; text-align:center;">該当する選手がいません。</p>';
-
-    container.innerHTML = `
-        <div style="background:var(--surface-color); border:1px solid var(--surface-border); border-radius:12px; padding:1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem;">
-                <h3 style="margin:0; font-size:1.1rem; display:flex; align-items:center; gap:0.5rem;">
-                    <i class="fa-solid fa-person-running" style="color:#16a34a;"></i> ポジション適性・比較シミュレーター
-                </h3>
-                <div id="pos-sim-filter-group" style="display:flex; gap:0.4rem;">
-                    ${filterBtnsHTML}
-                </div>
-            </div>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:1rem;">
-                ${cardsHTML}
-            </div>
-        </div>
-    `;
-
-    container.querySelectorAll('#pos-sim-filter-group button').forEach(btn => {
+    container.querySelectorAll('#heatmap-pos-filter-group button').forEach(btn => {
         btn.onclick = (e) => {
-            currentPosFilter = e.currentTarget.dataset.pos;
-            renderPositionSimulator();
+            currentHeatmapPosFilter = e.currentTarget.dataset.pos;
+            renderSkillHeatmap();
         };
     });
 }
@@ -1218,33 +1117,54 @@ export function renderParticipationGraph() {
 
     playersStats.sort((a, b) => b.matchCount - a.matchCount);
 
-    const rowsHTML = playersStats.map(p => `
-        <div style="background:var(--surface-color); border:1px solid var(--surface-border); border-radius:10px; padding:0.8rem 1rem; display:grid; grid-template-columns: 180px 1fr 120px; gap:1rem; align-items:center;">
-            <div style="display:flex; align-items:center; gap:0.6rem; cursor:pointer;" onclick="openPlayerDetail(${p.id})">
-                <span style="background:var(--primary); color:white; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.8rem;">${p.number}</span>
+    const cat1List = (state.positions || ['GK', 'DF', 'MF', 'FW']).map(pos => pos.toUpperCase());
+    const cat2ToCat1Map = {
+        'CB': 'DF', 'SB': 'DF',
+        'CH': 'MF', 'SH': 'MF', 'OH': 'MF', 'DH': 'MF',
+        'ST': 'FW', 'WG': 'FW'
+    };
+
+    const rowsHTML = playersStats.map(p => {
+        const rawPositions = (Array.isArray(p.position) ? p.position : [p.position]).filter(Boolean);
+        let cat1Positions = rawPositions
+            .map(pos => {
+                const u = pos.toUpperCase();
+                if (cat1List.includes(u)) return u;
+                if (cat2ToCat1Map[u]) return cat2ToCat1Map[u];
+                return null;
+            })
+            .filter(Boolean);
+        cat1Positions = [...new Set(cat1Positions)];
+        const positionsStr = cat1Positions.join(', ');
+
+        return `
+            <div style="background:var(--card-bg); border:1px solid var(--surface-border); border-radius:10px; padding:0.8rem 1rem; display:grid; grid-template-columns: 180px 1fr 120px; gap:1rem; align-items:center; transition:box-shadow 0.2s, transform 0.2s;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 2px 6px rgba(0,0,0,0.04)';" onmouseout="this.style.transform='none';this.style.boxShadow='none';">
+                <div style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;" onclick="openPlayerDetail(${p.id})">
+                    <span class="heatmap-player-num">${p.number}</span>
+                    <div>
+                        <strong style="font-size:0.9rem; color:var(--text-primary); display:block;">${escapeHtml(p.name)}</strong>
+                        <span style="font-size:0.75rem; color:var(--text-secondary);">${positionsStr || '-'}</span>
+                    </div>
+                </div>
                 <div>
-                    <strong style="font-size:0.9rem; color:var(--text-primary); display:block;">${escapeHtml(p.name)}</strong>
-                    <span style="font-size:0.75rem; color:var(--text-secondary);">${(Array.isArray(p.position) ? p.position : [p.position]).join(', ')}</span>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.2rem;">
+                        <span>試合参加: <strong>${p.matchCount}試合 (${p.matchPct}%)</strong></span>
+                        <span>30日出席率: <strong>${p.attPct}%</strong></span>
+                    </div>
+                    <div class="stat-bar-outer">
+                        <div class="stat-bar-inner" style="width:${p.matchPct}%; background:linear-gradient(90deg, #3b82f6, #9333ea);"></div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:0.8rem; justify-content:flex-end; font-size:0.8rem;">
+                    <span title="得点"><i class="fa-solid fa-futbol" style="color:var(--primary);"></i> <strong>${p.goals}</strong></span>
+                    <span title="アシスト"><i class="fa-solid fa-shoe-prints" style="color:#22c55e; transform:rotate(45deg);"></i> <strong>${p.assists}</strong></span>
                 </div>
             </div>
-            <div>
-                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.2rem;">
-                    <span>試合参加: <strong>${p.matchCount}試合 (${p.matchPct}%)</strong></span>
-                    <span>30日出席率: <strong>${p.attPct}%</strong></span>
-                </div>
-                <div class="stat-bar-outer">
-                    <div class="stat-bar-inner" style="width:${p.matchPct}%; background:linear-gradient(90deg, #3b82f6, #9333ea);"></div>
-                </div>
-            </div>
-            <div style="display:flex; gap:0.8rem; justify-content:flex-end; font-size:0.8rem;">
-                <span title="得点"><i class="fa-solid fa-futbol" style="color:var(--primary);"></i> <strong>${p.goals}</strong></span>
-                <span title="アシスト"><i class="fa-solid fa-shoe-prints" style="color:#22c55e; transform:rotate(45deg);"></i> <strong>${p.assists}</strong></span>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
     container.innerHTML = `
-        <div style="background:var(--surface-color); border:1px solid var(--surface-border); border-radius:12px; padding:1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+        <div class="card" style="padding:1.5rem; margin-bottom:1.5rem;">
             <h3 style="margin-top:0; margin-bottom:1rem; font-size:1.1rem; display:flex; align-items:center; gap:0.5rem;">
                 <i class="fa-solid fa-chart-column" style="color:#9333ea;"></i> 試合出場機会＆スタッツ比較
             </h3>

@@ -13,6 +13,48 @@
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
+/* ⚽ ハーフコートピッチ (色が統一感のあるベース、上がセンターライン、下がゴール) */
+.tactical-pitch.pitch-half-bottom {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #f1f5f9;
+    border: 2px solid #334155;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#custom-formation-pitch-canvas {
+    background-image: 
+        linear-gradient(to right, rgba(51, 65, 85, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(51, 65, 85, 0.07) 1px, transparent 1px);
+    background-size: 5% 5%;
+}
+
+.tactical-pitch.pitch-half-bottom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #334155;
+    transform: none;
+}
+
+.tactical-pitch.pitch-half-bottom::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: 50%;
+    width: 30%;
+    aspect-ratio: 1;
+    border: 2px solid #334155;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
 /* Pitch Lines (Layout & Design) */
 .tactical-pitch::before {
     content: '';

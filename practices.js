@@ -322,7 +322,7 @@ export function initPractices(miniPitchObserver) {
                             </div>
                         </div>
                         ${isCoach ? `
-                        <div class="u-ext-148" >
+                        <div class="u-ext-148 practice-card-actions" >
                             <button class="u-ext-149 btn btn-primary btn-add-menu" data-id="${p.id}"  title="メニュー追加"><i class="fa-solid fa-plus"></i></button>
                             <button class="u-ext-149 btn btn-secondary btn-edit-practice" data-id="${p.id}"  title="練習日詳細を編集"><i class="fa-solid fa-pen"></i></button>
                             <button class="u-ext-149 btn btn-danger btn-delete-practice" data-id="${p.id}" ><i class="fa-solid fa-trash"></i></button>
@@ -334,19 +334,21 @@ export function initPractices(miniPitchObserver) {
                             <li class="u-ext-150 practice-menu-item" >
                                 <details class="u-ext-151 practice-menu-details" >
                                     <summary class="u-ext-152 practice-menu-item-header" >
-    <span class="u-ext-153 practice-menu-item-title" >
-        <i class="u-ext-154 fa-solid fa-chevron-down" ></i>
-        ${escapeHtml(menu.focus)}
-        ${menu.engagement ? `<span class="u-ext-155" >${'★'.repeat(menu.engagement)}${'☆'.repeat(5 - menu.engagement)}</span>` : ''}
-    </span>
-    ${isCoach ? `
-    <div class="u-ext-156"  onclick="event.stopPropagation();">
-        <button class="u-ext-157 btn btn-secondary btn-edit-menu" data-pid="${p.id}" data-mid="${menu.id}"  title="編集"><i class="fa-solid fa-pen"></i></button>
-        <button class="u-ext-157 btn btn-secondary btn-anim-practice" data-pid="${p.id}" data-mid="${menu.id}"  title="作図"><i class="fa-solid fa-person-running"></i></button>
-        <button class="u-ext-157 btn btn-danger btn-delete-menu" data-pid="${p.id}" data-mid="${menu.id}" ><i class="fa-solid fa-times"></i></button>
-    </div>
-    ` : ''}
-</summary>
+                                        <div class="practice-menu-title-block">
+                                            <span class="u-ext-153 practice-menu-item-title" >
+                                                <i class="u-ext-154 fa-solid fa-chevron-down" ></i>
+                                                ${escapeHtml(menu.focus)}
+                                            </span>
+                                            ${menu.engagement ? `<span class="u-ext-155 practice-stars-badge" >${'★'.repeat(menu.engagement)}${'☆'.repeat(5 - menu.engagement)}</span>` : ''}
+                                        </div>
+                                        ${isCoach ? `
+                                        <div class="u-ext-156 practice-menu-actions-block"  onclick="event.stopPropagation();">
+                                            <button class="u-ext-157 btn btn-secondary btn-edit-menu" data-pid="${p.id}" data-mid="${menu.id}"  title="編集"><i class="fa-solid fa-pen"></i></button>
+                                            <button class="u-ext-157 btn btn-secondary btn-anim-practice" data-pid="${p.id}" data-mid="${menu.id}"  title="作図"><i class="fa-solid fa-person-running"></i></button>
+                                            <button class="u-ext-157 btn btn-danger btn-delete-menu" data-pid="${p.id}" data-mid="${menu.id}" ><i class="fa-solid fa-times"></i></button>
+                                        </div>
+                                        ` : ''}
+                                    </summary>
 ${(menu.organize || menu.keyfactor || menu.options || menu.videoUrl || menu.frames || menu.reflection) ? `
 <div class="u-ext-158 practice-menu-item-details" >
     <div class="u-ext-159 practice-canvas-wrapper btn-open-anim-preview" data-pid="${p.id}" data-mid="${menu.id}"  onclick="event.stopPropagation();" title="クリックして作図アニメーションを拡大表示">
@@ -366,7 +368,7 @@ ${(menu.organize || menu.keyfactor || menu.options || menu.videoUrl || menu.fram
 ` : '<div class="u-ext-167" >詳細説明はありません。</div>'}
                                 </details>
                             </li>
-                        `).join('') : '<li class="u-ext-168 text-secondary" >メニューなし</li>'}
+                        `).join('') : '<li class="u-ext-168 text-secondary no-practice-menu" >メニューなし</li>'}
                     </ul>
                 </div>
             `;

@@ -502,10 +502,10 @@ export function initSettings() {
                 const x = clientX - rect.left;
                 const y = clientY - rect.top;
 
-                let leftPercent = Math.round((x / rect.width) * 100);
-                let topPercent = Math.round((y / rect.height) * 100);
-                leftPercent = Math.max(0, Math.min(100, leftPercent));
-                topPercent = Math.max(0, Math.min(100, topPercent));
+                const snapToGrid = (val, step = 5) => Math.max(0, Math.min(100, Math.round(val / step) * step));
+
+                let leftPercent = snapToGrid((x / rect.width) * 100, 5);
+                let topPercent = snapToGrid((y / rect.height) * 100, 5);
 
                 nodeEl.style.left = `${leftPercent}%`;
                 nodeEl.style.top = `${topPercent}%`;
@@ -577,11 +577,9 @@ export function initSettings() {
                     return;
                 }
 
-                const rect = pitchCanvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const leftPercent = Math.round((x / rect.width) * 100);
-                const topPercent = Math.round((y / rect.height) * 100);
+                const snapToGrid = (val, step = 5) => Math.max(0, Math.min(100, Math.round(val / step) * step));
+                const leftPercent = snapToGrid(((e.clientX - rect.left) / rect.width) * 100, 5);
+                const topPercent = snapToGrid(((e.clientY - rect.top) / rect.height) * 100, 5);
 
                 const nodeIndex = placedNodes.length;
                 const defaultLabel = nodeIndex === 0 ? 'GK' : `P${nodeIndex}`;
