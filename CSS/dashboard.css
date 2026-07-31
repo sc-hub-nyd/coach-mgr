@@ -1357,16 +1357,17 @@ summary {
 
 /* --- 新規ウィジェット装飾 --- */
 .dash-myplayer-card {
-    border-left: 5px solid var(--primary);
+    border-left: 4px solid var(--primary);
     background: linear-gradient(135deg, var(--card-bg) 0%, rgba(242,57,50,0.02) 100%);
     position: relative;
     overflow: hidden;
+    padding: 0.6rem 0.8rem;
 }
 
 .dash-myplayer-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
     padding-top: 0.2rem;
 }
 

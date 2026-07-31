@@ -3,7 +3,7 @@ import { state, uiState } from './state.js';
 import { escapeHtml, encryptData, decryptData, showToast, setupScoreCounters, getNendo } from './utils.js';
 import { initPractices, openPracticeModal, renderPracticeRoster } from './practices.js';
 import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView } from './matches.js'; // ★ 1行にまとめる
-import { initPlayers, openPlayerDetail } from './players.js';
+import { initPlayers, openPlayerDetail, drawRadarChart } from './players.js';
 import { initLibrary } from './library.js';
 import { initSettings, initData } from './settings.js';
 import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
@@ -651,45 +651,152 @@ function initDashboard() {
                 const attendancePct = totalEvents > 0 ? Math.round((presentCount / totalEvents) * 100) : 0;
 
                 // 通算得点・アシスト
-                let goals = 0;
-                let assists = 0;
+                let playerGoals = 0;
+                let playerAssists = 0;
                 state.matches.forEach(m => {
-                    if (m.formations && m.formations.length > 0) {
-                        m.formations.forEach(f => {
-                            (f.goalRecords || []).forEach(r => {
-                                if (r.scorerId === player.id) goals++;
-                                if (r.assistId === player.id) assists++;
-                            });
-                        });
-                    } else {
-                        (m.goalRecords || []).forEach(r => {
-                            if (r.scorerId === player.id) goals++;
-                            if (r.assistId === player.id) assists++;
+                    if (m.goalRecords) {
+                        m.goalRecords.forEach(r => {
+                            if (r.scorerId === player.id) playerGoals++;
+                            if (r.assistId === player.id) playerAssists++;
                         });
                     }
                 });
 
-                // 直近のポジティブ評価 (1on1評価やフィードバック)
-                let latestFeedback = '登録された直近の評価コメントはありません';
-                if (player.oneOnOnes && player.oneOnOnes.length > 0) {
-                    const sortedOneOnOnes = [...player.oneOnOnes].sort((a,b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
-                    latestFeedback = sortedOneOnOnes[0].note || latestFeedback;
+                // 成長履歴
+                let timeline = [];
+                if (player.history) {
+                    player.history.forEach(h => {
+                        timeline.push({ type: 'assessment', date: h.date, comment: h.comment, data: h });
+                    });
                 }
+                state.matches.forEach(m => {
+                    if (m.playerFeedback) {
+                        m.playerFeedback.forEach(fb => {
+                            if (fb.playerId === player.id) {
+                                timeline.push({ type: 'match', date: m.date, matchDetails: `${m.type}${m.tournament ? ` (${m.tournament})` : ''} vs ${m.opponent}`, comment: fb.comment, matchId: m.id });
+                            }
+                        });
+                    }
+                });
+                timeline.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                const timelineHTML = timeline.length > 0 ? timeline.map(item => {
+                    if (item.type === 'assessment') {
+                        return `
+                            <div class="timeline-item" style="margin-bottom:0.6rem; padding-left:0.6rem;">
+                                <div class="timeline-item-date" style="font-size:0.72rem; margin-bottom:0.1rem;">
+                                    <span>${item.date} <span class="timeline-item-badge" style="font-size:0.62rem; padding:0.05rem 0.25rem;">スキル評価</span></span>
+                                </div>
+                                <div class="timeline-item-comment" style="white-space:pre-wrap; font-size:0.78rem; font-weight:normal; margin-bottom:0; line-height:1.35;">${escapeHtml(item.comment)}</div>
+                            </div>
+                        `;
+                    } else {
+                        return `
+                            <div class="timeline-item match-timeline-item" style="margin-bottom:0.6rem; padding-left:0.6rem;">
+                                <div class="timeline-item-date" style="font-size:0.72rem; margin-bottom:0.1rem;">
+                                    ${item.date} <span class="timeline-item-badge" style="font-size:0.62rem; padding:0.05rem 0.25rem;">試合評価</span>
+                                </div>
+                                <p style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:0.1rem; font-weight:600;">${item.matchDetails}</p>
+                                <p style="font-size:0.78rem; margin:0; line-height:1.35;">${escapeHtml(item.comment)}</p>
+                            </div>
+                        `;
+                    }
+                }).join('') : '<p class="text-secondary" style="font-size:0.75rem;">記録がありません。</p>';
+
+                // スキル
+                const currentSkills = player.history && player.history.length > 0 ? (player.history[0].data ? player.history[0].data.skills : player.history[0].skills) : [0, 0, 0, 0, 0, 0];
+                const prevSkills = player.history && player.history.length > 1 ? (player.history[1].data ? player.history[1].data.skills : player.history[1].skills) : null;
 
                 myPlayerContent.innerHTML = `
-                    <div class="dash-myplayer-metric-box">
-                        <span class="u-ext-14" ><i class="fa-solid fa-users"></i> 過去1ヶ月の出席率</span>
-                        <div class="dash-myplayer-metric-val">${attendancePct}% <span class="u-ext-15" >(${presentCount}/${totalEvents}回)</span></div>
+                    <div class="dash-myplayer-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.2rem 0; margin-bottom:0.2rem;">
+                        <div style="display:flex; align-items:center; gap:0.6rem;">
+                            <div class="player-number" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, var(--primary), #e83029);color:white;border-radius:50%;font-weight:900;font-size:0.95rem;">
+                                ${player.number}
+                            </div>
+                            <div style="display:flex; align-items:baseline; gap:0.4rem;">
+                                <h2 style="margin:0; font-size:1.1rem; color:var(--text-primary); font-weight:800; letter-spacing:-0.02em;">
+                                    ${escapeHtml(player.name)}
+                                </h2>
+                                <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">
+                                    (${(Array.isArray(player.position) ? player.position : [player.position]).join(', ')})
+                                </span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:0.8rem; align-items:center; font-size:0.8rem;">
+                            <span style="color:var(--text-secondary);"><i class="fa-solid fa-users" style="font-size:0.7rem;"></i> 出席: <strong style="color:var(--text-primary);">${attendancePct}%</strong></span>
+                            <span style="color:var(--text-secondary);"><i class="fa-solid fa-futbol" style="color:var(--primary); font-size:0.7rem;"></i> 得点: <strong style="color:var(--text-primary);">${playerGoals}</strong></span>
+                            <span style="color:var(--text-secondary);"><i class="fa-solid fa-shoe-prints" style="color:#22c55e; font-size:0.7rem; transform:rotate(45deg);"></i> アシスト: <strong style="color:var(--text-primary);">${playerAssists}</strong></span>
+                        </div>
                     </div>
-                    <div class="dash-myplayer-metric-box">
-                        <span class="u-ext-14" ><i class="u-ext-16 fa-solid fa-fire" ></i> 通算スタッツ</span>
-                        <div class="dash-myplayer-metric-val">${goals} <span class="u-ext-15" >得点</span> / ${assists} <span class="u-ext-15" >アシスト</span></div>
-                    </div>
-                    <div class="dash-myplayer-comment-box">
-                        <strong><i class="fa-solid fa-comment-dots"></i> 指導者からの最新フィードバック・成長記録:</strong>
-                        <div class="u-ext-17" >"${latestFeedback}"</div>
+
+                    <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.2rem;">
+                        <!-- Radar Chart Accordion -->
+                        <details id="dash-details-radar" style="flex:1; min-width:160px; background:rgba(0,0,0,0.015); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem;">
+                            <summary style="cursor:pointer; font-size:0.8rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; outline:none; user-select:none;">
+                                <span><i class="fa-solid fa-chart-pie" style="color:var(--primary);"></i> 最新のスキル</span>
+                            </summary>
+                            <div style="display:flex; flex-direction:column; align-items:center; margin-top:0.4rem;">
+                                <div style="position: relative; width:150px; height:150px;">
+                                    <canvas id="dash-myplayer-radar" width="300" height="300" style="width:150px; height:150px;"></canvas>
+                                </div>
+                                <div style="text-align: center; font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.3rem; display: flex; justify-content: center; gap: 0.8rem; font-weight:600;">
+                                    <span style="display:flex; align-items:center;"><span style="display:inline-block; width:8px; height:8px; background:rgba(242,57,50,0.6); border:1px solid #f23932; margin-right:4px; border-radius:50%;"></span>最新</span>
+                                    ${prevSkills ? `<span style="display:flex; align-items:center;"><span style="display:inline-block; width:8px; height:8px; background:rgba(148,163,184,0.3); border:2px dashed #64748b; margin-right:4px; border-radius:50%;"></span>前回</span>` : ''}
+                                </div>
+                            </div>
+                        </details>
+
+                        <!-- History Accordion -->
+                        <details style="flex:1; min-width:160px; background:rgba(0,0,0,0.015); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem;">
+                            <summary style="cursor:pointer; font-size:0.8rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; outline:none; user-select:none;">
+                                <span><i class="fa-solid fa-clock-rotate-left" style="color:var(--primary);"></i> 成長履歴</span>
+                            </summary>
+                            <div style="overflow-y: auto; max-height:180px; padding-right:0.3rem; margin-top:0.4rem; font-size:0.78rem;">
+                                ${timelineHTML}
+                            </div>
+                        </details>
+
+                        <!-- IDP Accordion -->
+                        <details style="flex:1; min-width:160px; background:rgba(0,0,0,0.015); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem;">
+                            <summary style="cursor:pointer; font-size:0.8rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; outline:none; user-select:none;">
+                                <span><i class="fa-solid fa-bullseye" style="color:var(--primary);"></i> 個人目標 (IDP)</span>
+                            </summary>
+                            <div style="display:flex; flex-direction:column; gap:0.4rem; margin-top:0.4rem;">
+                                <div>
+                                    <strong style="font-size:0.72rem; color:var(--text-secondary); display:block; margin-bottom:0.1rem;">短期目標</strong>
+                                    <p style="margin:0; padding:0.3rem 0.5rem; background:rgba(0,0,0,0.02); border-radius:4px; font-size:0.78rem; line-height:1.35; border:1px solid rgba(0,0,0,0.04);">${player.goals && player.goals.short ? escapeHtml(player.goals.short).replace(/\n/g, '<br>') : '未設定'}</p>
+                                </div>
+                                <div>
+                                    <strong style="font-size:0.72rem; color:var(--text-secondary); display:block; margin-bottom:0.1rem;">長期目標</strong>
+                                    <p style="margin:0; padding:0.3rem 0.5rem; background:rgba(0,0,0,0.02); border-radius:4px; font-size:0.78rem; line-height:1.35; border:1px solid rgba(0,0,0,0.04);">${player.goals && player.goals.long ? escapeHtml(player.goals.long).replace(/\n/g, '<br>') : '未設定'}</p>
+                                </div>
+                            </div>
+                        </details>
                     </div>
                 `;
+
+                setTimeout(() => {
+                    drawRadarChart('dash-myplayer-radar', currentSkills, prevSkills);
+                }, 50);
+
+                let isSyncingDetails = false;
+                const detailsElements = myPlayerContent.querySelectorAll('details');
+                detailsElements.forEach(det => {
+                    det.addEventListener('toggle', () => {
+                        if (isSyncingDetails) return;
+                        isSyncingDetails = true;
+                        const isOpen = det.open;
+                        detailsElements.forEach(d => {
+                            d.open = isOpen;
+                        });
+                        if (isOpen) {
+                            setTimeout(() => {
+                                drawRadarChart('dash-myplayer-radar', currentSkills, prevSkills);
+                            }, 10);
+                        }
+                        isSyncingDetails = false;
+                    });
+                });
             };
 
             myPlayerSelect.onchange = (e) => {
