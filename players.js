@@ -12,7 +12,8 @@ export function drawRadarChart(canvasId, skills, prevSkills = null) {
     const cx = w / 2;
     const cy = h / 2;
     const scaleFactor = w / 200;
-    const radius = w / 2 - (56 * scaleFactor / 2);
+    // ★ 半径を拡大 (74 -> 58) してチャート領域いっぱいに大きく描画
+    const radius = w / 2 - (58 * scaleFactor / 2);
 
     ctx.clearRect(0, 0, w, h);
 
@@ -138,10 +139,11 @@ export function render1on1List(p) {
         listEl.querySelectorAll('.btn-delete-1on1').forEach(btn => {
             btn.onclick = async (e) => {
                 e.stopPropagation();
+                // ★ await の前に ID を取得
+                const plId = parseInt(e.currentTarget.dataset.playerId, 10);
+                const noteId = parseInt(e.currentTarget.dataset.noteId, 10);
                 const proceed = await showCustomConfirm('この面談記録を削除しますか？', '面談記録の削除', { okText: '削除する', type: 'danger' });
                 if (proceed) {
-                    const plId = parseInt(e.currentTarget.dataset.playerId, 10);
-                    const noteId = parseInt(e.currentTarget.dataset.noteId, 10);
                     const player = state.players.find(pl => pl.id === plId);
                     if (player && player.notes1on1) {
                         player.notes1on1 = player.notes1on1.filter(n => n.id !== noteId);
@@ -1006,7 +1008,7 @@ export function renderSkillHeatmap() {
 
     const rowsHTML = filteredPlayers.length > 0 ? filteredPlayers.map(p => {
         const skills = (p.history && p.history.length > 0) ? (p.history[0].data ? p.history[0].data.skills : p.history[0].skills) : null;
-        
+
         const rawPositions = (Array.isArray(p.position) ? p.position : [p.position]).filter(Boolean);
         let cat1Positions = rawPositions
             .map(pos => {
@@ -1018,7 +1020,7 @@ export function renderSkillHeatmap() {
             .filter(Boolean);
         cat1Positions = [...new Set(cat1Positions)];
         const positions = cat1Positions.join('/');
-        
+
         let avg = '-';
         if (skills && skills.length > 0) {
             const sum = skills.reduce((a, b) => a + (b || 0), 0);
@@ -1030,7 +1032,7 @@ export function renderSkillHeatmap() {
             const lvlClass = val > 0 ? `heatmap-lvl-${val}` : 'heatmap-lvl-0';
             return `<td class="${lvlClass} heatmap-skill-col">${val > 0 ? `Lv ${val}` : '-'}</td>`;
         }).join('');
-        
+
         const avgContent = avg !== '-' ? `Lv ${avg}` : '-';
 
         return `

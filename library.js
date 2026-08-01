@@ -443,10 +443,12 @@ export function initLibrary(miniPitchObserver) {
 
     document.querySelectorAll('.btn-delete-library').forEach(btn => {
         btn.addEventListener('click', async (e) => {
+            // ★ await の前に ID を取得
+            const id = parseInt(e.currentTarget.dataset.id, 10);
             const proceed = await showCustomConfirm('このライブラリを削除しますか？', 'ライブラリの削除', { okText: '削除する', type: 'danger' });
             if (proceed) {
-                const id = parseInt(e.currentTarget.dataset.id);
                 state.menuLibrary = state.menuLibrary.filter(m => m.id !== id);
+                saveData();
                 showToast('削除しました');
                 initLibrary(miniPitchObserver);
             }

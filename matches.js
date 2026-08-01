@@ -825,6 +825,12 @@ export function initMatchDetailView(matchId) {
     const scoreBox = document.getElementById('match-detail-score-box');
     if (scoreBox) scoreBox.innerHTML = renderMatchScoreHeaderBadge(m);
 
+    // ★【追加】マイ選手出場要約の描写実行 ★
+    const summaryContainer = document.getElementById('my-player-summary-container');
+    if (summaryContainer) {
+        summaryContainer.innerHTML = renderMyPlayerSummaryCard(m);
+    }
+
     const themeText = document.getElementById('match-detail-theme-text');
     const themeInput = document.getElementById('match-detail-theme-input');
     const summaryText = document.getElementById('match-detail-summary-text');
@@ -1099,6 +1105,19 @@ function renderPeriodGrid(m) {
             ? `<span class="badge" style="background:var(--primary); color:#fff;">PK戦 (キッカー順)</span>`
             : `<span class="u-ext-71 badge">陣形: ${escapeHtml(f.system || '未設定')}</span>`;
 
+        // ★【追加】途中交代（OUT ➔ IN）の表示用HTML生成
+        // ★ 途中交代（OUT ➔ IN）の表示用HTML生成
+        let subsHtml = '';
+        if (f.substitutions && f.substitutions.length > 0) {
+            subsHtml = f.substitutions.map(sub => {
+                const pOut = state.players.find(p => p.id === sub.playerOutId);
+                const pIn = state.players.find(p => p.id === sub.playerInId);
+                const outName = pOut ? `${pOut.number ? `#${pOut.number} ` : ''}${pOut.name}` : 'OUT未設定';
+                const inName = pIn ? `${pIn.number ? `#${pIn.number} ` : ''}${pIn.name}` : 'IN未設定';
+                return `<div style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem;"><i class="fa-solid fa-arrows-rotate" style="color:#eab308;"></i> 交代: ${escapeHtml(outName)} ➔ <strong style="color:var(--text-primary);">${escapeHtml(inName)}</strong> (0.5P)</div>`;
+            }).join('');
+        }
+
         return `
             <div class="u-ext-65 card" >
                 <div>
@@ -1112,6 +1131,7 @@ function renderPeriodGrid(m) {
                     
                     <div class="u-ext-70" >
                         ${systemBadge}
+                        ${subsHtml}
                     </div>
 
                     <div class="u-ext-72" >
@@ -1450,6 +1470,31 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 }).join('');
             }
 
+            let sideSubRowsHtml = '';
+            if (!period.substitutions) period.substitutions = [];
+            const sortedPlayersForSub = [...state.players].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
+
+            if (period.substitutions.length > 0) {
+                sideSubRowsHtml = period.substitutions.map((sub, sIdx) => {
+                    const outOpts = `<option value="">OUT選手を選択</option>` + sortedPlayersForSub.map(p => `<option value="${p.id}" ${p.id === sub.playerOutId ? 'selected' : ''}>${p.number ? `#${p.number} ` : ''}${p.name}</option>`).join('');
+                    const inOpts = `<option value="">IN選手を選択</option>` + sortedPlayersForSub.map(p => `<option value="${p.id}" ${p.id === sub.playerInId ? 'selected' : ''}>${p.number ? `#${p.number} ` : ''}${p.name}</option>`).join('');
+
+                    return `
+                        <div class="side-sub-row" data-index="${sIdx}" style="display:flex; flex-direction:column; gap:0.2rem; padding:0.4rem; background:rgba(0,0,0,0.02); border:1px solid var(--surface-border); border-radius:6px; margin-bottom:0.4rem;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:0.72rem; font-weight:bold; color:var(--text-secondary);">交代 #${sIdx + 1} (0.5P)</span>
+                                <button type="button" class="btn btn-danger btn-xs btn-remove-side-sub" style="padding:0.1rem 0.3rem;" title="削除"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                            <div style="display:flex; gap:0.3rem; align-items:center;">
+                                <select class="form-control form-control-sm side-sub-out-select" style="font-size:0.75rem; flex:1;">${outOpts}</select>
+                                <span style="font-size:0.75rem;">➔</span>
+                                <select class="form-control form-control-sm side-sub-in-select" style="font-size:0.75rem; flex:1;">${inOpts}</select>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
             // 2. ミニピッチ図 ＆ ポジション配置ピン
             const currentCustomForm = state.customFormations.find(cf => cf.name === period.system) || state.customFormations[0];
             let pitchPinsHtml = '';
@@ -1461,7 +1506,17 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
                 pitchPinsHtml = currentCustomForm.coords.map((c, pIdx) => {
                     const posKey = `pos_${pIdx}_${c.role || 'pos'}`;
-                    const assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+
+                    // ★ lineup と positions の両方から選手IDを復元検索
+                    let assignedPlayerId = '';
+                    if (period.lineup && Array.isArray(period.lineup)) {
+                        const found = period.lineup.find(l => l.roleLabel === c.label || l.roleIndex === pIdx || l.role === c.role);
+                        if (found) assignedPlayerId = found.playerId;
+                    }
+                    if (!assignedPlayerId && period.positions) {
+                        assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+                    }
+
                     const assignedPlayer = state.players.find(p => p.id == assignedPlayerId);
                     const labelText = assignedPlayer ? (assignedPlayer.number ? `#${assignedPlayer.number}` : assignedPlayer.name.slice(0, 3)) : (c.role ? c.role.slice(0, 3) : `P${pIdx + 1}`);
 
@@ -1481,7 +1536,17 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
                 posListHtml = currentCustomForm.coords.map((c, pIdx) => {
                     const posKey = `pos_${pIdx}_${c.role || 'pos'}`;
-                    const assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+
+                    // ★ lineup と positions の両方から選手IDを復元検索
+                    let assignedPlayerId = '';
+                    if (period.lineup && Array.isArray(period.lineup)) {
+                        const found = period.lineup.find(l => l.roleLabel === c.label || l.roleIndex === pIdx || l.role === c.role);
+                        if (found) assignedPlayerId = found.playerId;
+                    }
+                    if (!assignedPlayerId && period.positions) {
+                        assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+                    }
+
                     const playerOpts = `<option value="">未割当</option>` + sortedPlayers.map(p => `<option value="${p.id}" ${p.id == assignedPlayerId ? 'selected' : ''}>${p.number ? `#${p.number}` : ''} ${p.name}</option>`).join('');
 
                     return `
@@ -1533,6 +1598,16 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     <span class="side-info-label">ピリオド総括</span>
                     <textarea id="side-form-summary" class="form-control form-control-sm" rows="3">${escapeHtml(period.summary || period.reflection || '')}</textarea>
                 </div>
+                <!-- ★【追加】途中交代カード -->
+                <div class="side-info-card">
+                    <div class="u-ext-94" style="margin-bottom:0.4rem;">
+                        <span class="u-ext-95 side-info-label" style="margin:0;"><i class="fa-solid fa-arrows-rotate" style="color:#eab308;"></i> 途中交代 (1人につき 0.5P)</span>
+                        <button type="button" class="u-ext-96 btn btn-primary btn-xs" id="btn-add-side-sub"><i class="fa-solid fa-plus"></i> 追加</button>
+                    </div>
+                    <div id="side-substitutions-container">
+                        ${sideSubRowsHtml || '<div class="u-ext-57">途中交代の記録なし</div>'}
+                    </div>
+                </div>
                 <div class="side-info-card">
                     <span class="side-info-label">システム (陣形)</span>
                     <select id="side-form-system" class="form-control form-control-sm">${systemOptions}</select>
@@ -1580,6 +1655,19 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     }
                 });
 
+                // ★【追加】交代データの収集
+                const substitutions = [];
+                sideBody.querySelectorAll('.side-sub-row').forEach(row => {
+                    const outVal = row.querySelector('.side-sub-out-select').value;
+                    const inVal = row.querySelector('.side-sub-in-select').value;
+                    if (outVal || inVal) {
+                        substitutions.push({
+                            playerOutId: outVal ? parseInt(outVal, 10) : null,
+                            playerInId: inVal ? parseInt(inVal, 10) : null
+                        });
+                    }
+                });
+
                 return {
                     name: document.getElementById('side-form-name').value.trim(),
                     system: document.getElementById('side-form-system').value,
@@ -1588,9 +1676,31 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     scoreThem: period.scoreThem || 0,
                     summary: document.getElementById('side-form-summary').value.trim(),
                     goalRecords: goalRecords,
-                    positions: positions
+                    positions: positions,
+                    substitutions: substitutions // ★ 追加
                 };
             };
+
+            // ★【追加】交代追加ボタン
+            const btnAddSub = document.getElementById('btn-add-side-sub');
+            if (btnAddSub) {
+                btnAddSub.onclick = () => {
+                    if (!period.substitutions) period.substitutions = [];
+                    period.substitutions.push({ playerOutId: null, playerInId: null });
+                    renderSidePanelContent();
+                };
+            }
+
+            // ★【追加】交代削除ボタン
+            sideBody.querySelectorAll('.btn-remove-side-sub').forEach(btn => {
+                btn.onclick = (e) => {
+                    const sIdx = parseInt(e.currentTarget.closest('.side-sub-row').dataset.index, 10);
+                    if (period.substitutions) {
+                        period.substitutions.splice(sIdx, 1);
+                        renderSidePanelContent();
+                    }
+                };
+            });
 
             // ピンをクリックした際のフォーカス挙動
             sideBody.querySelectorAll('.side-pitch-pin').forEach(pin => {
@@ -1696,6 +1806,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     period.summary = finalData.summary;
                     period.goalRecords = finalData.goalRecords;
                     period.positions = finalData.positions;
+                    period.substitutions = finalData.substitutions; // ★ 追加
 
                     recalculateMatchResult(match);
 
@@ -1738,7 +1849,17 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
                 pitchPinsHtml = currentCustomForm.coords.map((c, pIdx) => {
                     const posKey = `pos_${pIdx}_${c.role || 'pos'}`;
-                    const assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+
+                    // ★【修正】lineup と positions の両方から選手IDを復元検索
+                    let assignedPlayerId = '';
+                    if (period.lineup && Array.isArray(period.lineup)) {
+                        const found = period.lineup.find(l => l.roleLabel === c.label || l.roleIndex === pIdx || l.role === c.role);
+                        if (found) assignedPlayerId = found.playerId;
+                    }
+                    if (!assignedPlayerId && period.positions) {
+                        assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+                    }
+
                     const assignedPlayer = state.players.find(p => p.id == assignedPlayerId);
                     const labelText = assignedPlayer ? (assignedPlayer.number ? `#${assignedPlayer.number}` : assignedPlayer.name.slice(0, 3)) : (c.role ? c.role.slice(0, 3) : `P${pIdx + 1}`);
 
@@ -1756,7 +1877,17 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
                 posListHtml = currentCustomForm.coords.map((c, pIdx) => {
                     const posKey = `pos_${pIdx}_${c.role || 'pos'}`;
-                    const assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+
+                    // ★【修正】lineup と positions の両方から選手IDを復元検索
+                    let assignedPlayerId = '';
+                    if (period.lineup && Array.isArray(period.lineup)) {
+                        const found = period.lineup.find(l => l.roleLabel === c.label || l.roleIndex === pIdx || l.role === c.role);
+                        if (found) assignedPlayerId = found.playerId;
+                    }
+                    if (!assignedPlayerId && period.positions) {
+                        assignedPlayerId = period.positions[posKey] || period.positions[pIdx] || '';
+                    }
+
                     const assignedPlayer = state.players.find(p => p.id == assignedPlayerId);
                     const playerName = assignedPlayer ? `${assignedPlayer.number ? `#${assignedPlayer.number} ` : ''}${assignedPlayer.name}` : '未割当';
 
@@ -2886,9 +3017,10 @@ export function initMatches() {
 
     document.querySelectorAll('.btn-delete-match').forEach(btn => {
         btn.onclick = async (e) => {
+            // ★ await の前に ID を取得しておく
+            const id = parseInt(e.currentTarget.dataset.id, 10);
             const proceed = await showCustomConfirm('この試合記録を削除しますか？', '試合記録の削除', { okText: '削除する', type: 'danger' });
             if (proceed) {
-                const id = parseInt(e.currentTarget.dataset.id, 10);
                 state.matches = state.matches.filter(m => m.id !== id);
                 saveData();
                 showToast('削除しました');
@@ -2896,4 +3028,73 @@ export function initMatches() {
             }
         };
     });
+}
+
+/**
+ * マイ選手（我が子）の出場要約カード生成（ダッシュボード最新フィードバック同等デザイン）
+ */
+function renderMyPlayerSummaryCard(match) {
+    // ★【修正】コーチモードの場合はマイ選手要約カードを表示しない
+    if (state.currentUserRole === 'coach') return '';
+
+    // localStorage または state から マイ選手ID を取得
+    const myPlayerId = localStorage.getItem('coachMgrMyPlayerId') || state.settings?.myPlayerId;
+    if (!myPlayerId) return '';
+
+    const myPlayer = state.players?.find(p => String(p.id) === String(myPlayerId));
+    if (!myPlayer) return '';
+
+    const appearances = [];
+    if (match.formations && Array.isArray(match.formations)) {
+        match.formations.forEach((period, index) => {
+            const periodName = period.name || `${index + 1}本目`;
+            let posName = '';
+
+            // 1. lineup 配列からの検索
+            if (period.lineup && Array.isArray(period.lineup)) {
+                const found = period.lineup.find(l => String(l.playerId) === String(myPlayerId));
+                if (found) {
+                    posName = found.roleLabel || found.role || '出場';
+                }
+            }
+
+            // 2. positions オブジェクト/配列からの検索（未検出の場合）
+            if (!posName && period.positions) {
+                if (Array.isArray(period.positions)) {
+                    const found = period.positions.find(p => String(p.playerId) === String(myPlayerId));
+                    if (found) posName = found.position || '出場';
+                } else {
+                    for (const [posKey, pid] of Object.entries(period.positions)) {
+                        if (String(pid) === String(myPlayerId)) {
+                            const parts = posKey.split('_');
+                            posName = parts.length >= 3 ? parts[2] : '出場';
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (posName) {
+                appearances.push(`${escapeHtml(periodName)}（${escapeHtml(posName)}）`);
+            }
+        });
+    }
+
+    const summaryText = appearances.length > 0
+        ? `本日は <strong>${appearances.join('・')}</strong> に出場しました！`
+        : `本日の出場記録（配置設定）はありません。`;
+
+    return `
+        <div class="my-player-summary-card" style="margin-top:0.2rem; margin-bottom:0.8rem; background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(59,130,246,0.08)); border-left:4px solid var(--primary); border-radius:8px; padding:0.8rem 1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
+                <span style="font-size:0.78rem; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:0.35rem;">
+                    <i class="fa-solid fa-star"></i> ${escapeHtml(myPlayer.name)} 選手の出場記録
+                </span>
+                <span style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">マイ選手</span>
+            </div>
+            <p style="font-size:0.85rem; font-weight:600; color:var(--text-primary); margin:0; line-height:1.4;">
+                ${summaryText}
+            </p>
+        </div>
+    `;
 }

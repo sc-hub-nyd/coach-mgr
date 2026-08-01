@@ -109,7 +109,6 @@ export function showCustomConfirm(message, title = '確認', options = {}) {
     return new Promise((resolve) => {
         const modal = document.getElementById('modal-global-confirm');
         if (!modal) {
-            // Fallback to standard confirm if modal elements don't exist
             resolve(window.confirm(message));
             return;
         }
@@ -123,7 +122,6 @@ export function showCustomConfirm(message, title = '確認', options = {}) {
         if (titleEl) titleEl.textContent = title;
         if (msgEl) msgEl.textContent = message;
 
-        // Custom icon configurations if specified in options (e.g. alert or trash icon)
         if (iconEl) {
             let iconHtml = '<i class="fa-solid fa-triangle-exclamation"></i>';
             if (options.type === 'danger') {
@@ -153,14 +151,30 @@ export function showCustomConfirm(message, title = '確認', options = {}) {
             resolve(false);
         };
 
-        const cleanup = () => {
-            modal.classList.add('hidden');
-            btnOk.removeEventListener('click', handleOk);
-            btnCancel.removeEventListener('click', handleCancel);
+        const handleOverlayClick = (e) => {
+            if (e.target === modal) {
+                handleCancel();
+            }
         };
 
-        btnOk.addEventListener('click', handleOk);
-        btnCancel.addEventListener('click', handleCancel);
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                handleCancel();
+            }
+        };
+
+        const cleanup = () => {
+            modal.classList.add('hidden');
+            if (btnOk) btnOk.removeEventListener('click', handleOk);
+            if (btnCancel) btnCancel.removeEventListener('click', handleCancel);
+            modal.removeEventListener('click', handleOverlayClick);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+
+        if (btnOk) btnOk.addEventListener('click', handleOk);
+        if (btnCancel) btnCancel.addEventListener('click', handleCancel);
+        modal.addEventListener('click', handleOverlayClick);
+        document.addEventListener('keydown', handleKeyDown);
 
         modal.classList.remove('hidden');
     });

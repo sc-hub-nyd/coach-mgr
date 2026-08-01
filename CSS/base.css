@@ -558,3 +558,705 @@ body.role-read-only #pd-tab-goals textarea {
         display: none !important;
     }
 }
+
+/* ==========================================
+   試合・練習・メニュー管理一覧の余白最適化
+   ========================================== */
+
+/* 1. リスト全体のグリッド/フレックス間隔を詰める */
+body #match-list,
+body #practice-list,
+body #library-list {
+    gap: 0.75rem;
+}
+
+/* 2. 各月・各カテゴリセクション前後のマージンを整理 */
+body .month-section,
+body .category-section,
+body .library-category-section {
+    margin-bottom: 0.5rem;
+}
+
+/* 3. 月・カテゴリ見出し（h3）の上下余白をコンパクト化 */
+body .month-section h3,
+body .category-section h3,
+body .library-category-section h3 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.2rem;
+    display: inline-block;
+}
+
+
+/* ==========================================
+   屋外用高コントラストモード（!important 完全不使用）
+   ========================================== */
+
+/* 1. ベース背景と文字色 */
+body.high-contrast-mode,
+body.high-contrast-mode .main-content,
+body.high-contrast-mode .view-container {
+    background-color: #f1f5f9;
+    color: #000000;
+}
+
+/* 2. カード類：白背景 ＋ 濃紺極太枠 ＋ クッキリ影 */
+body.high-contrast-mode .card,
+body.high-contrast-mode .modal,
+body.high-contrast-mode aside#period-info-side-panel {
+    background-color: #ffffff;
+    border: 2px solid #0f172a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: #000000;
+}
+
+/* 3. 薄い文字・サブテキスト・日付の黒文字化 */
+body.high-contrast-mode p,
+body.high-contrast-mode span,
+body.high-contrast-mode label,
+body.high-contrast-mode h1,
+body.high-contrast-mode h2,
+body.high-contrast-mode h3,
+body.high-contrast-mode h4,
+body.high-contrast-mode h5,
+body.high-contrast-mode h6,
+body.high-contrast-mode i,
+body.high-contrast-mode .text-secondary,
+body.high-contrast-mode .match-card-date {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+/* 4. 入力フォーム・セレクトボックス */
+body.high-contrast-mode input.form-control,
+body.high-contrast-mode select.form-control,
+body.high-contrast-mode textarea.form-control,
+body.high-contrast-mode .practice-attendance-details summary {
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #334155;
+    font-weight: bold;
+}
+
+/* 5. プライマリボタン（濃紺×白） */
+body.high-contrast-mode button.btn-primary,
+body.high-contrast-mode #btn-add-match,
+body.high-contrast-mode .btn-open-analysis {
+    background-color: #0f172a;
+    border-color: #0f172a;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* 6. セカンダリボタン（白背景＋黒枠） */
+body.high-contrast-mode button.btn-secondary,
+body.high-contrast-mode .btn-detail-match,
+body.high-contrast-mode .btn-filter-detail {
+    background-color: #ffffff;
+    border: 2px solid #0f172a;
+    color: #0f172a;
+    font-weight: bold;
+}
+
+/* 7. ヘッダー・サイドバー */
+body.high-contrast-mode .topbar,
+body.high-contrast-mode header {
+    background-color: #ffffff;
+    border-bottom: 3px solid #0f172a;
+}
+
+body.high-contrast-mode .sidebar {
+    background-color: #ffffff;
+    border-right: 3px solid #0f172a;
+}
+
+body.high-contrast-mode .sidebar .nav-links li.active {
+    background-color: #0f172a;
+    color: #ffffff;
+}
+
+body.high-contrast-mode .sidebar .nav-links li.active i,
+body.high-contrast-mode .sidebar .nav-links li.active span {
+    color: #ffffff;
+}
+
+/* ==========================================
+   練習管理：一括アコーディオン＆カードデザイン
+   ========================================== */
+
+/* 親グリッド（PC:3列、タブレット:2列、スマホ:1列） */
+#practice-list .library-grid,
+body .library-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85rem;
+    width: 100%;
+}
+
+/* 練習カード本体 */
+body .practice-card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+    padding: 0.85rem;
+    box-sizing: border-box;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+/* 常時表示ヘッダー */
+body .practice-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--surface-border);
+}
+
+body .practice-card-header-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+/* 日付 */
+body .practice-card-date {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+/* サマリーバッジ（参加人数・メニュー数） */
+body .practice-card-summary-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+body .practice-card-summary-badges .badge-sub {
+    background: rgba(0, 0, 0, 0.04);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* 操作ボタン群 */
+body .practice-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+}
+
+body .practice-card-actions .btn {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+
+/* 一括アコーディオン（details/summary） */
+body .practice-card-details {
+    width: 100%;
+}
+
+body .practice-card-summary {
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.4rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+body .practice-card-summary:hover {
+    background: rgba(242, 57, 50, 0.05);
+    color: var(--primary);
+}
+
+body .practice-card-summary .summary-icon {
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+}
+
+body .practice-card-details[open] .practice-card-summary .summary-icon {
+    transform: rotate(180deg);
+}
+
+body .practice-card-details[open] .practice-card-summary span {
+    content: '詳細を閉じる';
+}
+
+/* 展開される中身のコンテナ */
+body .practice-card-expanded-body {
+    margin-top: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed var(--surface-border);
+}
+
+body .practice-detail-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+body .practice-section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+/* 参加者バッジリスト */
+body .practice-card-attendance-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+}
+
+/* ==========================================
+   練習メニュー全量表示（内部スクロール・高さ制限の完全解除）
+   ========================================== */
+
+/* カード本体・アコーディオン展開部・メニューリストの高さ・スクロール制限を解除 */
+body .practice-card,
+body .practice-card-details,
+body .practice-card-expanded-body,
+body .practice-card-menu-list,
+body .practice-menu-item,
+body .practice-menu-details,
+body .practice-menu-item-details {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+}
+
+/* メニューリスト */
+body .practice-card-menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/* ------------------------------------------
+変更後（500〜518行目付近） ------------------------------------------ */
+@media (max-width: 1024px) {
+
+    #practice-list .library-grid,
+    body .library-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+
+    #practice-list .library-grid,
+    body:not([data-route="players"]) .library-grid {
+        grid-template-columns: 1fr;
+        /* !important を削除し、選手画面を除外 */
+    }
+}
+
+/* ==========================================
+   1. 直近の練習テーマ非表示 ＆ 出席率・出場時間平準化の横並び化
+   ========================================== */
+
+
+/* 出席率カードと出場時間アラートの親コンテナを2列横並びに設定 */
+#dash-coach-row,
+.dash-coach-widgets-container,
+#dash-attendance-playtime-row,
+.dash-attendance-playtime-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+/* 各カードの幅を100%化 */
+.dash-rank-card:has(#dash-attendance-rank),
+.dash-rank-card:has(#dash-playtime-content),
+.card:has(#dash-attendance-rank),
+.card:has(#dash-playtime-content) {
+    width: 100%;
+}
+
+/* スマホ表示時（768px以下）は1列に自動縦並び */
+@media (max-width: 768px) {
+
+    #dash-coach-row,
+    .dash-coach-widgets-container,
+    #dash-attendance-playtime-row,
+    .dash-attendance-playtime-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ==========================================
+   2. チーム強化テーマ：1列全幅＆保護者モード表示対応
+   ========================================== */
+
+#dash-team-focus-card,
+.dash-rank-card:has(#dash-team-focus-content) {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+body.role-read-only #dash-team-focus-card,
+body.role-read-only .dash-rank-card:has(#dash-team-focus-content) {
+    display: block;
+}
+
+body.role-read-only #dash-btn-edit-focus,
+body.role-read-only #dash-btn-set-focus-empty {
+    display: none;
+}
+
+/* ID階層を深く指定してCSSの詳細度（優先度）を高める */
+body #app .dash-widget-grid #dash-coach-row.dash-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+/* 768px以下のレスポンシブ時も1列化スタイルに競合で勝つ設計 */
+@media (max-width: 768px) {
+    body #app .dash-widget-grid #dash-coach-row.dash-row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    body #app .dash-widget-grid #dash-coach-row .dash-rank-card {
+        padding: 0.6rem 0.4rem;
+    }
+
+    body #app .dash-widget-grid #dash-coach-row .dash-widget-label {
+        font-size: 0.72rem;
+        letter-spacing: -0.03em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* ==========================================
+   3. 個人ランキング詳細モーダルの最適化
+   ========================================== */
+
+body #modal-leader-ranking .modal-content {
+    max-width: 480px;
+    padding: 1.25rem 1rem;
+}
+
+body #leader-ranking-grid-cols {
+    display: grid;
+    gap: 1rem;
+    align-items: start;
+}
+
+body #modal-leader-ranking .u-ext-1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+    gap: 0.5rem;
+}
+
+body #modal-leader-ranking .u-ext-2 {
+    font-weight: 700;
+    min-width: 20px;
+    color: var(--text-secondary);
+}
+
+body #modal-leader-ranking .u-ext-3 {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body #modal-leader-ranking .u-ext-5 {
+    font-weight: 700;
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+/* ==========================================
+   直近の予定・実績：全幅＆横スクロールバナー型UI（!important完全不使用）
+   ========================================== */
+
+/* 「直近の予定・実績」カードの全幅1列表示 */
+body #app .dash-widget-grid #dash-schedule-widget-card {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+/* 「直近の試合」バーと同等の横スクロールコンテナ */
+body #app .dash-widget-grid .dash-schedule-horizontal-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* スケジュールカード（チップ型）のデザイン */
+body #app .dash-widget-grid .dash-schedule-item-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.75rem;
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid var(--surface-border);
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+body #app .dash-widget-grid .dash-schedule-item-chip:hover {
+    background: rgba(242, 57, 50, 0.04);
+    border-color: rgba(242, 57, 50, 0.3);
+}
+
+/* 練習／試合の種別バッジ */
+body #app .dash-widget-grid .dash-schedule-badge-practice {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+}
+
+body #app .dash-widget-grid .dash-schedule-badge-match {
+    background: rgba(242, 57, 50, 0.1);
+    color: var(--primary);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+}
+
+/* 日付・タイトル表記 */
+body #app .dash-widget-grid .dash-schedule-chip-date {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+body #app .dash-widget-grid .dash-schedule-chip-title {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* ==========================================
+   直近の予定・実績 ＆ 直近の試合：
+   丸バッジ完全復元・横スクロール廃止・7件均等フィット
+   ========================================== */
+
+/* 1. カード自体の左右パディングを削り、横幅を最大限活用 */
+body #app .dash-widget-grid .card.dash-form-card {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+/* 2. コンテナ：横スクロールを廃止し、画面幅に合わせて均等配置 */
+body #app .dash-widget-grid #dash-schedule-list,
+body #app .dash-widget-grid #dash-form-bar {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    /* 左右端までピッタリ均等配置 */
+    align-items: flex-start;
+    gap: 0.15rem;
+    /* 最小限の間隔 */
+    padding: 0.4rem 0;
+    /* コンテナ左右の余計なパディングを削除 */
+    overflow: hidden;
+    /* 横スクロールを完全に停止 */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 3. 各アイテム：画面幅に合わせて自動伸縮 */
+body #app .dash-widget-grid #dash-schedule-list .dash-form-item,
+body #app .dash-widget-grid #dash-form-bar .dash-form-item {
+    flex: 1;
+    /* 7個が均等な幅に収まる */
+    min-width: 0;
+    /* 幅の破綻を防止 */
+    max-width: none;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* 4. 丸バッジの基本構造（共通形状・文字中央揃え） */
+body #app .dash-widget-grid .dash-form-badge-lg {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    flex-shrink: 0;
+}
+
+/* 5. バッジの背景色と白文字（試合：赤 / 練習：青） */
+body #app .dash-widget-grid .dash-form-badge-lg.dash-circle-match {
+    background-color: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(242, 57, 50, 0.25);
+}
+
+body #app .dash-widget-grid .dash-form-badge-lg.dash-circle-practice {
+    background-color: #3b82f6;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+}
+
+/* 6. 日付・対戦相手（場所）テキストのフォントサイズ＆文字間調整 */
+body #app .dash-widget-grid #dash-schedule-list .dash-form-score,
+body #app .dash-widget-grid #dash-form-bar .dash-form-score {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    /* 文字間を少し詰めて綺麗に納める */
+    white-space: nowrap;
+}
+
+body #app .dash-widget-grid #dash-schedule-list .dash-form-opponent,
+body #app .dash-widget-grid #dash-form-bar .dash-form-opponent {
+    font-size: 0.6rem;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+/* ==========================================
+   選手管理：スマホ表示 2列（2カラム）完全レイアウト最適化
+   ========================================== */
+@media (max-width: 768px) {
+
+    /* 1. 2列グリッドコンテナ */
+    body[data-route="players"] #player-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* 2. カード本体 */
+    body[data-route="players"] #player-grid .player-card {
+        padding: 0.6rem 0.4rem;
+        margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    /* 3. ヘッダー（名前・背番号） */
+    body[data-route="players"] #player-grid .player-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.2rem;
+    }
+
+    /* 選手名 */
+    body[data-route="players"] #player-grid .player-card-header div>div:last-child {
+        font-size: 0.9rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-top: 0.15rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* 背番号 */
+    body[data-route="players"] #player-grid .player-number {
+        font-size: 1.2rem;
+        font-weight: 900;
+        color: var(--primary);
+        flex-shrink: 0;
+        line-height: 1;
+        margin-left: 0.2rem;
+    }
+
+    /* ポジションバッジ */
+    body[data-route="players"] #player-grid .player-position {
+        font-size: 0.52rem !important;
+        padding: 0.05rem 0.22rem !important;
+        margin-right: 0.1rem !important;
+        margin-bottom: 0.1rem !important;
+        line-height: 1.1 !important;
+        border-radius: 4px !important;
+    }
+
+    /* 4. レーダーチャート容器（幅いっぱいに拡大） */
+    body[data-route="players"] #player-grid .radar-container {
+        width: 100%;
+        max-width: 165px;
+        /* ★ 130px -> 165px に拡大 */
+        aspect-ratio: 1 / 1 !important;
+        margin: 0.3rem auto 0;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    body[data-route="players"] #player-grid .radar-container canvas {
+        width: 100% !important;
+        height: 100% !important;
+        aspect-ratio: 1 / 1 !important;
+        object-fit: contain;
+        display: block;
+    }
+}
