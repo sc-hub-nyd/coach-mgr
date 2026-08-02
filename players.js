@@ -3,162 +3,6 @@ import { state } from './state.js';
 import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
 import { saveData, navigate, openModal } from './app.js';
 
-export function drawRadarChart(canvasId, skills, prevSkills = null) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width;
-    const h = canvas.height;
-    const cx = w / 2;
-    const cy = h / 2;
-    const scaleFactor = w / 200;
-    // ★ 半径を拡大 (74 -> 58) してチャート領域いっぱいに大きく描画
-    const radius = w / 2 - (58 * scaleFactor / 2);
-
-    ctx.clearRect(0, 0, w, h);
-
-    const labels = state.skillMetrics || ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'];
-    const maxVal = 5;
-    const numSides = labels.length;
-
-    for (let i = 1; i <= maxVal; i++) {
-        ctx.beginPath();
-        for (let j = 0; j <= numSides; j++) {
-            const angle = (Math.PI * 2 * j) / numSides - Math.PI / 2;
-            const r = (radius / maxVal) * i;
-            const x = cx + r * Math.cos(angle);
-            const y = cy + r * Math.sin(angle);
-            if (j === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = 'rgba(203, 213, 225, 0.4)';
-        ctx.lineWidth = 1 * scaleFactor;
-        ctx.stroke();
-
-        if (i === maxVal) {
-            for (let j = 0; j < numSides; j++) {
-                const angle = (Math.PI * 2 * j) / numSides - Math.PI / 2;
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
-                ctx.strokeStyle = 'rgba(203, 213, 225, 0.5)';
-                ctx.lineWidth = 1 * scaleFactor;
-                ctx.stroke();
-
-                const labelDist = radius + (14 * scaleFactor);
-                const lx = cx + labelDist * Math.cos(angle);
-                const ly = cy + labelDist * Math.sin(angle);
-                ctx.fillStyle = '#334155';
-                ctx.font = `bold ${Math.round(10.5 * scaleFactor)}px 'Inter', 'Hiragino Kaku Gothic ProN', sans-serif`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(labels[j], lx, ly);
-            }
-        }
-    }
-
-    if (prevSkills) {
-        ctx.beginPath();
-        for (let j = 0; j < numSides; j++) {
-            const val = prevSkills[j] || 0;
-            const angle = (Math.PI * 2 * j) / numSides - Math.PI / 2;
-            const r = (radius / maxVal) * val;
-            const x = cx + r * Math.cos(angle);
-            const y = cy + r * Math.sin(angle);
-            if (j === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(148, 163, 184, 0.25)';
-        ctx.fill();
-        ctx.strokeStyle = '#64748b';
-        ctx.lineWidth = 2 * scaleFactor;
-        ctx.setLineDash([4 * scaleFactor, 4 * scaleFactor]);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        for (let j = 0; j < numSides; j++) {
-            const val = prevSkills[j] || 0;
-            const angle = (Math.PI * 2 * j) / numSides - Math.PI / 2;
-            const r = (radius / maxVal) * val;
-            const x = cx + r * Math.cos(angle);
-            const y = cy + r * Math.sin(angle);
-            ctx.beginPath();
-            ctx.arc(x, y, 3 * scaleFactor, 0, Math.PI * 2);
-            ctx.fillStyle = '#64748b';
-            ctx.fill();
-        }
-    }
-
-    ctx.beginPath();
-    for (let j = 0; j < numSides; j++) {
-        const val = skills[j] || 0;
-        const angle = (Math.PI * 2 * j) / numSides - Math.PI / 2;
-        const r = (radius / maxVal) * val;
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
-        if (j === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.fillStyle = 'rgba(242, 57, 50, 0.35)';
-    ctx.fill();
-    ctx.strokeStyle = '#f23932';
-    ctx.lineWidth = 2.5 * scaleFactor;
-    ctx.stroke();
-
-    for (let j = 0; j < numSides; j++) {
-        const val = skills[j] || 0;
-        const angle = (Math.PI * 2 * j) / numSides - Math.PI / 2;
-        const r = (radius / maxVal) * val;
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
-        ctx.beginPath();
-        ctx.arc(x, y, 4 * scaleFactor, 0, Math.PI * 2);
-        ctx.fillStyle = '#f23932';
-        ctx.fill();
-    }
-}
-
-export function render1on1List(p) {
-    const listEl = document.getElementById('pd-1on1-list');
-    if (!listEl) return;
-
-    if (p.notes1on1 && p.notes1on1.length > 0) {
-        const sorted = [...p.notes1on1].sort((a, b) => new Date(b.date) - new Date(a.date));
-        listEl.innerHTML = sorted.map(note => `
-            <div class="feedback-box" style="position:relative; padding:0.6rem 0.8rem; background:rgba(0,0,0,0.01); border:1px solid var(--surface-border); border-radius:6px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
-                    <strong style="font-size:0.8rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${note.date}</strong>
-                    <button class="btn btn-danger btn-delete-1on1" data-player-id="${p.id}" data-note-id="${note.id}" style="padding:0.15rem 0.35rem; font-size:0.65rem; height:20px; min-width:auto; display:inline-flex; align-items:center; justify-content:center;"><i class="fa-solid fa-trash"></i></button>
-                </div>
-                <p style="font-size:0.85rem; color:var(--text-primary); white-space:pre-wrap; margin:0; line-height:1.4;">${note.content}</p>
-            </div>
-        `).join('');
-
-        listEl.querySelectorAll('.btn-delete-1on1').forEach(btn => {
-            btn.onclick = async (e) => {
-                e.stopPropagation();
-                // ★ await の前に ID を取得
-                const plId = parseInt(e.currentTarget.dataset.playerId, 10);
-                const noteId = parseInt(e.currentTarget.dataset.noteId, 10);
-                const proceed = await showCustomConfirm('この面談記録を削除しますか？', '面談記録の削除', { okText: '削除する', type: 'danger' });
-                if (proceed) {
-                    const player = state.players.find(pl => pl.id === plId);
-                    if (player && player.notes1on1) {
-                        player.notes1on1 = player.notes1on1.filter(n => n.id !== noteId);
-                        saveData();
-                        showToast('面談記録を削除しました');
-                        render1on1List(player);
-                    }
-                }
-            };
-        });
-    } else {
-        listEl.innerHTML = '<p class="text-secondary" style="font-size:0.85rem; font-style:italic; text-align:center; padding:1rem 0; margin:0;">面談記録はありません。</p>';
-    }
-}
-
 export function openPlayerDetail(id) {
     const p = state.players.find(pl => pl.id === id);
     if (!p) return;
@@ -321,23 +165,18 @@ export function openPlayerDetail(id) {
             let goodText = '';
             let improveText = '';
             if (hItem.comment) {
-                const parts = hItem.comment.split('\n\n【ネクストステップ】\n');
+                const parts = hItem.comment.split(/\n\n【(?:More|ネクストステップ)】\n/);
                 if (parts.length === 2) {
-                    goodText = parts[0].replace('【ポジティブ】\n', '');
+                    goodText = parts[0].replace(/【(?:Good！|ポジティブ)】\n/, '');
                     improveText = parts[1];
                 } else {
-                    goodText = hItem.comment;
+                    goodText = hItem.comment.replace(/【(?:Good！|ポジティブ)】\n/, '');
                 }
             }
             document.getElementById('assessment-good').value = goodText;
             document.getElementById('assessment-improve').value = improveText;
 
-            const assSkills = document.getElementById('assessment-skills-container');
-            if (assSkills) {
-                assSkills.innerHTML = state.skillMetrics.map((m, i) => `
-                    <div class="form-group"><label>${m}</label><input type="number" id="skill-ass-${i}" class="form-control" min="1" max="5" value="${(hItem.skills && hItem.skills[i]) || 3}" required></div>
-                `).join('');
-            }
+            // スキルコンテナの処理は削除
 
             openModal('modal-player-assessment');
         };
@@ -365,20 +204,25 @@ export function openPlayerDetail(id) {
             navigate('animation', { matchId, formId });
         };
     });
+    // ★ ここから新しいプロフィール項目のセット
+    document.getElementById('pd-playstyle').textContent = p.playStyle || '未設定';
+    document.getElementById('pd-shortfocus').textContent = p.shortFocus || '未設定';
+
+    const spContainer = document.getElementById('pd-strongpoints');
+    if (p.strongPoints && p.strongPoints.length > 0) {
+        spContainer.innerHTML = p.strongPoints.map(sp => `
+            <div>
+                <span class="badge" style="background:rgba(37,99,235,0.1); color:#2563eb; font-size:0.75rem; padding:0.15rem 0.4rem; margin-bottom:0.2rem; display:inline-block;"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>
+                <div style="font-size:0.85rem; color:var(--text-primary); line-height:1.4;">${escapeHtml(sp.text)}</div>
+            </div>
+        `).join('');
+    } else {
+        spContainer.innerHTML = '<div style="font-size:0.85rem; color:var(--text-secondary);">未設定</div>';
+    }
 
     openModal('modal-player-detail');
 
-    const currentSkills = p.history && p.history.length > 0 ? (p.history[0].data ? p.history[0].data.skills : p.history[0].skills) : [0, 0, 0, 0, 0, 0];
-    const prevSkills = p.history && p.history.length > 1 ? (p.history[1].data ? p.history[1].data.skills : p.history[1].skills) : null;
-
-    const legend = document.getElementById('pd-radar-legend');
-    if (legend) {
-        legend.style.display = prevSkills ? 'flex' : 'none';
-    }
-
-    setTimeout(() => {
-        drawRadarChart('pd-radar', currentSkills, prevSkills);
-    }, 50);
+    // ★ drawRadarChart の呼び出しを完全に削除
 
     const btnAddAssessment = document.getElementById('btn-add-assessment');
     if (btnAddAssessment) {
@@ -386,24 +230,12 @@ export function openPlayerDetail(id) {
             document.getElementById('assessment-player-id').value = p.id;
             document.getElementById('assessment-edit-id').value = '';
             const titleEl = document.getElementById('assessment-modal-title');
-            if (titleEl) titleEl.textContent = '新しいスキル評価を記録';
+            if (titleEl) titleEl.textContent = '新しい観察メモを記録';
             document.getElementById('assessment-date').value = new Date().toISOString().split('T')[0];
             document.getElementById('assessment-good').value = '';
             document.getElementById('assessment-improve').value = '';
 
-            const assSkills = document.getElementById('assessment-skills-container');
-            if (assSkills) {
-                assSkills.innerHTML = state.skillMetrics.map((m, i) => `
-                    <div class="form-group"><label>${m}</label><input type="number" id="skill-ass-${i}" class="form-control" min="1" max="5" value="3" required></div>
-                `).join('');
-
-                if (currentSkills) {
-                    state.skillMetrics.forEach((m, i) => {
-                        const el = document.getElementById(`skill-ass-${i}`);
-                        if (el) el.value = currentSkills[i] || 3;
-                    });
-                }
-            }
+            // スキルコンテナの生成処理は削除
 
             openModal('modal-player-assessment');
         };
@@ -414,12 +246,17 @@ export function openPlayerDetail(id) {
         btnEdit.onclick = () => {
             document.getElementById('player-edit-id').value = p.id;
             document.getElementById('player-modal-title').textContent = '選手情報を編集';
-            document.getElementById('player-initial-assessment-section').classList.add('hidden');
-            document.getElementById('player-initial-good').removeAttribute('required');
-            document.getElementById('player-initial-improve').removeAttribute('required');
 
             document.getElementById('player-name').value = p.name;
             document.getElementById('player-number').value = p.number;
+
+            // ★ 編集時にカルテ情報をフォームにセット
+            document.getElementById('player-playstyle').value = p.playStyle || '';
+            document.getElementById('player-strong-key-1').value = p.strongPoints?.[0]?.key || '';
+            document.getElementById('player-strong-text-1').value = p.strongPoints?.[0]?.text || '';
+            document.getElementById('player-strong-key-2').value = p.strongPoints?.[1]?.key || '';
+            document.getElementById('player-strong-text-2').value = p.strongPoints?.[1]?.text || '';
+            document.getElementById('player-short-focus').value = p.shortFocus || '';
 
             const posContainer = document.getElementById('player-position-container');
             if (posContainer) {
@@ -473,17 +310,6 @@ export function openPlayerDetail(id) {
     const longEl = document.getElementById('player-goal-long');
     if (longEl) longEl.value = (p.goals && p.goals.longTerm) ? p.goals.longTerm : '';
 
-    const pl1on1IdEl = document.getElementById('1on1-player-id');
-    if (pl1on1IdEl) pl1on1IdEl.value = p.id;
-
-    const date1on1El = document.getElementById('player-1on1-date');
-    if (date1on1El) date1on1El.value = new Date().toISOString().split('T')[0];
-
-    const note1on1El = document.getElementById('player-1on1-note');
-    if (note1on1El) note1on1El.value = '';
-
-    render1on1List(p);
-
     const tabs = document.querySelectorAll('#modal-player-detail .player-detail-tab');
     const panes = document.querySelectorAll('#modal-player-detail .player-detail-tab-pane');
 
@@ -520,27 +346,6 @@ export function openPlayerDetail(id) {
                 };
                 saveData();
                 showToast('個人目標を保存しました');
-            }
-        };
-    }
-
-    const form1on1 = document.getElementById('form-player-1on1');
-    if (form1on1) {
-        form1on1.onsubmit = (e) => {
-            e.preventDefault();
-            const plId = parseInt(document.getElementById('1on1-player-id').value, 10);
-            const player = state.players.find(pl => pl.id === plId);
-            if (player) {
-                if (!player.notes1on1) player.notes1on1 = [];
-                player.notes1on1.push({
-                    id: Date.now(),
-                    date: document.getElementById('player-1on1-date').value,
-                    content: document.getElementById('player-1on1-note').value.trim()
-                });
-                saveData();
-                showToast('面談記録を追加しました');
-                document.getElementById('player-1on1-note').value = '';
-                render1on1List(player);
             }
         };
     }
@@ -740,7 +545,7 @@ export function initPlayers() {
                 <div style="font-size:3rem; color:var(--text-secondary); opacity:0.6;"><i class="fa-solid fa-users"></i></div>
                 <h3 style="font-size:1.15rem; margin:0; color:var(--text-primary); font-weight:600;">登録選手がいません</h3>
                 <p style="font-size:0.85rem; color:var(--text-secondary); max-width:340px; margin:0; line-height:1.4;">
-                    選手を登録して、スキル評価のレーダーチャート作成や、試合での出場ポジション設定、成長履歴の管理を始めましょう。
+                    選手を登録して、強みや指導フォーカスの設定、試合での出場ポジション設定、成長履歴の管理を始めましょう。
                 </p>
                 <button class="btn btn-primary" id="btn-empty-add-player" style="margin-top:0.5rem;"><i class="fa-solid fa-user-plus"></i> 最初の選手を追加</button>
             </div>
@@ -757,12 +562,7 @@ export function initPlayers() {
     } else {
         const sortedPlayers = [...state.players].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
         playerGrid.innerHTML = sortedPlayers.map(p => {
-            return `
-                <div class="player-card" style="cursor:pointer;" onclick="openPlayerDetail(${p.id});">
-                    <div class="player-card-header">
-                        <div>
-                            <div style="display:flex; gap:0.25rem; flex-wrap:wrap; margin-bottom:0.3rem;">
-                                ${(Array.isArray(p.position) ? p.position : [p.position]).map(pos => {
+            const badges = (Array.isArray(p.position) ? p.position : [p.position]).map(pos => {
                 if (!pos) return '';
                 const lower = pos.toLowerCase();
                 let badgeClass = 'badge-sub';
@@ -771,23 +571,35 @@ export function initPlayers() {
                 else if (lower === 'df') badgeClass = 'badge-df';
                 else if (lower === 'gk') badgeClass = 'badge-gk';
                 return `<span class="player-position ${badgeClass}" style="font-size:0.7rem; padding:0.1rem 0.35rem; border-radius:12px; font-weight:600; display:inline-block;">${pos}</span>`;
-            }).join('')}
-                            </div>
-                            <div style="font-size:1.2rem; font-weight:bold; margin-top:0.2rem;">${escapeHtml(p.name)}</div>
+            }).join('');
+
+            const spTags = (p.strongPoints || []).filter(sp => sp.key).map(sp =>
+                `<span class="badge" style="background:rgba(37,99,235,0.1); color:#2563eb; font-size:0.7rem; padding:0.15rem 0.4rem;"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>`
+            ).join('');
+
+            return `
+                <div class="player-card" style="cursor:pointer; display:flex; flex-direction:column;" onclick="openPlayerDetail(${p.id});">
+                    <div class="player-card-header" style="border-bottom: 1px solid var(--surface-border); padding-bottom: 0.6rem; margin-bottom: 0.6rem;">
+                        <div>
+                            <div style="display:flex; gap:0.25rem; flex-wrap:wrap; margin-bottom:0.3rem;">${badges}</div>
+                            <div style="font-size:1.15rem; font-weight:bold;">${escapeHtml(p.name)}</div>
                         </div>
                         <div class="player-number">${p.number}</div>
                     </div>
-                    <div class="radar-container" style="width:200px; height:200px; margin:0 auto; position:relative;">
-                        <canvas id="radar-${p.id}" width="400" height="400" style="width:200px; height:200px;"></canvas>
+                    <div style="flex:1; display:flex; flex-direction:column;">
+                        <div style="font-size:0.8rem; font-weight:600; color:var(--text-primary); margin-bottom:0.6rem; line-height:1.4;">
+                            ${escapeHtml(p.playStyle || 'プレースタイル未設定')}
+                        </div>
+                        <div style="display:flex; flex-wrap:wrap; gap:0.3rem; margin-bottom:auto;">
+                            ${spTags}
+                        </div>
+                        <div style="margin-top:0.8rem; padding-top:0.6rem; border-top:1px dashed var(--surface-border); font-size:0.75rem; color:var(--text-secondary); font-weight:600;">
+                            <i class="fa-solid fa-crosshairs" style="color:var(--primary);"></i> ${escapeHtml(p.shortFocus || 'フォーカス未設定')}
+                        </div>
                     </div>
                 </div>
             `;
         }).join('');
-
-        sortedPlayers.forEach(p => {
-            const currentSkills = p.history && p.history.length > 0 ? p.history[0].skills : [0, 0, 0, 0, 0, 0];
-            drawRadarChart(`radar-${p.id}`, currentSkills);
-        });
     }
 
     const formPlayer = document.getElementById('form-player');
@@ -800,12 +612,28 @@ export function initPlayers() {
                 selectedPositions.push(cb.value);
             });
 
+            const playStyle = document.getElementById('player-playstyle') ? document.getElementById('player-playstyle').value.trim() : '';
+            const key1 = document.getElementById('player-strong-key-1') ? document.getElementById('player-strong-key-1').value : '';
+            const text1 = document.getElementById('player-strong-text-1') ? document.getElementById('player-strong-text-1').value.trim() : '';
+            const key2 = document.getElementById('player-strong-key-2') ? document.getElementById('player-strong-key-2').value : '';
+            const text2 = document.getElementById('player-strong-text-2') ? document.getElementById('player-strong-text-2').value.trim() : '';
+            const shortFocus = document.getElementById('player-short-focus') ? document.getElementById('player-short-focus').value.trim() : '';
+
+            const strongPoints = [
+                { key: key1, text: text1 },
+                { key: key2, text: text2 }
+            ].filter(sp => sp.key || sp.text);
+
             if (editId) {
                 const player = state.players.find(p => p.id === parseInt(editId, 10));
                 if (player) {
                     player.name = document.getElementById('player-name').value;
                     player.number = parseInt(document.getElementById('player-number').value, 10);
                     player.position = selectedPositions;
+                    player.playStyle = playStyle;
+                    player.strongPoints = strongPoints;
+                    player.shortFocus = shortFocus;
+
                     saveData();
                     showToast('選手情報を更新しました');
                     document.getElementById('modal-player').classList.add('hidden');
@@ -813,24 +641,15 @@ export function initPlayers() {
                     initPlayers();
                 }
             } else {
-                const skills = [];
-                state.skillMetrics.forEach((metric, i) => {
-                    const val = document.getElementById(`skill-initial-${i}`);
-                    skills.push(val ? parseInt(val.value, 10) : 3);
-                });
                 const newPlayer = {
                     id: Date.now(),
                     name: document.getElementById('player-name').value,
                     number: parseInt(document.getElementById('player-number').value, 10),
                     position: selectedPositions,
-                    history: [
-                        {
-                            id: Date.now(),
-                            date: new Date().toISOString().split('T')[0],
-                            comment: '【ポジティブ】\n' + document.getElementById('player-initial-good').value + '\n\n【ネクストステップ】\n' + document.getElementById('player-initial-improve').value,
-                            skills: skills
-                        }
-                    ]
+                    playStyle: playStyle,
+                    strongPoints: strongPoints,
+                    shortFocus: shortFocus,
+                    history: []
                 };
                 state.players.push(newPlayer);
                 saveData();
@@ -849,12 +668,12 @@ export function initPlayers() {
             const editId = document.getElementById('assessment-edit-id').value;
             const player = state.players.find(p => p.id === playerId);
             if (player) {
-                const skills = [];
-                state.skillMetrics.forEach((metric, i) => {
-                    const val = document.getElementById(`skill-ass-${i}`);
-                    skills.push(val ? parseInt(val.value, 10) : 3);
-                });
-                const commentText = '【ポジティブ】\n' + document.getElementById('assessment-good').value + '\n\n【ネクストステップ】\n' + document.getElementById('assessment-improve').value;
+                const goodText = document.getElementById('assessment-good') ? document.getElementById('assessment-good').value.trim() : '';
+                const improveText = document.getElementById('assessment-improve') ? document.getElementById('assessment-improve').value.trim() : '';
+                let commentText = '【Good！】\n' + goodText;
+                if (improveText) {
+                    commentText += '\n\n【More】\n' + improveText;
+                }
                 const evalDate = document.getElementById('assessment-date').value;
 
                 if (editId) {
@@ -863,18 +682,16 @@ export function initPlayers() {
                     if (hItem) {
                         hItem.date = evalDate;
                         hItem.comment = commentText;
-                        hItem.skills = skills;
-                        showToast('評価を更新しました');
+                        showToast('観察メモを更新しました');
                     }
                 } else {
                     if (!player.history) player.history = [];
                     player.history.push({
                         id: Date.now(),
                         date: evalDate,
-                        comment: commentText,
-                        skills: skills
+                        comment: commentText
                     });
-                    showToast('評価を記録しました');
+                    showToast('観察メモを記録しました');
                 }
 
                 player.history.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -906,24 +723,35 @@ export function initPlayers() {
             `).join('');
         }
 
-        const initSkills = document.getElementById('player-initial-skills-container');
-        if (initSkills) {
-            initSkills.innerHTML = state.skillMetrics.map((m, i) => `
-                <div class="form-group"><label>${m}</label><input type="number" id="skill-initial-${i}" class="form-control" min="1" max="5" value="3" required></div>
-            `).join('');
-        }
+        const updateStrongKeySelects = () => {
+            const optionsHtml = '<option value="">-- 強みの軸を選択 --</option>' +
+                state.skillMetrics.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('');
+            const sel1 = document.getElementById('player-strong-key-1');
+            const sel2 = document.getElementById('player-strong-key-2');
+            if (sel1) sel1.innerHTML = optionsHtml;
+            if (sel2) sel2.innerHTML = optionsHtml;
+        };
 
         btnAdd.addEventListener('click', () => {
             document.getElementById('player-edit-id').value = '';
             document.getElementById('player-modal-title').textContent = '選手を登録';
-            document.getElementById('player-initial-assessment-section').classList.remove('hidden');
-            document.getElementById('player-initial-good').setAttribute('required', 'true');
-            document.getElementById('player-initial-improve').setAttribute('required', 'true');
 
+            const psEl = document.getElementById('player-playstyle');
+            if (psEl) psEl.value = '';
+            const st1El = document.getElementById('player-strong-text-1');
+            if (st1El) st1El.value = '';
+            const st2El = document.getElementById('player-strong-text-2');
+            if (st2El) st2El.value = '';
+            const sfEl = document.getElementById('player-short-focus');
+            if (sfEl) sfEl.value = '';
+
+            updateStrongKeySelects();
             document.querySelectorAll('.player-pos-checkbox').forEach(cb => cb.checked = false);
 
             openModal('modal-player');
         });
+
+        updateStrongKeySelects();
     }
 
     const btnImportCSV = document.getElementById('btn-import-players-csv');
@@ -960,9 +788,6 @@ export function initPlayers() {
 
                 if (targetView === 'cards') {
                     document.getElementById('player-grid')?.classList.remove('hidden');
-                } else if (targetView === 'heatmap') {
-                    document.getElementById('player-view-heatmap')?.classList.remove('hidden');
-                    renderSkillHeatmap();
                 } else if (targetView === 'participation') {
                     document.getElementById('player-view-participation')?.classList.remove('hidden');
                     renderParticipationGraph();
@@ -973,113 +798,6 @@ export function initPlayers() {
 }
 
 let currentHeatmapPosFilter = 'ALL';
-
-export function renderSkillHeatmap() {
-    const container = document.getElementById('player-view-heatmap');
-    if (!container) return;
-
-    if (!state.players || state.players.length === 0) {
-        container.innerHTML = '<div class="card" style="padding:2rem; text-align:center;">選手が登録されていません</div>';
-        return;
-    }
-
-    const positionsList = ['ALL', 'FW', 'MF', 'DF', 'GK'];
-
-    let filteredPlayers = state.players.filter(p => {
-        if (currentHeatmapPosFilter === 'ALL') return true;
-        const posArr = Array.isArray(p.position) ? p.position : [p.position];
-        return posArr.some(pos => pos && pos.toUpperCase().includes(currentHeatmapPosFilter));
-    });
-
-    const filterBtnsHTML = positionsList.map(pos => `
-        <button type="button" class="btn btn-sm ${currentHeatmapPosFilter === pos ? 'btn-primary' : 'btn-secondary'}" data-pos="${pos}" style="font-size:0.8rem; padding:0.25rem 0.65rem;">
-            ${pos === 'ALL' ? '全ポジション' : pos}
-        </button>
-    `).join('');
-
-    const metrics = state.skillMetrics || ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'];
-
-    const cat1List = (state.positions || ['GK', 'DF', 'MF', 'FW']).map(pos => pos.toUpperCase());
-    const cat2ToCat1Map = {
-        'CB': 'DF', 'SB': 'DF',
-        'CH': 'MF', 'SH': 'MF', 'OH': 'MF', 'DH': 'MF',
-        'ST': 'FW', 'WG': 'FW'
-    };
-
-    const rowsHTML = filteredPlayers.length > 0 ? filteredPlayers.map(p => {
-        const skills = (p.history && p.history.length > 0) ? (p.history[0].data ? p.history[0].data.skills : p.history[0].skills) : null;
-
-        const rawPositions = (Array.isArray(p.position) ? p.position : [p.position]).filter(Boolean);
-        let cat1Positions = rawPositions
-            .map(pos => {
-                const u = pos.toUpperCase();
-                if (cat1List.includes(u)) return u;
-                if (cat2ToCat1Map[u]) return cat2ToCat1Map[u];
-                return null;
-            })
-            .filter(Boolean);
-        cat1Positions = [...new Set(cat1Positions)];
-        const positions = cat1Positions.join('/');
-
-        let avg = '-';
-        if (skills && skills.length > 0) {
-            const sum = skills.reduce((a, b) => a + (b || 0), 0);
-            avg = (sum / skills.length).toFixed(1);
-        }
-
-        const skillCells = metrics.map((m, idx) => {
-            const val = skills ? (skills[idx] || 0) : 0;
-            const lvlClass = val > 0 ? `heatmap-lvl-${val}` : 'heatmap-lvl-0';
-            return `<td class="${lvlClass} heatmap-skill-col">${val > 0 ? `Lv ${val}` : '-'}</td>`;
-        }).join('');
-
-        const avgContent = avg !== '-' ? `Lv ${avg}` : '-';
-
-        return `
-            <tr>
-                <td class="heatmap-name-col" style="text-align:left; font-weight:bold; cursor:pointer; color:var(--primary);" onclick="openPlayerDetail(${p.id})">
-                    <span class="heatmap-player-num">${p.number}</span><span class="heatmap-player-name">${escapeHtml(p.name)}</span>
-                </td>
-                <td class="heatmap-pos-col" style="color:var(--text-secondary); font-size:0.75rem;">${positions || '-'}</td>
-                ${skillCells}
-                <td class="heatmap-skill-col" style="font-weight:bold; background:rgba(0,0,0,0.02);">${avgContent}</td>
-            </tr>
-        `;
-    }).join('') : `<tr><td colspan="${metrics.length + 3}" style="text-align:center; padding:1.5rem; color:var(--text-secondary);">該当するポジションの選手がいません。</td></tr>`;
-
-    container.innerHTML = `
-        <div class="card skill-heatmap-container" style="padding:1.5rem; overflow-x:auto; margin-bottom:1.5rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.8rem; margin-bottom:1.2rem;">
-                <h3 style="margin:0; font-size:1.1rem; display:flex; align-items:center; gap:0.5rem;">
-                    <i class="fa-solid fa-table-cells" style="color:#2563eb;"></i> 全選手スキルヒートマップ
-                </h3>
-                <div id="heatmap-pos-filter-group" style="display:flex; gap:0.4rem; flex-wrap:wrap;">
-                    ${filterBtnsHTML}
-                </div>
-            </div>
-            <table class="skill-heatmap-table">
-                <thead>
-                    <tr>
-                        <th class="heatmap-name-col" style="text-align:left;">選手</th>
-                        <th class="heatmap-pos-col">POS</th>
-                        ${metrics.map(m => `<th class="heatmap-skill-col heatmap-skill-col-header">${escapeHtml(m)}</th>`).join('')}
-                        <th class="heatmap-skill-col heatmap-skill-col-header">平均</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${rowsHTML}
-                </tbody>
-            </table>
-        </div>
-    `;
-
-    container.querySelectorAll('#heatmap-pos-filter-group button').forEach(btn => {
-        btn.onclick = (e) => {
-            currentHeatmapPosFilter = e.currentTarget.dataset.pos;
-            renderSkillHeatmap();
-        };
-    });
-}
 
 export function renderParticipationGraph() {
     const container = document.getElementById('player-view-participation');

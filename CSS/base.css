@@ -1260,3 +1260,160 @@ body #app .dash-widget-grid #dash-form-bar .dash-form-opponent {
         display: block;
     }
 }
+
+/* ==========================================
+   選手管理：カード内レイアウト＆チャート位置の均一化
+   ========================================== */
+
+/* 1. カード本体の上下配置を統一 */
+#player-grid .player-card,
+.player-grid .player-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* 2. ヘッダー領域の最小高さを固定（1行〜2行のバッジによる高さブレを吸収） */
+#player-grid .player-card-header,
+.player-grid .player-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    min-height: 72px;
+    /* ★ バッジ行数の違いによる高さブレを吸収 */
+}
+
+/* ポジションバッジの微調整（多ポジション時の表示改善） */
+#player-grid .player-position,
+.player-grid .player-position {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.3rem;
+    line-height: 1.1;
+    border-radius: 4px;
+}
+
+/* 選手名エリア */
+#player-grid .player-card-header div>div:last-child,
+.player-grid .player-card-header div>div:last-child {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-top: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 背番号 */
+#player-grid .player-number,
+.player-grid .player-number {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--primary);
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+/* 3. レーダーチャートの位置をカード下部に揃える */
+#player-grid .radar-container,
+.player-grid .radar-container {
+    margin-top: auto;
+    /* 下部に固定して位置を統一 */
+}
+
+/* ==========================================
+   個人ランキングモーダル：縦ライン完全整列
+   ========================================== */
+#modal-leader-ranking .modal {
+    max-width: 680px;
+    width: 92%;
+}
+
+#leader-ranking-grid-cols {
+    width: 100%;
+}
+
+/* スクロール解除 */
+#ranking-scorers-list,
+#ranking-assists-list,
+#ranking-attendance-list,
+#ranking-playtime-list {
+    max-height: none !important;
+    overflow: visible !important;
+    overflow-y: visible !important;
+    width: 100%;
+}
+
+/* 1行のレイアウト */
+#modal-leader-ranking .u-ext-1 {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    padding: 0.35rem 0.2rem;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+}
+
+/* ① 順位数字 (1. 〜 10.)：幅固定 ＋ 右揃え ＋ 数字の等幅化 */
+#modal-leader-ranking .u-ext-2 {
+    display: inline-block;
+    width: 26px;
+    text-align: right;
+    margin-right: 0.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+/* 選手情報領域 */
+#modal-leader-ranking .u-ext-3 {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    gap: 0.35rem;
+}
+
+/* ② 背番号 (#9, #60)：幅を固定して名前の開始位置を完璧に揃える */
+#modal-leader-ranking .rank-player-num {
+    display: inline-block;
+    width: 36px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-primary);
+    flex-shrink: 0;
+}
+
+/* ③ 選手名 */
+#modal-leader-ranking .rank-player-name {
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-primary);
+}
+
+/* ④ ポイント・回数 */
+#modal-leader-ranking .rank-player-count {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    margin-left: 0.2rem;
+}
+
+/* スマホ表示時は1列 */
+@media (max-width: 520px) {
+
+    #ranking-scorers-list,
+    #ranking-assists-list,
+    #ranking-attendance-list,
+    #ranking-playtime-list {
+        column-count: 1 !important;
+    }
+}

@@ -3,7 +3,7 @@ import { state, uiState } from './state.js';
 import { escapeHtml, encryptData, decryptData, showToast, setupScoreCounters, getNendo } from './utils.js';
 import { initPractices, openPracticeModal, renderPracticeRoster } from './practices.js';
 import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus } from './matches.js'; // ★ 1行にまとめる
-import { initPlayers, openPlayerDetail, drawRadarChart } from './players.js';
+import { initPlayers, openPlayerDetail } from './players.js';
 import { initLibrary } from './library.js';
 import { initSettings, initData } from './settings.js';
 import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
@@ -92,7 +92,7 @@ export async function loadData() {
                 state.matchTypes = parsed.matchTypes || ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'];
                 state.menuCategories = parsed.menuCategories || ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'];
                 state.analysisTags = parsed.analysisTags || ['チャンス', '得点', '失点', 'ビルドアップ', '課題/反省', 'メモ'];
-                state.skillMetrics = parsed.skillMetrics || ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'];
+                state.skillMetrics = parsed.skillMetrics || ['止める・蹴る', '運ぶ・駆け引き', '認知・スキャニング', '判断・ポジショニング', '切り替え・連続性', 'チャレンジ姿勢'];
                 state.positions = parsed.positions || ['GK', 'DF', 'MF', 'FW'];
                 state.positionsCat2 = parsed.positionsCat2 || ['CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH'];
                 state.teamInfo = parsed.teamInfo || { name: 'My Team', color: '#f23932', passcode: '7064' };
@@ -306,25 +306,30 @@ export function openLeaderRankingModal(type = 'all') {
     });
 
     const allScorers = Object.entries(scorerCounts)
-        .map(([id, count]) => ({ p: state.players.find(pl => pl.id === parseInt(id)), count }))
+        .map(([id, count]) => ({ p: state.players.find(pl => pl.id === parseInt(id, 10)), count }))
         .filter(x => x.p)
-        .sort((a, b) => b.count - a.count || ((parseInt(a.p.number) || 0) - (parseInt(b.p.number) || 0)));
+        .sort((a, b) => b.count - a.count || ((parseInt(a.p.number, 10) || 0) - (parseInt(b.p.number, 10) || 0)));
 
     const allAssists = Object.entries(assistCounts)
-        .map(([id, count]) => ({ p: state.players.find(pl => pl.id === parseInt(id)), count }))
+        .map(([id, count]) => ({ p: state.players.find(pl => pl.id === parseInt(id, 10)), count }))
         .filter(x => x.p)
-        .sort((a, b) => b.count - a.count || ((parseInt(a.p.number) || 0) - (parseInt(b.p.number) || 0)));
+        .sort((a, b) => b.count - a.count || ((parseInt(a.p.number, 10) || 0) - (parseInt(b.p.number, 10) || 0)));
 
     const renderRankingItem = (item, idx, unit = '') => {
+        const numStr = item.p.number ? `#${item.p.number}` : '';
         return `
             <div class="u-ext-1" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
                 <span class="u-ext-2">${idx + 1}.</span>
-                <span class="u-ext-3"><strong>${item.p.number} ${item.p.name}</strong> (${item.count}${unit})</span>
+                <span class="u-ext-3">
+                    <span class="rank-player-num">${numStr}</span>
+                    <span class="rank-player-name">${escapeHtml(item.p.name)}</span>
+                    <span class="rank-player-count">(${item.count}${unit})</span>
+                </span>
             </div>
         `;
     };
 
-    // 出席率集計 (過去1ヶ月間)
+    // 1. 出席率集計 (過去1ヶ月間)
     const now = new Date();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const oneMonthAgo = new Date();
@@ -344,6 +349,61 @@ export function openLeaderRankingModal(type = 'all') {
         const pct = totalRecentEvents > 0 ? Math.round((count / totalRecentEvents) * 100) : 0;
         return { p, count, pct };
     }).sort((a, b) => b.pct - a.pct || b.count - a.count || (parseInt(a.p.number, 10) || 0) - (parseInt(b.p.number, 10) || 0));
+
+    // 2. 出場時間集計 (直近5試合)
+    const recent5Matches = state.matches
+        .filter(m => m && m.date && m.date <= todayStr && m.result)
+        .sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''))
+        .slice(0, 5);
+
+    const playerPlayTimes = {};
+    state.players.forEach(p => { playerPlayTimes[p.id] = 0; });
+    let totalPeriods = 0;
+
+    recent5Matches.forEach(m => {
+        if (m.formations && m.formations.length > 0) {
+            m.formations.forEach(f => {
+                if (f.name && (f.name.trim() === 'PK戦' || f.name.toLowerCase().includes('pk'))) return;
+                totalPeriods++;
+
+                const starterPlayerIds = new Set();
+                if (f.lineup && Array.isArray(f.lineup)) {
+                    f.lineup.forEach(l => { if (l.playerId) starterPlayerIds.add(parseInt(l.playerId, 10)); });
+                } else if (f.positions) {
+                    Object.values(f.positions).forEach(pid => { if (pid) starterPlayerIds.add(parseInt(pid, 10)); });
+                }
+
+                const outPlayerIds = new Set();
+                const inPlayerIds = new Set();
+                if (f.substitutions && Array.isArray(f.substitutions)) {
+                    f.substitutions.forEach(sub => {
+                        if (sub.playerOutId) outPlayerIds.add(parseInt(sub.playerOutId, 10));
+                        if (sub.playerInId) inPlayerIds.add(parseInt(sub.playerInId, 10));
+                    });
+                }
+
+                state.players.forEach(p => {
+                    const isStarter = starterPlayerIds.has(p.id);
+                    const isOut = outPlayerIds.has(p.id);
+                    const isIn = inPlayerIds.has(p.id);
+
+                    if (isStarter && isOut) {
+                        playerPlayTimes[p.id] = (playerPlayTimes[p.id] || 0) + 0.5;
+                    } else if (isStarter) {
+                        playerPlayTimes[p.id] = (playerPlayTimes[p.id] || 0) + 1.0;
+                    } else if (isIn) {
+                        playerPlayTimes[p.id] = (playerPlayTimes[p.id] || 0) + 0.5;
+                    }
+                });
+            });
+        }
+    });
+
+    const allPlaytimes = state.players.map(p => {
+        const count = playerPlayTimes[p.id] || 0;
+        const pct = totalPeriods > 0 ? Math.round((count / totalPeriods) * 100) : 0;
+        return { p, count, pct };
+    }).sort((a, b) => a.pct - b.pct || a.count - b.count || (parseInt(a.p.number, 10) || 0) - (parseInt(b.p.number, 10) || 0)); // 少ない順(ケア対象が上)
 
     // UI描画
     const elRankingScorers = document.getElementById('ranking-scorers-list');
@@ -366,46 +426,102 @@ export function openLeaderRankingModal(type = 'all') {
             ? allAttendance.map((item, idx) => `
                 <div class="u-ext-1" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
                     <span class="u-ext-2">${idx + 1}.</span>
-                    <span class="u-ext-3"><strong>${item.p.number} ${item.p.name}</strong></span>
-                    <span class="u-ext-5">${item.pct}%</span>
+                    <span class="u-ext-3">
+                        <span class="rank-player-num">${item.p.number ? '#' + item.p.number : ''}</span>
+                        <span class="rank-player-name">${escapeHtml(item.p.name)}</span>
+                        <span class="rank-player-count" style="color:var(--primary); font-weight:700;">${item.pct}%</span>
+                    </span>
                 </div>
             `).join('')
             : '<div class="u-ext-4">過去1ヶ月の出席データがありません。</div>';
     }
 
-    // ★ 表示ターゲットに応じたカラム制御とタイトルの切り替え
+    const elRankingPlaytime = document.getElementById('ranking-playtime-list');
+    if (elRankingPlaytime) {
+        elRankingPlaytime.innerHTML = totalPeriods > 0
+            ? allPlaytimes.map((item, idx) => `
+                <div class="u-ext-1" style="flex-direction:column; align-items:stretch; gap:0.25rem; padding:0.4rem 0.6rem;" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;">
+                        <span><strong style="color:var(--text-secondary); margin-right:0.3rem;">${idx + 1}.</strong> <strong>${item.p.number ? '#' + item.p.number : ''} ${escapeHtml(item.p.name)}</strong></span>
+                        <span style="font-weight:700; color:${item.pct < 30 ? 'var(--primary)' : 'var(--text-primary)'};">${item.pct}% <span style="font-size:0.72rem; color:var(--text-secondary); font-weight:normal;">(${item.count}P / ${totalPeriods}P)</span></span>
+                    </div>
+                    <div class="dash-playtime-bar-outer" style="height:5px;">
+                        <div class="dash-playtime-bar-inner" style="width: ${item.pct}%; background:${item.pct < 30 ? 'var(--primary)' : '#3b82f6'};"></div>
+                    </div>
+                </div>
+            `).join('')
+            : '<div class="u-ext-4">直近5試合のピリオド記録がありません。</div>';
+    }
+
+    // 表示ターゲットに応じた表示切り替え ＆ 縦並び2列（マルチカラム）化
     const gridCols = document.getElementById('leader-ranking-grid-cols');
     const modalTitle = document.querySelector('#modal-leader-ranking h2');
 
-    if (gridCols && gridCols.children.length >= 3) {
+    if (gridCols && gridCols.children.length >= 4) {
         const colScorers = gridCols.children[0];
         const colAssists = gridCols.children[1];
         const colAttendance = gridCols.children[2];
+        const colPlaytime = gridCols.children[3];
 
+        const listScorers = document.getElementById('ranking-scorers-list');
+        const listAssists = document.getElementById('ranking-assists-list');
+        const listAttendance = document.getElementById('ranking-attendance-list');
+        const listPlaytime = document.getElementById('ranking-playtime-list');
+
+        // 各項目の見出し（h4）取得
+        const h4Scorers = colScorers.querySelector('h4');
+        const h4Assists = colAssists.querySelector('h4');
+        const h4Attendance = colAttendance.querySelector('h4');
+        const h4Playtime = colPlaytime.querySelector('h4');
+
+        // スタイルリセット
+        [colScorers, colAssists, colAttendance, colPlaytime].forEach(col => col.style.display = 'none');
+        [h4Scorers, h4Assists, h4Attendance, h4Playtime].forEach(h => { if (h) h.style.display = 'block'; });
+        [listScorers, listAssists, listAttendance, listPlaytime].forEach(list => {
+            if (list) {
+                list.style.display = 'block';
+                list.style.columnCount = 'auto';
+            }
+        });
+        gridCols.style.display = 'block';
+
+        // 共通の2列マルチカラム設定関数（縦順並び）
+        const applyColumnStyle = (listEl) => {
+            if (listEl) {
+                listEl.style.display = 'block';
+                listEl.style.columnCount = '2';
+                listEl.style.columnGap = '1.5rem';
+            }
+        };
+
+        // 選択されたランキングのみを表示し、上から下への縦並び2列化
         if (type === 'scorers') {
             colScorers.style.display = 'block';
-            colAssists.style.display = 'none';
-            colAttendance.style.display = 'none';
-            gridCols.style.gridTemplateColumns = '1fr';
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-trophy" style="color:var(--primary);"></i> 得点ランキング詳細';
+            if (h4Scorers) h4Scorers.style.display = 'none';
+            applyColumnStyle(listScorers);
+            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-fire" style="color:#ef4444;"></i> 得点ランキング詳細';
         } else if (type === 'assists') {
-            colScorers.style.display = 'none';
             colAssists.style.display = 'block';
-            colAttendance.style.display = 'none';
-            gridCols.style.gridTemplateColumns = '1fr';
+            if (h4Assists) h4Assists.style.display = 'none';
+            applyColumnStyle(listAssists);
             if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-shoe-prints" style="color:#22c55e;"></i> アシストランキング詳細';
         } else if (type === 'attendance') {
-            colScorers.style.display = 'none';
-            colAssists.style.display = 'none';
             colAttendance.style.display = 'block';
-            gridCols.style.gridTemplateColumns = '1fr';
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-users" style="color:#3b82f6;"></i> 出席率ランキング詳細';
+            if (h4Attendance) h4Attendance.style.display = 'none';
+            applyColumnStyle(listAttendance);
+            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-users" style="color:#3b82f6;"></i> 出席率ランキング詳細 (過去1ヶ月)';
+        } else if (type === 'playtime') {
+            colPlaytime.style.display = 'block';
+            if (h4Playtime) h4Playtime.style.display = 'none';
+            applyColumnStyle(listPlaytime);
+            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-stopwatch" style="color:#eab308;"></i> 出場時間・出場率詳細 (直近5試合)';
         } else {
-            colScorers.style.display = 'block';
-            colAssists.style.display = 'block';
-            colAttendance.style.display = 'block';
-            gridCols.style.gridTemplateColumns = 'repeat(auto-fit, minmax(180px, 1fr))';
-            if (modalTitle) modalTitle.innerHTML = '🏆 個人ランキング一覧';
+            // 全項目一覧モード
+            [colScorers, colAssists, colAttendance, colPlaytime].forEach(col => col.style.display = 'block');
+            gridCols.style.display = 'grid';
+            gridCols.style.gridTemplateColumns = 'repeat(2, 1fr)';
+            gridCols.style.gap = '1rem';
+            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-trophy" style="color:var(--primary);"></i> 個人ランキング一覧';
         }
     }
 
@@ -767,19 +883,18 @@ function initDashboard() {
                     ${latestFeedbackHTML}
 
                     <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.2rem;">
-                        <!-- Radar Chart Accordion -->
-                        <details id="dash-details-radar" style="flex:1; min-width:160px; background:rgba(0,0,0,0.015); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem;">
+                        <!-- Strong Points Accordion -->
+                        <details id="dash-details-strongpoints" style="flex:1; min-width:160px; background:rgba(0,0,0,0.015); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem;">
                             <summary style="cursor:pointer; font-size:0.8rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; outline:none; user-select:none;">
-                                <span><i class="fa-solid fa-chart-pie" style="color:var(--primary);"></i> 最新のスキル</span>
+                                <span><i class="fa-solid fa-shield-halved" style="color:var(--primary);"></i> ストロングポイント</span>
                             </summary>
-                            <div style="display:flex; flex-direction:column; align-items:center; margin-top:0.4rem;">
-                                <div style="position: relative; width:150px; height:150px;">
-                                    <canvas id="dash-myplayer-radar" width="300" height="300" style="width:150px; height:150px;"></canvas>
-                                </div>
-                                <div style="text-align: center; font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.3rem; display: flex; justify-content: center; gap: 0.8rem; font-weight:600;">
-                                    <span style="display:flex; align-items:center;"><span style="display:inline-block; width:8px; height:8px; background:rgba(242,57,50,0.6); border:1px solid #f23932; margin-right:4px; border-radius:50%;"></span>最新</span>
-                                    ${prevSkills ? `<span style="display:flex; align-items:center;"><span style="display:inline-block; width:8px; height:8px; background:rgba(148,163,184,0.3); border:2px dashed #64748b; margin-right:4px; border-radius:50%;"></span>前回</span>` : ''}
-                                </div>
+                            <div style="display:flex; flex-direction:column; gap:0.4rem; margin-top:0.4rem;">
+                                ${player.strongPoints && player.strongPoints.length > 0 ? player.strongPoints.map(sp => `
+                                    <div>
+                                        <span class="badge" style="background:rgba(37,99,235,0.1); color:#2563eb; font-size:0.7rem; padding:0.1rem 0.35rem; display:inline-block; margin-bottom:0.15rem;"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>
+                                        <p style="margin:0; font-size:0.78rem; color:var(--text-primary); line-height:1.35;">${escapeHtml(sp.text)}</p>
+                                    </div>
+                                `).join('') : '<p style="margin:0; font-size:0.78rem; color:var(--text-secondary);">未設定</p>'}
                             </div>
                         </details>
 
@@ -802,10 +917,6 @@ function initDashboard() {
                     </div>
                 `;
 
-                setTimeout(() => {
-                    drawRadarChart('dash-myplayer-radar', currentSkills, prevSkills);
-                }, 50);
-
                 let isSyncingDetails = false;
                 const detailsElements = myPlayerContent.querySelectorAll('details');
                 detailsElements.forEach(det => {
@@ -816,11 +927,6 @@ function initDashboard() {
                         detailsElements.forEach(d => {
                             d.open = isOpen;
                         });
-                        if (isOpen) {
-                            setTimeout(() => {
-                                drawRadarChart('dash-myplayer-radar', currentSkills, prevSkills);
-                            }, 10);
-                        }
                         isSyncingDetails = false;
                     });
                 });
@@ -897,19 +1003,17 @@ function initDashboard() {
 
         if (recent5Matches.length > 0) {
             // 各選手の出場ピリオド数を集計する
-            const playerPlayTimes = {}; // { playerId: count }
+            const playerPlayTimes = {};
             state.players.forEach(p => { playerPlayTimes[p.id] = 0; });
 
             let totalPeriods = 0;
             recent5Matches.forEach(m => {
                 if (m.formations && m.formations.length > 0) {
                     m.formations.forEach(f => {
-                        // PK戦は集計対象外
                         if (f.name && (f.name.trim() === 'PK戦' || f.name.toLowerCase().includes('pk'))) return;
 
-                        totalPeriods++; // 1ピリオド
+                        totalPeriods++;
 
-                        // 1. 先発メンバーの抽出
                         const starterPlayerIds = new Set();
                         if (f.lineup && Array.isArray(f.lineup)) {
                             f.lineup.forEach(l => { if (l.playerId) starterPlayerIds.add(parseInt(l.playerId, 10)); });
@@ -917,7 +1021,6 @@ function initDashboard() {
                             Object.values(f.positions).forEach(pid => { if (pid) starterPlayerIds.add(parseInt(pid, 10)); });
                         }
 
-                        // 2. 途中交代メンバーの抽出
                         const outPlayerIds = new Set();
                         const inPlayerIds = new Set();
                         if (f.substitutions && Array.isArray(f.substitutions)) {
@@ -927,20 +1030,16 @@ function initDashboard() {
                             });
                         }
 
-                        // 3. 各選手の出場ポイント（ピリオド数）加算
                         state.players.forEach(p => {
                             const isStarter = starterPlayerIds.has(p.id);
                             const isOut = outPlayerIds.has(p.id);
                             const isIn = inPlayerIds.has(p.id);
 
                             if (isStarter && isOut) {
-                                // 先発 ➔ 途中交代OUT: 0.5ピリオド
                                 playerPlayTimes[p.id] = (playerPlayTimes[p.id] || 0) + 0.5;
                             } else if (isStarter) {
-                                // 先発フル出場: 1.0ピリオド
                                 playerPlayTimes[p.id] = (playerPlayTimes[p.id] || 0) + 1.0;
                             } else if (isIn) {
-                                // 途中出場IN: 0.5ピリオド
                                 playerPlayTimes[p.id] = (playerPlayTimes[p.id] || 0) + 0.5;
                             }
                         });
@@ -948,30 +1047,30 @@ function initDashboard() {
                 }
             });
 
-            // プレイヤーごとの出場割合を算出
             const playRateList = state.players.map(p => {
                 const count = playerPlayTimes[p.id] || 0;
                 const pct = totalPeriods > 0 ? Math.round((count / totalPeriods) * 100) : 0;
                 return { p, count, pct };
-            }).sort((a, b) => a.pct - b.pct); // 低い順(アラート対象)
+            }).sort((a, b) => a.pct - b.pct);
 
-            // 出場時間が特に少ない下位3名を表示
+            // 出場時間が特に少ない下位3名を表示（他ランキングと100%構造・高さを統一）
             const alertPlayers = playRateList.slice(0, 3);
             if (alertPlayers.length > 0 && totalPeriods > 0) {
-                playtimeContent.innerHTML = alertPlayers.map(item => `
-                    <div class="dash-playtime-row">
-                        <div class="u-ext-27" >${item.p.number ? `#${item.p.number} ` : ''}${escapeHtml(item.p.name)}</div>
-                        <div class="dash-playtime-bar-outer">
-                            <div class="dash-playtime-bar-inner" style="width: ${item.pct}%;"></div>
-                        </div>
-                        <div style="font-weight:700; color:${item.pct < 30 ? 'var(--primary)' : 'var(--text-secondary)'};">${item.pct}% <span class="u-ext-28" >(${item.count}P / ${totalPeriods}P)</span></div>
+                playtimeContent.className = 'dash-rank-list';
+                playtimeContent.innerHTML = alertPlayers.map((item, idx) => `
+                    <div class="dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                        <span class="dash-rank-medal" style="margin-right: 0.5rem; display: inline-flex; align-items: center; justify-content: center; width: 22px;">⚠️</span>
+                        <span class="dash-rank-name">${item.p.number} ${escapeHtml(item.p.name)}</span>
+                        <span class="dash-rank-count" style="color:${item.pct < 30 ? 'var(--primary)' : 'var(--text-primary)'};">
+                            ${item.pct}<span class="dash-rank-count-unit">%</span>
+                        </span>
                     </div>
                 `).join('');
             } else {
-                playtimeContent.innerHTML = '<div class="u-ext-29 dash-no-data" >フォーメーション登録データがありません</div>';
+                playtimeContent.innerHTML = '<div class="u-ext-29 dash-no-data">フォーメーション登録データがありません</div>';
             }
         } else {
-            playtimeContent.innerHTML = '<div class="u-ext-29 dash-no-data" >出場時間の集計対象となる最近の試合データがありません</div>';
+            playtimeContent.innerHTML = '<div class="u-ext-29 dash-no-data">出場時間の集計対象となる最近の試合データがありません</div>';
         }
     }
 
