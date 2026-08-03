@@ -823,7 +823,16 @@ export function initMatchDetailView(matchId) {
     }
 
     const scoreBox = document.getElementById('match-detail-score-box');
-    if (scoreBox) scoreBox.innerHTML = renderMatchScoreHeaderBadge(m);
+    if (scoreBox) {
+        scoreBox.innerHTML = `
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+            ${renderMatchScoreHeaderBadge(m)}
+            <button type="button" class="btn btn-secondary btn-sm" onclick="copyMatchShareText(${m.id})" title="LINE共有用テキストをコピー" style="padding:0.35rem 0.6rem; font-size:0.8rem;">
+                <i class="fa-solid fa-share-nodes" style="color:var(--primary);"></i> 共有
+            </button>
+        </div>
+    `;
+    }
 
     // ★【追加】マイ選手出場要約の描写実行 ★
     const summaryContainer = document.getElementById('my-player-summary-container');
@@ -2888,11 +2897,10 @@ export function initMatches() {
                     `).join('')
                     : '<span class="u-ext-57" >メンバー登録がありません</span>';
 
-                const actionBtns = isCoach ? `
+                const actionBtns = `
+                    <button class="btn btn-secondary btn-share-match" data-id="${m.id}" title="LINE共有用テキストをコピー"><i class="fa-solid fa-share-nodes" style="color:var(--primary);"></i> 共有</button>
                     <button class="btn btn-secondary btn-detail-match" data-id="${m.id}"><i class="fa-solid fa-circle-info"></i> 詳細</button>
-                    <button class="btn btn-danger btn-delete-match" data-id="${m.id}"><i class="fa-solid fa-trash"></i></button>
-                ` : `
-                    <button class="btn btn-secondary btn-detail-match" data-id="${m.id}"><i class="fa-solid fa-circle-info"></i> 詳細</button>
+                    ${isCoach ? `<button class="btn btn-danger btn-delete-match" data-id="${m.id}"><i class="fa-solid fa-trash"></i></button>` : ''}
                 `;
 
                 html += `
@@ -3028,6 +3036,14 @@ export function initMatches() {
             }
         };
     });
+
+    document.querySelectorAll('.btn-share-match').forEach(btn => {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            const id = parseInt(e.currentTarget.dataset.id, 10);
+            copyMatchShareText(id);
+        };
+    });
 }
 
 /**
@@ -3081,8 +3097,8 @@ function renderMyPlayerSummaryCard(match) {
     }
 
     const summaryText = appearances.length > 0
-        ? `本日は <strong>${appearances.join('・')}</strong> に出場しました！`
-        : `本日の出場記録（配置設定）はありません。`;
+        ? `本試合は <strong>${appearances.join('・')}</strong> に出場しました！`
+        : `本試合の出場記録（配置設定）はありません。`;
 
     return `
         <div class="my-player-summary-card" style="margin-top:0.2rem; margin-bottom:0.8rem; background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(59,130,246,0.08)); border-left:4px solid var(--primary); border-radius:8px; padding:0.8rem 1rem;">
@@ -3098,3 +3114,148 @@ function renderMyPlayerSummaryCard(match) {
         </div>
     `;
 }
+
+// 試合情報を共有用テキストに整形してクリップボードにコピーする関数
+export function copyMatchShareText(matchId) {
+    const match = state.matches.find(m => Number(m.id) === Number(matchId));
+    if (!match) {
+        showToast('試合データが見つかりません');
+        return;
+    }
+
+    const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+    let dateStr = match.date || '';
+    if (dateStr) {
+        const d = new Date(dateStr.replace(/-/g, '/'));
+        dateStr = `${match.date.replace(/-/g, '/')} (${dayNames[d.getDay()]})`;
+    }
+
+    const lines = [];
+
+    // 1. ヘッダー情報
+    if (match.result) {
+        lines.push(`⚽ 【試合結果報告】`);
+    } else {
+        lines.push(`📢 【試合案内】`);
+    }
+    lines.push(`------------------------`);
+    lines.push(`📅 日付: ${dateStr}`);
+    if (match.tournament || match.type) {
+        lines.push(`🏆 大会/種別: ${match.tournament ? `${match.tournament} ` : ''}${match.type ? `(${match.type})` : ''}`);
+    }
+    lines.push(`🆚 対戦: vs ${match.opponent || '未定'}`);
+
+    if (match.result) {
+        lines.push(`📊 結果: ${match.result}`);
+    }
+
+    // 2. ピリオド一覧（ピリオドごとの得点者 ＆ YouTube動画URL）
+    if (match.formations && match.formations.length > 0) {
+        lines.push(``);
+        lines.push(`🎬 ピリオド詳細・動画:`);
+
+        match.formations.forEach(f => {
+            const pName = f.name || 'ピリオド';
+            const scoreStr = (f.scoreUs !== undefined && f.scoreThem !== undefined)
+                ? ` (${f.scoreUs} - ${f.scoreThem})`
+                : '';
+
+            lines.push(``);
+            lines.push(`▪️ ${pName}${scoreStr}`);
+
+            // ★ ピリオドごとの得点者集計
+            if (f.goalRecords && f.goalRecords.length > 0) {
+                const scorerCounts = {};
+                f.goalRecords.forEach(r => {
+                    if (r.scorerId) {
+                        const player = state.players.find(p => p.id === r.scorerId);
+                        const pName = player ? player.name : '不明';
+                        scorerCounts[pName] = (scorerCounts[pName] || 0) + 1;
+                    } else {
+                        scorerCounts['OG/その他'] = (scorerCounts['OG/その他'] || 0) + 1;
+                    }
+                });
+
+                const scorerTexts = Object.entries(scorerCounts).map(([name, count]) =>
+                    count > 1 ? `${name}(${count})` : name
+                );
+
+                if (scorerTexts.length > 0) {
+                    lines.push(`   ⚽ 得点: ${scorerTexts.join(', ')}`);
+                }
+            }
+
+            // ピリオドごとの動画URL
+            const videoUrl = (f.videoUrls && f.videoUrls[0]) || f.videoUrl || '';
+            if (videoUrl) {
+                lines.push(videoUrl.trim());
+            }
+        });
+    } else if (match.videoUrl) {
+        lines.push(``);
+        lines.push(`🎬 試合動画:`);
+        lines.push(match.videoUrl.trim());
+
+        // ピリオドなし・全体得点記録がある場合のフォールバック
+        if (match.goalRecords && match.goalRecords.length > 0) {
+            const scorerCounts = {};
+            match.goalRecords.forEach(r => {
+                if (r.scorerId) {
+                    const player = state.players.find(p => p.id === r.scorerId);
+                    const pName = player ? player.name : '不明';
+                    scorerCounts[pName] = (scorerCounts[pName] || 0) + 1;
+                }
+            });
+
+            const scorerTexts = Object.entries(scorerCounts).map(([name, count]) =>
+                count > 1 ? `${name}(${count})` : name
+            );
+
+            if (scorerTexts.length > 0) {
+                lines.push(``);
+                lines.push(`⚽ 得点: ${scorerTexts.join(', ')}`);
+            }
+        }
+    }
+
+    // 3. 試合テーマ・総括
+    if (match.theme) {
+        lines.push(``);
+        lines.push(`🎯 試合テーマ: ${match.theme}`);
+    }
+    if (match.comments) {
+        lines.push(``);
+        lines.push(`💬 コーチ総括:`);
+        lines.push(match.comments.trim());
+    }
+
+    const shareText = lines.join('\n');
+
+    // クリップボードへコピー
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareText).then(() => {
+            showToast('共有用テキストをコピーしました！');
+        }).catch(err => {
+            console.error('Copy failed:', err);
+            fallbackCopyText(shareText);
+        });
+    } else {
+        fallbackCopyText(shareText);
+    }
+}
+
+function fallbackCopyText(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        showToast('共有用テキストをコピーしました！');
+    } catch (err) {
+        alert('テキストのコピーに失敗しました。');
+    }
+    document.body.removeChild(textArea);
+}
+
+window.copyMatchShareText = copyMatchShareText;

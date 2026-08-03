@@ -461,17 +461,35 @@
 }
 
 @media (max-width: 640px) {
-    .library-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 0.5rem !important;
+
+    /* 練習管理カードはスマホで1列（100%幅）で表示 */
+    #practice-list .library-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
     }
-    
-    .match-card, 
+
+    /* メニュー管理（ライブラリ）のみ2列表示を維持 */
+    body[data-route="library"] .library-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .match-card,
     .practice-card,
     .library-grid .card {
-        padding: 0.55rem 0.65rem !important;
+        padding: 0.75rem 0.85rem;
         border-radius: 10px;
-        min-height: auto !important;
+        min-height: auto;
+    }
+
+    .practice-card-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+        padding-bottom: 0.4rem;
+        margin-bottom: 0.4rem;
     }
 
     .match-card-header {
@@ -479,14 +497,14 @@
         gap: 0.2rem !important;
         align-items: flex-start !important;
     }
-    
+
     .match-card-date {
         font-size: 0.7rem !important;
         white-space: normal !important;
         word-break: break-word !important;
         line-height: 1.25 !important;
     }
-    
+
     .match-card-opponent {
         font-size: 0.88rem !important;
         margin: 0.1rem 0 !important;
@@ -494,7 +512,7 @@
         word-break: break-word !important;
         line-height: 1.25 !important;
     }
-    
+
     .match-card-bottom-row {
         display: flex !important;
         justify-content: space-between !important;
@@ -509,12 +527,12 @@
         font-size: 0.92rem !important;
         margin-top: 0 !important;
     }
-    
+
     .match-card-actions {
         gap: 0.25rem !important;
         margin-top: 0 !important;
     }
-    
+
     .match-card-actions .btn {
         padding: 0.2rem 0.4rem !important;
         font-size: 0.7rem !important;
@@ -545,7 +563,7 @@
         border-radius: 8px;
         margin-bottom: 0.3rem;
     }
-    
+
     .practice-menu-item-title,
     .no-practice-menu {
         font-size: 0.8rem;
@@ -967,20 +985,25 @@ summary {
         flex-direction: column !important;
         gap: 1.2rem !important;
     }
+
     .dashboard-left-column,
     .dashboard-right-column {
         display: contents !important;
     }
+
     .dash-stats-card {
         order: 1 !important;
     }
+
     .dash-schedule-card {
         order: 2 !important;
     }
+
     .dash-matches-card {
         order: 3 !important;
     }
 }
+
 @media (max-width: 900px) {
 
     #dash-recent-matches,
@@ -1084,6 +1107,7 @@ summary {
 
 /* スマホ: ダッシュボードカードの内側間隔を詰める */
 @media (max-width: 640px) {
+
     .dash-stats-card,
     .dash-matches-card,
     .dash-schedule-card {
@@ -1145,16 +1169,23 @@ summary {
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-    background: linear-gradient(135deg, rgba(245,158,11,0.15) 0%, rgba(251,191,36,0.1) 100%);
-    border: 1px solid rgba(245,158,11,0.4);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(251, 191, 36, 0.1) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.4);
     border-radius: var(--border-radius);
     padding: 0.75rem 1rem;
     animation: dash-alert-pulse 2s ease-in-out infinite;
 }
 
 @keyframes dash-alert-pulse {
-    0%, 100% { border-color: rgba(245,158,11,0.4); }
-    50%       { border-color: rgba(245,158,11,0.8); }
+
+    0%,
+    100% {
+        border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    50% {
+        border-color: rgba(245, 158, 11, 0.8);
+    }
 }
 
 .dash-alert-inner {
@@ -1192,11 +1223,12 @@ summary {
 }
 
 /* --- ROW 2: 次の予定カード --- */
-.dash-next-event-card {
-    padding: 1rem 1.2rem !important;
-    margin: 0 !important;
-    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(242,57,50,0.04) 100%) !important;
-    border-left: 3px solid var(--primary) !important;
+#dash-next-event-card,
+.card.dash-next-event-card {
+    padding: 0.65rem 1rem;
+    margin: 0;
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(242, 57, 50, 0.04) 100%);
+    border-left: 3px solid var(--primary);
     position: relative;
     overflow: hidden;
 }
@@ -1206,77 +1238,124 @@ summary {
     position: absolute;
     top: -20px;
     right: -20px;
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
-    background: rgba(242,57,50,0.06);
+    background: rgba(242, 57, 50, 0.06);
     pointer-events: none;
 }
 
-.dash-next-event-type {
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-    display: inline-block;
-    margin-bottom: 0.4rem;
+.dash-next-event-card .dash-widget-label {
+    margin-bottom: 0.35rem;
 }
 
-.dash-next-event-type.match    { background: rgba(34,197,94,0.15);   color: #15803d; }
-.dash-next-event-type.practice { background: rgba(242,57,50,0.12);   color: var(--primary); }
+.dash-next-event-type {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    display: inline-block;
+    margin-bottom: 0.2rem;
+}
+
+.dash-next-event-type.match {
+    background: rgba(34, 197, 94, 0.15);
+    color: #15803d;
+}
+
+.dash-next-event-type.practice {
+    background: rgba(242, 57, 50, 0.12);
+    color: var(--primary);
+}
 
 .dash-next-event-title {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     font-weight: 800;
     color: var(--text-primary);
-    margin: 0.2rem 0 0.1rem;
+    margin: 0.1rem 0 0.05rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .dash-next-event-date {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0;
+    /* 下余白を解除して横並びに最適化 */
 }
 
 .dash-next-event-countdown {
     display: inline-block;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 700;
     color: var(--primary);
-    background: rgba(242,57,50,0.1);
-    padding: 0.2rem 0.55rem;
+    background: rgba(242, 57, 50, 0.1);
+    padding: 0.1rem 0.45rem;
     border-radius: 999px;
-    margin-top: 0.2rem;
+    margin-top: 0;
+    /* 上余白を解除して横並びに最適化 */
 }
 
 /* --- ROW 2: 今季成績カード --- */
-.dash-season-record-card {
-    padding: 1rem 1.2rem !important;
-    margin: 0 !important;
+#dash-card-matches,
+.card.dash-season-record-card {
+    padding: 0.65rem 1rem;
+    /* 上下パディングをコンパクトに */
+    margin: 0;
 }
 
-.dash-season-record-body { display: flex; flex-direction: column; }
+.dash-season-record-card .dash-widget-label {
+    margin-bottom: 0.35rem;
+    /* 見出し下の隙間を短縮 */
+}
+
+.dash-season-record-body {
+    display: flex;
+    flex-direction: column;
+}
 
 .dash-record-numbers {
     display: flex;
     align-items: baseline;
-    gap: 0.25rem;
-    margin-bottom: 0.4rem;
+    gap: 0.2rem;
+    margin-bottom: 0.2rem;
     flex-wrap: wrap;
 }
 
-.dash-record-win  { font-size: 1.8rem; font-weight: 900; color: var(--primary); line-height: 1; }
-.dash-record-loss { font-size: 1.4rem; font-weight: 700; color: #64748b;        line-height: 1; }
-.dash-record-draw { font-size: 1.4rem; font-weight: 700; color: #94a3b8;        line-height: 1; }
-.dash-record-sep  { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); margin-right: 0.2rem; }
+.dash-record-win {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1;
+}
+
+/* 1.8rem -> 1.5rem */
+.dash-record-loss {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #64748b;
+    line-height: 1;
+}
+
+.dash-record-draw {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #94a3b8;
+    line-height: 1;
+}
+
+.dash-record-sep {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-right: 0.15rem;
+}
 
 .dash-record-meta {
     display: flex;
-    gap: 0.7rem;
-    font-size: 0.72rem;
+    gap: 0.6rem;
+    font-size: 0.7rem;
     color: var(--text-secondary);
     font-weight: 500;
     flex-wrap: wrap;
@@ -1314,7 +1393,9 @@ summary {
     max-width: 80px;
 }
 
-.dash-form-item:hover { transform: translateY(-2px); }
+.dash-form-item:hover {
+    transform: translateY(-2px);
+}
 
 .dash-form-badge-lg {
     width: 36px;
@@ -1326,21 +1407,44 @@ summary {
     font-size: 0.85rem;
     font-weight: 800;
     color: #fff;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
     transition: transform 0.15s, box-shadow 0.15s;
 }
 
-.dash-form-badge-lg.win  { background: var(--primary); }
-.dash-form-badge-lg.loss { background: #64748b; }
-.dash-form-badge-lg.draw { background: #f59e0b; }
+.dash-form-badge-lg.win {
+    background: var(--primary);
+}
+
+.dash-form-badge-lg.loss {
+    background: #64748b;
+}
+
+.dash-form-badge-lg.draw {
+    background: #f59e0b;
+}
 
 .dash-form-item:hover .dash-form-badge-lg {
     transform: scale(1.12);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
 }
 
-.dash-form-score    { font-size: 0.68rem; font-weight: 600; color: var(--text-secondary); white-space: nowrap; text-align: center; }
-.dash-form-opponent { font-size: 0.6rem;  color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; text-align: center; }
+.dash-form-score {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    text-align: center;
+}
+
+.dash-form-opponent {
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70px;
+    text-align: center;
+}
 
 /* --- ROW 4 / ROW 6: ランキングカード --- */
 .dash-rank-card {
@@ -1360,7 +1464,7 @@ summary {
     gap: 0.5rem;
     padding: 0.35rem 0.55rem;
     border-radius: 8px;
-    background: rgba(0,0,0,0.02);
+    background: rgba(0, 0, 0, 0.02);
     border: 1px solid var(--surface-border);
     cursor: pointer;
     transition: background 0.15s, transform 0.15s;
@@ -1369,14 +1473,40 @@ summary {
 }
 
 .dash-rank-item:hover {
-    background: rgba(242,57,50,0.05);
+    background: rgba(242, 57, 50, 0.05);
     transform: translateX(2px);
 }
 
-.dash-rank-medal  { font-size: 1rem; width: 22px; flex-shrink: 0; text-align: center; }
-.dash-rank-name   { flex: 1; font-size: 0.8rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-.dash-rank-count  { font-size: 0.9rem; font-weight: 800; color: var(--primary); flex-shrink: 0; }
-.dash-rank-count-unit { font-size: 0.62rem; color: var(--text-secondary); margin-left: 0.05rem; }
+.dash-rank-medal {
+    font-size: 1rem;
+    width: 22px;
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.dash-rank-name {
+    flex: 1;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.dash-rank-count {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.dash-rank-count-unit {
+    font-size: 0.62rem;
+    color: var(--text-secondary);
+    margin-left: 0.05rem;
+}
 
 /* --- ROW 5: スケジュールリスト --- */
 .dash-schedule-widget {
@@ -1393,7 +1523,10 @@ summary {
     padding-bottom: 0.5rem;
 }
 
-.dash-schedule-actions { display: flex; gap: 0.4rem; }
+.dash-schedule-actions {
+    display: flex;
+    gap: 0.4rem;
+}
 
 .dash-schedule-list {
     display: flex;
@@ -1407,18 +1540,20 @@ summary {
     gap: 0.75rem;
     padding: 0.55rem 0.75rem;
     border-radius: 10px;
-    background: rgba(0,0,0,0.02);
+    background: rgba(0, 0, 0, 0.02);
     border: 1px solid var(--surface-border);
     transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 
 .dash-schedule-row:hover {
-    background: rgba(0,0,0,0.04);
+    background: rgba(0, 0, 0, 0.04);
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.dash-schedule-row.past { opacity: 0.65; }
+.dash-schedule-row.past {
+    opacity: 0.65;
+}
 
 .dash-schedule-icon {
     width: 32px;
@@ -1431,10 +1566,20 @@ summary {
     flex-shrink: 0;
 }
 
-.dash-schedule-icon.match    { background: rgba(34,197,94,0.12);  color: #16a34a; }
-.dash-schedule-icon.practice { background: rgba(242,57,50,0.1);   color: var(--primary); }
+.dash-schedule-icon.match {
+    background: rgba(34, 197, 94, 0.12);
+    color: #16a34a;
+}
 
-.dash-schedule-info  { flex: 1; min-width: 0; }
+.dash-schedule-icon.practice {
+    background: rgba(242, 57, 50, 0.1);
+    color: var(--primary);
+}
+
+.dash-schedule-info {
+    flex: 1;
+    min-width: 0;
+}
 
 .dash-schedule-row-title {
     font-size: 0.85rem;
@@ -1470,10 +1615,25 @@ summary {
     white-space: nowrap;
 }
 
-.dash-schedule-result-badge.win  { background: var(--primary);               color: #fff; }
-.dash-schedule-result-badge.loss { background: rgba(100,116,139,0.15);        color: #475569; }
-.dash-schedule-result-badge.draw { background: rgba(245,158,11,0.15);         color: #92400e; }
-.dash-schedule-result-badge.tbd  { background: rgba(59,130,246,0.15);         color: #1e40af; }
+.dash-schedule-result-badge.win {
+    background: var(--primary);
+    color: #fff;
+}
+
+.dash-schedule-result-badge.loss {
+    background: rgba(100, 116, 139, 0.15);
+    color: #475569;
+}
+
+.dash-schedule-result-badge.draw {
+    background: rgba(245, 158, 11, 0.15);
+    color: #92400e;
+}
+
+.dash-schedule-result-badge.tbd {
+    background: rgba(59, 130, 246, 0.15);
+    color: #1e40af;
+}
 
 .dash-schedule-row-actions {
     display: flex;
@@ -1484,7 +1644,7 @@ summary {
 /* --- 新規ウィジェット装飾 --- */
 .dash-myplayer-card {
     border-left: 4px solid var(--primary);
-    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(242,57,50,0.02) 100%);
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(242, 57, 50, 0.02) 100%);
     position: relative;
     overflow: hidden;
     padding: 0.6rem 0.8rem;
@@ -1498,7 +1658,7 @@ summary {
 }
 
 .dash-myplayer-metric-box {
-    background: rgba(0,0,0,0.02);
+    background: rgba(0, 0, 0, 0.02);
     border: 1px solid var(--surface-border);
     border-radius: 8px;
     padding: 0.4rem 0.6rem;
@@ -1516,8 +1676,8 @@ summary {
 
 .dash-myplayer-comment-box {
     grid-column: 1 / -1;
-    background: rgba(242,57,50,0.04);
-    border: 1px dashed rgba(242,57,50,0.2);
+    background: rgba(242, 57, 50, 0.04);
+    border: 1px dashed rgba(242, 57, 50, 0.2);
     border-radius: 8px;
     padding: 0.6rem 0.8rem;
     font-size: 0.78rem;
@@ -1532,14 +1692,14 @@ summary {
     font-size: 0.76rem;
     padding: 0.35rem 0.5rem;
     border-radius: 6px;
-    background: rgba(0,0,0,0.02);
+    background: rgba(0, 0, 0, 0.02);
     border: 1px solid var(--surface-border);
 }
 
 .dash-playtime-bar-outer {
     flex: 1;
     height: 8px;
-    background: rgba(0,0,0,0.06);
+    background: rgba(0, 0, 0, 0.06);
     border-radius: 4px;
     margin: 0 0.6rem;
     position: relative;
@@ -1559,36 +1719,71 @@ summary {
     font-size: 0.76rem;
     padding: 0.35rem 0.5rem;
     border-radius: 6px;
-    background: rgba(0,0,0,0.02);
+    background: rgba(0, 0, 0, 0.02);
 }
 
 .dash-correlation-trend {
     font-weight: 700;
 }
-.dash-correlation-trend.up { color: var(--primary); }
-.dash-correlation-trend.down { color: #22c55e; }
-.dash-correlation-trend.neutral { color: var(--text-secondary); }
+
+.dash-correlation-trend.up {
+    color: var(--primary);
+}
+
+.dash-correlation-trend.down {
+    color: #22c55e;
+}
+
+.dash-correlation-trend.neutral {
+    color: var(--text-secondary);
+}
 
 /* --- レスポンシブ --- */
 @media (max-width: 640px) {
-    .dash-widget-grid  { gap: 0.75rem; }
-    .dash-row-2        { gap: 0.6rem; }
+    .dash-widget-grid {
+        gap: 0.75rem;
+    }
 
-    .dash-next-event-title       { font-size: 0.95rem; }
-    .dash-record-win             { font-size: 1.4rem; }
+    .dash-row-2 {
+        gap: 0.6rem;
+    }
+
+    .dash-next-event-title {
+        font-size: 0.95rem;
+    }
+
+    .dash-record-win {
+        font-size: 1.4rem;
+    }
+
     .dash-record-loss,
-    .dash-record-draw            { font-size: 1.1rem; }
-    .dash-form-badge-lg          { width: 30px; height: 30px; font-size: 0.75rem; }
+    .dash-record-draw {
+        font-size: 1.1rem;
+    }
+
+    .dash-form-badge-lg {
+        width: 30px;
+        height: 30px;
+        font-size: 0.75rem;
+    }
+
     .dash-rank-card,
     .dash-form-card,
     .dash-schedule-widget,
     .dash-next-event-card,
-    .dash-season-record-card     { padding: 0.75rem 0.9rem !important; }
-    .dash-form-item              { max-width: 58px; }
+    .dash-season-record-card {
+        padding: 0.75rem 0.9rem !important;
+    }
+
+    .dash-form-item {
+        max-width: 58px;
+    }
 }
 
 @media (max-width: 380px) {
-    .dash-row-2 { grid-template-columns: 1fr; }
+    .dash-row-2 {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* --- 選手横断分析ビュー (Skill Heatmap, Position, Participation) --- */
@@ -1606,7 +1801,7 @@ summary {
 
 .skill-heatmap-table th {
     padding: 0.4rem 0.2rem;
-    background: rgba(0,0,0,0.03);
+    background: rgba(0, 0, 0, 0.03);
     color: var(--text-secondary);
     font-weight: 700;
     text-align: center;
@@ -1665,42 +1860,67 @@ summary {
     .skill-heatmap-table {
         font-size: 0.7rem;
     }
-    .skill-heatmap-table th, 
+
+    .skill-heatmap-table th,
     .skill-heatmap-table td {
         padding: 0.3rem 0.1rem;
     }
-    
+
     .heatmap-name-col {
         width: 64px;
         min-width: 64px;
     }
-    
+
     .heatmap-pos-col {
         width: 48px;
         min-width: 48px;
         font-size: 0.65rem !important;
     }
-    
+
     .heatmap-skill-col {
         width: 44px;
         min-width: 44px;
     }
-    
+
     .skill-heatmap-container {
         padding: 0.8rem !important;
         overflow-x: auto;
     }
 }
 
-.heatmap-lvl-0 { background: rgba(148,163,184,0.1); color: #94a3b8; }
-.heatmap-lvl-1 { background: rgba(239,68,68,0.12);  color: #dc2626; }
-.heatmap-lvl-2 { background: rgba(249,115,22,0.15); color: #ea580c; }
-.heatmap-lvl-3 { background: rgba(234,179,8,0.18);  color: #ca8a04; }
-.heatmap-lvl-4 { background: rgba(34,197,94,0.22);  color: #16a34a; }
-.heatmap-lvl-5 { background: rgba(37,99,235,0.25);  color: #1d4ed8; font-size: 0.95rem; }
+.heatmap-lvl-0 {
+    background: rgba(148, 163, 184, 0.1);
+    color: #94a3b8;
+}
+
+.heatmap-lvl-1 {
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+}
+
+.heatmap-lvl-2 {
+    background: rgba(249, 115, 22, 0.15);
+    color: #ea580c;
+}
+
+.heatmap-lvl-3 {
+    background: rgba(234, 179, 8, 0.18);
+    color: #ca8a04;
+}
+
+.heatmap-lvl-4 {
+    background: rgba(34, 197, 94, 0.22);
+    color: #16a34a;
+}
+
+.heatmap-lvl-5 {
+    background: rgba(37, 99, 235, 0.25);
+    color: #1d4ed8;
+    font-size: 0.95rem;
+}
 
 .stat-bar-outer {
-    background: rgba(0,0,0,0.05);
+    background: rgba(0, 0, 0, 0.05);
     height: 8px;
     border-radius: 4px;
     overflow: hidden;

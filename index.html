@@ -196,15 +196,18 @@
                             <span class="dash-record-draw" id="dash-record-draw">0</span><span
                                 class="dash-record-sep">分</span>
                         </div>
-                        <div class="dash-record-meta">
-                            <span id="dash-record-goals"><i class="fa-solid fa-futbol"></i> 得点: —</span>
-                            <span id="dash-record-concede"><i class="fa-solid fa-shield-halved"></i> 失点: —</span>
+                        <!-- 得点・失点の右側に勝率を配置 -->
+                        <div class="dash-record-meta"
+                            style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                            <div style="display:flex; gap:0.6rem; align-items:center;">
+                                <span id="dash-record-goals"><i class="fa-solid fa-futbol"></i> 得点: —</span>
+                                <span id="dash-record-concede"><i class="fa-solid fa-shield-halved"></i> 失点: —</span>
+                            </div>
+                            <span id="dash-db-record"
+                                style="font-size:0.72rem; color:var(--text-secondary); font-weight:700;"></span>
                         </div>
-                        <div class="progress-bar-container" style="margin-top:0.6rem; height:6px;">
+                        <div class="progress-bar-container" style="margin-top:0.35rem; height:5px;">
                             <div class="progress-bar-fill" id="dash-db-record-bar"></div>
-                        </div>
-                        <div id="dash-db-record"
-                            style="font-size:0.72rem; color:var(--text-secondary); margin-top:0.3rem; text-align:right;">
                         </div>
                     </div>
                 </div>

@@ -2,7 +2,7 @@
 import { state, uiState } from './state.js';
 import { escapeHtml, encryptData, decryptData, showToast, setupScoreCounters, getNendo } from './utils.js';
 import { initPractices, openPracticeModal, renderPracticeRoster } from './practices.js';
-import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus } from './matches.js'; // ★ 1行にまとめる
+import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText } from './matches.js';
 import { initPlayers, openPlayerDetail } from './players.js';
 import { initLibrary } from './library.js';
 import { initSettings, initData } from './settings.js';
@@ -1338,9 +1338,11 @@ function initDashboard() {
             nextEventContent.innerHTML = `
                 <span class="dash-next-event-type ${typeClass}">${typeLabel}</span>
                 <div class="dash-next-event-title">${escapeHtml(nextEvent.title)}</div>
-                <div class="dash-next-event-date">${dateLabel}${subLine ? ' · ' + escapeHtml(subLine) : ''}</div>
-                <span class="dash-next-event-countdown">${countdownLabel}</span>
-            `;
+                <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; margin-top:0.1rem;">
+                    <span class="dash-next-event-date">${dateLabel}${subLine ? ' · ' + escapeHtml(subLine) : ''}</span>
+                    <span class="dash-next-event-countdown">${countdownLabel}</span>
+                </div>
+`;
             if (nextEventCard) {
                 nextEventCard.style.cursor = 'pointer';
                 nextEventCard.onclick = () => nextEvent.type === 'match'
@@ -2030,4 +2032,5 @@ window.openModal = openModal;
 window.renderPracticeRoster = renderPracticeRoster;
 window.initMatchDetailView = initMatchDetailView;
 window.openTeamFocusModal = openTeamFocusModal;
-window.openMyPlayerSelectModal = openMyPlayerSelectModal;   
+window.openMyPlayerSelectModal = openMyPlayerSelectModal;
+window.copyMatchShareText = copyMatchShareText;
