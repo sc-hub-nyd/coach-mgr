@@ -165,7 +165,7 @@ export function openPlayerDetail(id) {
             let goodText = '';
             let improveText = '';
             if (hItem.comment) {
-                const parts = hItem.comment.split(/\n\n【(?:More|ネクストステップ)】\n/);
+                const parts = hItem.comment.split(/\n【(?:More|ネクストステップ)】\n/);
                 if (parts.length === 2) {
                     goodText = parts[0].replace(/【(?:Good！|ポジティブ)】\n/, '');
                     improveText = parts[1];
@@ -672,7 +672,7 @@ export function initPlayers() {
                 const improveText = document.getElementById('assessment-improve') ? document.getElementById('assessment-improve').value.trim() : '';
                 let commentText = '【Good！】\n' + goodText;
                 if (improveText) {
-                    commentText += '\n\n【More】\n' + improveText;
+                    commentText += '\n【More】\n' + improveText;
                 }
                 const evalDate = document.getElementById('assessment-date').value;
 

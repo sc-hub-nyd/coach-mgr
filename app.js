@@ -84,7 +84,6 @@ export async function loadData() {
             if (parsed) {
                 state.matches = parsed.matches || [];
                 state.practices = parsed.practices || [];
-                // 日付の新しい順 (降順) に並び替え
                 state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
                 state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
                 state.players = parsed.players || [];
@@ -98,6 +97,7 @@ export async function loadData() {
                 state.teamInfo = parsed.teamInfo || { name: 'My Team', color: '#f23932', passcode: '7064' };
                 if (!state.teamInfo.passcode) state.teamInfo.passcode = '7064';
                 state.customFormations = parsed.customFormations || state.customFormations;
+                state.teamFocus = parsed.teamFocus || {}; // ★【追加】チーム強化テーマの読み込み
             }
         }
     } catch (e) {
@@ -106,7 +106,6 @@ export async function loadData() {
 }
 
 export async function saveData() {
-    // 保存前に日付の新しい順（降順）にソートを確定する
     state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
     state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
 
@@ -122,7 +121,8 @@ export async function saveData() {
         positions: state.positions,
         positionsCat2: state.positionsCat2,
         teamInfo: state.teamInfo,
-        customFormations: state.customFormations
+        customFormations: state.customFormations,
+        teamFocus: state.teamFocus || {} // ★【追加】チーム強化テーマの保存
     });
 
     await localforage.setItem('coachMgrData', 'enc:' + encryptData(jsonStr));
@@ -175,11 +175,13 @@ export function syncPushGasCloud(isSilent = false) {
             menuLibrary: state.menuLibrary,
             matchTypes: state.matchTypes,
             menuCategories: state.menuCategories,
+            analysisTags: state.analysisTags, // ★【追加】動画分析タグ
             skillMetrics: state.skillMetrics,
             positions: state.positions,
             positionsCat2: state.positionsCat2,
             teamInfo: state.teamInfo,
-            customFormations: state.customFormations
+            customFormations: state.customFormations,
+            teamFocus: state.teamFocus || {} // ★【追加】チーム強化テーマ
         }
     };
 
@@ -231,16 +233,29 @@ export function syncPullGasCloud(isSilent = false) {
                     try { remoteData = JSON.parse(remoteData); } catch (e) { }
                 }
                 if (remoteData && typeof remoteData === 'object') {
+                    // 基本データの展開
                     state.matches = remoteData.matches || [];
                     state.practices = remoteData.practices || [];
                     state.players = remoteData.players || [];
                     state.menuLibrary = remoteData.menuLibrary || [];
+
+                    // ★【追加】マスタ・設定データの受信展開
+                    if (remoteData.matchTypes) state.matchTypes = remoteData.matchTypes;
+                    if (remoteData.menuCategories) state.menuCategories = remoteData.menuCategories;
+                    if (remoteData.analysisTags) state.analysisTags = remoteData.analysisTags;
+                    if (remoteData.skillMetrics) state.skillMetrics = remoteData.skillMetrics;
+                    if (remoteData.positions) state.positions = remoteData.positions;
+                    if (remoteData.positionsCat2) state.positionsCat2 = remoteData.positionsCat2;
+                    if (remoteData.customFormations) state.customFormations = remoteData.customFormations;
+                    if (remoteData.teamFocus) state.teamFocus = remoteData.teamFocus;
+                    if (remoteData.teamInfo) {
+                        state.teamInfo = { ...state.teamInfo, ...remoteData.teamInfo };
+                    }
+
                     saveData();
                     if (!isSilent) showToast('クラウドから最新データを復元しました！');
                     setSyncStateUI('success');
 
-                    // ★ 修正: すでにユーザーが別の画面（試合詳細など）にいる場合は、勝手に画面を強制遷移させない
-                    // 初回ロード時（dashboard）以外ならナビゲートを実行しない、または同期完了のトースト・表示更新のみにする
                     if (!state.currentRoute || state.currentRoute === 'dashboard') {
                         navigate('dashboard');
                     }
@@ -627,9 +642,6 @@ export function openSeasonRecordModal() {
     openModal('modal-season-record-detail');
 }
 
-
-
-
 export function openTeamFocusModal() {
     const focus = state.teamFocus || {};
     const inputMain = document.getElementById('input-focus-main-theme');
@@ -646,6 +658,51 @@ export function openTeamFocusModal() {
 
     openModal('modal-edit-team-focus');
 }
+
+// ★ 保護者向けマイ選手選択モーダルの起動（windowにグローバル公開）
+export function openMyPlayerSelectModal() {
+    const pmlTitle = document.getElementById('pml-title');
+    const pmlContent = document.getElementById('pml-content');
+    if (!pmlTitle || !pmlContent) return;
+
+    pmlTitle.innerHTML = '<i class="fa-solid fa-user-gear"></i> マイ選手の選択';
+
+    const currentId = localStorage.getItem('coachMgrMyPlayerId') || '';
+
+    if (!state.players || state.players.length === 0) {
+        pmlContent.innerHTML = '<p class="text-secondary" style="font-size:0.85rem; padding:1rem; text-align:center;">選択可能な選手が登録されていません。</p>';
+    } else {
+        pmlContent.innerHTML = `
+            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.8rem;">
+                表示対象の選手（お子様）を選択してください。この設定は端末に保存されます。
+            </p>
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                ${state.players.map(p => `
+                    <button type="button" class="btn ${p.id.toString() === currentId ? 'btn-primary' : 'btn-secondary'}" 
+                        style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; text-align:left;"
+                        onclick="selectMyPlayer(${p.id})">
+                        <span><strong>${escapeHtml(p.name)}</strong> (${p.number})</span>
+                        ${p.id.toString() === currentId ? '<i class="fa-solid fa-check"></i>' : ''}
+                    </button>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    openModal('modal-player-matches-list');
+}
+window.openMyPlayerSelectModal = openMyPlayerSelectModal;
+
+// マイ選手選択確定処理
+window.selectMyPlayer = function (playerId) {
+    localStorage.setItem('coachMgrMyPlayerId', playerId.toString());
+    const modal = document.getElementById('modal-player-matches-list');
+    if (modal) modal.classList.add('hidden');
+    if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+        document.body.classList.remove('modal-open');
+    }
+    initDashboard();
+};
 
 function setupModals() {
     const closeBtns = document.querySelectorAll('.btn-close-modal');
@@ -743,129 +800,154 @@ function initDashboard() {
         }
     });
 
-    // ── 保護者専用要素の表示制御と「マイ選手」ロジック ──
+    // ── 保護者専用要素の表示制御と「マイ選手」ロジック（案1：未選択スタート＋端末固定） ──
     const myPlayerBanner = document.getElementById('dash-myplayer-banner');
-    const myPlayerSelect = document.getElementById('dash-myplayer-select');
     const myPlayerContent = document.getElementById('dash-myplayer-content');
 
     if (!isCoach && myPlayerBanner) {
         myPlayerBanner.style.removeProperty('display');
 
-        // セレクトボックスに選手一覧をセット
-        if (myPlayerSelect) {
-            const savedPlayerId = localStorage.getItem('coachMgrMyPlayerId') || '';
-            myPlayerSelect.innerHTML = '<option value="">-- 我が子を選択 --</option>' +
-                state.players.map(p => `<option value="${p.id}" ${savedPlayerId === String(p.id) ? 'selected' : ''}>${p.number} ${escapeHtml(p.name)}</option>`).join('');
+        // 保存済みのマイ選手IDを取得（※初回は自動補完せず空文字のままにする）
+        const savedPlayerId = localStorage.getItem('coachMgrMyPlayerId') || '';
 
-            const renderMyPlayerStats = (playerId) => {
-                if (!playerId || !myPlayerContent) {
-                    myPlayerContent.innerHTML = '<div class="dash-no-data">上のセレクトボックスからマイ選手を設定してください</div>';
-                    return;
-                }
-                const player = state.players.find(p => p.id === parseInt(playerId, 10));
-                if (!player) {
-                    myPlayerContent.innerHTML = '<div class="dash-no-data">選手が見つかりません</div>';
-                    return;
-                }
+        const renderMyPlayerStats = (playerId) => {
+            // 1. 選手データが1件も未登録の場合
+            if (state.players.length === 0) {
+                myPlayerContent.innerHTML = `
+                    <div class="dash-no-data" style="padding:1.2rem 0; text-align:center;">
+                        <p style="margin-bottom:0.6rem; color:var(--text-secondary); font-size:0.85rem;">チームに選手が登録されていません。</p>
+                        <p style="font-size:0.75rem; color:var(--text-secondary);">※コーチモードに切り替えて「選手管理」から選手を登録してください。</p>
+                    </div>
+                `;
+                return;
+            }
 
-                // 過去1ヶ月の出席率
-                const oneMonthAgo = new Date();
-                oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
-                const oneMonthAgoStr = `${oneMonthAgo.getFullYear()}-${String(oneMonthAgo.getMonth() + 1).padStart(2, '0')}-${String(oneMonthAgo.getDate()).padStart(2, '0')}`;
+            // 2. 選手は登録されているが、マイ選手が「未選択」の場合
+            if (!playerId) {
+                myPlayerContent.innerHTML = `
+                    <div class="dash-no-data" style="padding:1.2rem 0; text-align:center;">
+                        <p style="margin-bottom:0.6rem; color:var(--text-primary); font-weight:700; font-size:0.9rem;">表示するマイ選手が未設定です</p>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="openMyPlayerSelectModal()" style="padding:0.4rem 1rem; font-size:0.82rem;">
+                            <i class="fa-solid fa-user-check"></i> マイ選手（我が子）を選択する
+                        </button>
+                    </div>
+                `;
+                return;
+            }
 
-                const recentPracs = state.practices.filter(p => p.date >= oneMonthAgoStr && p.date <= todayStr);
-                const recentMatches = state.matches.filter(m => m.date >= oneMonthAgoStr && m.date <= todayStr);
-                const totalEvents = recentPracs.length + recentMatches.length;
+            // 3. 選択された選手IDに対応する選手データを検索
+            const player = state.players.find(p => p.id === parseInt(playerId, 10));
+            if (!player) {
+                myPlayerContent.innerHTML = `
+                    <div class="dash-no-data" style="padding:1rem 0; text-align:center;">
+                        <p style="margin-bottom:0.5rem; color:var(--text-secondary);">該当する選手が見つかりません。</p>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="openMyPlayerSelectModal()">
+                            <i class="fa-solid fa-rotate"></i> 別の選手を選択する
+                        </button>
+                    </div>
+                `;
+                return;
+            }
 
-                let presentCount = 0;
-                recentPracs.forEach(p => { if ((p.presentPlayerIds || []).includes(player.id)) presentCount++; });
-                recentMatches.forEach(m => { if ((m.presentPlayerIds || []).includes(player.id)) presentCount++; });
-                const attendancePct = totalEvents > 0 ? Math.round((presentCount / totalEvents) * 100) : 0;
+            // ── 以下、選手が正しく選択されている場合の描画処理 ──
+            const currentNendo = getNendo(todayStr);
 
-                // 通算得点・アシスト
-                let playerGoals = 0;
-                let playerAssists = 0;
-                state.matches.forEach(m => {
-                    if (m.goalRecords) {
-                        m.goalRecords.forEach(r => {
-                            if (r.scorerId === player.id) playerGoals++;
-                            if (r.assistId === player.id) playerAssists++;
-                        });
-                    }
-                });
+            // 今年度の全試合・全練習
+            const thisYearMatches = state.matches.filter(m => getNendo(m.date) === currentNendo);
+            const thisYearPractices = state.practices.filter(p => getNendo(p.date) === currentNendo);
+            const totalThisYearEvents = thisYearMatches.length + thisYearPractices.length;
 
-                // 成長履歴
-                let timeline = [];
-                if (player.history) {
-                    player.history.forEach(h => {
-                        timeline.push({ type: 'assessment', date: h.date, comment: h.comment, data: h });
+            // 今年度の参加記録
+            const attendedMatches = thisYearMatches.filter(m => (m.presentPlayerIds || []).includes(player.id));
+            const attendedPractices = thisYearPractices.filter(p => (p.presentPlayerIds || []).includes(player.id));
+            const attendedThisYearCount = attendedMatches.length + attendedPractices.length;
+
+            // 出席率の算出
+            const attendancePct = totalThisYearEvents > 0
+                ? Math.round((attendedThisYearCount / totalThisYearEvents) * 100)
+                : 0;
+
+            // 通算（全期間）得点・アシストの集計
+            let playerGoals = 0;
+            let playerAssists = 0;
+            state.matches.forEach(m => {
+                if (m.goalRecords) {
+                    m.goalRecords.forEach(r => {
+                        if (r.scorerId === player.id) playerGoals++;
+                        if (r.assistId === player.id) playerAssists++;
                     });
                 }
-                state.matches.forEach(m => {
-                    if (m.playerFeedback) {
-                        m.playerFeedback.forEach(fb => {
-                            if (fb.playerId === player.id) {
-                                timeline.push({ type: 'match', date: m.date, matchDetails: `${m.type}${m.tournament ? ` (${m.tournament})` : ''} vs ${m.opponent}`, comment: fb.comment, matchId: m.id });
-                            }
-                        });
-                    }
+            });
+
+            // 最新フィードバックの抽出
+            let timeline = [];
+            if (player.history) {
+                player.history.forEach(h => {
+                    timeline.push({ type: 'assessment', date: h.date, comment: h.comment, data: h });
                 });
-                timeline.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                const timelineHTML = timeline.length > 0 ? timeline.map(item => {
-                    if (item.type === 'assessment') {
-                        return `
-                            <div class="timeline-item" style="margin-bottom:0.6rem; padding-left:0.6rem;">
-                                <div class="timeline-item-date" style="font-size:0.72rem; margin-bottom:0.1rem;">
-                                    <span>${item.date} <span class="timeline-item-badge" style="font-size:0.62rem; padding:0.05rem 0.25rem;">スキル評価</span></span>
-                                </div>
-                                <div class="timeline-item-comment" style="white-space:pre-wrap; font-size:0.78rem; font-weight:normal; margin-bottom:0; line-height:1.35;">${escapeHtml(item.comment)}</div>
-                            </div>
-                        `;
-                    } else {
-                        return `
-                            <div class="timeline-item match-timeline-item" style="margin-bottom:0.6rem; padding-left:0.6rem;">
-                                <div class="timeline-item-date" style="font-size:0.72rem; margin-bottom:0.1rem;">
-                                    ${item.date} <span class="timeline-item-badge" style="font-size:0.62rem; padding:0.05rem 0.25rem;">試合評価</span>
-                                </div>
-                                <p style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:0.1rem; font-weight:600;">${item.matchDetails}</p>
-                                <p style="font-size:0.78rem; margin:0; line-height:1.35;">${escapeHtml(item.comment)}</p>
-                            </div>
-                        `;
-                    }
-                }).join('') : '<p class="text-secondary" style="font-size:0.75rem;">記録がありません。</p>';
-
-                // スキル
-                const currentSkills = player.history && player.history.length > 0 ? (player.history[0].data ? player.history[0].data.skills : player.history[0].skills) : [0, 0, 0, 0, 0, 0];
-                const prevSkills = player.history && player.history.length > 1 ? (player.history[1].data ? player.history[1].data.skills : player.history[1].skills) : null;
-
-                // U-2: 最新フィードバックの抽出
-                const latestFeedbackItem = timeline.find(t => t.type === 'match' || t.type === 'assessment');
-                let latestFeedbackHTML = '';
-                if (latestFeedbackItem) {
-                    const labelStr = latestFeedbackItem.type === 'match' ? '試合評価' : 'スキル評価';
-                    latestFeedbackHTML = `
-                        <div style="margin-top:0.6rem; margin-bottom:0.6rem; background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(59,130,246,0.08)); border-left:4px solid var(--primary); border-radius:8px; padding:0.8rem 1rem;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                                <span style="font-size:0.78rem; font-weight:700; color:var(--primary);"><i class="fa-solid fa-comment-dots"></i> コーチからの最新フィードバック</span>
-                                <span style="font-size:0.7rem; color:var(--text-secondary);">${latestFeedbackItem.date} (${labelStr})</span>
-                            </div>
-                            <p style="font-size:0.85rem; font-weight:600; color:var(--text-primary); margin:0; line-height:1.4;">
-                                ${escapeHtml(latestFeedbackItem.comment).replace(/\\n/g, '<br>')}
-                            </p>
-                        </div>
-                    `;
+            }
+            state.matches.forEach(m => {
+                if (m.playerFeedback) {
+                    m.playerFeedback.forEach(fb => {
+                        if (fb.playerId === player.id) {
+                            timeline.push({
+                                type: 'match',
+                                date: m.date,
+                                matchDetails: `${m.type}${m.tournament ? ` (${m.tournament})` : ''} vs ${m.opponent}`,
+                                comment: fb.comment,
+                                matchId: m.id
+                            });
+                        }
+                    });
                 }
+            });
+            timeline.sort((a, b) => new Date(b.date) - new Date(a.date));
 
+            const latestFeedbackItem = timeline.find(t => t.type === 'match' || t.type === 'assessment');
+            let latestFeedbackHTML = '';
+            if (latestFeedbackItem) {
+                const labelStr = latestFeedbackItem.type === 'match' ? '試合評価' : '観察メモ';
+                latestFeedbackHTML = `
+                    <div style="margin-top:0.2rem; margin-bottom:0.2rem; background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(59,130,246,0.08)); border-left:4px solid var(--primary); border-radius:8px; padding:0.6rem 0.8rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
+                            <span style="font-size:0.75rem; font-weight:700; color:var(--primary);"><i class="fa-solid fa-comment-dots"></i> コーチからの最新フィードバック</span>
+                            <span style="font-size:0.68rem; color:var(--text-secondary);">${latestFeedbackItem.date} (${labelStr})</span>
+                        </div>
+                        <p style="font-size:0.8rem; font-weight:600; color:var(--text-primary); margin:0; line-height:1.35;">
+                            ${escapeHtml(latestFeedbackItem.comment)
+                        .trim()
+                        .replace(/\n\s*\n/g, '\n')
+                        .replace(/\n/g, '<br>')
+                    }
+                        </p>
+                    </div>
+                `;
+            }
 
-                myPlayerContent.innerHTML = `
-                    <div class="dash-myplayer-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.2rem 0; margin-bottom:0.2rem;">
+            // ストロングポイントのHTML生成
+            const strongPointsHtml = player.strongPoints && player.strongPoints.length > 0
+                ? player.strongPoints.map(sp => `
+                    <div style="margin-bottom:0.2rem;">
+                        <span class="badge" style="background:rgba(37,99,235,0.1); color:#2563eb; font-size:0.65rem; padding:0.08rem 0.28rem; display:inline-block;">
+                            <i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}
+                        </span>
+                        <div style="font-size:0.75rem; color:var(--text-primary); line-height:1.2; margin-top:0.1rem;">${escapeHtml(sp.text)}</div>
+                    </div>
+                `).join('')
+                : '<span style="font-size:0.75rem; color:var(--text-secondary);">未設定</span>';
+
+            // UI生成
+            myPlayerContent.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:0.6rem; padding:0.2rem 0;">
+                    
+                    <!-- ヘッダー（名前・背番号・ポジション・変更ボタン） -->
+                    <div class="dash-myplayer-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.1rem 0;">
                         <div style="display:flex; align-items:center; gap:0.6rem;">
-                            <div class="player-number" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, var(--primary), #e83029);color:white;border-radius:50%;font-weight:900;font-size:0.95rem;">
+                            <div class="player-number" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, var(--primary), #e83029);color:white;border-radius:50%;font-weight:900;font-size:0.9rem;">
                                 ${player.number}
                             </div>
                             <div style="display:flex; align-items:baseline; gap:0.4rem;">
-                                <h2 style="margin:0; font-size:1.1rem; color:var(--text-primary); font-weight:800; letter-spacing:-0.02em;">
+                                <h2 style="margin:0; font-size:1.05rem; color:var(--text-primary); font-weight:800; letter-spacing:-0.02em;">
                                     ${escapeHtml(player.name)}
                                 </h2>
                                 <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">
@@ -873,74 +955,191 @@ function initDashboard() {
                                 </span>
                             </div>
                         </div>
-                        <div style="display:flex; gap:0.8rem; align-items:center; font-size:0.8rem;">
-                            <span style="color:var(--text-secondary);"><i class="fa-solid fa-users" style="font-size:0.7rem;"></i> 出席: <strong style="color:var(--text-primary);">${attendancePct}%</strong></span>
-                            <span style="color:var(--text-secondary);"><i class="fa-solid fa-futbol" style="color:var(--primary); font-size:0.7rem;"></i> 得点: <strong style="color:var(--text-primary);">${playerGoals}</strong></span>
-                            <span style="color:var(--text-secondary);"><i class="fa-solid fa-shoe-prints" style="color:#22c55e; font-size:0.7rem; transform:rotate(45deg);"></i> アシスト: <strong style="color:var(--text-primary);">${playerAssists}</strong></span>
-                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-change-myplayer" style="font-size:0.72rem; padding:0.2rem 0.55rem;">
+                            <i class="fa-solid fa-rotate"></i> 選手変更
+                        </button>
                     </div>
 
+                    <!-- コーチからの最新フィードバック -->
                     ${latestFeedbackHTML}
 
-                    <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.2rem;">
-                        <!-- Strong Points Accordion -->
-                        <details id="dash-details-strongpoints" style="flex:1; min-width:160px; background:rgba(0,0,0,0.015); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem;">
-                            <summary style="cursor:pointer; font-size:0.8rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; outline:none; user-select:none;">
-                                <span><i class="fa-solid fa-shield-halved" style="color:var(--primary);"></i> ストロングポイント</span>
-                            </summary>
-                            <div style="display:flex; flex-direction:column; gap:0.4rem; margin-top:0.4rem;">
-                                ${player.strongPoints && player.strongPoints.length > 0 ? player.strongPoints.map(sp => `
-                                    <div>
-                                        <span class="badge" style="background:rgba(37,99,235,0.1); color:#2563eb; font-size:0.7rem; padding:0.1rem 0.35rem; display:inline-block; margin-bottom:0.15rem;"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>
-                                        <p style="margin:0; font-size:0.78rem; color:var(--text-primary); line-height:1.35;">${escapeHtml(sp.text)}</p>
-                                    </div>
-                                `).join('') : '<p style="margin:0; font-size:0.78rem; color:var(--text-secondary);">未設定</p>'}
+                    <!-- スタッツボタンエリア -->
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.4rem;">
+                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-att" 
+                            style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
+                            <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
+                                <i class="fa-solid fa-user-check" style="color:#3b82f6;"></i> 出席率
+                            </span>
+                            <div style="display:flex; align-items:baseline; gap:0.2rem;">
+                                <strong style="font-size:0.88rem; color:var(--text-primary);">${attendancePct}%</strong>
+                                <span style="font-size:0.62rem; color:var(--text-secondary); font-weight:normal;">(${attendedThisYearCount}/${totalThisYearEvents})</span>
                             </div>
-                        </details>
+                        </button>
 
-                        <!-- IDP Accordion -->
-                        <details style="flex:1; min-width:160px; background:rgba(0,0,0,0.015); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem;">
-                            <summary style="cursor:pointer; font-size:0.8rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; outline:none; user-select:none;">
-                                <span><i class="fa-solid fa-bullseye" style="color:var(--primary);"></i> 個人目標 (IDP)</span>
-                            </summary>
-                            <div style="display:flex; flex-direction:column; gap:0.4rem; margin-top:0.4rem;">
-                                <div>
-                                    <strong style="font-size:0.72rem; color:var(--text-secondary); display:block; margin-bottom:0.1rem;">短期目標</strong>
-                                    <p style="margin:0; padding:0.3rem 0.5rem; background:rgba(0,0,0,0.02); border-radius:4px; font-size:0.78rem; line-height:1.35; border:1px solid rgba(0,0,0,0.04);">${player.goals && player.goals.short ? escapeHtml(player.goals.short).replace(/\n/g, '<br>') : '未設定'}</p>
-                                </div>
-                                <div>
-                                    <strong style="font-size:0.72rem; color:var(--text-secondary); display:block; margin-bottom:0.1rem;">長期目標</strong>
-                                    <p style="margin:0; padding:0.3rem 0.5rem; background:rgba(0,0,0,0.02); border-radius:4px; font-size:0.78rem; line-height:1.35; border:1px solid rgba(0,0,0,0.04);">${player.goals && player.goals.long ? escapeHtml(player.goals.long).replace(/\n/g, '<br>') : '未設定'}</p>
-                                </div>
-                            </div>
-                        </details>
+                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-goals" 
+                            style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
+                            <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
+                                <i class="fa-solid fa-futbol" style="color:var(--primary);"></i> 通算得点
+                            </span>
+                            <strong style="font-size:0.88rem; color:var(--primary);">${playerGoals}<span style="font-size:0.65rem; font-weight:normal;">点</span></strong>
+                        </button>
+
+                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-assists" 
+                            style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
+                            <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
+                                <i class="fa-solid fa-shoe-prints" style="color:#22c55e; transform:rotate(45deg);"></i> 通算アシスト
+                            </span>
+                            <strong style="font-size:0.88rem; color:#22c55e;">${playerAssists}<span style="font-size:0.65rem; font-weight:normal;">回</span></strong>
+                        </button>
                     </div>
-                `;
 
-                let isSyncingDetails = false;
-                const detailsElements = myPlayerContent.querySelectorAll('details');
-                detailsElements.forEach(det => {
-                    det.addEventListener('toggle', () => {
-                        if (isSyncingDetails) return;
-                        isSyncingDetails = true;
-                        const isOpen = det.open;
-                        detailsElements.forEach(d => {
-                            d.open = isOpen;
+                    <!-- プロファイルアコーディオン -->
+                    <details style="background:rgba(0,0,0,0.015); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem;">
+                        <summary style="cursor:pointer; font-size:0.78rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; outline:none; user-select:none;">
+                            <span><i class="fa-solid fa-sliders" style="color:var(--primary);"></i> 選手詳細プロファイル (スタイル / 強み / IDP)</span>
+                        </summary>
+                        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.4rem; margin-top:0.4rem; padding-top:0.2rem;">
+                            <div style="background:rgba(0,0,0,0.02); border:1px solid var(--surface-border); border-radius:6px; padding:0.4rem 0.5rem;">
+                                <strong style="font-size:0.68rem; color:var(--text-secondary); display:block; margin-bottom:0.15rem;">
+                                    <i class="fa-solid fa-tag"></i> プレースタイル
+                                </strong>
+                                <div style="font-size:0.78rem; font-weight:700; color:var(--text-primary); line-height:1.3;">
+                                    ${escapeHtml(player.playStyle || '未設定')}
+                                </div>
+                            </div>
+
+                            <div style="background:rgba(0,0,0,0.02); border:1px solid var(--surface-border); border-radius:6px; padding:0.4rem 0.5rem;">
+                                <strong style="font-size:0.68rem; color:var(--text-secondary); display:block; margin-bottom:0.15rem;">
+                                    <i class="fa-solid fa-shield-halved"></i> ストロングポイント
+                                </strong>
+                                ${strongPointsHtml}
+                            </div>
+
+                            <div style="background:rgba(0,0,0,0.02); border:1px solid var(--surface-border); border-radius:6px; padding:0.4rem 0.5rem;">
+                                <strong style="font-size:0.68rem; color:var(--text-secondary); display:block; margin-bottom:0.15rem;">
+                                    <i class="fa-solid fa-bullseye"></i> 個人目標 (IDP)
+                                </strong>
+                                <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                                    <div>
+                                        <span style="font-size:0.62rem; color:var(--text-secondary); font-weight:bold;">[短期]</span>
+                                        <span style="font-size:0.75rem; color:var(--text-primary); line-height:1.2;">${player.goals && player.goals.short ? escapeHtml(player.goals.short) : '未設定'}</span>
+                                    </div>
+                                    <div>
+                                        <span style="font-size:0.62rem; color:var(--text-secondary); font-weight:bold;">[長期]</span>
+                                        <span style="font-size:0.75rem; color:var(--text-primary); line-height:1.2;">${player.goals && player.goals.long ? escapeHtml(player.goals.long) : '未設定'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            `;
+
+            // イベントバインド
+            const btnChange = document.getElementById('btn-change-myplayer');
+            if (btnChange) btnChange.onclick = () => openMyPlayerSelectModal();
+
+            const btnAtt = document.getElementById('dash-btn-myplayer-att');
+            if (btnAtt) {
+                btnAtt.onclick = () => {
+                    const pmlTitle = document.getElementById('pml-title');
+                    const pmlContent = document.getElementById('pml-content');
+                    if (!pmlTitle || !pmlContent) return;
+
+                    pmlTitle.innerHTML = `<i class="fa-solid fa-user-check" style="color:#3b82f6;"></i> ${escapeHtml(player.name)} の参加記録 (${currentNendo}年度)`;
+
+                    let html = '';
+                    if (attendedMatches.length === 0 && attendedPractices.length === 0) {
+                        html = '<p class="text-secondary" style="font-size:0.85rem; padding:1rem; text-align:center;">今年度の参加記録はありません。</p>';
+                    } else {
+                        attendedMatches.forEach(m => {
+                            html += `
+                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                                    onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
+                                    <div>
+                                        <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
+                                        <div style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date} | 試合 ${m.type ? `(${escapeHtml(m.type)})` : ''}</div>
+                                    </div>
+                                    <div style="font-size:0.85rem; font-weight:bold; color:var(--primary);">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i></div>
+                                </div>
+                            `;
                         });
-                        isSyncingDetails = false;
-                    });
-                });
-            };
+                        attendedPractices.forEach(p => {
+                            html += `
+                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                                    onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('practices', { date: '${p.date}' });">
+                                    <div>
+                                        <strong>練習 ${p.location ? `(${escapeHtml(p.location)})` : ''}</strong>
+                                        <div style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${p.date}</div>
+                                    </div>
+                                    <div style="font-size:0.85rem; font-weight:bold; color:var(--text-secondary);">練習記録 <i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i></div>
+                                </div>
+                            `;
+                        });
+                    }
 
-            myPlayerSelect.onchange = (e) => {
-                const pid = e.target.value;
-                localStorage.setItem('coachMgrMyPlayerId', pid);
-                renderMyPlayerStats(pid);
-            };
+                    pmlContent.innerHTML = html;
+                    openModal('modal-player-matches-list');
+                };
+            }
 
-            // 初回ロード表示
-            renderMyPlayerStats(savedPlayerId);
-        }
+            const btnGoals = document.getElementById('dash-btn-myplayer-goals');
+            if (btnGoals) {
+                btnGoals.onclick = () => {
+                    const matchesWithGoals = state.matches.filter(m =>
+                        m.goalRecords && m.goalRecords.some(r => r.scorerId === player.id)
+                    );
+
+                    const pmlTitle = document.getElementById('pml-title');
+                    const pmlContent = document.getElementById('pml-content');
+                    if (!pmlTitle || !pmlContent) return;
+
+                    pmlTitle.innerHTML = `<i class="fa-solid fa-futbol" style="color:var(--primary);"></i> ${escapeHtml(player.name)} の得点した試合 (通算)`;
+                    pmlContent.innerHTML = matchesWithGoals.length > 0 ? matchesWithGoals.map(m => `
+                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                            onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
+                            <div>
+                                <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
+                                <div style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '')}</div>
+                            </div>
+                            <div style="font-size:1.15rem; font-weight:bold; color:var(--primary);">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i></div>
+                        </div>
+                    `).join('') : '<p class="text-secondary" style="font-size:0.85rem; padding:1rem; text-align:center;">得点した試合はありません。</p>';
+
+                    openModal('modal-player-matches-list');
+                };
+            }
+
+            const btnAssists = document.getElementById('dash-btn-myplayer-assists');
+            if (btnAssists) {
+                btnAssists.onclick = () => {
+                    const matchesWithAssists = state.matches.filter(m =>
+                        m.goalRecords && m.goalRecords.some(r => r.assistId === player.id)
+                    );
+
+                    const pmlTitle = document.getElementById('pml-title');
+                    const pmlContent = document.getElementById('pml-content');
+                    if (!pmlTitle || !pmlContent) return;
+
+                    pmlTitle.innerHTML = `<span style="display:inline-block; transform:rotate(45deg); color:#22c55e;"><i class="fa-solid fa-shoe-prints"></i></span> ${escapeHtml(player.name)} のアシストした試合 (通算)`;
+                    pmlContent.innerHTML = matchesWithAssists.length > 0 ? matchesWithAssists.map(m => `
+                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                            onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
+                            <div>
+                                <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
+                                <div style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '')}</div>
+                            </div>
+                            <div style="font-size:1.15rem; font-weight:bold; color:var(--primary);">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i></div>
+                        </div>
+                    `).join('') : '<p class="text-secondary" style="font-size:0.85rem; padding:1rem; text-align:center;">アシストした試合はありません。</p>';
+
+                    openModal('modal-player-matches-list');
+                };
+            }
+        };
+
+        // ロード描画（※保存されているIDがあればその選手を表示、なければ「未選択」状態の画面を描画）
+        renderMyPlayerStats(savedPlayerId);
     } else if (myPlayerBanner) {
         myPlayerBanner.style.setProperty('display', 'none', 'important');
     }
@@ -1568,7 +1767,6 @@ export function updateRoleUI() {
             if (syncPopover) syncPopover.classList.toggle('hidden');
         };
 
-        // ポップオーバーの外側をクリックしたら閉じる（一度だけ登録）
         const wrapper = document.querySelector('.sync-status-wrapper');
         if (wrapper && !wrapper._outsideClickBound) {
             wrapper._outsideClickBound = true;
@@ -1593,7 +1791,12 @@ export function updateRoleUI() {
         };
     }
 
-    // PCサイドバーのリンク制御
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // PCサイドバーのリンク制御（コーチ専用画面を非表示）
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const playersLink = document.querySelector('.nav-links li[data-route="players"]');
+    if (playersLink) playersLink.style.display = isCoach ? 'flex' : 'none'; // ★ 追加: 選手管理を非表示
+
     const settingsLink = document.querySelector('.nav-links li[data-route="settings"]');
     if (settingsLink) settingsLink.style.display = isCoach ? 'flex' : 'none';
 
@@ -1603,7 +1806,12 @@ export function updateRoleUI() {
     const dataLink = document.querySelector('.nav-links li[data-route="data"]');
     if (dataLink) dataLink.style.display = isCoach ? 'flex' : 'none';
 
-    // ★ 修正: スマホ下部ナビゲーションのリンク制御（メニュー・設定はコーチ専用）
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // スマホ下部ナビゲーションのリンク制御（コーチ専用画面を非表示）
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const bottomPlayers = document.querySelector('.bottom-nav .nav-item[data-route="players"]');
+    if (bottomPlayers) bottomPlayers.style.display = isCoach ? 'flex' : 'none'; // ★ 追加: 選手管理を非表示
+
     const bottomLibrary = document.querySelector('.bottom-nav .nav-item[data-route="library"]');
     const bottomSettings = document.querySelector('.bottom-nav .nav-item[data-route="settings"]');
     if (bottomLibrary) bottomLibrary.style.display = isCoach ? 'flex' : 'none';
@@ -1624,6 +1832,12 @@ export function updateRoleUI() {
         document.body.classList.remove('role-read-only');
     } else {
         document.body.classList.add('role-read-only');
+
+        // ★ 追加: 保護者モード切り替え時に選手管理画面を開いていた場合はダッシュボードへ退避
+        if (uiState.currentRoute === 'players') {
+            navigate('dashboard');
+            return;
+        }
     }
 
     // ロール切り替え完了後、現在ダッシュボード表示中なら即時再描画（ウィジェット切り替え）
@@ -1741,6 +1955,7 @@ async function init() {
         window.openSeasonRecordModal = openSeasonRecordModal;
         window.openPlayerDetail = openPlayerDetail;
         window.openTeamFocusModal = openTeamFocusModal;
+        window.openMyPlayerSelectModal = openMyPlayerSelectModal;
         window.navigate = navigate;
         await loadData();
     } catch (e) {
@@ -1815,3 +2030,4 @@ window.openModal = openModal;
 window.renderPracticeRoster = renderPracticeRoster;
 window.initMatchDetailView = initMatchDetailView;
 window.openTeamFocusModal = openTeamFocusModal;
+window.openMyPlayerSelectModal = openMyPlayerSelectModal;   
