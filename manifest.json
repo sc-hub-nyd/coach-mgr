@@ -1,0 +1,20 @@
+{
+  "name": "Soccer Coach Manager",
+  "short_name": "CoachMgr",
+  "description": "少年サッカーチーム向けの練習・試合・戦術管理アプリ",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f1f5f9",
+  "theme_color": "#10b981",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "./icons/icon-512x512.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "education"]
+}

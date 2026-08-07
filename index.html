@@ -6,9 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
-    <link rel="stylesheet" href="./CSS/main.css">
+    <link rel="stylesheet" href="./CSS/main.css?v=41">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="./icons/icon-512x512.jpg">
     <!-- YouTube Iframe API -->
     <script src="https://www.youtube.com/iframe_api"></script>
 </head>
@@ -25,6 +31,7 @@
                 <li data-route="matches"><i class="fa-solid fa-trophy"></i> 試合記録</li>
                 <li data-route="practices"><i class="fa-solid fa-calendar-check"></i> 練習管理</li>
                 <li data-route="library"><i class="fa-solid fa-book"></i> メニュー管理</li>
+                <li data-route="tactics"><i class="fa-solid fa-chess-knight"></i> 戦術管理</li>
                 <li data-route="players"><i class="fa-solid fa-users"></i> 選手管理</li>
                 <li data-route="settings"><i class="fa-solid fa-gear"></i> 設定</li>
             </ul>
@@ -104,6 +111,10 @@
                 <a href="#" class="nav-item" data-route="library">
                     <i class="fa-solid fa-book"></i>
                     <span>メニュー</span>
+                </a>
+                <a href="#" class="nav-item" data-route="tactics">
+                    <i class="fa-solid fa-chess-knight"></i>
+                    <span>戦術</span>
                 </a>
                 <a href="#" class="nav-item" data-route="players">
                     <i class="fa-solid fa-users"></i>
@@ -668,6 +679,27 @@
         </div>
     </template>
 
+    <template id="tpl-tactics">
+        <div class="filter-bar-container">
+            <div class="filter-main-row">
+                <div class="filter-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" id="input-tactics-search" placeholder="戦術をキーワード検索..."
+                        class="form-control filter-search-input">
+                </div>
+                <div class="filter-btn-group">
+                    <select id="filter-tactics-category" class="form-control">
+                        <option value="all">すべてのカテゴリ</option>
+                    </select>
+                    <button class="btn btn-primary" id="btn-add-tactic"><i class="fa-solid fa-plus"></i> 追加</button>
+                </div>
+            </div>
+        </div>
+        <div id="tactics-list" style="display:flex; flex-direction:column; gap:1.5rem; margin-top:1rem;">
+            <!-- Tactics items injected here -->
+        </div>
+    </template>
+
     <template id="tpl-settings">
         <div class="sl-settings">
 
@@ -740,7 +772,12 @@
 
             <!-- Section: 試合種別 -->
             <div class="sl-section">
-                <div class="sl-section-label"><i class="fa-solid fa-list"></i> 試合種別</div>
+                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                    <span><i class="fa-solid fa-list"></i> 試合種別</span>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-match-types" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+                        <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
+                    </button>
+                </div>
                 <div class="sl-section-body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-match-type" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
@@ -755,7 +792,12 @@
 
             <!-- Section: 練習カテゴリ -->
             <div class="sl-section">
-                <div class="sl-section-label"><i class="fa-solid fa-tags"></i> 練習カテゴリ</div>
+                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                    <span><i class="fa-solid fa-tags"></i> 練習カテゴリ</span>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-menu-categories" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+                        <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
+                    </button>
+                </div>
                 <div class="sl-section-body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-menu-category" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
@@ -769,10 +811,36 @@
                 </div>
             </div>
 
+            <!-- Section: 戦術カテゴリ -->
+            <div class="sl-section">
+                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                    <span><i class="fa-solid fa-chess-knight"></i> 戦術カテゴリ</span>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-tactics-categories" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+                        <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
+                    </button>
+                </div>
+                <div class="sl-section-body">
+                    <div class="sl-row sl-add-row">
+                        <form id="form-add-tactics-category" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
+                            <input type="text" id="new-tactics-category" class="sl-input" placeholder="新しい戦術カテゴリを入力"
+                                required>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i>
+                                追加</button>
+                        </form>
+                    </div>
+                    <ul id="tactics-category-list" class="sl-list"></ul>
+                </div>
+            </div>
+
             <!-- Section: スキル評価項目 -->
             <div class="sl-section">
-                <div class="sl-section-label"><i class="fa-solid fa-chart-pie"></i> スキル評価項目 <span
-                        style="font-weight:400; font-style:italic;">（3項目以上でレーダーチャートが有効）</span></div>
+                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                    <span><i class="fa-solid fa-chart-pie"></i> スキル評価項目 <span
+                        style="font-weight:400; font-style:italic;">（3項目以上でレーダーチャートが有効）</span></span>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-skill-metrics" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+                        <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
+                    </button>
+                </div>
                 <div class="sl-section-body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-skill-metric" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
@@ -787,7 +855,12 @@
 
             <!-- Section: ポジション (カテゴリ1) -->
             <div class="sl-section">
-                <div class="sl-section-label"><i class="fa-solid fa-street-view"></i> ポジション (カテゴリ1: 大分類)</div>
+                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                    <span><i class="fa-solid fa-street-view"></i> ポジション (カテゴリ1: 大分類)</span>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-positions" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+                        <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
+                    </button>
+                </div>
                 <div class="sl-section-body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-position" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
@@ -803,7 +876,12 @@
 
             <!-- Section: ポジション (カテゴリ2) -->
             <div class="sl-section">
-                <div class="sl-section-label"><i class="fa-solid fa-person-running"></i> ポジション (カテゴリ2: 詳細役割)</div>
+                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                    <span><i class="fa-solid fa-person-running"></i> ポジション (カテゴリ2: 詳細役割)</span>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-positions-cat2" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+                        <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
+                    </button>
+                </div>
                 <div class="sl-section-body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-position-cat2" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
@@ -819,7 +897,12 @@
 
             <!-- Section: 動画分析タグ -->
             <div class="sl-section">
-                <div class="sl-section-label"><i class="fa-solid fa-tags"></i> 動画分析タグ</div>
+                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                    <span><i class="fa-solid fa-tags"></i> 動画分析タグ</span>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-analysis-tags" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+                        <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
+                    </button>
+                </div>
                 <div class="sl-section-body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-analysis-tag" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
@@ -1062,6 +1145,79 @@
                             class="dock-text">選択</span></button>
                     <button class="dock-btn tool-btn" data-tool="player" data-tooltip="選手配置 (👤)" title="選手配置 (👤)"><i
                             class="fa-solid fa-user-plus"></i><span class="dock-text">選手</span></button>
+
+                    <!-- Tactics Tools (Placed right below Player tool) -->
+                    <!-- Bulk Formation Placement Dropdown -->
+                    <div class="dropdown-settings-wrapper tactics-only" style="position:relative;">
+                        <button class="dock-btn" id="anim-bulk-formation-btn" title="フォーメーション一括配置"><i class="fa-solid fa-users-gear"></i><span class="dock-text">一括配置</span></button>
+                        <div id="anim-bulk-formation-popover" class="anim-settings-popover hidden" style="width:260px; left:100%; top:0; margin-left:8px; z-index:3000;">
+                            <div style="font-size:0.8rem; font-weight:700; color:var(--text-primary); margin-bottom:8px;"><i class="fa-solid fa-users-gear"></i> フォーメーション一括配置</div>
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <div>
+                                    <label style="font-size:0.75rem; font-weight:600; display:block; margin-bottom:4px;">配置対象</label>
+                                    <select id="select-bulk-team-mode" class="form-control form-control-sm" style="width:100%; font-size:0.8rem;">
+                                        <option value="both">両チーム（対峙配置）</option>
+                                        <option value="home">自チームのみ</option>
+                                        <option value="away">相手チームのみ</option>
+                                    </select>
+                                </div>
+                                <div id="wrapper-bulk-home-formation">
+                                    <label style="font-size:0.75rem; font-weight:600; display:block; margin-bottom:4px; color:var(--text-primary);">自チームのフォーメーション</label>
+                                    <select id="select-bulk-home-formation" class="form-control form-control-sm" style="width:100%; font-size:0.8rem;">
+                                        <option value="3-3-1">3-3-1 (8人制標準)</option>
+                                        <option value="2-4-1">2-4-1 (8人制)</option>
+                                        <option value="3-2-2">3-2-2 (8人制)</option>
+                                        <option value="2-3-2">2-3-2 (8人制)</option>
+                                        <option value="4-4-2">4-4-2 (11人制)</option>
+                                        <option value="4-3-3">4-3-3 (11人制)</option>
+                                    </select>
+                                </div>
+                                <div id="wrapper-bulk-away-formation">
+                                    <label style="font-size:0.75rem; font-weight:600; display:block; margin-bottom:4px; color:var(--text-primary);">相手チームのフォーメーション</label>
+                                    <select id="select-bulk-away-formation" class="form-control form-control-sm" style="width:100%; font-size:0.8rem;">
+                                        <option value="3-3-1">3-3-1 (8人制標準)</option>
+                                        <option value="2-4-1">2-4-1 (8人制)</option>
+                                        <option value="3-2-2">3-2-2 (8人制)</option>
+                                        <option value="2-3-2">2-3-2 (8人制)</option>
+                                        <option value="4-4-2">4-4-2 (11人制)</option>
+                                        <option value="4-3-3">4-3-3 (11人制)</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm" id="btn-apply-bulk-formation" style="width:100%; margin-top:4px;">
+                                    <i class="fa-solid fa-check"></i> キャンバスに一括配置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Colors Dropdown -->
+                    <div class="dropdown-settings-wrapper tactics-only" style="position:relative;">
+                        <button class="dock-btn" id="anim-team-colors-btn" title="チームカラー一括変更"><i class="fa-solid fa-palette"></i><span class="dock-text">カラー</span></button>
+                        <div id="anim-team-colors-popover" class="anim-settings-popover hidden" style="width:240px; left:100%; top:0; margin-left:8px; z-index:3000;">
+                            <div style="font-size:0.8rem; font-weight:700; color:var(--text-primary); margin-bottom:8px;"><i class="fa-solid fa-palette"></i> チームカラーの一括変更</div>
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="font-size:0.75rem; font-weight:600;">自チーム:</span>
+                                    <input type="color" id="input-home-team-color" value="#f23932" style="width:40px; height:28px; border:none; background:none; cursor:pointer;">
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="font-size:0.75rem; font-weight:600;">敵チーム:</span>
+                                    <input type="color" id="input-away-team-color" value="#2563eb" style="width:40px; height:28px; border:none; background:none; cursor:pointer;">
+                                </div>
+                                <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:4px;">プリセット:</div>
+                                <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:4px;">
+                                    <button type="button" class="btn btn-secondary btn-xs btn-color-preset" data-home="#f23932" data-away="#2563eb" style="font-size:0.7rem;">赤 vs 青</button>
+                                    <button type="button" class="btn btn-secondary btn-xs btn-color-preset" data-home="#eab308" data-away="#a855f7" style="font-size:0.7rem;">黄 vs 紫</button>
+                                    <button type="button" class="btn btn-secondary btn-xs btn-color-preset" data-home="#ffffff" data-away="#1e293b" style="font-size:0.7rem;">白 vs 黒</button>
+                                    <button type="button" class="btn btn-secondary btn-xs btn-color-preset" data-home="#22c55e" data-away="#f97316" style="font-size:0.7rem;">緑 vs オレンジ</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Divider Line -->
+                    <div class="dock-divider tactics-only" style="width: 28px; height: 1px; background: var(--border-color, #e2e8f0); margin: 4px auto; flex-shrink: 0;"></div>
+
                     <button class="dock-btn tool-btn" data-tool="ball" data-tooltip="ボール (⚽)" title="ボール (⚽)"><i
                             class="fa-solid fa-futbol"></i><span class="dock-text">ボール</span></button>
 
@@ -1094,6 +1250,8 @@
                             class="dock-text">四角</span></button>
                     <button class="dock-btn tool-btn" data-tool="line-circle" data-tooltip="円エリア (⭕)"
                         title="円エリア (⭕)"><i class="fa-regular fa-circle"></i><span class="dock-text">円</span></button>
+                    <button class="dock-btn tool-btn" data-tool="vision" data-tooltip="視野・扇形 (👁️)"
+                        title="視野・扇形 (👁️)"><i class="fa-solid fa-eye"></i><span class="dock-text">視野</span></button>
                     <button class="dock-btn tool-btn" data-tool="text" data-tooltip="文字 (🔤)" title="文字 (🔤)"><i
                             class="fa-solid fa-font"></i><span class="dock-text">文字</span></button>
                 </nav>
@@ -1107,6 +1265,9 @@
                         <!-- 上層：動的オブジェクトレイヤー (選手・ボール・操作用) -->
                         <canvas id="pitch-canvas" width="800" height="500"
                             style="position: absolute; top:0; left:0; z-index: 2;"></canvas>
+                        <!-- 最上層：UI操作レイヤー (選択枠・回転ハンドル・ガイド線用) -->
+                        <canvas id="pitch-ui-canvas" width="800" height="500"
+                            style="position: absolute; top:0; left:0; z-index: 3; pointer-events: none;"></canvas>
 
                         <!-- 4. Contextual Floating Popover Menu (Directly above/below selected object) -->
                         <div id="anim-context-popover" class="anim-context-popover hidden">
@@ -1156,12 +1317,17 @@
                             <div class="popover-arrow"></div>
                         </div>
 
-                        <!-- 5. Floating Compact Player Bar Timeline (Centered Inside Pitch Canvas) -->
+                        <!-- 5a. Filmstrip Timeline Card Strip (Item 08: フィルムスリップ型タイムライン) -->
+                        <div id="filmstrip-timeline-wrapper" class="filmstrip-timeline-wrapper">
+                            <div id="filmstrip-cards-container" class="filmstrip-cards-container"></div>
+                        </div>
+
+                        <!-- 5b. Floating Compact Player Bar Timeline (Centered Inside Pitch Canvas) -->
                         <footer class="anim-player-bar" id="anim-timeline-bar">
                             <!-- Timeline Toggle Button -->
-                            <button class="btn btn-secondary btn-xs" id="anim-timeline-toggle" title="バーを隠す"
+                            <button class="btn btn-secondary btn-xs" id="anim-timeline-toggle" title="タイムラインを開く/閉じる"
                                 style="padding:0 0.5rem; font-size:0.75rem; height:30px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center;"><i
-                                    class="fa-solid fa-chevron-down"></i></button>
+                                    class="fa-solid fa-film"></i></button>
                             <!-- Left Group: Play / Stop -->
                             <div class="player-bar-group player-bar-left">
                                 <button class="btn btn-primary btn-xs" id="anim-play" title="アニメーション再生"><i
@@ -1197,6 +1363,34 @@
                             </div>
                         </footer>
 
+                        <!-- 6. Animation Caption Telop Bar -->
+                        <div id="anim-caption-bar" class="anim-caption-bar hidden">
+                            <span id="anim-caption-text"></span>
+                        </div>
+
+                        <!-- 7. Quick Edit Drawer (Item 09: ボトムシート) -->
+                        <div id="anim-quick-drawer" class="anim-quick-drawer hidden">
+                            <div class="drawer-header">
+                                <span class="drawer-title"><i class="fa-solid fa-sliders"></i> シーン設定 (<span id="drawer-scene-num">シーン1</span>)</span>
+                                <button type="button" class="drawer-close-btn" id="btn-close-quick-drawer"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <div class="drawer-body">
+                                <div class="drawer-field">
+                                    <label for="drawer-caption-text">テロップ (指導ポイント)</label>
+                                    <input type="text" id="drawer-caption-text" class="form-control form-control-sm" placeholder="例: 受ける前に首を振る、マークを外す動き">
+                                </div>
+                                <div class="drawer-field drawer-field-short">
+                                    <label for="drawer-pause-duration">停止時間</label>
+                                    <select id="drawer-pause-duration" class="form-control form-control-sm">
+                                        <option value="0">停止なし</option>
+                                        <option value="1">1秒</option>
+                                        <option value="2">2秒</option>
+                                        <option value="3">3秒</option>
+                                        <option value="5">5秒</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1206,32 +1400,32 @@
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
                     <div class="side-panel-header">
-                        <h4
+                        <h4 id="anim-side-panel-title"
                             style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.4rem;">
                             <i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細
                         </h4>
                     </div>
                     <div class="side-panel-body">
                         <div class="side-info-card">
-                            <span class="side-info-label"><i class="fa-solid fa-bullseye"
+                            <span class="side-info-label" id="lbl-side-focus"><i class="fa-solid fa-bullseye"
                                     style="color:var(--primary);"></i> テーマ・フォーカス</span>
                             <div id="side-info-focus" class="side-info-val" style="font-weight:700;">未設定</div>
                         </div>
 
                         <div class="side-info-card">
-                            <span class="side-info-label"><i class="fa-solid fa-users" style="color:#3b82f6;"></i>
+                            <span class="side-info-label" id="lbl-side-org"><i class="fa-solid fa-users" style="color:#3b82f6;"></i>
                                 オーガナイズ</span>
                             <div id="side-info-organize" class="side-info-val">なし</div>
                         </div>
 
                         <div class="side-info-card">
-                            <span class="side-info-label"><i class="fa-solid fa-key" style="color:#eab308;"></i>
+                            <span class="side-info-label" id="lbl-side-kf"><i class="fa-solid fa-key" style="color:#eab308;"></i>
                                 キーファクター</span>
                             <div id="side-info-keyfactor" class="side-info-val">なし</div>
                         </div>
 
-                        <div class="side-info-card">
-                            <span class="side-info-label"><i class="fa-solid fa-plus-circle" style="color:#10b981;"></i>
+                        <div class="side-info-card" id="side-card-opt">
+                            <span class="side-info-label" id="lbl-side-opt"><i class="fa-solid fa-plus-circle" style="color:#10b981;"></i>
                                 オプション</span>
                             <div id="side-info-options" class="side-info-val">なし</div>
                         </div>
@@ -1411,7 +1605,7 @@
 
                 <!-- Center: Resizer -->
                 <div id="period-workspace-resizer"
-                    style="width: 8px; background: var(--surface-border); cursor: col-resize; display: flex; align-items: center; justify-content: center; z-index: 10;">
+                    style="width: 8px; background: var(--surface-border); cursor: col-resize; display: flex; align-items: center; justify-content: center; z-index: 10; touch-action: none;">
                     <div style="width: 2px; height: 24px; background: #94a3b8; border-radius: 1px;"></div>
                 </div>
 
@@ -1594,6 +1788,31 @@
     </div>
 
     <!-- Menu Form Modal -->
+    <div id="modal-tactic" class="modal-overlay hidden">
+        <div class="modal">
+            <h2 id="modal-tactic-title">新しい戦術を作成</h2>
+            <form id="form-tactic">
+                <input type="hidden" id="tactic-id" value="">
+                <div class="form-group">
+                    <label>タイトル <span class="badge-required">必須</span></label>
+                    <input type="text" id="tactic-title" class="form-control" placeholder="例: ビルドアップパターンA" required>
+                </div>
+                <div class="form-group">
+                    <label>カテゴリ</label>
+                    <select id="tactic-category" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>説明・キーファクター</label>
+                    <textarea id="tactic-description" class="form-control" rows="3" placeholder="狙いや注意点を記述"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> 保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="modal-menu" class="modal-overlay hidden">
         <div class="modal" style="position:relative;">
             <button type="button" class="btn-close-modal"
@@ -1949,6 +2168,22 @@
                     <input type="text" id="input-scene-title" class="form-control" placeholder="例: 初期配置、プレス回避、シュート体勢 など"
                         autocomplete="off">
                 </div>
+                <div class="form-group" style="margin-top:1rem;">
+                    <label>指導ポイント（テロップ） <span class="badge-optional">任意</span></label>
+                    <textarea id="input-scene-caption" class="form-control" rows="2" placeholder="例: ★受ける前に首を振る、パスの受け手はマークを外す動き" style="resize:vertical;"></textarea>
+                    <small style="color:var(--text-secondary); font-size:0.72rem;">再生中に画面下部に大きく表示されます</small>
+                </div>
+                <div class="form-group" style="margin-top:1rem;">
+                    <label>このシーンでの停止時間</label>
+                    <select id="input-scene-pause" class="form-control">
+                        <option value="0">停止なし（すぐ次へ）</option>
+                        <option value="1">1秒</option>
+                        <option value="2" selected>2秒</option>
+                        <option value="3">3秒</option>
+                        <option value="5">5秒</option>
+                    </select>
+                    <small style="color:var(--text-secondary); font-size:0.72rem;">アニメーション再生中、このシーンに到達したとき指定秒数停止します</small>
+                </div>
                 <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
                     <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
                     <button type="submit" class="btn btn-primary">保存する</button>
@@ -2284,8 +2519,29 @@
         </div>
     </div>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <script>
+        MobileDragDrop.polyfill({
+            dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride
+        });
+        window.addEventListener('touchmove', function() {}, {passive: false});
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script type="module" src="app.js?v=20"></script>
+    <script type="module" src="app.js?v=41"></script>
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((reg) => {
+                        reg.update();
+                        console.log('SW registered & updated:', reg.scope);
+                    })
+                    .catch((err) => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
 </body>
 
 </html>

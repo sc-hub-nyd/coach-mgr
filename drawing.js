@@ -1,9 +1,14 @@
-// drawing.js
 import { state } from './state.js';
-import { showToast, showCustomConfirm } from './utils.js';
+import { showToast, showCustomConfirm, escapeHtml } from './utils.js';
+import { getFormationPlayerList } from './formation-defs.js';
+import { registerListener, cleanupScope } from './event-manager.js';
+import { tacticsStore } from './store.js';
+import { commandStack, SetObjectsCommand } from './command-stack.js';
 
 let canvas, ctx;
 let bgCanvas, bgCtx;
+let uiCanvas, uiCtx;
+let currentBgTemplate = null;
 let objects = [];
 let currentTool = 'select';
 let isDrawing = false;
@@ -29,92 +34,79 @@ let currentLibraryId = null;
 
 let isDirty = false;
 
-let boundListeners = {
-    canvasMouseDown: null,
-    canvasMouseMove: null,
-    canvasMouseUp: null,
-    canvasDblClick: null,
-    canvasTouchStart: null,
-    canvasTouchMove: null,
-    canvasTouchEnd: null,
-    docKeyDown: null,
-    docKeyUp: null,
-    docClickOutside: null
-};
+// We now rely on event-manager.js for listener storage and cleanup
+let boundListeners = {}; // Keeping an empty object for backwards compatibility if needed internally, but no longer used for management.
 
 export function cleanupCanvasEvents() {
-    if (!canvas) return;
+    cleanupScope('drawing.canvas');
+}
 
-    if (boundListeners.canvasMouseDown) canvas.removeEventListener('mousedown', boundListeners.canvasMouseDown);
-    if (boundListeners.canvasMouseMove) canvas.removeEventListener('mousemove', boundListeners.canvasMouseMove);
-    if (boundListeners.canvasMouseUp) canvas.removeEventListener('mouseup', boundListeners.canvasMouseUp);
-    if (boundListeners.canvasDblClick) canvas.removeEventListener('dblclick', boundListeners.canvasDblClick);
-    if (boundListeners.canvasTouchStart) canvas.removeEventListener('touchstart', boundListeners.canvasTouchStart);
-    if (boundListeners.canvasTouchMove) canvas.removeEventListener('touchmove', boundListeners.canvasTouchMove);
-    if (boundListeners.canvasTouchEnd) canvas.removeEventListener('touchend', boundListeners.canvasTouchEnd);
-
-    if (boundListeners.docKeyDown) {
-        document.removeEventListener('keydown', boundListeners.docKeyDown);
+function syncCurrentFrameObjects() {
+    if (!frames || frames.length === 0) {
+        frames = [{ objects: JSON.parse(JSON.stringify(objects)), title: '', caption: '', pauseDuration: 0 }];
+        currentFrameIndex = 0;
+        return;
     }
-    if (boundListeners.docKeyUp) {
-        document.removeEventListener('keyup', boundListeners.docKeyUp);
+    if (currentFrameIndex < 0 || currentFrameIndex >= frames.length) {
+        currentFrameIndex = Math.max(0, frames.length - 1);
     }
-    if (boundListeners.docClickOutside) {
-        document.removeEventListener('click', boundListeners.docClickOutside);
-        document.removeEventListener('touchstart', boundListeners.docClickOutside);
+    const curFrame = frames[currentFrameIndex];
+    if (Array.isArray(curFrame)) {
+        frames[currentFrameIndex] = {
+            objects: JSON.parse(JSON.stringify(objects)),
+            title: '',
+            caption: '',
+            pauseDuration: 0
+        };
+    } else if (typeof curFrame === 'object' && curFrame !== null) {
+        curFrame.objects = JSON.parse(JSON.stringify(objects));
     }
-
-    Object.keys(boundListeners).forEach(key => boundListeners[key] = null);
 }
 
 function saveHistory() {
     if (isPlaying) return;
     isDirty = true;
-    historyStack.push(JSON.parse(JSON.stringify(objects)));
-    if (historyStack.length > 30) historyStack.shift();
-    redoStack = [];
+    tacticsStore.setObjects(objects, false);
+    const prevObjects = commandStack.undoStack.length > 0
+        ? commandStack.undoStack[commandStack.undoStack.length - 1].newObjects
+        : [];
+    commandStack.execute(new SetObjectsCommand(tacticsStore, objects, prevObjects));
     updateUndoRedoButtons();
+    syncCurrentFrameObjects();
 }
 
 function undoHistory() {
     if (isPlaying) return;
-    if (historyStack.length > 1) {
-        const current = historyStack.pop();
-        redoStack.push(current);
-        objects = JSON.parse(JSON.stringify(historyStack[historyStack.length - 1]));
-        selectedObject = null;
-        drawPitch(objects);
-    } else if (historyStack.length === 1) {
-        historyStack.pop();
-        objects = [];
+    if (commandStack.undo()) {
+        objects = JSON.parse(JSON.stringify(tacticsStore.objects));
         selectedObject = null;
         drawPitch(objects);
     }
     updateUndoRedoButtons();
+    syncCurrentFrameObjects();
 }
 
 function redoHistory() {
     if (isPlaying) return;
-    if (redoStack.length > 0) {
-        const nextState = redoStack.pop();
-        historyStack.push(nextState);
-        objects = JSON.parse(JSON.stringify(nextState));
+    if (commandStack.redo()) {
+        objects = JSON.parse(JSON.stringify(tacticsStore.objects));
         selectedObject = null;
         drawPitch(objects);
     }
     updateUndoRedoButtons();
+    syncCurrentFrameObjects();
 }
 
 function updateUndoRedoButtons() {
     const btnUndo = document.getElementById('tool-undo');
     const btnRedo = document.getElementById('tool-redo');
     if (btnUndo) {
-        btnUndo.disabled = historyStack.length === 0;
-        btnUndo.style.opacity = historyStack.length > 0 ? '1' : '0.5';
+        btnUndo.disabled = !commandStack.canUndo();
+        btnUndo.style.opacity = commandStack.canUndo() ? '1' : '0.5';
     }
     if (btnRedo) {
-        btnRedo.disabled = redoStack.length === 0;
-        btnRedo.style.opacity = redoStack.length > 0 ? '1' : '0.5';
+        btnRedo.disabled = !commandStack.canRedo();
+        btnRedo.style.opacity = commandStack.canRedo() ? '1' : '0.5';
     }
 }
 
@@ -161,6 +153,89 @@ function updateFrameCount() {
         return `<option value="${idx}" ${idx === currentFrameIndex ? 'selected' : ''}>${idx + 1}: ${titlePart}</option>`;
     }).join('');
 
+    // Item 08: Render Filmstrip Timeline Cards with Drag & Drop (DND) and Inline Badges
+    const filmstripContainer = document.getElementById('filmstrip-cards-container');
+    if (filmstripContainer) {
+        filmstripContainer.innerHTML = frames.map((f, idx) => {
+            const isObj = (typeof f === 'object' && f !== null && !Array.isArray(f));
+            const titleStr = isObj && f.title ? f.title : `シーン${idx + 1}`;
+            const pauseVal = isObj && typeof f.pauseDuration !== 'undefined' ? f.pauseDuration : 0;
+            const captionStr = isObj && f.caption ? f.caption : '';
+
+            return `
+                <div class="filmstrip-card ${idx === currentFrameIndex ? 'active' : ''}" data-frame-index="${idx}" draggable="true">
+                    <div class="filmstrip-card-header">
+                        <span class="filmstrip-frame-num">S${idx + 1}</span>
+                        <div style="display:flex; gap:3px;">
+                            ${pauseVal > 0 ? `<span class="filmstrip-badge pause-badge" title="停止時間 ${pauseVal}秒"><i class="fa-solid fa-clock"></i> ${pauseVal}s</span>` : ''}
+                            ${captionStr ? `<span class="filmstrip-badge caption-badge" title="${escapeHtml(captionStr)}"><i class="fa-solid fa-comment-dots"></i></span>` : ''}
+                        </div>
+                    </div>
+                    <div class="filmstrip-card-title">${escapeHtml(titleStr)}</div>
+                    <div class="filmstrip-card-actions">
+                        <button type="button" class="btn-card-delete" data-idx="${idx}" title="削除"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        const cards = filmstripContainer.querySelectorAll('.filmstrip-card');
+        cards.forEach(card => {
+            const delBtn = card.querySelector('.btn-card-delete');
+            if (delBtn) {
+                const handleDelete = (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const idx = parseInt(delBtn.dataset.idx, 10);
+                    if (!isNaN(idx) && idx >= 0) {
+                        deleteFrame(idx);
+                    }
+                };
+                delBtn.onclick = handleDelete;
+            }
+
+            card.onclick = () => {
+                const idx = parseInt(card.dataset.frameIndex, 10);
+                if (idx >= 0) selectFrame(idx);
+            };
+
+            card.ondblclick = () => {
+                const idx = parseInt(card.dataset.frameIndex, 10);
+                if (idx >= 0) openQuickDrawer(idx);
+            };
+
+            card.ondragstart = (e) => {
+                e.dataTransfer.setData('text/plain', card.dataset.frameIndex);
+                card.classList.add('dragging');
+            };
+
+            card.ondragover = (e) => {
+                e.preventDefault();
+                card.classList.add('drag-over');
+            };
+
+            card.ondragleave = () => {
+                card.classList.remove('drag-over');
+            };
+
+            card.ondrop = (e) => {
+                e.preventDefault();
+                card.classList.remove('drag-over');
+                const fromIdx = parseInt(e.dataTransfer.getData('text/plain'), 10);
+                const toIdx = parseInt(card.dataset.frameIndex, 10);
+                if (!isNaN(fromIdx) && !isNaN(toIdx) && fromIdx !== toIdx) {
+                    const movedFrame = frames.splice(fromIdx, 1)[0];
+                    frames.splice(toIdx, 0, movedFrame);
+                    currentFrameIndex = toIdx;
+                    saveHistory();
+                    updateFrameCount();
+                    drawPitch(objects);
+                    showToast(`シーン ${fromIdx + 1} を シーン ${toIdx + 1} へ移動しました`);
+                }
+            };
+        });
+    }
+
     if (btnPrev) {
         btnPrev.disabled = currentFrameIndex <= 0;
         btnPrev.style.opacity = currentFrameIndex > 0 ? '1' : '0.5';
@@ -184,6 +259,7 @@ function selectFrame(index) {
         selectedObject = null;
         updateFrameCount();
         drawPitch(objects);
+        openQuickDrawer(index);
         showToast(`シーン ${index + 1} を表示中`);
     }
 }
@@ -211,16 +287,86 @@ function deleteFrame(index) {
 function addFrame() {
     isDirty = true;
     const insertIdx = (currentFrameIndex >= 0 && currentFrameIndex < frames.length) ? currentFrameIndex + 1 : frames.length;
-    frames.splice(insertIdx, 0, { objects: JSON.parse(JSON.stringify(objects)), title: '' });
+    frames.splice(insertIdx, 0, { objects: JSON.parse(JSON.stringify(objects)), title: '', caption: '', pauseDuration: 0 });
     currentFrameIndex = insertIdx;
     updateFrameCount();
     drawPitch(objects);
+    openQuickDrawer(insertIdx);
     showToast(`シーン ${insertIdx + 1} を追加しました`);
+}
+
+export function openQuickDrawer(index) {
+    if (index < 0 || index >= frames.length) return;
+    const curFrame = frames[index];
+    const drawer = document.getElementById('anim-quick-drawer');
+    const sceneNum = document.getElementById('drawer-scene-num');
+    const inputCaption = document.getElementById('drawer-caption-text');
+    const selectPause = document.getElementById('drawer-pause-duration');
+
+    if (!drawer) return;
+    if (sceneNum) sceneNum.textContent = `シーン${index + 1}`;
+
+    const captionVal = (typeof curFrame === 'object' && curFrame !== null && curFrame.caption) ? curFrame.caption : '';
+    const pauseVal = (typeof curFrame === 'object' && curFrame !== null && typeof curFrame.pauseDuration !== 'undefined') ? curFrame.pauseDuration : 2;
+
+    if (inputCaption) inputCaption.value = captionVal;
+    if (selectPause) selectPause.value = pauseVal;
+
+    drawer.classList.remove('hidden');
+}
+
+export function closeQuickDrawer() {
+    const drawer = document.getElementById('anim-quick-drawer');
+    if (drawer) drawer.classList.add('hidden');
+}
+
+function initQuickDrawerEvents() {
+    const inputCaption = document.getElementById('drawer-caption-text');
+    if (inputCaption) {
+        inputCaption.oninput = (e) => {
+            if (currentFrameIndex >= 0 && currentFrameIndex < frames.length) {
+                const curFrame = frames[currentFrameIndex];
+                if (typeof curFrame === 'object' && curFrame !== null) {
+                    curFrame.caption = e.target.value;
+                    isDirty = true;
+                    updateFrameCount();
+                }
+            }
+        };
+    }
+    const selectPause = document.getElementById('drawer-pause-duration');
+    if (selectPause) {
+        selectPause.onchange = (e) => {
+            if (currentFrameIndex >= 0 && currentFrameIndex < frames.length) {
+                const curFrame = frames[currentFrameIndex];
+                if (typeof curFrame === 'object' && curFrame !== null) {
+                    curFrame.pauseDuration = parseFloat(e.target.value) || 0;
+                    isDirty = true;
+                    updateFrameCount();
+                }
+            }
+        };
+    }
+    const btnClose = document.getElementById('btn-close-quick-drawer');
+    if (btnClose) btnClose.onclick = closeQuickDrawer;
+
+    document.addEventListener('pointerdown', (e) => {
+        const drawer = document.getElementById('anim-quick-drawer');
+        if (!drawer || drawer.classList.contains('hidden')) return;
+
+        const isInsideDrawer = drawer.contains(e.target);
+        const isFilmstripCard = e.target.closest('.filmstrip-card');
+        const isAnimAddBtn = e.target.closest('#anim-add-frame');
+
+        if (!isInsideDrawer && !isFilmstripCard && !isAnimAddBtn) {
+            closeQuickDrawer();
+        }
+    });
 }
 
 function editFrameTitle() {
     if (frames.length === 0) {
-        frames = [{ objects: JSON.parse(JSON.stringify(objects)), title: '' }];
+        frames = [{ objects: JSON.parse(JSON.stringify(objects)), title: '', caption: '', pauseDuration: 0 }];
         currentFrameIndex = 0;
     }
     if (currentFrameIndex < 0 || currentFrameIndex >= frames.length) {
@@ -228,15 +374,21 @@ function editFrameTitle() {
     }
     let f = frames[currentFrameIndex];
     let currentTitle = (f && typeof f === 'object' && !Array.isArray(f) && f.title) ? f.title : '';
+    let currentCaption = (f && typeof f === 'object' && !Array.isArray(f) && f.caption) ? f.caption : '';
+    let currentPause = (f && typeof f === 'object' && !Array.isArray(f)) ? (Number(f.pauseDuration) || 0) : 0;
 
     const modal = document.getElementById('modal-scene-title');
     const input = document.getElementById('input-scene-title');
+    const captionInput = document.getElementById('input-scene-caption');
+    const pauseSelect = document.getElementById('input-scene-pause');
     const form = document.getElementById('form-scene-title');
     const heading = document.getElementById('scene-title-modal-heading');
 
     if (modal && input && form) {
         if (heading) heading.textContent = `シーン ${currentFrameIndex + 1} の見出し編集`;
         input.value = currentTitle;
+        if (captionInput) captionInput.value = currentCaption;
+        if (pauseSelect) pauseSelect.value = String(currentPause);
         modal.classList.remove('hidden');
         setTimeout(() => {
             input.focus();
@@ -247,12 +399,16 @@ function editFrameTitle() {
         form.onsubmit = (ev) => {
             ev.preventDefault();
             const trimmed = input.value.trim();
+            const captionVal = captionInput ? captionInput.value.trim() : '';
+            const pauseVal = pauseSelect ? (parseInt(pauseSelect.value, 10) || 0) : 0;
             if (Array.isArray(f)) {
-                frames[currentFrameIndex] = { objects: f, title: trimmed };
+                frames[currentFrameIndex] = { objects: f, title: trimmed, caption: captionVal, pauseDuration: pauseVal };
             } else if (typeof f === 'object' && f !== null) {
                 f.title = trimmed;
+                f.caption = captionVal;
+                f.pauseDuration = pauseVal;
             } else {
-                frames[currentFrameIndex] = { objects: [], title: trimmed };
+                frames[currentFrameIndex] = { objects: [], title: trimmed, caption: captionVal, pauseDuration: pauseVal };
             }
             updateFrameCount();
             showToast(`シーン ${currentFrameIndex + 1} の見出しを「${trimmed || '(なし)'}」に更新しました`);
@@ -264,6 +420,7 @@ function editFrameTitle() {
 function stopAnimation() {
     isPlaying = false;
     if (animReqId) cancelAnimationFrame(animReqId);
+    if (animPauseTimer) { clearTimeout(animPauseTimer); animPauseTimer = null; }
     if (frames.length > 0) {
         const lastFrame = frames[frames.length - 1];
         objects = JSON.parse(JSON.stringify(Array.isArray(lastFrame) ? lastFrame : (lastFrame.objects || [])));
@@ -271,9 +428,50 @@ function stopAnimation() {
     if (canvas) {
         drawPitch(objects);
     }
+    // Hide caption bar on stop
+    const captionBar = document.getElementById('anim-caption-bar');
+    if (captionBar) captionBar.classList.add('hidden');
+}
+
+let animPauseTimer = null;
+
+function showCaptionBar(text) {
+    const bar = document.getElementById('anim-caption-bar');
+    const span = document.getElementById('anim-caption-text');
+    if (!bar || !span) return;
+    if (text && text.trim()) {
+        span.textContent = text;
+        bar.classList.remove('hidden');
+    } else {
+        bar.classList.add('hidden');
+    }
+}
+
+function getFrameCaptionText(frame) {
+    if (!frame) return '';
+    if (typeof frame === 'object' && !Array.isArray(frame)) {
+        return frame.caption || '';
+    }
+    return '';
+}
+
+function getFramePauseSec(frame) {
+    if (!frame) return 0;
+    if (typeof frame === 'object' && !Array.isArray(frame)) {
+        if (typeof frame.pauseDuration === 'number') return frame.pauseDuration;
+        if (typeof frame.pauseDuration === 'string') return parseFloat(frame.pauseDuration) || 0;
+    }
+    return 0;
+}
+
+function getFrameObjects(frame) {
+    if (!frame) return [];
+    if (Array.isArray(frame)) return frame;
+    return frame.objects || [];
 }
 
 function playAnimation() {
+    syncCurrentFrameObjects();
     if (frames.length < 2) {
         alert('アニメーションを作成するには、少なくとも2つのシーンを記録してください。');
         return;
@@ -281,28 +479,48 @@ function playAnimation() {
     isPlaying = true;
     let currentFrameIdx = 0;
     let startTime = null;
+    let stateStage = 'START'; // 'PAUSING' | 'ANIMATING'
     const duration = 1500;
 
-    function animate(timestamp) {
+    function startFrame(idx) {
         if (!isPlaying) return;
+        currentFrameIdx = idx;
+        const rawFrame = frames[idx];
+        showCaptionBar(getFrameCaptionText(rawFrame));
+        drawPitch(getFrameObjects(rawFrame));
+
+        const pauseSec = getFramePauseSec(rawFrame);
+        if (pauseSec > 0) {
+            stateStage = 'PAUSING';
+            animPauseTimer = setTimeout(() => {
+                animPauseTimer = null;
+                if (!isPlaying) return;
+                stateStage = 'ANIMATING';
+                startTime = null;
+                animReqId = requestAnimationFrame(animate);
+            }, pauseSec * 1000);
+        } else {
+            stateStage = 'ANIMATING';
+            startTime = null;
+            animReqId = requestAnimationFrame(animate);
+        }
+    }
+
+    function animate(timestamp) {
+        if (!isPlaying || stateStage !== 'ANIMATING') return;
         if (!startTime) startTime = timestamp;
 
         let progress = (timestamp - startTime) / duration;
 
-        if (progress >= 1) {
-            currentFrameIdx++;
-            startTime = timestamp;
-            progress = 0;
-            if (currentFrameIdx >= frames.length - 1) {
-                currentFrameIdx = 0;
-            }
+        if (progress >= 1.0) {
+            const nextIdx = (currentFrameIdx + 1) % frames.length;
+            startFrame(nextIdx);
+            return;
         }
 
-        const rawCurrent = frames[currentFrameIdx];
-        const rawNext = frames[currentFrameIdx + 1];
-
-        const currentFrame = Array.isArray(rawCurrent) ? rawCurrent : ((rawCurrent && rawCurrent.objects) || []);
-        const nextFrame = Array.isArray(rawNext) ? rawNext : ((rawNext && rawNext.objects) || []);
+        const nextIdx = (currentFrameIdx + 1) % frames.length;
+        const currentFrame = getFrameObjects(frames[currentFrameIdx]);
+        const nextFrame = getFrameObjects(frames[nextIdx]);
 
         const interpolatedObjects = currentFrame.map(obj1 => {
             const obj2 = nextFrame.find(o => o.id === obj1.id);
@@ -311,11 +529,28 @@ function playAnimation() {
             const p = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
 
             if (typeof obj1.x !== 'undefined' && typeof obj1.y !== 'undefined') {
-                return {
+                const interpolatedObj = {
                     ...obj1,
                     x: obj1.x + (obj2.x - obj1.x) * p,
                     y: obj1.y + (obj2.y - obj1.y) * p
                 };
+                if (typeof obj1.angle !== 'undefined' || typeof obj2.angle !== 'undefined') {
+                    let a1 = typeof obj1.angle !== 'undefined' ? obj1.angle : 0;
+                    let a2 = typeof obj2.angle !== 'undefined' ? obj2.angle : 0;
+                    let diff = a2 - a1;
+                    while (diff > 180) diff -= 360;
+                    while (diff < -180) diff += 360;
+                    interpolatedObj.angle = a1 + diff * p;
+                }
+                if (typeof obj1.radius !== 'undefined' && typeof obj2.radius !== 'undefined') {
+                    interpolatedObj.radius = obj1.radius + (obj2.radius - obj1.radius) * p;
+                }
+                if (typeof obj1.fov !== 'undefined' || typeof obj2.fov !== 'undefined') {
+                    let f1 = typeof obj1.fov !== 'undefined' ? obj1.fov : 60;
+                    let f2 = typeof obj2.fov !== 'undefined' ? obj2.fov : 60;
+                    interpolatedObj.fov = f1 + (f2 - f1) * p;
+                }
+                return interpolatedObj;
             } else if (typeof obj1.x1 !== 'undefined') {
                 const res = {
                     ...obj1,
@@ -337,7 +572,7 @@ function playAnimation() {
         animReqId = requestAnimationFrame(animate);
     }
 
-    animReqId = requestAnimationFrame(animate);
+    startFrame(0);
 }
 
 export function exportAnimationVideo() {
@@ -415,29 +650,122 @@ export function exportAnimationVideo() {
         const durationPerFrame = 1400;
         let startTime = null;
         let isRecording = true;
+        let recFrameIdx = 0;
+        let recPauseUntil = 0; // timestamp until which we are paused
+        let recFrameStartTime = null;
+
+        // Pre-calculate total pause durations for accurate recording
+        function getFramePause(idx) {
+            return getFramePauseSec(frames[idx]);
+        }
+        function getFrameCaption(idx) {
+            return getFrameCaptionText(frames[idx]);
+        }
+
+        // Draw caption text overlay directly on canvas for video export
+        function drawCaptionOnCanvas(captionText) {
+            if (!captionText || !captionText.trim()) return;
+            const pitchCanvasEl = document.getElementById('pitch-canvas');
+            if (!pitchCanvasEl) return;
+            const exportCtx = pitchCanvasEl.getContext('2d');
+            const w = pitchCanvasEl.width;
+            const h = pitchCanvasEl.height;
+            const fontSize = Math.round(h * 0.045);
+            const padding = Math.round(h * 0.02);
+            const barHeight = fontSize + padding * 2;
+            const barY = h - barHeight - Math.round(h * 0.12);
+
+            exportCtx.save();
+            exportCtx.fillStyle = 'rgba(15, 23, 42, 0.82)';
+            const barWidth = Math.min(w * 0.85, w);
+            const barX = (w - barWidth) / 2;
+            const radius = Math.round(h * 0.015);
+            exportCtx.beginPath();
+            exportCtx.roundRect(barX, barY, barWidth, barHeight, radius);
+            exportCtx.fill();
+
+            exportCtx.fillStyle = '#ffffff';
+            exportCtx.font = `bold ${fontSize}px 'Inter', sans-serif`;
+            exportCtx.textAlign = 'center';
+            exportCtx.textBaseline = 'middle';
+            exportCtx.fillText(captionText, w / 2, barY + barHeight / 2, barWidth - padding * 2);
+            exportCtx.restore();
+        }
 
         function recordLoop(timestamp) {
             if (!isRecording) return;
-            if (!startTime) startTime = timestamp;
-            const elapsed = timestamp - startTime;
-
-            if (hasMultiFrames) {
-                let currentFrameIdx = Math.floor(elapsed / durationPerFrame);
-                let progress = (elapsed % durationPerFrame) / durationPerFrame;
-
-                if (currentFrameIdx >= frames.length - 1) {
-                    isRecording = false;
-                    try {
-                        if (mediaRecorder.state !== 'inactive') {
-                            mediaRecorder.requestData();
-                            setTimeout(() => mediaRecorder.stop(), 150);
-                        }
-                    } catch (err) { mediaRecorder.stop(); }
+            if (!startTime) { 
+                startTime = timestamp; 
+                recFrameStartTime = timestamp; 
+                const initPause = getFramePause(0);
+                if (initPause > 0) {
+                    recPauseUntil = timestamp + initPause * 1000;
+                    const rawF = frames[0];
+                    const pauseObjs = Array.isArray(rawF) ? rawF : ((rawF && rawF.objects) || []);
+                    drawPitch(pauseObjs);
+                    drawCaptionOnCanvas(getFrameCaption(0));
+                    requestAnimationFrame(recordLoop);
                     return;
                 }
+            }
 
-                const rawCurrent = frames[currentFrameIdx];
-                const rawNext = frames[currentFrameIdx + 1];
+            // Handle pause at frame
+            if (recPauseUntil > 0 && timestamp < recPauseUntil) {
+                // Still paused: just keep drawing the current frame with caption
+                const rawF = frames[recFrameIdx];
+                const pauseObjs = Array.isArray(rawF) ? rawF : ((rawF && rawF.objects) || []);
+                drawPitch(pauseObjs);
+                drawCaptionOnCanvas(getFrameCaption(recFrameIdx));
+                requestAnimationFrame(recordLoop);
+                return;
+            }
+            if (recPauseUntil > 0) {
+                // Pause just ended, advance to interpolation
+                recPauseUntil = 0;
+                recFrameStartTime = timestamp;
+            }
+
+            if (hasMultiFrames) {
+                const frameElapsed = timestamp - recFrameStartTime;
+                let progress = frameElapsed / durationPerFrame;
+
+                if (progress >= 1) {
+                    recFrameIdx++;
+                    if (recFrameIdx >= frames.length - 1) {
+                        // Draw last frame with caption before stopping
+                        const lastRaw = frames[frames.length - 1];
+                        const lastObjs = Array.isArray(lastRaw) ? lastRaw : ((lastRaw && lastRaw.objects) || []);
+                        drawPitch(lastObjs);
+                        drawCaptionOnCanvas(getFrameCaption(frames.length - 1));
+
+                        isRecording = false;
+                        try {
+                            if (mediaRecorder.state !== 'inactive') {
+                                mediaRecorder.requestData();
+                                setTimeout(() => mediaRecorder.stop(), 150);
+                            }
+                        } catch (err) { mediaRecorder.stop(); }
+                        return;
+                    }
+
+                    // Check for pause at this frame
+                    const pauseSec = getFramePause(recFrameIdx);
+                    if (pauseSec > 0) {
+                        recPauseUntil = timestamp + pauseSec * 1000;
+                        const rawF = frames[recFrameIdx];
+                        const pauseObjs = Array.isArray(rawF) ? rawF : ((rawF && rawF.objects) || []);
+                        drawPitch(pauseObjs);
+                        drawCaptionOnCanvas(getFrameCaption(recFrameIdx));
+                        requestAnimationFrame(recordLoop);
+                        return;
+                    }
+
+                    recFrameStartTime = timestamp;
+                    progress = 0;
+                }
+
+                const rawCurrent = frames[recFrameIdx];
+                const rawNext = frames[recFrameIdx + 1];
                 const currentFrame = Array.isArray(rawCurrent) ? rawCurrent : ((rawCurrent && rawCurrent.objects) || []);
                 const nextFrame = Array.isArray(rawNext) ? rawNext : ((rawNext && rawNext.objects) || []);
                 const interpolatedObjects = currentFrame.map(obj1 => {
@@ -447,11 +775,20 @@ export function exportAnimationVideo() {
                     const p = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
 
                     if (typeof obj1.x !== 'undefined' && typeof obj1.y !== 'undefined') {
-                        return {
+                        const interpolatedObj = {
                             ...obj1,
                             x: obj1.x + (obj2.x - obj1.x) * p,
                             y: obj1.y + (obj2.y - obj1.y) * p
                         };
+                        if (typeof obj1.angle !== 'undefined' && typeof obj2.angle !== 'undefined') {
+                            let a1 = obj1.angle;
+                            let a2 = obj2.angle;
+                            let diff = a2 - a1;
+                            while (diff > 180) diff -= 360;
+                            while (diff < -180) diff += 360;
+                            interpolatedObj.angle = a1 + diff * p;
+                        }
+                        return interpolatedObj;
                     } else if (typeof obj1.x1 !== 'undefined') {
                         const res = {
                             ...obj1,
@@ -470,8 +807,11 @@ export function exportAnimationVideo() {
                 });
 
                 drawPitch(interpolatedObjects);
+                // Draw caption overlay for current frame during interpolation
+                drawCaptionOnCanvas(getFrameCaption(recFrameIdx));
             } else {
                 drawPitch(objects);
+                const elapsed = timestamp - startTime;
                 if (elapsed >= 2000) {
                     isRecording = false;
                     try {
@@ -840,6 +1180,76 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
                 targetCtx.fillRect(obj.x1 - s / 2, obj.y2 - s / 2, s, s);
                 targetCtx.fillRect(obj.x2 - s / 2, obj.y2 - s / 2, s, s);
             }
+        } else if (obj.type === 'vision') {
+            // 視野・扇形オブジェクト描画
+            const r = obj.radius || 60;
+            const angle = obj.angle || 0;
+            const fov = obj.fov || 60; // field of view angle in degrees (default 60°)
+            const halfFov = (fov / 2) * (Math.PI / 180);
+
+            targetCtx.save();
+            targetCtx.translate(obj.x, obj.y);
+            targetCtx.rotate((angle * Math.PI) / 180);
+
+            // 扇形の塗りつぶし（半透明）
+            targetCtx.beginPath();
+            targetCtx.moveTo(0, 0);
+            targetCtx.arc(0, 0, r, -Math.PI / 2 - halfFov, -Math.PI / 2 + halfFov);
+            targetCtx.closePath();
+            const visionColor = obj.color || '#38bdf8';
+            targetCtx.fillStyle = visionColor + '40'; // 25% opacity
+            targetCtx.fill();
+
+            // 扇形の輪郭（破線）
+            targetCtx.beginPath();
+            targetCtx.moveTo(0, 0);
+            targetCtx.arc(0, 0, r, -Math.PI / 2 - halfFov, -Math.PI / 2 + halfFov);
+            targetCtx.closePath();
+            targetCtx.strokeStyle = visionColor;
+            targetCtx.lineWidth = 1.5;
+            targetCtx.setLineDash([4, 3]);
+            targetCtx.stroke();
+            targetCtx.setLineDash([]);
+
+            targetCtx.restore();
+
+            if (typeof selectedObject !== 'undefined' && selectedObject === obj) {
+                const selAngleRad = (angle * Math.PI) / 180;
+                const halfFovRad = halfFov;
+
+                // 半径ハンドル（扇形の先端中央）
+                const rHx = obj.x + r * Math.sin(selAngleRad);
+                const rHy = obj.y - r * Math.cos(selAngleRad);
+
+                // FOVハンドル左右（扇形の左右端の弧上）
+                const fovLx = obj.x + r * Math.sin(selAngleRad - halfFovRad) * 0.7;
+                const fovLy = obj.y - r * Math.cos(selAngleRad - halfFovRad) * 0.7;
+                const fovRx = obj.x + r * Math.sin(selAngleRad + halfFovRad) * 0.7;
+                const fovRy = obj.y - r * Math.cos(selAngleRad + halfFovRad) * 0.7;
+
+                const drawHandle = (hx, hy, fillColor) => {
+                    targetCtx.beginPath();
+                    targetCtx.arc(hx, hy, 6, 0, Math.PI * 2);
+                    targetCtx.fillStyle = fillColor;
+                    targetCtx.fill();
+                    targetCtx.strokeStyle = '#ffffff';
+                    targetCtx.lineWidth = 1.5;
+                    targetCtx.stroke();
+                };
+
+                // 中心選択インジケータ
+                targetCtx.beginPath();
+                targetCtx.arc(obj.x, obj.y, 7, 0, Math.PI * 2);
+                targetCtx.strokeStyle = 'var(--primary)';
+                targetCtx.lineWidth = 2;
+                targetCtx.setLineDash([2, 2]);
+                targetCtx.stroke();
+                targetCtx.setLineDash([]);
+
+                drawHandle(rHx, rHy, '#10b981');   // 緑：半径ハンドル
+                drawHandle(fovLx, fovLy, '#f59e0b'); // 黄：FOV左ハンドル
+                drawHandle(fovRx, fovRy, '#f59e0b'); // 黄：FOV右ハンドル
+            }
         } else if (obj.type === 'marker') {
             targetCtx.save();
             targetCtx.translate(obj.x, obj.y);
@@ -1025,13 +1435,52 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
             targetCtx.rotate((angle * Math.PI) / 180);
 
+            // 前方の指向性ポイント（三角形）
             targetCtx.beginPath();
-            targetCtx.moveTo(-r * 0.45, -r * 1.05);
-            targetCtx.lineTo(0, -r * 1.55);
-            targetCtx.lineTo(r * 0.45, -r * 1.05);
+            targetCtx.moveTo(-r * 0.28, -r * 1.02);
+            targetCtx.lineTo(0, -r * 1.35);
+            targetCtx.lineTo(r * 0.28, -r * 1.02);
             targetCtx.closePath();
             targetCtx.fillStyle = mainColor;
             targetCtx.fill();
+
+            // 腕（Arms: 左右の肩から前方へ伸びるライン）
+            targetCtx.lineWidth = r * 0.32;
+            targetCtx.strokeStyle = mainColor;
+            targetCtx.lineCap = 'round';
+
+            // 左腕
+            targetCtx.beginPath();
+            targetCtx.moveTo(-r * 0.75, -r * 0.05);
+            targetCtx.lineTo(-r * 0.85, -r * 0.75);
+            targetCtx.stroke();
+
+            // 右腕
+            targetCtx.beginPath();
+            targetCtx.moveTo(r * 0.75, -r * 0.05);
+            targetCtx.lineTo(r * 0.85, -r * 0.75);
+            targetCtx.stroke();
+
+            // 手先（Hands: 体の向きを象徴する左右の手のグラフィック）
+            const handRadius = r * 0.28;
+
+            // 左手先
+            targetCtx.beginPath();
+            targetCtx.arc(-r * 0.85, -r * 0.8, handRadius, 0, Math.PI * 2);
+            targetCtx.fillStyle = '#ffdfc4';
+            targetCtx.fill();
+            targetCtx.strokeStyle = mainColor;
+            targetCtx.lineWidth = 1.2;
+            targetCtx.stroke();
+
+            // 右手先
+            targetCtx.beginPath();
+            targetCtx.arc(r * 0.85, -r * 0.8, handRadius, 0, Math.PI * 2);
+            targetCtx.fillStyle = '#ffdfc4';
+            targetCtx.fill();
+            targetCtx.strokeStyle = mainColor;
+            targetCtx.lineWidth = 1.2;
+            targetCtx.stroke();
 
             const grad = targetCtx.createRadialGradient(0, -r * 0.3, r * 0.1, 0, 0, r);
             grad.addColorStop(0, '#311096');
@@ -1193,7 +1642,7 @@ function getHiDPIScale() {
     return Math.max(window.devicePixelRatio || 1, 2);
 }
 
-function drawPitchBackground() {
+export function drawPitchBackground() {
     bgCanvas = document.getElementById('pitch-bg-canvas');
     if (!bgCanvas) return;
     bgCtx = bgCanvas.getContext('2d');
@@ -1214,6 +1663,162 @@ function drawPitchBackground() {
     drawPitchToCtx([], bgCanvas, bgCtx, template);
 }
 
+let activeSnapLines = { v: null, h: null };
+
+export function drawTrajectoryTrailOnUI() {
+    if (!selectedObject || !frames || frames.length <= 1 || !uiCtx) return;
+
+    const selId = selectedObject.id;
+    const selX = typeof selectedObject.x !== 'undefined' ? selectedObject.x : selectedObject.x1;
+    const selY = typeof selectedObject.y !== 'undefined' ? selectedObject.y : selectedObject.y1;
+    if (typeof selX === 'undefined' || typeof selY === 'undefined') return;
+
+    const points = [];
+
+    frames.forEach((f, fIdx) => {
+        const frameObjs = (Array.isArray(f) ? f : (f.objects || []));
+        let match = null;
+        if (selId) {
+            match = frameObjs.find(o => o && o.id === selId);
+        }
+        if (!match && typeof selectedObject.number !== 'undefined') {
+            match = frameObjs.find(o => o && o.type === selectedObject.type && o.number === selectedObject.number);
+        }
+        if (!match) {
+            match = frameObjs.find(o => {
+                if (!o) return false;
+                const ox = typeof o.x !== 'undefined' ? o.x : o.x1;
+                const oy = typeof o.y !== 'undefined' ? o.y : o.y1;
+                return o.type === selectedObject.type && typeof ox !== 'undefined' && Math.abs(ox - selX) < 40 && Math.abs(oy - selY) < 40;
+            });
+        }
+
+        if (match) {
+            const ptX = typeof match.x !== 'undefined' ? match.x : match.x1;
+            const ptY = typeof match.y !== 'undefined' ? match.y : match.y1;
+            if (typeof ptX !== 'undefined' && typeof ptY !== 'undefined') {
+                points.push({ x: ptX, y: ptY, frameIdx: fIdx });
+            }
+        }
+    });
+
+    if (points.length <= 1) return;
+
+    const dpr = getHiDPIScale();
+    uiCtx.save();
+    uiCtx.scale(dpr, dpr);
+
+    uiCtx.beginPath();
+    uiCtx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+        uiCtx.lineTo(points[i].x, points[i].y);
+    }
+    uiCtx.strokeStyle = '#06b6d4';
+    uiCtx.lineWidth = 2.5;
+    uiCtx.setLineDash([6, 4]);
+    uiCtx.stroke();
+    uiCtx.setLineDash([]);
+
+    points.forEach((pt) => {
+        uiCtx.beginPath();
+        uiCtx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+        uiCtx.fillStyle = '#06b6d4';
+        uiCtx.fill();
+        uiCtx.strokeStyle = '#ffffff';
+        uiCtx.lineWidth = 1.5;
+        uiCtx.stroke();
+
+        uiCtx.fillStyle = '#0f172a';
+        uiCtx.fillRect(pt.x - 11, pt.y - 20, 22, 12);
+        uiCtx.strokeStyle = '#06b6d4';
+        uiCtx.lineWidth = 1;
+        uiCtx.strokeRect(pt.x - 11, pt.y - 20, 22, 12);
+
+        uiCtx.fillStyle = '#ffffff';
+        uiCtx.font = 'bold 8px sans-serif';
+        uiCtx.textAlign = 'center';
+        uiCtx.textBaseline = 'middle';
+        uiCtx.fillText(`S${pt.frameIdx + 1}`, pt.x, pt.y - 14);
+    });
+
+    uiCtx.restore();
+}
+
+export function drawSnapGuidesOnUI() {
+    if ((activeSnapLines.v === null && activeSnapLines.h === null) || !uiCtx) return;
+    const dpr = getHiDPIScale();
+    uiCtx.save();
+    uiCtx.scale(dpr, dpr);
+
+    uiCtx.strokeStyle = '#06b6d4';
+    uiCtx.lineWidth = 1.5;
+    uiCtx.setLineDash([4, 4]);
+
+    if (activeSnapLines.v !== null) {
+        uiCtx.beginPath();
+        uiCtx.moveTo(activeSnapLines.v, 0);
+        uiCtx.lineTo(activeSnapLines.v, 500);
+        uiCtx.stroke();
+    }
+    if (activeSnapLines.h !== null) {
+        uiCtx.beginPath();
+        uiCtx.moveTo(0, activeSnapLines.h);
+        uiCtx.lineTo(800, activeSnapLines.h);
+        uiCtx.stroke();
+    }
+
+    uiCtx.setLineDash([]);
+    uiCtx.restore();
+}
+
+export function applySmartMagnetSnap(obj, x, y) {
+    activeSnapLines = { v: null, h: null };
+    if (!obj || typeof x === 'undefined' || typeof y === 'undefined') return { x, y };
+    const tolerance = 8;
+    let finalX = x;
+    let finalY = y;
+
+    objects.forEach(other => {
+        if (!other || other === obj) return;
+        const otherX = typeof other.x !== 'undefined' ? other.x : (typeof other.x1 !== 'undefined' ? other.x1 : null);
+        const otherY = typeof other.y !== 'undefined' ? other.y : (typeof other.y1 !== 'undefined' ? other.y1 : null);
+
+        if (otherX !== null && Math.abs(otherX - x) < tolerance) {
+            finalX = otherX;
+            activeSnapLines.v = otherX;
+        }
+        if (otherY !== null && Math.abs(otherY - y) < tolerance) {
+            finalY = otherY;
+            activeSnapLines.h = otherY;
+        }
+    });
+
+    return { x: finalX, y: finalY };
+}
+
+export function drawPitchUI() {
+    uiCanvas = document.getElementById('pitch-ui-canvas');
+    if (!uiCanvas) return;
+    uiCtx = uiCanvas.getContext('2d');
+    if (!uiCtx) return;
+
+    const dpr = getHiDPIScale();
+    const targetW = 800 * dpr;
+    const targetH = 500 * dpr;
+
+    if (uiCanvas.width !== targetW || uiCanvas.height !== targetH) {
+        uiCanvas.width = targetW;
+        uiCanvas.height = targetH;
+    }
+
+    uiCtx.save();
+    uiCtx.clearRect(0, 0, uiCanvas.width, uiCanvas.height);
+    uiCtx.restore();
+
+    drawTrajectoryTrailOnUI();
+    drawSnapGuidesOnUI();
+}
+
 export function drawPitch(renderObjects) {
     canvas = document.getElementById('pitch-canvas');
     if (!canvas) return;
@@ -1231,6 +1836,7 @@ export function drawPitch(renderObjects) {
 
     drawPitchBackground();
     drawPitchToCtx(renderObjects, canvas, ctx, 'blank');
+    drawPitchUI();
     updateCanvasToolbar();
 }
 
@@ -1337,6 +1943,8 @@ function updateContextPopover() {
         objectRadiusInPixels = 8 * scaleY;
     } else if (selectedObject.type === 'cone') {
         objectRadiusInPixels = 12 * scaleY;
+    } else if (selectedObject.type === 'vision') {
+        objectRadiusInPixels = (selectedObject.radius || 60) * scaleY;
     } else if (selectedObject.type === 'minigoal') {
         let scale = selectedObject.goalScale || 1.0;
         if (!selectedObject.goalScale) {
@@ -1512,6 +2120,7 @@ function getCanvasPos(e) {
     if (!targetCanvas) return { x: 0, y: 0 };
 
     const rect = targetCanvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return { x: 0, y: 0 };
     let clientX = e.clientX;
     let clientY = e.clientY;
 
@@ -1540,6 +2149,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
     canvas.width = 800 * dpr;
     canvas.height = 500 * dpr;
 
+    currentBgTemplate = null;
     if (bgCanvas) {
         bgCanvas.width = 800 * dpr;
         bgCanvas.height = 500 * dpr;
@@ -1551,10 +2161,12 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
     currentMatchId = params && params.matchId ? params.matchId : null;
     currentFormationId = params && params.formId ? params.formId : null;
     currentLibraryId = params && params.libraryId ? params.libraryId : null;
+    let currentTacticId = params && params.tacticId ? params.tacticId : null;
 
     let initialFrames = null;
     let isFormationMode = !!(currentMatchId && currentFormationId);
     let isLibraryMode = !!currentLibraryId;
+    let isTacticsMode = !!currentTacticId;
     let targetMenu = null;
 
     if (currentPracticeId && currentMenuId) {
@@ -1580,6 +2192,11 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         if (targetMenu && targetMenu.frames) {
             initialFrames = JSON.parse(JSON.stringify(targetMenu.frames));
         }
+    } else if (isTacticsMode) {
+        const tactic = state.tactics ? state.tactics.find(t => String(t.id) === String(currentTacticId)) : null;
+        if (tactic && tactic.frames) {
+            initialFrames = JSON.parse(JSON.stringify(tactic.frames));
+        }
     }
 
     ctx = canvas.getContext('2d');
@@ -1597,7 +2214,11 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
 
     // ★ 保存されたピッチテンプレートの初期読込 & Reflect
     let savedTemplate = 'full';
-    if (targetMenu && targetMenu.pitchTemplate) {
+    let targetTactic = isTacticsMode ? (state.tactics ? state.tactics.find(t => String(t.id) === String(currentTacticId)) : null) : null;
+
+    if (targetTactic && targetTactic.pitchTemplate) {
+        savedTemplate = targetTactic.pitchTemplate;
+    } else if (targetMenu && targetMenu.pitchTemplate) {
         savedTemplate = targetMenu.pitchTemplate;
     } else if (isFormationMode) {
         const match = state.matches.find(m => m.id === currentMatchId);
@@ -1613,15 +2234,19 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         templateSel.value = savedTemplate;
         templateSel.onchange = () => {
             isDirty = true;
+            drawPitchBackground(true);
             drawPitch(objects);
         };
     }
+    drawPitchBackground(true);
 
     // テーマタイトルの反映
     const titleEl = document.getElementById('anim-menu-focus');
     if (titleEl) {
         if (targetMenu && (targetMenu.focus || targetMenu.name)) {
             titleEl.textContent = targetMenu.focus || targetMenu.name;
+        } else if (targetTactic && targetTactic.title) {
+            titleEl.textContent = targetTactic.title;
         } else if (isFormationMode) {
             titleEl.textContent = 'フォーメーション作図';
         } else {
@@ -1640,12 +2265,37 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         const sideKf = document.getElementById('side-info-keyfactor');
         const sideOpt = document.getElementById('side-info-options');
 
+        const lblSideTitle = document.getElementById('anim-side-panel-title');
+        const lblSideFocus = document.getElementById('lbl-side-focus');
+        const lblSideOrg = document.getElementById('lbl-side-org');
+        const lblSideKf = document.getElementById('lbl-side-kf');
+        const cardSideOpt = document.getElementById('side-card-opt');
+
         if (targetMenu) {
+            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細';
+            if (lblSideFocus) lblSideFocus.innerHTML = '<i class="fa-solid fa-bullseye" style="color:var(--primary);"></i> テーマ・フォーカス';
+            if (lblSideOrg) lblSideOrg.innerHTML = '<i class="fa-solid fa-users" style="color:#3b82f6;"></i> オーガナイズ';
+            if (lblSideKf) lblSideKf.innerHTML = '<i class="fa-solid fa-key" style="color:#eab308;"></i> キーファクター';
+            if (cardSideOpt) cardSideOpt.style.display = 'block';
+
             if (sideFocus) sideFocus.textContent = targetMenu.focus || targetMenu.name || '未設定';
             if (sideOrg) sideOrg.textContent = targetMenu.organize || 'なし';
             if (sideKf) sideKf.textContent = targetMenu.keyfactor || 'なし';
             if (sideOpt) sideOpt.textContent = targetMenu.options || 'なし';
+        } else if (targetTactic) {
+            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-chess-board" style="color:var(--primary);"></i> 戦術詳細';
+            if (lblSideFocus) lblSideFocus.innerHTML = '<i class="fa-solid fa-heading" style="color:var(--primary);"></i> 戦術名';
+            if (lblSideOrg) lblSideOrg.innerHTML = '<i class="fa-solid fa-tags" style="color:#3b82f6;"></i> カテゴリ';
+            if (lblSideKf) lblSideKf.innerHTML = '<i class="fa-solid fa-align-left" style="color:#eab308;"></i> 説明';
+            if (cardSideOpt) cardSideOpt.style.display = 'none';
+
+            if (sideFocus) sideFocus.textContent = targetTactic.title || '未設定';
+            if (sideOrg) sideOrg.textContent = targetTactic.category || 'その他';
+            if (sideKf) sideKf.textContent = targetTactic.description || 'なし';
         } else {
+            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細';
+            if (cardSideOpt) cardSideOpt.style.display = 'block';
+
             if (sideFocus) sideFocus.textContent = '未設定';
             if (sideOrg) sideOrg.textContent = 'なし';
             if (sideKf) sideKf.textContent = 'なし';
@@ -1670,12 +2320,9 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 }
             }
         };
-        boundListeners.docClickOutside = closeSidebarOutside;
         setTimeout(() => {
-            if (boundListeners.docClickOutside) {
-                document.addEventListener('click', closeSidebarOutside);
-                document.addEventListener('touchstart', closeSidebarOutside);
-            }
+            registerListener('drawing.canvas', document, 'click', closeSidebarOutside);
+            registerListener('drawing.canvas', document, 'touchstart', closeSidebarOutside);
         }, 0);
 
         // Keyboard shortcuts and Escape key
@@ -1752,35 +2399,288 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             }
         };
 
-        document.addEventListener('keydown', handleKeyDown);
-        document.addEventListener('keyup', handleKeyUp);
-        boundListeners.docKeyDown = handleKeyDown;
-        boundListeners.docKeyUp = handleKeyUp;
+        registerListener('drawing.canvas', document, 'keydown', handleKeyDown);
+        registerListener('drawing.canvas', document, 'keyup', handleKeyUp);
     }
 
-    // 設定ポップオーバー開閉
+    // ★ 戦術モード時のツールドック制御
+    const animContainer = document.querySelector('.anim-app-container');
+    if (animContainer) {
+        if (isTacticsMode) {
+            animContainer.classList.add('is-tactics-mode');
+        } else {
+            animContainer.classList.remove('is-tactics-mode');
+        }
+    }
+
+    // ポップオーバー要素の取得
     const settingsBtn = document.getElementById('anim-settings-btn');
     const settingsPopover = document.getElementById('anim-settings-popover');
+    const teamColorsBtn = document.getElementById('anim-team-colors-btn');
+    const teamColorsPopover = document.getElementById('anim-team-colors-popover');
+    const bulkFormationBtn = document.getElementById('anim-bulk-formation-btn');
+    const bulkFormationPopover = document.getElementById('anim-bulk-formation-popover');
+    const inputHomeColor = document.getElementById('input-home-team-color');
+    const inputAwayColor = document.getElementById('input-away-team-color');
+
+    let homeTeamColor = (inputHomeColor && inputHomeColor.value) || '#f23932';
+    let awayTeamColor = (inputAwayColor && inputAwayColor.value) || '#2563eb';
+
+    // ポップオーバー開閉ハンドラの個別登録
     if (settingsBtn && settingsPopover) {
         settingsBtn.onclick = (e) => {
+            e.preventDefault();
             e.stopPropagation();
-            settingsPopover.classList.toggle('hidden');
-        };
-        document.addEventListener('click', (e) => {
-            if (settingsPopover && !settingsPopover.contains(e.target) && e.target !== settingsBtn) {
+            const isHidden = settingsPopover.classList.contains('hidden');
+            if (teamColorsPopover) teamColorsPopover.classList.add('hidden');
+            if (bulkFormationPopover) bulkFormationPopover.classList.add('hidden');
+            if (isHidden) {
+                settingsPopover.classList.remove('hidden');
+            } else {
                 settingsPopover.classList.add('hidden');
             }
+        };
+    }
+
+    if (teamColorsBtn && teamColorsPopover) {
+        teamColorsBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const isHidden = teamColorsPopover.classList.contains('hidden');
+            if (settingsPopover) settingsPopover.classList.add('hidden');
+            if (bulkFormationPopover) bulkFormationPopover.classList.add('hidden');
+            if (isHidden) {
+                teamColorsPopover.classList.remove('hidden');
+            } else {
+                teamColorsPopover.classList.add('hidden');
+            }
+        };
+    }
+
+    if (bulkFormationBtn && bulkFormationPopover) {
+        const selectHomeBulk = document.getElementById('select-bulk-home-formation');
+        const selectAwayBulk = document.getElementById('select-bulk-away-formation');
+        const selectTeamMode = document.getElementById('select-bulk-team-mode');
+        const wrapHome = document.getElementById('wrapper-bulk-home-formation');
+        const wrapAway = document.getElementById('wrapper-bulk-away-formation');
+
+        let opts = `
+            <option value="3-3-1">3-3-1 (8人制標準)</option>
+            <option value="2-4-1">2-4-1 (8人制)</option>
+            <option value="3-2-2">3-2-2 (8人制)</option>
+            <option value="2-3-2">2-3-2 (8人制)</option>
+            <option value="4-4-2">4-4-2 (11人制)</option>
+            <option value="4-3-3">4-3-3 (11人制)</option>
+        `;
+        if (state.customFormations && state.customFormations.length > 0) {
+            state.customFormations.forEach((cf, idx) => {
+                opts += `<option value="custom_${idx}">カスタム: ${escapeHtml(cf.name)}</option>`;
+            });
+        }
+        if (selectHomeBulk) selectHomeBulk.innerHTML = opts;
+        if (selectAwayBulk) selectAwayBulk.innerHTML = opts;
+
+        if (selectTeamMode) {
+            selectTeamMode.onchange = () => {
+                const mode = selectTeamMode.value;
+                if (mode === 'both') {
+                    if (wrapHome) wrapHome.style.display = 'block';
+                    if (wrapAway) wrapAway.style.display = 'block';
+                } else if (mode === 'home') {
+                    if (wrapHome) wrapHome.style.display = 'block';
+                    if (wrapAway) wrapAway.style.display = 'none';
+                } else if (mode === 'away') {
+                    if (wrapHome) wrapHome.style.display = 'none';
+                    if (wrapAway) wrapAway.style.display = 'block';
+                }
+            };
+        }
+
+        bulkFormationBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const isHidden = bulkFormationPopover.classList.contains('hidden');
+            if (settingsPopover) settingsPopover.classList.add('hidden');
+            if (teamColorsPopover) teamColorsPopover.classList.add('hidden');
+            if (isHidden) {
+                bulkFormationPopover.classList.remove('hidden');
+            } else {
+                bulkFormationPopover.classList.add('hidden');
+            }
+        };
+    }
+
+    // 全ポップオーバー共通の画面外クリック判定
+    const closeAllPopoversOutside = (e) => {
+        if (settingsPopover && !settingsPopover.contains(e.target) && settingsBtn && !settingsBtn.contains(e.target)) {
+            settingsPopover.classList.add('hidden');
+        }
+        if (teamColorsPopover && !teamColorsPopover.contains(e.target) && teamColorsBtn && !teamColorsBtn.contains(e.target)) {
+            teamColorsPopover.classList.add('hidden');
+        }
+        if (bulkFormationPopover && !bulkFormationPopover.contains(e.target) && bulkFormationBtn && !bulkFormationBtn.contains(e.target)) {
+            bulkFormationPopover.classList.add('hidden');
+        }
+    };
+    registerListener('drawing.canvas', document, 'click', closeAllPopoversOutside);
+
+    // チームカラー変更処理
+    if (inputHomeColor) {
+        inputHomeColor.onchange = (e) => {
+            const oldColor = homeTeamColor;
+            homeTeamColor = e.target.value;
+            updateTeamColorsOnCanvas('home', oldColor, homeTeamColor);
+        };
+    }
+    if (inputAwayColor) {
+        inputAwayColor.onchange = (e) => {
+            const oldColor = awayTeamColor;
+            awayTeamColor = e.target.value;
+            updateTeamColorsOnCanvas('away', oldColor, awayTeamColor);
+        };
+    }
+
+    document.querySelectorAll('.btn-color-preset').forEach(btn => {
+        btn.onclick = (e) => {
+            const home = e.currentTarget.dataset.home;
+            const away = e.currentTarget.dataset.away;
+            if (home && away) {
+                const oldHome = homeTeamColor;
+                const oldAway = awayTeamColor;
+                homeTeamColor = home;
+                awayTeamColor = away;
+                if (inputHomeColor) inputHomeColor.value = home;
+                if (inputAwayColor) inputAwayColor.value = away;
+                updateTeamColorsOnCanvas('home', oldHome, homeTeamColor);
+                updateTeamColorsOnCanvas('away', oldAway, awayTeamColor);
+                showToast('チームカラーを変更しました');
+            }
+        };
+    });
+
+    function updateTeamColorsOnCanvas(teamType, oldColor, newColor) {
+        let changed = false;
+        objects.forEach(obj => {
+            if (obj.type === 'player') {
+                if (obj.team === teamType || obj.color === oldColor) {
+                    obj.color = newColor;
+                    obj.team = teamType;
+                    changed = true;
+                }
+            }
         });
+        if (changed) {
+            isDirty = true;
+            saveHistory();
+            drawPitch(objects);
+        }
+    }
+
+    // フォーメーション一括配置実行処理
+    const btnApplyBulk = document.getElementById('btn-apply-bulk-formation');
+    if (btnApplyBulk) {
+        btnApplyBulk.onclick = () => {
+            const selectHome = document.getElementById('select-bulk-home-formation');
+            const selectAway = document.getElementById('select-bulk-away-formation');
+            const homeKey = selectHome ? selectHome.value : '3-3-1';
+            const awayKey = selectAway ? selectAway.value : '3-3-1';
+            const teamMode = document.getElementById('select-bulk-team-mode') ? document.getElementById('select-bulk-team-mode').value : 'both';
+            const pitchTemplateSel = document.getElementById('canvas-pitch-template');
+            const template = pitchTemplateSel ? pitchTemplateSel.value : 'full';
+
+            applyBulkFormationToCanvas(homeKey, awayKey, teamMode, template);
+            if (bulkFormationPopover) bulkFormationPopover.classList.add('hidden');
+        };
+    }
+
+    function getFormationList(formationKey) {
+        return getFormationPlayerList(formationKey, state.customFormations);
+    }
+
+    function applyBulkFormationToCanvas(homeKey, awayKey, teamMode, template) {
+        if (teamMode === 'both') {
+            objects = objects.filter(o => o.type !== 'player');
+        } else if (teamMode === 'home') {
+            objects = objects.filter(o => o.type !== 'player' || o.team !== 'home');
+        } else if (teamMode === 'away') {
+            objects = objects.filter(o => o.type !== 'player' || o.team !== 'away');
+        }
+
+        const minX = 40, maxX = 760;
+        const minY = 30, maxY = 470;
+        const pWidth = maxX - minX;
+        const pHeight = maxY - minY;
+
+        if (teamMode === 'home' || teamMode === 'both') {
+            const homeList = getFormationList(homeKey);
+            homeList.forEach(p => {
+                let cx, cy, angle = 90;
+                if (template === 'half' || template === 'half-bottom') {
+                    cx = minX + p.y * pWidth;
+                    cy = maxY - p.x * pHeight;
+                    angle = 0;
+                } else {
+                    cx = minX + p.x * pWidth * 0.48;
+                    cy = minY + p.y * pHeight;
+                    angle = 90;
+                }
+                objects.push({
+                    id: objectIdCounter++,
+                    type: 'player',
+                    team: 'home',
+                    x: Math.round(cx),
+                    y: Math.round(cy),
+                    radius: 14,
+                    color: homeTeamColor,
+                    number: p.num,
+                    angle: angle
+                });
+            });
+        }
+
+        if (teamMode === 'away' || teamMode === 'both') {
+            const awayList = getFormationList(awayKey);
+            awayList.forEach(p => {
+                let cx, cy, angle = 270;
+                if (template === 'half' || template === 'half-bottom') {
+                    cx = minX + (1 - p.y) * pWidth;
+                    cy = minY + p.x * pHeight * 0.7;
+                    angle = 180;
+                } else {
+                    cx = maxX - p.x * pWidth * 0.48;
+                    cy = maxY - p.y * pHeight;
+                    angle = 270;
+                }
+                objects.push({
+                    id: objectIdCounter++,
+                    type: 'player',
+                    team: 'away',
+                    x: Math.round(cx),
+                    y: Math.round(cy),
+                    radius: 14,
+                    color: awayTeamColor,
+                    number: p.num,
+                    angle: angle
+                });
+            });
+        }
+
+        isDirty = true;
+        saveHistory();
+        drawPitch(objects);
+        showToast('フォーメーションを一括配置しました');
     }
 
     // ★ タイムラインバーの隠す/開くトグル復元
     const timelineToggleBtn = document.getElementById('anim-timeline-toggle');
     const timelineBar = document.getElementById('anim-timeline-bar');
+    const filmstripWrapper = document.getElementById('filmstrip-timeline-wrapper');
     if (timelineToggleBtn && timelineBar) {
         timelineToggleBtn.onclick = (e) => {
             e.stopPropagation();
             const isCollapsed = timelineBar.classList.toggle('collapsed');
-            timelineToggleBtn.innerHTML = isCollapsed ? '<i class="fa-solid fa-chevron-up"></i>' : '<i class="fa-solid fa-chevron-down"></i>';
+            if (filmstripWrapper) filmstripWrapper.classList.toggle('collapsed', isCollapsed);
+            timelineToggleBtn.innerHTML = isCollapsed ? '<i class="fa-solid fa-film"></i>' : '<i class="fa-solid fa-chevron-down"></i>';
         };
     }
 
@@ -1788,7 +2688,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
     drawPitch(objects);
 
     // ★ ツールドック（ボタン）のイベント登録
-    const tools = ['select', 'player', 'ball', 'marker', 'cone', 'ladder', 'minigoal', 'line-rect', 'line-circle', 'text', 'line-move', 'line-pass', 'line-dribble'];
+    const tools = ['select', 'player', 'ball', 'marker', 'cone', 'ladder', 'minigoal', 'line-rect', 'line-circle', 'vision', 'text', 'line-move', 'line-pass', 'line-dribble'];
     tools.forEach(tool => {
         const el = document.querySelector(`.tool-btn[data-tool="${tool}"]`);
         if (!el) return;
@@ -1971,6 +2871,8 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         newBtn.addEventListener('click', exportAnimationVideo);
     }
 
+    initQuickDrawerEvents();
+
     // 保存ボタン
     const btnSave = document.getElementById('anim-save');
     if (btnSave) {
@@ -2055,6 +2957,25 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                     showToast('作図を保存しました');
                     if (typeof navigateFunc === 'function') navigateFunc('library');
                 }
+            } else if (isTacticsMode) {
+                const tactic = state.tactics ? state.tactics.find(t => String(t.id) === String(currentTacticId)) : null;
+                if (tactic) {
+                    if (frames.length === 0) {
+                        frames.push({ objects: JSON.parse(JSON.stringify(objects)), title: '' });
+                    } else {
+                        if (Array.isArray(frames[currentFrameIndex])) {
+                            frames[currentFrameIndex] = { objects: JSON.parse(JSON.stringify(objects)), title: '' };
+                        } else {
+                            frames[currentFrameIndex].objects = JSON.parse(JSON.stringify(objects));
+                        }
+                    }
+                    tactic.frames = JSON.parse(JSON.stringify(frames));
+                    tactic.pitchTemplate = pitchTemplateVal;
+                    isDirty = false;
+                    if (window.saveData) window.saveData();
+                    showToast('戦術の作図を保存しました');
+                    if (typeof navigateFunc === 'function') navigateFunc('tactics');
+                }
             }
         };
     }
@@ -2072,14 +2993,15 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 if (typeof navigateFunc === 'function') navigateFunc('matches');
             } else if (isLibraryMode) {
                 if (typeof navigateFunc === 'function') navigateFunc('library');
+            } else if (isTacticsMode) {
+                if (typeof navigateFunc === 'function') navigateFunc('tactics');
             } else {
                 if (typeof navigateFunc === 'function') navigateFunc('practices');
             }
         };
     }
 
-    // ★ 全オブジェクトの配置・ドラッグ・描画イベントハンドラ（完全復元）
-    boundListeners.canvasMouseDown = (e) => {
+    const handleMouseDown = (e) => {
         if (isPlaying) return;
         const pos = getCanvasPos(e);
         let x = pos.x;
@@ -2100,6 +3022,34 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                     if (Math.abs(x - (prevSelected.x + selR)) <= s && Math.abs(y - prevSelected.y) <= s) { isResizing = true; resizeHandle = 'goal-e'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
                     if (Math.abs(x - prevSelected.x) <= s && Math.abs(y - (prevSelected.y - selR)) <= s) { isResizing = true; resizeHandle = 'goal-n'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
                     if (Math.abs(x - prevSelected.x) <= s && Math.abs(y - (prevSelected.y + selR)) <= s) { isResizing = true; resizeHandle = 'goal-s'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
+                } else if (prevSelected.type === 'vision') {
+                    const vAngleRad = ((prevSelected.angle || 0) * Math.PI) / 180;
+                    const vR = prevSelected.radius || 60;
+                    const vHalfFov = ((prevSelected.fov || 60) / 2) * (Math.PI / 180);
+                    const s = 18;
+
+                    const rHx = prevSelected.x + vR * Math.sin(vAngleRad);
+                    const rHy = prevSelected.y - vR * Math.cos(vAngleRad);
+                    if (Math.abs(x - rHx) <= s && Math.abs(y - rHy) <= s) {
+                        isResizing = true; resizeHandle = 'vision-radius';
+                        draggedObject = prevSelected; selectedObject = prevSelected;
+                        drawPitch(objects); return;
+                    }
+
+                    const fovLx = prevSelected.x + vR * Math.sin(vAngleRad - vHalfFov) * 0.7;
+                    const fovLy = prevSelected.y - vR * Math.cos(vAngleRad - vHalfFov) * 0.7;
+                    const fovRx = prevSelected.x + vR * Math.sin(vAngleRad + vHalfFov) * 0.7;
+                    const fovRy = prevSelected.y - vR * Math.cos(vAngleRad + vHalfFov) * 0.7;
+                    if (Math.abs(x - fovLx) <= s && Math.abs(y - fovLy) <= s) {
+                        isResizing = true; resizeHandle = 'vision-fov-left';
+                        draggedObject = prevSelected; selectedObject = prevSelected;
+                        drawPitch(objects); return;
+                    }
+                    if (Math.abs(x - fovRx) <= s && Math.abs(y - fovRy) <= s) {
+                        isResizing = true; resizeHandle = 'vision-fov-right';
+                        draggedObject = prevSelected; selectedObject = prevSelected;
+                        drawPitch(objects); return;
+                    }
                 } else if (prevSelected.type === 'rect' || prevSelected.type === 'circle') {
                     const s = 18;
                     if (Math.abs(x - prevSelected.x1) <= s && Math.abs(y - prevSelected.y1) <= s) { isResizing = true; resizeHandle = 'nw'; draggedObject = prevSelected; selectedObject = prevSelected; drawPitch(objects); return; }
@@ -2197,6 +3147,19 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                         ctx.font = 'bold 14px Inter, sans-serif';
                         const tw = ctx.measureText(obj.text || '').width;
                         isHit = Math.abs(dx) <= tw / 2 + 5 && Math.abs(dy) <= 15;
+                    } else if (obj.type === 'vision') {
+                        const distFromCenter = Math.sqrt(dx * dx + dy * dy);
+                        if (distFromCenter <= 20) {
+                            isHit = true;
+                        } else if (distFromCenter <= (obj.radius || 60) + 5) {
+                            const vAngleRad = ((obj.angle || 0) * Math.PI) / 180;
+                            const clickAngle = Math.atan2(dx, -dy);
+                            let diffAngle = clickAngle - vAngleRad;
+                            while (diffAngle > Math.PI) diffAngle -= Math.PI * 2;
+                            while (diffAngle < -Math.PI) diffAngle += Math.PI * 2;
+                            const halfFovRad = ((obj.fov || 60) / 2) * (Math.PI / 180);
+                            isHit = Math.abs(diffAngle) <= halfFovRad;
+                        }
                     } else if (obj.type === 'minigoal') {
                         const scale = obj.goalScale || 1.0;
                         const gw = 30 * scale;
@@ -2234,6 +3197,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             if (currentTool === 'marker') { color = '#f97316'; radius = 8; type = 'marker'; }
             if (currentTool === 'cone') { color = '#facc15'; radius = 10; type = 'cone'; }
             if (currentTool === 'minigoal') { color = '#ffffff'; radius = 15; type = 'minigoal'; }
+            if (currentTool === 'vision') { color = '#38bdf8'; radius = 60; type = 'vision'; }
             if (currentTool === 'text') { color = '#000000'; radius = 0; type = 'text'; }
 
             if (type) {
@@ -2287,14 +3251,30 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         }
     };
 
-    boundListeners.canvasMouseMove = (e) => {
+    const handleMouseMove = (e) => {
         if (isPlaying) return;
         const pos = getCanvasPos(e);
         const x = pos.x;
         const y = pos.y;
 
         if (draggedObject) {
-            if (isResizing && draggedObject.type === 'minigoal') {
+            if (isResizing && draggedObject.type === 'vision') {
+                const dx = x - draggedObject.x;
+                const dy = y - draggedObject.y;
+                if (resizeHandle === 'vision-radius') {
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    draggedObject.radius = Math.max(20, Math.min(300, Math.round(dist)));
+                } else if (resizeHandle === 'vision-fov-left' || resizeHandle === 'vision-fov-right') {
+                    const vAngleRad = ((draggedObject.angle || 0) * Math.PI) / 180;
+                    const forwardX = Math.sin(vAngleRad);
+                    const forwardY = -Math.cos(vAngleRad);
+                    const dragAngle = Math.atan2(dx, -dy);
+                    const forwardAngle = Math.atan2(forwardX, forwardY);
+                    let diffDeg = Math.abs((dragAngle - forwardAngle) * (180 / Math.PI));
+                    if (diffDeg > 180) diffDeg = 360 - diffDeg;
+                    draggedObject.fov = Math.max(10, Math.min(270, Math.round(diffDeg * 2)));
+                }
+            } else if (isResizing && draggedObject.type === 'minigoal') {
                 const dist = Math.sqrt(Math.pow(x - draggedObject.x, 2) + Math.pow(y - draggedObject.y, 2));
                 const newScale = Math.max(0.4, Math.min(3.5, dist / 21));
                 draggedObject.goalScale = parseFloat(newScale.toFixed(2));
@@ -2345,8 +3325,9 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 }
                 startX = x; startY = y;
             } else {
-                draggedObject.x = applyGridSnap(x);
-                draggedObject.y = applyGridSnap(y);
+                const snapped = applySmartMagnetSnap(draggedObject, applyGridSnap(x), applyGridSnap(y));
+                draggedObject.x = snapped.x;
+                draggedObject.y = snapped.y;
             }
             drawPitch(objects);
         } else if (isDrawing && currentTool && (currentTool.startsWith('line-') || currentTool === 'ladder')) {
@@ -2364,13 +3345,14 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         }
     };
 
-    boundListeners.canvasMouseUp = (e) => {
+    const handleMouseUp = (e) => {
         if (isPlaying) return;
         if (draggedObject) {
             saveHistory();
             draggedObject = null;
             isResizing = false;
             resizeHandle = null;
+            activeSnapLines = { v: null, h: null };
             drawPitch(objects);
         } else if (isDrawing && currentTool && (currentTool.startsWith('line-') || currentTool === 'ladder')) {
             const pos = getCanvasPos(e);
@@ -2412,7 +3394,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         }
     };
 
-    boundListeners.canvasDblClick = (e) => {
+    const handleDoubleClick = (e) => {
         if (isPlaying) return;
         const pos = getCanvasPos(e);
         for (let i = objects.length - 1; i >= 0; i--) {
@@ -2447,10 +3429,10 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         }
     };
 
-    canvas.addEventListener('mousedown', boundListeners.canvasMouseDown);
-    canvas.addEventListener('mousemove', boundListeners.canvasMouseMove);
-    canvas.addEventListener('mouseup', boundListeners.canvasMouseUp);
-    canvas.addEventListener('dblclick', boundListeners.canvasDblClick);
+    registerListener('drawing.canvas', canvas, 'mousedown', handleMouseDown);
+    registerListener('drawing.canvas', canvas, 'mousemove', handleMouseMove);
+    registerListener('drawing.canvas', canvas, 'mouseup', handleMouseUp);
+    registerListener('drawing.canvas', canvas, 'dblclick', handleDoubleClick);
 
     // タッチデバイス（スマホ・タブレット）対応
     function getTouchPos(touchEvent) {
@@ -2458,23 +3440,23 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         return { clientX: touch.clientX, clientY: touch.clientY };
     }
 
-    boundListeners.canvasTouchStart = (e) => {
+    const handleTouchStart = (e) => {
         e.preventDefault();
         const pos = getTouchPos(e);
-        boundListeners.canvasMouseDown({ clientX: pos.clientX, clientY: pos.clientY, button: 0 });
+        handleMouseDown({ clientX: pos.clientX, clientY: pos.clientY, button: 0 });
     };
-    boundListeners.canvasTouchMove = (e) => {
+    const handleTouchMove = (e) => {
         e.preventDefault();
         const pos = getTouchPos(e);
-        boundListeners.canvasMouseMove({ clientX: pos.clientX, clientY: pos.clientY });
+        handleMouseMove({ clientX: pos.clientX, clientY: pos.clientY });
     };
-    boundListeners.canvasTouchEnd = (e) => {
+    const handleTouchEnd = (e) => {
         e.preventDefault();
         const pos = getTouchPos(e);
-        boundListeners.canvasMouseUp({ clientX: pos.clientX, clientY: pos.clientY });
+        handleMouseUp({ clientX: pos.clientX, clientY: pos.clientY });
     };
 
-    canvas.addEventListener('touchstart', boundListeners.canvasTouchStart, { passive: false });
-    canvas.addEventListener('touchmove', boundListeners.canvasTouchMove, { passive: false });
-    canvas.addEventListener('touchend', boundListeners.canvasTouchEnd, { passive: false });
+    registerListener('drawing.canvas', canvas, 'touchstart', handleTouchStart, { passive: false });
+    registerListener('drawing.canvas', canvas, 'touchmove', handleTouchMove, { passive: false });
+    registerListener('drawing.canvas', canvas, 'touchend', handleTouchEnd, { passive: false });
 }

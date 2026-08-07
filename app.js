@@ -5,8 +5,10 @@ import { initPractices, openPracticeModal, renderPracticeRoster } from './practi
 import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText } from './matches.js';
 import { initPlayers, openPlayerDetail } from './players.js';
 import { initLibrary } from './library.js';
+import { initTactics } from './tactics.js';
 import { initSettings, initData } from './settings.js';
 import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
+import { cleanupScope } from './event-manager.js';
 
 let lastSyncTimeStr = uiState.lastSyncTimeStr;
 
@@ -88,8 +90,39 @@ export async function loadData() {
                 state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
                 state.players = parsed.players || [];
                 state.menuLibrary = parsed.menuLibrary || [];
+                state.tactics = parsed.tactics || [];
                 state.matchTypes = parsed.matchTypes || ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'];
                 state.menuCategories = parsed.menuCategories || ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'];
+                const newTacticsDefaults = ['攻撃：ビルドアップ（自陣）', '攻撃：前進・崩し（中盤〜敵陣）', '守備：ハイプレス（前線）', '守備：ブロック・ゴール前（自陣）', '切り替え：攻→守（奪われたとき）', '切り替え：守→攻（奪ったとき）', 'セットプレー', 'その他'];
+                const loadedTacticsCat = parsed.tacticsCategories || [];
+                const isOldTacticsCat = loadedTacticsCat.length === 0 || 
+                    loadedTacticsCat.includes('トランジション') || 
+                    loadedTacticsCat.includes('プレッシング') ||
+                    (loadedTacticsCat.includes('攻撃') && !loadedTacticsCat.includes('攻撃：ビルドアップ（自陣）'));
+
+                if (isOldTacticsCat) {
+                    state.tacticsCategories = [...newTacticsDefaults];
+                    const catMap = {
+                        'ビルドアップ': '攻撃：ビルドアップ（自陣）',
+                        '攻撃': '攻撃：前進・崩し（中盤〜敵陣）',
+                        'プレッシング': '守備：ハイプレス（前線）',
+                        '守備': '守備：ブロック・ゴール前（自陣）',
+                        'トランジション': '切り替え：攻→守（奪われたとき）',
+                        'セットプレー': 'セットプレー'
+                    };
+                    if (state.tactics) {
+                        state.tactics.forEach(t => {
+                            if (t.category && catMap[t.category]) {
+                                t.category = catMap[t.category];
+                            } else if (t.category && !newTacticsDefaults.includes(t.category)) {
+                                t.category = 'その他';
+                            }
+                        });
+                    }
+                } else {
+                    state.tacticsCategories = loadedTacticsCat;
+                }
+
                 state.analysisTags = parsed.analysisTags || ['チャンス', '得点', '失点', 'ビルドアップ', '課題/反省', 'メモ'];
                 state.skillMetrics = parsed.skillMetrics || ['止める・蹴る', '運ぶ・駆け引き', '認知・スキャニング', '判断・ポジショニング', '切り替え・連続性', 'チャレンジ姿勢'];
                 state.positions = parsed.positions || ['GK', 'DF', 'MF', 'FW'];
@@ -100,6 +133,9 @@ export async function loadData() {
                 state.teamFocus = parsed.teamFocus || {}; // ★【追加】チーム強化テーマの読み込み
             }
         }
+        // 起動時はセキュリティと誤操作防止のため、常に保護者モード（閲覧専用）で初期化
+        state.currentUserRole = 'parent';
+        localStorage.removeItem('currentUserRole');
     } catch (e) {
         console.error('Failed to load data:', e);
     }
@@ -114,8 +150,10 @@ export async function saveData() {
         practices: state.practices,
         players: state.players,
         menuLibrary: state.menuLibrary,
+        tactics: state.tactics,
         matchTypes: state.matchTypes,
         menuCategories: state.menuCategories,
+        tacticsCategories: state.tacticsCategories,
         analysisTags: state.analysisTags,
         skillMetrics: state.skillMetrics,
         positions: state.positions,
@@ -1665,6 +1703,7 @@ function setupEventListeners() {
             // 現在がコーチモードの場合：パスコード不要で保護者モードへ
             if (state.currentUserRole === 'coach') {
                 state.currentUserRole = 'parent';
+                localStorage.removeItem('currentUserRole');
 
                 // UIのバッジやボタン状態を更新する関数（プロジェクト内の既存関数）
                 if (typeof updateRoleUI === 'function') {
@@ -1716,6 +1755,7 @@ function setupEventListeners() {
 
             if (val === targetPass) {
                 state.currentUserRole = 'coach';
+                localStorage.removeItem('currentUserRole');
                 if (modalPasscode) modalPasscode.classList.add('hidden');
                 document.body.classList.remove('modal-open');
                 updateRoleUI();
@@ -1805,6 +1845,9 @@ export function updateRoleUI() {
     const libraryLink = document.querySelector('.nav-links li[data-route="library"]');
     if (libraryLink) libraryLink.style.display = isCoach ? 'flex' : 'none';
 
+    const tacticsLink = document.querySelector('.nav-links li[data-route="tactics"]');
+    if (tacticsLink) tacticsLink.style.display = isCoach ? 'flex' : 'none';
+
     const dataLink = document.querySelector('.nav-links li[data-route="data"]');
     if (dataLink) dataLink.style.display = isCoach ? 'flex' : 'none';
 
@@ -1815,8 +1858,10 @@ export function updateRoleUI() {
     if (bottomPlayers) bottomPlayers.style.display = isCoach ? 'flex' : 'none'; // ★ 追加: 選手管理を非表示
 
     const bottomLibrary = document.querySelector('.bottom-nav .nav-item[data-route="library"]');
+    const bottomTactics = document.querySelector('.bottom-nav .nav-item[data-route="tactics"]');
     const bottomSettings = document.querySelector('.bottom-nav .nav-item[data-route="settings"]');
     if (bottomLibrary) bottomLibrary.style.display = isCoach ? 'flex' : 'none';
+    if (bottomTactics) bottomTactics.style.display = isCoach ? 'flex' : 'none';
     if (bottomSettings) bottomSettings.style.display = isCoach ? 'flex' : 'none';
 
     const goalShort = document.getElementById('player-goal-short');
@@ -1850,6 +1895,10 @@ export function updateRoleUI() {
 
 export function navigate(route, params = null) {
     cleanupCanvasEvents();
+    // Cleanup scoped event listeners from the previous view
+    if (uiState.currentRoute) {
+        cleanupScope(uiState.currentRoute);
+    }
     // 画面遷移時にYouTube音声を停止・破棄する
     if (typeof window.stopAndCleanupYouTube === 'function') {
         window.stopAndCleanupYouTube();
@@ -1857,6 +1906,13 @@ export function navigate(route, params = null) {
     // 画面遷移時にクラウド同期ポップオーバーを閉じる
     const syncPopoverOnNav = document.getElementById('sync-popover');
     if (syncPopoverOnNav) syncPopoverOnNav.classList.add('hidden');
+
+    if (state.currentUserRole !== 'coach') {
+        const coachOnlyRoutes = ['tactics', 'library', 'settings', 'players'];
+        if (coachOnlyRoutes.includes(route)) {
+            route = 'dashboard';
+        }
+    }
 
     state.currentRoute = route;
     uiState.currentRoute = route;
@@ -1914,6 +1970,9 @@ export function navigate(route, params = null) {
         uiState.currentPracticeMonth = 'all';
         uiState.currentPracticePage = 1;
         uiState.currentLibraryCategory = 'all';
+        uiState.currentTacticsCategory = 'all';
+        uiState.currentTacticsPage = 1;
+        uiState.currentTacticsSearch = '';
 
         if (route === 'dashboard') {
             try {
@@ -1936,6 +1995,7 @@ export function navigate(route, params = null) {
             initPractices(miniPitchObserver);
         }
         if (route === 'matches') initMatches();
+        if (route === 'tactics') initTactics(miniPitchObserver);
         // ★ IDを数値型(parseInt)にキャストして確実に渡す
         if (route === 'match-detail') {
             const rawId = params ? (params.matchId || params.id) : null;

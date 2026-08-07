@@ -179,6 +179,14 @@ body[data-route="animation"] .bottom-nav {
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.03);
 }
 
+/* Tactics Mode: hide equipment tools (marker, cone, ladder, minigoal) */
+.is-tactics-mode .anim-tool-dock [data-tool="marker"],
+.is-tactics-mode .anim-tool-dock [data-tool="cone"],
+.is-tactics-mode .anim-tool-dock [data-tool="ladder"],
+.is-tactics-mode .anim-tool-dock [data-tool="minigoal"] {
+    display: none !important;
+}
+
 .dock-btn {
     width: 38px;
     height: 38px;
@@ -362,6 +370,12 @@ body[data-route="animation"] .bottom-nav {
     background: transparent;
     z-index: 20;
     pointer-events: auto;
+}
+
+#pitch-ui-canvas {
+    background: transparent;
+    z-index: 30;
+    pointer-events: none;
 }
 
 /* Side Panel */
@@ -1139,4 +1153,325 @@ aside#period-info-side-panel textarea#side-form-summary {
     min-height: 30px;
     font-size: 0.7rem;
     padding: 0.15rem 0.3rem;
+}
+/* Fix for popovers in tool dock */
+.anim-main-workspace:has(.anim-tool-dock) .anim-tool-dock {
+    overflow: visible;
+}
+
+/* Tactics-only UI elements */
+.tactics-only {
+    display: none !important;
+}
+.is-tactics-mode .tactics-only {
+    display: block !important;
+}
+
+/* Animation Caption / Telop Bar */
+.anim-caption-bar {
+    position: absolute;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    max-width: 85%;
+    padding: 10px 24px;
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    animation: captionFadeIn 0.35s ease-out;
+    pointer-events: none;
+}
+
+.anim-caption-bar.hidden {
+    display: none;
+}
+
+.anim-caption-bar span {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    letter-spacing: 0.02em;
+}
+
+@keyframes captionFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .anim-caption-bar {
+        bottom: 55px;
+        max-width: 92%;
+        padding: 8px 16px;
+    }
+
+    .anim-caption-bar span {
+        font-size: 0.9rem;
+    }
+
+    .anim-quick-drawer {
+        bottom: 48px;
+        width: 95%;
+        padding: 8px 12px;
+    }
+}
+
+/* Quick Edit Drawer (Item 09: ボトムシート) */
+.anim-quick-drawer {
+    position: absolute;
+    bottom: 135px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 250;
+    width: 92%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.12));
+    border-radius: 16px;
+    padding: 12px 18px;
+    box-shadow: 0 12px 36px rgba(15, 23, 42, 0.16);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.anim-quick-drawer.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(20px);
+}
+
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--surface-border, rgba(0, 0, 0, 0.08));
+}
+
+.drawer-title {
+    color: var(--primary, #f23932);
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.drawer-close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary, #64748b);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 2px 6px;
+    transition: color 0.18s ease;
+}
+
+.drawer-close-btn:hover {
+    color: var(--text-primary, #1e293b);
+}
+
+.drawer-body {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.drawer-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.drawer-field-short {
+    flex: 0 0 110px;
+}
+
+.drawer-field label {
+    font-size: 0.74rem;
+    color: var(--text-secondary, #64748b);
+    font-weight: 700;
+}
+
+.drawer-field input, .drawer-field select {
+    background: #ffffff;
+    border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.15));
+    color: var(--text-primary, #1e293b);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    outline: none;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.drawer-field input:focus, .drawer-field select:focus {
+    border-color: var(--primary, #f23932);
+    box-shadow: 0 0 0 3px rgba(242, 57, 50, 0.15);
+}
+
+/* Ultra-Compact Filmstrip Timeline Strip (Item 08: フィルムスリップ型タイムライン) */
+.filmstrip-timeline-wrapper {
+    position: absolute;
+    bottom: 66px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 180;
+    width: auto;
+    max-width: 85%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.12));
+    border-radius: 20px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+    transition: all 0.25s ease;
+}
+
+.filmstrip-timeline-wrapper.collapsed {
+    display: none !important;
+}
+
+.filmstrip-timeline-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.filmstrip-cards-container {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    min-width: max-content;
+}
+
+.filmstrip-card {
+    flex: 0 0 auto;
+    height: 28px;
+    padding: 0 8px;
+    background: #ffffff;
+    border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.12));
+    border-radius: 14px;
+    cursor: grab;
+    user-select: none;
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.filmstrip-card:hover {
+    background: rgba(241, 245, 249, 0.95);
+    border-color: var(--primary, #f23932);
+    transform: translateY(-1px);
+}
+
+.filmstrip-card.active {
+    background: var(--primary, #f23932);
+    border-color: var(--primary, #f23932);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(242, 57, 50, 0.35);
+}
+
+.filmstrip-card.drag-over {
+    border: 2px dashed var(--primary, #f23932);
+    background: rgba(242, 57, 50, 0.1);
+}
+
+.filmstrip-card-header {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.filmstrip-frame-num {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-primary, #1e293b);
+}
+
+.filmstrip-card.active .filmstrip-frame-num {
+    color: #ffffff;
+}
+
+.filmstrip-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0 3px;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--primary, #f23932);
+}
+
+.filmstrip-card.active .filmstrip-badge {
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.filmstrip-card-title {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-secondary, #64748b);
+    max-width: 65px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.filmstrip-card.active .filmstrip-card-title {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Filmstrip Card Delete Action (Inline inside micro-pill) */
+.filmstrip-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: 2px;
+}
+
+.btn-card-delete {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--text-secondary, #64748b);
+    transition: all 0.15s ease;
+    padding: 0;
+}
+
+.btn-card-delete:hover {
+    background: #ef4444;
+    color: #ffffff;
+    transform: scale(1.15);
+}
+
+.filmstrip-card.active .btn-card-delete {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.filmstrip-card.active .btn-card-delete:hover {
+    background: #ffffff;
+    color: #ef4444;
 }

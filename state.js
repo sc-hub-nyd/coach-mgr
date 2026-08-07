@@ -5,8 +5,10 @@ export const state = {
     practices: [],
     players: [],
     menuLibrary: [],
+    tactics: [], // 戦術データ保存用
     matchTypes: ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'],
     menuCategories: ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'],
+    tacticsCategories: ['攻撃：ビルドアップ（自陣）', '攻撃：前進・崩し（中盤〜敵陣）', '守備：ハイプレス（前線）', '守備：ブロック・ゴール前（自陣）', '切り替え：攻→守（奪われたとき）', '切り替え：守→攻（奪ったとき）', 'セットプレー', 'その他'],
     analysisTags: ['チャンス', '得点', '失点', 'ビルドアップ', '課題/反省', 'メモ'],
     skillMetrics: ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'],
     positions: ['GK', 'DF', 'MF', 'FW'],
@@ -91,8 +93,11 @@ export const uiState = {
     currentLibraryAssigned: 'all',
     currentLibraryRating: 'all',
     currentLibrarySearch: '',
+    currentTacticsCategory: 'all',
+    currentTacticsSearch: '',
     currentMatchPage: 1,
     currentPracticePage: 1,
+    currentTacticsPage: 1,
     ITEMS_PER_PAGE: 10,
     currentView: 'dashboard', // または 'matches', 'match-analysis' など
     activeMatchId: null,

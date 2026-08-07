@@ -4,6 +4,7 @@ import { escapeHtml, getNendo, showToast, showCustomConfirm } from './utils.js';
 import { saveData, navigate, openModal } from './app.js';
 import { openPlayerDetail } from './players.js';
 import { drawPitchToCtx } from './drawing.js';
+import { registerListener, cleanupScope } from './event-manager.js';
 
 let ytPlayer = null;
 let currentMatchId = null;
@@ -15,15 +16,9 @@ let periodSideClickOutsideHandler = null;
 let periodSideKeyDownHandler = null;
 
 function cleanupPeriodSideEvents() {
-    if (periodSideClickOutsideHandler) {
-        document.removeEventListener('click', periodSideClickOutsideHandler);
-        document.removeEventListener('touchstart', periodSideClickOutsideHandler);
-        periodSideClickOutsideHandler = null;
-    }
-    if (periodSideKeyDownHandler) {
-        document.removeEventListener('keydown', periodSideKeyDownHandler);
-        periodSideKeyDownHandler = null;
-    }
+    cleanupScope('matches.periodSidePanel');
+    periodSideClickOutsideHandler = null;
+    periodSideKeyDownHandler = null;
 }
 
 // YouTube URLから11桁のIDを抽出
@@ -2010,8 +2005,8 @@ export function openPeriodAnalysis(matchId, periodIndex) {
         };
         setTimeout(() => {
             if (periodSideClickOutsideHandler) {
-                document.addEventListener('click', periodSideClickOutsideHandler);
-                document.addEventListener('touchstart', periodSideClickOutsideHandler);
+                registerListener('matches.periodSidePanel', document, 'click', periodSideClickOutsideHandler);
+                registerListener('matches.periodSidePanel', document, 'touchstart', periodSideClickOutsideHandler);
             }
         }, 0);
 
@@ -2024,7 +2019,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 }
             }
         };
-        document.addEventListener('keydown', periodSideKeyDownHandler);
+        registerListener('matches.periodSidePanel', document, 'keydown', periodSideKeyDownHandler);
     }
 
     // --- ピリオド遷移ナビ ---

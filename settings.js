@@ -46,8 +46,10 @@ export function initData() {
             practices: state.practices,
             players: state.players,
             menuLibrary: state.menuLibrary,
+            tactics: state.tactics,
             matchTypes: state.matchTypes,
             menuCategories: state.menuCategories,
+            tacticsCategories: state.tacticsCategories,
             analysisTags: state.analysisTags,
             skillMetrics: state.skillMetrics,
             positions: state.positions,
@@ -139,6 +141,7 @@ export function initData() {
             state.practices = [];
             state.players = [];
             state.menuLibrary = [];
+            state.tactics = [];
 
             await localforage.removeItem('coachMgrData');
 
@@ -282,6 +285,7 @@ export function initSettings() {
 
     renderList('match-type-list', state.matchTypes);
     renderList('menu-category-list', state.menuCategories);
+    renderList('tactics-category-list', state.tacticsCategories);
     renderList('analysis-tag-list', state.analysisTags);
     renderList('skill-metric-list', state.skillMetrics);
     renderList('position-list', state.positions);
@@ -297,6 +301,7 @@ export function initSettings() {
 
             if (listId === 'match-type-list') targetArray = state.matchTypes;
             else if (listId === 'menu-category-list') targetArray = state.menuCategories;
+            else if (listId === 'tactics-category-list') targetArray = state.tacticsCategories;
             else if (listId === 'analysis-tag-list') targetArray = state.analysisTags;
             else if (listId === 'skill-metric-list') targetArray = state.skillMetrics;
             else if (listId === 'position-list') targetArray = state.positions;
@@ -318,6 +323,8 @@ export function initSettings() {
                         if (p.menus) p.menus.forEach(m => { if (m.category === oldVal) m.category = trimmed; });
                     });
                     state.menuLibrary.forEach(m => { if (m.category === oldVal) m.category = trimmed; });
+                } else if (listId === 'tactics-category-list') {
+                    state.tactics.forEach(t => { if (t.category === oldVal) t.category = trimmed; });
                 } else if (listId === 'position-list' || listId === 'position-cat2-list') {
                     state.players.forEach(p => {
                         if (Array.isArray(p.position)) {
@@ -357,6 +364,9 @@ export function initSettings() {
                 label = state.menuCategories[idx];
                 inUse = state.practices.some(p => p.menus.some(m => m.category === label)) ||
                     state.menuLibrary.some(m => m.category === label);
+            } else if (listId === 'tactics-category-list') {
+                label = state.tacticsCategories[idx];
+                inUse = state.tactics.some(t => t.category === label);
             } else if (listId === 'skill-metric-list') {
                 label = state.skillMetrics[idx];
                 inUse = state.players.some(p => p.history && p.history.some(h => h.skills && h.skills.length > idx));
@@ -394,6 +404,7 @@ export function initSettings() {
 
             if (listId === 'match-type-list') state.matchTypes.splice(idx, 1);
             if (listId === 'menu-category-list') state.menuCategories.splice(idx, 1);
+            if (listId === 'tactics-category-list') state.tacticsCategories.splice(idx, 1);
             if (listId === 'skill-metric-list') state.skillMetrics.splice(idx, 1);
             if (listId === 'position-list') state.positions.splice(idx, 1);
             if (listId === 'position-cat2-list') state.positionsCat2.splice(idx, 1);
@@ -678,10 +689,77 @@ export function initSettings() {
 
     setupAddForm('form-add-match-type', 'new-match-type', state.matchTypes);
     setupAddForm('form-add-menu-category', 'new-menu-category', state.menuCategories);
+    setupAddForm('form-add-tactics-category', 'new-tactics-category', state.tacticsCategories);
     setupAddForm('form-add-skill-metric', 'new-skill-metric', state.skillMetrics);
     setupAddForm('form-add-position', 'new-position', state.positions);
     setupAddForm('form-add-position-cat2', 'new-position-cat2', state.positionsCat2);
     setupAddForm('form-add-analysis-tag', 'new-analysis-tag', state.analysisTags);
+
+    const btnResetTacticsCat = document.getElementById('btn-reset-tactics-categories');
+    if (btnResetTacticsCat) {
+        btnResetTacticsCat.onclick = async () => {
+            const proceed = await showCustomConfirm('戦術カテゴリを新デフォルト（8項目）に洗い替えますか？\n（既存の戦術データも新カテゴリに自動移行されます）', 'カテゴリの洗い替え', { okText: '洗い替える' });
+            if (proceed) {
+                state.tacticsCategories = [
+                    '攻撃：ビルドアップ（自陣）',
+                    '攻撃：前進・崩し（中盤〜敵陣）',
+                    '守備：ハイプレス（前線）',
+                    '守備：ブロック・ゴール前（自陣）',
+                    '切り替え：攻→守（奪われたとき）',
+                    '切り替え：守→攻（奪ったとき）',
+                    'セットプレー',
+                    'その他'
+                ];
+                const catMap = {
+                    'ビルドアップ': '攻撃：ビルドアップ（自陣）',
+                    '攻撃': '攻撃：前進・崩し（中盤〜敵陣）',
+                    'プレッシング': '守備：ハイプレス（前線）',
+                    '守備': '守備：ブロック・ゴール前（自陣）',
+                    'トランジション': '切り替え：攻→守（奪われたとき）',
+                    'セットプレー': 'セットプレー'
+                };
+                if (state.tactics) {
+                    state.tactics.forEach(t => {
+                        if (t.category && catMap[t.category]) {
+                            t.category = catMap[t.category];
+                        } else if (t.category && !state.tacticsCategories.includes(t.category)) {
+                            t.category = 'その他';
+                        }
+                    });
+                }
+                saveData();
+                initSettings();
+                showToast('戦術カテゴリを新デフォルトに洗い替えました');
+            }
+        };
+    }
+
+    function setupResetMasterButton(btnId, itemName, defaultArray) {
+        const btn = document.getElementById(btnId);
+        if (!btn) return;
+        btn.onclick = async () => {
+            const proceed = await showCustomConfirm(`「${itemName}」を初期デフォルト設定に洗い替えますか？`, 'マスターデータの洗い替え', { okText: '洗い替える' });
+            if (proceed) {
+                if (btnId === 'btn-reset-match-types') state.matchTypes = [...defaultArray];
+                else if (btnId === 'btn-reset-menu-categories') state.menuCategories = [...defaultArray];
+                else if (btnId === 'btn-reset-skill-metrics') state.skillMetrics = [...defaultArray];
+                else if (btnId === 'btn-reset-positions') state.positions = [...defaultArray];
+                else if (btnId === 'btn-reset-positions-cat2') state.positionsCat2 = [...defaultArray];
+                else if (btnId === 'btn-reset-analysis-tags') state.analysisTags = [...defaultArray];
+
+                saveData();
+                initSettings();
+                showToast(`「${itemName}」を初期デフォルト設定に洗い替えました`);
+            }
+        };
+    }
+
+    setupResetMasterButton('btn-reset-match-types', '試合種別', ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯']);
+    setupResetMasterButton('btn-reset-menu-categories', '練習カテゴリ', ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他']);
+    setupResetMasterButton('btn-reset-skill-metrics', 'スキル評価項目', ['止める・蹴る', '運ぶ・駆け引き', '認知・スキャニング', '判断・ポジショニング', '切り替え・連続性', 'チャレンジ姿勢']);
+    setupResetMasterButton('btn-reset-positions', 'ポジション (大分類)', ['GK', 'DF', 'MF', 'FW']);
+    setupResetMasterButton('btn-reset-positions-cat2', 'ポジション (詳細)', ['CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH']);
+    setupResetMasterButton('btn-reset-analysis-tags', '動画分析タグ', ['チャンス', '得点', '失点', 'ビルドアップ', '課題/反省', 'メモ']);
 
     initData();
 }
