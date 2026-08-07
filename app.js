@@ -273,12 +273,11 @@ export function syncPullGasCloud(isSilent = false) {
                     try { remoteData = JSON.parse(remoteData); } catch (e) { }
                 }
                 if (remoteData && typeof remoteData === 'object') {
-                    // 基本データの展開
-                    state.matches = remoteData.matches || [];
-                    state.practices = remoteData.practices || [];
-                    state.players = remoteData.players || [];
-                    state.menuLibrary = remoteData.menuLibrary || [];
-                    state.tactics = remoteData.tactics || [];
+                    if (remoteData.matches) state.matches = remoteData.matches;
+                    if (remoteData.practices) state.practices = remoteData.practices;
+                    if (remoteData.players) state.players = remoteData.players;
+                    if (remoteData.menuLibrary) state.menuLibrary = remoteData.menuLibrary;
+                    if (remoteData.tactics) state.tactics = remoteData.tactics;
 
                     // ★【追加】マスタ・設定データの受信展開
                     if (remoteData.matchTypes) state.matchTypes = remoteData.matchTypes;
@@ -329,6 +328,8 @@ export function syncPullGasCloud(isSilent = false) {
 
                     if (!state.currentRoute || state.currentRoute === 'dashboard') {
                         navigate('dashboard');
+                    } else {
+                        navigate(state.currentRoute);
                     }
 
                     return remoteData;
