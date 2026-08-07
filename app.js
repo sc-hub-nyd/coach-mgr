@@ -9,6 +9,7 @@ import { initTactics } from './tactics.js';
 import { initSettings, initData } from './settings.js';
 import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
 import { cleanupScope } from './event-manager.js';
+import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
 
 let lastSyncTimeStr = uiState.lastSyncTimeStr;
 
@@ -2102,12 +2103,42 @@ async function init() {
     const sidebarTitle = document.querySelector('.sidebar-header h2');
     if (sidebarTitle && state.teamInfo) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name || 'My Team')}`;
 
+    // ★ バージョン表示とリリースノートモーダル初期化
+    const sidebarVersionText = document.getElementById('sidebar-version-text');
+    if (sidebarVersionText) sidebarVersionText.textContent = `CoachMgr ${APP_VERSION}`;
+
+    const sidebarVersionBadge = document.getElementById('sidebar-version-badge');
+    if (sidebarVersionBadge) sidebarVersionBadge.onclick = () => openReleaseNotesModal();
+
+    window.openReleaseNotesModal = openReleaseNotesModal;
+
     navigate('dashboard');
 
     if (state.teamInfo && state.teamInfo.gasApiUrl) {
         if (isFromInviteLink) showToast('招待リンクよりクラウド設定を適用しました！同期中...');
         syncPullGasCloud(true).catch(() => { });
     }
+}
+
+export function openReleaseNotesModal() {
+    const modal = document.getElementById('modal-release-notes');
+    const container = document.getElementById('release-notes-content');
+    if (!modal || !container) return;
+
+    container.innerHTML = RELEASE_NOTES.map(item => `
+        <div style="margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                <span class="badge" style="background:rgba(16,185,129,0.15); color:var(--primary); font-size:0.85rem; font-weight:700;">${item.version}</span>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">${item.date}</span>
+            </div>
+            <div style="font-weight:700; font-size:0.95rem; margin-bottom:0.4rem; color:var(--text-primary);">${escapeHtml(item.title)}</div>
+            <ul style="margin:0; padding-left:1.2rem; font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">
+                ${item.features.map(f => `<li>${escapeHtml(f)}</li>`).join('')}
+            </ul>
+        </div>
+    `).join('');
+
+    modal.classList.remove('hidden');
 }
 
 if (document.readyState === 'loading') {

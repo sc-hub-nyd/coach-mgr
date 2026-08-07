@@ -37,6 +37,19 @@ export function _showExportFallbackModal(jsonStr) {
 }
 
 export function initData() {
+    const settingsVersionText = document.getElementById('settings-version-text');
+    if (settingsVersionText) {
+        import('./version.js').then(ver => {
+            settingsVersionText.textContent = `CoachMgr ${ver.APP_VERSION} (${ver.RELEASE_DATE})`;
+        });
+    }
+
+    const btnShowReleaseNotes = document.getElementById('btn-show-release-notes');
+    if (btnShowReleaseNotes) {
+        btnShowReleaseNotes.onclick = () => {
+            if (window.openReleaseNotesModal) window.openReleaseNotesModal();
+        };
+    }
     const btnExportSettings = document.getElementById('btn-export-data');
     const btnExportView = document.getElementById('btn-data-view-export');
 
