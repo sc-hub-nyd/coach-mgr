@@ -1481,3 +1481,39 @@ aside#period-info-side-panel textarea#side-form-summary {
     background: #ffffff;
     color: #ef4444;
 }
+
+/* Preset Chips */
+.drawer-preset-chips {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 6px;
+    margin-top: 6px;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+}
+.drawer-preset-chips::-webkit-scrollbar {
+    display: none;
+}
+.preset-chip {
+    flex: 0 0 auto;
+    background: rgba(15, 23, 42, 0.05);
+    border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.1));
+    border-radius: 12px;
+    padding: 3px 8px;
+    font-size: 0.7rem;
+    color: var(--text-secondary, #64748b);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+.preset-chip:hover, .preset-chip:active {
+    background: rgba(242, 57, 50, 0.08);
+    border-color: var(--primary, #f23932);
+    color: var(--primary, #f23932);
+}
+
+/* Swipe interaction for drawer */
+.anim-quick-drawer {
+    touch-action: pan-y;
+}

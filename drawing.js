@@ -322,19 +322,30 @@ export function closeQuickDrawer() {
 
 function initQuickDrawerEvents() {
     const inputCaption = document.getElementById('drawer-caption-text');
+    const selectPause = document.getElementById('drawer-pause-duration');
+    
+    function updatePauseDuration(text, curFrame) {
+        if (!text || text.length === 0) return;
+        let calcPause = Math.max(2, Math.ceil(text.length / 10));
+        if (calcPause === 4) calcPause = 5; // Fallback for missing '4' option
+        if (calcPause > 5) calcPause = 5;
+        curFrame.pauseDuration = calcPause;
+        if (selectPause) selectPause.value = calcPause;
+    }
+
     if (inputCaption) {
         inputCaption.oninput = (e) => {
             if (currentFrameIndex >= 0 && currentFrameIndex < frames.length) {
                 const curFrame = frames[currentFrameIndex];
                 if (typeof curFrame === 'object' && curFrame !== null) {
                     curFrame.caption = e.target.value;
+                    updatePauseDuration(e.target.value, curFrame);
                     isDirty = true;
                     updateFrameCount();
                 }
             }
         };
     }
-    const selectPause = document.getElementById('drawer-pause-duration');
     if (selectPause) {
         selectPause.onchange = (e) => {
             if (currentFrameIndex >= 0 && currentFrameIndex < frames.length) {
@@ -350,18 +361,56 @@ function initQuickDrawerEvents() {
     const btnClose = document.getElementById('btn-close-quick-drawer');
     if (btnClose) btnClose.onclick = closeQuickDrawer;
 
-    document.addEventListener('pointerdown', (e) => {
-        const drawer = document.getElementById('anim-quick-drawer');
-        if (!drawer || drawer.classList.contains('hidden')) return;
-
-        const isInsideDrawer = drawer.contains(e.target);
-        const isFilmstripCard = e.target.closest('.filmstrip-card');
-        const isAnimAddBtn = e.target.closest('#anim-add-frame');
-
-        if (!isInsideDrawer && !isFilmstripCard && !isAnimAddBtn) {
-            closeQuickDrawer();
-        }
+    const presetChips = document.querySelectorAll('.preset-chip');
+    presetChips.forEach(chip => {
+        chip.onclick = () => {
+            if (currentFrameIndex >= 0 && currentFrameIndex < frames.length) {
+                const curFrame = frames[currentFrameIndex];
+                if (typeof curFrame === 'object' && curFrame !== null) {
+                    const text = chip.textContent;
+                    if (inputCaption) inputCaption.value = text;
+                    curFrame.caption = text;
+                    updatePauseDuration(text, curFrame);
+                    isDirty = true;
+                    updateFrameCount();
+                }
+            }
+        };
     });
+
+    if (!window._quickDrawerEventsInitialized) {
+        document.addEventListener('pointerdown', (e) => {
+            const drawer = document.getElementById('anim-quick-drawer');
+            if (!drawer || drawer.classList.contains('hidden')) return;
+
+            const isInsideDrawer = drawer.contains(e.target);
+            const isFilmstripCard = e.target.closest('.filmstrip-card');
+            const isAnimAddBtn = e.target.closest('#anim-add-frame');
+
+            if (!isInsideDrawer && !isFilmstripCard && !isAnimAddBtn) {
+                closeQuickDrawer();
+            }
+        });
+
+        const drawer = document.getElementById('anim-quick-drawer');
+        if (drawer) {
+            let startY = 0;
+            let currentY = 0;
+            drawer.addEventListener('touchstart', (e) => {
+                startY = e.touches[0].clientY;
+                currentY = startY;
+            }, {passive: true});
+            drawer.addEventListener('touchmove', (e) => {
+                currentY = e.touches[0].clientY;
+            }, {passive: true});
+            drawer.addEventListener('touchend', (e) => {
+                if (currentY > startY + 40) { // 40px swipe down threshold
+                    closeQuickDrawer();
+                }
+            }, {passive: true});
+        }
+        window._quickDrawerEventsInitialized = true;
+    }
 }
 
 function editFrameTitle() {
@@ -672,23 +721,49 @@ export function exportAnimationVideo() {
             const h = pitchCanvasEl.height;
             const fontSize = Math.round(h * 0.045);
             const padding = Math.round(h * 0.02);
-            const barHeight = fontSize + padding * 2;
-            const barY = h - barHeight - Math.round(h * 0.12);
-
+            const maxTextWidth = Math.min(w * 0.85, w) - padding * 2;
+            
             exportCtx.save();
-            exportCtx.fillStyle = 'rgba(15, 23, 42, 0.82)';
+            exportCtx.font = `bold ${fontSize}px 'Inter', sans-serif`;
+            
+            const words = captionText.split(''); 
+            let lines = [];
+            let currentLine = '';
+            
+            for (let i = 0; i < words.length; i++) {
+                const testLine = currentLine + words[i];
+                const metrics = exportCtx.measureText(testLine);
+                const testWidth = metrics.width;
+                if (testWidth > maxTextWidth && i > 0) {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            lines.push(currentLine);
+
+            const lineHeight = fontSize * 1.5;
+            const barHeight = (lines.length * lineHeight) + padding * 2;
+            const barY = h - barHeight - Math.round(h * 0.12);
             const barWidth = Math.min(w * 0.85, w);
             const barX = (w - barWidth) / 2;
             const radius = Math.round(h * 0.015);
+
+            exportCtx.fillStyle = 'rgba(15, 23, 42, 0.82)';
             exportCtx.beginPath();
             exportCtx.roundRect(barX, barY, barWidth, barHeight, radius);
             exportCtx.fill();
 
             exportCtx.fillStyle = '#ffffff';
-            exportCtx.font = `bold ${fontSize}px 'Inter', sans-serif`;
             exportCtx.textAlign = 'center';
             exportCtx.textBaseline = 'middle';
-            exportCtx.fillText(captionText, w / 2, barY + barHeight / 2, barWidth - padding * 2);
+            
+            let textY = barY + padding + (lineHeight / 2);
+            for (let i = 0; i < lines.length; i++) {
+                exportCtx.fillText(lines[i], w / 2, textY);
+                textY += lineHeight;
+            }
             exportCtx.restore();
         }
 
