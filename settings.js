@@ -55,7 +55,8 @@ export function initData() {
             positions: state.positions,
             positionsCat2: state.positionsCat2,
             teamInfo: state.teamInfo,
-            customFormations: state.customFormations
+            customFormations: state.customFormations,
+            teamFocus: state.teamFocus || {}
         }, null, 2);
 
         const now = new Date();

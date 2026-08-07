@@ -211,8 +211,10 @@ export function syncPushGasCloud(isSilent = false) {
             practices: state.practices,
             players: state.players,
             menuLibrary: state.menuLibrary,
+            tactics: state.tactics || [],
             matchTypes: state.matchTypes,
             menuCategories: state.menuCategories,
+            tacticsCategories: state.tacticsCategories,
             analysisTags: state.analysisTags, // ★【追加】動画分析タグ
             skillMetrics: state.skillMetrics,
             positions: state.positions,
@@ -276,10 +278,41 @@ export function syncPullGasCloud(isSilent = false) {
                     state.practices = remoteData.practices || [];
                     state.players = remoteData.players || [];
                     state.menuLibrary = remoteData.menuLibrary || [];
+                    state.tactics = remoteData.tactics || [];
 
                     // ★【追加】マスタ・設定データの受信展開
                     if (remoteData.matchTypes) state.matchTypes = remoteData.matchTypes;
                     if (remoteData.menuCategories) state.menuCategories = remoteData.menuCategories;
+                    if (remoteData.tacticsCategories) state.tacticsCategories = remoteData.tacticsCategories;
+
+                    const newTacticsDefaults = ['攻撃：ビルドアップ（自陣）', '攻撃：前進・崩し（中盤〜敵陣）', '守備：ハイプレス（前線）', '守備：ブロック・ゴール前（自陣）', '切り替え：攻→守（奪われたとき）', '切り替え：守→攻（奪ったとき）', 'セットプレー', 'その他'];
+                    const loadedTacticsCat = state.tacticsCategories || [];
+                    const isOldTacticsCat = loadedTacticsCat.length === 0 || 
+                        loadedTacticsCat.includes('トランジション') || 
+                        loadedTacticsCat.includes('プレッシング') ||
+                        (loadedTacticsCat.includes('攻撃') && !loadedTacticsCat.includes('攻撃：ビルドアップ（自陣）'));
+
+                    if (isOldTacticsCat) {
+                        state.tacticsCategories = [...newTacticsDefaults];
+                        const catMap = {
+                            'ビルドアップ': '攻撃：ビルドアップ（自陣）',
+                            '攻撃': '攻撃：前進・崩し（中盤〜敵陣）',
+                            'プレッシング': '守備：ハイプレス（前線）',
+                            '守備': '守備：ブロック・ゴール前（自陣）',
+                            'トランジション': '切り替え：攻→守（奪われたとき）',
+                            'セットプレー': 'セットプレー'
+                        };
+                        if (state.tactics) {
+                            state.tactics.forEach(t => {
+                                if (t.category && catMap[t.category]) {
+                                    t.category = catMap[t.category];
+                                } else if (t.category && !newTacticsDefaults.includes(t.category)) {
+                                    t.category = 'その他';
+                                }
+                            });
+                        }
+                    }
+
                     if (remoteData.analysisTags) state.analysisTags = remoteData.analysisTags;
                     if (remoteData.skillMetrics) state.skillMetrics = remoteData.skillMetrics;
                     if (remoteData.positions) state.positions = remoteData.positions;
