@@ -918,23 +918,23 @@ input[type="checkbox"] {
 }
 
 .filter-btn-group select.form-control {
-    height: 38px;
-    font-size: 0.85rem;
-    border-radius: 20px;
-    padding: 0 0.85rem;
-    box-sizing: border-box;
+    height: 38px !important;
+    font-size: 0.85rem !important;
+    border-radius: 20px !important;
+    padding: 0 0.85rem !important;
+    box-sizing: border-box !important;
 }
 
 .filter-btn-group .btn {
-    height: 38px;
-    font-size: 0.85rem;
-    border-radius: 20px;
-    padding: 0 1rem;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    box-sizing: border-box;
+    height: 38px !important;
+    font-size: 0.85rem !important;
+    border-radius: 20px !important;
+    padding: 0 1rem !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    box-sizing: border-box !important;
 }
 
 .btn-filter-detail {
