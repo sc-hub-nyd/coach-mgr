@@ -2104,13 +2104,8 @@ async function init() {
     if (sidebarTitle && state.teamInfo) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name || 'My Team')}`;
 
     // ★ バージョン表示とリリースノートモーダル初期化
-    const sidebarVersionText = document.getElementById('sidebar-version-text');
-    if (sidebarVersionText) sidebarVersionText.textContent = `CoachMgr ${APP_VERSION}`;
-
-
-
-    const sidebarVersionBadge = document.getElementById('sidebar-version-badge');
-    if (sidebarVersionBadge) sidebarVersionBadge.onclick = () => openReleaseNotesModal();
+    const topbarVersionTag = document.getElementById('topbar-version-tag');
+    if (topbarVersionTag) topbarVersionTag.textContent = `${APP_VERSION}`;
 
     window.openReleaseNotesModal = openReleaseNotesModal;
 

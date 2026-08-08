@@ -35,9 +35,6 @@
                 <li data-route="players"><i class="fa-solid fa-users"></i> 選手管理</li>
                 <li data-route="settings"><i class="fa-solid fa-gear"></i> 設定</li>
             </ul>
-            <div class="sidebar-footer" id="sidebar-version-badge" title="タップして更新履歴を表示">
-                <i class="fa-solid fa-circle-info"></i> <span id="sidebar-version-text">CoachMgr v1.4.0</span>
-            </div>
         </nav>
 
         <!-- Sidebar Overlay (for mobile & side-menu open state) -->
@@ -56,6 +53,7 @@
                         style="background:rgba(34, 197, 94, 0.15); color:#15803d;">
                         <i class="fa-solid fa-eye"></i><span>保護者モード</span>
                     </div>
+                    <span id="topbar-version-tag" class="topbar-version-subtle" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">v1.4.0</span>
 
                     <!-- ★【追加】屋外高コントラストモード切替ボタン ★ -->
                     <button class="btn btn-secondary topbar-btn" id="btn-toggle-contrast" title="屋外高コントラストモード切替">
@@ -2574,7 +2572,7 @@
         window.addEventListener('touchmove', function() {}, {passive: false});
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script type="module" src="app.js?v=45"></script>
+    <script type="module" src="app.js?v=46"></script>
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
