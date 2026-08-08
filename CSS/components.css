@@ -910,11 +910,11 @@ input[type="checkbox"] {
 }
 
 .filter-btn-group {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-shrink: 0;
-    flex-wrap: wrap;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    flex-shrink: 0 !important;
+    flex-wrap: nowrap !important;
 }
 
 .filter-btn-group select.form-control {
@@ -923,6 +923,8 @@ input[type="checkbox"] {
     border-radius: 20px !important;
     padding: 0 0.85rem !important;
     box-sizing: border-box !important;
+    max-width: 200px !important;
+    width: auto !important;
 }
 
 .filter-btn-group .btn {
@@ -933,8 +935,11 @@ input[type="checkbox"] {
     white-space: nowrap !important;
     display: inline-flex !important;
     align-items: center !important;
+    justify-content: center !important;
     gap: 0.4rem !important;
+    line-height: 1 !important;
     box-sizing: border-box !important;
+    flex-shrink: 0 !important;
 }
 
 .btn-filter-detail {
