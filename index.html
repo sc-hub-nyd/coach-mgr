@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
-    <link rel="stylesheet" href="./CSS/main.css?v=42">
+    <link rel="stylesheet" href="./CSS/main.css?v=43">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- PWA Manifest -->
@@ -35,7 +35,7 @@
                 <li data-route="players"><i class="fa-solid fa-users"></i> 選手管理</li>
                 <li data-route="settings"><i class="fa-solid fa-gear"></i> 設定</li>
             </ul>
-            <div class="sidebar-footer" id="sidebar-version-badge" title="タップして更新履歴を表示" style="margin-top:auto; padding:1rem 1.25rem; font-size:0.75rem; color:var(--text-secondary); border-top:1px solid rgba(255,255,255,0.08); cursor:pointer; display:flex; align-items:center; gap:0.4rem;">
+            <div class="sidebar-footer" id="sidebar-version-badge" title="タップして更新履歴を表示">
                 <i class="fa-solid fa-circle-info"></i> <span id="sidebar-version-text">CoachMgr v1.4.0</span>
             </div>
         </nav>
@@ -55,6 +55,9 @@
                     <div id="user-role-badge" class="topbar-badge"
                         style="background:rgba(34, 197, 94, 0.15); color:#15803d;">
                         <i class="fa-solid fa-eye"></i><span>保護者モード</span>
+                    </div>
+                    <div id="topbar-version-badge" class="topbar-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();" style="background:rgba(16,185,129,0.15); color:#059669; cursor:pointer;">
+                        <i class="fa-solid fa-circle-info"></i><span id="topbar-version-text">v1.4.0</span>
                     </div>
                     <!-- ★【追加】屋外高コントラストモード切替ボタン ★ -->
                     <button class="btn btn-secondary topbar-btn" id="btn-toggle-contrast" title="屋外高コントラストモード切替">
@@ -2573,7 +2576,7 @@
         window.addEventListener('touchmove', function() {}, {passive: false});
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script type="module" src="app.js?v=42"></script>
+    <script type="module" src="app.js?v=44"></script>
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {

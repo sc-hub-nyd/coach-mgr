@@ -166,6 +166,20 @@ export function initData() {
 }
 
 export function initSettings() {
+    const settingsVersionText = document.getElementById('settings-version-text');
+    if (settingsVersionText) {
+        import('./version.js').then(ver => {
+            settingsVersionText.textContent = `CoachMgr ${ver.APP_VERSION} (${ver.RELEASE_DATE})`;
+        });
+    }
+
+    const btnShowReleaseNotes = document.getElementById('btn-show-release-notes');
+    if (btnShowReleaseNotes) {
+        btnShowReleaseNotes.onclick = () => {
+            if (window.openReleaseNotesModal) window.openReleaseNotesModal();
+        };
+    }
+
     const teamNameInput = document.getElementById('team-info-name');
     const teamColorInput = document.getElementById('team-info-color');
     const teamPasscodeInput = document.getElementById('team-info-passcode');
