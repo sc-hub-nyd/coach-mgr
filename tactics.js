@@ -316,3 +316,5 @@ export function openTacticModal(tactic = null) {
 
     modal.classList.remove('hidden');
 }
+
+window.openTacticModal = openTacticModal;

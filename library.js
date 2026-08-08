@@ -408,35 +408,42 @@ export function initLibrary(miniPitchObserver) {
         };
     }
 
+export function openLibraryMenuModal(menu) {
+    if (!menu) return;
+    document.getElementById('menu-practice-id').value = 'library';
+    document.getElementById('menu-library-source-id').value = '';
+    if (document.getElementById('menu-edit-id')) document.getElementById('menu-edit-id').value = menu.id;
+
+    document.getElementById('menu-focus').value = menu.focus || '';
+    document.getElementById('menu-category').value = menu.category || 'その他';
+    document.getElementById('menu-organize').value = menu.organize || '';
+    document.getElementById('menu-keyfactor').value = menu.keyfactor || '';
+    document.getElementById('menu-options').value = menu.options || '';
+    const vInp = document.getElementById('menu-video-url');
+    if (vInp) vInp.value = menu.videoUrl || '';
+
+    const engInp = document.getElementById('menu-engagement');
+    if (engInp) engInp.value = menu.engagement || 0;
+    const refInp = document.getElementById('menu-reflection');
+    if (refInp) refInp.value = menu.reflection || '';
+
+    const selWrap = document.getElementById('menu-library-select');
+    if (selWrap) selWrap.parentElement.style.display = 'none';
+
+    const title = document.querySelector('#modal-menu h2');
+    if (title) title.textContent = '練習メニューを編集';
+
+    openModal('modal-menu');
+}
+
+window.openLibraryMenuModal = openLibraryMenuModal;
+
     document.querySelectorAll('.btn-edit-library').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const id = parseInt(e.currentTarget.dataset.id);
             const menu = state.menuLibrary.find(m => m.id === id);
             if (menu) {
-                document.getElementById('menu-practice-id').value = 'library';
-                document.getElementById('menu-library-source-id').value = '';
-                if (document.getElementById('menu-edit-id')) document.getElementById('menu-edit-id').value = id;
-
-                document.getElementById('menu-focus').value = menu.focus || '';
-                document.getElementById('menu-category').value = menu.category || 'その他';
-                document.getElementById('menu-organize').value = menu.organize || '';
-                document.getElementById('menu-keyfactor').value = menu.keyfactor || '';
-                document.getElementById('menu-options').value = menu.options || '';
-                const vInp = document.getElementById('menu-video-url');
-                if (vInp) vInp.value = menu.videoUrl || '';
-
-                const engInp = document.getElementById('menu-engagement');
-                if (engInp) engInp.value = menu.engagement || 0;
-                const refInp = document.getElementById('menu-reflection');
-                if (refInp) refInp.value = menu.reflection || '';
-
-                const selWrap = document.getElementById('menu-library-select');
-                if (selWrap) selWrap.parentElement.style.display = 'none';
-
-                const title = document.querySelector('#modal-menu h2');
-                if (title) title.textContent = '練習メニューを編集';
-
-                openModal('modal-menu');
+                openLibraryMenuModal(menu);
             }
         });
     });

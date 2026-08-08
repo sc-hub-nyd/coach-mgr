@@ -2346,6 +2346,9 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         const lblSideKf = document.getElementById('lbl-side-kf');
         const cardSideOpt = document.getElementById('side-card-opt');
 
+        const btnEditSide = document.getElementById('btn-edit-anim-side-info');
+        const isCoach = state.currentUserRole === 'coach';
+
         if (targetMenu) {
             if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細';
             if (lblSideFocus) lblSideFocus.innerHTML = '<i class="fa-solid fa-bullseye" style="color:var(--primary);"></i> テーマ・フォーカス';
@@ -2357,6 +2360,20 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             if (sideOrg) sideOrg.textContent = targetMenu.organize || 'なし';
             if (sideKf) sideKf.textContent = targetMenu.keyfactor || 'なし';
             if (sideOpt) sideOpt.textContent = targetMenu.options || 'なし';
+
+            if (btnEditSide) {
+                if (isCoach) {
+                    btnEditSide.style.display = 'inline-flex';
+                    btnEditSide.onclick = (e) => {
+                        e.stopPropagation();
+                        if (window.openLibraryMenuModal) {
+                            window.openLibraryMenuModal(targetMenu);
+                        }
+                    };
+                } else {
+                    btnEditSide.style.display = 'none';
+                }
+            }
         } else if (targetTactic) {
             if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-chess-board" style="color:var(--primary);"></i> 戦術詳細';
             if (lblSideFocus) lblSideFocus.innerHTML = '<i class="fa-solid fa-heading" style="color:var(--primary);"></i> 戦術名';
@@ -2367,6 +2384,20 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             if (sideFocus) sideFocus.textContent = targetTactic.title || '未設定';
             if (sideOrg) sideOrg.textContent = targetTactic.category || 'その他';
             if (sideKf) sideKf.textContent = targetTactic.description || 'なし';
+
+            if (btnEditSide) {
+                if (isCoach) {
+                    btnEditSide.style.display = 'inline-flex';
+                    btnEditSide.onclick = (e) => {
+                        e.stopPropagation();
+                        if (window.openTacticModal) {
+                            window.openTacticModal(targetTactic);
+                        }
+                    };
+                } else {
+                    btnEditSide.style.display = 'none';
+                }
+            }
         } else {
             if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細';
             if (cardSideOpt) cardSideOpt.style.display = 'block';
@@ -2375,6 +2406,8 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             if (sideOrg) sideOrg.textContent = 'なし';
             if (sideKf) sideKf.textContent = 'なし';
             if (sideOpt) sideOpt.textContent = 'なし';
+
+            if (btnEditSide) btnEditSide.style.display = 'none';
         }
 
         sidePanel.classList.remove('open');

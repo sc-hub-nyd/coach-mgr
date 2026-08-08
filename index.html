@@ -1428,11 +1428,15 @@
                     <button class="side-panel-toggle-btn" id="anim-side-panel-toggle-btn" title="詳細パネルを開閉">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
-                    <div class="side-panel-header">
+                    <div class="side-panel-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
                         <h4 id="anim-side-panel-title"
                             style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.4rem;">
                             <i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細
                         </h4>
+                        <button type="button" class="btn btn-secondary btn-xs" id="btn-edit-anim-side-info" title="詳細情報を編集"
+                            style="font-size:0.75rem; padding:0.2rem 0.5rem; display:none;">
+                            <i class="fa-solid fa-pen"></i> 編集
+                        </button>
                     </div>
                     <div class="side-panel-body">
                         <div class="side-info-card">
@@ -2573,7 +2577,7 @@
         window.addEventListener('touchmove', function() {}, {passive: false});
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script type="module" src="app.js?v=54"></script>
+    <script type="module" src="app.js?v=55"></script>
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
