@@ -134,9 +134,10 @@ export async function loadData() {
                 state.teamFocus = parsed.teamFocus || {}; // ★【追加】チーム強化テーマの読み込み
             }
         }
-        // 起動時はセキュリティと誤操作防止のため、常に保護者モード（閲覧専用）で初期化
-        state.currentUserRole = 'parent';
-        localStorage.removeItem('currentUserRole');
+        // セッション中にロールが未設定の場合のみ初期値（保護者モード）をセット
+        if (!state.currentUserRole) {
+            state.currentUserRole = 'parent';
+        }
     } catch (e) {
         console.error('Failed to load data:', e);
     }
