@@ -225,14 +225,16 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
     });
 
     document.querySelectorAll('.btn-delete-tactic').forEach(btn => {
-        btn.onclick = (e) => {
+        btn.onclick = async (e) => {
             const id = parseInt(e.currentTarget.dataset.id);
-            showCustomConfirm('この戦術を削除しますか？', () => {
-                state.tactics = state.tactics.filter(x => x.id !== id);
-                saveData();
-                showToast('戦術を削除しました');
-                initTactics(miniPitchObserver);
-            });
+            const t = filteredTactics.find(x => x.id === id);
+            const title = t ? `「${t.title || '無題'}」を削除` : '戦術を削除';
+            const confirmed = await showCustomConfirm('この戦術を削除します。この操作は取り消せません。', title, { okText: '削除する', type: 'danger' });
+            if (!confirmed) return;
+            state.tactics = state.tactics.filter(x => x.id !== id);
+            saveData();
+            showToast('戦術を削除しました');
+            initTactics(miniPitchObserver);
         };
     });
 

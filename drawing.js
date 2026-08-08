@@ -1292,11 +1292,26 @@ function updateContextPopover() {
     const wrapper = document.getElementById('canvas-wrapper') || canvas.parentElement;
     const wrapperRect = wrapper.getBoundingClientRect();
 
-    const scaleX = canvasRect.width / 800;
-    const scaleY = canvasRect.height / 500;
+    // object-fit: contain で実際に描画されている領域を正確に計算
+    const canvasRatio = 800 / 500;
+    const rectRatio = canvasRect.width / canvasRect.height;
+    let visualLeft = canvasRect.left;
+    let visualTop = canvasRect.top;
+    let visualWidth = canvasRect.width;
+    let visualHeight = canvasRect.height;
+    if (rectRatio > canvasRatio) {
+        visualWidth = canvasRect.height * canvasRatio;
+        visualLeft = canvasRect.left + (canvasRect.width - visualWidth) / 2;
+    } else {
+        visualHeight = canvasRect.width / canvasRatio;
+        visualTop = canvasRect.top + (canvasRect.height - visualHeight) / 2;
+    }
 
-    const objCenterX = (objX * scaleX) + (canvasRect.left - wrapperRect.left);
-    const objTopY = (objY * scaleY) + (canvasRect.top - wrapperRect.top);
+    const scaleX = visualWidth / 800;
+    const scaleY = visualHeight / 500;
+
+    const objCenterX = (objX * scaleX) + (visualLeft - wrapperRect.left);
+    const objTopY = (objY * scaleY) + (visualTop - wrapperRect.top);
 
     popover.style.visibility = 'hidden';
     popover.classList.remove('hidden');
