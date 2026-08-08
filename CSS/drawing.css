@@ -317,7 +317,7 @@ body[data-route="animation"] .bottom-nav {
     justify-content: center !important;
     overflow: hidden !important;
     position: relative !important;
-    padding: 0.5rem 0.5rem 60px 0.5rem !important; /* Force 60px bottom space for player bar */
+    padding: 0.5rem !important;
     box-sizing: border-box !important;
     /* Design */
     background: #f1f5f9;
@@ -906,7 +906,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         flex: 1 !important;
         width: auto !important;
         height: 100% !important;
-        padding: 0.25rem 0.25rem 60px 0.25rem !important;
+        padding: 0.25rem !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
