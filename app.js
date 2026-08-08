@@ -2104,8 +2104,8 @@ async function init() {
     if (sidebarTitle && state.teamInfo) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name || 'My Team')}`;
 
     // ★ バージョン表示とリリースノートモーダル初期化
-    const topbarVersionTag = document.getElementById('topbar-version-tag');
-    if (topbarVersionTag) topbarVersionTag.textContent = `${APP_VERSION}`;
+    const topbarVersionText = document.getElementById('topbar-version-text');
+    if (topbarVersionText) topbarVersionText.textContent = `${APP_VERSION}`;
 
     window.openReleaseNotesModal = openReleaseNotesModal;
 
