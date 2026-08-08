@@ -312,12 +312,12 @@ body[data-route="animation"] .bottom-nav {
     min-height: 0;
     height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     position: relative;
-    padding: 0.75rem;
-    padding-bottom: 115px; /* Reserve space above floating timeline controls */
+    padding: 0.75rem 1.25rem 70px 1.25rem; /* Reserve 70px at bottom for player bar */
     box-sizing: border-box;
     /* Design */
     background: #f1f5f9;
@@ -603,7 +603,7 @@ body[data-route="animation"] .bottom-nav {
 .anim-player-bar {
     /* Layout */
     position: absolute;
-    bottom: 20px;
+    bottom: 12px;
     left: 50%;
     transform: translateX(-50%);
     height: 44px;
