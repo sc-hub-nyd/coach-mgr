@@ -83,9 +83,9 @@
                             </div>
                         </div>
                     </div>
-                    <div id="topbar-version-badge" class="topbar-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();" style="background:rgba(16,185,129,0.15); color:#059669; cursor:pointer;">
+                    <button class="btn btn-secondary topbar-btn" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
                         <i class="fa-solid fa-circle-info"></i><span id="topbar-version-text">v1.4.0</span>
-                    </div>
+                    </button>
                 </div>
             </header>
 
@@ -2573,7 +2573,7 @@
         window.addEventListener('touchmove', function() {}, {passive: false});
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script type="module" src="app.js?v=48"></script>
+    <script type="module" src="app.js?v=49"></script>
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
