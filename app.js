@@ -2107,8 +2107,7 @@ async function init() {
     const sidebarVersionText = document.getElementById('sidebar-version-text');
     if (sidebarVersionText) sidebarVersionText.textContent = `CoachMgr ${APP_VERSION}`;
 
-    const topbarVersionText = document.getElementById('topbar-version-text');
-    if (topbarVersionText) topbarVersionText.textContent = `${APP_VERSION}`;
+
 
     const sidebarVersionBadge = document.getElementById('sidebar-version-badge');
     if (sidebarVersionBadge) sidebarVersionBadge.onclick = () => openReleaseNotesModal();

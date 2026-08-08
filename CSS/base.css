@@ -172,27 +172,28 @@ button {
 
 .sidebar-footer {
     margin-top: auto;
-    padding: 1rem 1.25rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    border-top: 1px solid var(--surface-border);
+    padding: 0.75rem 1.25rem;
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    opacity: 0.65;
+    border-top: 1px dashed var(--surface-border);
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.35rem;
     flex-shrink: 0;
-    background: var(--surface-color);
     transition: var(--transition);
 }
 
 .sidebar-footer:hover {
-    background: rgba(0, 0, 0, 0.04);
+    opacity: 1;
     color: var(--text-primary);
 }
 
 .sidebar-footer i {
-    color: var(--primary);
+    font-size: 0.7rem;
+    opacity: 0.7;
 }
 
 /* Main Content & Topbar */
