@@ -1934,11 +1934,13 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 </div>
                 <div class="side-info-card">
                     <span class="u-ext-98 side-info-label" >ポジション配置（ミニピッチ図）</span>
-                    <div class="u-ext-99" >
-                        <div class="u-ext-100" ></div>
-                        <div class="u-ext-101" ></div>
-                        <div class="u-ext-102" ></div>
-                        <div class="u-ext-103" ></div>
+                    <div class="tactical-pitch pitch-half-bottom" id="side-mini-pitch-parent" style="max-width: 320px; width: 100%; margin: 0 auto 0.5rem;">
+                        <div class="penalty-area-bottom"></div>
+                        <div class="goal-area-bottom"></div>
+                        <div class="penalty-arc-bottom"></div>
+                        <div class="penalty-spot-bottom"></div>
+                        <div class="corner-arc-bl"></div>
+                        <div class="corner-arc-br"></div>
                         ${pitchPinsHtml}
                     </div>
                     <div class="u-ext-104" >
