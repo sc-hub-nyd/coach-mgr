@@ -15,17 +15,29 @@ function toTimestamp(value) {
     return Number.isFinite(timestamp) ? timestamp : 0;
 }
 
+function toRevision(value) {
+    const revision = Number(value);
+    return Number.isInteger(revision) && revision >= 0 ? revision : 0;
+}
+
 export function ensureSyncMeta(state) {
     const existing = state.syncMeta && typeof state.syncMeta === 'object' ? state.syncMeta : {};
     state.syncMeta = {
         deviceId: existing.deviceId || createDeviceId(),
-        revision: Number(existing.revision || 0),
+        revision: toRevision(existing.revision),
+        // この端末が最後に観測したクラウド確定世代。送信時の楽観ロック条件になる。
+        cloudRevision: toRevision(existing.cloudRevision),
+        lastKnownCloudRevision: toRevision(existing.lastKnownCloudRevision ?? existing.cloudRevision),
+        cloudUpdatedAt: existing.cloudUpdatedAt || null,
+        cloudRecoveryAvailable: Boolean(existing.cloudRecoveryAvailable),
         updatedAt: existing.updatedAt || null,
         lastSyncedAt: existing.lastSyncedAt || null,
         lastAttemptAt: existing.lastAttemptAt || null,
         lastErrorAt: existing.lastErrorAt || null,
         lastErrorKind: existing.lastErrorKind || null,
-        lastErrorMessage: existing.lastErrorMessage || null
+        lastErrorMessage: existing.lastErrorMessage || null,
+        lastConflictAt: existing.lastConflictAt || null,
+        lastConflictKind: existing.lastConflictKind || null
     };
     return state.syncMeta;
 }
@@ -43,9 +55,32 @@ export function markSyncAttempt(state, now = new Date()) {
     return meta;
 }
 
-export function markSyncAcknowledged(state, now = new Date()) {
+export function getExpectedCloudRevision(state) {
+    return ensureSyncMeta(state).cloudRevision;
+}
+
+export function buildSyncSummary(snapshot) {
+    const data = snapshot || {};
+    return {
+        players: Array.isArray(data.players) ? data.players.length : 0,
+        matches: Array.isArray(data.matches) ? data.matches.length : 0,
+        practices: Array.isArray(data.practices) ? data.practices.length : 0,
+        templates: Array.isArray(data.practiceTemplates) ? data.practiceTemplates.length : 0,
+        updatedAt: data.syncMeta?.updatedAt || null,
+        cloudRevision: toRevision(data.syncMeta?.cloudRevision)
+    };
+}
+
+export function markSyncAcknowledged(state, now = new Date(), cloudMeta = {}) {
     const meta = ensureSyncMeta(state);
     const timestamp = now.toISOString();
+    const observedRevision = cloudMeta.cloudRevision ?? cloudMeta.revision;
+    if (observedRevision !== undefined) {
+        meta.cloudRevision = toRevision(observedRevision);
+        meta.lastKnownCloudRevision = meta.cloudRevision;
+    }
+    if (cloudMeta.updatedAt) meta.cloudUpdatedAt = cloudMeta.updatedAt;
+    if (cloudMeta.recoveryAvailable !== undefined) meta.cloudRecoveryAvailable = Boolean(cloudMeta.recoveryAvailable);
     meta.lastAttemptAt = timestamp;
     meta.lastSyncedAt = timestamp;
     meta.lastErrorAt = null;
@@ -58,11 +93,16 @@ export function markSyncFailure(state, error, now = new Date()) {
     const meta = ensureSyncMeta(state);
     const timestamp = now.toISOString();
     const rawMessage = String(error?.message || '同期に失敗しました');
+    const kind = String(error?.kind || error?.code || 'unknown').slice(0, 40);
     meta.lastAttemptAt = timestamp;
     meta.lastErrorAt = timestamp;
-    meta.lastErrorKind = String(error?.kind || 'unknown').slice(0, 40);
+    meta.lastErrorKind = kind;
     // 同期設定やトークンをエラー詳細として残さないよう、短い一般メッセージだけを保持する。
     meta.lastErrorMessage = rawMessage.replace(/https?:\/\/\S+/g, '[URL非表示]').slice(0, 160);
+    if (kind === 'conflict') {
+        meta.lastConflictAt = timestamp;
+        meta.lastConflictKind = error?.code || 'revision_conflict';
+    }
     return meta;
 }
 
@@ -75,12 +115,14 @@ export function hasSyncConflict(localState, remoteData) {
     const local = ensureSyncMeta(localState);
     const remote = remoteData?.syncMeta || {};
     const localChanged = hasUnsyncedChanges(localState);
-    const remoteChangedAfterLastSync = toTimestamp(remote.updatedAt) > toTimestamp(local.lastSyncedAt);
+    const remoteChangedAfterLastSync = toTimestamp(remote.updatedAt || remote.cloudUpdatedAt) > toTimestamp(local.lastSyncedAt);
+    const remoteRevisionIsNewer = toRevision(remote.cloudRevision) > toRevision(local.cloudRevision);
     const isDifferentDevice = remote.deviceId && remote.deviceId !== local.deviceId;
-    return Boolean(localChanged && remoteChangedAfterLastSync && isDifferentDevice);
+    return Boolean(localChanged && isDifferentDevice && (remoteChangedAfterLastSync || remoteRevisionIsNewer));
 }
 
 export function applyRemoteSnapshot(state, remoteData) {
+    const localMeta = ensureSyncMeta(state);
     SYNC_FIELDS.forEach(key => {
         if (remoteData[key] !== undefined) state[key] = remoteData[key];
     });
@@ -89,7 +131,21 @@ export function applyRemoteSnapshot(state, remoteData) {
         state.teamInfo = { ...state.teamInfo, ...sharedTeamInfo };
     }
     if (remoteData.syncMeta && typeof remoteData.syncMeta === 'object') {
-        state.syncMeta = { ...ensureSyncMeta(state), ...remoteData.syncMeta, lastSyncedAt: new Date().toISOString() };
+        const remoteMeta = remoteData.syncMeta;
+        // pullでクラウド側のdeviceIdをコピーせず、このブラウザ固有の識別子を保持する。
+        state.syncMeta = {
+            ...localMeta,
+            revision: Math.max(toRevision(localMeta.revision), toRevision(remoteMeta.revision)),
+            cloudRevision: toRevision(remoteMeta.cloudRevision),
+            lastKnownCloudRevision: toRevision(remoteMeta.cloudRevision),
+            cloudUpdatedAt: remoteMeta.cloudUpdatedAt || remoteMeta.updatedAt || null,
+            cloudRecoveryAvailable: Boolean(remoteMeta.cloudRecoveryAvailable),
+            updatedAt: remoteMeta.updatedAt || null,
+            lastSyncedAt: new Date().toISOString(),
+            lastErrorAt: null,
+            lastErrorKind: null,
+            lastErrorMessage: null
+        };
     } else {
         markSyncAcknowledged(state);
     }
@@ -106,3 +162,5 @@ export function getSyncStatusLabel(status) {
         error: '同期に失敗しました'
     }[status] || '同期状態を確認中';
 }
+
+export { toRevision };

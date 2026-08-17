@@ -191,6 +191,23 @@
                 <div id="dash-setup-items" class="setup-checklist-items"></div>
             </section>
 
+            <!-- P17: 試合前の運用確認（コーチ専用） -->
+            <section id="dash-preflight-card" class="card dash-preflight-card coach-only" aria-labelledby="dash-preflight-title">
+                <div class="dash-preflight-header">
+                    <div>
+                        <span class="eyebrow-label">MATCHDAY READY</span>
+                        <h2 id="dash-preflight-title"><i class="fa-solid fa-shield-heart"></i> 試合前チェック</h2>
+                        <p id="dash-preflight-headline">保存・同期・復旧状態を確認しています。</p>
+                    </div>
+                    <span id="dash-preflight-progress" class="dash-preflight-progress">確認中</span>
+                </div>
+                <div id="dash-preflight-items" class="dash-preflight-items" aria-live="polite"></div>
+                <div class="dash-preflight-actions">
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-dash-preflight-action"><i class="fa-solid fa-play"></i> 確認する</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-dash-preflight-settings"><i class="fa-solid fa-gear"></i> 運用設定</button>
+                </div>
+            </section>
+
             <!-- ROW 0: マイ選手 (保護者専用) -->
             <div id="dash-myplayer-banner" class="card dash-myplayer-card parent-only" style="display:none;">
                 <div class="dash-widget-label"
@@ -862,8 +879,10 @@
                     <div class="operations-actions">
                         <button type="button" class="btn btn-primary btn-sm" id="btn-operations-backup"><i class="fa-solid fa-download"></i> 今すぐバックアップ</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-export-recovery" disabled><i class="fa-solid fa-clock-rotate-left"></i> 復旧用データを保存</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-cloud-recoveries"><i class="fa-solid fa-clock-rotate-left"></i> クラウド復旧世代</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-operations-check"><i class="fa-solid fa-copy"></i> 状態をコピー</button>
                     </div>
+                    <div class="cloud-recovery-history" id="cloud-recovery-history" aria-live="polite"></div>
                 </div>
             </div>
 

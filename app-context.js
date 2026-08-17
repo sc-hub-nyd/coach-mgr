@@ -19,4 +19,5 @@ export const loadData = (...args) => requireAction('loadData')(...args);
 export const updateRoleUI = (...args) => requireAction('updateRoleUI')(...args);
 export const syncPushGasCloud = (...args) => requireAction('syncPushGasCloud')(...args);
 export const syncPullGasCloud = (...args) => requireAction('syncPullGasCloud')(...args);
+export const restoreCloudRecovery = (...args) => requireAction('restoreCloudRecovery')(...args);
 export const clearAllMiniPitchIntervals = (...args) => requireAction('clearAllMiniPitchIntervals')(...args);
