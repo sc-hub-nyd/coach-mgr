@@ -55,9 +55,14 @@ async function parseResponse(response, direction) {
         throw new SyncError(`${direction}のレスポンス形式が正しくありません`, { kind: 'response', retryable: false, cause: error });
     }
     if (!result || result.status !== 'success') {
-        throw new SyncError(result?.message || `${direction}に失敗しました`, {
-            kind: 'api', retryable: false
+        const code = String(result?.code || 'api_error');
+        const error = new SyncError(result?.message || `${direction}に失敗しました`, {
+            kind: code === 'revision_conflict' ? 'conflict' : 'api',
+            retryable: false
         });
+        error.code = code;
+        error.meta = result?.meta && typeof result.meta === 'object' ? result.meta : null;
+        throw error;
     }
     return result;
 }
@@ -73,11 +78,13 @@ export function getSyncProtocol(teamInfo) {
         : GAS_SYNC_PROTOCOLS.LEGACY;
 }
 
-export function createCloudPayload(teamInfo, data) {
+export function createCloudPayload(teamInfo, data, { expectedRevision = 0, force = false } = {}) {
     return {
         action: 'push',
         sheetName: teamInfo?.gasSheetName || '',
         authToken: teamInfo?.gasAuthToken || '',
+        expectedRevision: Number.isInteger(Number(expectedRevision)) ? Number(expectedRevision) : 0,
+        force: Boolean(force),
         data
     };
 }
@@ -90,16 +97,56 @@ export function createPullPayload(teamInfo) {
     };
 }
 
-export async function pushCloud({ teamInfo, data, fetchImpl = fetch, timeoutMs = 10000 }) {
+export async function pushCloud({ teamInfo, data, expectedRevision = 0, force = false, fetchImpl = fetch, timeoutMs = 10000 }) {
     const url = assertUrl(teamInfo?.gasApiUrl);
     const response = await fetchWithTimeout(fetchImpl, url, {
         method: 'POST',
         mode: 'cors',
         redirect: 'follow',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(createCloudPayload(teamInfo, data))
+        body: JSON.stringify(createCloudPayload(teamInfo, data, { expectedRevision, force }))
     }, timeoutMs);
     return parseResponse(response, 'クラウド送信');
+}
+
+function assertSecureProtocol(teamInfo, featureLabel) {
+    if (getSyncProtocol(teamInfo) !== GAS_SYNC_PROTOCOLS.SECURE) {
+        throw new SyncError(`${featureLabel}は安全モード（POST認証）でのみ利用できます`, { kind: 'configuration' });
+    }
+}
+
+async function postSecureAction({ teamInfo, payload, direction, fetchImpl = fetch, timeoutMs = 10000 }) {
+    assertSecureProtocol(teamInfo, direction);
+    const url = assertUrl(teamInfo?.gasApiUrl);
+    const response = await fetchWithTimeout(fetchImpl, url, {
+        method: 'POST',
+        mode: 'cors',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ ...payload, sheetName: teamInfo?.gasSheetName || '', authToken: teamInfo?.gasAuthToken || '' })
+    }, timeoutMs);
+    return parseResponse(response, direction);
+}
+
+export async function listCloudRecoveries({ teamInfo, fetchImpl = fetch, timeoutMs = 10000 }) {
+    const result = await postSecureAction({
+        teamInfo,
+        payload: { action: 'listRecoveries' },
+        direction: 'クラウド復旧一覧の取得',
+        fetchImpl,
+        timeoutMs
+    });
+    return Array.isArray(result.recoveries) ? result.recoveries : [];
+}
+
+export async function restoreCloudRecovery({ teamInfo, revision, expectedRevision = 0, force = false, fetchImpl = fetch, timeoutMs = 10000 }) {
+    return postSecureAction({
+        teamInfo,
+        payload: { action: 'restore', revision: Number(revision), expectedRevision: Number(expectedRevision), force: Boolean(force) },
+        direction: 'クラウド復旧',
+        fetchImpl,
+        timeoutMs
+    });
 }
 
 export async function pullCloud({ teamInfo, fetchImpl = fetch, timeoutMs = 10000 }) {

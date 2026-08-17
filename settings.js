@@ -3,8 +3,9 @@ import { state } from './state.js';
 import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm } from './utils.js';
 import { createBackupPayload, parseBackupPayload, savePersistedSnapshot, loadRecoverySnapshot, clearPersistedSnapshot } from './repository.js';
 import { markBackupCreated, buildOperationalDiagnostics, buildOperationsShareText } from './operations-service.js';
+import { listCloudRecoveries } from './sync-service.js';
 
-import { saveData, syncPushGasCloud, syncPullGasCloud, updateRoleUI, openModal, loadData } from './app-context.js';
+import { saveData, syncPushGasCloud, syncPullGasCloud, restoreCloudRecovery, updateRoleUI, openModal, loadData } from './app-context.js';
 
 export function _showExportFallbackModal(jsonStr) {
     const modal = document.getElementById('modal-export-fallback');
@@ -203,12 +204,24 @@ export function initSettings() {
     const refreshOperationalDiagnostics = () => {
         if (!diagnosticsContainer) return;
         const diagnostics = buildOperationalDiagnostics(state);
-        const icons = { backup: 'fa-box-archive', sync: 'fa-cloud', recovery: 'fa-clock-rotate-left', team: 'fa-people-group', storage: 'fa-hard-drive' };
-        diagnosticsContainer.innerHTML = diagnostics.checks.map(check => `
-            <div class="operations-check is-${check.status}">
+        const icons = { backup: 'fa-box-archive', sync: 'fa-cloud', cloudRecovery: 'fa-clock-rotate-left', recovery: 'fa-clock-rotate-left', team: 'fa-people-group', storage: 'fa-hard-drive' };
+        diagnosticsContainer.innerHTML = diagnostics.checks.map(check => {
+            const action = check.action ? `<button type="button" class="btn btn-secondary btn-sm operations-check-action" data-operation-action="${escapeHtml(check.action.action)}">${escapeHtml(check.action.label)}</button>` : '';
+            return `<div class="operations-check is-${check.status}${action ? ' has-action' : ''}">
                 <span class="operations-check-icon"><i class="fa-solid ${icons[check.key] || 'fa-circle-info'}" aria-hidden="true"></i></span>
                 <span><strong>${escapeHtml(check.label)}</strong><small title="${escapeHtml(check.detail)}">${escapeHtml(check.detail)}</small></span>
-            </div>`).join('');
+                ${action}
+            </div>`;
+        }).join('');
+        diagnosticsContainer.querySelectorAll('.operations-check-action').forEach(button => {
+            button.onclick = async () => {
+                const action = button.dataset.operationAction;
+                if (action === 'backup') return exportBackupData();
+                if (action === 'sync') return syncPushGasCloud(false).finally(refreshOperationalDiagnostics);
+                if (action === 'recoveries') return refreshCloudRecoveries();
+                if (action === 'local-recovery') return exportRecoveryBackupData();
+            };
+        });
         const recoveryButton = document.getElementById('btn-export-recovery');
         if (recoveryButton) recoveryButton.disabled = !diagnostics.lastRecoveryAt;
     };
@@ -239,6 +252,61 @@ export function initSettings() {
             }
         };
     }
+
+    const cloudRecoveryHistory = document.getElementById('cloud-recovery-history');
+    const renderCloudRecoveries = recoveries => {
+        if (!cloudRecoveryHistory) return;
+        if (!recoveries.length) {
+            cloudRecoveryHistory.innerHTML = '<p class="cloud-recovery-empty">利用可能なクラウド復旧世代はありません。次回以降のクラウド送信後に表示されます。</p>';
+            return;
+        }
+        cloudRecoveryHistory.innerHTML = recoveries.map(item => `
+            <div class="cloud-recovery-item">
+                <span><strong>世代 ${Number(item.revision)}</strong><small>${escapeHtml(item.updatedAt || '直前の確定版')} ・ ${escapeHtml(item.source === 'immediate' ? '直前の安全スロット' : '世代履歴')}</small></span>
+                <button type="button" class="btn btn-secondary btn-sm btn-restore-cloud-generation" data-revision="${Number(item.revision)}"><i class="fa-solid fa-clock-rotate-left"></i> 復元</button>
+            </div>`).join('');
+        cloudRecoveryHistory.querySelectorAll('.btn-restore-cloud-generation').forEach(button => {
+            button.onclick = async () => {
+                const revision = Number(button.dataset.revision);
+                const proceed = await showCustomConfirm(`クラウド世代 ${revision} を復元します。現在のクラウド状態と端末状態は復旧ポイントとして保護されます。`, 'クラウド世代の復元', { okText: 'この世代を復元する', type: 'danger' });
+                if (!proceed) return;
+                try {
+                    button.disabled = true;
+                    await restoreCloudRecovery(revision);
+                    refreshOperationalDiagnostics();
+                    await refreshCloudRecoveries();
+                } catch (error) {
+                    alert(`クラウド世代を復元できませんでした。\n${error?.message || error}`);
+                } finally {
+                    button.disabled = false;
+                }
+            };
+        });
+    };
+    const refreshCloudRecoveries = async () => {
+        if (!cloudRecoveryHistory) return [];
+        if (!state.teamInfo?.gasApiUrl) {
+            cloudRecoveryHistory.innerHTML = '<p class="cloud-recovery-empty">クラウド同期を設定すると、クラウド上の復旧世代を確認できます。</p>';
+            return [];
+        }
+        if (state.teamInfo.gasSyncProtocol !== 'secure-v2') {
+            cloudRecoveryHistory.innerHTML = '<p class="cloud-recovery-empty">クラウド世代の復元は安全モード（POST認証）で利用できます。</p>';
+            return [];
+        }
+        cloudRecoveryHistory.innerHTML = '<p class="cloud-recovery-empty"><i class="fa-solid fa-rotate fa-spin"></i> クラウド復旧世代を確認中...</p>';
+        try {
+            const recoveries = await listCloudRecoveries({ teamInfo: state.teamInfo });
+            renderCloudRecoveries(recoveries);
+            return recoveries;
+        } catch (error) {
+            cloudRecoveryHistory.innerHTML = `<p class="cloud-recovery-empty is-error">クラウド復旧世代を確認できませんでした。${escapeHtml(error?.message || '')}</p>`;
+            return [];
+        }
+    };
+    window.refreshCloudRecoveries = refreshCloudRecoveries;
+    const btnRefreshCloudRecoveries = document.getElementById('btn-refresh-cloud-recoveries');
+    if (btnRefreshCloudRecoveries) btnRefreshCloudRecoveries.onclick = () => refreshCloudRecoveries();
+    void refreshCloudRecoveries();
 
     const teamNameInput = document.getElementById('team-info-name');
     const teamColorInput = document.getElementById('team-info-color');

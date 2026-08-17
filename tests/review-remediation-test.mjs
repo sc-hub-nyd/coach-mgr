@@ -31,7 +31,8 @@ assert.equal(hasSyncConflict(local, remote), true);
 applyRemoteSnapshot(local, { ...remote, teamInfo: { name: '共有チーム', gasAuthToken: 'remote-secret' } });
 assert.equal(local.matches[0].id, 2);
 assert.equal(local.teamInfo.gasAuthToken, undefined);
-assert.equal(local.syncMeta.deviceId, 'remote');
+// P15: pullはクラウド側の端末IDをコピーせず、このブラウザ固有の識別子を保持する。
+assert.equal(local.syncMeta.deviceId, 'local');
 markLocalChange(local, new Date('2026-08-17T11:00:00.000Z'));
 assert.equal(local.syncMeta.revision, 2);
 markSyncAcknowledged(local, new Date('2026-08-17T11:01:00.000Z'));

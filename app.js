@@ -12,8 +12,10 @@ import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js
 import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
 import { loadPersistedSnapshot, savePersistedSnapshot, createStateSnapshot, createCloudSnapshot } from './repository.js';
-import { pushCloud, pullCloud, withRetry } from './sync-service.js';
-import { ensureSyncMeta, markLocalChange, markSyncAttempt, markSyncAcknowledged, markSyncFailure, hasSyncConflict, applyRemoteSnapshot, getSyncStatusLabel } from './sync-controller.js';
+import { pushCloud, pullCloud, restoreCloudRecovery as restoreCloudRecoveryRequest, withRetry } from './sync-service.js';
+import { ensureSyncMeta, markLocalChange, markSyncAttempt, markSyncAcknowledged, markSyncFailure, hasSyncConflict, applyRemoteSnapshot, getExpectedCloudRevision, buildSyncSummary, getSyncStatusLabel } from './sync-controller.js';
+import { showSyncConflictDialog } from './sync-conflict-dialog.js';
+import { buildOperationalDiagnostics } from './operations-service.js';
 import { configureAppContext } from './app-context.js';
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
@@ -223,35 +225,115 @@ function setSyncStateUI(status) {
     }
 }
 
-export function syncPushGasCloud(isSilent = false) {
+function createConflictError(message, code = 'revision_conflict') {
+    const error = new Error(message);
+    error.kind = 'conflict';
+    error.code = code;
+    return error;
+}
+
+async function persistRemoteSnapshot(remoteData, { toast = true } = {}) {
+    applyRemoteSnapshot(state, remoteData);
+    markSyncAcknowledged(state, new Date(), remoteData.syncMeta || {});
+    await saveData({ sync: false, markChange: false });
+    if (toast) showToast('クラウドから最新データを復元しました！');
+    setSyncStateUI('success');
+    navigate(state.currentRoute || 'dashboard');
+    return remoteData;
+}
+
+async function resolveSyncConflict(remoteData, { isSilent = false, errorMeta = null } = {}) {
+    setSyncStateUI('conflict');
+    if (isSilent) throw createConflictError('端末とクラウドの両方に未同期の変更があります');
+
+    const action = await showSyncConflictDialog({
+        localSummary: buildSyncSummary(createCloudSnapshot(state)),
+        remoteSummary: buildSyncSummary(remoteData),
+        cloudRevision: errorMeta?.revision ?? remoteData?.syncMeta?.cloudRevision
+    });
+    if (action === 'cloud') return persistRemoteSnapshot(remoteData);
+    if (action === 'keep-local') {
+        const expectedRevision = Number(errorMeta?.revision ?? remoteData?.syncMeta?.cloudRevision ?? getExpectedCloudRevision(state));
+        return syncPushGasCloud(false, { force: true, expectedRevision, resolvedConflict: true });
+    }
+
+    const cancelled = createConflictError('同期の競合はまだ解決されていません', 'manual_review');
+    markSyncFailure(state, cancelled);
+    await saveData({ sync: false, markChange: false });
+    setSyncStateUI('conflict');
+    return null;
+}
+
+export function syncPushGasCloud(isSilent = false, { force = false, expectedRevision = getExpectedCloudRevision(state), resolvedConflict = false } = {}) {
     if (!state.teamInfo || !state.teamInfo.gasApiUrl) {
         if (!isSilent) alert('Google Apps Script の Web API URL が設定されていません。');
         return Promise.reject('No URL');
     }
-    if (!isSilent) showToast('クラウドへ同期中...');
+    if (!isSilent) showToast(force ? '端末版をクラウドへ保存中...' : 'クラウドへ同期中...');
     markSyncAttempt(state);
     setSyncStateUI('syncing');
 
-    return withRetry(() => pushCloud({ teamInfo: state.teamInfo, data: createCloudSnapshot(state) }), {
+    return withRetry(() => pushCloud({
+        teamInfo: state.teamInfo,
+        data: createCloudSnapshot(state),
+        expectedRevision,
+        force
+    }), {
         onRetry: (_error, attempt) => {
             if (!isSilent) showToast(`同期を再試行しています（${attempt}回目）...`);
         }
     })
         .then(async result => {
-            markSyncAcknowledged(state);
+            markSyncAcknowledged(state, new Date(), result.meta || result);
             await saveData({ sync: false, markChange: false });
-            if (!isSilent) showToast('クラウドへの送信が完了しました！');
+            if (!isSilent) showToast(resolvedConflict ? '端末版をクラウドへ保存しました' : 'クラウドへの送信が完了しました！');
             setSyncStateUI('success');
             return result;
         })
         .catch(async err => {
+            if (err?.kind === 'conflict' && !force && !isSilent) {
+                try {
+                    const remoteData = await pullCloud({ teamInfo: state.teamInfo });
+                    return await resolveSyncConflict(remoteData, { isSilent, errorMeta: err.meta });
+                } catch (resolutionError) {
+                    err = resolutionError;
+                }
+            }
             console.error('GAS Sync Push Error:', err);
             markSyncFailure(state, err);
             await saveData({ sync: false, markChange: false });
-            setSyncStateUI('error');
-            if (!isSilent) alert(`クラウド送信に失敗しました:\n${err.message || err}`);
+            setSyncStateUI(err?.kind === 'conflict' ? 'conflict' : 'error');
+            if (!isSilent && err?.code !== 'manual_review') alert(`クラウド送信に失敗しました:\n${err.message || err}`);
             throw err;
         });
+}
+
+export async function restoreCloudRecovery(revision) {
+    if (!state.teamInfo || !state.teamInfo.gasApiUrl) {
+        throw new Error('Google Apps Script の Web API URL が設定されていません。');
+    }
+    markSyncAttempt(state);
+    setSyncStateUI('syncing');
+    try {
+        const result = await withRetry(() => restoreCloudRecoveryRequest({
+            teamInfo: state.teamInfo,
+            revision,
+            expectedRevision: getExpectedCloudRevision(state)
+        }));
+        // 復元成功後は、意図的な復元操作として競合確認を挟まずクラウド確定版を適用する。
+        const remoteData = await withRetry(() => pullCloud({ teamInfo: state.teamInfo }));
+        await persistRemoteSnapshot(remoteData, { toast: false });
+        markSyncAcknowledged(state, new Date(), result.meta || result);
+        await saveData({ sync: false, markChange: false });
+        showToast(`クラウド世代 ${Number(revision)} を復元しました`);
+        return remoteData;
+    } catch (err) {
+        console.error('GAS recovery restore error:', err);
+        markSyncFailure(state, err);
+        await saveData({ sync: false, markChange: false });
+        setSyncStateUI(err?.kind === 'conflict' ? 'conflict' : 'error');
+        throw err;
+    }
 }
 
 export async function syncPullGasCloud(isSilent = false) {
@@ -271,24 +353,15 @@ export async function syncPullGasCloud(isSilent = false) {
             }
         });
         if (hasSyncConflict(state, remoteData)) {
-            setSyncStateUI('conflict');
-            if (isSilent) throw new Error('端末とクラウドの両方に未同期の変更があります');
-            const proceed = await showCustomConfirm('端末とクラウドの両方に未同期の変更があります。端末の変更は復旧用データに保持されますが、クラウド版で上書きしますか？', '同期の競合を確認', { okText: 'クラウド版を復元する', type: 'danger' });
-            if (!proceed) return null;
+            return resolveSyncConflict(remoteData, { isSilent });
         }
-        applyRemoteSnapshot(state, remoteData);
-        markSyncAcknowledged(state);
-        await saveData({ sync: false, markChange: false });
-        if (!isSilent) showToast('クラウドから最新データを復元しました！');
-        setSyncStateUI('success');
-        navigate(state.currentRoute || 'dashboard');
-        return remoteData;
+        return persistRemoteSnapshot(remoteData, { toast: !isSilent });
     } catch (err) {
         console.error('GAS Sync Pull Error:', err);
         markSyncFailure(state, err);
         await saveData({ sync: false, markChange: false });
-        setSyncStateUI('error');
-        if (!isSilent) alert(`クラウドからの復元に失敗しました:\n${err.message || err}`);
+        setSyncStateUI(err?.kind === 'conflict' ? 'conflict' : 'error');
+        if (!isSilent && err?.code !== 'manual_review') alert(`クラウドからの復元に失敗しました:\n${err.message || err}`);
         throw err;
     }
 }
@@ -806,10 +879,66 @@ function setupModals() {
     setupScoreCounters();
 }
 
+async function runDashboardPreflightAction(action) {
+    if (action === 'backup') {
+        const { exportBackupData } = await import('./settings.js');
+        exportBackupData();
+        return;
+    }
+    if (action === 'sync') {
+        await syncPushGasCloud(false);
+        return;
+    }
+    if (action === 'recoveries' || action === 'local-recovery' || action === 'settings') {
+        navigate('settings');
+    }
+}
+
+function renderDashboardPreflight() {
+    const card = document.getElementById('dash-preflight-card');
+    if (!card || state.currentUserRole !== 'coach') return;
+    const diagnostics = buildOperationalDiagnostics(state);
+    const preflight = diagnostics.preflight;
+    const headline = document.getElementById('dash-preflight-headline');
+    const progress = document.getElementById('dash-preflight-progress');
+    const items = document.getElementById('dash-preflight-items');
+    const primaryAction = document.getElementById('btn-dash-preflight-action');
+    const settingsAction = document.getElementById('btn-dash-preflight-settings');
+    const icons = { backup: 'fa-download', sync: 'fa-cloud-arrow-up', cloudRecovery: 'fa-clock-rotate-left', recovery: 'fa-shield-heart' };
+    if (headline) headline.textContent = preflight.headline;
+    if (progress) {
+        progress.textContent = `${preflight.readyCount}/${preflight.items.length} 確認済み`;
+        progress.className = `dash-preflight-progress is-${preflight.status}`;
+    }
+    if (items) {
+        items.innerHTML = preflight.items.map(item => `
+            <div class="dash-preflight-item is-${item.status}">
+                <i class="fa-solid ${icons[item.key] || 'fa-circle-info'}" aria-hidden="true"></i>
+                <span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.detail)}</small></span>
+            </div>`).join('');
+    }
+    if (primaryAction) {
+        primaryAction.innerHTML = `<i class="fa-solid fa-play"></i> ${escapeHtml(preflight.nextAction.label)}`;
+        primaryAction.onclick = async () => {
+            primaryAction.disabled = true;
+            try {
+                await runDashboardPreflightAction(preflight.nextAction.action);
+            } catch (error) {
+                alert(`試合前チェックの操作に失敗しました。\n${error?.message || error}`);
+            } finally {
+                primaryAction.disabled = false;
+                renderDashboardPreflight();
+            }
+        };
+    }
+    if (settingsAction) settingsAction.onclick = () => navigate('settings');
+}
+
 function initDashboard() {
     const now = new Date();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const isCoach = state.currentUserRole === 'coach';
+    renderDashboardPreflight();
 
     // ── P0: 初回セットアップチェックリスト ──
     const setupChecklist = document.getElementById('dash-setup-checklist');
@@ -2149,6 +2278,7 @@ configureAppContext({
     updateRoleUI,
     syncPushGasCloud,
     syncPullGasCloud,
+    restoreCloudRecovery,
     clearAllMiniPitchIntervals
 });
 
