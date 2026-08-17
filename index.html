@@ -174,6 +174,23 @@
         </div>
     </div>
 
+    <!-- P30: 分析から作る編集可能な練習計画 -->
+    <div id="modal-practice-plan" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="practice-plan-title">
+        <div class="modal modal-practice-plan">
+            <div class="modal-header"><h2 id="practice-plan-title"><i class="fa-solid fa-clipboard-list"></i> 次の練習案</h2><button type="button" class="btn btn-secondary btn-close-modal" aria-label="練習案を閉じる"><i class="fa-solid fa-xmark"></i></button></div>
+            <p class="text-secondary">振り返りの示唆を下書きにしました。チームの状況に合わせて編集してから保存してください。</p>
+            <form id="form-practice-plan" class="practice-plan-form">
+                <label>テーマ<input id="practice-plan-name" class="form-control" required></label>
+                <label>実施日（任意）<input id="practice-plan-date" type="date" class="form-control"></label>
+                <label>所要時間（分）<input id="practice-plan-duration" type="number" min="30" max="180" step="5" class="form-control" required></label>
+                <label>ねらい<textarea id="practice-plan-purpose" class="form-control" rows="3"></textarea></label>
+                <div id="practice-plan-blocks" class="practice-plan-blocks"></div>
+                <label>雨天・人数不足時の代替案<textarea id="practice-plan-contingency" class="form-control" rows="2"></textarea></label>
+                <div class="modal-actions"><button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button><button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> 練習案を保存</button></div>
+            </form>
+        </div>
+    </div>
+
     <!-- ===== Templates (hidden, cloned on navigation) ===== -->
     <template id="tpl-dashboard">
         <div class="dash-widget-grid">
@@ -189,6 +206,27 @@
                     <span id="dash-setup-progress" class="setup-progress">0/3 完了</span>
                 </div>
                 <div id="dash-setup-items" class="setup-checklist-items"></div>
+            </section>
+
+            <!-- P28: 文脈優先のコーチホーム -->
+            <section id="dash-action-center" class="card dash-action-center coach-only" aria-labelledby="dash-action-center-title">
+                <div class="dash-action-center-header">
+                    <div><span class="eyebrow-label">TODAY</span><h2 id="dash-action-center-title">今日やること</h2><p>試合準備、出欠、記録の安全性を優先順に確認します。</p></div>
+                    <span id="dash-action-center-count" class="dash-action-count">確認中</span>
+                </div>
+                <div id="dash-action-center-list" class="dash-action-center-list" aria-live="polite"></div>
+            </section>
+
+            <!-- P30: 分析から次回練習へつなぐ計画導線 -->
+            <section id="dash-practice-plan" class="card dash-practice-plan coach-only" aria-labelledby="dash-practice-plan-title">
+                <div class="dash-action-center-header"><div><span class="eyebrow-label">NEXT SESSION</span><h2 id="dash-practice-plan-title">次の練習を組み立てる</h2><p id="dash-practice-plan-copy">振り返りの示唆から、編集可能な練習案を作成します。</p></div><button type="button" class="btn btn-primary btn-sm" id="btn-dash-create-practice-plan"><i class="fa-solid fa-clipboard-list"></i> 練習案を作る</button></div>
+                <div id="dash-practice-plan-summary" class="dash-practice-plan-summary" aria-live="polite"></div>
+            </section>
+
+            <!-- P28: 保護者が最初に行う操作 -->
+            <section id="dash-parent-agenda" class="card dash-parent-agenda parent-only" aria-labelledby="dash-parent-agenda-title">
+                <div class="dash-action-center-header"><div><span class="eyebrow-label">FOR YOU</span><h2 id="dash-parent-agenda-title">次にすること</h2><p>予定の確認、出欠回答、成長ログの確認をここから行えます。</p></div></div>
+                <div id="dash-parent-agenda-list" class="dash-action-center-list" aria-live="polite"></div>
             </section>
 
             <!-- P17: 試合前の運用確認（コーチ専用） -->
@@ -466,6 +504,11 @@
                     <span id="field-session-status" class="field-network-status" hidden role="status" aria-live="polite"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i> 画面オン</span>
                 </div>
                 <div id="field-action-hint" class="field-action-hint">試合中はここから素早く記録できます</div>
+                <!-- P29: 試合前の最終確認。試合中は折りたたみ、操作面を優先する。 -->
+                <details class="field-matchday-readiness" id="field-matchday-readiness" open>
+                    <summary><span><i class="fa-solid fa-list-check"></i> 試合前チェック</span><strong id="field-matchday-headline">確認中</strong></summary>
+                    <div id="field-matchday-items" class="field-matchday-items" aria-live="polite"></div>
+                </details>
                 <div class="field-live-score" aria-live="polite"><span>LIVE SCORE</span><strong id="field-live-score">0 - 0</strong><small id="field-live-score-detail">合計スコア</small></div>
                 <div class="field-action-bar">
                     <button type="button" class="btn btn-action-score" id="btn-field-score"><i class="fa-solid fa-futbol"></i><span>得点</span></button>
@@ -792,6 +835,32 @@
     <template id="tpl-settings">
         <div class="sl-settings">
 
+            <!-- P28: 長い設定画面を目的別に移動できるハブ -->
+            <section class="settings-hub card coach-only" aria-labelledby="settings-hub-title">
+                <div><span class="eyebrow-label">SETTINGS</span><h2 id="settings-hub-title">何を設定しますか？</h2><p>目的を選ぶと、必要な設定まで移動します。</p></div>
+                <div class="settings-hub-grid">
+                    <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="workspace-management-section"><i class="fa-solid fa-layer-group"></i><span>チーム・年度</span><small>切替と年度管理</small></button>
+                    <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="gas-sync-section"><i class="fa-solid fa-cloud-arrow-up"></i><span>同期・復旧</span><small>保存の安全性</small></button>
+                    <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="parent-share-section"><i class="fa-solid fa-people-roof"></i><span>保護者共有</span><small>招待と閲覧範囲</small></button>
+                    <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="ui-preferences-section"><i class="fa-solid fa-universal-access"></i><span>表示・操作</span><small>文字・利き手・動き</small></button>
+                </div>
+            </section>
+
+            <!-- P32: 個別表示設定とアクセシビリティ -->
+            <section class="sl-section" id="ui-preferences-section">
+                <div class="sl-section-label"><i class="fa-solid fa-universal-access"></i> 表示・操作の個別設定</div>
+                <div class="sl-section-body">
+                    <p class="operations-intro">端末ごとに、文字の大きさ、利き手、動きの量を調整できます。記録データや他の利用者の表示は変わりません。</p>
+                    <div class="ui-preferences-grid">
+                        <label>文字の大きさ<select id="ui-font-scale" class="sl-input"><option value="normal">標準</option><option value="large">大きめ</option><option value="xlarge">最大</option></select></label>
+                        <label>Field Companionの利き手<select id="ui-preferred-hand" class="sl-input"><option value="right">右手（標準）</option><option value="left">左手</option></select></label>
+                        <label class="ui-preference-check"><input id="ui-reduce-motion" type="checkbox"> 動きを控えめにする</label>
+                        <label class="ui-preference-check"><input id="ui-compact-mode" type="checkbox"> 情報をコンパクトに表示</label>
+                    </div>
+                    <div class="operations-actions"><button type="button" class="btn btn-primary btn-sm" id="btn-save-ui-preferences"><i class="fa-solid fa-check"></i> 表示設定を保存</button></div>
+                </div>
+            </section>
+
             <!-- Section: Team Info -->
             <div class="sl-section">
                 <div class="sl-section-label"><i class="fa-solid fa-building-flag"></i> チーム基本情報</div>
@@ -865,7 +934,7 @@
             </div>
 
             <!-- Section: クラウド自動同期 (GAS) -->
-            <div class="sl-section">
+            <div class="sl-section" id="gas-sync-section">
                 <div class="sl-section-label"><i class="fa-solid fa-cloud-arrow-up"></i> クラウド無料同期 (GAS)</div>
                 <div class="sl-section-body">
                     <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.75rem;">
@@ -931,8 +1000,9 @@
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-rotate-parent-share-link"><i class="fa-solid fa-arrows-rotate"></i> リンクを再発行・旧リンクを失効</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-rsvp-reminder"><i class="fa-solid fa-bell"></i> 未回答リマインドをコピー</button>
                     </div>
-                    <div class="parent-access-manager">
-                        <div class="parent-access-manager-heading"><strong><i class="fa-solid fa-id-card"></i> 保護者アクセス管理</strong><span>招待ごとに対象選手・閲覧範囲・期限を設定します。</span></div>
+                        <div class="parent-access-manager">
+                            <div class="parent-access-manager-heading"><strong><i class="fa-solid fa-id-card"></i> 保護者アクセス管理</strong><span>招待ごとに対象選手・閲覧範囲・期限を設定します。</span></div>
+                            <div id="parent-access-trust-status" class="parent-access-trust-status" role="status" aria-live="polite"></div>
                         <div class="parent-access-create-grid">
                             <label>招待の表示名（任意）<input id="parent-access-label" class="sl-input" type="text" placeholder="例：山田様"></label>
                             <fieldset class="parent-access-scopes"><legend>閲覧範囲</legend><label><input type="checkbox" value="schedule" checked>予定・結果</label><label><input type="checkbox" value="attendance" checked>出欠</label><label><input type="checkbox" value="development" checked>本人の成長ログ</label></fieldset>
@@ -1310,6 +1380,11 @@
                     <article class="card insights-panel"><div class="insights-section-header"><div><span class="eyebrow-label">POSITION LOAD</span><h3>ポジション別出場時間</h3></div></div><div id="insights-position-participation" class="insights-position-list"></div></article>
                     <article class="card insights-panel"><div class="insights-section-header"><div><span class="eyebrow-label">NEXT SESSION</span><h3>次の練習テーマ</h3></div></div><div id="insights-recommendations" class="insights-recommendations"></div></article>
                 </div>
+                <!-- P31: 数値を次の意思決定へつなぐ根拠付きカード -->
+                <section class="decision-cards-section coach-only" aria-labelledby="decision-cards-title">
+                    <div class="insights-section-header"><div><span class="eyebrow-label">DECISION SUPPORT</span><h2 id="decision-cards-title">次の判断</h2></div><span class="insights-hint">対象期間と記録件数を根拠として表示します</span></div>
+                    <div id="insights-decision-cards" class="decision-cards" aria-live="polite"></div>
+                </section>
             </section>
             <div class="insights-content-grid">
                 <section class="card insights-panel" aria-labelledby="insights-timeline-title">

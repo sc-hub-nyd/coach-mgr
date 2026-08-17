@@ -7,6 +7,7 @@ import { listCloudRecoveries } from './sync-service.js';
 import { ensureParentShareSettings, rotateParentShareLink, buildPendingRsvpDigest, createParentAccessInvite, getParentAccessSummary, PARENT_ACCESS_SCOPES, revokeParentAccessInvite } from './parent-operations-service.js';
 import { archiveSeason, createSeason, createTeam, ensureWorkspaceState, getActiveSeason, getActiveTeam, switchWorkspace } from './workspace-service.js';
 import { buildSeasonReport, buildSeasonReportCsv, buildSeasonReportPrintHtml } from './season-report-service.js';
+import { loadUiPreferences, saveUiPreferences, applyUiPreferences } from './experience-service.js';
 
 import { saveData, syncPushGasCloud, syncPullGasCloud, restoreCloudRecovery, updateRoleUI, openModal, loadData } from './app-context.js';
 
@@ -201,6 +202,40 @@ export function initSettings() {
         btnShowReleaseNotes.onclick = () => {
             if (window.openReleaseNotesModal) window.openReleaseNotesModal();
         };
+    }
+
+    // P28: 設定ハブから目的別のカードへ移動し、長い画面でも迷子にならないようにする。
+    document.querySelectorAll('[data-settings-target]').forEach(button => {
+        button.onclick = () => document.getElementById(button.dataset.settingsTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // P32: 表示設定は端末にだけ保存し、チームの共有データや他の利用者の画面へ影響させない。
+    const uiPreferences = loadUiPreferences();
+    const fontScale = document.getElementById('ui-font-scale');
+    const preferredHand = document.getElementById('ui-preferred-hand');
+    const reduceMotion = document.getElementById('ui-reduce-motion');
+    const compactMode = document.getElementById('ui-compact-mode');
+    if (fontScale) fontScale.value = uiPreferences.fontScale;
+    if (preferredHand) preferredHand.value = uiPreferences.preferredHand;
+    if (reduceMotion) reduceMotion.checked = Boolean(uiPreferences.reduceMotion);
+    if (compactMode) compactMode.checked = Boolean(uiPreferences.compactMode);
+    const saveUiPreferencesButton = document.getElementById('btn-save-ui-preferences');
+    if (saveUiPreferencesButton) saveUiPreferencesButton.onclick = () => {
+        const saved = saveUiPreferences({
+            fontScale: fontScale?.value || 'normal',
+            preferredHand: preferredHand?.value || 'right',
+            reduceMotion: Boolean(reduceMotion?.checked),
+            compactMode: Boolean(compactMode?.checked)
+        });
+        applyUiPreferences(saved);
+        showToast('この端末の表示・操作設定を保存しました');
+    };
+
+    // P28: P26の招待の現在状態と、静的PWA上での権限制約を分けて明示する。
+    const trustStatus = document.getElementById('parent-access-trust-status');
+    if (trustStatus) {
+        const summary = getParentAccessSummary(state.teamInfo || {});
+        trustStatus.innerHTML = `<i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span><strong>招待状態：</strong>有効 ${summary.active.length}件${summary.expired.length ? ` ・期限切れ ${summary.expired.length}件` : ''}${summary.revoked.length ? ` ・失効 ${summary.revoked.length}件` : ''}<small>現在の公開版では、招待URLの利用範囲を端末・同期データ上で確認します。本人確認とサーバー側遮断は認証バックエンド導入後に有効化します。</small></span>`;
     }
 
     const diagnosticsContainer = document.getElementById('operations-diagnostics');
