@@ -18,7 +18,7 @@ function renderSummary(label, summary = {}, emphasis = false) {
 
 /**
  * 自動マージを行わず、利用者が安全な解決方法を選ぶための競合ダイアログ。
- * @returns {Promise<'cloud'|'keep-local'|'cancel'>}
+ * @returns {Promise<'cloud'|'merge'|'keep-local'|'cancel'>}
  */
 export function showSyncConflictDialog({ localSummary, remoteSummary, cloudRevision = 0 } = {}) {
     return new Promise(resolve => {
@@ -28,7 +28,7 @@ export function showSyncConflictDialog({ localSummary, remoteSummary, cloudRevis
         dialog.innerHTML = `<section class="sync-conflict-dialog" role="dialog" aria-modal="true" aria-labelledby="sync-conflict-title">
             <div class="sync-conflict-dialog-icon" aria-hidden="true"><i class="fa-solid fa-code-compare"></i></div>
             <h2 id="sync-conflict-title">同期の競合を確認</h2>
-            <p>この端末とクラウドの両方に未同期の変更があります。内容を自動で混ぜず、残す側を選択してください。</p>
+            <p>この端末とクラウドの両方に未同期の変更があります。レコード単位で新しい更新を採用する「安全に統合」、または残す側を選択してください。</p>
             <div class="sync-conflict-summaries" aria-label="変更概要">
                 ${renderSummary('この端末', localSummary, true)}
                 ${renderSummary(`クラウド（世代 ${Number(cloudRevision || remoteSummary?.cloudRevision || 0)}）`, remoteSummary)}
@@ -37,6 +37,7 @@ export function showSyncConflictDialog({ localSummary, remoteSummary, cloudRevis
             <div class="sync-conflict-dialog-actions">
                 <button type="button" class="btn btn-secondary" data-action="cancel">あとで確認</button>
                 <button type="button" class="btn btn-secondary" data-action="cloud"><i class="fa-solid fa-cloud-arrow-down"></i> クラウドを復元</button>
+                <button type="button" class="btn btn-secondary" data-action="merge"><i class="fa-solid fa-code-branch"></i> 安全に統合</button>
                 <button type="button" class="btn btn-primary" data-action="keep-local"><i class="fa-solid fa-hard-drive"></i> 端末版を残す</button>
             </div>
         </section>`;

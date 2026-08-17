@@ -5,6 +5,8 @@ import { createBackupPayload, parseBackupPayload, savePersistedSnapshot, loadRec
 import { markBackupCreated, buildOperationalDiagnostics, buildOperationsShareText } from './operations-service.js';
 import { listCloudRecoveries } from './sync-service.js';
 import { ensureParentShareSettings, rotateParentShareLink, buildPendingRsvpDigest } from './parent-operations-service.js';
+import { archiveSeason, createSeason, createTeam, ensureWorkspaceState, getActiveSeason, getActiveTeam, switchWorkspace } from './workspace-service.js';
+import { buildSeasonReport, buildSeasonReportCsv, buildSeasonReportPrintHtml } from './season-report-service.js';
 
 import { saveData, syncPushGasCloud, syncPullGasCloud, restoreCloudRecovery, updateRoleUI, openModal, loadData } from './app-context.js';
 
@@ -329,6 +331,9 @@ export function initSettings() {
                 e.preventDefault();
                 state.teamInfo.name = document.getElementById('team-info-name').value;
                 state.teamInfo.color = document.getElementById('team-info-color').value;
+                const activeTeam = getActiveTeam(state);
+                activeTeam.name = state.teamInfo.name;
+                activeTeam.color = state.teamInfo.color;
                 const newPasscode = document.getElementById('team-info-passcode') ? document.getElementById('team-info-passcode').value.trim() : '';
                 if (newPasscode) {
                     state.teamInfo.passcode = newPasscode;
@@ -346,6 +351,136 @@ export function initSettings() {
             };
         }
     }
+
+    const workspaceTeamSelect = document.getElementById('workspace-team-select');
+    const workspaceSeasonSelect = document.getElementById('workspace-season-select');
+    const workspaceContextStatus = document.getElementById('workspace-context-status');
+    const renderWorkspaceManagement = () => {
+        if (!workspaceTeamSelect || !workspaceSeasonSelect || !workspaceContextStatus) return;
+        ensureWorkspaceState(state);
+        const activeTeam = getActiveTeam(state);
+        const activeSeason = getActiveSeason(state);
+        const requestedTeamId = workspaceTeamSelect.value || activeTeam.id;
+        workspaceTeamSelect.innerHTML = state.teams.map(team => `<option value="${escapeHtml(team.id)}" ${team.id === requestedTeamId ? 'selected' : ''}>${escapeHtml(team.name)}${team.archivedAt ? '（アーカイブ）' : ''}</option>`).join('');
+        const selectedTeamId = workspaceTeamSelect.value || activeTeam.id;
+        const selectedTeam = state.teams.find(team => team.id === selectedTeamId) || activeTeam;
+        const requestedSeasonId = workspaceSeasonSelect.value || (selectedTeam.id === activeTeam.id ? activeSeason.id : selectedTeam.seasons[0]?.id);
+        workspaceSeasonSelect.innerHTML = selectedTeam.seasons.map(season => `<option value="${escapeHtml(season.id)}" ${season.id === requestedSeasonId ? 'selected' : ''}>${escapeHtml(season.name)}${season.archivedAt ? '（アーカイブ）' : ''}</option>`).join('');
+        const selectedSeason = selectedTeam.seasons.find(season => season.id === workspaceSeasonSelect.value) || selectedTeam.seasons[0] || activeSeason;
+        const isCurrent = selectedTeam.id === activeTeam.id && selectedSeason.id === activeSeason.id;
+        workspaceContextStatus.textContent = isCurrent
+            ? `現在表示中：${activeTeam.name} / ${activeSeason.name}${activeSeason.archivedAt ? '（アーカイブ済み）' : ''}`
+            : `切替予定：${selectedTeam.name} / ${selectedSeason.name}${selectedSeason.archivedAt ? '（アーカイブ済み）' : ''}`;
+    };
+    const updateWorkspaceSidebar = () => {
+        const team = getActiveTeam(state);
+        const season = getActiveSeason(state);
+        const sidebarTitle = document.querySelector('.sidebar-header h2');
+        if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(team.name)}`;
+        const topbarTitle = document.getElementById('topbar-title');
+        if (topbarTitle) topbarTitle.dataset.workspace = season.name;
+    };
+    if (workspaceTeamSelect) {
+        renderWorkspaceManagement();
+        workspaceTeamSelect.onchange = () => renderWorkspaceManagement();
+        workspaceSeasonSelect.onchange = () => renderWorkspaceManagement();
+    }
+    const btnWorkspaceSwitch = document.getElementById('btn-workspace-switch');
+    if (btnWorkspaceSwitch) btnWorkspaceSwitch.onclick = async () => {
+        try {
+            switchWorkspace(state, workspaceTeamSelect.value, workspaceSeasonSelect.value);
+            await saveData();
+            updateWorkspaceSidebar();
+            showToast(`${getActiveTeam(state).name} / ${getActiveSeason(state).name} に切り替えました`);
+            if (typeof window.navigate === 'function') window.navigate('dashboard');
+        } catch (error) { showToast(error?.message || 'チーム・シーズンを切り替えられませんでした'); }
+    };
+    const btnWorkspaceNewSeason = document.getElementById('btn-workspace-new-season');
+    if (btnWorkspaceNewSeason) btnWorkspaceNewSeason.onclick = async () => {
+        const proposed = `${new Date().getFullYear() + (new Date().getMonth() >= 2 ? 1 : 0)}年度`;
+        const name = window.prompt('新しいシーズン名を入力してください。選手・設定を引き継ぎ、試合・練習は空で開始します。', proposed);
+        if (name === null) return;
+        try {
+            createSeason(state, { name, copyPlayers: true, copyTeamSetup: true });
+            await saveData();
+            updateWorkspaceSidebar();
+            renderWorkspaceManagement();
+            showToast('新しいシーズンを作成して切り替えました');
+            if (typeof window.navigate === 'function') window.navigate('dashboard');
+        } catch (error) { showToast(error?.message || '新年度を作成できませんでした'); }
+    };
+    const btnWorkspaceNewTeam = document.getElementById('btn-workspace-new-team');
+    if (btnWorkspaceNewTeam) btnWorkspaceNewTeam.onclick = async () => {
+        const name = window.prompt('新しいチーム名を入力してください。新しいチームは空の記録から始まります。', '新しいチーム');
+        if (name === null) return;
+        try {
+            createTeam(state, { name, color: state.teamInfo?.color || '#13795b' });
+            await saveData();
+            updateWorkspaceSidebar();
+            renderWorkspaceManagement();
+            showToast('新しいチームを作成して切り替えました');
+            if (typeof window.navigate === 'function') window.navigate('dashboard');
+        } catch (error) { showToast(error?.message || 'チームを作成できませんでした'); }
+    };
+    const btnWorkspaceArchive = document.getElementById('btn-workspace-archive');
+    if (btnWorkspaceArchive) btnWorkspaceArchive.onclick = async () => {
+        const team = getActiveTeam(state);
+        const season = getActiveSeason(state);
+        const proceed = await showCustomConfirm(`${team.name}の${season.name}をアーカイブします。記録は削除されず、後から切り替えて確認できます。`, 'シーズンをアーカイブ', { okText: 'アーカイブする', type: 'danger' });
+        if (!proceed) return;
+        try {
+            archiveSeason(state, team.id, season.id);
+            const alternative = team.seasons.filter(item => !item.archivedAt)[0];
+            if (alternative) switchWorkspace(state, team.id, alternative.id);
+            await saveData();
+            updateWorkspaceSidebar();
+            renderWorkspaceManagement();
+            showToast('シーズンのアーカイブ状態を更新しました');
+        } catch (error) { showToast(error?.message || 'アーカイブ状態を更新できませんでした'); }
+    };
+
+    const seasonReportContext = document.getElementById('season-report-context');
+    const seasonReportSummary = document.getElementById('season-report-summary');
+    const renderSeasonReport = () => {
+        if (!seasonReportContext || !seasonReportSummary) return null;
+        const team = getActiveTeam(state);
+        const season = getActiveSeason(state);
+        const report = buildSeasonReport(state, { teamName: team.name, seasonName: season.name });
+        seasonReportContext.textContent = `対象：${team.name} / ${season.name}${season.archivedAt ? '（アーカイブ済み）' : ''}`;
+        const summary = report.summary;
+        seasonReportSummary.innerHTML = [
+            ['試合', `${summary.matches}件`, `${summary.wins}勝 ${summary.draws}分 ${summary.losses}敗`],
+            ['得失点', `${summary.goalsFor}-${summary.goalsAgainst}`, `勝率 ${summary.winRate}%`],
+            ['練習', `${summary.practices}回`, `選手 ${summary.players}名`],
+            ['平均出席率', `${summary.attendanceAverage}%`, '選手別集計はCSV・印刷で確認']
+        ].map(([label, value, detail]) => `<div class="season-report-metric"><small>${escapeHtml(label)}</small><strong>${escapeHtml(value)}</strong><span>${escapeHtml(detail)}</span></div>`).join('');
+        return report;
+    };
+    const downloadSeasonCsv = report => {
+        const fileName = `CoachMgr_${String(report.teamName).replace(/[^a-zA-Z0-9一-龠ぁ-んァ-ヶー_-]/g, '_')}_${String(report.seasonName).replace(/[^a-zA-Z0-9一-龠ぁ-んァ-ヶー_-]/g, '_')}_report.csv`;
+        const blob = new Blob([buildSeasonReportCsv(report)], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url; link.download = fileName; link.style.display = 'none';
+        document.body.appendChild(link); link.click(); link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 500);
+        showToast('シーズンレポートCSVを出力しました');
+    };
+    const btnRefreshSeasonReport = document.getElementById('btn-refresh-season-report');
+    if (btnRefreshSeasonReport) btnRefreshSeasonReport.onclick = () => { renderSeasonReport(); showToast('シーズン集計を更新しました'); };
+    const btnExportSeasonReportCsv = document.getElementById('btn-export-season-report-csv');
+    if (btnExportSeasonReportCsv) btnExportSeasonReportCsv.onclick = () => { const report = renderSeasonReport(); if (report) downloadSeasonCsv(report); };
+    const btnPrintSeasonReport = document.getElementById('btn-print-season-report');
+    if (btnPrintSeasonReport) btnPrintSeasonReport.onclick = () => {
+        const report = renderSeasonReport();
+        if (!report) return;
+        const printWindow = window.open('', '_blank', 'noopener,noreferrer');
+        if (!printWindow) { showToast('印刷用ウィンドウを開けませんでした。ブラウザのポップアップ設定を確認してください'); return; }
+        printWindow.document.open();
+        printWindow.document.write(buildSeasonReportPrintHtml(report));
+        printWindow.document.close();
+    };
+    renderSeasonReport();
 
     const gasApiInput = document.getElementById('gas-api-url');
     const gasSheetInput = document.getElementById('gas-sheet-name');

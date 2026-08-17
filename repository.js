@@ -1,9 +1,12 @@
+import { captureActiveWorkspace, ensureWorkspaceState } from './workspace-service.js';
+import { ensureRecordMetadata } from './record-service.js';
+
 const STORAGE_KEY = 'coachMgrData';
 const RECOVERY_KEY = 'coachMgrDataRecovery';
 const RECOVERY_TIMESTAMP_KEY = 'coachMgrRecoverySnapshotAt';
 const BACKUP_FORMAT = 'coachmgr-backup';
-const BACKUP_VERSION = 2;
-const CURRENT_SCHEMA_VERSION = 2;
+const BACKUP_VERSION = 3;
+const CURRENT_SCHEMA_VERSION = 3;
 
 const ARRAY_FIELDS = [
     'matches', 'practices', 'players', 'menuLibrary', 'tactics', 'practiceTemplates',
@@ -24,9 +27,9 @@ function migrateSnapshot(input) {
     const version = Number(source.schemaVersion || 1);
 
     // v1 was a plain state object. Keep it readable while adding the v2 contract.
-    if (version < 2) {
-        source.schemaVersion = 2;
-    }
+    if (version < 2) source.schemaVersion = 2;
+    // v3 adds stable record IDs, updatedAt timestamps, deletion tombstones, and workspaces.
+    if (version < 3) source.schemaVersion = 3;
 
     ARRAY_FIELDS.forEach(key => {
         source[key] = asArray(source[key]);
@@ -34,6 +37,10 @@ function migrateSnapshot(input) {
     source.teamInfo = source.teamInfo && typeof source.teamInfo === 'object' ? source.teamInfo : {};
     source.teamFocus = source.teamFocus && typeof source.teamFocus === 'object' ? source.teamFocus : {};
     source.syncMeta = source.syncMeta && typeof source.syncMeta === 'object' ? source.syncMeta : {};
+    source.teams = Array.isArray(source.teams) ? source.teams : [];
+    source.workspaces = source.workspaces && typeof source.workspaces === 'object' ? source.workspaces : {};
+    source.activeTeamId = source.activeTeamId || null;
+    source.activeSeasonId = source.activeSeasonId || null;
 
     const normalizeAttendance = event => {
         if (!event || typeof event !== 'object') return;
@@ -73,10 +80,14 @@ function migrateSnapshot(input) {
         });
     });
 
+    ensureRecordMetadata(source);
+    Object.values(source.workspaces).forEach(workspace => ensureRecordMetadata(workspace));
     return source;
 }
 
 export function createStateSnapshot(state) {
+    ensureWorkspaceState(state);
+    captureActiveWorkspace(state);
     return migrateSnapshot({
         schemaVersion: CURRENT_SCHEMA_VERSION,
         matches: state.matches || [],
@@ -95,15 +106,21 @@ export function createStateSnapshot(state) {
         teamInfo: state.teamInfo || {},
         customFormations: state.customFormations || [],
         teamFocus: state.teamFocus || {},
+        teams: state.teams || [],
+        workspaces: state.workspaces || {},
+        activeTeamId: state.activeTeamId || null,
+        activeSeasonId: state.activeSeasonId || null,
         syncMeta: state.syncMeta || {}
     });
 }
 
 export function createCloudSnapshot(state) {
     const snapshot = createStateSnapshot(state);
-    if (snapshot.teamInfo) {
-        delete snapshot.teamInfo.gasAuthToken;
-    }
+    if (snapshot.teamInfo) delete snapshot.teamInfo.gasAuthToken;
+    // P22の各ワークスペースにもチーム設定が含まれるため、認証トークンはすべての保存先から除外する。
+    Object.values(snapshot.workspaces || {}).forEach(workspace => {
+        if (workspace?.teamInfo) delete workspace.teamInfo.gasAuthToken;
+    });
     return snapshot;
 }
 

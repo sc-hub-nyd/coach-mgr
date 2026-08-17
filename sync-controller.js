@@ -1,7 +1,8 @@
 const SYNC_FIELDS = [
     'matches', 'practices', 'players', 'menuLibrary', 'tactics', 'practiceTemplates',
     'matchTypes', 'menuCategories', 'tacticsCategories', 'analysisTags',
-    'skillMetrics', 'positions', 'positionsCat2', 'customFormations', 'teamFocus'
+    'skillMetrics', 'positions', 'positionsCat2', 'customFormations', 'teamFocus',
+    'teams', 'workspaces', 'activeTeamId', 'activeSeasonId'
 ];
 
 function createDeviceId() {
@@ -37,7 +38,9 @@ export function ensureSyncMeta(state) {
         lastErrorKind: existing.lastErrorKind || null,
         lastErrorMessage: existing.lastErrorMessage || null,
         lastConflictAt: existing.lastConflictAt || null,
-        lastConflictKind: existing.lastConflictKind || null
+        lastConflictKind: existing.lastConflictKind || null,
+        tombstones: existing.tombstones && typeof existing.tombstones === 'object' ? existing.tombstones : {},
+        recordFingerprints: existing.recordFingerprints && typeof existing.recordFingerprints === 'object' ? existing.recordFingerprints : {}
     };
     return state.syncMeta;
 }
@@ -124,7 +127,18 @@ export function hasSyncConflict(localState, remoteData) {
 export function applyRemoteSnapshot(state, remoteData) {
     const localMeta = ensureSyncMeta(state);
     SYNC_FIELDS.forEach(key => {
-        if (remoteData[key] !== undefined) state[key] = remoteData[key];
+        if (remoteData[key] === undefined) return;
+        if (key === 'workspaces' && remoteData.workspaces && typeof remoteData.workspaces === 'object') {
+            const localWorkspaces = state.workspaces || {};
+            state.workspaces = Object.fromEntries(Object.entries(remoteData.workspaces).map(([workspaceId, workspace]) => {
+                const localToken = localWorkspaces[workspaceId]?.teamInfo?.gasAuthToken;
+                const safeWorkspace = { ...workspace, teamInfo: { ...(workspace?.teamInfo || {}) } };
+                if (localToken) safeWorkspace.teamInfo.gasAuthToken = localToken;
+                return [workspaceId, safeWorkspace];
+            }));
+            return;
+        }
+        state[key] = remoteData[key];
     });
     if (remoteData.teamInfo && typeof remoteData.teamInfo === 'object') {
         const { gasAuthToken: _ignoredAuthToken, ...sharedTeamInfo } = remoteData.teamInfo;
@@ -144,7 +158,9 @@ export function applyRemoteSnapshot(state, remoteData) {
             lastSyncedAt: new Date().toISOString(),
             lastErrorAt: null,
             lastErrorKind: null,
-            lastErrorMessage: null
+            lastErrorMessage: null,
+            tombstones: remoteMeta.tombstones && typeof remoteMeta.tombstones === 'object' ? remoteMeta.tombstones : localMeta.tombstones,
+            recordFingerprints: localMeta.recordFingerprints
         };
     } else {
         markSyncAcknowledged(state);

@@ -829,6 +829,41 @@
                 </div>
             </div>
 
+            <!-- P22: チーム・シーズン管理 -->
+            <div class="sl-section coach-only" id="workspace-management-section">
+                <div class="sl-section-label"><i class="fa-solid fa-layer-group"></i> チーム・シーズン管理</div>
+                <div class="sl-section-body workspace-management-body">
+                    <p class="operations-intro">チームと年度を切り替えます。切替前のデータは自動保存され、年度アーカイブからいつでも再表示できます。</p>
+                    <div class="workspace-select-grid">
+                        <label>チーム<select id="workspace-team-select" class="sl-input" aria-label="チームを選択"></select></label>
+                        <label>シーズン<select id="workspace-season-select" class="sl-input" aria-label="シーズンを選択"></select></label>
+                    </div>
+                    <p id="workspace-context-status" class="workspace-context-status" aria-live="polite"></p>
+                    <div class="workspace-actions">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-workspace-switch"><i class="fa-solid fa-arrow-right-arrow-left"></i> このシーズンへ切替</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-workspace-new-season"><i class="fa-solid fa-calendar-plus"></i> 新年度を作成</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-workspace-new-team"><i class="fa-solid fa-people-group"></i> チームを追加</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-workspace-archive"><i class="fa-solid fa-box-archive"></i> 年度をアーカイブ</button>
+                    </div>
+                    <p class="workspace-help"><i class="fa-solid fa-circle-info"></i> 新年度では選手・設定を引き継ぎ、試合・練習・年度ごとの目標は空の状態から始めます。</p>
+                </div>
+            </div>
+
+            <!-- P24: シーズンレポート -->
+            <div class="sl-section coach-only" id="season-report-section">
+                <div class="sl-section-label"><i class="fa-solid fa-chart-column"></i> シーズンレポート・出力</div>
+                <div class="sl-section-body season-report-body">
+                    <p id="season-report-context" class="operations-intro">現在選択中のチーム・シーズンを集計します。</p>
+                    <div id="season-report-summary" class="season-report-summary" aria-live="polite"></div>
+                    <div class="season-report-actions">
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-season-report"><i class="fa-solid fa-rotate"></i> 集計を更新</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-export-season-report-csv"><i class="fa-solid fa-file-csv"></i> CSVを出力</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-print-season-report"><i class="fa-solid fa-print"></i> 印刷用レポート</button>
+                    </div>
+                    <p class="season-report-help"><i class="fa-solid fa-circle-info"></i> CSVは表計算ソフト用、印刷用レポートはスタッフ会議・保護者説明用の要約です。出力前に対象のチーム・シーズンを確認してください。</p>
+                </div>
+            </div>
+
             <!-- Section: クラウド自動同期 (GAS) -->
             <div class="sl-section">
                 <div class="sl-section-label"><i class="fa-solid fa-cloud-arrow-up"></i> クラウド無料同期 (GAS)</div>
