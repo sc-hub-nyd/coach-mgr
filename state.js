@@ -5,7 +5,8 @@ export const state = {
     practices: [],
     players: [],
     menuLibrary: [],
-    tactics: [], // 戦術データ保存用
+        tactics: [], // 戦術データ保存用
+    practiceTemplates: [],
     matchTypes: ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'],
     menuCategories: ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'],
     tacticsCategories: ['攻撃：ビルドアップ（自陣）', '攻撃：前進・崩し（中盤〜敵陣）', '守備：ハイプレス（前線）', '守備：ブロック・ゴール前（自陣）', '切り替え：攻→守（奪われたとき）', '切り替え：守→攻（奪ったとき）', 'セットプレー', 'その他'],
@@ -15,6 +16,7 @@ export const state = {
     positionsCat2: ['CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH'],
     teamInfo: { name: 'My Team', color: '#f23932', passcode: '7064' },
     teamFocus: { mainTheme: '', points: [], note: '', updatedAt: '' },
+    syncMeta: { deviceId: '', revision: 0, updatedAt: null, lastSyncedAt: null },
     currentUserRole: 'parent',
     customFormations: [
         {

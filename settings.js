@@ -1,7 +1,10 @@
 // settings.js
 import { state } from './state.js';
-import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
-import { saveData, syncPushGasCloud, syncPullGasCloud, updateRoleUI, openModal, loadData } from './app.js';
+import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm } from './utils.js';
+import { createBackupPayload, parseBackupPayload, savePersistedSnapshot, loadRecoverySnapshot, clearPersistedSnapshot } from './repository.js';
+import { markBackupCreated, buildOperationalDiagnostics, buildOperationsShareText } from './operations-service.js';
+
+import { saveData, syncPushGasCloud, syncPullGasCloud, updateRoleUI, openModal, loadData } from './app-context.js';
 
 export function _showExportFallbackModal(jsonStr) {
     const modal = document.getElementById('modal-export-fallback');
@@ -36,6 +39,55 @@ export function _showExportFallbackModal(jsonStr) {
     }
 }
 
+export function exportBackupData() {
+    const dataStr = JSON.stringify(createBackupPayload(state), null, 2);
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+    const filename = `coachMgrBackup_${dateStr}.json`;
+    try {
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.style.display = 'none';
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        setTimeout(() => URL.revokeObjectURL(url), 500);
+        showToast(`${filename} をダウンロードしました`);
+    } catch (_error) {
+        _showExportFallbackModal(dataStr);
+    }
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) setTimeout(() => _showExportFallbackModal(dataStr), 300);
+    markBackupCreated(now);
+    if (typeof window.refreshOperationalDiagnostics === 'function') window.refreshOperationalDiagnostics();
+    return { filename, dataStr };
+}
+
+export async function exportRecoveryBackupData() {
+    const recoverySnapshot = await loadRecoverySnapshot({ decryptData });
+    if (!recoverySnapshot) throw new Error('復旧用データが見つかりません');
+
+    const dataStr = JSON.stringify(createBackupPayload(recoverySnapshot), null, 2);
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+    const filename = `coachMgrRecovery_${dateStr}.json`;
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.style.display = 'none';
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+    showToast(`${filename} をダウンロードしました`);
+    return { filename, dataStr };
+}
+
 export function initData() {
     const settingsVersionText = document.getElementById('settings-version-text');
     if (settingsVersionText) {
@@ -53,50 +105,7 @@ export function initData() {
     const btnExportSettings = document.getElementById('btn-export-data');
     const btnExportView = document.getElementById('btn-data-view-export');
 
-    const handleExport = () => {
-        const dataStr = JSON.stringify({
-            matches: state.matches,
-            practices: state.practices,
-            players: state.players,
-            menuLibrary: state.menuLibrary,
-            tactics: state.tactics,
-            matchTypes: state.matchTypes,
-            menuCategories: state.menuCategories,
-            tacticsCategories: state.tacticsCategories,
-            analysisTags: state.analysisTags,
-            skillMetrics: state.skillMetrics,
-            positions: state.positions,
-            positionsCat2: state.positionsCat2,
-            teamInfo: state.teamInfo,
-            customFormations: state.customFormations,
-            teamFocus: state.teamFocus || {}
-        }, null, 2);
-
-        const now = new Date();
-        const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
-        const filename = `coachMgrBackup_${dateStr}.json`;
-
-        try {
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 500);
-            showToast(`${filename} をダウンロードしました`);
-        } catch (err) {
-            _showExportFallbackModal(dataStr);
-        }
-
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-            setTimeout(() => _showExportFallbackModal(dataStr), 300);
-        }
-    };
+    const handleExport = () => exportBackupData();
 
     if (btnExportSettings) btnExportSettings.onclick = handleExport;
     if (btnExportView) btnExportView.onclick = handleExport;
@@ -111,12 +120,9 @@ export function initData() {
         const reader = new FileReader();
         reader.onload = async (evt) => {
             try {
-                const parsed = JSON.parse(evt.target.result);
-                if (!parsed.matches && !parsed.players && !parsed.practices) {
-                    alert('有効なデータファイルではありません。エクスポートしたJSONファイルを選択してください。');
-                    return;
-                }
-                await localforage.setItem('coachMgrData', JSON.stringify(parsed));
+                                const parsed = parseBackupPayload(evt.target.result);
+                await savePersistedSnapshot(parsed, { encryptData });
+
                 await loadData();
                 document.documentElement.style.setProperty('--primary', state.teamInfo.color);
                 const sidebarTitle = document.querySelector('.sidebar-header h2');
@@ -155,9 +161,10 @@ export function initData() {
             state.practices = [];
             state.players = [];
             state.menuLibrary = [];
-            state.tactics = [];
+                state.tactics = [];
+                state.practiceTemplates = [];
 
-            await localforage.removeItem('coachMgrData');
+            await clearPersistedSnapshot();
 
             showToast('すべての入力データをクリアしました。');
             setTimeout(() => location.reload(), 1000);
@@ -165,7 +172,19 @@ export function initData() {
     }
 }
 
+export function applyThemePreset(preset = 'field-green') {
+    const body = document.body;
+        body.classList.remove('theme-midnight', 'theme-high-visibility', 'theme-ocean-blue', 'theme-redline', 'theme-warm-notebook');
+    if (preset === 'midnight') body.classList.add('theme-midnight');
+    if (preset === 'high-visibility') body.classList.add('theme-high-visibility');
+    if (preset === 'ocean-blue') body.classList.add('theme-ocean-blue');
+    if (preset === 'redline') body.classList.add('theme-redline');
+    if (preset === 'warm-notebook') body.classList.add('theme-warm-notebook');
+    localStorage.setItem('coachMgrThemePreset', preset);
+}
+
 export function initSettings() {
+
     const settingsVersionText = document.getElementById('settings-version-text');
     if (settingsVersionText) {
         import('./version.js').then(ver => {
@@ -180,13 +199,59 @@ export function initSettings() {
         };
     }
 
+    const diagnosticsContainer = document.getElementById('operations-diagnostics');
+    const refreshOperationalDiagnostics = () => {
+        if (!diagnosticsContainer) return;
+        const diagnostics = buildOperationalDiagnostics(state);
+        const icons = { backup: 'fa-box-archive', sync: 'fa-cloud', recovery: 'fa-clock-rotate-left', team: 'fa-people-group', storage: 'fa-hard-drive' };
+        diagnosticsContainer.innerHTML = diagnostics.checks.map(check => `
+            <div class="operations-check is-${check.status}">
+                <span class="operations-check-icon"><i class="fa-solid ${icons[check.key] || 'fa-circle-info'}" aria-hidden="true"></i></span>
+                <span><strong>${escapeHtml(check.label)}</strong><small title="${escapeHtml(check.detail)}">${escapeHtml(check.detail)}</small></span>
+            </div>`).join('');
+        const recoveryButton = document.getElementById('btn-export-recovery');
+        if (recoveryButton) recoveryButton.disabled = !diagnostics.lastRecoveryAt;
+    };
+    window.refreshOperationalDiagnostics = refreshOperationalDiagnostics;
+    refreshOperationalDiagnostics();
+
+    const btnOperationsBackup = document.getElementById('btn-operations-backup');
+    if (btnOperationsBackup) btnOperationsBackup.onclick = () => exportBackupData();
+    const btnExportRecovery = document.getElementById('btn-export-recovery');
+    if (btnExportRecovery) {
+        btnExportRecovery.onclick = async () => {
+            try {
+                await exportRecoveryBackupData();
+            } catch (_error) {
+                alert('復旧用データを準備できませんでした。端末バックアップを作成してください。');
+            }
+        };
+    }
+    const btnCopyOperationsCheck = document.getElementById('btn-copy-operations-check');
+    if (btnCopyOperationsCheck) {
+        btnCopyOperationsCheck.onclick = async () => {
+            const text = buildOperationsShareText(state.teamInfo?.name, buildOperationalDiagnostics(state));
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('運用チェックの状態をコピーしました');
+            } catch (_error) {
+                window.prompt('以下をコピーして共有してください。', text);
+            }
+        };
+    }
+
     const teamNameInput = document.getElementById('team-info-name');
     const teamColorInput = document.getElementById('team-info-color');
     const teamPasscodeInput = document.getElementById('team-info-passcode');
+    const themePresetInput = document.getElementById('theme-preset');
 
     if (teamNameInput && teamColorInput) {
         teamNameInput.value = state.teamInfo.name;
-        teamColorInput.value = state.teamInfo.color;
+        teamColorInput.value = state.teamInfo.color || '#13795b';
+        if (themePresetInput) {
+            themePresetInput.value = localStorage.getItem('coachMgrThemePreset') || 'field-green';
+            themePresetInput.onchange = () => applyThemePreset(themePresetInput.value);
+        }
         if (teamPasscodeInput) teamPasscodeInput.value = state.teamInfo.passcode || '7064';
 
         const formTeamInfo = document.getElementById('form-team-info');
@@ -201,9 +266,14 @@ export function initSettings() {
                 }
                 saveData();
                 showToast('チーム基本情報を保存しました');
-                document.documentElement.style.setProperty('--primary', state.teamInfo.color);
+                applyThemePreset(themePresetInput ? themePresetInput.value : (localStorage.getItem('coachMgrThemePreset') || 'field-green'));
+                document.documentElement.style.setProperty('--primary', state.teamInfo.color || '#13795b');
                 const sidebarTitle = document.querySelector('.sidebar-header h2');
-                if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
+                if (sidebarTitle) {
+                    const icon = document.createElement('i');
+                    icon.className = 'fa-solid fa-futbol';
+                    sidebarTitle.replaceChildren(icon, document.createTextNode(` ${state.teamInfo.name}`));
+                }
             };
         }
     }
@@ -211,9 +281,23 @@ export function initSettings() {
     const gasApiInput = document.getElementById('gas-api-url');
     const gasSheetInput = document.getElementById('gas-sheet-name');
     const gasAuthInput = document.getElementById('gas-auth-token');
+    const gasProtocolInput = document.getElementById('gas-sync-protocol');
+    const gasSecurityGuidance = document.getElementById('gas-security-guidance');
+    const getProtocolValue = () => gasProtocolInput?.value === 'secure-v2' ? 'secure-v2' : 'legacy-v1';
+    const renderProtocolGuidance = () => {
+        if (!gasSecurityGuidance) return;
+        gasSecurityGuidance.textContent = getProtocolValue() === 'secure-v2'
+            ? '安全モードでは受信もPOSTで行い、認証トークンをURLに含めません。P10のGASテンプレートをデプロイして利用してください。'
+            : '互換モードでは旧GASのGET受信を使います。認証トークンがURLに含まれるため、安全モードへの移行を推奨します。';
+    };
     if (gasApiInput) gasApiInput.value = state.teamInfo.gasApiUrl || '';
     if (gasSheetInput) gasSheetInput.value = state.teamInfo.gasSheetName || '';
     if (gasAuthInput) gasAuthInput.value = state.teamInfo.gasAuthToken || '';
+    if (gasProtocolInput) {
+        gasProtocolInput.value = state.teamInfo.gasSyncProtocol || 'legacy-v1';
+        gasProtocolInput.onchange = renderProtocolGuidance;
+    }
+    renderProtocolGuidance();
 
     const formGasSync = document.getElementById('form-gas-sync');
     if (formGasSync) {
@@ -225,6 +309,7 @@ export function initSettings() {
             state.teamInfo.gasApiUrl = urlVal;
             state.teamInfo.gasSheetName = sheetVal;
             state.teamInfo.gasAuthToken = authVal;
+            state.teamInfo.gasSyncProtocol = getProtocolValue();
             saveData();
             updateRoleUI();
             showToast('クラウド同期設定を保存しました');
@@ -240,6 +325,7 @@ export function initSettings() {
             if (urlVal) state.teamInfo.gasApiUrl = urlVal;
             state.teamInfo.gasSheetName = sheetVal;
             state.teamInfo.gasAuthToken = authVal;
+            state.teamInfo.gasSyncProtocol = getProtocolValue();
             syncPushGasCloud(false);
         };
     }
@@ -249,8 +335,11 @@ export function initSettings() {
         btnPull.onclick = async () => {
             const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
             const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
+            const authVal = gasAuthInput ? gasAuthInput.value.trim() : '';
             if (urlVal) state.teamInfo.gasApiUrl = urlVal;
             state.teamInfo.gasSheetName = sheetVal;
+            state.teamInfo.gasAuthToken = authVal;
+            state.teamInfo.gasSyncProtocol = getProtocolValue();
             const proceed = await showCustomConfirm('クラウドからデータを復元しますか？ローカルのデータは上書きされます。', 'クラウドからの復元', { okText: '復元する' });
             if (proceed) {
                 syncPullGasCloud(false);
@@ -263,7 +352,7 @@ export function initSettings() {
         btnCopyInviteLink.onclick = () => {
             const urlVal = gasApiInput ? gasApiInput.value.trim() : (state.teamInfo.gasApiUrl || '');
             const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : (state.teamInfo.gasSheetName || '');
-            const authVal = gasAuthInput ? gasAuthInput.value.trim() : (state.teamInfo.gasAuthToken || '');
+            const protocolVal = getProtocolValue();
 
             if (!urlVal) {
                 alert('Web API URL が設定されていません。入力して保存した後に実行してください。');
@@ -274,14 +363,14 @@ export function initSettings() {
             const params = new URLSearchParams();
             params.set('apiUrl', urlVal);
             if (sheetVal) params.set('sheetName', sheetVal);
-            if (authVal) params.set('authToken', authVal);
+            if (protocolVal === 'secure-v2') params.set('syncProtocol', protocolVal);
 
             const inviteUrl = `${baseUrl}?${params.toString()}`;
 
             try {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(inviteUrl).then(() => {
-                        showToast('保護者用設定リンクをクリップボードにコピーしました！LINE等で送付してください。');
+                        showToast('保護者用リンクをコピーしました。認証情報は含まれていません。');
                     });
                 } else {
                     prompt('以下の招待用URLをコピーして保護者に共有してください:', inviteUrl);

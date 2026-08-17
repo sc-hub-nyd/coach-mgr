@@ -1,17 +1,53 @@
 // app.js - エントリーポイント
 import { state, uiState } from './state.js';
-import { escapeHtml, encryptData, decryptData, showToast, setupScoreCounters, getNendo } from './utils.js';
+import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm, setupScoreCounters, getNendo } from './utils.js';
 import { initPractices, openPracticeModal, renderPracticeRoster } from './practices.js';
-import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText } from './matches.js';
+import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText, releaseFieldCompanionSession } from './matches.js';
 import { initPlayers, openPlayerDetail } from './players.js';
 import { initLibrary } from './library.js';
 import { initTactics } from './tactics.js';
-import { initSettings, initData } from './settings.js';
+import { initInsights } from './insights.js';
+import { initSettings, initData, applyThemePreset } from './settings.js';
 import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
 import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
+import { loadPersistedSnapshot, savePersistedSnapshot, createStateSnapshot, createCloudSnapshot } from './repository.js';
+import { pushCloud, pullCloud, withRetry } from './sync-service.js';
+import { ensureSyncMeta, markLocalChange, markSyncAttempt, markSyncAcknowledged, markSyncFailure, hasSyncConflict, applyRemoteSnapshot, getSyncStatusLabel } from './sync-controller.js';
+import { configureAppContext } from './app-context.js';
+
+function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
+    const action = actionLabel && actionId
+        ? `<button type="button" class="btn btn-primary empty-state-action" id="${actionId}">${actionLabel}</button>`
+        : '';
+    return `<div class="empty-state" role="status"><div class="empty-state-icon" aria-hidden="true"><i class="fa-solid ${icon}"></i></div><h3>${title}</h3>${description ? `<p>${description}</p>` : ''}${action}</div>`;
+}
+
+function setupGlobalUi() {
+    document.querySelectorAll('button[title]:not([aria-label]), [role="button"][title]:not([aria-label])').forEach(element => {
+        const title = element.getAttribute('title');
+        if (title) element.setAttribute('aria-label', title);
+    });
+    document.querySelectorAll('.btn-close-modal:not([aria-label])').forEach(element => element.setAttribute('aria-label', '閉じる'));
+    let liveRegion = document.getElementById('global-live-region');
+    if (!liveRegion) {
+        liveRegion = document.createElement('div');
+        liveRegion.id = 'global-live-region';
+        liveRegion.className = 'sr-only';
+        liveRegion.setAttribute('role', 'status');
+        liveRegion.setAttribute('aria-live', 'polite');
+        document.body.appendChild(liveRegion);
+    }
+    document.addEventListener('pointerdown', event => {
+        const button = event.target.closest('button, .btn, .nav-item');
+        if (button && !button.hasAttribute('disabled')) button.classList.add('is-pressing');
+    }, { passive: true });
+    document.addEventListener('pointerup', event => event.target.closest('button, .btn, .nav-item')?.classList.remove('is-pressing'), { passive: true });
+    document.addEventListener('pointercancel', event => event.target.closest('button, .btn, .nav-item')?.classList.remove('is-pressing'), { passive: true });
+}
 
 let lastSyncTimeStr = uiState.lastSyncTimeStr;
+let saveDataQueue = Promise.resolve();
 
 // --- ミニピッチアニメーション Observer ---
 const miniPitchObserver = new IntersectionObserver((entries) => {
@@ -64,27 +100,8 @@ export function clearAllMiniPitchIntervals() {
 
 export async function loadData() {
     try {
-        let saved = await localforage.getItem('coachMgrData');
-        if (!saved) {
-            const oldSaved = localStorage.getItem('coachMgrData');
-            if (oldSaved) {
-                saved = oldSaved;
-                await localforage.setItem('coachMgrData', saved);
-                localStorage.removeItem('coachMgrData');
-            }
-        }
-
-        if (saved) {
-            if (typeof saved === 'string' && saved.startsWith('enc:')) {
-                saved = decryptData(saved.slice(4));
-            }
-            let parsed = null;
-            try {
-                parsed = (typeof saved === 'string') ? JSON.parse(saved) : saved;
-            } catch (e) {
-                console.error('Failed to parse saved data:', e);
-            }
-            if (parsed) {
+        const parsed = await loadPersistedSnapshot({ decryptData });
+        if (parsed) {
                 state.matches = parsed.matches || [];
                 state.practices = parsed.practices || [];
                 state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
@@ -92,12 +109,13 @@ export async function loadData() {
                 state.players = parsed.players || [];
                 state.menuLibrary = parsed.menuLibrary || [];
                 state.tactics = parsed.tactics || [];
+                state.practiceTemplates = parsed.practiceTemplates || [];
                 state.matchTypes = parsed.matchTypes || ['リーグ戦', 'カップ戦', 'トレーニングマッチ', '招待杯'];
                 state.menuCategories = parsed.menuCategories || ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'];
                 const newTacticsDefaults = ['攻撃：ビルドアップ（自陣）', '攻撃：前進・崩し（中盤〜敵陣）', '守備：ハイプレス（前線）', '守備：ブロック・ゴール前（自陣）', '切り替え：攻→守（奪われたとき）', '切り替え：守→攻（奪ったとき）', 'セットプレー', 'その他'];
                 const loadedTacticsCat = parsed.tacticsCategories || [];
-                const isOldTacticsCat = loadedTacticsCat.length === 0 || 
-                    loadedTacticsCat.includes('トランジション') || 
+                const isOldTacticsCat = loadedTacticsCat.length === 0 ||
+                    loadedTacticsCat.includes('トランジション') ||
                     loadedTacticsCat.includes('プレッシング') ||
                     (loadedTacticsCat.includes('攻撃') && !loadedTacticsCat.includes('攻撃：ビルドアップ（自陣）'));
 
@@ -132,8 +150,9 @@ export async function loadData() {
                 if (!state.teamInfo.passcode) state.teamInfo.passcode = '7064';
                 state.customFormations = parsed.customFormations || state.customFormations;
                 state.teamFocus = parsed.teamFocus || {}; // ★【追加】チーム強化テーマの読み込み
+                state.syncMeta = parsed.syncMeta || state.syncMeta;
             }
-        }
+            ensureSyncMeta(state);
         // セッション中にロールが未設定の場合のみ初期値（保護者モード）をセット
         if (!state.currentUserRole) {
             state.currentUserRole = 'parent';
@@ -143,33 +162,32 @@ export async function loadData() {
     }
 }
 
-export async function saveData() {
-    state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
-    state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
+export function saveData({ sync = true, markChange = true } = {}) {
+    saveDataQueue = saveDataQueue.then(async () => {
+        state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
+        state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
+        if (markChange) markLocalChange(state);
 
-    const jsonStr = JSON.stringify({
-        matches: state.matches,
-        practices: state.practices,
-        players: state.players,
-        menuLibrary: state.menuLibrary,
-        tactics: state.tactics,
-        matchTypes: state.matchTypes,
-        menuCategories: state.menuCategories,
-        tacticsCategories: state.tacticsCategories,
-        analysisTags: state.analysisTags,
-        skillMetrics: state.skillMetrics,
-        positions: state.positions,
-        positionsCat2: state.positionsCat2,
-        teamInfo: state.teamInfo,
-        customFormations: state.customFormations,
-        teamFocus: state.teamFocus || {} // ★【追加】チーム強化テーマの保存
+        const snapshot = createStateSnapshot(state);
+
+        try {
+            await savePersistedSnapshot(snapshot, { encryptData });
+            setSyncStateUI(navigator.onLine === false ? 'offline' : 'local');
+            if (sync && state.currentUserRole === 'coach' && state.teamInfo && state.teamInfo.gasApiUrl) {
+                void syncPushGasCloud(true).catch(error => {
+                    console.error('Background sync failed after save:', error);
+                });
+            }
+        } catch (error) {
+            console.error('Failed to save data:', error);
+            showToast('保存に失敗しました。データを変更せず、もう一度お試しください');
+            throw error;
+        }
+    }).catch(error => {
+        // 1件の失敗で後続の保存キューを止めない
+        console.error('Save queue error:', error);
     });
-
-    await localforage.setItem('coachMgrData', 'enc:' + encryptData(jsonStr));
-
-    if (state.currentUserRole === 'coach' && state.teamInfo && state.teamInfo.gasApiUrl) {
-        syncPushGasCloud(true);
-    }
+    return saveDataQueue;
 }
 
 function setSyncStateUI(status) {
@@ -178,23 +196,30 @@ function setSyncStateUI(status) {
     const timeEl = document.getElementById('sync-last-time');
     const textEl = document.getElementById('sync-status-text');
     const isCoach = state.currentUserRole === 'coach';
+    window.__coachMgrSyncStatus = status;
+    if (textEl) textEl.textContent = getSyncStatusLabel(status);
 
     if (status === 'syncing') {
         if (icon) icon.className = 'fa-solid fa-rotate fa-spin';
         if (dot) dot.className = 'sync-status-dot syncing';
-        if (textEl) textEl.textContent = '通信中...';
     } else if (status === 'success') {
         if (icon) icon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
         if (dot) dot.className = 'sync-status-dot';
-
         const now = new Date();
         lastSyncTimeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
         if (timeEl) timeEl.textContent = `本日 ${lastSyncTimeStr}`;
-        if (textEl) textEl.textContent = '最新状態です';
+    } else if (status === 'local') {
+        if (icon) icon.className = 'fa-solid fa-hard-drive';
+        if (dot) dot.className = 'sync-status-dot';
+    } else if (status === 'offline') {
+        if (icon) icon.className = 'fa-solid fa-mobile-screen-button';
+        if (dot) dot.className = 'sync-status-dot error';
+    } else if (status === 'conflict') {
+        if (icon) icon.className = 'fa-solid fa-triangle-exclamation';
+        if (dot) dot.className = 'sync-status-dot error';
     } else if (status === 'error') {
         if (icon) icon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
         if (dot) dot.className = 'sync-status-dot error';
-        if (textEl) textEl.textContent = '同期に失敗しました';
     }
 }
 
@@ -203,148 +228,69 @@ export function syncPushGasCloud(isSilent = false) {
         if (!isSilent) alert('Google Apps Script の Web API URL が設定されていません。');
         return Promise.reject('No URL');
     }
-
-    const payload = {
-        action: 'push',
-        sheetName: state.teamInfo.gasSheetName || '',
-        authToken: state.teamInfo.gasAuthToken || '',
-        data: {
-            matches: state.matches,
-            practices: state.practices,
-            players: state.players,
-            menuLibrary: state.menuLibrary,
-            tactics: state.tactics || [],
-            matchTypes: state.matchTypes,
-            menuCategories: state.menuCategories,
-            tacticsCategories: state.tacticsCategories,
-            analysisTags: state.analysisTags, // ★【追加】動画分析タグ
-            skillMetrics: state.skillMetrics,
-            positions: state.positions,
-            positionsCat2: state.positionsCat2,
-            teamInfo: state.teamInfo,
-            customFormations: state.customFormations,
-            teamFocus: state.teamFocus || {} // ★【追加】チーム強化テーマ
-        }
-    };
-
     if (!isSilent) showToast('クラウドへ同期中...');
+    markSyncAttempt(state);
+    setSyncStateUI('syncing');
 
-    return fetch(state.teamInfo.gasApiUrl, {
-        method: 'POST',
-        mode: 'cors',
-        redirect: 'follow',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
+    return withRetry(() => pushCloud({ teamInfo: state.teamInfo, data: createCloudSnapshot(state) }), {
+        onRetry: (_error, attempt) => {
+            if (!isSilent) showToast(`同期を再試行しています（${attempt}回目）...`);
+        }
     })
-        .then(res => res.json())
-        .then(resData => {
-            if (resData && resData.status === 'success') {
-                if (!isSilent) showToast('クラウドへの送信が完了しました！');
-                setSyncStateUI('success');
-                return resData;
-            } else {
-                setSyncStateUI('error');
-                throw new Error(resData.message || '同期エラー');
-            }
+        .then(async result => {
+            markSyncAcknowledged(state);
+            await saveData({ sync: false, markChange: false });
+            if (!isSilent) showToast('クラウドへの送信が完了しました！');
+            setSyncStateUI('success');
+            return result;
         })
-        .catch(err => {
+        .catch(async err => {
             console.error('GAS Sync Push Error:', err);
+            markSyncFailure(state, err);
+            await saveData({ sync: false, markChange: false });
             setSyncStateUI('error');
             if (!isSilent) alert(`クラウド送信に失敗しました:\n${err.message || err}`);
+            throw err;
         });
 }
 
-export function syncPullGasCloud(isSilent = false) {
+export async function syncPullGasCloud(isSilent = false) {
     if (!state.teamInfo || !state.teamInfo.gasApiUrl) {
-        if (!isSilent) alert('Google Apps Script の Web API URL が設定されていません。');
-        return Promise.reject('No URL');
+        const error = new Error('Google Apps Script の Web API URL が設定されていません。');
+        if (!isSilent) alert(error.message);
+        throw error;
     }
 
     if (!isSilent) showToast('クラウドからデータを受信中...');
-
-    const sheetParam = state.teamInfo.gasSheetName ? `&sheetName=${encodeURIComponent(state.teamInfo.gasSheetName)}` : '';
-    const authParam = state.teamInfo.gasAuthToken ? `&authToken=${encodeURIComponent(state.teamInfo.gasAuthToken)}` : '';
-    const fetchUrl = `${state.teamInfo.gasApiUrl}?action=pull${sheetParam}${authParam}&t=${Date.now()}`;
-
-    return fetch(fetchUrl, { method: 'GET', mode: 'cors', redirect: 'follow' })
-        .then(res => res.json())
-        .then(resData => {
-            if (resData && resData.status === 'success' && resData.data) {
-                let remoteData = resData.data;
-                if (typeof remoteData === 'string') {
-                    try { remoteData = JSON.parse(remoteData); } catch (e) { }
-                }
-                if (remoteData && typeof remoteData === 'object') {
-                    if (remoteData.matches) state.matches = remoteData.matches;
-                    if (remoteData.practices) state.practices = remoteData.practices;
-                    if (remoteData.players) state.players = remoteData.players;
-                    if (remoteData.menuLibrary) state.menuLibrary = remoteData.menuLibrary;
-                    if (remoteData.tactics) state.tactics = remoteData.tactics;
-
-                    // ★【追加】マスタ・設定データの受信展開
-                    if (remoteData.matchTypes) state.matchTypes = remoteData.matchTypes;
-                    if (remoteData.menuCategories) state.menuCategories = remoteData.menuCategories;
-                    if (remoteData.tacticsCategories) state.tacticsCategories = remoteData.tacticsCategories;
-
-                    const newTacticsDefaults = ['攻撃：ビルドアップ（自陣）', '攻撃：前進・崩し（中盤〜敵陣）', '守備：ハイプレス（前線）', '守備：ブロック・ゴール前（自陣）', '切り替え：攻→守（奪われたとき）', '切り替え：守→攻（奪ったとき）', 'セットプレー', 'その他'];
-                    const loadedTacticsCat = state.tacticsCategories || [];
-                    const isOldTacticsCat = loadedTacticsCat.length === 0 || 
-                        loadedTacticsCat.includes('トランジション') || 
-                        loadedTacticsCat.includes('プレッシング') ||
-                        (loadedTacticsCat.includes('攻撃') && !loadedTacticsCat.includes('攻撃：ビルドアップ（自陣）'));
-
-                    if (isOldTacticsCat) {
-                        state.tacticsCategories = [...newTacticsDefaults];
-                        const catMap = {
-                            'ビルドアップ': '攻撃：ビルドアップ（自陣）',
-                            '攻撃': '攻撃：前進・崩し（中盤〜敵陣）',
-                            'プレッシング': '守備：ハイプレス（前線）',
-                            '守備': '守備：ブロック・ゴール前（自陣）',
-                            'トランジション': '切り替え：攻→守（奪われたとき）',
-                            'セットプレー': 'セットプレー'
-                        };
-                        if (state.tactics) {
-                            state.tactics.forEach(t => {
-                                if (t.category && catMap[t.category]) {
-                                    t.category = catMap[t.category];
-                                } else if (t.category && !newTacticsDefaults.includes(t.category)) {
-                                    t.category = 'その他';
-                                }
-                            });
-                        }
-                    }
-
-                    if (remoteData.analysisTags) state.analysisTags = remoteData.analysisTags;
-                    if (remoteData.skillMetrics) state.skillMetrics = remoteData.skillMetrics;
-                    if (remoteData.positions) state.positions = remoteData.positions;
-                    if (remoteData.positionsCat2) state.positionsCat2 = remoteData.positionsCat2;
-                    if (remoteData.customFormations) state.customFormations = remoteData.customFormations;
-                    if (remoteData.teamFocus) state.teamFocus = remoteData.teamFocus;
-                    if (remoteData.teamInfo) {
-                        state.teamInfo = { ...state.teamInfo, ...remoteData.teamInfo };
-                    }
-
-                    saveData();
-                    if (!isSilent) showToast('クラウドから最新データを復元しました！');
-                    setSyncStateUI('success');
-
-                    if (!state.currentRoute || state.currentRoute === 'dashboard') {
-                        navigate('dashboard');
-                    } else {
-                        navigate(state.currentRoute);
-                    }
-
-                    return remoteData;
-                }
+    markSyncAttempt(state);
+    setSyncStateUI('syncing');
+    try {
+        const remoteData = await withRetry(() => pullCloud({ teamInfo: state.teamInfo }), {
+            onRetry: (_error, attempt) => {
+                if (!isSilent) showToast(`同期を再試行しています（${attempt}回目）...`);
             }
-            setSyncStateUI('error');
-            throw new Error('有効なクラウドデータが見つかりませんでした');
-        })
-        .catch(err => {
-            console.error('GAS Sync Pull Error:', err);
-            setSyncStateUI('error');
-            if (!isSilent) alert(`クラウドからの復元に失敗しました:\n${err.message || err}`);
         });
+        if (hasSyncConflict(state, remoteData)) {
+            setSyncStateUI('conflict');
+            if (isSilent) throw new Error('端末とクラウドの両方に未同期の変更があります');
+            const proceed = await showCustomConfirm('端末とクラウドの両方に未同期の変更があります。端末の変更は復旧用データに保持されますが、クラウド版で上書きしますか？', '同期の競合を確認', { okText: 'クラウド版を復元する', type: 'danger' });
+            if (!proceed) return null;
+        }
+        applyRemoteSnapshot(state, remoteData);
+        markSyncAcknowledged(state);
+        await saveData({ sync: false, markChange: false });
+        if (!isSilent) showToast('クラウドから最新データを復元しました！');
+        setSyncStateUI('success');
+        navigate(state.currentRoute || 'dashboard');
+        return remoteData;
+    } catch (err) {
+        console.error('GAS Sync Pull Error:', err);
+        markSyncFailure(state, err);
+        await saveData({ sync: false, markChange: false });
+        setSyncStateUI('error');
+        if (!isSilent) alert(`クラウドからの復元に失敗しました:\n${err.message || err}`);
+        throw err;
+    }
 }
 
 export function openModal(id) {
@@ -752,7 +698,7 @@ export function openMyPlayerSelectModal() {
             </p>
             <div style="display:flex; flex-direction:column; gap:0.4rem;">
                 ${state.players.map(p => `
-                    <button type="button" class="btn ${p.id.toString() === currentId ? 'btn-primary' : 'btn-secondary'}" 
+                    <button type="button" class="btn ${p.id.toString() === currentId ? 'btn-primary' : 'btn-secondary'}"
                         style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; text-align:left;"
                         onclick="selectMyPlayer(${p.id})">
                         <span><strong>${escapeHtml(p.name)}</strong> (${p.number})</span>
@@ -864,6 +810,35 @@ function initDashboard() {
     const now = new Date();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const isCoach = state.currentUserRole === 'coach';
+
+    // ── P0: 初回セットアップチェックリスト ──
+    const setupChecklist = document.getElementById('dash-setup-checklist');
+    const setupItems = document.getElementById('dash-setup-items');
+    const setupProgress = document.getElementById('dash-setup-progress');
+    if (setupChecklist && setupItems && setupProgress) {
+        const hasTeam = Boolean(state.teamInfo && (state.teamInfo.name || state.teamInfo.teamName));
+        const hasPlayers = Array.isArray(state.players) && state.players.length > 0;
+        const hasFirstRecord = (Array.isArray(state.matches) && state.matches.length > 0)
+            || (Array.isArray(state.practices) && state.practices.length > 0);
+        const setupSteps = [
+            { done: hasTeam, icon: 'fa-flag', title: 'チーム情報を設定', description: 'チーム名やシーズンを登録', action: 'settings', label: '設定する' },
+            { done: hasPlayers, icon: 'fa-users', title: '選手を登録', description: '選手一覧をチームに追加', action: 'players', label: '登録する' },
+            { done: hasFirstRecord, icon: 'fa-futbol', title: '最初の記録を作成', description: '試合または練習を登録', action: 'matches', label: '始める' }
+        ];
+        const completed = setupSteps.filter(step => step.done).length;
+        setupProgress.textContent = `${completed}/${setupSteps.length} 完了`;
+        setupItems.innerHTML = setupSteps.map(step => `
+            <div class="setup-checklist-item${step.done ? ' is-complete' : ''}">
+                <span class="setup-checklist-icon"><i class="fa-solid ${step.done ? 'fa-check' : step.icon}"></i></span>
+                <span class="setup-checklist-copy"><strong>${step.title}</strong><span>${step.done ? '設定済み' : step.description}</span></span>
+                ${step.done ? '' : `<button type="button" class="btn btn-secondary btn-setup-action" data-setup-route="${step.action}">${step.label}</button>`}
+            </div>
+        `).join('');
+        setupItems.querySelectorAll('.btn-setup-action').forEach(button => {
+            button.addEventListener('click', () => navigate(button.dataset.setupRoute));
+        });
+        setupChecklist.classList.toggle('hidden', !isCoach || completed === setupSteps.length);
+    }
 
     // ── コーチ専用要素の表示制御 ──
     document.querySelectorAll('.coach-only').forEach(el => {
@@ -1013,7 +988,7 @@ function initDashboard() {
             // UI生成
             myPlayerContent.innerHTML = `
                 <div style="display:flex; flex-direction:column; gap:0.6rem; padding:0.2rem 0;">
-                    
+
                     <!-- ヘッダー（名前・背番号・ポジション・変更ボタン） -->
                     <div class="dash-myplayer-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.1rem 0;">
                         <div style="display:flex; align-items:center; gap:0.6rem;">
@@ -1039,7 +1014,7 @@ function initDashboard() {
 
                     <!-- スタッツボタンエリア -->
                     <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.4rem;">
-                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-att" 
+                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-att"
                             style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
                             <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
                                 <i class="fa-solid fa-user-check" style="color:#3b82f6;"></i> 出席率
@@ -1050,7 +1025,7 @@ function initDashboard() {
                             </div>
                         </button>
 
-                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-goals" 
+                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-goals"
                             style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
                             <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
                                 <i class="fa-solid fa-futbol" style="color:var(--primary);"></i> 通算得点
@@ -1058,7 +1033,7 @@ function initDashboard() {
                             <strong style="font-size:0.88rem; color:var(--primary);">${playerGoals}<span style="font-size:0.65rem; font-weight:normal;">点</span></strong>
                         </button>
 
-                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-assists" 
+                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-assists"
                             style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
                             <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
                                 <i class="fa-solid fa-shoe-prints" style="color:#22c55e; transform:rotate(45deg);"></i> 通算アシスト
@@ -1128,7 +1103,7 @@ function initDashboard() {
                     } else {
                         attendedMatches.forEach(m => {
                             html += `
-                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
                                     onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                                     <div>
                                         <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
@@ -1140,7 +1115,7 @@ function initDashboard() {
                         });
                         attendedPractices.forEach(p => {
                             html += `
-                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
                                     onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('practices', { date: '${p.date}' });">
                                     <div>
                                         <strong>練習 ${p.location ? `(${escapeHtml(p.location)})` : ''}</strong>
@@ -1170,7 +1145,7 @@ function initDashboard() {
 
                     pmlTitle.innerHTML = `<i class="fa-solid fa-futbol" style="color:var(--primary);"></i> ${escapeHtml(player.name)} の得点した試合 (通算)`;
                     pmlContent.innerHTML = matchesWithGoals.length > 0 ? matchesWithGoals.map(m => `
-                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
                             onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                             <div>
                                 <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
@@ -1197,7 +1172,7 @@ function initDashboard() {
 
                     pmlTitle.innerHTML = `<span style="display:inline-block; transform:rotate(45deg); color:#22c55e;"><i class="fa-solid fa-shoe-prints"></i></span> ${escapeHtml(player.name)} のアシストした試合 (通算)`;
                     pmlContent.innerHTML = matchesWithAssists.length > 0 ? matchesWithAssists.map(m => `
-                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
                             onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                             <div>
                                 <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
@@ -1498,7 +1473,8 @@ function initDashboard() {
                 `;
             }).join('');
         } else {
-            formBar.innerHTML = '<div class="dash-no-data">試合記録がありません</div>';
+            formBar.innerHTML = renderEmptyState({ icon: 'fa-futbol', title: '試合記録がありません', description: '最初の試合を登録すると、ここに結果と学びが表示されます。', actionLabel: '試合を追加', actionId: 'dash-empty-add-match' });
+            document.getElementById('dash-empty-add-match')?.addEventListener('click', () => openMatchModal());
         }
     }
 
@@ -1602,7 +1578,8 @@ function initDashboard() {
                 `;
             }).join('');
         } else {
-            scheduleList.innerHTML = '<div class="dash-no-data">予定・実績はありません</div>';
+            scheduleList.innerHTML = renderEmptyState({ icon: 'fa-calendar-days', title: '予定・実績はありません', description: '次の練習や試合を登録して、チームの予定を整理しましょう。', actionLabel: '試合を追加', actionId: 'dash-empty-add-schedule' });
+            document.getElementById('dash-empty-add-schedule')?.addEventListener('click', () => openMatchModal());
         }
     }
 
@@ -1708,7 +1685,21 @@ function setupEventListeners() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const route = e.currentTarget.dataset.route;
+            if (route === 'more') {
+                openModal('modal-mobile-more');
+                return;
+            }
             navigate(route);
+        });
+    });
+
+    document.querySelectorAll('[data-mobile-route]').forEach(item => {
+        item.addEventListener('click', (e) => {
+            const route = e.currentTarget.dataset.mobileRoute;
+            const modal = document.getElementById('modal-mobile-more');
+            if (modal) modal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+            if (route) navigate(route);
         });
     });
 
@@ -1930,6 +1921,7 @@ export function updateRoleUI() {
 }
 
 export function navigate(route, params = null) {
+    if (uiState.currentRoute === 'match-detail' && route !== 'match-detail') releaseFieldCompanionSession();
     cleanupCanvasEvents();
     // Cleanup scoped event listeners from the previous view
     if (uiState.currentRoute) {
@@ -2040,6 +2032,7 @@ export function navigate(route, params = null) {
         }
         if (route === 'players') initPlayers();
         if (route === 'library') initLibrary(miniPitchObserver);
+        if (route === 'insights') initInsights();
         if (route === 'settings') initSettings();
         if (route === 'data') initData();
         if (route === 'animation') initAnimation(params, navigate, openModal);
@@ -2062,15 +2055,16 @@ async function init() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramApiUrl = urlParams.get('apiUrl');
-    const paramAuthToken = urlParams.get('authToken');
     const paramSheetName = urlParams.get('sheetName');
+    const paramSyncProtocol = urlParams.get('syncProtocol');
+    const hadLegacyAuthToken = urlParams.has('authToken');
 
     let isFromInviteLink = false;
     if (paramApiUrl) {
         if (!state.teamInfo) state.teamInfo = {};
         state.teamInfo.gasApiUrl = paramApiUrl;
-        if (paramAuthToken) state.teamInfo.gasAuthToken = paramAuthToken;
         if (paramSheetName) state.teamInfo.gasSheetName = paramSheetName;
+        if (paramSyncProtocol === 'secure-v2') state.teamInfo.gasSyncProtocol = 'secure-v2';
         isFromInviteLink = true;
 
         try {
@@ -2079,8 +2073,16 @@ async function init() {
         } catch (e) { }
     }
 
+    if (hadLegacyAuthToken) {
+        showToast('安全のため、共有URLに含まれる認証情報は使用せず削除しました');
+    }
+
     setupEventListeners();
     setupModals();
+    setupGlobalUi();
+
+    // ★ P0: 保存済みテーマの初期化 ★
+    applyThemePreset(localStorage.getItem('coachMgrThemePreset') || 'field-green');
 
     // ★【追加】屋外高コントラストモードの初期化と切り替え処理 ★
     const isHighContrast = localStorage.getItem('high_contrast_mode') === 'true';
@@ -2138,6 +2140,17 @@ export function openReleaseNotesModal() {
 
     modal.classList.remove('hidden');
 }
+
+configureAppContext({
+    saveData,
+    navigate,
+    openModal,
+    loadData,
+    updateRoleUI,
+    syncPushGasCloud,
+    syncPullGasCloud,
+    clearAllMiniPitchIntervals
+});
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

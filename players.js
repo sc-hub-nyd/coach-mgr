@@ -1,7 +1,7 @@
 // players.js
 import { state } from './state.js';
 import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
-import { saveData, navigate, openModal } from './app.js';
+import { saveData, navigate, openModal } from './app-context.js';
 
 export function openPlayerDetail(id) {
     const p = state.players.find(pl => pl.id === id);

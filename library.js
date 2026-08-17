@@ -1,7 +1,7 @@
 // library.js
 import { state, uiState } from './state.js';
 import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
-import { navigate, openModal } from './app.js';
+import { navigate, openModal } from './app-context.js';
 import { drawPitchToCtx } from './drawing.js';
 
 export function openAssignPracticeModal(menuId) {

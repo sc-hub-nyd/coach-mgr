@@ -30,6 +30,7 @@
                 <li class="active" data-route="dashboard"><i class="fa-solid fa-chart-line"></i> ダッシュボード</li>
                 <li data-route="matches"><i class="fa-solid fa-trophy"></i> 試合記録</li>
                 <li data-route="practices"><i class="fa-solid fa-calendar-check"></i> 練習管理</li>
+                <li data-route="insights"><i class="fa-solid fa-chart-pie"></i> 振り返り</li>
                 <li data-route="library"><i class="fa-solid fa-book"></i> メニュー管理</li>
                 <li data-route="tactics"><i class="fa-solid fa-chess-knight"></i> 戦術管理</li>
                 <li data-route="players"><i class="fa-solid fa-users"></i> 選手管理</li>
@@ -97,40 +98,55 @@
                     <div style="font-size:0.8rem;">クラウドから最新情報を取得しています</div>
                 </div>
             </div>
-            <!-- スマホ用ハイブリッドナビゲーション -->
-            <nav class="bottom-nav" id="bottom-nav">
-                <a href="#" class="nav-item active" data-route="dashboard">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span>ダッシュボード</span>
+            <!-- スマホ用5項目ナビゲーション。詳細機能は「その他」に集約 -->
+            <nav class="bottom-nav" id="bottom-nav" aria-label="主要ナビゲーション">
+                <a href="#" class="nav-item active" data-route="dashboard" aria-label="ホーム">
+                    <i class="fa-solid fa-house"></i>
+                    <span>ホーム</span>
                 </a>
-                <a href="#" class="nav-item" data-route="matches">
-                    <i class="fa-solid fa-trophy"></i>
+                <a href="#" class="nav-item" data-route="practices" aria-label="予定">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>予定</span>
+                </a>
+                <a href="#" class="nav-item" data-route="matches" aria-label="試合">
+                    <i class="fa-solid fa-futbol"></i>
                     <span>試合</span>
                 </a>
-                <a href="#" class="nav-item" data-route="practices">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    <span>練習</span>
-                </a>
-                <a href="#" class="nav-item" data-route="library">
-                    <i class="fa-solid fa-book"></i>
-                    <span>メニュー</span>
-                </a>
-                <a href="#" class="nav-item" data-route="tactics">
-                    <i class="fa-solid fa-chess-knight"></i>
-                    <span>戦術</span>
-                </a>
-                <a href="#" class="nav-item" data-route="players">
+                <a href="#" class="nav-item" data-route="players" aria-label="選手">
                     <i class="fa-solid fa-users"></i>
                     <span>選手</span>
                 </a>
-                <a href="#" class="nav-item" data-route="settings">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>設定</span>
+                <a href="#" class="nav-item" data-route="more" aria-label="その他">
+                    <i class="fa-solid fa-ellipsis"></i>
+                    <span>その他</span>
                 </a>
             </nav>
         </main>
 
     </div><!-- /#app -->
+
+    <!-- Mobile overflow menu -->
+    <div id="modal-mobile-more" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-more-title">
+        <div class="bottom-sheet-modal mobile-more-sheet">
+            <div class="modal-header">
+                <h2 id="mobile-more-title">その他</h2>
+                <button type="button" class="btn btn-secondary btn-close-modal" aria-label="その他メニューを閉じる"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="mobile-more-grid">
+                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="library"><i class="fa-solid fa-book"></i><span>メニュー管理</span></button>
+                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="tactics"><i class="fa-solid fa-chess-knight"></i><span>戦術管理</span></button>
+                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="insights"><i class="fa-solid fa-chart-pie"></i><span>振り返り</span></button>
+                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="settings"><i class="fa-solid fa-gear"></i><span>設定</span></button>
+                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="dashboard"><i class="fa-solid fa-house"></i><span>ホームへ戻る</span></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pwa-update-banner" class="pwa-update-banner hidden" role="status" aria-live="polite">
+        <span><i class="fa-solid fa-arrows-rotate"></i> 新しいバージョンを利用できます</span>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-pwa-reload">更新する</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-pwa-dismiss" aria-label="更新通知を閉じる"><i class="fa-solid fa-xmark"></i></button>
+    </div>
 
     <!-- Passcode Modal for Coach Mode -->
     <div id="modal-coach-passcode" class="modal-overlay hidden" style="z-index: 1002;">
@@ -161,6 +177,19 @@
     <!-- ===== Templates (hidden, cloned on navigation) ===== -->
     <template id="tpl-dashboard">
         <div class="dash-widget-grid">
+
+            <!-- P0: 初回セットアップ導線 -->
+            <section id="dash-setup-checklist" class="card setup-checklist coach-only" aria-labelledby="dash-setup-title">
+                <div class="setup-checklist-header">
+                    <div>
+                        <span class="eyebrow-label">START HERE</span>
+                        <h2 id="dash-setup-title">チームを使い始める</h2>
+                        <p>3つの準備が完了すると、試合と練習の記録をスムーズに始められます。</p>
+                    </div>
+                    <span id="dash-setup-progress" class="setup-progress">0/3 完了</span>
+                </div>
+                <div id="dash-setup-items" class="setup-checklist-items"></div>
+            </section>
 
             <!-- ROW 0: マイ選手 (保護者専用) -->
             <div id="dash-myplayer-banner" class="card dash-myplayer-card parent-only" style="display:none;">
@@ -406,6 +435,35 @@
                 </div>
                 <div id="match-detail-score-box"></div>
             </div>
+
+            <!-- P5 Field Companion: 試合時計・片手操作・記録タイムライン -->
+            <section class="field-companion coach-only" aria-label="試合中のField Companion">
+                <div class="field-companion-status">
+                    <div class="field-timer" aria-live="polite">
+                        <span class="field-timer-label"><i class="fa-regular fa-clock" aria-hidden="true"></i> 試合時計</span>
+                        <strong id="field-match-timer" class="field-timer-value">00:00</strong>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-field-timer-toggle" aria-label="試合時計を開始">開始</button>
+                    </div>
+                    <label class="field-period-control" for="field-period-select">記録先 <select id="field-period-select" class="form-control" aria-label="記録するピリオド"></select></label>
+                    <span id="field-network-status" class="field-network-status" role="status" aria-live="polite"><i class="fa-solid fa-wifi" aria-hidden="true"></i> 保存済み</span>
+                    <span id="field-session-status" class="field-network-status" hidden role="status" aria-live="polite"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i> 画面オン</span>
+                </div>
+                <div id="field-action-hint" class="field-action-hint">試合中はここから素早く記録できます</div>
+                <div class="field-action-bar">
+                    <button type="button" class="btn btn-action-score" id="btn-field-score"><i class="fa-solid fa-futbol"></i><span>得点</span></button>
+                    <button type="button" class="btn btn-action-concede" id="btn-field-concede"><i class="fa-solid fa-arrow-down"></i><span>失点</span></button>
+                    <button type="button" class="btn btn-primary" id="btn-field-substitution"><i class="fa-solid fa-arrows-rotate"></i><span>交代</span></button>
+                    <button type="button" class="btn btn-action-card" id="btn-field-card"><i class="fa-regular fa-square"></i><span>警告</span></button>
+                    <button type="button" class="btn btn-action-note" id="btn-field-note"><i class="fa-solid fa-pen"></i><span>メモ</span></button>
+                </div>
+                <div class="field-event-timeline" aria-labelledby="field-event-title">
+                    <div class="field-event-timeline-header">
+                        <h3 id="field-event-title"><i class="fa-solid fa-list-check" aria-hidden="true"></i> 試合ログ</h3>
+                        <span id="field-event-count" class="field-event-count">0件</span>
+                    </div>
+                    <ol id="field-event-list" class="field-event-list" aria-live="polite"></ol>
+                </div>
+            </section>
 
             <!-- コーチモード用 試合基本情報 編集エリア -->
             <div class="card coach-only" style="padding:1.2rem; display:flex; flex-direction:column; gap:0.6rem;">
@@ -720,8 +778,19 @@
                             <input type="password" id="team-info-passcode" class="sl-input" placeholder="パスコードを入力"
                                 style="max-width:140px; text-align:center;">
                         </div>
+                        <div class="sl-row">
+                            <span class="sl-row-label">表示テーマ</span>
+                            <select id="theme-preset" class="form-control settings-theme-select" aria-label="表示テーマ">
+                                <option value="field-green">Field Green（標準）</option>
+                                <option value="midnight">Midnight Pitch（試合・分析）</option>
+                                <option value="high-visibility">High Visibility（屋外）</option>
+                                <option value="ocean-blue">Ocean Blue（分析・データ）</option>
+                                <option value="redline">Redline（競技モード）</option>
+                                <option value="warm-notebook">Warm Notebook（育成記録）</option>
+                            </select>
+                        </div>
                         <div class="sl-row sl-row-last">
-                            <span class="sl-row-label">テーマカラー</span>
+                            <span class="sl-row-label">チームカラー</span>
                             <div style="display:flex; align-items:center; gap:0.75rem; margin-left:auto;">
                                 <input type="color" id="team-info-color"
                                     style="width:52px; height:32px; border:none; border-radius:6px; cursor:pointer; background:none; padding:0;">
@@ -753,8 +822,16 @@
                         <div class="sl-row">
                             <span class="sl-row-label">認証トークン</span>
                             <input type="password" id="gas-auth-token" class="sl-input"
-                                placeholder="任意の合い言葉（例: mysecret123）" style="flex:1; min-width:0;">
+                                placeholder="任意の合い言葉（例: mysecret123）" autocomplete="off" style="flex:1; min-width:0;">
                         </div>
+                        <div class="sl-row">
+                            <span class="sl-row-label">同期プロトコル</span>
+                            <select id="gas-sync-protocol" class="sl-input" style="flex:1; min-width:0;">
+                                <option value="secure-v2">安全モード（POST認証・推奨）</option>
+                                <option value="legacy-v1">互換モード（旧GAS用・認証情報がURLに含まれます）</option>
+                            </select>
+                        </div>
+                        <p id="gas-security-guidance" style="margin:0 0 0.75rem; font-size:0.75rem; color:var(--text-secondary); line-height:1.5;">安全モードを使うには、P10のGASテンプレートをデプロイしてください。認証トークンは共有リンクに含まれません。</p>
                         <div class="sl-row sl-row-last gas-actions-row">
                             <button type="button" class="btn btn-secondary btn-sm btn-copy-link"
                                 id="btn-copy-invite-link">
@@ -773,6 +850,20 @@
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <!-- Section: 運用チェック -->
+            <div class="sl-section operations-section">
+                <div class="sl-section-label"><i class="fa-solid fa-shield-heart"></i> 運用チェック</div>
+                <div class="sl-section-body operations-body">
+                    <p class="operations-intro">端末保存、クラウド同期、バックアップの状態を確認し、シーズン中の記録を安全に維持します。</p>
+                    <div id="operations-diagnostics" class="operations-diagnostics" aria-live="polite"></div>
+                    <div class="operations-actions">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-operations-backup"><i class="fa-solid fa-download"></i> 今すぐバックアップ</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-export-recovery" disabled><i class="fa-solid fa-clock-rotate-left"></i> 復旧用データを保存</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-operations-check"><i class="fa-solid fa-copy"></i> 状態をコピー</button>
+                    </div>
                 </div>
             </div>
 
@@ -939,7 +1030,7 @@
                 <div class="sl-section-label"><i class="fa-solid fa-database"></i> データ連携・バックアップ管理</div>
                 <div class="sl-section-body" style="padding:1rem; display:flex; flex-direction:column; gap:1rem;">
                     <p class="text-secondary" style="font-size:0.85rem; margin:0; line-height:1.4;">
-                        全データ（試合記録、練習予定、メニュー、選手情報等）をJSONファイルとしてダウンロード・バックアップ、または取込・一括削除が行えます。
+                        全データ（試合記録、練習予定、メニュー、選手情報等）をJSONファイルとしてダウンロード・バックアップ、または取込・一括削除が行えます。大切な試合の前後や端末変更前には、必ずバックアップを作成してください。
                     </p>
 
                     <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.5rem;">
@@ -1097,6 +1188,37 @@
                 </div>
             </div>
         </div>
+    </template>
+
+    <template id="tpl-insights">
+        <section class="insights-page" aria-labelledby="insights-page-title">
+            <header class="insights-hero">
+                <div>
+                    <span class="eyebrow-label">REVIEW</span>
+                    <h1 id="insights-page-title">チームの振り返り</h1>
+                    <p>試合・練習・出欠・Field Companionの記録を、次の指導と共有につなげます。</p>
+                </div>
+                <button type="button" class="btn btn-primary" id="btn-copy-insights-report"><i class="fa-solid fa-share-nodes"></i> レポートをコピー</button>
+            </header>
+            <div class="insights-toolbar card">
+                <label class="form-group"><span>対象期間</span><select id="insights-range-select" class="form-control"><option value="30">直近30日</option><option value="90" selected>直近90日</option><option value="180">直近180日</option><option value="all">すべて</option></select></label>
+                <label class="form-group insights-player-filter"><span>選手別に見る</span><select id="insights-player-select" class="form-control"></select></label>
+            </div>
+            <section class="insights-section" aria-labelledby="insights-overview-title">
+                <div class="insights-section-header"><div><span class="eyebrow-label">TEAM OVERVIEW</span><h2 id="insights-overview-title">活動サマリー</h2></div></div>
+                <div id="insights-team-metrics" class="insight-metric-grid"></div>
+            </section>
+            <div class="insights-content-grid">
+                <section class="card insights-panel" aria-labelledby="insights-timeline-title">
+                    <div class="insights-section-header"><div><span class="eyebrow-label">RECENT LOG</span><h2 id="insights-timeline-title">直近の記録</h2></div><span class="insights-hint">項目をタップして試合詳細へ</span></div>
+                    <div id="insights-timeline" class="insight-timeline"></div>
+                </section>
+                <section class="card insights-panel" aria-labelledby="insights-player-history-title">
+                    <div class="insights-section-header"><div><span class="eyebrow-label">PLAYER JOURNEY</span><h2 id="insights-player-history-title">選手を選択してください</h2></div></div>
+                    <div id="insights-player-history"></div>
+                </section>
+            </div>
+        </section>
     </template>
 
     <template id="tpl-animation">
@@ -1679,6 +1801,27 @@
         </div>
     </div>
 
+    <!-- P1 Field Companion: 試合中クイック記録Bottom sheet -->
+    <div id="modal-field-quick-action" class="modal-overlay hidden" style="z-index: 1040; align-items:flex-end;">
+        <div class="field-quick-sheet" role="dialog" aria-modal="true" aria-labelledby="field-quick-title">
+            <div class="field-quick-sheet-handle" aria-hidden="true"></div>
+            <div class="field-quick-sheet-header">
+                <div>
+                    <span class="eyebrow-label">FIELD COMPANION</span>
+                    <h2 id="field-quick-title">クイック記録</h2>
+                </div>
+                <button type="button" class="btn-close-modal field-quick-close" aria-label="クイック記録を閉じる">&times;</button>
+            </div>
+            <div id="field-quick-content" class="field-quick-content"></div>
+        </div>
+    </div>
+
+    <!-- P1 Undo bar -->
+    <div id="field-undo-bar" class="field-undo-bar hidden" role="status" aria-live="polite">
+        <span id="field-undo-message">記録しました</span>
+        <button type="button" id="btn-field-undo" class="btn btn-secondary btn-sm">取り消す</button>
+    </div>
+
     <!-- コンテキスト維持型: ピリオド情報編集モーダル (軽量化版 ボトムシート) -->
     <div id="modal-formation" class="modal-overlay hidden" style="z-index: 1030;">
         <div class="bottom-sheet-modal" style="max-width: 600px; width: 100%; position:relative;">
@@ -1806,7 +1949,14 @@
                     <input type="text" id="practice-location" class="form-control" placeholder="例: 八王子小学校G、市民スポーツセンター">
                 </div>
                 <div class="form-group">
-                    <label>選手出欠（名簿） <span class="badge-optional">任意</span></label>
+                    <label><i class="fa-solid fa-bookmark" aria-hidden="true"></i> 練習テンプレート <span class="badge-optional">任意</span></label>
+                    <select id="practice-template-select" class="form-control">
+                        <option value="">テンプレートを選ばない</option>
+                    </select>
+                    <p class="form-help">保存済みのメニュー構成と場所を読み込みます。出欠はこの練習日ごとに設定します。</p>
+                </div>
+                <div class="form-group">
+                    <label>招集・出欠管理 <span class="badge-optional">任意</span></label>
                     <div id="practice-attendance-roster"
                         style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 0.8rem 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
                         <!-- Checkboxes populated dynamically -->
@@ -2577,15 +2727,38 @@
         window.addEventListener('touchmove', function() {}, {passive: false});
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script type="module" src="app.js?v=62"></script>
-    <!-- Service Worker Registration -->
+    <script type="module" src="app.js"></script>
+    <!-- Service Worker Registration & P8 update experience -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
+                const banner = document.getElementById('pwa-update-banner');
+                const updateButton = document.getElementById('btn-pwa-reload');
+                const dismissButton = document.getElementById('btn-pwa-dismiss');
+                let refreshing = false;
+                const showUpdate = (worker) => {
+                    if (!worker || !navigator.serviceWorker.controller || !banner) return;
+                    banner.classList.remove('hidden');
+                    if (updateButton) updateButton.onclick = () => worker.postMessage({ type: 'SKIP_WAITING' });
+                };
+                if (dismissButton) dismissButton.onclick = () => banner?.classList.add('hidden');
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (refreshing) return;
+                    refreshing = true;
+                    window.location.reload();
+                });
                 navigator.serviceWorker.register('./sw.js')
                     .then((reg) => {
+                        if (reg.waiting) showUpdate(reg.waiting);
+                        reg.addEventListener('updatefound', () => {
+                            const worker = reg.installing;
+                            if (!worker) return;
+                            worker.addEventListener('statechange', () => {
+                                if (worker.state === 'installed') showUpdate(worker);
+                            });
+                        });
                         reg.update();
-                        console.log('SW registered & updated:', reg.scope);
+                        console.log('SW registered & checked:', reg.scope);
                     })
                     .catch((err) => console.log('SW registration failed:', err));
             });
