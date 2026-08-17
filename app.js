@@ -6,6 +6,7 @@ import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getM
 import { initPlayers, openPlayerDetail } from './players.js';
 import { initLibrary } from './library.js';
 import { initTactics } from './tactics.js';
+import { initInsights } from './insights.js';
 import { initSettings, initData, applyThemePreset } from './settings.js';
 import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
 import { cleanupScope } from './event-manager.js';
@@ -2024,6 +2025,7 @@ export function navigate(route, params = null) {
         }
         if (route === 'players') initPlayers();
         if (route === 'library') initLibrary(miniPitchObserver);
+        if (route === 'insights') initInsights();
         if (route === 'settings') initSettings();
         if (route === 'data') initData();
         if (route === 'animation') initAnimation(params, navigate, openModal);
