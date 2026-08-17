@@ -37,6 +37,78 @@ export function isParentShareValid(teamInfo, { version, token, now = new Date() 
     return true;
 }
 
+export const PARENT_ACCESS_SCOPES = Object.freeze([
+    { id: 'schedule', label: '予定・試合結果' },
+    { id: 'attendance', label: '出欠状況' },
+    { id: 'development', label: '本人の成長ログ' }
+]);
+
+function normalizeScopes(scopes) {
+    const allowed = new Set(PARENT_ACCESS_SCOPES.map(scope => scope.id));
+    const values = Array.isArray(scopes) ? scopes : [];
+    const normalized = [...new Set(values.filter(scope => allowed.has(scope)))];
+    return normalized.length ? normalized : ['schedule', 'attendance', 'development'];
+}
+
+export function ensureParentAccessRegistry(teamInfo = {}) {
+    if (!teamInfo.parentAccess || typeof teamInfo.parentAccess !== 'object') teamInfo.parentAccess = { version: 1, invites: [] };
+    if (!Array.isArray(teamInfo.parentAccess.invites)) teamInfo.parentAccess.invites = [];
+    if (!teamInfo.parentAccess.version) teamInfo.parentAccess.version = 1;
+    return teamInfo.parentAccess;
+}
+
+export function createParentAccessInvite(teamInfo, { playerId, label = '', scopes, expiresAt = '' } = {}) {
+    if (playerId === null || playerId === undefined || playerId === '') throw new Error('対象選手を選択してください');
+    const registry = ensureParentAccessRegistry(teamInfo);
+    const now = new Date().toISOString();
+    const invite = {
+        id: `parent-${randomToken().slice(0, 16)}`,
+        token: randomToken(),
+        playerId: String(playerId),
+        label: String(label || '').trim(),
+        scopes: normalizeScopes(scopes),
+        expiresAt: String(expiresAt || ''),
+        status: 'active',
+        createdAt: now,
+        revokedAt: null,
+        lastUsedAt: null
+    };
+    registry.invites.unshift(invite);
+    return invite;
+}
+
+export function revokeParentAccessInvite(teamInfo, inviteId) {
+    const registry = ensureParentAccessRegistry(teamInfo);
+    const invite = registry.invites.find(item => String(item.id) === String(inviteId));
+    if (!invite) return null;
+    invite.status = 'revoked';
+    invite.revokedAt = new Date().toISOString();
+    return invite;
+}
+
+export function getParentAccessInvite(teamInfo, { inviteId, token, now = new Date() } = {}) {
+    const registry = ensureParentAccessRegistry(teamInfo || {});
+    const invite = registry.invites.find(item => String(item.id) === String(inviteId) && String(item.token) === String(token));
+    if (!invite || invite.status !== 'active') return null;
+    if (invite.expiresAt && toTimestamp(`${invite.expiresAt}T23:59:59`) < now.getTime()) return null;
+    return { ...invite, scopes: normalizeScopes(invite.scopes) };
+}
+
+export function markParentAccessUsed(teamInfo, inviteId) {
+    const registry = ensureParentAccessRegistry(teamInfo || {});
+    const invite = registry.invites.find(item => String(item.id) === String(inviteId));
+    if (invite) invite.lastUsedAt = new Date().toISOString();
+    return invite || null;
+}
+
+export function getParentAccessSummary(teamInfo = {}) {
+    const registry = ensureParentAccessRegistry(teamInfo);
+    const now = new Date();
+    const active = registry.invites.filter(invite => invite.status === 'active' && (!invite.expiresAt || toTimestamp(`${invite.expiresAt}T23:59:59`) >= now.getTime()));
+    const expired = registry.invites.filter(invite => invite.status === 'active' && invite.expiresAt && toTimestamp(`${invite.expiresAt}T23:59:59`) < now.getTime());
+    return { active, expired, revoked: registry.invites.filter(invite => invite.status === 'revoked') };
+}
+
 export function getRsvpDeadlineStatus(event, { now = new Date() } = {}) {
     const deadline = event?.rsvpDeadline || '';
     const summary = getAttendanceSummary(event);

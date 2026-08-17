@@ -4,6 +4,8 @@ import { ensureRecordMetadata } from './record-service.js';
 const STORAGE_KEY = 'coachMgrData';
 const RECOVERY_KEY = 'coachMgrDataRecovery';
 const RECOVERY_TIMESTAMP_KEY = 'coachMgrRecoverySnapshotAt';
+const SYNC_OUTBOX_KEY = 'coachMgrSyncOutbox';
+const SYNC_AUDIT_KEY = 'coachMgrSyncAudit';
 const BACKUP_FORMAT = 'coachmgr-backup';
 const BACKUP_VERSION = 3;
 const CURRENT_SCHEMA_VERSION = 3;
@@ -233,10 +235,45 @@ export function getLastRecoveryAt() {
     return typeof localStorage !== 'undefined' ? localStorage.getItem(RECOVERY_TIMESTAMP_KEY) : null;
 }
 
+async function loadDeviceRecord(key, { decryptData } = {}) {
+    const saved = await getItem(key);
+    if (!saved) return null;
+    try {
+        return decodeStoredValue(saved, decryptData || (value => value));
+    } catch (_error) {
+        return null;
+    }
+}
+
+async function saveDeviceRecord(key, value, { encryptData } = {}) {
+    const serialized = JSON.stringify(value);
+    return setItem(key, encryptData ? `enc:${encryptData(serialized)}` : serialized);
+}
+
+export async function loadSyncOutbox({ decryptData } = {}) {
+    const value = await loadDeviceRecord(SYNC_OUTBOX_KEY, { decryptData });
+    return value && typeof value === 'object' ? value : { items: [] };
+}
+
+export async function saveSyncOutbox(outbox, { encryptData } = {}) {
+    return saveDeviceRecord(SYNC_OUTBOX_KEY, outbox && typeof outbox === 'object' ? outbox : { items: [] }, { encryptData });
+}
+
+export async function loadSyncAudit({ decryptData } = {}) {
+    const value = await loadDeviceRecord(SYNC_AUDIT_KEY, { decryptData });
+    return Array.isArray(value) ? value : [];
+}
+
+export async function saveSyncAudit(auditEntries, { encryptData } = {}) {
+    return saveDeviceRecord(SYNC_AUDIT_KEY, Array.isArray(auditEntries) ? auditEntries : [], { encryptData });
+}
+
 export async function clearPersistedSnapshot() {
     await removeItem(STORAGE_KEY);
     await removeItem(RECOVERY_KEY);
+    await removeItem(SYNC_OUTBOX_KEY);
+    await removeItem(SYNC_AUDIT_KEY);
     if (typeof localStorage !== 'undefined') localStorage.removeItem(RECOVERY_TIMESTAMP_KEY);
 }
 
-export { STORAGE_KEY, RECOVERY_KEY, RECOVERY_TIMESTAMP_KEY, BACKUP_FORMAT, BACKUP_VERSION, CURRENT_SCHEMA_VERSION };
+export { STORAGE_KEY, RECOVERY_KEY, RECOVERY_TIMESTAMP_KEY, SYNC_OUTBOX_KEY, SYNC_AUDIT_KEY, BACKUP_FORMAT, BACKUP_VERSION, CURRENT_SCHEMA_VERSION };

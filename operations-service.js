@@ -26,7 +26,8 @@ function actionFor(check) {
         sync: { label: '同期を確認', action: 'sync' },
         cloudRecovery: { label: '復旧世代を確認', action: 'recoveries' },
         recovery: { label: '復旧用データを保存', action: 'local-recovery' },
-        team: { label: 'チーム設定へ', action: 'settings' }
+        team: { label: 'チーム設定へ', action: 'settings' },
+        outbox: { label: '同期待機を再試行', action: 'sync' }
     }[check.key] || null;
 }
 
@@ -96,6 +97,9 @@ export function buildOperationalDiagnostics(state, { now = new Date() } = {}) {
     const syncMeta = state?.syncMeta || {};
     const hasCloud = Boolean(state?.teamInfo?.gasApiUrl);
     const hasUnsyncedChanges = toTime(syncMeta.updatedAt) > toTime(syncMeta.lastSyncedAt);
+    const outboxItems = Array.isArray(state?.syncOutbox?.items) ? state.syncOutbox.items : [];
+    const outboxPending = outboxItems.filter(item => item.status !== 'sending');
+    const outboxLatest = Array.isArray(state?.syncAudit) ? state.syncAudit[0] || null : null;
     const hasRecentSyncError = toTime(syncMeta.lastErrorAt) > toTime(syncMeta.lastSyncedAt);
     const backupIsStale = Boolean(lastBackupAt && toTime(now) - toTime(lastBackupAt) > BACKUP_STALE_MS);
     const snapshotBytes = new Blob([JSON.stringify({
@@ -135,6 +139,12 @@ export function buildOperationalDiagnostics(state, { now = new Date() } = {}) {
             status: lastRecoveryAt ? 'ready' : 'neutral'
         },
         {
+            key: 'outbox',
+            label: '同期待機・監査ログ',
+            detail: !hasCloud ? 'クラウド未設定' : outboxPending.length ? `送信待ち ${outboxPending.length}件${outboxPending[0]?.lastError ? ` ・ ${outboxPending[0].lastError.kind}` : ''}` : outboxLatest ? `直近：${outboxLatest.type === 'acknowledged' ? 'クラウド受領済み' : outboxLatest.type}` : '送信待ちはありません',
+            status: !hasCloud ? 'neutral' : outboxPending.length ? 'attention' : 'ready'
+        },
+        {
             key: 'team',
             label: 'チームデータ',
             detail: `選手 ${records.players}名 ・ 試合 ${records.matches}件 ・ 練習 ${records.practices}件`,
@@ -152,6 +162,7 @@ export function buildOperationalDiagnostics(state, { now = new Date() } = {}) {
         hasCloud,
         isSecureCloud: isSecureCloud(state),
         hasUnsyncedChanges,
+        outbox: { pendingCount: outboxPending.length, latest: outboxLatest, lastError: outboxPending.find(item => item.lastError)?.lastError || null },
         backupIsStale,
         lastBackupAt,
         lastRecoveryAt,
@@ -178,6 +189,7 @@ export function buildOperationsShareText(teamName, diagnostics) {
         `自動復旧ポイント：${diagnostics.lastRecoveryAt ? formatDateTime(diagnostics.lastRecoveryAt) : '未作成'}`,
         `クラウド同期：${diagnostics.hasCloud ? (diagnostics.lastSyncError ? `直近の失敗：${diagnostics.lastSyncError.kind}` : diagnostics.hasUnsyncedChanges ? '未同期の変更あり' : `同期済み（${formatDateTime(diagnostics.lastSyncAt)}）`) : '未設定'}`,
         `クラウド世代：${diagnostics.isSecureCloud ? `世代 ${diagnostics.cloudRevision}${diagnostics.cloudRecoveryAvailable ? '（復旧可）' : ''}` : '安全モード未設定'}`,
+        `同期待機：${diagnostics.outbox?.pendingCount ? `${diagnostics.outbox.pendingCount}件` : 'なし'}`,
         `データ：選手 ${diagnostics.records.players}名 / 試合 ${diagnostics.records.matches}件 / 練習 ${diagnostics.records.practices}件`,
         `端末保存：約 ${diagnostics.records.snapshotKb} KB`
     ];

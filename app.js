@@ -11,14 +11,15 @@ import { initSettings, initData, applyThemePreset } from './settings.js';
 import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
 import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
-import { loadPersistedSnapshot, savePersistedSnapshot, createStateSnapshot, createCloudSnapshot } from './repository.js';
+import { loadPersistedSnapshot, savePersistedSnapshot, createStateSnapshot, createCloudSnapshot, loadSyncAudit, loadSyncOutbox, saveSyncAudit, saveSyncOutbox } from './repository.js';
 import { pushCloud, pullCloud, restoreCloudRecovery as restoreCloudRecoveryRequest, withRetry } from './sync-service.js';
 import { ensureSyncMeta, markLocalChange, markSyncAttempt, markSyncAcknowledged, markSyncFailure, hasSyncConflict, applyRemoteSnapshot, getExpectedCloudRevision, buildSyncSummary, getSyncStatusLabel } from './sync-controller.js';
 import { showSyncConflictDialog } from './sync-conflict-dialog.js';
 import { buildOperationalDiagnostics } from './operations-service.js';
-import { isParentShareValid } from './parent-operations-service.js';
+import { getParentAccessInvite, isParentShareValid, markParentAccessUsed } from './parent-operations-service.js';
 import { ensureWorkspaceState, hydrateActiveWorkspace } from './workspace-service.js';
 import { mergeSnapshotsByRecord, touchRecordsForSave } from './record-service.js';
+import { acknowledgeSyncOutboxItem, appendSyncAudit, enqueueSyncSnapshot, ensureSyncOutbox, getNextSyncItem, hydrateSyncOutbox, markSyncOutboxFailed, markSyncOutboxSending, refreshSyncOutboxItem } from './sync-outbox-service.js';
 import { configureAppContext } from './app-context.js';
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
@@ -166,6 +167,11 @@ export async function loadData() {
             state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
             state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
             ensureSyncMeta(state);
+            const [outbox, audit] = await Promise.all([
+                loadSyncOutbox({ decryptData }),
+                loadSyncAudit({ decryptData })
+            ]);
+            hydrateSyncOutbox(state, { outbox, audit });
         // セッション中にロールが未設定の場合のみ初期値（保護者モード）をセット
         if (!state.currentUserRole) {
             state.currentUserRole = 'parent';
@@ -175,6 +181,14 @@ export async function loadData() {
     }
 }
 
+async function persistSyncQueues() {
+    ensureSyncOutbox(state);
+    await Promise.all([
+        saveSyncOutbox(state.syncOutbox, { encryptData }),
+        saveSyncAudit(state.syncAudit, { encryptData })
+    ]);
+}
+
 export function saveData({ sync = true, markChange = true } = {}) {
     saveDataQueue = saveDataQueue.then(async () => {
         state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
@@ -182,12 +196,17 @@ export function saveData({ sync = true, markChange = true } = {}) {
         if (markChange) {
             touchRecordsForSave(state);
             markLocalChange(state);
+            if (state.currentUserRole === 'coach' && state.teamInfo?.gasApiUrl) {
+                const queued = enqueueSyncSnapshot(state, createCloudSnapshot(state), { expectedRevision: getExpectedCloudRevision(state) });
+                appendSyncAudit(state, { type: 'queued', itemId: queued.id, message: 'ローカル変更を同期待ちキューへ追加しました' });
+            }
         }
 
         const snapshot = createStateSnapshot(state);
 
         try {
             await savePersistedSnapshot(snapshot, { encryptData });
+            await persistSyncQueues();
             setSyncStateUI(navigator.onLine === false ? 'offline' : 'local');
             if (sync && state.currentUserRole === 'coach' && state.teamInfo && state.teamInfo.gasApiUrl) {
                 void syncPushGasCloud(true).catch(error => {
@@ -289,48 +308,58 @@ async function resolveSyncConflict(remoteData, { isSilent = false, errorMeta = n
     return null;
 }
 
-export function syncPushGasCloud(isSilent = false, { force = false, expectedRevision = getExpectedCloudRevision(state), resolvedConflict = false } = {}) {
+export async function syncPushGasCloud(isSilent = false, { force = false, expectedRevision = getExpectedCloudRevision(state), resolvedConflict = false } = {}) {
     if (!state.teamInfo || !state.teamInfo.gasApiUrl) {
         if (!isSilent) alert('Google Apps Script の Web API URL が設定されていません。');
-        return Promise.reject('No URL');
+        throw new Error('No URL');
     }
     if (!isSilent) showToast(force ? '端末版をクラウドへ保存中...' : 'クラウドへ同期中...');
+    let item = getNextSyncItem(state);
+    if (!item) item = enqueueSyncSnapshot(state, createCloudSnapshot(state), { expectedRevision });
+    if (force) item = refreshSyncOutboxItem(state, item.id, createCloudSnapshot(state), expectedRevision) || item;
+    markSyncOutboxSending(state, item.id);
+    appendSyncAudit(state, { type: 'sending', itemId: item.id, message: `同期待機キューを送信中（${Number(item.attempts || 0) + 1}回目）` });
+    await persistSyncQueues();
     markSyncAttempt(state);
     setSyncStateUI('syncing');
-
-    return withRetry(() => pushCloud({
-        teamInfo: state.teamInfo,
-        data: createCloudSnapshot(state),
-        expectedRevision,
-        force
-    }), {
-        onRetry: (_error, attempt) => {
-            if (!isSilent) showToast(`同期を再試行しています（${attempt}回目）...`);
-        }
-    })
-        .then(async result => {
-            markSyncAcknowledged(state, new Date(), result.meta || result);
-            await saveData({ sync: false, markChange: false });
-            if (!isSilent) showToast(resolvedConflict ? '端末版をクラウドへ保存しました' : 'クラウドへの送信が完了しました！');
-            setSyncStateUI('success');
-            return result;
-        })
-        .catch(async err => {
-            if (err?.kind === 'conflict' && !force && !isSilent) {
-                try {
-                    const remoteData = await pullCloud({ teamInfo: state.teamInfo });
-                    return await resolveSyncConflict(remoteData, { isSilent, errorMeta: err.meta });
-                } catch (resolutionError) {
-                    err = resolutionError;
-                }
+    try {
+        const result = await withRetry(() => pushCloud({
+            teamInfo: state.teamInfo,
+            data: item.payload,
+            expectedRevision: force ? expectedRevision : Number(item.expectedRevision || expectedRevision),
+            force
+        }), {
+            onRetry: (_error, attempt) => {
+                if (!isSilent) showToast(`同期を再試行しています（${attempt}回目）...`);
             }
-            console.error('GAS Sync Push Error:', err);
-            markSyncFailure(state, err);
-            await saveData({ sync: false, markChange: false });
-            setSyncStateUI(err?.kind === 'conflict' ? 'conflict' : 'error');
-            if (!isSilent && err?.code !== 'manual_review') alert(`クラウド送信に失敗しました:\n${err.message || err}`);
-            throw err;
         });
+        acknowledgeSyncOutboxItem(state, item.id);
+        appendSyncAudit(state, { type: 'acknowledged', itemId: item.id, message: 'クラウド受領を確認し、同期待機キューを確定しました', revision: result.meta?.revision ?? result.meta?.cloudRevision ?? null });
+        markSyncAcknowledged(state, new Date(), result.meta || result);
+        await saveData({ sync: false, markChange: false });
+        if (!isSilent) showToast(resolvedConflict ? '端末版をクラウドへ保存しました' : 'クラウドへの送信が完了しました！');
+        setSyncStateUI('success');
+        return result;
+    } catch (error) {
+        let err = error;
+        markSyncOutboxFailed(state, item.id, err);
+        appendSyncAudit(state, { type: err?.kind === 'conflict' ? 'conflict' : 'failed', itemId: item.id, message: String(err?.message || '同期に失敗しました').slice(0, 240), kind: err?.kind || 'unknown' });
+        await persistSyncQueues();
+        if (err?.kind === 'conflict' && !force && !isSilent) {
+            try {
+                const remoteData = await pullCloud({ teamInfo: state.teamInfo });
+                return await resolveSyncConflict(remoteData, { isSilent, errorMeta: err.meta });
+            } catch (resolutionError) {
+                err = resolutionError;
+            }
+        }
+        console.error('GAS Sync Push Error:', err);
+        markSyncFailure(state, err);
+        await saveData({ sync: false, markChange: false });
+        setSyncStateUI(err?.kind === 'conflict' ? 'conflict' : 'error');
+        if (!isSilent && err?.code !== 'manual_review') alert(`クラウド送信に失敗しました:\n${err.message || err}`);
+        throw err;
+    }
 }
 
 export async function restoreCloudRecovery(revision) {
@@ -1953,6 +1982,20 @@ function setupEventListeners() {
     }
 }
 
+function retryPendingSyncOutbox() {
+    if (state.currentUserRole !== 'coach' || !state.teamInfo?.gasApiUrl || navigator.onLine === false || !getNextSyncItem(state)) return;
+    void syncPushGasCloud(true).catch(error => console.error('Outbox retry failed:', error));
+}
+
+function getParentAccessScopes() {
+    try {
+        const scopes = JSON.parse(localStorage.getItem('coachMgrParentAccessScopes') || 'null');
+        return Array.isArray(scopes) && scopes.length ? scopes : ['schedule', 'attendance', 'development'];
+    } catch (_error) {
+        return ['schedule', 'attendance', 'development'];
+    }
+}
+
 export function updateRoleUI() {
     const badge = document.getElementById('user-role-badge');
     const btnToggle = document.getElementById('btn-toggle-role');
@@ -2017,11 +2060,21 @@ export function updateRoleUI() {
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // PCサイドバーのリンク制御（コーチ専用画面を非表示）
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const parentScopes = getParentAccessScopes();
+    document.body.dataset.parentScopes = isCoach ? 'coach' : parentScopes.join(',');
     const playersLink = document.querySelector('.nav-links li[data-route="players"]');
-    if (playersLink) playersLink.style.display = isCoach ? 'flex' : 'none'; // ★ 追加: 選手管理を非表示
+    if (playersLink) playersLink.style.display = isCoach ? 'flex' : 'none';
 
     const settingsLink = document.querySelector('.nav-links li[data-route="settings"]');
     if (settingsLink) settingsLink.style.display = isCoach ? 'flex' : 'none';
+    const matchesLink = document.querySelector('.nav-links li[data-route="matches"]');
+    const practicesLink = document.querySelector('.nav-links li[data-route="practices"]');
+    const insightsLink = document.querySelector('.nav-links li[data-route="insights"]');
+    if (!isCoach) {
+        if (matchesLink) matchesLink.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
+        if (practicesLink) practicesLink.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
+        if (insightsLink) insightsLink.style.display = parentScopes.includes('development') ? 'flex' : 'none';
+    }
 
     const libraryLink = document.querySelector('.nav-links li[data-route="library"]');
     if (libraryLink) libraryLink.style.display = isCoach ? 'flex' : 'none';
@@ -2058,6 +2111,7 @@ export function updateRoleUI() {
 
     if (isCoach) {
         document.body.classList.remove('role-read-only');
+        retryPendingSyncOutbox();
     } else {
         document.body.classList.add('role-read-only');
 
@@ -2091,7 +2145,11 @@ export function navigate(route, params = null) {
 
     if (state.currentUserRole !== 'coach') {
         const coachOnlyRoutes = ['tactics', 'library', 'settings', 'players'];
-        if (coachOnlyRoutes.includes(route)) {
+        const parentScopes = getParentAccessScopes();
+        const scheduleRoutes = ['matches', 'match-detail', 'practices'];
+        if (coachOnlyRoutes.includes(route)
+            || (scheduleRoutes.includes(route) && !parentScopes.includes('schedule'))
+            || (route === 'insights' && !parentScopes.includes('development'))) {
             route = 'dashboard';
         }
     }
@@ -2214,6 +2272,8 @@ async function init() {
     const parentPlayerId = urlParams.get('parentPlayerId');
     const parentShareVersion = urlParams.get('parentShareVersion');
     const parentShareToken = urlParams.get('parentShareToken');
+    const parentInviteId = urlParams.get('parentInviteId');
+    const parentInviteToken = urlParams.get('parentInviteToken');
     const hadLegacyAuthToken = urlParams.has('authToken');
 
     let isFromInviteLink = false;
@@ -2235,13 +2295,22 @@ async function init() {
     }
 
     if (parentPlayerId) {
-        const shareValid = isParentShareValid(state.teamInfo || {}, { version: parentShareVersion, token: parentShareToken });
+        const individualInvite = parentInviteId ? getParentAccessInvite(state.teamInfo || {}, { inviteId: parentInviteId, token: parentInviteToken }) : null;
+        const shareValid = individualInvite ? String(individualInvite.playerId) === String(parentPlayerId) : isParentShareValid(state.teamInfo || {}, { version: parentShareVersion, token: parentShareToken });
         const playerExists = (state.players || []).some(player => String(player.id) === String(parentPlayerId));
         if (shareValid && playerExists) {
+            const scopes = individualInvite?.scopes || ['schedule', 'attendance', 'development'];
             localStorage.setItem('coachMgrMyPlayerId', String(parentPlayerId));
+            localStorage.setItem('coachMgrParentAccessScopes', JSON.stringify(scopes));
+            if (individualInvite) {
+                localStorage.setItem('coachMgrParentAccessInviteId', individualInvite.id);
+                markParentAccessUsed(state.teamInfo, individualInvite.id);
+            } else {
+                localStorage.removeItem('coachMgrParentAccessInviteId');
+            }
             state.currentUserRole = 'parent';
             isFromInviteLink = true;
-            showToast('保護者用の選手別表示を適用しました');
+            showToast(individualInvite ? '個別保護者招待の閲覧範囲を適用しました' : '保護者用の選手別表示を適用しました');
         } else {
             showToast('この保護者共有リンクは無効・期限切れ、またはこの端末に最新データがありません');
         }
@@ -2250,6 +2319,11 @@ async function init() {
     setupEventListeners();
     setupModals();
     setupGlobalUi();
+    if (!window.__coachMgrOutboxOnlineBound) {
+        window.__coachMgrOutboxOnlineBound = true;
+        window.addEventListener('online', () => retryPendingSyncOutbox());
+    }
+    retryPendingSyncOutbox();
 
     // ★ P0: 保存済みテーマの初期化 ★
     applyThemePreset(localStorage.getItem('coachMgrThemePreset') || 'field-green');
