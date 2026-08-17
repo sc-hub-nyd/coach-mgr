@@ -1,7 +1,7 @@
 // settings.js
 import { state } from './state.js';
-import { escapeHtml, encryptData, showToast, showCustomConfirm } from './utils.js';
-import { createBackupPayload, parseBackupPayload, savePersistedSnapshot, clearPersistedSnapshot } from './repository.js';
+import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm } from './utils.js';
+import { createBackupPayload, parseBackupPayload, savePersistedSnapshot, loadRecoverySnapshot, clearPersistedSnapshot } from './repository.js';
 import { markBackupCreated, buildOperationalDiagnostics, buildOperationsShareText } from './operations-service.js';
 
 import { saveData, syncPushGasCloud, syncPullGasCloud, updateRoleUI, openModal, loadData } from './app-context.js';
@@ -63,6 +63,28 @@ export function exportBackupData() {
     if (isIOS) setTimeout(() => _showExportFallbackModal(dataStr), 300);
     markBackupCreated(now);
     if (typeof window.refreshOperationalDiagnostics === 'function') window.refreshOperationalDiagnostics();
+    return { filename, dataStr };
+}
+
+export async function exportRecoveryBackupData() {
+    const recoverySnapshot = await loadRecoverySnapshot({ decryptData });
+    if (!recoverySnapshot) throw new Error('復旧用データが見つかりません');
+
+    const dataStr = JSON.stringify(createBackupPayload(recoverySnapshot), null, 2);
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+    const filename = `coachMgrRecovery_${dateStr}.json`;
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.style.display = 'none';
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+    showToast(`${filename} をダウンロードしました`);
     return { filename, dataStr };
 }
 
@@ -181,18 +203,30 @@ export function initSettings() {
     const refreshOperationalDiagnostics = () => {
         if (!diagnosticsContainer) return;
         const diagnostics = buildOperationalDiagnostics(state);
-        const icons = { backup: 'fa-box-archive', sync: 'fa-cloud', team: 'fa-people-group', storage: 'fa-hard-drive' };
+        const icons = { backup: 'fa-box-archive', sync: 'fa-cloud', recovery: 'fa-clock-rotate-left', team: 'fa-people-group', storage: 'fa-hard-drive' };
         diagnosticsContainer.innerHTML = diagnostics.checks.map(check => `
             <div class="operations-check is-${check.status}">
                 <span class="operations-check-icon"><i class="fa-solid ${icons[check.key] || 'fa-circle-info'}" aria-hidden="true"></i></span>
                 <span><strong>${escapeHtml(check.label)}</strong><small title="${escapeHtml(check.detail)}">${escapeHtml(check.detail)}</small></span>
             </div>`).join('');
+        const recoveryButton = document.getElementById('btn-export-recovery');
+        if (recoveryButton) recoveryButton.disabled = !diagnostics.lastRecoveryAt;
     };
     window.refreshOperationalDiagnostics = refreshOperationalDiagnostics;
     refreshOperationalDiagnostics();
 
     const btnOperationsBackup = document.getElementById('btn-operations-backup');
     if (btnOperationsBackup) btnOperationsBackup.onclick = () => exportBackupData();
+    const btnExportRecovery = document.getElementById('btn-export-recovery');
+    if (btnExportRecovery) {
+        btnExportRecovery.onclick = async () => {
+            try {
+                await exportRecoveryBackupData();
+            } catch (_error) {
+                alert('復旧用データを準備できませんでした。端末バックアップを作成してください。');
+            }
+        };
+    }
     const btnCopyOperationsCheck = document.getElementById('btn-copy-operations-check');
     if (btnCopyOperationsCheck) {
         btnCopyOperationsCheck.onclick = async () => {

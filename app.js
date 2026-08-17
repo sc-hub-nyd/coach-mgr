@@ -13,7 +13,7 @@ import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
 import { loadPersistedSnapshot, savePersistedSnapshot, createStateSnapshot, createCloudSnapshot } from './repository.js';
 import { pushCloud, pullCloud, withRetry } from './sync-service.js';
-import { ensureSyncMeta, markLocalChange, markSyncAcknowledged, hasSyncConflict, applyRemoteSnapshot, getSyncStatusLabel } from './sync-controller.js';
+import { ensureSyncMeta, markLocalChange, markSyncAttempt, markSyncAcknowledged, markSyncFailure, hasSyncConflict, applyRemoteSnapshot, getSyncStatusLabel } from './sync-controller.js';
 import { configureAppContext } from './app-context.js';
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
@@ -229,6 +229,7 @@ export function syncPushGasCloud(isSilent = false) {
         return Promise.reject('No URL');
     }
     if (!isSilent) showToast('クラウドへ同期中...');
+    markSyncAttempt(state);
     setSyncStateUI('syncing');
 
     return withRetry(() => pushCloud({ teamInfo: state.teamInfo, data: createCloudSnapshot(state) }), {
@@ -243,8 +244,10 @@ export function syncPushGasCloud(isSilent = false) {
             setSyncStateUI('success');
             return result;
         })
-        .catch(err => {
+        .catch(async err => {
             console.error('GAS Sync Push Error:', err);
+            markSyncFailure(state, err);
+            await saveData({ sync: false, markChange: false });
             setSyncStateUI('error');
             if (!isSilent) alert(`クラウド送信に失敗しました:\n${err.message || err}`);
             throw err;
@@ -259,6 +262,7 @@ export async function syncPullGasCloud(isSilent = false) {
     }
 
     if (!isSilent) showToast('クラウドからデータを受信中...');
+    markSyncAttempt(state);
     setSyncStateUI('syncing');
     try {
         const remoteData = await withRetry(() => pullCloud({ teamInfo: state.teamInfo }), {
@@ -281,6 +285,8 @@ export async function syncPullGasCloud(isSilent = false) {
         return remoteData;
     } catch (err) {
         console.error('GAS Sync Pull Error:', err);
+        markSyncFailure(state, err);
+        await saveData({ sync: false, markChange: false });
         setSyncStateUI('error');
         if (!isSilent) alert(`クラウドからの復元に失敗しました:\n${err.message || err}`);
         throw err;

@@ -1,5 +1,6 @@
 const STORAGE_KEY = 'coachMgrData';
 const RECOVERY_KEY = 'coachMgrDataRecovery';
+const RECOVERY_TIMESTAMP_KEY = 'coachMgrRecoverySnapshotAt';
 const BACKUP_FORMAT = 'coachmgr-backup';
 const BACKUP_VERSION = 2;
 const CURRENT_SCHEMA_VERSION = 2;
@@ -198,14 +199,27 @@ export async function savePersistedSnapshot(snapshot, { encryptData } = {}) {
     const serialized = JSON.stringify(normalized);
     const value = encryptData ? `enc:${encryptData(serialized)}` : serialized;
     const previous = await getItem(STORAGE_KEY);
-    if (previous) await setItem(RECOVERY_KEY, previous);
+    if (previous) {
+        await setItem(RECOVERY_KEY, previous);
+        if (typeof localStorage !== 'undefined') localStorage.setItem(RECOVERY_TIMESTAMP_KEY, new Date().toISOString());
+    }
     await setItem(STORAGE_KEY, value);
     return normalized;
+}
+
+export async function loadRecoverySnapshot({ decryptData } = {}) {
+    const recovery = await getItem(RECOVERY_KEY);
+    return recovery ? decodeSnapshot(recovery, decryptData) : null;
+}
+
+export function getLastRecoveryAt() {
+    return typeof localStorage !== 'undefined' ? localStorage.getItem(RECOVERY_TIMESTAMP_KEY) : null;
 }
 
 export async function clearPersistedSnapshot() {
     await removeItem(STORAGE_KEY);
     await removeItem(RECOVERY_KEY);
+    if (typeof localStorage !== 'undefined') localStorage.removeItem(RECOVERY_TIMESTAMP_KEY);
 }
 
-export { STORAGE_KEY, RECOVERY_KEY, BACKUP_FORMAT, BACKUP_VERSION, CURRENT_SCHEMA_VERSION };
+export { STORAGE_KEY, RECOVERY_KEY, RECOVERY_TIMESTAMP_KEY, BACKUP_FORMAT, BACKUP_VERSION, CURRENT_SCHEMA_VERSION };

@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.9.0';
+export const APP_VERSION = 'v1.10.0';
 export const RELEASE_DATE = '2026-08-17';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.10.0',
+        date: '2026-08-18',
+        title: 'データ保護と運用可視化：自動復旧ポイント・同期診断',
+        features: [
+            '保存・復元の直前に自動復旧ポイントを保管し、設定画面からJSONとして退避可能に改善',
+            '同期の直近試行・失敗種別を端末へ記録し、運用チェックと共有テキストで確認可能に改善',
+            '7日以上経過した端末バックアップを注意状態として表示'
+        ]
+    },
     {
         version: 'v1.9.0',
         date: '2026-08-18',

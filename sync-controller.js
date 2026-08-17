@@ -21,7 +21,11 @@ export function ensureSyncMeta(state) {
         deviceId: existing.deviceId || createDeviceId(),
         revision: Number(existing.revision || 0),
         updatedAt: existing.updatedAt || null,
-        lastSyncedAt: existing.lastSyncedAt || null
+        lastSyncedAt: existing.lastSyncedAt || null,
+        lastAttemptAt: existing.lastAttemptAt || null,
+        lastErrorAt: existing.lastErrorAt || null,
+        lastErrorKind: existing.lastErrorKind || null,
+        lastErrorMessage: existing.lastErrorMessage || null
     };
     return state.syncMeta;
 }
@@ -33,9 +37,32 @@ export function markLocalChange(state, now = new Date()) {
     return meta;
 }
 
+export function markSyncAttempt(state, now = new Date()) {
+    const meta = ensureSyncMeta(state);
+    meta.lastAttemptAt = now.toISOString();
+    return meta;
+}
+
 export function markSyncAcknowledged(state, now = new Date()) {
     const meta = ensureSyncMeta(state);
-    meta.lastSyncedAt = now.toISOString();
+    const timestamp = now.toISOString();
+    meta.lastAttemptAt = timestamp;
+    meta.lastSyncedAt = timestamp;
+    meta.lastErrorAt = null;
+    meta.lastErrorKind = null;
+    meta.lastErrorMessage = null;
+    return meta;
+}
+
+export function markSyncFailure(state, error, now = new Date()) {
+    const meta = ensureSyncMeta(state);
+    const timestamp = now.toISOString();
+    const rawMessage = String(error?.message || '同期に失敗しました');
+    meta.lastAttemptAt = timestamp;
+    meta.lastErrorAt = timestamp;
+    meta.lastErrorKind = String(error?.kind || 'unknown').slice(0, 40);
+    // 同期設定やトークンをエラー詳細として残さないよう、短い一般メッセージだけを保持する。
+    meta.lastErrorMessage = rawMessage.replace(/https?:\/\/\S+/g, '[URL非表示]').slice(0, 160);
     return meta;
 }
 
