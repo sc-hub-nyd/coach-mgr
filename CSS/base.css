@@ -1,22 +1,32 @@
 /* css/base.css */
 :root {
     /* Design: Colors */
-    --primary: #f23932;
-    --primary-hover: #d32f2f;
-    --bg-color: #f8fafc;
-    --surface-color: rgba(255, 255, 255, 0.75);
-    --surface-border: rgba(0, 0, 0, 0.06);
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
+    /* Theme tokens: Field Green (P0 default) */
+    --primary: #13795b;
+    --primary-hover: #095c43;
+    --primary-soft: #ddf3e9;
+    --accent: #f0c75e;
+    --bg-color: #f3f7f4;
+    --surface-color: rgba(255, 255, 255, 0.9);
+    --surface-border: rgba(22, 35, 30, 0.10);
+    --text-primary: #16231e;
+    --text-secondary: #60736a;
     --card-bg: #ffffff;
-    --danger: #ef4444;
-    --danger-hover: #dc2626;
+    --success: #167c5a;
+    --warning: #a56a00;
+    --danger: #b42318;
+    --danger-hover: #8f1d14;
+    --info: #1769aa;
+    --focus-ring: #0b5fff;
+    --tap-target: 44px;
 
     /* Layout & Design: Variables */
     --sidebar-width: 250px;
     --header-height: 60px;
     --border-radius: 16px;
-    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition: 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+
 }
 
 * {
@@ -54,6 +64,44 @@ button {
     font-family: inherit;
     -webkit-appearance: none;
     appearance: none;
+}
+
+button,
+a,
+.nav-links li,
+.bottom-nav .nav-item {
+    -webkit-tap-highlight-color: transparent;
+}
+
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+}
+
+body.theme-midnight {
+    --primary: #45c98a;
+    --primary-hover: #6ce0a7;
+    --primary-soft: #1e3a30;
+    --bg-color: #0f1715;
+    --surface-color: rgba(24, 37, 34, 0.96);
+    --surface-border: rgba(255, 255, 255, 0.12);
+    --text-primary: #f4f7f5;
+    --text-secondary: #b3c4bc;
+    --card-bg: #182522;
+    --focus-ring: #f2c14e;
+}
+
+body.theme-high-visibility {
+    --primary: #005a3c;
+    --primary-hover: #003d2a;
+    --primary-soft: #d9f2e7;
+    --bg-color: #ffffff;
+    --surface-color: #ffffff;
+    --surface-border: #9aa9a1;
+    --text-primary: #101820;
+    --text-secondary: #36443d;
+    --card-bg: #ffffff;
+    --focus-ring: #003d2a;
 }
 
 .hidden {
@@ -516,15 +564,17 @@ body.role-read-only #pd-tab-goals textarea {
         margin-right: 0.25rem !important;
     }
 
-    .bottom-nav {
+        .bottom-nav {
         display: flex !important;
         position: fixed !important;
-        bottom: 10px !important;
-        left: 12px !important;
-        right: 12px !important;
-        width: calc(100% - 24px) !important;
-        height: 48px !important;
-        /* 高さを低くコンパクトに変更 */
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        min-height: 64px !important;
+        height: calc(64px + var(--safe-bottom)) !important;
+        /* 親指操作とSafe Areaを優先 */
+
         flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
@@ -533,10 +583,11 @@ body.role-read-only #pd-tab-goals textarea {
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
         border: 1px solid var(--surface-border) !important;
-        border-radius: 14px !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+                border-radius: 16px 16px 0 0 !important;
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1) !important;
         box-sizing: border-box !important;
-        padding: 0 2px !important;
+        padding: 4px 4px var(--safe-bottom) !important;
+
     }
 
     .bottom-nav .nav-item {
@@ -545,8 +596,10 @@ body.role-read-only #pd-tab-goals textarea {
         align-items: center !important;
         justify-content: center !important;
         flex: 1 !important;
+                min-height: var(--tap-target) !important;
         height: 100% !important;
-        gap: 4px !important;
+        gap: 3px !important;
+
         /* アイコンと文字の間に適度な余白を持たせる */
         padding: 4px 0 !important;
         /* 上下の余白もバランスよく調整 */

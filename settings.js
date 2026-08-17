@@ -165,7 +165,16 @@ export function initData() {
     }
 }
 
+export function applyThemePreset(preset = 'field-green') {
+    const body = document.body;
+    body.classList.remove('theme-midnight', 'theme-high-visibility');
+    if (preset === 'midnight') body.classList.add('theme-midnight');
+    if (preset === 'high-visibility') body.classList.add('theme-high-visibility');
+    localStorage.setItem('coachMgrThemePreset', preset);
+}
+
 export function initSettings() {
+
     const settingsVersionText = document.getElementById('settings-version-text');
     if (settingsVersionText) {
         import('./version.js').then(ver => {
@@ -183,10 +192,15 @@ export function initSettings() {
     const teamNameInput = document.getElementById('team-info-name');
     const teamColorInput = document.getElementById('team-info-color');
     const teamPasscodeInput = document.getElementById('team-info-passcode');
+    const themePresetInput = document.getElementById('theme-preset');
 
     if (teamNameInput && teamColorInput) {
         teamNameInput.value = state.teamInfo.name;
-        teamColorInput.value = state.teamInfo.color;
+        teamColorInput.value = state.teamInfo.color || '#13795b';
+        if (themePresetInput) {
+            themePresetInput.value = localStorage.getItem('coachMgrThemePreset') || 'field-green';
+            themePresetInput.onchange = () => applyThemePreset(themePresetInput.value);
+        }
         if (teamPasscodeInput) teamPasscodeInput.value = state.teamInfo.passcode || '7064';
 
         const formTeamInfo = document.getElementById('form-team-info');
@@ -201,7 +215,8 @@ export function initSettings() {
                 }
                 saveData();
                 showToast('チーム基本情報を保存しました');
-                document.documentElement.style.setProperty('--primary', state.teamInfo.color);
+                applyThemePreset(themePresetInput ? themePresetInput.value : (localStorage.getItem('coachMgrThemePreset') || 'field-green'));
+                document.documentElement.style.setProperty('--primary', state.teamInfo.color || '#13795b');
                 const sidebarTitle = document.querySelector('.sidebar-header h2');
                 if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
             };

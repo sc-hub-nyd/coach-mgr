@@ -97,40 +97,48 @@
                     <div style="font-size:0.8rem;">クラウドから最新情報を取得しています</div>
                 </div>
             </div>
-            <!-- スマホ用ハイブリッドナビゲーション -->
-            <nav class="bottom-nav" id="bottom-nav">
-                <a href="#" class="nav-item active" data-route="dashboard">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span>ダッシュボード</span>
+            <!-- スマホ用5項目ナビゲーション。詳細機能は「その他」に集約 -->
+            <nav class="bottom-nav" id="bottom-nav" aria-label="主要ナビゲーション">
+                <a href="#" class="nav-item active" data-route="dashboard" aria-label="ホーム">
+                    <i class="fa-solid fa-house"></i>
+                    <span>ホーム</span>
                 </a>
-                <a href="#" class="nav-item" data-route="matches">
-                    <i class="fa-solid fa-trophy"></i>
+                <a href="#" class="nav-item" data-route="practices" aria-label="予定">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>予定</span>
+                </a>
+                <a href="#" class="nav-item" data-route="matches" aria-label="試合">
+                    <i class="fa-solid fa-futbol"></i>
                     <span>試合</span>
                 </a>
-                <a href="#" class="nav-item" data-route="practices">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    <span>練習</span>
-                </a>
-                <a href="#" class="nav-item" data-route="library">
-                    <i class="fa-solid fa-book"></i>
-                    <span>メニュー</span>
-                </a>
-                <a href="#" class="nav-item" data-route="tactics">
-                    <i class="fa-solid fa-chess-knight"></i>
-                    <span>戦術</span>
-                </a>
-                <a href="#" class="nav-item" data-route="players">
+                <a href="#" class="nav-item" data-route="players" aria-label="選手">
                     <i class="fa-solid fa-users"></i>
                     <span>選手</span>
                 </a>
-                <a href="#" class="nav-item" data-route="settings">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>設定</span>
+                <a href="#" class="nav-item" data-route="more" aria-label="その他">
+                    <i class="fa-solid fa-ellipsis"></i>
+                    <span>その他</span>
                 </a>
             </nav>
         </main>
 
     </div><!-- /#app -->
+
+    <!-- Mobile overflow menu -->
+    <div id="modal-mobile-more" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-more-title">
+        <div class="bottom-sheet-modal mobile-more-sheet">
+            <div class="modal-header">
+                <h2 id="mobile-more-title">その他</h2>
+                <button type="button" class="btn btn-secondary btn-close-modal" aria-label="その他メニューを閉じる"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="mobile-more-grid">
+                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="library"><i class="fa-solid fa-book"></i><span>メニュー管理</span></button>
+                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="tactics"><i class="fa-solid fa-chess-knight"></i><span>戦術管理</span></button>
+                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="settings"><i class="fa-solid fa-gear"></i><span>設定</span></button>
+                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="dashboard"><i class="fa-solid fa-house"></i><span>ホームへ戻る</span></button>
+            </div>
+        </div>
+    </div>
 
     <!-- Passcode Modal for Coach Mode -->
     <div id="modal-coach-passcode" class="modal-overlay hidden" style="z-index: 1002;">
@@ -161,6 +169,19 @@
     <!-- ===== Templates (hidden, cloned on navigation) ===== -->
     <template id="tpl-dashboard">
         <div class="dash-widget-grid">
+
+            <!-- P0: 初回セットアップ導線 -->
+            <section id="dash-setup-checklist" class="card setup-checklist coach-only" aria-labelledby="dash-setup-title">
+                <div class="setup-checklist-header">
+                    <div>
+                        <span class="eyebrow-label">START HERE</span>
+                        <h2 id="dash-setup-title">チームを使い始める</h2>
+                        <p>3つの準備が完了すると、試合と練習の記録をスムーズに始められます。</p>
+                    </div>
+                    <span id="dash-setup-progress" class="setup-progress">0/3 完了</span>
+                </div>
+                <div id="dash-setup-items" class="setup-checklist-items"></div>
+            </section>
 
             <!-- ROW 0: マイ選手 (保護者専用) -->
             <div id="dash-myplayer-banner" class="card dash-myplayer-card parent-only" style="display:none;">
@@ -405,6 +426,16 @@
                         id="match-detail-title">vs 対戦相手</h2>
                 </div>
                 <div id="match-detail-score-box"></div>
+            </div>
+
+            <!-- P0 Field Companion: 試合中の片手操作Action bar -->
+            <div class="field-action-context coach-only" aria-label="試合中の主要操作">
+                <div id="field-action-hint" class="text-secondary" style="font-size:0.75rem; margin-bottom:0.35rem;">試合中はここから素早く記録できます</div>
+                <div class="field-action-bar">
+                    <button type="button" class="btn btn-action-score" id="btn-field-score"><i class="fa-solid fa-futbol"></i><span>得点</span></button>
+                    <button type="button" class="btn btn-primary" id="btn-field-substitution"><i class="fa-solid fa-arrows-rotate"></i><span>交代</span></button>
+                    <button type="button" class="btn btn-action-note" id="btn-field-note"><i class="fa-solid fa-pen"></i><span>メモ</span></button>
+                </div>
             </div>
 
             <!-- コーチモード用 試合基本情報 編集エリア -->
@@ -720,8 +751,16 @@
                             <input type="password" id="team-info-passcode" class="sl-input" placeholder="パスコードを入力"
                                 style="max-width:140px; text-align:center;">
                         </div>
+                        <div class="sl-row">
+                            <span class="sl-row-label">表示テーマ</span>
+                            <select id="theme-preset" class="form-control settings-theme-select" aria-label="表示テーマ">
+                                <option value="field-green">Field Green（標準）</option>
+                                <option value="midnight">Midnight Pitch（試合・分析）</option>
+                                <option value="high-visibility">High Visibility（屋外）</option>
+                            </select>
+                        </div>
                         <div class="sl-row sl-row-last">
-                            <span class="sl-row-label">テーマカラー</span>
+                            <span class="sl-row-label">チームカラー</span>
                             <div style="display:flex; align-items:center; gap:0.75rem; margin-left:auto;">
                                 <input type="color" id="team-info-color"
                                     style="width:52px; height:32px; border:none; border-radius:6px; cursor:pointer; background:none; padding:0;">

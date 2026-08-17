@@ -6,7 +6,7 @@ import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getM
 import { initPlayers, openPlayerDetail } from './players.js';
 import { initLibrary } from './library.js';
 import { initTactics } from './tactics.js';
-import { initSettings, initData } from './settings.js';
+import { initSettings, initData, applyThemePreset } from './settings.js';
 import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
 import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
@@ -96,8 +96,8 @@ export async function loadData() {
                 state.menuCategories = parsed.menuCategories || ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'];
                 const newTacticsDefaults = ['攻撃：ビルドアップ（自陣）', '攻撃：前進・崩し（中盤〜敵陣）', '守備：ハイプレス（前線）', '守備：ブロック・ゴール前（自陣）', '切り替え：攻→守（奪われたとき）', '切り替え：守→攻（奪ったとき）', 'セットプレー', 'その他'];
                 const loadedTacticsCat = parsed.tacticsCategories || [];
-                const isOldTacticsCat = loadedTacticsCat.length === 0 || 
-                    loadedTacticsCat.includes('トランジション') || 
+                const isOldTacticsCat = loadedTacticsCat.length === 0 ||
+                    loadedTacticsCat.includes('トランジション') ||
                     loadedTacticsCat.includes('プレッシング') ||
                     (loadedTacticsCat.includes('攻撃') && !loadedTacticsCat.includes('攻撃：ビルドアップ（自陣）'));
 
@@ -288,8 +288,8 @@ export function syncPullGasCloud(isSilent = false) {
 
                     const newTacticsDefaults = ['攻撃：ビルドアップ（自陣）', '攻撃：前進・崩し（中盤〜敵陣）', '守備：ハイプレス（前線）', '守備：ブロック・ゴール前（自陣）', '切り替え：攻→守（奪われたとき）', '切り替え：守→攻（奪ったとき）', 'セットプレー', 'その他'];
                     const loadedTacticsCat = state.tacticsCategories || [];
-                    const isOldTacticsCat = loadedTacticsCat.length === 0 || 
-                        loadedTacticsCat.includes('トランジション') || 
+                    const isOldTacticsCat = loadedTacticsCat.length === 0 ||
+                        loadedTacticsCat.includes('トランジション') ||
                         loadedTacticsCat.includes('プレッシング') ||
                         (loadedTacticsCat.includes('攻撃') && !loadedTacticsCat.includes('攻撃：ビルドアップ（自陣）'));
 
@@ -752,7 +752,7 @@ export function openMyPlayerSelectModal() {
             </p>
             <div style="display:flex; flex-direction:column; gap:0.4rem;">
                 ${state.players.map(p => `
-                    <button type="button" class="btn ${p.id.toString() === currentId ? 'btn-primary' : 'btn-secondary'}" 
+                    <button type="button" class="btn ${p.id.toString() === currentId ? 'btn-primary' : 'btn-secondary'}"
                         style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; text-align:left;"
                         onclick="selectMyPlayer(${p.id})">
                         <span><strong>${escapeHtml(p.name)}</strong> (${p.number})</span>
@@ -864,6 +864,35 @@ function initDashboard() {
     const now = new Date();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const isCoach = state.currentUserRole === 'coach';
+
+    // ── P0: 初回セットアップチェックリスト ──
+    const setupChecklist = document.getElementById('dash-setup-checklist');
+    const setupItems = document.getElementById('dash-setup-items');
+    const setupProgress = document.getElementById('dash-setup-progress');
+    if (setupChecklist && setupItems && setupProgress) {
+        const hasTeam = Boolean(state.teamInfo && (state.teamInfo.name || state.teamInfo.teamName));
+        const hasPlayers = Array.isArray(state.players) && state.players.length > 0;
+        const hasFirstRecord = (Array.isArray(state.matches) && state.matches.length > 0)
+            || (Array.isArray(state.practices) && state.practices.length > 0);
+        const setupSteps = [
+            { done: hasTeam, icon: 'fa-flag', title: 'チーム情報を設定', description: 'チーム名やシーズンを登録', action: 'settings', label: '設定する' },
+            { done: hasPlayers, icon: 'fa-users', title: '選手を登録', description: '選手一覧をチームに追加', action: 'players', label: '登録する' },
+            { done: hasFirstRecord, icon: 'fa-futbol', title: '最初の記録を作成', description: '試合または練習を登録', action: 'matches', label: '始める' }
+        ];
+        const completed = setupSteps.filter(step => step.done).length;
+        setupProgress.textContent = `${completed}/${setupSteps.length} 完了`;
+        setupItems.innerHTML = setupSteps.map(step => `
+            <div class="setup-checklist-item${step.done ? ' is-complete' : ''}">
+                <span class="setup-checklist-icon"><i class="fa-solid ${step.done ? 'fa-check' : step.icon}"></i></span>
+                <span class="setup-checklist-copy"><strong>${step.title}</strong><span>${step.done ? '設定済み' : step.description}</span></span>
+                ${step.done ? '' : `<button type="button" class="btn btn-secondary btn-setup-action" data-setup-route="${step.action}">${step.label}</button>`}
+            </div>
+        `).join('');
+        setupItems.querySelectorAll('.btn-setup-action').forEach(button => {
+            button.addEventListener('click', () => navigate(button.dataset.setupRoute));
+        });
+        setupChecklist.classList.toggle('hidden', !isCoach || completed === setupSteps.length);
+    }
 
     // ── コーチ専用要素の表示制御 ──
     document.querySelectorAll('.coach-only').forEach(el => {
@@ -1013,7 +1042,7 @@ function initDashboard() {
             // UI生成
             myPlayerContent.innerHTML = `
                 <div style="display:flex; flex-direction:column; gap:0.6rem; padding:0.2rem 0;">
-                    
+
                     <!-- ヘッダー（名前・背番号・ポジション・変更ボタン） -->
                     <div class="dash-myplayer-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.1rem 0;">
                         <div style="display:flex; align-items:center; gap:0.6rem;">
@@ -1039,7 +1068,7 @@ function initDashboard() {
 
                     <!-- スタッツボタンエリア -->
                     <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.4rem;">
-                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-att" 
+                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-att"
                             style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
                             <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
                                 <i class="fa-solid fa-user-check" style="color:#3b82f6;"></i> 出席率
@@ -1050,7 +1079,7 @@ function initDashboard() {
                             </div>
                         </button>
 
-                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-goals" 
+                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-goals"
                             style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
                             <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
                                 <i class="fa-solid fa-futbol" style="color:var(--primary);"></i> 通算得点
@@ -1058,7 +1087,7 @@ function initDashboard() {
                             <strong style="font-size:0.88rem; color:var(--primary);">${playerGoals}<span style="font-size:0.65rem; font-weight:normal;">点</span></strong>
                         </button>
 
-                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-assists" 
+                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-assists"
                             style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
                             <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
                                 <i class="fa-solid fa-shoe-prints" style="color:#22c55e; transform:rotate(45deg);"></i> 通算アシスト
@@ -1128,7 +1157,7 @@ function initDashboard() {
                     } else {
                         attendedMatches.forEach(m => {
                             html += `
-                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
                                     onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                                     <div>
                                         <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
@@ -1140,7 +1169,7 @@ function initDashboard() {
                         });
                         attendedPractices.forEach(p => {
                             html += `
-                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
                                     onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('practices', { date: '${p.date}' });">
                                     <div>
                                         <strong>練習 ${p.location ? `(${escapeHtml(p.location)})` : ''}</strong>
@@ -1170,7 +1199,7 @@ function initDashboard() {
 
                     pmlTitle.innerHTML = `<i class="fa-solid fa-futbol" style="color:var(--primary);"></i> ${escapeHtml(player.name)} の得点した試合 (通算)`;
                     pmlContent.innerHTML = matchesWithGoals.length > 0 ? matchesWithGoals.map(m => `
-                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
                             onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                             <div>
                                 <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
@@ -1197,7 +1226,7 @@ function initDashboard() {
 
                     pmlTitle.innerHTML = `<span style="display:inline-block; transform:rotate(45deg); color:#22c55e;"><i class="fa-solid fa-shoe-prints"></i></span> ${escapeHtml(player.name)} のアシストした試合 (通算)`;
                     pmlContent.innerHTML = matchesWithAssists.length > 0 ? matchesWithAssists.map(m => `
-                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;" 
+                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
                             onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                             <div>
                                 <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
@@ -1708,7 +1737,21 @@ function setupEventListeners() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const route = e.currentTarget.dataset.route;
+            if (route === 'more') {
+                openModal('modal-mobile-more');
+                return;
+            }
             navigate(route);
+        });
+    });
+
+    document.querySelectorAll('[data-mobile-route]').forEach(item => {
+        item.addEventListener('click', (e) => {
+            const route = e.currentTarget.dataset.mobileRoute;
+            const modal = document.getElementById('modal-mobile-more');
+            if (modal) modal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+            if (route) navigate(route);
         });
     });
 
@@ -2081,6 +2124,9 @@ async function init() {
 
     setupEventListeners();
     setupModals();
+
+    // ★ P0: 保存済みテーマの初期化 ★
+    applyThemePreset(localStorage.getItem('coachMgrThemePreset') || 'field-green');
 
     // ★【追加】屋外高コントラストモードの初期化と切り替え処理 ★
     const isHighContrast = localStorage.getItem('high_contrast_mode') === 'true';

@@ -829,7 +829,25 @@ export function initMatchDetailView(matchId) {
     `;
     }
 
+        // P0 Field Companion: 片手操作Action barを既存のPeriod分析へ接続
+    const fieldActions = [
+        ['btn-field-score', '得点記録を開きます', 'fa-futbol'],
+        ['btn-field-substitution', '交代記録を開きます', 'fa-arrows-rotate'],
+        ['btn-field-note', '試合メモを開きます', 'fa-pen']
+    ];
+    fieldActions.forEach(([id, message]) => {
+        const button = document.getElementById(id);
+        if (button) {
+            button.onclick = () => {
+                if (!isCoach) return;
+                showToast(message);
+                openPeriodAnalysis(m.id, 0);
+            };
+        }
+    });
+
     // ★【追加】マイ選手出場要約の描写実行 ★
+
     const summaryContainer = document.getElementById('my-player-summary-container');
     if (summaryContainer) {
         summaryContainer.innerHTML = renderMyPlayerSummaryCard(m);
@@ -1132,7 +1150,7 @@ function renderPeriodGrid(m) {
                             <span class="u-ext-69 badge" >${isPkPeriod ? 'PK ' : ''}${scoreUs} - ${scoreThem}</span>
                         </div>
                     </div>
-                    
+
                     <div class="u-ext-70" >
                         ${systemBadge}
                         ${subsHtml}
@@ -2847,8 +2865,8 @@ export function initMatches() {
                         <div class="u-ext-129" >
                             <div class="u-ext-30" >勝敗内訳</div>
                             <div class="u-ext-130" >
-                                <span class="u-ext-131" >${wins}勝</span> 
-                                <span class="u-ext-16" >${losses}敗</span> 
+                                <span class="u-ext-131" >${wins}勝</span>
+                                <span class="u-ext-16" >${losses}敗</span>
                                 <span class="u-ext-132" >${draws}分</span>
                             </div>
                         </div>
