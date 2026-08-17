@@ -1,0 +1,178 @@
+/* CSS Architecture: reusable UI components
+   Components are intentionally low-specificity so page styles can extend them without !important. */
+.card.c-card {
+    min-width: 0;
+    padding: var(--space-4);
+    background: var(--card-bg);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.card.c-card--compact {
+    padding: var(--space-3);
+}
+
+.card.c-card--interactive {
+    cursor: pointer;
+    transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out);
+}
+
+.card.c-card--interactive:hover {
+    border-color: color-mix(in srgb, var(--primary) 38%, var(--surface-border));
+    box-shadow: var(--shadow-md);
+}
+
+.card.c-card--interactive:active {
+    transform: scale(0.99);
+}
+
+.card.c-card--accent {
+    border-inline-start: 4px solid var(--primary);
+}
+
+.c-section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-width: 0;
+}
+
+.c-section-header__content {
+    min-width: 0;
+}
+
+.c-section-header__title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    line-height: 1.35;
+}
+
+.c-section-header__meta {
+    margin: var(--space-1) 0 0;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.c-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-bottom: var(--space-1);
+    color: var(--primary);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.25;
+    text-transform: uppercase;
+}
+
+.c-action-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.c-action-group--end {
+    justify-content: flex-end;
+}
+
+.c-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: 1.75rem;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.c-status--muted {
+    background: var(--surface-muted);
+    color: var(--text-muted);
+}
+
+.c-status--warning {
+    background: color-mix(in srgb, var(--warning) 13%, var(--card-bg));
+    color: var(--warning);
+}
+
+.c-empty-state {
+    display: grid;
+    place-items: center;
+    min-height: 8rem;
+    padding: var(--space-5);
+    border: 1px dashed var(--surface-border);
+    border-radius: var(--radius-md);
+    background: var(--surface-muted);
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.c-empty-state__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    max-width: 34rem;
+}
+
+.c-empty-state__icon {
+    color: var(--primary);
+    font-size: 1.25rem;
+}
+
+.c-empty-state__title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+}
+
+.c-empty-state__text {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+}
+
+.c-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+}
+
+.c-field__label {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.c-field .form-control {
+    min-height: var(--form-control-height);
+}
+
+@media (max-width: 640px) {
+    .card.c-card {
+        padding: var(--space-3);
+    }
+
+    .c-section-header {
+        flex-wrap: wrap;
+    }
+
+    .c-action-group--mobile-stretch {
+        width: 100%;
+    }
+
+    .c-action-group--mobile-stretch > .btn {
+        flex: 1 1 auto;
+    }
+}
