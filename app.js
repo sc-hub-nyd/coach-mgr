@@ -11,7 +11,7 @@ import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js
 import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
 import { loadPersistedSnapshot, savePersistedSnapshot, createStateSnapshot } from './repository.js';
-import { pushCloud, pullCloud } from './sync-service.js';
+import { pushCloud, pullCloud, withRetry } from './sync-service.js';
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
     const action = actionLabel && actionId
@@ -215,7 +215,11 @@ export function syncPushGasCloud(isSilent = false) {
     }
     if (!isSilent) showToast('クラウドへ同期中...');
 
-    return pushCloud({ teamInfo: state.teamInfo, data: createStateSnapshot(state) })
+    return withRetry(() => pushCloud({ teamInfo: state.teamInfo, data: createStateSnapshot(state) }), {
+        onRetry: (_error, attempt) => {
+            if (!isSilent) showToast(`同期を再試行しています（${attempt}回目）...`);
+        }
+    })
         .then(result => {
             if (!isSilent) showToast('クラウドへの送信が完了しました！');
             setSyncStateUI('success');
@@ -237,7 +241,11 @@ export function syncPullGasCloud(isSilent = false) {
 
     if (!isSilent) showToast('クラウドからデータを受信中...');
 
-    return pullCloud({ teamInfo: state.teamInfo })
+    return withRetry(() => pullCloud({ teamInfo: state.teamInfo }), {
+        onRetry: (_error, attempt) => {
+            if (!isSilent) showToast(`同期を再試行しています（${attempt}回目）...`);
+        }
+    })
         .then(remoteData => {
                 if (remoteData && typeof remoteData === 'object') {
                     if (remoteData.matches) state.matches = remoteData.matches;
