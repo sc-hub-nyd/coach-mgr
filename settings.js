@@ -167,9 +167,12 @@ export function initData() {
 
 export function applyThemePreset(preset = 'field-green') {
     const body = document.body;
-    body.classList.remove('theme-midnight', 'theme-high-visibility');
+        body.classList.remove('theme-midnight', 'theme-high-visibility', 'theme-ocean-blue', 'theme-redline', 'theme-warm-notebook');
     if (preset === 'midnight') body.classList.add('theme-midnight');
     if (preset === 'high-visibility') body.classList.add('theme-high-visibility');
+    if (preset === 'ocean-blue') body.classList.add('theme-ocean-blue');
+    if (preset === 'redline') body.classList.add('theme-redline');
+    if (preset === 'warm-notebook') body.classList.add('theme-warm-notebook');
     localStorage.setItem('coachMgrThemePreset', preset);
 }
 

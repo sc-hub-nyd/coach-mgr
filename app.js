@@ -11,6 +11,36 @@ import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js
 import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
 
+function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
+    const action = actionLabel && actionId
+        ? `<button type="button" class="btn btn-primary empty-state-action" id="${actionId}">${actionLabel}</button>`
+        : '';
+    return `<div class="empty-state" role="status"><div class="empty-state-icon" aria-hidden="true"><i class="fa-solid ${icon}"></i></div><h3>${title}</h3>${description ? `<p>${description}</p>` : ''}${action}</div>`;
+}
+
+function setupGlobalUi() {
+    document.querySelectorAll('button[title]:not([aria-label]), [role="button"][title]:not([aria-label])').forEach(element => {
+        const title = element.getAttribute('title');
+        if (title) element.setAttribute('aria-label', title);
+    });
+    document.querySelectorAll('.btn-close-modal:not([aria-label])').forEach(element => element.setAttribute('aria-label', '閉じる'));
+    let liveRegion = document.getElementById('global-live-region');
+    if (!liveRegion) {
+        liveRegion = document.createElement('div');
+        liveRegion.id = 'global-live-region';
+        liveRegion.className = 'sr-only';
+        liveRegion.setAttribute('role', 'status');
+        liveRegion.setAttribute('aria-live', 'polite');
+        document.body.appendChild(liveRegion);
+    }
+    document.addEventListener('pointerdown', event => {
+        const button = event.target.closest('button, .btn, .nav-item');
+        if (button && !button.hasAttribute('disabled')) button.classList.add('is-pressing');
+    }, { passive: true });
+    document.addEventListener('pointerup', event => event.target.closest('button, .btn, .nav-item')?.classList.remove('is-pressing'), { passive: true });
+    document.addEventListener('pointercancel', event => event.target.closest('button, .btn, .nav-item')?.classList.remove('is-pressing'), { passive: true });
+}
+
 let lastSyncTimeStr = uiState.lastSyncTimeStr;
 let saveDataQueue = Promise.resolve();
 
@@ -1541,7 +1571,8 @@ function initDashboard() {
                 `;
             }).join('');
         } else {
-            formBar.innerHTML = '<div class="dash-no-data">試合記録がありません</div>';
+            formBar.innerHTML = renderEmptyState({ icon: 'fa-futbol', title: '試合記録がありません', description: '最初の試合を登録すると、ここに結果と学びが表示されます。', actionLabel: '試合を追加', actionId: 'dash-empty-add-match' });
+            document.getElementById('dash-empty-add-match')?.addEventListener('click', () => openMatchModal());
         }
     }
 
@@ -1645,7 +1676,8 @@ function initDashboard() {
                 `;
             }).join('');
         } else {
-            scheduleList.innerHTML = '<div class="dash-no-data">予定・実績はありません</div>';
+            scheduleList.innerHTML = renderEmptyState({ icon: 'fa-calendar-days', title: '予定・実績はありません', description: '次の練習や試合を登録して、チームの予定を整理しましょう。', actionLabel: '試合を追加', actionId: 'dash-empty-add-schedule' });
+            document.getElementById('dash-empty-add-schedule')?.addEventListener('click', () => openMatchModal());
         }
     }
 
@@ -2138,6 +2170,7 @@ async function init() {
 
     setupEventListeners();
     setupModals();
+    setupGlobalUi();
 
     // ★ P0: 保存済みテーマの初期化 ★
     applyThemePreset(localStorage.getItem('coachMgrThemePreset') || 'field-green');
