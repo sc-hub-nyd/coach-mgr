@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { escapeHtml, showToast } from './utils.js';
 import { navigate } from './app-context.js';
-import { buildTeamInsights, buildPlayerInsights, getTimelinePresentation, buildInsightsShareText } from './insights-service.js';
+import { buildTeamInsights, buildPlayerInsights, buildPeriodComparison, buildPositionParticipation, buildCoachingRecommendations, getTimelinePresentation, buildInsightsShareText } from './insights-service.js';
 
 function getSelectedPlayerId() {
     const parentPlayerId = localStorage.getItem('coachMgrMyPlayerId');
@@ -76,6 +76,31 @@ function renderPlayerHistory(playerInsights) {
         </div>`;
 }
 
+function renderCoachingSignals(comparison, positionParticipation, recommendations) {
+    const comparisonContainer = document.getElementById('insights-comparison');
+    if (comparisonContainer) {
+        if (!comparison.previous) {
+            comparisonContainer.innerHTML = '<div class="insights-empty compact"><p>「すべて」の期間では、前期間との比較は表示されません。</p></div>';
+        } else {
+            const sign = value => `${value > 0 ? '+' : ''}${value}`;
+            comparisonContainer.innerHTML = [
+                ['活動数', `${comparison.current.matches + comparison.current.practices}`, `${sign(comparison.deltas.activities)}件`, comparison.deltas.activities >= 0 ? 'positive' : 'negative'],
+                ['得失点差', `${comparison.current.goalDifference >= 0 ? '+' : ''}${comparison.current.goalDifference}`, `${sign(comparison.deltas.goalDifference)}`, comparison.deltas.goalDifference >= 0 ? 'positive' : 'negative'],
+                ['勝利数', `${comparison.current.results.wins}勝`, `${sign(comparison.deltas.wins)}勝`, comparison.deltas.wins >= 0 ? 'positive' : 'negative'],
+                ['失点', `${comparison.current.conceded}`, `${sign(comparison.deltas.conceded)}点`, comparison.deltas.conceded <= 0 ? 'positive' : 'negative']
+            ].map(([label, value, delta, tone]) => `<article class="insight-comparison insight-comparison-${tone}"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong><small>前期間比 ${escapeHtml(delta)}</small></article>`).join('');
+        }
+    }
+    const positionContainer = document.getElementById('insights-position-participation');
+    if (positionContainer) {
+        positionContainer.innerHTML = positionParticipation.length ? positionParticipation.map(item => `<div class="insight-position-row"><span>${escapeHtml(item.position)}</span><strong>${item.minutes}分</strong><small>${item.playerCount}名が出場</small></div>`).join('') : '<div class="insights-empty compact"><p>Field Companionで時計・交代を記録すると、ポジション別の出場時間を表示できます。</p></div>';
+    }
+    const recommendationsContainer = document.getElementById('insights-recommendations');
+    if (recommendationsContainer) {
+        recommendationsContainer.innerHTML = recommendations.map(item => `<article class="insight-recommendation is-${escapeHtml(item.tone)}"><div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.reason)}</p></div><small><i class="fa-solid fa-arrow-right"></i> ${escapeHtml(item.action)}</small></article>`).join('');
+    }
+}
+
 function renderInsights() {
     const range = document.getElementById('insights-range-select')?.value || '90';
     const teamInsights = buildTeamInsights(state, { days: range === 'all' ? 'all' : Number(range) });
@@ -90,9 +115,13 @@ function renderInsights() {
             renderMetric('出欠回答', `${teamInsights.attendance.attending}名`, 'fa-user-check', 'primary', `未回答 ${teamInsights.attendance.pending} / 欠席 ${teamInsights.attendance.absent}`)
         ].join('');
     }
+    const comparison = buildPeriodComparison(state, { days: range === 'all' ? 'all' : Number(range) });
+    const positionParticipation = buildPositionParticipation(state, { days: range === 'all' ? 'all' : Number(range) });
+    const recommendations = buildCoachingRecommendations(state, { days: range === 'all' ? 'all' : Number(range) });
+    renderCoachingSignals(comparison, positionParticipation, recommendations);
     renderTimeline(teamInsights);
     renderPlayerHistory(playerInsights);
-    return { teamInsights, playerInsights };
+    return { teamInsights, playerInsights, comparison, positionParticipation, recommendations };
 }
 
 async function copyInsightsReport() {

@@ -931,7 +931,16 @@
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-rotate-parent-share-link"><i class="fa-solid fa-arrows-rotate"></i> リンクを再発行・旧リンクを失効</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-rsvp-reminder"><i class="fa-solid fa-bell"></i> 未回答リマインドをコピー</button>
                     </div>
-                    <p class="parent-share-security-note"><i class="fa-solid fa-circle-info"></i> この機能は共有先画面での表示範囲を指定する運用支援です。静的PWAのみでは、URL自体を本人確認やサーバー側の権限制御として扱えません。認証が必要な外部共有は、今後の保護者認証基盤で対応します。</p>
+                    <div class="parent-access-manager">
+                        <div class="parent-access-manager-heading"><strong><i class="fa-solid fa-id-card"></i> 保護者アクセス管理</strong><span>招待ごとに対象選手・閲覧範囲・期限を設定します。</span></div>
+                        <div class="parent-access-create-grid">
+                            <label>招待の表示名（任意）<input id="parent-access-label" class="sl-input" type="text" placeholder="例：山田様"></label>
+                            <fieldset class="parent-access-scopes"><legend>閲覧範囲</legend><label><input type="checkbox" value="schedule" checked>予定・結果</label><label><input type="checkbox" value="attendance" checked>出欠</label><label><input type="checkbox" value="development" checked>本人の成長ログ</label></fieldset>
+                        </div>
+                        <div class="operations-actions"><button type="button" class="btn btn-primary btn-sm" id="btn-create-parent-access"><i class="fa-solid fa-user-plus"></i> 個別招待リンクを作成</button></div>
+                        <div id="parent-access-invites" class="parent-access-invites" aria-live="polite"></div>
+                    </div>
+                    <p class="parent-share-security-note"><i class="fa-solid fa-circle-info"></i> 個別招待はこの端末・同期データ上で有効性と閲覧範囲を確認する運用基盤です。静的PWAと公開URLだけでは、URL受領者の本人確認やサーバー側アクセス遮断はできません。機微な個人情報を扱う外部公開では、認証付きバックエンドを導入してください。</p>
                 </div>
             </div>
 
@@ -946,7 +955,9 @@
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-export-recovery" disabled><i class="fa-solid fa-clock-rotate-left"></i> 復旧用データを保存</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-cloud-recoveries"><i class="fa-solid fa-clock-rotate-left"></i> クラウド復旧世代</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-operations-check"><i class="fa-solid fa-copy"></i> 状態をコピー</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-retry-sync-outbox"><i class="fa-solid fa-arrow-rotate-right"></i> 同期待機を再試行</button>
                     </div>
+                    <div class="sync-audit-history" id="sync-audit-history" aria-live="polite"></div>
                     <div class="cloud-recovery-history" id="cloud-recovery-history" aria-live="polite"></div>
                 </div>
             </div>
@@ -1291,6 +1302,14 @@
             <section class="insights-section" aria-labelledby="insights-overview-title">
                 <div class="insights-section-header"><div><span class="eyebrow-label">TEAM OVERVIEW</span><h2 id="insights-overview-title">活動サマリー</h2></div></div>
                 <div id="insights-team-metrics" class="insight-metric-grid"></div>
+            </section>
+            <section class="insights-section coaching-insights-section coach-only" aria-labelledby="insights-coaching-title">
+                <div class="insights-section-header"><div><span class="eyebrow-label">COACHING SIGNALS</span><h2 id="insights-coaching-title">比較分析と次の練習テーマ</h2></div><span class="insights-hint">同じ日数の直前期間と比較します</span></div>
+                <div id="insights-comparison" class="insights-comparison-grid"></div>
+                <div class="insights-coaching-grid">
+                    <article class="card insights-panel"><div class="insights-section-header"><div><span class="eyebrow-label">POSITION LOAD</span><h3>ポジション別出場時間</h3></div></div><div id="insights-position-participation" class="insights-position-list"></div></article>
+                    <article class="card insights-panel"><div class="insights-section-header"><div><span class="eyebrow-label">NEXT SESSION</span><h3>次の練習テーマ</h3></div></div><div id="insights-recommendations" class="insights-recommendations"></div></article>
+                </div>
             </section>
             <div class="insights-content-grid">
                 <section class="card insights-panel" aria-labelledby="insights-timeline-title">

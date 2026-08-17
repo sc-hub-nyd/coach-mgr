@@ -21,6 +21,8 @@ export const state = {
     activeTeamId: null,
     activeSeasonId: null,
     syncMeta: { deviceId: '', revision: 0, updatedAt: null, lastSyncedAt: null },
+    syncOutbox: { items: [] },
+    syncAudit: [],
     currentUserRole: 'parent',
     customFormations: [
         {

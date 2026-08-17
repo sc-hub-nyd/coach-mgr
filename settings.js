@@ -4,7 +4,7 @@ import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm } fr
 import { createBackupPayload, parseBackupPayload, savePersistedSnapshot, loadRecoverySnapshot, clearPersistedSnapshot } from './repository.js';
 import { markBackupCreated, buildOperationalDiagnostics, buildOperationsShareText } from './operations-service.js';
 import { listCloudRecoveries } from './sync-service.js';
-import { ensureParentShareSettings, rotateParentShareLink, buildPendingRsvpDigest } from './parent-operations-service.js';
+import { ensureParentShareSettings, rotateParentShareLink, buildPendingRsvpDigest, createParentAccessInvite, getParentAccessSummary, PARENT_ACCESS_SCOPES, revokeParentAccessInvite } from './parent-operations-service.js';
 import { archiveSeason, createSeason, createTeam, ensureWorkspaceState, getActiveSeason, getActiveTeam, switchWorkspace } from './workspace-service.js';
 import { buildSeasonReport, buildSeasonReportCsv, buildSeasonReportPrintHtml } from './season-report-service.js';
 
@@ -204,10 +204,22 @@ export function initSettings() {
     }
 
     const diagnosticsContainer = document.getElementById('operations-diagnostics');
+    const syncAuditHistory = document.getElementById('sync-audit-history');
+    const renderSyncAuditHistory = () => {
+        if (!syncAuditHistory) return;
+        const entries = Array.isArray(state.syncAudit) ? state.syncAudit.slice(0, 6) : [];
+        const pending = Array.isArray(state.syncOutbox?.items) ? state.syncOutbox.items.filter(item => item.status !== 'sending').length : 0;
+        if (!entries.length && !pending) {
+            syncAuditHistory.innerHTML = '<p class="sync-audit-empty">同期待機はありません。クラウド同期を行うと、送信・受領・失敗の履歴をここで確認できます。</p>';
+            return;
+        }
+        const label = { queued: '待機へ追加', sending: '送信中', acknowledged: '受領済み', failed: '送信失敗', conflict: '競合' };
+        syncAuditHistory.innerHTML = `<div class="sync-audit-heading"><strong>同期監査ログ</strong><span>${pending ? `送信待ち ${pending}件` : '送信待ちなし'}</span></div>${entries.map(entry => `<div class="sync-audit-item is-${escapeHtml(entry.type || 'unknown')}"><span><strong>${escapeHtml(label[entry.type] || entry.type || '記録')}</strong><small>${escapeHtml(entry.message || '')}</small></span><time>${escapeHtml(entry.at ? new Date(entry.at).toLocaleString('ja-JP') : '')}</time></div>`).join('')}`;
+    };
     const refreshOperationalDiagnostics = () => {
         if (!diagnosticsContainer) return;
         const diagnostics = buildOperationalDiagnostics(state);
-        const icons = { backup: 'fa-box-archive', sync: 'fa-cloud', cloudRecovery: 'fa-clock-rotate-left', recovery: 'fa-clock-rotate-left', team: 'fa-people-group', storage: 'fa-hard-drive' };
+        const icons = { backup: 'fa-box-archive', sync: 'fa-cloud', cloudRecovery: 'fa-clock-rotate-left', recovery: 'fa-clock-rotate-left', outbox: 'fa-list-check', team: 'fa-people-group', storage: 'fa-hard-drive' };
         diagnosticsContainer.innerHTML = diagnostics.checks.map(check => {
             const action = check.action ? `<button type="button" class="btn btn-secondary btn-sm operations-check-action" data-operation-action="${escapeHtml(check.action.action)}">${escapeHtml(check.action.label)}</button>` : '';
             return `<div class="operations-check is-${check.status}${action ? ' has-action' : ''}">
@@ -225,6 +237,7 @@ export function initSettings() {
                 if (action === 'local-recovery') return exportRecoveryBackupData();
             };
         });
+        renderSyncAuditHistory();
         const recoveryButton = document.getElementById('btn-export-recovery');
         if (recoveryButton) recoveryButton.disabled = !diagnostics.lastRecoveryAt;
     };
@@ -243,6 +256,16 @@ export function initSettings() {
             }
         };
     }
+    const btnRetrySyncOutbox = document.getElementById('btn-retry-sync-outbox');
+    if (btnRetrySyncOutbox) btnRetrySyncOutbox.onclick = async () => {
+        try {
+            await syncPushGasCloud(false);
+        } catch (_error) {
+            // 同期関数が利用者向け通知と監査ログの更新を担う。
+        } finally {
+            refreshOperationalDiagnostics();
+        }
+    };
     const btnCopyOperationsCheck = document.getElementById('btn-copy-operations-check');
     if (btnCopyOperationsCheck) {
         btnCopyOperationsCheck.onclick = async () => {
@@ -626,6 +649,68 @@ export function initSettings() {
         const digest = buildPendingRsvpDigest(events, state.players || []);
         await copyText(digest.text, digest.pendingEvents.length ? '未回答者向けリマインド文をコピーしました' : '未回答がないことを確認しました');
     };
+
+    const parentAccessLabel = document.getElementById('parent-access-label');
+    const parentAccessInvites = document.getElementById('parent-access-invites');
+    const buildParentAccessUrl = invite => {
+        const baseUrl = window.location.origin + window.location.pathname;
+        const params = new URLSearchParams();
+        const apiUrl = gasApiInput?.value.trim() || state.teamInfo?.gasApiUrl || '';
+        const sheetName = gasSheetInput?.value.trim() || state.teamInfo?.gasSheetName || '';
+        if (apiUrl) params.set('apiUrl', apiUrl);
+        if (sheetName) params.set('sheetName', sheetName);
+        if (getProtocolValue() === 'secure-v2') params.set('syncProtocol', 'secure-v2');
+        params.set('parentPlayerId', invite.playerId);
+        params.set('parentInviteId', invite.id);
+        params.set('parentInviteToken', invite.token);
+        return `${baseUrl}?${params.toString()}`;
+    };
+    const renderParentAccess = () => {
+        if (!parentAccessInvites) return;
+        const summary = getParentAccessSummary(state.teamInfo || (state.teamInfo = {}));
+        const playerName = id => {
+            const player = (state.players || []).find(item => String(item.id) === String(id));
+            return player ? `${player.number ? `${player.number}. ` : ''}${player.name}` : '削除済みの選手';
+        };
+        const entries = [...summary.active.map(item => ({ ...item, displayStatus: 'active' })), ...summary.expired.map(item => ({ ...item, displayStatus: 'expired' })), ...summary.revoked.map(item => ({ ...item, displayStatus: 'revoked' }))];
+        if (!entries.length) {
+            parentAccessInvites.innerHTML = '<div class="parent-access-empty"><i class="fa-solid fa-user-shield"></i><span>個別招待はまだありません。</span></div>';
+            return;
+        }
+        parentAccessInvites.innerHTML = entries.map(invite => {
+            const scopeLabels = (invite.scopes || []).map(scope => PARENT_ACCESS_SCOPES.find(item => item.id === scope)?.label || scope).join('・');
+            const statusLabel = invite.displayStatus === 'active' ? '有効' : invite.displayStatus === 'expired' ? '期限切れ' : '失効済み';
+            return `<article class="parent-access-invite is-${escapeHtml(invite.displayStatus)}"><div><strong>${escapeHtml(invite.label || playerName(invite.playerId))}</strong><span>${escapeHtml(playerName(invite.playerId))} ・ ${escapeHtml(scopeLabels)}</span><small>${invite.expiresAt ? `期限 ${escapeHtml(invite.expiresAt)}` : '期限なし'}${invite.lastUsedAt ? ` ・ 最終利用 ${escapeHtml(new Date(invite.lastUsedAt).toLocaleDateString('ja-JP'))}` : ''}</small></div><div class="parent-access-invite-actions">${invite.displayStatus === 'active' ? `<button type="button" class="btn btn-secondary btn-sm" data-parent-access-copy="${escapeHtml(invite.id)}"><i class="fa-solid fa-copy"></i> コピー</button><button type="button" class="btn btn-danger btn-sm" data-parent-access-revoke="${escapeHtml(invite.id)}"><i class="fa-solid fa-ban"></i> 失効</button>` : ''}<span class="parent-access-status">${statusLabel}</span></div></article>`;
+        }).join('');
+        parentAccessInvites.querySelectorAll('[data-parent-access-copy]').forEach(button => {
+            button.onclick = () => {
+                const invite = entries.find(item => item.id === button.dataset.parentAccessCopy);
+                if (invite) void copyText(buildParentAccessUrl(invite), '個別保護者招待リンクをコピーしました');
+            };
+        });
+        parentAccessInvites.querySelectorAll('[data-parent-access-revoke]').forEach(button => {
+            button.onclick = async () => {
+                const proceed = await showCustomConfirm('この招待リンクを失効します。新しいリンクを共有するまで、保護者画面は利用できません。', '保護者招待を失効', { okText: '失効する', type: 'danger' });
+                if (!proceed) return;
+                revokeParentAccessInvite(state.teamInfo, button.dataset.parentAccessRevoke);
+                await saveData();
+                renderParentAccess();
+                showToast('保護者招待を失効しました');
+            };
+        });
+    };
+    const btnCreateParentAccess = document.getElementById('btn-create-parent-access');
+    if (btnCreateParentAccess) btnCreateParentAccess.onclick = async () => {
+        try {
+            const playerId = parentSharePlayer?.value || '';
+            const scopes = [...document.querySelectorAll('.parent-access-scopes input:checked')].map(input => input.value);
+            const invite = createParentAccessInvite(state.teamInfo || (state.teamInfo = {}), { playerId, label: parentAccessLabel?.value || '', scopes, expiresAt: parentShareExpires?.value || '' });
+            await saveData();
+            renderParentAccess();
+            await copyText(buildParentAccessUrl(invite), '個別保護者招待リンクをコピーしました');
+        } catch (error) { showToast(error?.message || '保護者招待を作成できませんでした'); }
+    };
+    renderParentAccess();
 
     const btnCopyInviteLink = document.getElementById('btn-copy-invite-link');
     if (btnCopyInviteLink) {

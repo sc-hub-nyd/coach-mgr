@@ -1,3 +1,5 @@
+import { getFieldPlayingSeconds } from './field-companion-service.js';
+
 function asArray(value) {
     return Array.isArray(value) ? value : [];
 }
@@ -13,12 +15,12 @@ function getStatus(event, playerId) {
     return asArray(event?.presentPlayerIds).includes(playerId) ? 'attending' : 'pending';
 }
 
-function dateInRange(date, days) {
+function dateInRange(date, days, now = new Date()) {
     if (!days || days === 'all') return true;
     const eventTime = toTimestamp(date);
     if (!eventTime) return false;
-    const from = Date.now() - (Number(days) * 24 * 60 * 60 * 1000);
-    return eventTime >= from;
+    const from = now.getTime() - (Number(days) * 24 * 60 * 60 * 1000);
+    return eventTime >= from && eventTime <= now.getTime();
 }
 
 function getMatchEvents(match) {
@@ -70,9 +72,9 @@ function resolveMatchScore(match) {
     return { us, them };
 }
 
-export function buildTeamInsights(state, { days = 90 } = {}) {
-    const matches = asArray(state?.matches).filter(match => dateInRange(match.date, days));
-    const practices = asArray(state?.practices).filter(practice => dateInRange(practice.date, days));
+export function buildTeamInsights(state, { days = 90, now = new Date() } = {}) {
+    const matches = asArray(state?.matches).filter(match => dateInRange(match.date, days, now));
+    const practices = asArray(state?.practices).filter(practice => dateInRange(practice.date, days, now));
     const matchEvents = matches.flatMap(getMatchEvents);
     const practiceEvents = practices.flatMap(getPracticeEvents);
     const goals = matchEvents.filter(event => event.type === 'score').length;
@@ -173,6 +175,95 @@ export function getTimelinePresentation(event, players = []) {
         'practice-menu': { icon: 'fa-clipboard-list', label: event.focus, className: 'is-practice' }
     };
     return typeMap[event.type] || { icon: 'fa-circle', label: '記録', className: 'is-neutral' };
+}
+
+function dateInWindow(date, from, to) {
+    const value = toTimestamp(date);
+    return value >= from.getTime() && value <= to.getTime();
+}
+
+function buildTeamInsightsForWindow(state, { from, to }) {
+    const matches = asArray(state?.matches).filter(match => dateInWindow(match.date, from, to));
+    const practices = asArray(state?.practices).filter(practice => dateInWindow(practice.date, from, to));
+    const events = matches.flatMap(getMatchEvents);
+    const goals = events.filter(event => event.type === 'score').length;
+    const conceded = events.filter(event => event.type === 'concede').length;
+    const results = matches.reduce((summary, match) => {
+        const score = resolveMatchScore(match);
+        if (score.us > score.them) summary.wins += 1;
+        else if (score.us < score.them) summary.losses += 1;
+        else summary.draws += 1;
+        return summary;
+    }, { wins: 0, draws: 0, losses: 0 });
+    return { matches: matches.length, practices: practices.length, goals, conceded, goalDifference: goals - conceded, results };
+}
+
+function getPrimaryPosition(player = {}) {
+    return player.position || player.position1 || player.primaryPosition || player.positionCategory || '未設定';
+}
+
+export function buildPeriodComparison(state, { days = 90, now = new Date() } = {}) {
+    if (days === 'all') return { current: buildTeamInsights(state, { days: 'all', now }), previous: null, days: 'all' };
+    const windowDays = Math.max(1, Number(days) || 90);
+    const currentTo = new Date(now);
+    const currentFrom = new Date(now.getTime() - windowDays * 24 * 60 * 60 * 1000);
+    const previousTo = new Date(currentFrom.getTime() - 1);
+    const previousFrom = new Date(previousTo.getTime() - windowDays * 24 * 60 * 60 * 1000);
+    const current = buildTeamInsightsForWindow(state, { from: currentFrom, to: currentTo });
+    const previous = buildTeamInsightsForWindow(state, { from: previousFrom, to: previousTo });
+    return {
+        days: windowDays,
+        current,
+        previous,
+        deltas: {
+            activities: (current.matches + current.practices) - (previous.matches + previous.practices),
+            goalDifference: current.goalDifference - previous.goalDifference,
+            wins: current.results.wins - previous.results.wins,
+            conceded: current.conceded - previous.conceded
+        }
+    };
+}
+
+export function buildPositionParticipation(state, { days = 90, now = new Date() } = {}) {
+    const players = asArray(state?.players).filter(player => !player.deletedAt);
+    const playerIds = players.map(player => player.id);
+    const positions = new Map(players.map(player => [String(player.id), getPrimaryPosition(player)]));
+    const totals = new Map();
+    asArray(state?.matches).filter(match => dateInRange(match.date, days, now)).forEach(match => {
+        asArray(match.formations).forEach(period => {
+            const seconds = getFieldPlayingSeconds(period, playerIds, now.getTime());
+            Object.entries(seconds).forEach(([id, value]) => {
+                const position = positions.get(String(id)) || '未設定';
+                const item = totals.get(position) || { position, seconds: 0, players: new Set() };
+                item.seconds += Number(value || 0);
+                if (Number(value || 0) > 0) item.players.add(String(id));
+                totals.set(position, item);
+            });
+        });
+    });
+    return [...totals.values()]
+        .map(item => ({ position: item.position, minutes: Math.round(item.seconds / 60), playerCount: item.players.size }))
+        .sort((a, b) => b.minutes - a.minutes || a.position.localeCompare(b.position, 'ja'));
+}
+
+export function buildCoachingRecommendations(state, { days = 90, now = new Date() } = {}) {
+    const insights = buildTeamInsights(state, { days, now });
+    const recommendations = [];
+    if (!insights.matches && !insights.practices) return [{ tone: 'neutral', title: '記録を増やして分析を開始', reason: '対象期間の試合・練習がまだありません。', action: '最初の練習または試合を記録してください。' }];
+    if (insights.conceded > insights.goals || insights.goalDifference < 0) {
+        recommendations.push({ tone: 'attention', title: '守備の再現性を高める', reason: `対象期間は ${insights.goals}得点・${insights.conceded}失点です。`, action: '切り替え直後の帰陣、ゴール前のマーク、ボールを失った直後の3秒をテーマにした少人数ゲームを設定してください。' });
+    }
+    if (insights.results.losses > insights.results.wins) {
+        recommendations.push({ tone: 'attention', title: '試合の入りを整える', reason: `${insights.results.losses}敗で、勝利数を上回っています。`, action: '最初の5分の守備原則と、ボール保持時の最初の前進ルートを短時間で確認してからゲーム形式へ移行してください。' });
+    }
+    const responseTotal = insights.attendance.attending + insights.attendance.absent + insights.attendance.pending;
+    if (responseTotal && insights.attendance.pending / responseTotal >= 0.25) {
+        recommendations.push({ tone: 'neutral', title: '出欠確認を早める', reason: `未回答が ${insights.attendance.pending} 件あります。`, action: '次回予定に回答期限を設定し、未回答リマインドを練習前に共有してください。' });
+    }
+    if (!recommendations.length) {
+        recommendations.push({ tone: 'positive', title: '現在のテーマを継続', reason: '得失点・成績・出欠に大きな注意信号はありません。', action: '直近の成功場面を動画・メモで振り返り、同じ原則を制約付きゲームで再現してください。' });
+    }
+    return recommendations.slice(0, 3);
 }
 
 export function buildInsightsShareText(team, player, teamInsights, playerInsights) {
