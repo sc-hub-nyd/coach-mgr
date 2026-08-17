@@ -1547,3 +1547,71 @@ body #app .dash-widget-grid #dash-form-bar .dash-form-opponent {
         column-count: 1 !important;
     }
 }
+
+/* 小型端末では本文幅を守るため、トップバーの補助操作をアイコン主体にする。 */
+@media (max-width: 420px) {
+    .topbar {
+        gap: 0.25rem !important;
+        padding-inline: 0.5rem !important;
+    }
+
+    .menu-toggle {
+        display: grid !important;
+        flex: 0 0 36px;
+        width: 36px;
+        min-height: 36px;
+        place-items: center;
+    }
+
+    .topbar-title {
+        min-width: 0;
+        margin-right: 0 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .topbar > div:last-child {
+        min-width: 0;
+        gap: 0.2rem !important;
+    }
+
+    .topbar #user-role-badge {
+        display: none !important;
+    }
+
+    .topbar-btn,
+    .topbar-badge,
+    .topbar button.topbar-btn,
+    .topbar div.topbar-badge {
+        flex: 0 0 32px;
+        width: 32px;
+        padding: 0 !important;
+    }
+
+    .topbar .btn span:not(.fa-solid):not(.fa-regular):not(.fas),
+    .topbar .topbar-btn-text,
+    .topbar-btn span,
+    .topbar-badge span,
+    .topbar button span {
+        display: none !important;
+    }
+
+    .topbar-btn i,
+    .topbar-badge i {
+        margin-right: 0 !important;
+    }
+}
+
+/* 極小幅では高特異性のコーチ専用ランキング行も一列化する。 */
+@media (max-width: 520px) {
+    body #app .dash-widget-grid #dash-coach-row.dash-row-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 詳細画面では戻る操作を優先し、最小幅では更新履歴ボタンを省略する。 */
+@media (max-width: 420px) {
+    #topbar-back:not(.hidden) ~ div #topbar-version-badge {
+        display: none !important;
+    }
+}

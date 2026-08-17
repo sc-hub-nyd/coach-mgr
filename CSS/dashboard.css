@@ -1936,3 +1936,10 @@ summary {
     border-radius: 4px;
     transition: width 0.4s ease;
 }
+
+/* P33.1: 小型端末では二列カードを一列へ畳み、カード内の長いラベルによる横溢れを防ぐ。 */
+@media (max-width: 520px) {
+    .dash-row-2 {
+        grid-template-columns: 1fr;
+    }
+}
