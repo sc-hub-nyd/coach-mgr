@@ -16,6 +16,10 @@ export const state = {
     positionsCat2: ['CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH'],
     teamInfo: { name: 'My Team', color: '#f23932', passcode: '7064' },
     teamFocus: { mainTheme: '', points: [], note: '', updatedAt: '' },
+    teams: [],
+    workspaces: {},
+    activeTeamId: null,
+    activeSeasonId: null,
     syncMeta: { deviceId: '', revision: 0, updatedAt: null, lastSyncedAt: null },
     currentUserRole: 'parent',
     customFormations: [

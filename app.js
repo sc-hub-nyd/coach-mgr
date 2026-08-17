@@ -17,6 +17,8 @@ import { ensureSyncMeta, markLocalChange, markSyncAttempt, markSyncAcknowledged,
 import { showSyncConflictDialog } from './sync-conflict-dialog.js';
 import { buildOperationalDiagnostics } from './operations-service.js';
 import { isParentShareValid } from './parent-operations-service.js';
+import { ensureWorkspaceState, hydrateActiveWorkspace } from './workspace-service.js';
+import { mergeSnapshotsByRecord, touchRecordsForSave } from './record-service.js';
 import { configureAppContext } from './app-context.js';
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
@@ -153,8 +155,16 @@ export async function loadData() {
                 if (!state.teamInfo.passcode) state.teamInfo.passcode = '7064';
                 state.customFormations = parsed.customFormations || state.customFormations;
                 state.teamFocus = parsed.teamFocus || {}; // ★【追加】チーム強化テーマの読み込み
+                state.teams = parsed.teams || [];
+                state.workspaces = parsed.workspaces || {};
+                state.activeTeamId = parsed.activeTeamId || null;
+                state.activeSeasonId = parsed.activeSeasonId || null;
                 state.syncMeta = parsed.syncMeta || state.syncMeta;
             }
+            ensureWorkspaceState(state);
+            hydrateActiveWorkspace(state);
+            state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
+            state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
             ensureSyncMeta(state);
         // セッション中にロールが未設定の場合のみ初期値（保護者モード）をセット
         if (!state.currentUserRole) {
@@ -169,7 +179,10 @@ export function saveData({ sync = true, markChange = true } = {}) {
     saveDataQueue = saveDataQueue.then(async () => {
         state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
         state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
-        if (markChange) markLocalChange(state);
+        if (markChange) {
+            touchRecordsForSave(state);
+            markLocalChange(state);
+        }
 
         const snapshot = createStateSnapshot(state);
 
@@ -235,6 +248,8 @@ function createConflictError(message, code = 'revision_conflict') {
 
 async function persistRemoteSnapshot(remoteData, { toast = true } = {}) {
     applyRemoteSnapshot(state, remoteData);
+    ensureWorkspaceState(state);
+    hydrateActiveWorkspace(state);
     markSyncAcknowledged(state, new Date(), remoteData.syncMeta || {});
     await saveData({ sync: false, markChange: false });
     if (toast) showToast('クラウドから最新データを復元しました！');
@@ -253,6 +268,15 @@ async function resolveSyncConflict(remoteData, { isSilent = false, errorMeta = n
         cloudRevision: errorMeta?.revision ?? remoteData?.syncMeta?.cloudRevision
     });
     if (action === 'cloud') return persistRemoteSnapshot(remoteData);
+    if (action === 'merge') {
+        const merged = mergeSnapshotsByRecord(createCloudSnapshot(state), remoteData);
+        applyRemoteSnapshot(state, merged);
+        ensureWorkspaceState(state);
+        hydrateActiveWorkspace(state);
+        await saveData({ sync: false, markChange: true });
+        const expectedRevision = Number(errorMeta?.revision ?? remoteData?.syncMeta?.cloudRevision ?? getExpectedCloudRevision(state));
+        return syncPushGasCloud(false, { force: true, expectedRevision, resolvedConflict: true });
+    }
     if (action === 'keep-local') {
         const expectedRevision = Number(errorMeta?.revision ?? remoteData?.syncMeta?.cloudRevision ?? getExpectedCloudRevision(state));
         return syncPushGasCloud(false, { force: true, expectedRevision, resolvedConflict: true });

@@ -3505,3 +3505,26 @@ input[type="checkbox"] {
 /* P20: 保護者共有・RSVP管理 */
 .parent-share-body { display: grid; gap: 0.7rem; }.parent-share-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }.parent-share-controls label { display: grid; gap: 0.25rem; color: var(--text-secondary); font-size: 0.72rem; font-weight: 750; }.parent-share-controls .sl-input { width: 100%; min-height: 40px; }.parent-share-status { margin: 0; padding: 0.55rem 0.65rem; color: var(--text-secondary); background: color-mix(in srgb, var(--primary) 7%, var(--surface)); border-radius: 8px; font-size: 0.72rem; line-height: 1.5; }.parent-share-security-note { margin: 0; padding: 0.6rem 0.7rem; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; font-size: 0.7rem; line-height: 1.5; }.parent-share-security-note i { margin-right: 0.2rem; }
 @media (max-width: 560px) { .parent-share-controls { grid-template-columns: 1fr; }.parent-share-body .operations-actions { display: grid; grid-template-columns: 1fr; }.parent-share-body .operations-actions .btn { min-height: 44px; justify-content: center; } }
+
+/* P22: チーム・シーズン管理 */
+.workspace-management-body { display: grid; gap: 0.7rem; }
+.workspace-select-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
+.workspace-select-grid label { display: grid; gap: 0.28rem; color: var(--text-secondary); font-size: 0.72rem; font-weight: 750; }
+.workspace-select-grid .sl-input { width: 100%; min-height: 40px; }
+.workspace-context-status { margin: 0; padding: 0.55rem 0.65rem; border-radius: 8px; color: var(--text-secondary); background: color-mix(in srgb, var(--primary) 7%, var(--surface)); font-size: 0.75rem; line-height: 1.5; }
+.workspace-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.workspace-help { margin: 0; padding: 0.55rem 0.65rem; border-radius: 8px; background: rgba(37, 99, 235, 0.06); color: var(--text-secondary); font-size: 0.7rem; line-height: 1.5; }
+.workspace-help i { margin-right: 0.25rem; color: var(--primary); }
+@media (max-width: 560px) { .workspace-select-grid { grid-template-columns: 1fr; } .workspace-actions { display: grid; grid-template-columns: 1fr; } .workspace-actions .btn { min-height: 44px; justify-content: center; } }
+
+/* P24: シーズンレポート */
+.season-report-body { display: grid; gap: 0.75rem; }
+.season-report-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; }
+.season-report-metric { display: grid; gap: 0.12rem; padding: 0.65rem; border: 1px solid var(--surface-border); border-radius: 9px; background: color-mix(in srgb, var(--primary) 4%, var(--card-bg)); }
+.season-report-metric small, .season-report-metric span { color: var(--text-secondary); font-size: 0.67rem; line-height: 1.4; }
+.season-report-metric strong { font-size: 0.95rem; color: var(--text-primary); }
+.season-report-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.season-report-help { margin: 0; padding: 0.55rem 0.65rem; border-radius: 8px; background: rgba(37, 99, 235, 0.06); color: var(--text-secondary); font-size: 0.7rem; line-height: 1.5; }
+.season-report-help i { margin-right: 0.25rem; color: var(--primary); }
+@media (max-width: 700px) { .season-report-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .season-report-actions { display: grid; grid-template-columns: 1fr; } .season-report-actions .btn { min-height: 44px; justify-content: center; } }
