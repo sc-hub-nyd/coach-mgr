@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.10.0';
+export const APP_VERSION = 'v1.11.0';
 export const RELEASE_DATE = '2026-08-17';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.11.0',
+        date: '2026-08-18',
+        title: '試合当日UX：画面常時表示・触覚フィードバック',
+        features: [
+            'Field Companionで試合時計を開始すると、対応端末では画面の自動消灯を抑制',
+            '得点・失点・交代・警告・メモ・Undo・時計操作に控えめな触覚フィードバックを追加',
+            '時計稼働中に画面常時表示が有効な場合は「画面オン」と表示'
+        ]
+    },
     {
         version: 'v1.10.0',
         date: '2026-08-18',

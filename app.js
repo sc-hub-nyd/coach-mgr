@@ -2,7 +2,7 @@
 import { state, uiState } from './state.js';
 import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm, setupScoreCounters, getNendo } from './utils.js';
 import { initPractices, openPracticeModal, renderPracticeRoster } from './practices.js';
-import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText } from './matches.js';
+import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText, releaseFieldCompanionSession } from './matches.js';
 import { initPlayers, openPlayerDetail } from './players.js';
 import { initLibrary } from './library.js';
 import { initTactics } from './tactics.js';
@@ -1921,6 +1921,7 @@ export function updateRoleUI() {
 }
 
 export function navigate(route, params = null) {
+    if (uiState.currentRoute === 'match-detail' && route !== 'match-detail') releaseFieldCompanionSession();
     cleanupCanvasEvents();
     // Cleanup scoped event listeners from the previous view
     if (uiState.currentRoute) {

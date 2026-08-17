@@ -7,6 +7,7 @@ import { drawPitchToCtx } from './drawing.js';
 import { registerListener, cleanupScope } from './event-manager.js';
 import { ensureFieldPeriod, getFieldClockSeconds, appendFieldEvent, removeFieldEvent, setFieldClockRunning } from './field-companion-service.js';
 import { ensureAttendance, setAttendanceStatus, getAttendanceSummary } from './team-operations-service.js';
+import { setFieldSessionActive, bindFieldSessionVisibility, triggerFieldHaptic } from './field-session-service.js';
 
 let ytPlayer = null;
 let currentMatchId = null;
@@ -85,6 +86,12 @@ async function deleteFieldEvent(match, eventId) {
     showToast('試合ログを削除しました');
 }
 
+function renderFieldSessionStatus(running, wakeLockActive) {
+    const status = document.getElementById('field-session-status');
+    if (!status) return;
+    status.hidden = !(running && wakeLockActive);
+}
+
 function renderFieldClock(match) {
     const timer = document.getElementById('field-match-timer');
     const button = document.getElementById('btn-field-timer-toggle');
@@ -103,6 +110,8 @@ function toggleFieldClock(match) {
     setFieldClockRunning(period, running);
     if (fieldTimerInterval) clearInterval(fieldTimerInterval);
     fieldTimerInterval = running ? setInterval(() => renderFieldClock(match), 1000) : null;
+    void setFieldSessionActive(running && state.currentUserRole === 'coach').then(active => renderFieldSessionStatus(running, active));
+    triggerFieldHaptic(running ? 'timerStart' : 'timerStop');
     saveData();
     renderFieldClock(match);
     showToast(running ? '試合時計を開始しました' : '試合時計を停止しました');
@@ -172,6 +181,7 @@ function showFieldUndo(matchId, periodIndex, previous, label) {
     const bar = document.getElementById('field-undo-bar');
     const message = document.getElementById('field-undo-message');
     if (message) message.textContent = `${label}を記録しました`;
+    triggerFieldHaptic(label === '失点' || label === '退場' ? 'caution' : 'record');
     if (bar) bar.classList.remove('hidden');
     if (fieldUndoTimer) clearTimeout(fieldUndoTimer);
     fieldUndoTimer = setTimeout(() => {
@@ -189,6 +199,7 @@ function undoFieldAction() {
         recalculateMatchResult(match);
         saveData();
         refreshFieldCompanion(match);
+        triggerFieldHaptic('undo');
         showToast('直前の記録を取り消しました');
     }
     fieldUndoState = null;
@@ -385,19 +396,30 @@ function initFieldCompanionActions(matchId, isCoach) {
         const previousPeriod = ensureFieldPeriod(match, fieldPeriodIndex);
         if (previousPeriod.fieldClockRunning) setFieldClockRunning(previousPeriod, false);
         fieldPeriodIndex = Number(periodSelect.value) || 0;
+        void setFieldSessionActive(false);
         saveData();
         if (fieldTimerInterval) clearInterval(fieldTimerInterval);
         const nextPeriod = ensureFieldPeriod(match, fieldPeriodIndex);
         fieldTimerInterval = nextPeriod.fieldClockRunning ? setInterval(() => renderFieldClock(match), 1000) : null;
+        void setFieldSessionActive(isCoach && nextPeriod.fieldClockRunning).then(active => renderFieldSessionStatus(nextPeriod.fieldClockRunning, active));
         refreshFieldCompanion(match);
     };
     const period = ensureFieldPeriod(match, fieldPeriodIndex);
     if (fieldTimerInterval) clearInterval(fieldTimerInterval);
     fieldTimerInterval = period.fieldClockRunning ? setInterval(() => renderFieldClock(match), 1000) : null;
+    bindFieldSessionVisibility();
+    void setFieldSessionActive(isCoach && period.fieldClockRunning).then(active => renderFieldSessionStatus(period.fieldClockRunning, active));
     const undoButton = document.getElementById('btn-field-undo');
     if (undoButton) undoButton.onclick = undoFieldAction;
     initFieldNetworkStatus();
     refreshFieldCompanion(match);
+}
+
+export function releaseFieldCompanionSession() {
+    if (fieldTimerInterval) clearInterval(fieldTimerInterval);
+    fieldTimerInterval = null;
+    renderFieldSessionStatus(false, false);
+    void setFieldSessionActive(false);
 }
 
 // YouTube URLから11桁のIDを抽出
