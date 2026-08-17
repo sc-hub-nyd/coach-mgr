@@ -3186,6 +3186,20 @@ input[type="checkbox"] {
     background: #dc2626;
     border-color: #dc2626;
 }
+.field-period-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 750;
+}
+.field-period-control .form-control {
+    width: auto;
+    min-height: 36px;
+    padding: 0.3rem 1.75rem 0.3rem 0.5rem;
+    font-size: 0.78rem;
+}
 .field-network-status {
     display: inline-flex;
     align-items: center;
@@ -3230,7 +3244,7 @@ input[type="checkbox"] {
 .field-event-item,
 .field-event-empty {
     display: grid;
-    grid-template-columns: 3.5rem 1.05rem minmax(0, 1fr);
+    grid-template-columns: 3.5rem 1.05rem minmax(0, 1fr) auto;
     align-items: center;
     gap: 0.45rem;
     min-height: 36px;
@@ -3242,6 +3256,20 @@ input[type="checkbox"] {
 }
 .field-event-item time { color: var(--text-secondary); font-weight: 800; font-variant-numeric: tabular-nums; }
 .field-event-item > i { color: var(--primary); text-align: center; }
+.field-event-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0.35rem;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+}
+.field-event-delete:hover,
+.field-event-delete:focus-visible { color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, transparent); }
 .field-event-concede > i { color: #dc2626; }
 .field-event-card > i { color: #ca8a04; }
 .field-event-empty { display: block; color: var(--text-secondary); text-align: center; }
@@ -3254,4 +3282,5 @@ input[type="checkbox"] {
 @media (max-width: 390px) {
     .field-companion-status { align-items: flex-start; flex-direction: column; }
     .field-network-status { justify-content: flex-start; text-align: left; }
+    .field-period-control { width: 100%; justify-content: space-between; }
 }

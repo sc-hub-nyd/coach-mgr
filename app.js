@@ -1,6 +1,6 @@
 // app.js - エントリーポイント
 import { state, uiState } from './state.js';
-import { escapeHtml, encryptData, decryptData, showToast, setupScoreCounters, getNendo } from './utils.js';
+import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm, setupScoreCounters, getNendo } from './utils.js';
 import { initPractices, openPracticeModal, renderPracticeRoster } from './practices.js';
 import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText } from './matches.js';
 import { initPlayers, openPlayerDetail } from './players.js';
@@ -10,8 +10,10 @@ import { initSettings, initData, applyThemePreset } from './settings.js';
 import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
 import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
-import { loadPersistedSnapshot, savePersistedSnapshot, createStateSnapshot } from './repository.js';
+import { loadPersistedSnapshot, savePersistedSnapshot, createStateSnapshot, createCloudSnapshot } from './repository.js';
 import { pushCloud, pullCloud, withRetry } from './sync-service.js';
+import { ensureSyncMeta, markLocalChange, markSyncAcknowledged, hasSyncConflict, applyRemoteSnapshot, getSyncStatusLabel } from './sync-controller.js';
+import { configureAppContext } from './app-context.js';
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
     const action = actionLabel && actionId
@@ -146,7 +148,9 @@ export async function loadData() {
                 if (!state.teamInfo.passcode) state.teamInfo.passcode = '7064';
                 state.customFormations = parsed.customFormations || state.customFormations;
                 state.teamFocus = parsed.teamFocus || {}; // ★【追加】チーム強化テーマの読み込み
+                state.syncMeta = parsed.syncMeta || state.syncMeta;
             }
+            ensureSyncMeta(state);
         // セッション中にロールが未設定の場合のみ初期値（保護者モード）をセット
         if (!state.currentUserRole) {
             state.currentUserRole = 'parent';
@@ -156,16 +160,18 @@ export async function loadData() {
     }
 }
 
-export function saveData() {
+export function saveData({ sync = true, markChange = true } = {}) {
     saveDataQueue = saveDataQueue.then(async () => {
         state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
         state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
+        if (markChange) markLocalChange(state);
 
         const snapshot = createStateSnapshot(state);
 
         try {
             await savePersistedSnapshot(snapshot, { encryptData });
-            if (state.currentUserRole === 'coach' && state.teamInfo && state.teamInfo.gasApiUrl) {
+            setSyncStateUI(navigator.onLine === false ? 'offline' : 'local');
+            if (sync && state.currentUserRole === 'coach' && state.teamInfo && state.teamInfo.gasApiUrl) {
                 void syncPushGasCloud(true).catch(error => {
                     console.error('Background sync failed after save:', error);
                 });
@@ -188,23 +194,30 @@ function setSyncStateUI(status) {
     const timeEl = document.getElementById('sync-last-time');
     const textEl = document.getElementById('sync-status-text');
     const isCoach = state.currentUserRole === 'coach';
+    window.__coachMgrSyncStatus = status;
+    if (textEl) textEl.textContent = getSyncStatusLabel(status);
 
     if (status === 'syncing') {
         if (icon) icon.className = 'fa-solid fa-rotate fa-spin';
         if (dot) dot.className = 'sync-status-dot syncing';
-        if (textEl) textEl.textContent = '通信中...';
     } else if (status === 'success') {
         if (icon) icon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
         if (dot) dot.className = 'sync-status-dot';
-
         const now = new Date();
         lastSyncTimeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
         if (timeEl) timeEl.textContent = `本日 ${lastSyncTimeStr}`;
-        if (textEl) textEl.textContent = '最新状態です';
+    } else if (status === 'local') {
+        if (icon) icon.className = 'fa-solid fa-hard-drive';
+        if (dot) dot.className = 'sync-status-dot';
+    } else if (status === 'offline') {
+        if (icon) icon.className = 'fa-solid fa-mobile-screen-button';
+        if (dot) dot.className = 'sync-status-dot error';
+    } else if (status === 'conflict') {
+        if (icon) icon.className = 'fa-solid fa-triangle-exclamation';
+        if (dot) dot.className = 'sync-status-dot error';
     } else if (status === 'error') {
         if (icon) icon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
         if (dot) dot.className = 'sync-status-dot error';
-        if (textEl) textEl.textContent = '同期に失敗しました';
     }
 }
 
@@ -214,13 +227,16 @@ export function syncPushGasCloud(isSilent = false) {
         return Promise.reject('No URL');
     }
     if (!isSilent) showToast('クラウドへ同期中...');
+    setSyncStateUI('syncing');
 
-    return withRetry(() => pushCloud({ teamInfo: state.teamInfo, data: createStateSnapshot(state) }), {
+    return withRetry(() => pushCloud({ teamInfo: state.teamInfo, data: createCloudSnapshot(state) }), {
         onRetry: (_error, attempt) => {
             if (!isSilent) showToast(`同期を再試行しています（${attempt}回目）...`);
         }
     })
-        .then(result => {
+        .then(async result => {
+            markSyncAcknowledged(state);
+            await saveData({ sync: false, markChange: false });
             if (!isSilent) showToast('クラウドへの送信が完了しました！');
             setSyncStateUI('success');
             return result;
@@ -233,90 +249,40 @@ export function syncPushGasCloud(isSilent = false) {
         });
 }
 
-export function syncPullGasCloud(isSilent = false) {
+export async function syncPullGasCloud(isSilent = false) {
     if (!state.teamInfo || !state.teamInfo.gasApiUrl) {
-        if (!isSilent) alert('Google Apps Script の Web API URL が設定されていません。');
-        return Promise.reject('No URL');
+        const error = new Error('Google Apps Script の Web API URL が設定されていません。');
+        if (!isSilent) alert(error.message);
+        throw error;
     }
 
     if (!isSilent) showToast('クラウドからデータを受信中...');
-
-    return withRetry(() => pullCloud({ teamInfo: state.teamInfo }), {
-        onRetry: (_error, attempt) => {
-            if (!isSilent) showToast(`同期を再試行しています（${attempt}回目）...`);
-        }
-    })
-        .then(remoteData => {
-                if (remoteData && typeof remoteData === 'object') {
-                    if (remoteData.matches) state.matches = remoteData.matches;
-                    if (remoteData.practices) state.practices = remoteData.practices;
-                    if (remoteData.players) state.players = remoteData.players;
-                    if (remoteData.menuLibrary) state.menuLibrary = remoteData.menuLibrary;
-                    if (remoteData.tactics) state.tactics = remoteData.tactics;
-
-                    // ★【追加】マスタ・設定データの受信展開
-                    if (remoteData.matchTypes) state.matchTypes = remoteData.matchTypes;
-                    if (remoteData.menuCategories) state.menuCategories = remoteData.menuCategories;
-                    if (remoteData.tacticsCategories) state.tacticsCategories = remoteData.tacticsCategories;
-
-                    const newTacticsDefaults = ['攻撃：ビルドアップ（自陣）', '攻撃：前進・崩し（中盤〜敵陣）', '守備：ハイプレス（前線）', '守備：ブロック・ゴール前（自陣）', '切り替え：攻→守（奪われたとき）', '切り替え：守→攻（奪ったとき）', 'セットプレー', 'その他'];
-                    const loadedTacticsCat = state.tacticsCategories || [];
-                    const isOldTacticsCat = loadedTacticsCat.length === 0 ||
-                        loadedTacticsCat.includes('トランジション') ||
-                        loadedTacticsCat.includes('プレッシング') ||
-                        (loadedTacticsCat.includes('攻撃') && !loadedTacticsCat.includes('攻撃：ビルドアップ（自陣）'));
-
-                    if (isOldTacticsCat) {
-                        state.tacticsCategories = [...newTacticsDefaults];
-                        const catMap = {
-                            'ビルドアップ': '攻撃：ビルドアップ（自陣）',
-                            '攻撃': '攻撃：前進・崩し（中盤〜敵陣）',
-                            'プレッシング': '守備：ハイプレス（前線）',
-                            '守備': '守備：ブロック・ゴール前（自陣）',
-                            'トランジション': '切り替え：攻→守（奪われたとき）',
-                            'セットプレー': 'セットプレー'
-                        };
-                        if (state.tactics) {
-                            state.tactics.forEach(t => {
-                                if (t.category && catMap[t.category]) {
-                                    t.category = catMap[t.category];
-                                } else if (t.category && !newTacticsDefaults.includes(t.category)) {
-                                    t.category = 'その他';
-                                }
-                            });
-                        }
-                    }
-
-                    if (remoteData.analysisTags) state.analysisTags = remoteData.analysisTags;
-                    if (remoteData.skillMetrics) state.skillMetrics = remoteData.skillMetrics;
-                    if (remoteData.positions) state.positions = remoteData.positions;
-                    if (remoteData.positionsCat2) state.positionsCat2 = remoteData.positionsCat2;
-                    if (remoteData.customFormations) state.customFormations = remoteData.customFormations;
-                    if (remoteData.teamFocus) state.teamFocus = remoteData.teamFocus;
-                    if (remoteData.teamInfo) {
-                        state.teamInfo = { ...state.teamInfo, ...remoteData.teamInfo };
-                    }
-
-                    saveData();
-                    if (!isSilent) showToast('クラウドから最新データを復元しました！');
-                    setSyncStateUI('success');
-
-                    if (!state.currentRoute || state.currentRoute === 'dashboard') {
-                        navigate('dashboard');
-                    } else {
-                        navigate(state.currentRoute);
-                    }
-
-                    return remoteData;
-                }
-            setSyncStateUI('error');
-            throw new Error('有効なクラウドデータが見つかりませんでした');
-        })
-        .catch(err => {
-            console.error('GAS Sync Pull Error:', err);
-            setSyncStateUI('error');
-            if (!isSilent) alert(`クラウドからの復元に失敗しました:\n${err.message || err}`);
+    setSyncStateUI('syncing');
+    try {
+        const remoteData = await withRetry(() => pullCloud({ teamInfo: state.teamInfo }), {
+            onRetry: (_error, attempt) => {
+                if (!isSilent) showToast(`同期を再試行しています（${attempt}回目）...`);
+            }
         });
+        if (hasSyncConflict(state, remoteData)) {
+            setSyncStateUI('conflict');
+            if (isSilent) throw new Error('端末とクラウドの両方に未同期の変更があります');
+            const proceed = await showCustomConfirm('端末とクラウドの両方に未同期の変更があります。端末の変更は復旧用データに保持されますが、クラウド版で上書きしますか？', '同期の競合を確認', { okText: 'クラウド版を復元する', type: 'danger' });
+            if (!proceed) return null;
+        }
+        applyRemoteSnapshot(state, remoteData);
+        markSyncAcknowledged(state);
+        await saveData({ sync: false, markChange: false });
+        if (!isSilent) showToast('クラウドから最新データを復元しました！');
+        setSyncStateUI('success');
+        navigate(state.currentRoute || 'dashboard');
+        return remoteData;
+    } catch (err) {
+        console.error('GAS Sync Pull Error:', err);
+        setSyncStateUI('error');
+        if (!isSilent) alert(`クラウドからの復元に失敗しました:\n${err.message || err}`);
+        throw err;
+    }
 }
 
 export function openModal(id) {
@@ -2079,14 +2045,13 @@ async function init() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramApiUrl = urlParams.get('apiUrl');
-    const paramAuthToken = urlParams.get('authToken');
     const paramSheetName = urlParams.get('sheetName');
+    const hadLegacyAuthToken = urlParams.has('authToken');
 
     let isFromInviteLink = false;
     if (paramApiUrl) {
         if (!state.teamInfo) state.teamInfo = {};
         state.teamInfo.gasApiUrl = paramApiUrl;
-        if (paramAuthToken) state.teamInfo.gasAuthToken = paramAuthToken;
         if (paramSheetName) state.teamInfo.gasSheetName = paramSheetName;
         isFromInviteLink = true;
 
@@ -2094,6 +2059,10 @@ async function init() {
             const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
             window.history.replaceState({}, document.title, cleanUrl);
         } catch (e) { }
+    }
+
+    if (hadLegacyAuthToken) {
+        showToast('安全のため、共有URLに含まれる認証情報は使用せず削除しました');
     }
 
     setupEventListeners();
@@ -2159,6 +2128,17 @@ export function openReleaseNotesModal() {
 
     modal.classList.remove('hidden');
 }
+
+configureAppContext({
+    saveData,
+    navigate,
+    openModal,
+    loadData,
+    updateRoleUI,
+    syncPushGasCloud,
+    syncPullGasCloud,
+    clearAllMiniPitchIntervals
+});
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

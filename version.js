@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.4.0';
-export const RELEASE_DATE = '2026-08-08';
+export const APP_VERSION = 'v1.5.0';
+export const RELEASE_DATE = '2026-08-17';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.5.0',
+        date: '2026-08-17',
+        title: '試合日記録の安定化・安全な同期・PWA配信改善',
+        features: [
+            'Field Companionの複数ピリオド記録、イベント訂正、試合時計の扱いを改善',
+            'クラウド同期の競合確認、端末保存とクラウド同期状態の表示を追加',
+            'PWAのプリキャッシュ検査と更新導線を強化し、認証情報を共有URLから除外'
+        ]
+    },
     {
         version: 'v1.4.0',
         date: '2026-08-08',

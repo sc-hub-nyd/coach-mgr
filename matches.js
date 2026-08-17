@@ -1,10 +1,11 @@
 // matches.js
 import { state, uiState } from './state.js';
 import { escapeHtml, getNendo, showToast, showCustomConfirm } from './utils.js';
-import { saveData, navigate, openModal } from './app.js';
+import { saveData, navigate, openModal } from './app-context.js';
 import { openPlayerDetail } from './players.js';
 import { drawPitchToCtx } from './drawing.js';
 import { registerListener, cleanupScope } from './event-manager.js';
+import { ensureFieldPeriod, getFieldClockSeconds, appendFieldEvent, removeFieldEvent, setFieldClockRunning } from './field-companion-service.js';
 
 let ytPlayer = null;
 let currentMatchId = null;
@@ -17,69 +18,13 @@ let periodSideKeyDownHandler = null;
 let fieldUndoState = null;
 let fieldUndoTimer = null;
 let fieldTimerInterval = null;
+let fieldPeriodIndex = 0;
 
 function cleanupPeriodSideEvents() {
 
     cleanupScope('matches.periodSidePanel');
     periodSideClickOutsideHandler = null;
     periodSideKeyDownHandler = null;
-}
-
-function ensureFieldPeriod(match) {
-    if (!match.formations) match.formations = [];
-    if (match.formations.length === 0) {
-        match.formations.push({
-            id: Date.now(),
-            name: '試合中記録',
-            system: '',
-            scoreUs: 0,
-            scoreThem: 0,
-            goalRecords: [],
-            substitutions: [],
-            pkKickerRecords: [],
-            videoUrl: '',
-            videoUrls: [],
-            lineup: [],
-            analysisMemos: [],
-            cardRecords: [],
-            fieldClockSeconds: 0,
-            fieldClockRunning: false,
-            fieldClockStartedAt: null,
-            summary: '',
-            boardData: []
-        });
-    }
-    const period = match.formations[0];
-    if (!period.goalRecords) period.goalRecords = [];
-    if (!period.substitutions) period.substitutions = [];
-    if (!period.analysisMemos) period.analysisMemos = [];
-    if (!period.cardRecords) period.cardRecords = [];
-    if (!period.eventHistory) period.eventHistory = [];
-    if (!Number.isFinite(Number(period.fieldClockSeconds))) period.fieldClockSeconds = 0;
-    if (typeof period.fieldClockRunning !== 'boolean') period.fieldClockRunning = false;
-    return period;
-}
-
-function getFieldClockSeconds(period) {
-    const base = Number(period?.fieldClockSeconds || 0);
-    if (!period?.fieldClockRunning || !period.fieldClockStartedAt) return base;
-    const elapsed = Math.max(0, Math.floor((Date.now() - new Date(period.fieldClockStartedAt).getTime()) / 1000));
-    return base + elapsed;
-}
-
-function appendFieldEvent(period, event) {
-    if (!period.eventHistory) period.eventHistory = [];
-    const id = (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function')
-        ? globalThis.crypto.randomUUID()
-        : `event-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    const record = {
-        id,
-        recordedAt: new Date().toISOString(),
-        elapsedSeconds: getFieldClockSeconds(period),
-        ...event
-    };
-    period.eventHistory.push(record);
-    return record;
 }
 
 function getPlayerName(playerId) {
@@ -104,26 +49,46 @@ function renderFieldTimeline(match) {
     const list = document.getElementById('field-event-list');
     const count = document.getElementById('field-event-count');
     if (!list || !count) return;
-    const period = ensureFieldPeriod(match);
+    const period = ensureFieldPeriod(match, fieldPeriodIndex);
     const events = [...period.eventHistory].sort((a, b) => (b.elapsedSeconds || 0) - (a.elapsedSeconds || 0) || String(b.recordedAt || '').localeCompare(String(a.recordedAt || '')));
     count.textContent = `${events.length}件`;
     if (events.length === 0) {
         list.innerHTML = '<li class="field-event-empty">記録はまだありません</li>';
         return;
     }
+    const canEdit = state.currentUserRole === 'coach';
     list.innerHTML = events.slice(0, 8).map(event => `
         <li class="field-event-item field-event-${escapeHtml(event.type || 'other')}">
             <time>${formatSeconds(event.elapsedSeconds || 0)}</time>
             <i class="fa-solid ${getFieldEventIcon(event)}" aria-hidden="true"></i>
             <span>${escapeHtml(getFieldEventLabel(event))}</span>
+            ${canEdit ? `<button type="button" class="btn field-event-delete" data-field-event-id="${escapeHtml(event.id)}" aria-label="${escapeHtml(getFieldEventLabel(event))}を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>` : ''}
         </li>`).join('');
+    if (canEdit) {
+        list.querySelectorAll('[data-field-event-id]').forEach(button => {
+            button.onclick = () => deleteFieldEvent(match, button.dataset.fieldEventId);
+        });
+    }
+}
+
+async function deleteFieldEvent(match, eventId) {
+    const period = ensureFieldPeriod(match, fieldPeriodIndex);
+    const event = period.eventHistory.find(item => item.id === eventId);
+    if (!event) return;
+    const proceed = await showCustomConfirm(`「${getFieldEventLabel(event)}」を削除しますか？`, '試合ログを訂正', { okText: '削除する', type: 'danger' });
+    if (!proceed) return;
+    removeFieldEvent(period, eventId);
+    recalculateMatchResult(match);
+    await saveData();
+    refreshFieldCompanion(match);
+    showToast('試合ログを削除しました');
 }
 
 function renderFieldClock(match) {
     const timer = document.getElementById('field-match-timer');
     const button = document.getElementById('btn-field-timer-toggle');
     if (!timer || !button) return;
-    const period = ensureFieldPeriod(match);
+    const period = ensureFieldPeriod(match, fieldPeriodIndex);
     const running = period.fieldClockRunning;
     timer.textContent = formatSeconds(getFieldClockSeconds(period));
     button.textContent = running ? '停止' : '開始';
@@ -132,33 +97,30 @@ function renderFieldClock(match) {
 }
 
 function toggleFieldClock(match) {
-    const period = ensureFieldPeriod(match);
-    if (period.fieldClockRunning) {
-        period.fieldClockSeconds = getFieldClockSeconds(period);
-        period.fieldClockRunning = false;
-        period.fieldClockStartedAt = null;
-        if (fieldTimerInterval) clearInterval(fieldTimerInterval);
-        fieldTimerInterval = null;
-        showToast('試合時計を停止しました');
-    } else {
-        period.fieldClockRunning = true;
-        period.fieldClockStartedAt = new Date().toISOString();
-        if (fieldTimerInterval) clearInterval(fieldTimerInterval);
-        fieldTimerInterval = setInterval(() => renderFieldClock(match), 1000);
-        showToast('試合時計を開始しました');
-    }
+    const period = ensureFieldPeriod(match, fieldPeriodIndex);
+    const running = !period.fieldClockRunning;
+    setFieldClockRunning(period, running);
+    if (fieldTimerInterval) clearInterval(fieldTimerInterval);
+    fieldTimerInterval = running ? setInterval(() => renderFieldClock(match), 1000) : null;
     saveData();
     renderFieldClock(match);
+    showToast(running ? '試合時計を開始しました' : '試合時計を停止しました');
 }
 
 function renderFieldNetworkStatus() {
     const status = document.getElementById('field-network-status');
     if (!status) return;
-    const online = navigator.onLine !== false;
-    status.classList.toggle('is-offline', !online);
-    status.innerHTML = online
-        ? '<i class="fa-solid fa-wifi" aria-hidden="true"></i> 保存済み'
-        : '<i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> オフライン：端末に保存';
+    const syncStatus = navigator.onLine === false ? 'offline' : (window.__coachMgrSyncStatus || 'local');
+    const labels = {
+        local: '<i class="fa-solid fa-hard-drive" aria-hidden="true"></i> 端末に保存済み',
+        syncing: '<i class="fa-solid fa-rotate fa-spin" aria-hidden="true"></i> クラウド同期中',
+        success: '<i class="fa-solid fa-cloud-check" aria-hidden="true"></i> クラウド同期済み',
+        offline: '<i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> オフライン：端末に保存',
+        conflict: '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 同期の確認が必要です',
+        error: '<i class="fa-solid fa-cloud-exclamation" aria-hidden="true"></i> 同期に失敗しました'
+    };
+    status.classList.toggle('is-offline', syncStatus === 'offline' || syncStatus === 'error' || syncStatus === 'conflict');
+    status.innerHTML = labels[syncStatus] || labels.local;
 }
 
 function initFieldNetworkStatus() {
@@ -169,7 +131,17 @@ function initFieldNetworkStatus() {
     window.addEventListener('offline', renderFieldNetworkStatus);
 }
 
+function renderFieldPeriodSelector(match) {
+    const select = document.getElementById('field-period-select');
+    if (!select) return;
+    if (!match.formations || match.formations.length === 0) ensureFieldPeriod(match, 0);
+    fieldPeriodIndex = Math.max(0, Math.min(fieldPeriodIndex, match.formations.length - 1));
+    select.innerHTML = match.formations.map((period, index) => `<option value="${index}">${escapeHtml(period.name || `${index + 1}本目`)}</option>`).join('');
+    select.value = String(fieldPeriodIndex);
+}
+
 function refreshFieldCompanion(match) {
+    renderFieldPeriodSelector(match);
     renderFieldClock(match);
     renderFieldTimeline(match);
     renderFieldNetworkStatus();
@@ -250,7 +222,7 @@ function renderFieldQuickAction(matchId, type) {
             };
         });
         document.getElementById('btn-field-quick-submit').onclick = () => {
-            const period = ensureFieldPeriod(match);
+            const period = ensureFieldPeriod(match, fieldPeriodIndex);
             const previous = JSON.parse(JSON.stringify(period));
             const scorerId = parseInt(document.getElementById('field-score-player-id').value, 10) || null;
             period.scoreUs = (period.scoreUs || 0) + 1;
@@ -260,7 +232,7 @@ function renderFieldQuickAction(matchId, type) {
             saveData();
             closeFieldQuickAction();
             refreshFieldCompanion(match);
-            showFieldUndo(match.id, 0, previous, '得点');
+            showFieldUndo(match.id, fieldPeriodIndex, previous, '得点');
             showToast('得点を記録しました');
         };
     } else if (type === 'concede') {
@@ -269,7 +241,7 @@ function renderFieldQuickAction(matchId, type) {
             <p class="field-quick-description">現在のスコアに失点を1点追加します。誤操作時は10秒以内に取り消せます。</p>
             <button type="button" class="btn btn-danger field-quick-submit" id="btn-field-quick-submit"><i class="fa-solid fa-arrow-down"></i> 失点を記録する</button>`;
         document.getElementById('btn-field-quick-submit').onclick = () => {
-            const period = ensureFieldPeriod(match);
+            const period = ensureFieldPeriod(match, fieldPeriodIndex);
             const previous = JSON.parse(JSON.stringify(period));
             period.scoreThem = (period.scoreThem || 0) + 1;
             appendFieldEvent(period, { type: 'concede' });
@@ -277,7 +249,7 @@ function renderFieldQuickAction(matchId, type) {
             saveData();
             closeFieldQuickAction();
             refreshFieldCompanion(match);
-            showFieldUndo(match.id, 0, previous, '失点');
+            showFieldUndo(match.id, fieldPeriodIndex, previous, '失点');
             showToast('失点を記録しました');
         };
     } else if (type === 'substitution') {
@@ -295,14 +267,14 @@ function renderFieldQuickAction(matchId, type) {
                 showToast('OUT選手とIN選手を選択してください');
                 return;
             }
-            const period = ensureFieldPeriod(match);
+            const period = ensureFieldPeriod(match, fieldPeriodIndex);
             const previous = JSON.parse(JSON.stringify(period));
             const event = appendFieldEvent(period, { type: 'substitution', playerOutId: outId, playerInId: inId });
             period.substitutions.push({ playerOutId: outId, playerInId: inId, eventId: event.id });
             saveData();
             closeFieldQuickAction();
             refreshFieldCompanion(match);
-            showFieldUndo(match.id, 0, previous, '交代');
+            showFieldUndo(match.id, fieldPeriodIndex, previous, '交代');
             showToast('交代を記録しました');
         };
     } else if (type === 'card') {
@@ -327,7 +299,7 @@ function renderFieldQuickAction(matchId, type) {
             };
         });
         document.getElementById('btn-field-quick-submit').onclick = () => {
-            const period = ensureFieldPeriod(match);
+            const period = ensureFieldPeriod(match, fieldPeriodIndex);
             const previous = JSON.parse(JSON.stringify(period));
             const playerId = parseInt(document.getElementById('field-card-player').value, 10) || null;
             const cardType = document.getElementById('field-card-type').value;
@@ -336,7 +308,7 @@ function renderFieldQuickAction(matchId, type) {
             saveData();
             closeFieldQuickAction();
             refreshFieldCompanion(match);
-            showFieldUndo(match.id, 0, previous, cardType === 'red' ? '退場' : '警告');
+            showFieldUndo(match.id, fieldPeriodIndex, previous, cardType === 'red' ? '退場' : '警告');
             showToast(cardType === 'red' ? '退場を記録しました' : '警告を記録しました');
         };
     } else {
@@ -359,7 +331,7 @@ function renderFieldQuickAction(matchId, type) {
             };
         });
         document.getElementById('btn-field-quick-submit').onclick = () => {
-            const period = ensureFieldPeriod(match);
+            const period = ensureFieldPeriod(match, fieldPeriodIndex);
             const previous = JSON.parse(JSON.stringify(period));
             const tag = document.getElementById('field-note-tag').value;
             const text = document.getElementById('field-note-text').value.trim();
@@ -374,7 +346,7 @@ function renderFieldQuickAction(matchId, type) {
             saveData();
             closeFieldQuickAction();
             refreshFieldCompanion(match);
-            showFieldUndo(match.id, 0, previous, 'メモ');
+            showFieldUndo(match.id, fieldPeriodIndex, previous, 'メモ');
             showToast('メモを記録しました');
         };
     }
@@ -389,6 +361,7 @@ function renderFieldQuickAction(matchId, type) {
 function initFieldCompanionActions(matchId, isCoach) {
     const match = state.matches.find(item => Number(item.id) === Number(matchId));
     if (!match) return;
+    fieldPeriodIndex = Math.max(0, Math.min(fieldPeriodIndex, Math.max(0, (match.formations || []).length - 1)));
     const actions = [
         ['btn-field-score', 'score'],
         ['btn-field-concede', 'concede'],
@@ -406,7 +379,18 @@ function initFieldCompanionActions(matchId, isCoach) {
     if (timerButton) timerButton.onclick = () => {
         if (isCoach) toggleFieldClock(match);
     };
-    const period = ensureFieldPeriod(match);
+    const periodSelect = document.getElementById('field-period-select');
+    if (periodSelect) periodSelect.onchange = () => {
+        const previousPeriod = ensureFieldPeriod(match, fieldPeriodIndex);
+        if (previousPeriod.fieldClockRunning) setFieldClockRunning(previousPeriod, false);
+        fieldPeriodIndex = Number(periodSelect.value) || 0;
+        saveData();
+        if (fieldTimerInterval) clearInterval(fieldTimerInterval);
+        const nextPeriod = ensureFieldPeriod(match, fieldPeriodIndex);
+        fieldTimerInterval = nextPeriod.fieldClockRunning ? setInterval(() => renderFieldClock(match), 1000) : null;
+        refreshFieldCompanion(match);
+    };
+    const period = ensureFieldPeriod(match, fieldPeriodIndex);
     if (fieldTimerInterval) clearInterval(fieldTimerInterval);
     fieldTimerInterval = period.fieldClockRunning ? setInterval(() => renderFieldClock(match), 1000) : null;
     const undoButton = document.getElementById('btn-field-undo');

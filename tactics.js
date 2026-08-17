@@ -1,6 +1,6 @@
 import { state, uiState } from './state.js';
 import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
-import { navigate, openModal, saveData, clearAllMiniPitchIntervals } from './app.js';
+import { navigate, openModal, saveData, clearAllMiniPitchIntervals } from './app-context.js';
 import { drawPitchToCtx } from './drawing.js';
 
 export function initTactics(miniPitchObserver) {

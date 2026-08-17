@@ -32,6 +32,7 @@ function migrateSnapshot(input) {
     });
     source.teamInfo = source.teamInfo && typeof source.teamInfo === 'object' ? source.teamInfo : {};
     source.teamFocus = source.teamFocus && typeof source.teamFocus === 'object' ? source.teamFocus : {};
+    source.syncMeta = source.syncMeta && typeof source.syncMeta === 'object' ? source.syncMeta : {};
 
     // Normalize match periods so eventHistory is always persisted consistently.
     source.matches.forEach(match => {
@@ -70,8 +71,17 @@ export function createStateSnapshot(state) {
         positionsCat2: state.positionsCat2 || [],
         teamInfo: state.teamInfo || {},
         customFormations: state.customFormations || [],
-        teamFocus: state.teamFocus || {}
+        teamFocus: state.teamFocus || {},
+        syncMeta: state.syncMeta || {}
     });
+}
+
+export function createCloudSnapshot(state) {
+    const snapshot = createStateSnapshot(state);
+    if (snapshot.teamInfo) {
+        delete snapshot.teamInfo.gasAuthToken;
+    }
+    return snapshot;
 }
 
 export function createBackupPayload(state) {

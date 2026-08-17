@@ -1,7 +1,7 @@
 // practices.js
 import { state, uiState } from './state.js';
 import { escapeHtml, getNendo, showToast, showCustomConfirm } from './utils.js';
-import { saveData, navigate, openModal, clearAllMiniPitchIntervals } from './app.js';
+import { saveData, navigate, openModal, clearAllMiniPitchIntervals } from './app-context.js';
 import { drawPitchToCtx } from './drawing.js';
 
 export function renderPracticeRoster(selectedPlayerIds = []) {

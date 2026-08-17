@@ -3,7 +3,7 @@ import { state } from './state.js';
 import { escapeHtml, encryptData, showToast, showCustomConfirm } from './utils.js';
 import { createBackupPayload, parseBackupPayload, savePersistedSnapshot, clearPersistedSnapshot } from './repository.js';
 
-import { saveData, syncPushGasCloud, syncPullGasCloud, updateRoleUI, openModal, loadData } from './app.js';
+import { saveData, syncPushGasCloud, syncPullGasCloud, updateRoleUI, openModal, loadData } from './app-context.js';
 
 export function _showExportFallbackModal(jsonStr) {
     const modal = document.getElementById('modal-export-fallback');
@@ -204,7 +204,11 @@ export function initSettings() {
                 applyThemePreset(themePresetInput ? themePresetInput.value : (localStorage.getItem('coachMgrThemePreset') || 'field-green'));
                 document.documentElement.style.setProperty('--primary', state.teamInfo.color || '#13795b');
                 const sidebarTitle = document.querySelector('.sidebar-header h2');
-                if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${state.teamInfo.name}`;
+                if (sidebarTitle) {
+                    const icon = document.createElement('i');
+                    icon.className = 'fa-solid fa-futbol';
+                    sidebarTitle.replaceChildren(icon, document.createTextNode(` ${state.teamInfo.name}`));
+                }
             };
         }
     }
@@ -264,7 +268,6 @@ export function initSettings() {
         btnCopyInviteLink.onclick = () => {
             const urlVal = gasApiInput ? gasApiInput.value.trim() : (state.teamInfo.gasApiUrl || '');
             const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : (state.teamInfo.gasSheetName || '');
-            const authVal = gasAuthInput ? gasAuthInput.value.trim() : (state.teamInfo.gasAuthToken || '');
 
             if (!urlVal) {
                 alert('Web API URL が設定されていません。入力して保存した後に実行してください。');
@@ -275,14 +278,13 @@ export function initSettings() {
             const params = new URLSearchParams();
             params.set('apiUrl', urlVal);
             if (sheetVal) params.set('sheetName', sheetVal);
-            if (authVal) params.set('authToken', authVal);
 
             const inviteUrl = `${baseUrl}?${params.toString()}`;
 
             try {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(inviteUrl).then(() => {
-                        showToast('保護者用設定リンクをクリップボードにコピーしました！LINE等で送付してください。');
+                        showToast('保護者用リンクをコピーしました。認証情報は含まれていません。');
                     });
                 } else {
                     prompt('以下の招待用URLをコピーして保護者に共有してください:', inviteUrl);
