@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.11.0';
-export const RELEASE_DATE = '2026-08-17';
+export const APP_VERSION = 'v1.11.1';
+export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.11.1',
+        date: '2026-08-18',
+        title: '同期設定の即時反映：シート変更後の手動同期を安定化',
+        features: [
+            'GASのURL・シート名・認証トークン・同期方式を変更した直後、端末保存の完了を待ってから手動送受信を開始するよう改善',
+            '設定直後の同期で前のシート設定を参照してエラーになる問題を修正',
+            '手動同期の失敗時も利用者向けのエラー表示と診断記録を維持し、未処理例外を防止'
+        ]
+    },
     {
         version: 'v1.11.0',
         date: '2026-08-18',
