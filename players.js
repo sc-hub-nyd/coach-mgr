@@ -926,16 +926,16 @@ export function renderParticipationGraph() {
         const positionsStr = cat1Positions.join(', ');
 
         return `
-            <div style="background:var(--card-bg); border:1px solid var(--surface-border); border-radius:10px; padding:0.8rem 1rem; display:grid; grid-template-columns: 180px 1fr 120px; gap:1rem; align-items:center; transition:box-shadow 0.2s, transform 0.2s;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 2px 6px rgba(0,0,0,0.04)';" onmouseout="this.style.transform='none';this.style.boxShadow='none';">
-                <div style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;" onclick="openPlayerDetail(${p.id})">
+            <div class="player-participation-row" onclick="openPlayerDetail(${p.id})">
+                <div class="player-participation-player">
                     <span class="heatmap-player-num">${p.number}</span>
-                    <div>
-                        <strong style="font-size:0.9rem; color:var(--text-primary); display:block;">${escapeHtml(p.name)}</strong>
-                        <span style="font-size:0.75rem; color:var(--text-secondary);">${positionsStr || '-'}</span>
+                    <div class="player-participation-player-meta">
+                        <strong>${escapeHtml(p.name)}</strong>
+                        <span>${positionsStr || '-'}</span>
                     </div>
                 </div>
-                <div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.2rem;">
+                <div class="player-participation-metrics">
+                    <div class="player-participation-metric-labels">
                         <span>試合参加: <strong>${p.matchCount}試合 (${p.matchPct}%)</strong></span>
                         <span>30日出席率: <strong>${p.attPct}%</strong></span>
                     </div>
@@ -943,7 +943,7 @@ export function renderParticipationGraph() {
                         <div class="stat-bar-inner" style="width:${p.matchPct}%; background:linear-gradient(90deg, #3b82f6, #9333ea);"></div>
                     </div>
                 </div>
-                <div style="display:flex; gap:0.8rem; justify-content:flex-end; font-size:0.8rem;">
+                <div class="player-participation-stats">
                     <span title="得点"><i class="fa-solid fa-futbol" style="color:var(--primary);"></i> <strong>${p.goals}</strong></span>
                     <span title="アシスト"><i class="fa-solid fa-shoe-prints" style="color:#22c55e; transform:rotate(45deg);"></i> <strong>${p.assists}</strong></span>
                 </div>
@@ -952,11 +952,11 @@ export function renderParticipationGraph() {
     }).join('');
 
     container.innerHTML = `
-        <div class="card" style="padding:1.5rem; margin-bottom:1.5rem;">
-            <h3 style="margin-top:0; margin-bottom:1rem; font-size:1.1rem; display:flex; align-items:center; gap:0.5rem;">
+            <div class="card c-card player-participation-panel">
+            <h3 class="player-participation-title">
                 <i class="fa-solid fa-chart-column" style="color:#9333ea;"></i> 試合出場機会＆スタッツ比較
             </h3>
-            <div style="display:flex; flex-direction:column; gap:0.6rem;">
+            <div class="player-participation-list">
                 ${rowsHTML}
             </div>
         </div>
