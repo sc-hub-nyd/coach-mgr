@@ -16,6 +16,7 @@ let periodSideClickOutsideHandler = null;
 let periodSideKeyDownHandler = null;
 let fieldUndoState = null;
 let fieldUndoTimer = null;
+let fieldTimerInterval = null;
 
 function cleanupPeriodSideEvents() {
 
@@ -40,6 +41,10 @@ function ensureFieldPeriod(match) {
             videoUrls: [],
             lineup: [],
             analysisMemos: [],
+            cardRecords: [],
+            fieldClockSeconds: 0,
+            fieldClockRunning: false,
+            fieldClockStartedAt: null,
             summary: '',
             boardData: []
         });
@@ -48,8 +53,18 @@ function ensureFieldPeriod(match) {
     if (!period.goalRecords) period.goalRecords = [];
     if (!period.substitutions) period.substitutions = [];
     if (!period.analysisMemos) period.analysisMemos = [];
+    if (!period.cardRecords) period.cardRecords = [];
     if (!period.eventHistory) period.eventHistory = [];
+    if (!Number.isFinite(Number(period.fieldClockSeconds))) period.fieldClockSeconds = 0;
+    if (typeof period.fieldClockRunning !== 'boolean') period.fieldClockRunning = false;
     return period;
+}
+
+function getFieldClockSeconds(period) {
+    const base = Number(period?.fieldClockSeconds || 0);
+    if (!period?.fieldClockRunning || !period.fieldClockStartedAt) return base;
+    const elapsed = Math.max(0, Math.floor((Date.now() - new Date(period.fieldClockStartedAt).getTime()) / 1000));
+    return base + elapsed;
 }
 
 function appendFieldEvent(period, event) {
@@ -57,9 +72,118 @@ function appendFieldEvent(period, event) {
     const id = (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function')
         ? globalThis.crypto.randomUUID()
         : `event-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    const record = { id, recordedAt: new Date().toISOString(), ...event };
+    const record = {
+        id,
+        recordedAt: new Date().toISOString(),
+        elapsedSeconds: getFieldClockSeconds(period),
+        ...event
+    };
     period.eventHistory.push(record);
     return record;
+}
+
+function getPlayerName(playerId) {
+    const player = (state.players || []).find(item => Number(item.id) === Number(playerId));
+    return player ? player.name : '選手未指定';
+}
+
+function getFieldEventLabel(event) {
+    if (event.type === 'score') return `${event.scorerId ? getPlayerName(event.scorerId) : 'チーム'}が得点`;
+    if (event.type === 'concede') return '失点';
+    if (event.type === 'substitution') return `${getPlayerName(event.playerOutId)} → ${getPlayerName(event.playerInId)} に交代`;
+    if (event.type === 'card') return `${getPlayerName(event.playerId)}に${event.cardType === 'red' ? '退場' : '警告'}`;
+    if (event.type === 'memo') return event.text ? `${event.tag}：${event.text}` : `${event.tag}を記録`;
+    return '試合イベントを記録';
+}
+
+function getFieldEventIcon(event) {
+    return ({ score: 'fa-futbol', concede: 'fa-arrow-down', substitution: 'fa-arrows-rotate', card: 'fa-square', memo: 'fa-pen' })[event.type] || 'fa-circle';
+}
+
+function renderFieldTimeline(match) {
+    const list = document.getElementById('field-event-list');
+    const count = document.getElementById('field-event-count');
+    if (!list || !count) return;
+    const period = ensureFieldPeriod(match);
+    const events = [...period.eventHistory].sort((a, b) => (b.elapsedSeconds || 0) - (a.elapsedSeconds || 0) || String(b.recordedAt || '').localeCompare(String(a.recordedAt || '')));
+    count.textContent = `${events.length}件`;
+    if (events.length === 0) {
+        list.innerHTML = '<li class="field-event-empty">記録はまだありません</li>';
+        return;
+    }
+    list.innerHTML = events.slice(0, 8).map(event => `
+        <li class="field-event-item field-event-${escapeHtml(event.type || 'other')}">
+            <time>${formatSeconds(event.elapsedSeconds || 0)}</time>
+            <i class="fa-solid ${getFieldEventIcon(event)}" aria-hidden="true"></i>
+            <span>${escapeHtml(getFieldEventLabel(event))}</span>
+        </li>`).join('');
+}
+
+function renderFieldClock(match) {
+    const timer = document.getElementById('field-match-timer');
+    const button = document.getElementById('btn-field-timer-toggle');
+    if (!timer || !button) return;
+    const period = ensureFieldPeriod(match);
+    const running = period.fieldClockRunning;
+    timer.textContent = formatSeconds(getFieldClockSeconds(period));
+    button.textContent = running ? '停止' : '開始';
+    button.setAttribute('aria-label', running ? '試合時計を停止' : '試合時計を開始');
+    button.classList.toggle('is-running', running);
+}
+
+function toggleFieldClock(match) {
+    const period = ensureFieldPeriod(match);
+    if (period.fieldClockRunning) {
+        period.fieldClockSeconds = getFieldClockSeconds(period);
+        period.fieldClockRunning = false;
+        period.fieldClockStartedAt = null;
+        if (fieldTimerInterval) clearInterval(fieldTimerInterval);
+        fieldTimerInterval = null;
+        showToast('試合時計を停止しました');
+    } else {
+        period.fieldClockRunning = true;
+        period.fieldClockStartedAt = new Date().toISOString();
+        if (fieldTimerInterval) clearInterval(fieldTimerInterval);
+        fieldTimerInterval = setInterval(() => renderFieldClock(match), 1000);
+        showToast('試合時計を開始しました');
+    }
+    saveData();
+    renderFieldClock(match);
+}
+
+function renderFieldNetworkStatus() {
+    const status = document.getElementById('field-network-status');
+    if (!status) return;
+    const online = navigator.onLine !== false;
+    status.classList.toggle('is-offline', !online);
+    status.innerHTML = online
+        ? '<i class="fa-solid fa-wifi" aria-hidden="true"></i> 保存済み'
+        : '<i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> オフライン：端末に保存';
+}
+
+function initFieldNetworkStatus() {
+    renderFieldNetworkStatus();
+    if (window.__fieldNetworkStatusBound) return;
+    window.__fieldNetworkStatusBound = true;
+    window.addEventListener('online', renderFieldNetworkStatus);
+    window.addEventListener('offline', renderFieldNetworkStatus);
+}
+
+function refreshFieldCompanion(match) {
+    renderFieldClock(match);
+    renderFieldTimeline(match);
+    renderFieldNetworkStatus();
+    const scoreBox = document.getElementById('match-detail-score-box');
+    if (scoreBox) {
+        scoreBox.innerHTML = `
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+                ${renderMatchScoreHeaderBadge(match)}
+                <button type="button" class="btn btn-secondary btn-sm" onclick="copyMatchShareText(${match.id})" title="LINE共有用テキストをコピー" style="padding:0.35rem 0.6rem; font-size:0.8rem;">
+                    <i class="fa-solid fa-share-nodes" style="color:var(--primary);"></i> 共有
+                </button>
+            </div>`;
+    }
+    renderPeriodGrid(match);
 }
 
 function closeFieldQuickAction() {
@@ -91,6 +215,7 @@ function undoFieldAction() {
         match.formations[periodIndex] = previous;
         recalculateMatchResult(match);
         saveData();
+        refreshFieldCompanion(match);
         showToast('直前の記録を取り消しました');
     }
     fieldUndoState = null;
@@ -134,8 +259,26 @@ function renderFieldQuickAction(matchId, type) {
             recalculateMatchResult(match);
             saveData();
             closeFieldQuickAction();
+            refreshFieldCompanion(match);
             showFieldUndo(match.id, 0, previous, '得点');
             showToast('得点を記録しました');
+        };
+    } else if (type === 'concede') {
+        title.textContent = '失点を記録';
+        content.innerHTML = `
+            <p class="field-quick-description">現在のスコアに失点を1点追加します。誤操作時は10秒以内に取り消せます。</p>
+            <button type="button" class="btn btn-danger field-quick-submit" id="btn-field-quick-submit"><i class="fa-solid fa-arrow-down"></i> 失点を記録する</button>`;
+        document.getElementById('btn-field-quick-submit').onclick = () => {
+            const period = ensureFieldPeriod(match);
+            const previous = JSON.parse(JSON.stringify(period));
+            period.scoreThem = (period.scoreThem || 0) + 1;
+            appendFieldEvent(period, { type: 'concede' });
+            recalculateMatchResult(match);
+            saveData();
+            closeFieldQuickAction();
+            refreshFieldCompanion(match);
+            showFieldUndo(match.id, 0, previous, '失点');
+            showToast('失点を記録しました');
         };
     } else if (type === 'substitution') {
         title.textContent = '交代を記録';
@@ -158,8 +301,43 @@ function renderFieldQuickAction(matchId, type) {
             period.substitutions.push({ playerOutId: outId, playerInId: inId, eventId: event.id });
             saveData();
             closeFieldQuickAction();
+            refreshFieldCompanion(match);
             showFieldUndo(match.id, 0, previous, '交代');
             showToast('交代を記録しました');
+        };
+    } else if (type === 'card') {
+        title.textContent = '警告・退場を記録';
+        content.innerHTML = `
+            <label class="field-quick-label" for="field-card-player">対象選手（任意）</label>
+            <select id="field-card-player" class="form-control field-quick-select"><option value="">選手を選択しない</option>${playerOptions}</select>
+            <span class="field-quick-label">種類</span>
+            <div class="field-quick-grid" id="field-card-types">
+                <button type="button" class="btn btn-primary is-selected field-quick-option" data-card-type="yellow"><span><strong>警告</strong><small>イエローカード</small></span><i class="fa-regular fa-square"></i></button>
+                <button type="button" class="btn btn-secondary field-quick-option" data-card-type="red"><span><strong>退場</strong><small>レッドカード</small></span><i class="fa-solid fa-square"></i></button>
+            </div>
+            <input type="hidden" id="field-card-type" value="yellow">
+            <button type="button" class="btn btn-primary field-quick-submit" id="btn-field-quick-submit"><i class="fa-regular fa-square"></i> 記録する</button>`;
+        content.querySelectorAll('[data-card-type]').forEach(button => {
+            button.onclick = () => {
+                content.querySelectorAll('[data-card-type]').forEach(item => item.classList.remove('is-selected', 'btn-primary'));
+                content.querySelectorAll('[data-card-type]').forEach(item => item.classList.add('btn-secondary'));
+                button.classList.add('is-selected', 'btn-primary');
+                button.classList.remove('btn-secondary');
+                document.getElementById('field-card-type').value = button.dataset.cardType;
+            };
+        });
+        document.getElementById('btn-field-quick-submit').onclick = () => {
+            const period = ensureFieldPeriod(match);
+            const previous = JSON.parse(JSON.stringify(period));
+            const playerId = parseInt(document.getElementById('field-card-player').value, 10) || null;
+            const cardType = document.getElementById('field-card-type').value;
+            const event = appendFieldEvent(period, { type: 'card', playerId, cardType });
+            period.cardRecords.push({ playerId, cardType, eventId: event.id, recordedAt: event.recordedAt });
+            saveData();
+            closeFieldQuickAction();
+            refreshFieldCompanion(match);
+            showFieldUndo(match.id, 0, previous, cardType === 'red' ? '退場' : '警告');
+            showToast(cardType === 'red' ? '退場を記録しました' : '警告を記録しました');
         };
     } else {
         title.textContent = 'メモを記録';
@@ -195,6 +373,7 @@ function renderFieldQuickAction(matchId, type) {
             });
             saveData();
             closeFieldQuickAction();
+            refreshFieldCompanion(match);
             showFieldUndo(match.id, 0, previous, 'メモ');
             showToast('メモを記録しました');
         };
@@ -208,15 +387,32 @@ function renderFieldQuickAction(matchId, type) {
 }
 
 function initFieldCompanionActions(matchId, isCoach) {
-    const actions = [['btn-field-score', 'score'], ['btn-field-substitution', 'substitution'], ['btn-field-note', 'note']];
+    const match = state.matches.find(item => Number(item.id) === Number(matchId));
+    if (!match) return;
+    const actions = [
+        ['btn-field-score', 'score'],
+        ['btn-field-concede', 'concede'],
+        ['btn-field-substitution', 'substitution'],
+        ['btn-field-card', 'card'],
+        ['btn-field-note', 'note']
+    ];
     actions.forEach(([id, type]) => {
         const button = document.getElementById(id);
         if (button) button.onclick = () => {
             if (isCoach) renderFieldQuickAction(matchId, type);
         };
     });
+    const timerButton = document.getElementById('btn-field-timer-toggle');
+    if (timerButton) timerButton.onclick = () => {
+        if (isCoach) toggleFieldClock(match);
+    };
+    const period = ensureFieldPeriod(match);
+    if (fieldTimerInterval) clearInterval(fieldTimerInterval);
+    fieldTimerInterval = period.fieldClockRunning ? setInterval(() => renderFieldClock(match), 1000) : null;
     const undoButton = document.getElementById('btn-field-undo');
     if (undoButton) undoButton.onclick = undoFieldAction;
+    initFieldNetworkStatus();
+    refreshFieldCompanion(match);
 }
 
 // YouTube URLから11桁のIDを抽出

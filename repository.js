@@ -42,7 +42,11 @@ function migrateSnapshot(input) {
             if (!Array.isArray(period.goalRecords)) period.goalRecords = [];
             if (!Array.isArray(period.substitutions)) period.substitutions = [];
             if (!Array.isArray(period.analysisMemos)) period.analysisMemos = [];
+            if (!Array.isArray(period.cardRecords)) period.cardRecords = [];
             if (!Array.isArray(period.eventHistory)) period.eventHistory = [];
+            if (!Number.isFinite(Number(period.fieldClockSeconds))) period.fieldClockSeconds = 0;
+            if (typeof period.fieldClockRunning !== 'boolean') period.fieldClockRunning = false;
+            if (!period.fieldClockStartedAt) period.fieldClockStartedAt = null;
         });
     });
 
