@@ -1,0 +1,53 @@
+name: Contract tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contract-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract-tests:
+    name: Contract and release smoke tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          check-latest: true
+
+      - name: Check whitespace errors
+        run: git diff --check HEAD^ HEAD
+
+      - name: Run contract tests
+        run: node tests/run-contract-tests.mjs
+
+      - name: Check JavaScript syntax
+        run: |
+          find . -maxdepth 1 -name '*.js' -print0 | xargs -0 -n1 node --check
+
+      - name: Publish test summary
+        if: always()
+        run: |
+          {
+            echo '## CoachMgr contract tests'
+            echo ''
+            echo '- Node.js: `22`'
+            echo '- Scope: P4–P21 contract tests and PWA release smoke checks'
+            echo '- Result: see the job log above'
+          } >> "$GITHUB_STEP_SUMMARY"

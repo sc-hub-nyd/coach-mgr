@@ -5,7 +5,7 @@ import { saveData, navigate, openModal } from './app-context.js';
 import { openPlayerDetail } from './players.js';
 import { drawPitchToCtx } from './drawing.js';
 import { registerListener, cleanupScope } from './event-manager.js';
-import { ensureFieldPeriod, getFieldClockSeconds, appendFieldEvent, removeFieldEvent, setFieldClockRunning } from './field-companion-service.js';
+import { ensureFieldPeriod, getFieldClockSeconds, appendFieldEvent, removeFieldEvent, setFieldClockRunning, initializeFieldRoster, getCurrentFieldRoster, getFieldPlayingSeconds, recordFieldSubstitution, recordFieldPositionChange } from './field-companion-service.js';
 import { ensureAttendance, setAttendanceStatus, getAttendanceSummary } from './team-operations-service.js';
 import { setFieldSessionActive, bindFieldSessionVisibility, triggerFieldHaptic } from './field-session-service.js';
 
@@ -36,15 +36,61 @@ function getPlayerName(playerId) {
 
 function getFieldEventLabel(event) {
     if (event.type === 'score') return `${event.scorerId ? getPlayerName(event.scorerId) : 'チーム'}が得点`;
-    if (event.type === 'concede') return '失点';
+    if (event.type === 'concede') return event.opponentDetail ? `失点（${event.opponentDetail}）` : '失点';
     if (event.type === 'substitution') return `${getPlayerName(event.playerOutId)} → ${getPlayerName(event.playerInId)} に交代`;
     if (event.type === 'card') return `${getPlayerName(event.playerId)}に${event.cardType === 'red' ? '退場' : '警告'}`;
     if (event.type === 'memo') return event.text ? `${event.tag}：${event.text}` : `${event.tag}を記録`;
+    if (event.type === 'position') return `${getPlayerName(event.playerId)}を${event.position || '配置'}へ変更`;
     return '試合イベントを記録';
 }
 
 function getFieldEventIcon(event) {
-    return ({ score: 'fa-futbol', concede: 'fa-arrow-down', substitution: 'fa-arrows-rotate', card: 'fa-square', memo: 'fa-pen' })[event.type] || 'fa-circle';
+    return ({ score: 'fa-futbol', concede: 'fa-arrow-down', substitution: 'fa-arrows-rotate', position: 'fa-people-arrows-left-right', card: 'fa-square', memo: 'fa-pen' })[event.type] || 'fa-circle';
+}
+
+function getFieldPlayers() {
+    return [...(state.players || [])].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
+}
+
+function getFieldPositionLabel(period, playerId) {
+    const changes = (period.positionChanges || []).filter(change => Number(change.playerId) === Number(playerId));
+    if (changes.length) return changes.sort((a, b) => Number(b.elapsedSeconds || 0) - Number(a.elapsedSeconds || 0))[0].position;
+    const lineup = (period.lineup || []).find(item => Number(typeof item === 'object' ? item.playerId : item) === Number(playerId));
+    return lineup?.position || lineup?.role || '出場中';
+}
+
+function renderFieldLiveScore(match) {
+    const score = document.getElementById('field-live-score');
+    const detail = document.getElementById('field-live-score-detail');
+    if (!score || !detail) return;
+    const periods = match.formations || [];
+    const totals = periods.reduce((result, period) => ({ us: result.us + Number(period.scoreUs || 0), them: result.them + Number(period.scoreThem || 0) }), { us: 0, them: 0 });
+    const current = ensureFieldPeriod(match, fieldPeriodIndex);
+    score.textContent = `${totals.us} - ${totals.them}`;
+    detail.textContent = `${current.name || `${fieldPeriodIndex + 1}本目`}：${Number(current.scoreUs || 0)} - ${Number(current.scoreThem || 0)}`;
+}
+
+function renderFieldRoster(match) {
+    const period = ensureFieldPeriod(match, fieldPeriodIndex);
+    const players = getFieldPlayers();
+    if (!period.initialActivePlayerIds?.length && Array.isArray(match.presentPlayerIds) && match.presentPlayerIds.length) {
+        period.initialActivePlayerIds = [...match.presentPlayerIds];
+    }
+    const roster = initializeFieldRoster(period, players.map(player => player.id));
+    const secondsByPlayer = getFieldPlayingSeconds(period, players.map(player => player.id));
+    const active = document.getElementById('field-active-roster');
+    const bench = document.getElementById('field-bench-roster');
+    const total = document.getElementById('field-roster-playtime');
+    const playerCard = (id, kind) => {
+        const player = players.find(item => Number(item.id) === Number(id));
+        if (!player) return '';
+        const seconds = secondsByPlayer[String(id)] || 0;
+        const position = kind === 'active' ? getFieldPositionLabel(period, id) : 'ベンチ';
+        return `<span class="field-roster-chip is-${kind}"><strong>${escapeHtml(`${player.number || ''} ${player.name}`.trim())}</strong><small>${escapeHtml(position)} ・ ${formatSeconds(seconds)}</small></span>`;
+    };
+    if (active) active.innerHTML = roster.activePlayerIds.length ? roster.activePlayerIds.map(id => playerCard(id, 'active')).join('') : '<span class="field-roster-empty">フォーメーションまたは参加選手を登録すると表示されます</span>';
+    if (bench) bench.innerHTML = roster.benchPlayerIds.length ? roster.benchPlayerIds.map(id => playerCard(id, 'bench')).join('') : '<span class="field-roster-empty">ベンチの選手はいません</span>';
+    if (total) total.textContent = `出場中 ${roster.activePlayerIds.length}名 ・ ベンチ ${roster.benchPlayerIds.length}名`;
 }
 
 function renderFieldTimeline(match) {
@@ -52,8 +98,10 @@ function renderFieldTimeline(match) {
     const count = document.getElementById('field-event-count');
     if (!list || !count) return;
     const period = ensureFieldPeriod(match, fieldPeriodIndex);
-    const events = [...period.eventHistory].sort((a, b) => (b.elapsedSeconds || 0) - (a.elapsedSeconds || 0) || String(b.recordedAt || '').localeCompare(String(a.recordedAt || '')));
-    count.textContent = `${events.length}件`;
+    const filter = document.getElementById('field-event-filter')?.value || 'all';
+    const allEvents = [...period.eventHistory].sort((a, b) => (b.elapsedSeconds || 0) - (a.elapsedSeconds || 0) || String(b.recordedAt || '').localeCompare(String(a.recordedAt || '')));
+    const events = filter === 'all' ? allEvents : allEvents.filter(event => event.type === filter);
+    count.textContent = filter === 'all' ? `${events.length}件` : `${events.length}/${allEvents.length}件`;
     if (events.length === 0) {
         list.innerHTML = '<li class="field-event-empty">記録はまだありません</li>';
         return;
@@ -154,6 +202,8 @@ function refreshFieldCompanion(match) {
     renderFieldPeriodSelector(match);
     renderFieldClock(match);
     renderFieldTimeline(match);
+    renderFieldLiveScore(match);
+    renderFieldRoster(match);
     renderFieldNetworkStatus();
     const scoreBox = document.getElementById('match-detail-score-box');
     if (scoreBox) {
@@ -212,8 +262,12 @@ function renderFieldQuickAction(matchId, type) {
     const content = document.getElementById('field-quick-content');
     const title = document.getElementById('field-quick-title');
     if (!match || !content || !title) return;
-    const players = [...(state.players || [])].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
+    const players = getFieldPlayers();
+    const periodForRoster = ensureFieldPeriod(match, fieldPeriodIndex);
+    const roster = initializeFieldRoster(periodForRoster, players.map(player => player.id));
     const playerOptions = players.map(p => `<option value="${p.id}">${escapeHtml(`${p.number || ''} ${p.name}`.trim())}</option>`).join('');
+    const activeOptions = roster.activePlayerIds.map(id => players.find(player => Number(player.id) === Number(id))).filter(Boolean).map(p => `<option value="${p.id}">${escapeHtml(`${p.number || ''} ${p.name}`.trim())}</option>`).join('');
+    const benchOptions = roster.benchPlayerIds.map(id => players.find(player => Number(player.id) === Number(id))).filter(Boolean).map(p => `<option value="${p.id}">${escapeHtml(`${p.number || ''} ${p.name}`.trim())}</option>`).join('');
     const playerGrid = players.length ? players.map(p => `
         <button type="button" class="btn btn-secondary field-quick-option" data-player-id="${p.id}">
             <span><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.number || '番号なし')}</small></span><i class="fa-solid fa-check"></i>
@@ -251,12 +305,15 @@ function renderFieldQuickAction(matchId, type) {
         title.textContent = '失点を記録';
         content.innerHTML = `
             <p class="field-quick-description">現在のスコアに失点を1点追加します。誤操作時は10秒以内に取り消せます。</p>
+            <label class="field-quick-label" for="field-concede-detail">失点の内訳（任意）</label>
+            <select id="field-concede-detail" class="form-control field-quick-select"><option value="">選択しない</option><option value="オープンプレー">オープンプレー</option><option value="セットプレー">セットプレー</option><option value="PK">PK</option><option value="オウンゴール">オウンゴール</option><option value="その他">その他</option></select>
             <button type="button" class="btn btn-danger field-quick-submit" id="btn-field-quick-submit"><i class="fa-solid fa-arrow-down"></i> 失点を記録する</button>`;
         document.getElementById('btn-field-quick-submit').onclick = () => {
             const period = ensureFieldPeriod(match, fieldPeriodIndex);
             const previous = JSON.parse(JSON.stringify(period));
             period.scoreThem = (period.scoreThem || 0) + 1;
-            appendFieldEvent(period, { type: 'concede' });
+            const opponentDetail = document.getElementById('field-concede-detail').value;
+            appendFieldEvent(period, { type: 'concede', opponentDetail });
             recalculateMatchResult(match);
             saveData();
             closeFieldQuickAction();
@@ -267,10 +324,10 @@ function renderFieldQuickAction(matchId, type) {
     } else if (type === 'substitution') {
         title.textContent = '交代を記録';
         content.innerHTML = `
-            <label class="field-quick-label" for="field-sub-out">OUT選手</label>
-            <select id="field-sub-out" class="form-control field-quick-select"><option value="">選択してください</option>${playerOptions}</select>
-            <label class="field-quick-label" for="field-sub-in">IN選手</label>
-            <select id="field-sub-in" class="form-control field-quick-select"><option value="">選択してください</option>${playerOptions}</select>
+            <label class="field-quick-label" for="field-sub-out">OUT選手（出場中）</label>
+            <select id="field-sub-out" class="form-control field-quick-select"><option value="">選択してください</option>${activeOptions}</select>
+            <label class="field-quick-label" for="field-sub-in">IN選手（ベンチ）</label>
+            <select id="field-sub-in" class="form-control field-quick-select"><option value="">選択してください</option>${benchOptions}</select>
             <button type="button" class="btn btn-primary field-quick-submit" id="btn-field-quick-submit"><i class="fa-solid fa-arrows-rotate"></i> 交代を記録する</button>`;
         document.getElementById('btn-field-quick-submit').onclick = () => {
             const outId = parseInt(document.getElementById('field-sub-out').value, 10) || null;
@@ -281,14 +338,58 @@ function renderFieldQuickAction(matchId, type) {
             }
             const period = ensureFieldPeriod(match, fieldPeriodIndex);
             const previous = JSON.parse(JSON.stringify(period));
-            const event = appendFieldEvent(period, { type: 'substitution', playerOutId: outId, playerInId: inId });
-            period.substitutions.push({ playerOutId: outId, playerInId: inId, eventId: event.id });
+            try {
+                recordFieldSubstitution(period, outId, inId, players.map(player => player.id));
+            } catch (error) {
+                showToast(error.message || '交代を記録できませんでした');
+                return;
+            }
             saveData();
             closeFieldQuickAction();
             refreshFieldCompanion(match);
             showFieldUndo(match.id, fieldPeriodIndex, previous, '交代');
             showToast('交代を記録しました');
         };
+    } else if (type === 'position') {
+        title.textContent = '配置を変更';
+        const positionOptions = [...new Set([...(state.positionsCat2 || []), ...(state.positions || [])])].map(position => `<option value="${escapeHtml(position)}">${escapeHtml(position)}</option>`).join('');
+        content.innerHTML = `
+            <p class="field-quick-description">出場中の選手の配置を記録します。フォーメーション編集に戻らず、試合ログへ時刻付きで残せます。</p>
+            <label class="field-quick-label" for="field-position-player">対象選手（出場中）</label>
+            <select id="field-position-player" class="form-control field-quick-select"><option value="">選択してください</option>${activeOptions}</select>
+            <label class="field-quick-label" for="field-position-value">新しい配置</label>
+            <select id="field-position-value" class="form-control field-quick-select"><option value="">選択してください</option>${positionOptions}</select>
+            <button type="button" class="btn btn-primary field-quick-submit" id="btn-field-quick-submit"><i class="fa-solid fa-people-arrows-left-right"></i> 配置を記録する</button>`;
+        document.getElementById('btn-field-quick-submit').onclick = () => {
+            const playerId = parseInt(document.getElementById('field-position-player').value, 10) || null;
+            const position = document.getElementById('field-position-value').value;
+            if (!playerId || !position) {
+                showToast('対象選手と新しい配置を選択してください');
+                return;
+            }
+            const period = ensureFieldPeriod(match, fieldPeriodIndex);
+            const previous = JSON.parse(JSON.stringify(period));
+            recordFieldPositionChange(period, playerId, position);
+            saveData();
+            closeFieldQuickAction();
+            refreshFieldCompanion(match);
+            showFieldUndo(match.id, fieldPeriodIndex, previous, '配置変更');
+            showToast('配置変更を記録しました');
+        };
+    } else if (type === 'finish') {
+        title.textContent = '試合終了サマリー';
+        const totals = (match.formations || []).reduce((result, period) => ({ us: result.us + Number(period.scoreUs || 0), them: result.them + Number(period.scoreThem || 0) }), { us: 0, them: 0 });
+        const allEvents = (match.formations || []).flatMap(period => period.eventHistory || []);
+        const summaryText = `【試合終了】\n${match.opponent ? `vs ${match.opponent}\n` : ''}結果：${totals.us} - ${totals.them}\n得点：${allEvents.filter(event => event.type === 'score').length}件 / 失点：${allEvents.filter(event => event.type === 'concede').length}件 / 交代：${allEvents.filter(event => event.type === 'substitution').length}件\n記録ピリオド：${(match.formations || []).length}本`;
+        content.innerHTML = `
+            <div class="field-finish-summary"><span class="eyebrow-label">FINAL</span><strong>${totals.us} - ${totals.them}</strong><p>${escapeHtml(match.opponent ? `vs ${match.opponent}` : '対戦相手未設定')}</p><dl><div><dt>得点</dt><dd>${allEvents.filter(event => event.type === 'score').length}</dd></div><div><dt>失点</dt><dd>${allEvents.filter(event => event.type === 'concede').length}</dd></div><div><dt>交代</dt><dd>${allEvents.filter(event => event.type === 'substitution').length}</dd></div></dl></div>
+            <button type="button" class="btn btn-secondary field-quick-submit" id="btn-field-copy-summary"><i class="fa-solid fa-copy"></i> サマリーをコピー</button>
+            <button type="button" class="btn btn-primary field-quick-submit" id="btn-field-close-summary">記録画面へ戻る</button>`;
+        document.getElementById('btn-field-copy-summary').onclick = async () => {
+            try { await navigator.clipboard.writeText(summaryText); showToast('試合終了サマリーをコピーしました'); }
+            catch (_error) { window.prompt('以下をコピーして共有してください。', summaryText); }
+        };
+        document.getElementById('btn-field-close-summary').onclick = closeFieldQuickAction;
     } else if (type === 'card') {
         title.textContent = '警告・退場を記録';
         content.innerHTML = `
@@ -378,6 +479,7 @@ function initFieldCompanionActions(matchId, isCoach) {
         ['btn-field-score', 'score'],
         ['btn-field-concede', 'concede'],
         ['btn-field-substitution', 'substitution'],
+        ['btn-field-position', 'position'],
         ['btn-field-card', 'card'],
         ['btn-field-note', 'note']
     ];
@@ -387,6 +489,22 @@ function initFieldCompanionActions(matchId, isCoach) {
             if (isCoach) renderFieldQuickAction(matchId, type);
         };
     });
+    const finishButton = document.getElementById('btn-field-finish');
+    if (finishButton) finishButton.onclick = async () => {
+        if (!isCoach) return;
+        const activePeriod = ensureFieldPeriod(match, fieldPeriodIndex);
+        const proceed = await showCustomConfirm('現在の時計を停止して、試合終了サマリーを表示します。記録はそのまま編集できます。', '試合を終了しますか？', { okText: 'サマリーを表示', type: 'primary' });
+        if (!proceed) return;
+        if (activePeriod.fieldClockRunning) {
+            setFieldClockRunning(activePeriod, false);
+            if (fieldTimerInterval) clearInterval(fieldTimerInterval);
+            fieldTimerInterval = null;
+            await setFieldSessionActive(false);
+            await saveData();
+        }
+        renderFieldQuickAction(matchId, 'finish');
+        refreshFieldCompanion(match);
+    };
     const timerButton = document.getElementById('btn-field-timer-toggle');
     if (timerButton) timerButton.onclick = () => {
         if (isCoach) toggleFieldClock(match);
@@ -404,6 +522,8 @@ function initFieldCompanionActions(matchId, isCoach) {
         void setFieldSessionActive(isCoach && nextPeriod.fieldClockRunning).then(active => renderFieldSessionStatus(nextPeriod.fieldClockRunning, active));
         refreshFieldCompanion(match);
     };
+    const filter = document.getElementById('field-event-filter');
+    if (filter) filter.onchange = () => renderFieldTimeline(match);
     const period = ensureFieldPeriod(match, fieldPeriodIndex);
     if (fieldTimerInterval) clearInterval(fieldTimerInterval);
     fieldTimerInterval = period.fieldClockRunning ? setInterval(() => renderFieldClock(match), 1000) : null;
@@ -946,6 +1066,7 @@ export function openMatchModal(matchId = null) {
 
             const presentPlayerIds = Array.from(document.querySelectorAll('#match-attendance-roster input[type="checkbox"]:checked')).map(cb => parseInt(cb.value, 10));
 
+            const rsvpDeadline = document.getElementById('match-rsvp-deadline')?.value || '';
             const pkUsInput = document.getElementById('match-pk-us');
             const pkThemInput = document.getElementById('match-pk-them');
             const pkUs = (pkUsInput && pkUsInput.value !== '') ? parseInt(pkUsInput.value, 10) : null;
@@ -959,6 +1080,7 @@ export function openMatchModal(matchId = null) {
                     match.opponent = document.getElementById('match-opponent').value;
                     match.type = document.getElementById('match-type').value;
                     match.tournament = document.getElementById('match-tournament').value;
+                    match.rsvpDeadline = rsvpDeadline;
                     match.pkUs = pkUs;
                     match.pkThem = pkThem;
                     match.result = resultStr;
@@ -977,6 +1099,7 @@ export function openMatchModal(matchId = null) {
                     opponent: document.getElementById('match-opponent').value,
                     type: document.getElementById('match-type').value,
                     tournament: document.getElementById('match-tournament').value,
+                    rsvpDeadline,
                     result: resultStr,
                     pkUs: pkUs,
                     pkThem: pkThem,
@@ -1027,6 +1150,8 @@ export function openMatchModal(matchId = null) {
 
             const oppEl = document.getElementById('match-opponent');
             if (oppEl) oppEl.value = m.opponent;
+            const deadlineEl = document.getElementById('match-rsvp-deadline');
+            if (deadlineEl) deadlineEl.value = m.rsvpDeadline || '';
 
             if (select) select.value = m.type;
 

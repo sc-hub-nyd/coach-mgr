@@ -100,6 +100,7 @@ export function buildEventShareText(event, players = [], kind = '練習') {
         `日付：${event.date || '未定'}`,
         event.location ? `場所：${event.location}` : '',
         kind === '試合' && event.opponent ? `対戦相手：${event.opponent}` : '',
+        event.rsvpDeadline ? `回答期限：${event.rsvpDeadline}` : '',
         `出欠：参加 ${summary.attending}名 / 欠席 ${summary.absent}名 / 未回答 ${summary.pending}名`,
         attendingNames.length ? `参加予定：${attendingNames.join('、')}` : ''
     ];

@@ -3209,6 +3209,10 @@ input[type="checkbox"] {
 }
 .field-network-status.is-offline { color: #b45309; }
 .field-action-hint { margin: 0; }
+.field-live-score { position: sticky; z-index: 4; top: 0.35rem; display: flex; align-items: baseline; justify-content: center; gap: 0.55rem; padding: 0.55rem 0.75rem; color: #fff; background: linear-gradient(110deg, #0f766e, #0f172a); border-radius: 12px; box-shadow: 0 8px 16px rgba(15, 23, 42, 0.16); }
+.field-live-score span { color: #99f6e4; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.1em; }
+.field-live-score strong { font-size: 1.3rem; font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
+.field-live-score small { color: #cbd5e1; font-size: 0.68rem; }
 .field-action-bar {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -3229,6 +3233,30 @@ input[type="checkbox"] {
 .field-action-bar .btn > i { font-size: 1rem; }
 .btn-action-concede { color: #fff; background: #dc2626; border-color: #dc2626; }
 .btn-action-card { color: #713f12; background: #fef3c7; border-color: #facc15; }
+.field-roster { display: grid; gap: 0.55rem; padding: 0.7rem; background: color-mix(in srgb, var(--surface) 94%, var(--primary)); border: 1px solid var(--surface-border); border-radius: 12px; }
+.field-roster-header { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.field-roster-header h3 { margin: 0; font-size: 0.8rem; }
+.field-roster-header span { color: var(--text-secondary); font-size: 0.68rem; }
+.field-roster-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.field-roster-label { display: inline-block; margin-bottom: 0.35rem; font-size: 0.67rem; font-weight: 850; }
+.field-roster-label.is-active { color: #166534; }
+.field-roster-label.is-bench { color: #92400e; }
+.field-roster-list { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.field-roster-chip { display: inline-flex; flex-direction: column; min-width: 5.75rem; padding: 0.38rem 0.45rem; border-radius: 8px; }
+.field-roster-chip.is-active { background: #dcfce7; color: #166534; }
+.field-roster-chip.is-bench { background: #fef3c7; color: #92400e; }
+.field-roster-chip strong { font-size: 0.68rem; }
+.field-roster-chip small, .field-roster-empty { margin-top: 0.08rem; color: color-mix(in srgb, currentColor 76%, var(--text-secondary)); font-size: 0.61rem; }
+.field-event-filter-label { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--text-secondary); font-size: 0.68rem; font-weight: 750; }
+.field-event-filter-label .form-control { width: auto; min-height: 32px; padding: 0.2rem 1.5rem 0.2rem 0.4rem; font-size: 0.7rem; }
+.field-finish-summary { padding: 1rem; text-align: center; background: linear-gradient(145deg, #0f172a, #115e59); border-radius: 14px; }
+.field-finish-summary .eyebrow-label { color: #99f6e4; }
+.field-finish-summary > strong { display: block; margin: 0.25rem 0; color: #fff; font-size: 2rem; font-variant-numeric: tabular-nums; }
+.field-finish-summary p { margin: 0; color: #cbd5e1; font-size: 0.8rem; }
+.field-finish-summary dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; margin: 0.85rem 0 0; }
+.field-finish-summary dl div { padding: 0.45rem; background: rgba(255, 255, 255, 0.1); border-radius: 8px; }
+.field-finish-summary dt { color: #cbd5e1; font-size: 0.64rem; }
+.field-finish-summary dd { margin: 0.12rem 0 0; color: #fff; font-size: 1rem; font-weight: 850; }
 .field-event-timeline { padding-top: 0.25rem; border-top: 1px solid var(--surface-border); }
 .field-event-timeline-header h3 { margin: 0; color: var(--text-primary); font-size: 0.84rem; }
 .field-event-list {
@@ -3278,6 +3306,8 @@ input[type="checkbox"] {
     .field-companion { margin-right: -0.15rem; margin-left: -0.15rem; border-radius: 16px; }
     .field-action-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .field-action-bar .btn { min-height: 60px; }
+    .field-roster-groups { grid-template-columns: 1fr; }
+    .field-event-timeline-header { align-items: flex-start; flex-wrap: wrap; }
 }
 @media (max-width: 390px) {
     .field-companion-status { align-items: flex-start; flex-direction: column; }
@@ -3451,3 +3481,27 @@ input[type="checkbox"] {
 .dash-preflight-actions .btn { min-height: 42px; }
 @media (max-width: 780px) { .dash-preflight-items { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .dash-preflight-header { flex-direction: column; } .dash-preflight-items { grid-template-columns: 1fr; } .dash-preflight-actions { display: grid; grid-template-columns: 1fr 1fr; } .dash-preflight-actions .btn { justify-content: center; padding-inline: 0.6rem; } }
+
+/* P19: 選手成長ノート */
+.player-notebook-summary { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.8rem; padding: 0.85rem; background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 13%, var(--surface)), var(--card-bg)); border: 1px solid var(--surface-border); border-radius: 12px; }
+.player-notebook-summary h3, .player-notebook-form h3 { margin: 0.18rem 0 0; color: var(--text-primary); font-size: 0.92rem; }
+.player-notebook-trends { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.35rem; }
+.player-notebook-trend { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.12rem 0.3rem; min-width: 4.8rem; padding: 0.36rem 0.45rem; background: var(--card-bg); border-radius: 8px; }
+.player-notebook-trend strong { overflow: hidden; color: var(--text-secondary); font-size: 0.62rem; text-overflow: ellipsis; white-space: nowrap; }
+.player-notebook-trend em { grid-row: span 2; font-style: normal; color: var(--text-primary); font-size: 1rem; font-weight: 850; }
+.player-notebook-trend small { font-size: 0.6rem; }
+.player-notebook-trend.is-up small { color: #15803d; }.player-notebook-trend.is-down small { color: #b91c1c; }.player-notebook-trend.is-neutral small { color: var(--text-secondary); }
+.player-notebook-timeline { display: grid; gap: 0.45rem; max-height: 300px; margin-top: 0.85rem; overflow-y: auto; }
+.player-notebook-entry { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: start; gap: 0.55rem; padding: 0.62rem; background: color-mix(in srgb, var(--surface) 96%, var(--primary)); border: 1px solid var(--surface-border); border-radius: 10px; }
+.player-notebook-icon { display: grid; width: 30px; height: 30px; place-items: center; color: var(--primary); background: color-mix(in srgb, var(--primary) 12%, transparent); border-radius: 50%; }
+.player-notebook-entry.is-match .player-notebook-icon { color: #1d4ed8; background: #dbeafe; }.player-notebook-entry.is-practice .player-notebook-icon { color: #15803d; background: #dcfce7; }
+.player-notebook-entry small, .player-notebook-entry strong, .player-notebook-entry p { display: block; }.player-notebook-entry small { color: var(--text-secondary); font-size: 0.65rem; }.player-notebook-entry strong { margin-top: 0.12rem; color: var(--text-primary); font-size: 0.79rem; }.player-notebook-entry p { margin: 0.18rem 0 0; color: var(--text-secondary); font-size: 0.72rem; line-height: 1.45; white-space: pre-wrap; }
+.btn-remove-development-note { min-width: 36px; min-height: 36px; padding: 0.3rem; color: var(--text-secondary); background: transparent; border-color: transparent; }.btn-remove-development-note:hover { color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, transparent); }
+.player-notebook-form { display: grid; gap: 0.65rem; margin-top: 0.85rem; padding: 0.85rem; background: var(--card-bg); border: 1px solid var(--surface-border); border-radius: 12px; }.player-notebook-form > label { display: grid; gap: 0.25rem; color: var(--text-secondary); font-size: 0.72rem; font-weight: 750; }.player-notebook-form-heading { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }.player-notebook-form-heading > label { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--text-secondary); font-size: 0.7rem; }.player-notebook-form-heading .form-control { width: auto; min-height: 34px; font-size: 0.72rem; }
+.player-notebook-ratings { margin: 0; padding: 0.6rem; border: 1px solid var(--surface-border); border-radius: 10px; }.player-notebook-ratings legend { padding: 0 0.3rem; color: var(--text-secondary); font-size: 0.68rem; font-weight: 800; }.player-notebook-ratings > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; }.player-notebook-ratings label { display: grid; gap: 0.2rem; color: var(--text-secondary); font-size: 0.65rem; }.player-notebook-ratings .form-control { min-height: 34px; padding: 0.2rem 1.4rem 0.2rem 0.35rem; font-size: 0.7rem; }
+.player-notebook-empty { margin: 0; padding: 0.85rem; color: var(--text-secondary); text-align: center; background: color-mix(in srgb, var(--surface) 95%, var(--primary)); border-radius: 10px; font-size: 0.75rem; }
+@media (max-width: 620px) { .player-notebook-summary { flex-direction: column; }.player-notebook-trends { justify-content: flex-start; }.player-notebook-ratings > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }.player-notebook-form-heading { align-items: flex-start; flex-direction: column; } }
+
+/* P20: 保護者共有・RSVP管理 */
+.parent-share-body { display: grid; gap: 0.7rem; }.parent-share-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }.parent-share-controls label { display: grid; gap: 0.25rem; color: var(--text-secondary); font-size: 0.72rem; font-weight: 750; }.parent-share-controls .sl-input { width: 100%; min-height: 40px; }.parent-share-status { margin: 0; padding: 0.55rem 0.65rem; color: var(--text-secondary); background: color-mix(in srgb, var(--primary) 7%, var(--surface)); border-radius: 8px; font-size: 0.72rem; line-height: 1.5; }.parent-share-security-note { margin: 0; padding: 0.6rem 0.7rem; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; font-size: 0.7rem; line-height: 1.5; }.parent-share-security-note i { margin-right: 0.2rem; }
+@media (max-width: 560px) { .parent-share-controls { grid-template-columns: 1fr; }.parent-share-body .operations-actions { display: grid; grid-template-columns: 1fr; }.parent-share-body .operations-actions .btn { min-height: 44px; justify-content: center; } }
