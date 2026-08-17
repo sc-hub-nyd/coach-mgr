@@ -48,7 +48,18 @@ function ensureFieldPeriod(match) {
     if (!period.goalRecords) period.goalRecords = [];
     if (!period.substitutions) period.substitutions = [];
     if (!period.analysisMemos) period.analysisMemos = [];
+    if (!period.eventHistory) period.eventHistory = [];
     return period;
+}
+
+function appendFieldEvent(period, event) {
+    if (!period.eventHistory) period.eventHistory = [];
+    const id = (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function')
+        ? globalThis.crypto.randomUUID()
+        : `event-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const record = { id, recordedAt: new Date().toISOString(), ...event };
+    period.eventHistory.push(record);
+    return record;
 }
 
 function closeFieldQuickAction() {
@@ -118,7 +129,8 @@ function renderFieldQuickAction(matchId, type) {
             const previous = JSON.parse(JSON.stringify(period));
             const scorerId = parseInt(document.getElementById('field-score-player-id').value, 10) || null;
             period.scoreUs = (period.scoreUs || 0) + 1;
-            period.goalRecords.push({ scorerId, assistId: null });
+            const event = appendFieldEvent(period, { type: 'score', scorerId });
+            period.goalRecords.push({ scorerId, assistId: null, eventId: event.id });
             recalculateMatchResult(match);
             saveData();
             closeFieldQuickAction();
@@ -142,7 +154,8 @@ function renderFieldQuickAction(matchId, type) {
             }
             const period = ensureFieldPeriod(match);
             const previous = JSON.parse(JSON.stringify(period));
-            period.substitutions.push({ playerOutId: outId, playerInId: inId });
+            const event = appendFieldEvent(period, { type: 'substitution', playerOutId: outId, playerInId: inId });
+            period.substitutions.push({ playerOutId: outId, playerInId: inId, eventId: event.id });
             saveData();
             closeFieldQuickAction();
             showFieldUndo(match.id, 0, previous, '交代');
@@ -170,10 +183,15 @@ function renderFieldQuickAction(matchId, type) {
         document.getElementById('btn-field-quick-submit').onclick = () => {
             const period = ensureFieldPeriod(match);
             const previous = JSON.parse(JSON.stringify(period));
+            const tag = document.getElementById('field-note-tag').value;
+            const text = document.getElementById('field-note-text').value.trim();
+            const event = appendFieldEvent(period, { type: 'memo', tag, text });
             period.analysisMemos.push({
                 time: '00:00',
-                tag: document.getElementById('field-note-tag').value,
-                text: document.getElementById('field-note-text').value.trim()
+                tag,
+                text,
+                eventId: event.id,
+                recordedAt: event.recordedAt
             });
             saveData();
             closeFieldQuickAction();

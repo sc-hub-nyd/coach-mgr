@@ -1,7 +1,7 @@
 // sw.js - Service Worker for CoachMgr PWA
 // Cache-First strategy for offline support
 
-const CACHE_VERSION = 'coachmgr-v43';
+const CACHE_VERSION = 'coachmgr-v44';
 
 // Core app files to pre-cache on install
 const PRECACHE_URLS = [
@@ -23,6 +23,8 @@ const PRECACHE_URLS = [
   './state.js',
   './tactics.js',
   './utils.js',
+  './repository.js',
+  './sync-service.js',
   './base.css',
   './CSS/main.css',
   './CSS/base.css',

@@ -1,6 +1,8 @@
 // settings.js
 import { state } from './state.js';
-import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
+import { escapeHtml, encryptData, showToast, showCustomConfirm } from './utils.js';
+import { createBackupPayload, parseBackupPayload, savePersistedSnapshot, clearPersistedSnapshot } from './repository.js';
+
 import { saveData, syncPushGasCloud, syncPullGasCloud, updateRoleUI, openModal, loadData } from './app.js';
 
 export function _showExportFallbackModal(jsonStr) {
@@ -54,23 +56,7 @@ export function initData() {
     const btnExportView = document.getElementById('btn-data-view-export');
 
     const handleExport = () => {
-        const dataStr = JSON.stringify({
-            matches: state.matches,
-            practices: state.practices,
-            players: state.players,
-            menuLibrary: state.menuLibrary,
-            tactics: state.tactics,
-            matchTypes: state.matchTypes,
-            menuCategories: state.menuCategories,
-            tacticsCategories: state.tacticsCategories,
-            analysisTags: state.analysisTags,
-            skillMetrics: state.skillMetrics,
-            positions: state.positions,
-            positionsCat2: state.positionsCat2,
-            teamInfo: state.teamInfo,
-            customFormations: state.customFormations,
-            teamFocus: state.teamFocus || {}
-        }, null, 2);
+        const dataStr = JSON.stringify(createBackupPayload(state), null, 2);
 
         const now = new Date();
         const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
@@ -111,12 +97,9 @@ export function initData() {
         const reader = new FileReader();
         reader.onload = async (evt) => {
             try {
-                const parsed = JSON.parse(evt.target.result);
-                if (!parsed.matches && !parsed.players && !parsed.practices) {
-                    alert('有効なデータファイルではありません。エクスポートしたJSONファイルを選択してください。');
-                    return;
-                }
-                await localforage.setItem('coachMgrData', JSON.stringify(parsed));
+                                const parsed = parseBackupPayload(evt.target.result);
+                await savePersistedSnapshot(parsed, { encryptData });
+
                 await loadData();
                 document.documentElement.style.setProperty('--primary', state.teamInfo.color);
                 const sidebarTitle = document.querySelector('.sidebar-header h2');
@@ -157,7 +140,7 @@ export function initData() {
             state.menuLibrary = [];
             state.tactics = [];
 
-            await localforage.removeItem('coachMgrData');
+            await clearPersistedSnapshot();
 
             showToast('すべての入力データをクリアしました。');
             setTimeout(() => location.reload(), 1000);

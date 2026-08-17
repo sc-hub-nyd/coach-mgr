@@ -10,6 +10,8 @@ import { initSettings, initData, applyThemePreset } from './settings.js';
 import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
 import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
+import { loadPersistedSnapshot, savePersistedSnapshot, createStateSnapshot } from './repository.js';
+import { pushCloud, pullCloud } from './sync-service.js';
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
     const action = actionLabel && actionId
@@ -95,27 +97,8 @@ export function clearAllMiniPitchIntervals() {
 
 export async function loadData() {
     try {
-        let saved = await localforage.getItem('coachMgrData');
-        if (!saved) {
-            const oldSaved = localStorage.getItem('coachMgrData');
-            if (oldSaved) {
-                saved = oldSaved;
-                await localforage.setItem('coachMgrData', saved);
-                localStorage.removeItem('coachMgrData');
-            }
-        }
-
-        if (saved) {
-            if (typeof saved === 'string' && saved.startsWith('enc:')) {
-                saved = decryptData(saved.slice(4));
-            }
-            let parsed = null;
-            try {
-                parsed = (typeof saved === 'string') ? JSON.parse(saved) : saved;
-            } catch (e) {
-                console.error('Failed to parse saved data:', e);
-            }
-            if (parsed) {
+        const parsed = await loadPersistedSnapshot({ decryptData });
+        if (parsed) {
                 state.matches = parsed.matches || [];
                 state.practices = parsed.practices || [];
                 state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
@@ -164,7 +147,6 @@ export async function loadData() {
                 state.customFormations = parsed.customFormations || state.customFormations;
                 state.teamFocus = parsed.teamFocus || {}; // ★【追加】チーム強化テーマの読み込み
             }
-        }
         // セッション中にロールが未設定の場合のみ初期値（保護者モード）をセット
         if (!state.currentUserRole) {
             state.currentUserRole = 'parent';
@@ -179,26 +161,10 @@ export function saveData() {
         state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
         state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
 
-        const jsonStr = JSON.stringify({
-            matches: state.matches,
-            practices: state.practices,
-            players: state.players,
-            menuLibrary: state.menuLibrary,
-            tactics: state.tactics,
-            matchTypes: state.matchTypes,
-            menuCategories: state.menuCategories,
-            tacticsCategories: state.tacticsCategories,
-            analysisTags: state.analysisTags,
-            skillMetrics: state.skillMetrics,
-            positions: state.positions,
-            positionsCat2: state.positionsCat2,
-            teamInfo: state.teamInfo,
-            customFormations: state.customFormations,
-            teamFocus: state.teamFocus || {} // ★【追加】チーム強化テーマの保存
-        });
+        const snapshot = createStateSnapshot(state);
 
         try {
-            await localforage.setItem('coachMgrData', 'enc:' + encryptData(jsonStr));
+            await savePersistedSnapshot(snapshot, { encryptData });
             if (state.currentUserRole === 'coach' && state.teamInfo && state.teamInfo.gasApiUrl) {
                 void syncPushGasCloud(true).catch(error => {
                     console.error('Background sync failed after save:', error);
@@ -247,54 +213,19 @@ export function syncPushGasCloud(isSilent = false) {
         if (!isSilent) alert('Google Apps Script の Web API URL が設定されていません。');
         return Promise.reject('No URL');
     }
-
-    const payload = {
-        action: 'push',
-        sheetName: state.teamInfo.gasSheetName || '',
-        authToken: state.teamInfo.gasAuthToken || '',
-        data: {
-            matches: state.matches,
-            practices: state.practices,
-            players: state.players,
-            menuLibrary: state.menuLibrary,
-            tactics: state.tactics || [],
-            matchTypes: state.matchTypes,
-            menuCategories: state.menuCategories,
-            tacticsCategories: state.tacticsCategories,
-            analysisTags: state.analysisTags, // ★【追加】動画分析タグ
-            skillMetrics: state.skillMetrics,
-            positions: state.positions,
-            positionsCat2: state.positionsCat2,
-            teamInfo: state.teamInfo,
-            customFormations: state.customFormations,
-            teamFocus: state.teamFocus || {} // ★【追加】チーム強化テーマ
-        }
-    };
-
     if (!isSilent) showToast('クラウドへ同期中...');
 
-    return fetch(state.teamInfo.gasApiUrl, {
-        method: 'POST',
-        mode: 'cors',
-        redirect: 'follow',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-    })
-        .then(res => res.json())
-        .then(resData => {
-            if (resData && resData.status === 'success') {
-                if (!isSilent) showToast('クラウドへの送信が完了しました！');
-                setSyncStateUI('success');
-                return resData;
-            } else {
-                setSyncStateUI('error');
-                throw new Error(resData.message || '同期エラー');
-            }
+    return pushCloud({ teamInfo: state.teamInfo, data: createStateSnapshot(state) })
+        .then(result => {
+            if (!isSilent) showToast('クラウドへの送信が完了しました！');
+            setSyncStateUI('success');
+            return result;
         })
         .catch(err => {
             console.error('GAS Sync Push Error:', err);
             setSyncStateUI('error');
             if (!isSilent) alert(`クラウド送信に失敗しました:\n${err.message || err}`);
+            throw err;
         });
 }
 
@@ -306,18 +237,8 @@ export function syncPullGasCloud(isSilent = false) {
 
     if (!isSilent) showToast('クラウドからデータを受信中...');
 
-    const sheetParam = state.teamInfo.gasSheetName ? `&sheetName=${encodeURIComponent(state.teamInfo.gasSheetName)}` : '';
-    const authParam = state.teamInfo.gasAuthToken ? `&authToken=${encodeURIComponent(state.teamInfo.gasAuthToken)}` : '';
-    const fetchUrl = `${state.teamInfo.gasApiUrl}?action=pull${sheetParam}${authParam}&t=${Date.now()}`;
-
-    return fetch(fetchUrl, { method: 'GET', mode: 'cors', redirect: 'follow' })
-        .then(res => res.json())
-        .then(resData => {
-            if (resData && resData.status === 'success' && resData.data) {
-                let remoteData = resData.data;
-                if (typeof remoteData === 'string') {
-                    try { remoteData = JSON.parse(remoteData); } catch (e) { }
-                }
+    return pullCloud({ teamInfo: state.teamInfo })
+        .then(remoteData => {
                 if (remoteData && typeof remoteData === 'object') {
                     if (remoteData.matches) state.matches = remoteData.matches;
                     if (remoteData.practices) state.practices = remoteData.practices;
@@ -380,7 +301,6 @@ export function syncPullGasCloud(isSilent = false) {
 
                     return remoteData;
                 }
-            }
             setSyncStateUI('error');
             throw new Error('有効なクラウドデータが見つかりませんでした');
         })
