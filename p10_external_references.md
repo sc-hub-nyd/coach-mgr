@@ -15,3 +15,11 @@
   - Content Service の応答は `script.googleusercontent.com` のワンタイムURLへリダイレクトされるため、クライアントはリダイレクト追従が必要である。
 
 参照日: 2026-08-18 JST
+
+## 2026-08-18: POST応答のリダイレクト経路
+
+- 公開済み安全モードWeb Appへの無効トークンPOSTは初回応答として短時間の`302`を返し、`script.googleusercontent.com`の一時URLへ誘導された。
+- Content ServiceはPOST・GETを問わず一時URLへリダイレクトする。クライアントはリダイレクトを追従する必要がある。
+- Google Cloud Communityの技術検証では、POST後の一時URLはGETで取得する必要があると説明されている。出典: <https://medium.com/google-cloud/understanding-flow-of-request-to-web-apps-created-by-google-apps-script-ac49e80f7c6b>
+
+この結果はクライアント側のタイムアウト診断に用いる。秘密情報は記録しない。

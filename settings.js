@@ -299,50 +299,56 @@ export function initSettings() {
     }
     renderProtocolGuidance();
 
+    const applyGasSettingsFromForm = () => {
+        const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
+        const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
+        const authVal = gasAuthInput ? gasAuthInput.value.trim() : '';
+        state.teamInfo.gasApiUrl = urlVal;
+        state.teamInfo.gasSheetName = sheetVal;
+        state.teamInfo.gasAuthToken = authVal;
+        state.teamInfo.gasSyncProtocol = getProtocolValue();
+    };
+
+    const persistGasSettings = async () => {
+        applyGasSettingsFromForm();
+        // GAS接続先の変更は端末ローカル設定です。保存完了後に手動同期を開始し、
+        // 直前の接続先を使う自動送信や未同期データ競合を発生させません。
+        await saveData({ sync: false, markChange: false });
+        updateRoleUI();
+    };
+
     const formGasSync = document.getElementById('form-gas-sync');
     if (formGasSync) {
-        formGasSync.onsubmit = (e) => {
+        formGasSync.onsubmit = async (e) => {
             e.preventDefault();
-            const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
-            const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
-            const authVal = gasAuthInput ? gasAuthInput.value.trim() : '';
-            state.teamInfo.gasApiUrl = urlVal;
-            state.teamInfo.gasSheetName = sheetVal;
-            state.teamInfo.gasAuthToken = authVal;
-            state.teamInfo.gasSyncProtocol = getProtocolValue();
-            saveData();
-            updateRoleUI();
+            await persistGasSettings();
             showToast('クラウド同期設定を保存しました');
         };
     }
 
     const btnPush = document.getElementById('btn-manual-sync-push');
     if (btnPush) {
-        btnPush.onclick = () => {
-            const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
-            const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
-            const authVal = gasAuthInput ? gasAuthInput.value.trim() : '';
-            if (urlVal) state.teamInfo.gasApiUrl = urlVal;
-            state.teamInfo.gasSheetName = sheetVal;
-            state.teamInfo.gasAuthToken = authVal;
-            state.teamInfo.gasSyncProtocol = getProtocolValue();
-            syncPushGasCloud(false);
+        btnPush.onclick = async () => {
+            try {
+                await persistGasSettings();
+                await syncPushGasCloud(false);
+            } catch (_error) {
+                // 同期関数が利用者向けのエラー表示と診断保存を担う。
+            }
         };
     }
 
     const btnPull = document.getElementById('btn-manual-sync-pull');
     if (btnPull) {
         btnPull.onclick = async () => {
-            const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
-            const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
-            const authVal = gasAuthInput ? gasAuthInput.value.trim() : '';
-            if (urlVal) state.teamInfo.gasApiUrl = urlVal;
-            state.teamInfo.gasSheetName = sheetVal;
-            state.teamInfo.gasAuthToken = authVal;
-            state.teamInfo.gasSyncProtocol = getProtocolValue();
-            const proceed = await showCustomConfirm('クラウドからデータを復元しますか？ローカルのデータは上書きされます。', 'クラウドからの復元', { okText: '復元する' });
-            if (proceed) {
-                syncPullGasCloud(false);
+            try {
+                await persistGasSettings();
+                const proceed = await showCustomConfirm('クラウドからデータを復元しますか？ローカルのデータは上書きされます。', 'クラウドからの復元', { okText: '復元する' });
+                if (proceed) {
+                    await syncPullGasCloud(false);
+                }
+            } catch (_error) {
+                // 同期関数が利用者向けのエラー表示と診断保存を担う。
             }
         };
     }
