@@ -2,6 +2,7 @@
 import { state } from './state.js';
 import { escapeHtml, encryptData, showToast, showCustomConfirm } from './utils.js';
 import { createBackupPayload, parseBackupPayload, savePersistedSnapshot, clearPersistedSnapshot } from './repository.js';
+import { markBackupCreated, buildOperationalDiagnostics, buildOperationsShareText } from './operations-service.js';
 
 import { saveData, syncPushGasCloud, syncPullGasCloud, updateRoleUI, openModal, loadData } from './app-context.js';
 
@@ -38,6 +39,33 @@ export function _showExportFallbackModal(jsonStr) {
     }
 }
 
+export function exportBackupData() {
+    const dataStr = JSON.stringify(createBackupPayload(state), null, 2);
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+    const filename = `coachMgrBackup_${dateStr}.json`;
+    try {
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.style.display = 'none';
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        setTimeout(() => URL.revokeObjectURL(url), 500);
+        showToast(`${filename} をダウンロードしました`);
+    } catch (_error) {
+        _showExportFallbackModal(dataStr);
+    }
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) setTimeout(() => _showExportFallbackModal(dataStr), 300);
+    markBackupCreated(now);
+    if (typeof window.refreshOperationalDiagnostics === 'function') window.refreshOperationalDiagnostics();
+    return { filename, dataStr };
+}
+
 export function initData() {
     const settingsVersionText = document.getElementById('settings-version-text');
     if (settingsVersionText) {
@@ -55,34 +83,7 @@ export function initData() {
     const btnExportSettings = document.getElementById('btn-export-data');
     const btnExportView = document.getElementById('btn-data-view-export');
 
-    const handleExport = () => {
-        const dataStr = JSON.stringify(createBackupPayload(state), null, 2);
-
-        const now = new Date();
-        const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
-        const filename = `coachMgrBackup_${dateStr}.json`;
-
-        try {
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 500);
-            showToast(`${filename} をダウンロードしました`);
-        } catch (err) {
-            _showExportFallbackModal(dataStr);
-        }
-
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-            setTimeout(() => _showExportFallbackModal(dataStr), 300);
-        }
-    };
+    const handleExport = () => exportBackupData();
 
     if (btnExportSettings) btnExportSettings.onclick = handleExport;
     if (btnExportView) btnExportView.onclick = handleExport;
@@ -138,7 +139,8 @@ export function initData() {
             state.practices = [];
             state.players = [];
             state.menuLibrary = [];
-            state.tactics = [];
+                state.tactics = [];
+                state.practiceTemplates = [];
 
             await clearPersistedSnapshot();
 
@@ -172,6 +174,35 @@ export function initSettings() {
     if (btnShowReleaseNotes) {
         btnShowReleaseNotes.onclick = () => {
             if (window.openReleaseNotesModal) window.openReleaseNotesModal();
+        };
+    }
+
+    const diagnosticsContainer = document.getElementById('operations-diagnostics');
+    const refreshOperationalDiagnostics = () => {
+        if (!diagnosticsContainer) return;
+        const diagnostics = buildOperationalDiagnostics(state);
+        const icons = { backup: 'fa-box-archive', sync: 'fa-cloud', team: 'fa-people-group', storage: 'fa-hard-drive' };
+        diagnosticsContainer.innerHTML = diagnostics.checks.map(check => `
+            <div class="operations-check is-${check.status}">
+                <span class="operations-check-icon"><i class="fa-solid ${icons[check.key] || 'fa-circle-info'}" aria-hidden="true"></i></span>
+                <span><strong>${escapeHtml(check.label)}</strong><small title="${escapeHtml(check.detail)}">${escapeHtml(check.detail)}</small></span>
+            </div>`).join('');
+    };
+    window.refreshOperationalDiagnostics = refreshOperationalDiagnostics;
+    refreshOperationalDiagnostics();
+
+    const btnOperationsBackup = document.getElementById('btn-operations-backup');
+    if (btnOperationsBackup) btnOperationsBackup.onclick = () => exportBackupData();
+    const btnCopyOperationsCheck = document.getElementById('btn-copy-operations-check');
+    if (btnCopyOperationsCheck) {
+        btnCopyOperationsCheck.onclick = async () => {
+            const text = buildOperationsShareText(state.teamInfo?.name, buildOperationalDiagnostics(state));
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('運用チェックの状態をコピーしました');
+            } catch (_error) {
+                window.prompt('以下をコピーして共有してください。', text);
+            }
         };
     }
 

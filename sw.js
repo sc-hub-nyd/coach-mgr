@@ -1,7 +1,7 @@
 // sw.js - Service Worker for CoachMgr PWA
 // Cache-First strategy for offline support
 
-const CACHE_VERSION = 'coachmgr-v49';
+const CACHE_VERSION = 'coachmgr-v50';
 
 // Core app files to pre-cache on install
 const PRECACHE_URLS = [
@@ -31,6 +31,7 @@ const PRECACHE_URLS = [
   './team-operations-service.js',
   './insights-service.js',
   './insights.js',
+  './operations-service.js',
   './CSS/main.css',
   './CSS/base.css',
   './CSS/components.css',
@@ -51,11 +52,12 @@ const EXTERNAL_CACHEABLE = [
 
 // Install: Pre-cache core app shell
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_VERSION)
-      .then((cache) => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil(caches.open(CACHE_VERSION).then((cache) => cache.addAll(PRECACHE_URLS)));
+});
+
+// The page asks an installed update to take control only after user confirmation.
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 // Activate: Clean up old caches

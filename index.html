@@ -142,6 +142,12 @@
         </div>
     </div>
 
+    <div id="pwa-update-banner" class="pwa-update-banner hidden" role="status" aria-live="polite">
+        <span><i class="fa-solid fa-arrows-rotate"></i> 新しいバージョンを利用できます</span>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-pwa-reload">更新する</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-pwa-dismiss" aria-label="更新通知を閉じる"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
     <!-- Passcode Modal for Coach Mode -->
     <div id="modal-coach-passcode" class="modal-overlay hidden" style="z-index: 1002;">
         <div class="modal" style="max-width:380px; text-align:center;">
@@ -838,6 +844,19 @@
                 </div>
             </div>
 
+            <!-- Section: 運用チェック -->
+            <div class="sl-section operations-section">
+                <div class="sl-section-label"><i class="fa-solid fa-shield-heart"></i> 運用チェック</div>
+                <div class="sl-section-body operations-body">
+                    <p class="operations-intro">端末保存、クラウド同期、バックアップの状態を確認し、シーズン中の記録を安全に維持します。</p>
+                    <div id="operations-diagnostics" class="operations-diagnostics" aria-live="polite"></div>
+                    <div class="operations-actions">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-operations-backup"><i class="fa-solid fa-download"></i> 今すぐバックアップ</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-operations-check"><i class="fa-solid fa-copy"></i> 状態をコピー</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Section: 試合種別 -->
             <div class="sl-section">
                 <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
@@ -1001,7 +1020,7 @@
                 <div class="sl-section-label"><i class="fa-solid fa-database"></i> データ連携・バックアップ管理</div>
                 <div class="sl-section-body" style="padding:1rem; display:flex; flex-direction:column; gap:1rem;">
                     <p class="text-secondary" style="font-size:0.85rem; margin:0; line-height:1.4;">
-                        全データ（試合記録、練習予定、メニュー、選手情報等）をJSONファイルとしてダウンロード・バックアップ、または取込・一括削除が行えます。
+                        全データ（試合記録、練習予定、メニュー、選手情報等）をJSONファイルとしてダウンロード・バックアップ、または取込・一括削除が行えます。大切な試合の前後や端末変更前には、必ずバックアップを作成してください。
                     </p>
 
                     <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.5rem;">
@@ -2698,15 +2717,38 @@
         window.addEventListener('touchmove', function() {}, {passive: false});
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script type="module" src="app.js?v=71"></script>
-    <!-- Service Worker Registration -->
+    <script type="module" src="app.js?v=72"></script>
+    <!-- Service Worker Registration & P8 update experience -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
+                const banner = document.getElementById('pwa-update-banner');
+                const updateButton = document.getElementById('btn-pwa-reload');
+                const dismissButton = document.getElementById('btn-pwa-dismiss');
+                let refreshing = false;
+                const showUpdate = (worker) => {
+                    if (!worker || !navigator.serviceWorker.controller || !banner) return;
+                    banner.classList.remove('hidden');
+                    if (updateButton) updateButton.onclick = () => worker.postMessage({ type: 'SKIP_WAITING' });
+                };
+                if (dismissButton) dismissButton.onclick = () => banner?.classList.add('hidden');
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (refreshing) return;
+                    refreshing = true;
+                    window.location.reload();
+                });
                 navigator.serviceWorker.register('./sw.js')
                     .then((reg) => {
+                        if (reg.waiting) showUpdate(reg.waiting);
+                        reg.addEventListener('updatefound', () => {
+                            const worker = reg.installing;
+                            if (!worker) return;
+                            worker.addEventListener('statechange', () => {
+                                if (worker.state === 'installed') showUpdate(worker);
+                            });
+                        });
                         reg.update();
-                        console.log('SW registered & updated:', reg.scope);
+                        console.log('SW registered & checked:', reg.scope);
                     })
                     .catch((err) => console.log('SW registration failed:', err));
             });
