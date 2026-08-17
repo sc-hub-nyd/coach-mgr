@@ -821,8 +821,16 @@
                         <div class="sl-row">
                             <span class="sl-row-label">認証トークン</span>
                             <input type="password" id="gas-auth-token" class="sl-input"
-                                placeholder="任意の合い言葉（例: mysecret123）" style="flex:1; min-width:0;">
+                                placeholder="任意の合い言葉（例: mysecret123）" autocomplete="off" style="flex:1; min-width:0;">
                         </div>
+                        <div class="sl-row">
+                            <span class="sl-row-label">同期プロトコル</span>
+                            <select id="gas-sync-protocol" class="sl-input" style="flex:1; min-width:0;">
+                                <option value="secure-v2">安全モード（POST認証・推奨）</option>
+                                <option value="legacy-v1">互換モード（旧GAS用・認証情報がURLに含まれます）</option>
+                            </select>
+                        </div>
+                        <p id="gas-security-guidance" style="margin:0 0 0.75rem; font-size:0.75rem; color:var(--text-secondary); line-height:1.5;">安全モードを使うには、P10のGASテンプレートをデプロイしてください。認証トークンは共有リンクに含まれません。</p>
                         <div class="sl-row sl-row-last gas-actions-row">
                             <button type="button" class="btn btn-secondary btn-sm btn-copy-link"
                                 id="btn-copy-invite-link">
@@ -2717,7 +2725,7 @@
         window.addEventListener('touchmove', function() {}, {passive: false});
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script type="module" src="app.js?v=72"></script>
+    <script type="module" src="app.js"></script>
     <!-- Service Worker Registration & P8 update experience -->
     <script>
         if ('serviceWorker' in navigator) {

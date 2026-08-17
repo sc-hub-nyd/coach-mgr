@@ -2049,6 +2049,7 @@ async function init() {
     const urlParams = new URLSearchParams(window.location.search);
     const paramApiUrl = urlParams.get('apiUrl');
     const paramSheetName = urlParams.get('sheetName');
+    const paramSyncProtocol = urlParams.get('syncProtocol');
     const hadLegacyAuthToken = urlParams.has('authToken');
 
     let isFromInviteLink = false;
@@ -2056,6 +2057,7 @@ async function init() {
         if (!state.teamInfo) state.teamInfo = {};
         state.teamInfo.gasApiUrl = paramApiUrl;
         if (paramSheetName) state.teamInfo.gasSheetName = paramSheetName;
+        if (paramSyncProtocol === 'secure-v2') state.teamInfo.gasSyncProtocol = 'secure-v2';
         isFromInviteLink = true;
 
         try {

@@ -62,12 +62,31 @@ async function parseResponse(response, direction) {
     return result;
 }
 
+export const GAS_SYNC_PROTOCOLS = Object.freeze({
+    LEGACY: 'legacy-v1',
+    SECURE: 'secure-v2'
+});
+
+export function getSyncProtocol(teamInfo) {
+    return teamInfo?.gasSyncProtocol === GAS_SYNC_PROTOCOLS.SECURE
+        ? GAS_SYNC_PROTOCOLS.SECURE
+        : GAS_SYNC_PROTOCOLS.LEGACY;
+}
+
 export function createCloudPayload(teamInfo, data) {
     return {
         action: 'push',
         sheetName: teamInfo?.gasSheetName || '',
         authToken: teamInfo?.gasAuthToken || '',
         data
+    };
+}
+
+export function createPullPayload(teamInfo) {
+    return {
+        action: 'pull',
+        sheetName: teamInfo?.gasSheetName || '',
+        authToken: teamInfo?.gasAuthToken || ''
     };
 }
 
@@ -85,12 +104,23 @@ export async function pushCloud({ teamInfo, data, fetchImpl = fetch, timeoutMs =
 
 export async function pullCloud({ teamInfo, fetchImpl = fetch, timeoutMs = 10000 }) {
     const url = assertUrl(teamInfo?.gasApiUrl);
-    const params = new URLSearchParams({ action: 'pull', t: String(Date.now()) });
-    if (teamInfo?.gasSheetName) params.set('sheetName', teamInfo.gasSheetName);
-    if (teamInfo?.gasAuthToken) params.set('authToken', teamInfo.gasAuthToken);
-    const response = await fetchWithTimeout(fetchImpl, `${url}?${params.toString()}`, {
-        method: 'GET', mode: 'cors', redirect: 'follow'
-    }, timeoutMs);
+    const protocol = getSyncProtocol(teamInfo);
+    const response = protocol === GAS_SYNC_PROTOCOLS.SECURE
+        ? await fetchWithTimeout(fetchImpl, url, {
+            method: 'POST',
+            mode: 'cors',
+            redirect: 'follow',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(createPullPayload(teamInfo))
+        }, timeoutMs)
+        : await (() => {
+            const params = new URLSearchParams({ action: 'pull', t: String(Date.now()) });
+            if (teamInfo?.gasSheetName) params.set('sheetName', teamInfo.gasSheetName);
+            if (teamInfo?.gasAuthToken) params.set('authToken', teamInfo.gasAuthToken);
+            return fetchWithTimeout(fetchImpl, `${url}?${params.toString()}`, {
+                method: 'GET', mode: 'cors', redirect: 'follow'
+            }, timeoutMs);
+        })();
     const result = await parseResponse(response, 'クラウド受信');
     if (!result.data) throw new SyncError('有効なクラウドデータが見つかりませんでした', { kind: 'data', retryable: false });
     let data = result.data;

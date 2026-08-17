@@ -247,9 +247,23 @@ export function initSettings() {
     const gasApiInput = document.getElementById('gas-api-url');
     const gasSheetInput = document.getElementById('gas-sheet-name');
     const gasAuthInput = document.getElementById('gas-auth-token');
+    const gasProtocolInput = document.getElementById('gas-sync-protocol');
+    const gasSecurityGuidance = document.getElementById('gas-security-guidance');
+    const getProtocolValue = () => gasProtocolInput?.value === 'secure-v2' ? 'secure-v2' : 'legacy-v1';
+    const renderProtocolGuidance = () => {
+        if (!gasSecurityGuidance) return;
+        gasSecurityGuidance.textContent = getProtocolValue() === 'secure-v2'
+            ? '安全モードでは受信もPOSTで行い、認証トークンをURLに含めません。P10のGASテンプレートをデプロイして利用してください。'
+            : '互換モードでは旧GASのGET受信を使います。認証トークンがURLに含まれるため、安全モードへの移行を推奨します。';
+    };
     if (gasApiInput) gasApiInput.value = state.teamInfo.gasApiUrl || '';
     if (gasSheetInput) gasSheetInput.value = state.teamInfo.gasSheetName || '';
     if (gasAuthInput) gasAuthInput.value = state.teamInfo.gasAuthToken || '';
+    if (gasProtocolInput) {
+        gasProtocolInput.value = state.teamInfo.gasSyncProtocol || 'legacy-v1';
+        gasProtocolInput.onchange = renderProtocolGuidance;
+    }
+    renderProtocolGuidance();
 
     const formGasSync = document.getElementById('form-gas-sync');
     if (formGasSync) {
@@ -261,6 +275,7 @@ export function initSettings() {
             state.teamInfo.gasApiUrl = urlVal;
             state.teamInfo.gasSheetName = sheetVal;
             state.teamInfo.gasAuthToken = authVal;
+            state.teamInfo.gasSyncProtocol = getProtocolValue();
             saveData();
             updateRoleUI();
             showToast('クラウド同期設定を保存しました');
@@ -276,6 +291,7 @@ export function initSettings() {
             if (urlVal) state.teamInfo.gasApiUrl = urlVal;
             state.teamInfo.gasSheetName = sheetVal;
             state.teamInfo.gasAuthToken = authVal;
+            state.teamInfo.gasSyncProtocol = getProtocolValue();
             syncPushGasCloud(false);
         };
     }
@@ -289,6 +305,7 @@ export function initSettings() {
             if (urlVal) state.teamInfo.gasApiUrl = urlVal;
             state.teamInfo.gasSheetName = sheetVal;
             state.teamInfo.gasAuthToken = authVal;
+            state.teamInfo.gasSyncProtocol = getProtocolValue();
             const proceed = await showCustomConfirm('クラウドからデータを復元しますか？ローカルのデータは上書きされます。', 'クラウドからの復元', { okText: '復元する' });
             if (proceed) {
                 syncPullGasCloud(false);
@@ -301,6 +318,7 @@ export function initSettings() {
         btnCopyInviteLink.onclick = () => {
             const urlVal = gasApiInput ? gasApiInput.value.trim() : (state.teamInfo.gasApiUrl || '');
             const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : (state.teamInfo.gasSheetName || '');
+            const protocolVal = getProtocolValue();
 
             if (!urlVal) {
                 alert('Web API URL が設定されていません。入力して保存した後に実行してください。');
@@ -311,6 +329,7 @@ export function initSettings() {
             const params = new URLSearchParams();
             params.set('apiUrl', urlVal);
             if (sheetVal) params.set('sheetName', sheetVal);
+            if (protocolVal === 'secure-v2') params.set('syncProtocol', protocolVal);
 
             const inviteUrl = `${baseUrl}?${params.toString()}`;
 

@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.8.1';
+export const APP_VERSION = 'v1.9.0';
 export const RELEASE_DATE = '2026-08-17';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.9.0',
+        date: '2026-08-18',
+        title: '安全なクラウド同期：POST認証・GAS運用テンプレート',
+        features: [
+            '安全モードではクラウド受信もPOSTで行い、認証トークンをURLに含めないよう改善',
+            '認証・排他制御・完全性検査を備えたGAS Web APIテンプレートと導入手順を追加',
+            '旧GASは互換モードとして明示表示し、安全モードへの移行を案内'
+        ]
+    },
     {
         version: 'v1.8.1',
         date: '2026-08-17',
