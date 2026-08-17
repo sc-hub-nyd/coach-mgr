@@ -285,8 +285,10 @@ export function initSettings() {
         btnPull.onclick = async () => {
             const urlVal = gasApiInput ? gasApiInput.value.trim() : '';
             const sheetVal = gasSheetInput ? gasSheetInput.value.trim() : '';
+            const authVal = gasAuthInput ? gasAuthInput.value.trim() : '';
             if (urlVal) state.teamInfo.gasApiUrl = urlVal;
             state.teamInfo.gasSheetName = sheetVal;
+            state.teamInfo.gasAuthToken = authVal;
             const proceed = await showCustomConfirm('クラウドからデータを復元しますか？ローカルのデータは上書きされます。', 'クラウドからの復元', { okText: '復元する' });
             if (proceed) {
                 syncPullGasCloud(false);

@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.8.0';
+export const APP_VERSION = 'v1.8.1';
 export const RELEASE_DATE = '2026-08-17';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.8.1',
+        date: '2026-08-17',
+        title: '同期の信頼性改善：手動復元の認証情報反映',
+        features: [
+            'クラウドから復元する際、保存前に入力した認証トークンも同期処理に反映されるよう改善',
+            '更新済み設定モジュールを確実に配信するため、PWAキャッシュ世代を更新'
+        ]
+    },
     {
         version: 'v1.8.0',
         date: '2026-08-17',

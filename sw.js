@@ -1,7 +1,7 @@
 // sw.js - Service Worker for CoachMgr PWA
 // Cache-First strategy for offline support
 
-const CACHE_VERSION = 'coachmgr-v50';
+const CACHE_VERSION = 'coachmgr-v52';
 
 // Core app files to pre-cache on install
 const PRECACHE_URLS = [
@@ -50,9 +50,18 @@ const EXTERNAL_CACHEABLE = [
   'cdnjs.cloudflare.com/ajax/libs/font-awesome'
 ];
 
-// Install: Pre-cache core app shell
+// Install: Pre-cache core app shell. Cache-busted fetches prevent the active worker
+// from serving its older cache while a new worker is installing.
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE_VERSION).then((cache) => cache.addAll(PRECACHE_URLS)));
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_VERSION);
+    await Promise.all(PRECACHE_URLS.map(async (url) => {
+      const separator = url.includes('?') ? '&' : '?';
+      const response = await fetch(`${url}${separator}precache=${CACHE_VERSION}`, { cache: 'reload' });
+      if (!response.ok) throw new Error(`Failed to precache ${url}`);
+      await cache.put(url, response);
+    }));
+  })());
 });
 
 // The page asks an installed update to take control only after user confirmation.
