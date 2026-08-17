@@ -14,11 +14,191 @@ let timelineInterval = null;
 
 let periodSideClickOutsideHandler = null;
 let periodSideKeyDownHandler = null;
+let fieldUndoState = null;
+let fieldUndoTimer = null;
 
 function cleanupPeriodSideEvents() {
+
     cleanupScope('matches.periodSidePanel');
     periodSideClickOutsideHandler = null;
     periodSideKeyDownHandler = null;
+}
+
+function ensureFieldPeriod(match) {
+    if (!match.formations) match.formations = [];
+    if (match.formations.length === 0) {
+        match.formations.push({
+            id: Date.now(),
+            name: '試合中記録',
+            system: '',
+            scoreUs: 0,
+            scoreThem: 0,
+            goalRecords: [],
+            substitutions: [],
+            pkKickerRecords: [],
+            videoUrl: '',
+            videoUrls: [],
+            lineup: [],
+            analysisMemos: [],
+            summary: '',
+            boardData: []
+        });
+    }
+    const period = match.formations[0];
+    if (!period.goalRecords) period.goalRecords = [];
+    if (!period.substitutions) period.substitutions = [];
+    if (!period.analysisMemos) period.analysisMemos = [];
+    return period;
+}
+
+function closeFieldQuickAction() {
+    const modal = document.getElementById('modal-field-quick-action');
+    if (modal) modal.classList.add('hidden');
+    if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
+        document.body.classList.remove('modal-open');
+    }
+}
+
+function showFieldUndo(matchId, periodIndex, previous, label) {
+    fieldUndoState = { matchId, periodIndex, previous, label };
+    const bar = document.getElementById('field-undo-bar');
+    const message = document.getElementById('field-undo-message');
+    if (message) message.textContent = `${label}を記録しました`;
+    if (bar) bar.classList.remove('hidden');
+    if (fieldUndoTimer) clearTimeout(fieldUndoTimer);
+    fieldUndoTimer = setTimeout(() => {
+        fieldUndoState = null;
+        if (bar) bar.classList.add('hidden');
+    }, 10000);
+}
+
+function undoFieldAction() {
+    if (!fieldUndoState) return;
+    const { matchId, periodIndex, previous } = fieldUndoState;
+    const match = state.matches.find(m => Number(m.id) === Number(matchId));
+    if (match && match.formations && match.formations[periodIndex]) {
+        match.formations[periodIndex] = previous;
+        recalculateMatchResult(match);
+        saveData();
+        showToast('直前の記録を取り消しました');
+    }
+    fieldUndoState = null;
+    if (fieldUndoTimer) clearTimeout(fieldUndoTimer);
+    document.getElementById('field-undo-bar')?.classList.add('hidden');
+}
+
+function renderFieldQuickAction(matchId, type) {
+    const match = state.matches.find(m => Number(m.id) === Number(matchId));
+    const content = document.getElementById('field-quick-content');
+    const title = document.getElementById('field-quick-title');
+    if (!match || !content || !title) return;
+    const players = [...(state.players || [])].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
+    const playerOptions = players.map(p => `<option value="${p.id}">${escapeHtml(`${p.number || ''} ${p.name}`.trim())}</option>`).join('');
+    const playerGrid = players.length ? players.map(p => `
+        <button type="button" class="btn btn-secondary field-quick-option" data-player-id="${p.id}">
+            <span><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.number || '番号なし')}</small></span><i class="fa-solid fa-check"></i>
+        </button>`).join('') : '<p class="text-secondary">選手未登録でも記録できます。後から選手を設定できます。</p>';
+
+    if (type === 'score') {
+        title.textContent = '得点を記録';
+        content.innerHTML = `
+            <span class="field-quick-label">得点者（任意）</span>
+            <div class="field-quick-grid" id="field-score-players">${playerGrid}</div>
+            <input type="hidden" id="field-score-player-id" value="">
+            <button type="button" class="btn btn-primary field-quick-submit" id="btn-field-quick-submit"><i class="fa-solid fa-futbol"></i> 得点を記録する</button>`;
+        content.querySelectorAll('[data-player-id]').forEach(button => {
+            button.onclick = () => {
+                content.querySelectorAll('[data-player-id]').forEach(item => item.classList.remove('is-selected'));
+                button.classList.add('is-selected');
+                document.getElementById('field-score-player-id').value = button.dataset.playerId;
+            };
+        });
+        document.getElementById('btn-field-quick-submit').onclick = () => {
+            const period = ensureFieldPeriod(match);
+            const previous = JSON.parse(JSON.stringify(period));
+            const scorerId = parseInt(document.getElementById('field-score-player-id').value, 10) || null;
+            period.scoreUs = (period.scoreUs || 0) + 1;
+            period.goalRecords.push({ scorerId, assistId: null });
+            recalculateMatchResult(match);
+            saveData();
+            closeFieldQuickAction();
+            showFieldUndo(match.id, 0, previous, '得点');
+            showToast('得点を記録しました');
+        };
+    } else if (type === 'substitution') {
+        title.textContent = '交代を記録';
+        content.innerHTML = `
+            <label class="field-quick-label" for="field-sub-out">OUT選手</label>
+            <select id="field-sub-out" class="form-control field-quick-select"><option value="">選択してください</option>${playerOptions}</select>
+            <label class="field-quick-label" for="field-sub-in">IN選手</label>
+            <select id="field-sub-in" class="form-control field-quick-select"><option value="">選択してください</option>${playerOptions}</select>
+            <button type="button" class="btn btn-primary field-quick-submit" id="btn-field-quick-submit"><i class="fa-solid fa-arrows-rotate"></i> 交代を記録する</button>`;
+        document.getElementById('btn-field-quick-submit').onclick = () => {
+            const outId = parseInt(document.getElementById('field-sub-out').value, 10) || null;
+            const inId = parseInt(document.getElementById('field-sub-in').value, 10) || null;
+            if (!outId || !inId || outId === inId) {
+                showToast('OUT選手とIN選手を選択してください');
+                return;
+            }
+            const period = ensureFieldPeriod(match);
+            const previous = JSON.parse(JSON.stringify(period));
+            period.substitutions.push({ playerOutId: outId, playerInId: inId });
+            saveData();
+            closeFieldQuickAction();
+            showFieldUndo(match.id, 0, previous, '交代');
+            showToast('交代を記録しました');
+        };
+    } else {
+        title.textContent = 'メモを記録';
+        const tags = ['チャンス', '得点', '失点', 'ビルドアップ', '課題/反省', 'メモ'];
+        content.innerHTML = `
+            <span class="field-quick-label">タグ</span>
+            <div class="field-quick-grid" id="field-note-tags">${tags.map((tag, index) => `<button type="button" class="btn ${index === 0 ? 'btn-primary is-selected' : 'btn-secondary'} field-quick-option" data-tag="${tag}">${tag}</button>`).join('')}</div>
+            <input type="hidden" id="field-note-tag" value="${tags[0]}">
+            <label class="field-quick-label" for="field-note-text">メモ（任意）</label>
+            <textarea id="field-note-text" class="form-control field-quick-input" rows="3" placeholder="例：左サイドからの崩し"></textarea>
+            <button type="button" class="btn btn-primary field-quick-submit" id="btn-field-quick-submit"><i class="fa-solid fa-pen"></i> メモを記録する</button>`;
+        content.querySelectorAll('[data-tag]').forEach(button => {
+            button.onclick = () => {
+                content.querySelectorAll('[data-tag]').forEach(item => item.classList.remove('is-selected', 'btn-primary'));
+                content.querySelectorAll('[data-tag]').forEach(item => item.classList.add('btn-secondary'));
+                button.classList.add('is-selected', 'btn-primary');
+                button.classList.remove('btn-secondary');
+                document.getElementById('field-note-tag').value = button.dataset.tag;
+            };
+        });
+        document.getElementById('btn-field-quick-submit').onclick = () => {
+            const period = ensureFieldPeriod(match);
+            const previous = JSON.parse(JSON.stringify(period));
+            period.analysisMemos.push({
+                time: '00:00',
+                tag: document.getElementById('field-note-tag').value,
+                text: document.getElementById('field-note-text').value.trim()
+            });
+            saveData();
+            closeFieldQuickAction();
+            showFieldUndo(match.id, 0, previous, 'メモ');
+            showToast('メモを記録しました');
+        };
+    }
+    const modal = document.getElementById('modal-field-quick-action');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.classList.add('modal-open');
+        content.querySelector('button, select, textarea')?.focus();
+    }
+}
+
+function initFieldCompanionActions(matchId, isCoach) {
+    const actions = [['btn-field-score', 'score'], ['btn-field-substitution', 'substitution'], ['btn-field-note', 'note']];
+    actions.forEach(([id, type]) => {
+        const button = document.getElementById(id);
+        if (button) button.onclick = () => {
+            if (isCoach) renderFieldQuickAction(matchId, type);
+        };
+    });
+    const undoButton = document.getElementById('btn-field-undo');
+    if (undoButton) undoButton.onclick = undoFieldAction;
 }
 
 // YouTube URLから11桁のIDを抽出
@@ -829,22 +1009,8 @@ export function initMatchDetailView(matchId) {
     `;
     }
 
-        // P0 Field Companion: 片手操作Action barを既存のPeriod分析へ接続
-    const fieldActions = [
-        ['btn-field-score', '得点記録を開きます', 'fa-futbol'],
-        ['btn-field-substitution', '交代記録を開きます', 'fa-arrows-rotate'],
-        ['btn-field-note', '試合メモを開きます', 'fa-pen']
-    ];
-    fieldActions.forEach(([id, message]) => {
-        const button = document.getElementById(id);
-        if (button) {
-            button.onclick = () => {
-                if (!isCoach) return;
-                showToast(message);
-                openPeriodAnalysis(m.id, 0);
-            };
-        }
-    });
+    // P1 Field Companion: 専用Bottom sheetへ接続
+    initFieldCompanionActions(m.id, isCoach);
 
     // ★【追加】マイ選手出場要約の描写実行 ★
 

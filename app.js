@@ -12,6 +12,7 @@ import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
 
 let lastSyncTimeStr = uiState.lastSyncTimeStr;
+let saveDataQueue = Promise.resolve();
 
 // --- ミニピッチアニメーション Observer ---
 const miniPitchObserver = new IntersectionObserver((entries) => {
@@ -143,33 +144,46 @@ export async function loadData() {
     }
 }
 
-export async function saveData() {
-    state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
-    state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
+export function saveData() {
+    saveDataQueue = saveDataQueue.then(async () => {
+        state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
+        state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
 
-    const jsonStr = JSON.stringify({
-        matches: state.matches,
-        practices: state.practices,
-        players: state.players,
-        menuLibrary: state.menuLibrary,
-        tactics: state.tactics,
-        matchTypes: state.matchTypes,
-        menuCategories: state.menuCategories,
-        tacticsCategories: state.tacticsCategories,
-        analysisTags: state.analysisTags,
-        skillMetrics: state.skillMetrics,
-        positions: state.positions,
-        positionsCat2: state.positionsCat2,
-        teamInfo: state.teamInfo,
-        customFormations: state.customFormations,
-        teamFocus: state.teamFocus || {} // ★【追加】チーム強化テーマの保存
+        const jsonStr = JSON.stringify({
+            matches: state.matches,
+            practices: state.practices,
+            players: state.players,
+            menuLibrary: state.menuLibrary,
+            tactics: state.tactics,
+            matchTypes: state.matchTypes,
+            menuCategories: state.menuCategories,
+            tacticsCategories: state.tacticsCategories,
+            analysisTags: state.analysisTags,
+            skillMetrics: state.skillMetrics,
+            positions: state.positions,
+            positionsCat2: state.positionsCat2,
+            teamInfo: state.teamInfo,
+            customFormations: state.customFormations,
+            teamFocus: state.teamFocus || {} // ★【追加】チーム強化テーマの保存
+        });
+
+        try {
+            await localforage.setItem('coachMgrData', 'enc:' + encryptData(jsonStr));
+            if (state.currentUserRole === 'coach' && state.teamInfo && state.teamInfo.gasApiUrl) {
+                void syncPushGasCloud(true).catch(error => {
+                    console.error('Background sync failed after save:', error);
+                });
+            }
+        } catch (error) {
+            console.error('Failed to save data:', error);
+            showToast('保存に失敗しました。データを変更せず、もう一度お試しください');
+            throw error;
+        }
+    }).catch(error => {
+        // 1件の失敗で後続の保存キューを止めない
+        console.error('Save queue error:', error);
     });
-
-    await localforage.setItem('coachMgrData', 'enc:' + encryptData(jsonStr));
-
-    if (state.currentUserRole === 'coach' && state.teamInfo && state.teamInfo.gasApiUrl) {
-        syncPushGasCloud(true);
-    }
+    return saveDataQueue;
 }
 
 function setSyncStateUI(status) {
