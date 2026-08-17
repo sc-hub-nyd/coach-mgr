@@ -6,6 +6,7 @@ import { openPlayerDetail } from './players.js';
 import { drawPitchToCtx } from './drawing.js';
 import { registerListener, cleanupScope } from './event-manager.js';
 import { ensureFieldPeriod, getFieldClockSeconds, appendFieldEvent, removeFieldEvent, setFieldClockRunning } from './field-companion-service.js';
+import { ensureAttendance, setAttendanceStatus, getAttendanceSummary } from './team-operations-service.js';
 
 let ytPlayer = null;
 let currentMatchId = null;
@@ -1245,37 +1246,54 @@ export function initMatchDetailView(matchId) {
     const detailRosterEdit = document.getElementById('match-detail-attendance-roster-edit');
     const detailAttendanceSummary = document.getElementById('match-detail-attendance-summary');
 
+    ensureAttendance(m, state.players.map(player => player.id));
+    const matchAttendance = getAttendanceSummary(m);
     if (detailAttendanceSummary) {
-        detailAttendanceSummary.textContent = `参加者 (${m.presentPlayerIds ? `${m.presentPlayerIds.length}/${state.players.length}` : `0/${state.players.length}`})`;
+        detailAttendanceSummary.textContent = `招集 ${matchAttendance.total}名（参加 ${matchAttendance.attending} / 未回答 ${matchAttendance.pending} / 欠席 ${matchAttendance.absent}）`;
     }
 
     if (detailRosterDisplay) {
         const attendeesHtml = m.presentPlayerIds && m.presentPlayerIds.length > 0
-            ? state.players.filter(pl => m.presentPlayerIds.includes(pl.id)).map(pl => `
+            ? state.players.filter(player => m.presentPlayerIds.includes(player.id)).map(player => `
                 <span class="u-ext-54" >
-                    ${pl.number ? `<span class="u-ext-55" >${pl.number}</span>` : ''}
-                    <span class="u-ext-56" >${escapeHtml(pl.name)}</span>
+                    ${player.number ? `<span class="u-ext-55" >${player.number}</span>` : ''}
+                    <span class="u-ext-56" >${escapeHtml(player.name)}</span>
                 </span>
             `).join('')
-            : '<span class="u-ext-57" >メンバー登録がありません</span>';
+            : '<span class="u-ext-57" >参加予定はまだありません</span>';
 
         detailRosterDisplay.innerHTML = attendeesHtml;
     }
 
-    // コーチ用出欠チェックボックス一覧の描画
+    // コーチ用の招集・出欠状態名簿
     if (detailRosterEdit) {
-        const activeIds = m.presentPlayerIds || [];
         const sortedPlayers = [...state.players].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
-        detailRosterEdit.innerHTML = sortedPlayers.map(p => {
-            const isChecked = activeIds.includes(p.id) ? 'checked' : '';
+        detailRosterEdit.innerHTML = sortedPlayers.map(player => {
+            const invited = m.callUpPlayerIds.includes(player.id);
+            const status = m.attendanceByPlayer[String(player.id)]?.status || 'pending';
             return `
-                <label class="u-ext-58" >
-                    <input type="checkbox" class="u-ext-59 inline-match-attendance-checkbox" value="${p.id}" ${isChecked} >
-                    <span class="u-ext-5" >${p.number || '—'}</span>
-                    <span class="u-ext-60"  title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</span>
-                </label>
+                <div class="attendance-roster-row ${invited ? '' : 'is-not-called'}">
+                    <label class="u-ext-58" >
+                        <input type="checkbox" class="inline-match-callup-checkbox" value="${player.id}" ${invited ? 'checked' : ''} aria-label="${escapeHtml(player.name)}を招集対象にする">
+                        <span class="u-ext-5" >${player.number || '—'}</span>
+                        <span class="u-ext-60" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</span>
+                    </label>
+                    <select class="form-control inline-match-attendance-status" data-player-id="${player.id}" ${invited ? '' : 'disabled'} aria-label="${escapeHtml(player.name)}の出欠">
+                        <option value="pending" ${status === 'pending' ? 'selected' : ''}>未回答</option>
+                        <option value="attending" ${status === 'attending' ? 'selected' : ''}>参加</option>
+                        <option value="absent" ${status === 'absent' ? 'selected' : ''}>欠席</option>
+                    </select>
+                </div>
             `;
         }).join('');
+        detailRosterEdit.querySelectorAll('.inline-match-callup-checkbox').forEach(checkbox => {
+            checkbox.onchange = () => {
+                const row = checkbox.closest('.attendance-roster-row');
+                const select = row?.querySelector('.inline-match-attendance-status');
+                if (select) select.disabled = !checkbox.checked;
+                row?.classList.toggle('is-not-called', !checkbox.checked);
+            };
+        });
     }
 
     // インラインフォームの送信（保存）イベント
@@ -1288,9 +1306,9 @@ export function initMatchDetailView(matchId) {
                 return;
             }
 
-            // 出欠チェックボックスの収集
-            const checkedBoxes = formInline.querySelectorAll('.inline-match-attendance-checkbox:checked');
-            const presentPlayerIds = Array.from(checkedBoxes).map(cb => parseInt(cb.value, 10));
+            // 招集・出欠状態の収集
+            const calledBoxes = formInline.querySelectorAll('.inline-match-callup-checkbox:checked');
+            const callUpPlayerIds = Array.from(calledBoxes).map(checkbox => parseInt(checkbox.value, 10));
 
             // テーマと総括・基本情報の更新
             m.date = dateInput ? dateInput.value : m.date;
@@ -1299,10 +1317,14 @@ export function initMatchDetailView(matchId) {
             m.tournament = tournamentInput ? tournamentInput.value.trim() : m.tournament;
             m.theme = themeInput ? themeInput.value.trim() : '';
             m.comments = summaryInput ? summaryInput.value.trim() : '';
-            m.presentPlayerIds = presentPlayerIds;
+            m.callUpPlayerIds = callUpPlayerIds;
+            ensureAttendance(m, callUpPlayerIds);
+            formInline.querySelectorAll('.inline-match-attendance-status').forEach(select => {
+                if (!select.disabled) setAttendanceStatus(m, parseInt(select.dataset.playerId, 10), select.value, 'coach');
+            });
 
             saveData();
-            showToast('試合基本情報・テーマ・総括・出欠情報を保存しました');
+            showToast('試合基本情報・テーマ・招集・出欠情報を保存しました');
             initMatchDetailView(m.id);
         };
     }

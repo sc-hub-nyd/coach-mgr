@@ -3,8 +3,9 @@ import { state, uiState } from './state.js';
 import { escapeHtml, getNendo, showToast, showCustomConfirm } from './utils.js';
 import { saveData, navigate, openModal, clearAllMiniPitchIntervals } from './app-context.js';
 import { drawPitchToCtx } from './drawing.js';
+import { ensureAttendance, setAttendanceStatus, getAttendanceStatus, getAttendanceSummary, createPracticeTemplate, applyPracticeTemplate, buildEventShareText } from './team-operations-service.js';
 
-export function renderPracticeRoster(selectedPlayerIds = []) {
+export function renderPracticeRoster(event = {}) {
     const container = document.getElementById('practice-attendance-roster');
     if (!container) return;
 
@@ -13,21 +14,52 @@ export function renderPracticeRoster(selectedPlayerIds = []) {
         return;
     }
 
-    const sortedPlayers = [...state.players].sort((a, b) => {
-        const numA = parseInt(a.number, 10) || 0;
-        const numB = parseInt(b.number, 10) || 0;
-        return numA - numB;
-    });
+    const isLegacyIds = Array.isArray(event);
+    const rosterEvent = isLegacyIds
+        ? { callUpPlayerIds: event, presentPlayerIds: event }
+        : { ...event, callUpPlayerIds: event.callUpPlayerIds || state.players.map(player => player.id) };
+    ensureAttendance(rosterEvent, state.players.map(player => player.id));
+    const sortedPlayers = [...state.players].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
 
-    container.innerHTML = sortedPlayers.map(p => {
-        const isChecked = (selectedPlayerIds && selectedPlayerIds.includes(p.id)) ? 'checked' : '';
+    container.innerHTML = sortedPlayers.map(player => {
+        const invited = rosterEvent.callUpPlayerIds.includes(player.id);
+        const status = rosterEvent.attendanceByPlayer[String(player.id)]?.status || 'pending';
         return `
-            <label class="roster-checkbox-label">
-                <input type="checkbox" value="${p.id}" ${isChecked} class="roster-checkbox">
-                <span class="roster-player-name">${p.number}. ${escapeHtml(p.name)}</span>
-            </label>
+            <div class="attendance-roster-row ${invited ? '' : 'is-not-called'}">
+                <label class="roster-checkbox-label">
+                    <input type="checkbox" value="${player.id}" ${invited ? 'checked' : ''} class="practice-callup-checkbox" aria-label="${escapeHtml(player.name)}を招集対象にする">
+                    <span class="roster-player-name">${player.number ? `${player.number}. ` : ''}${escapeHtml(player.name)}</span>
+                </label>
+                <select class="form-control practice-attendance-status" data-player-id="${player.id}" ${invited ? '' : 'disabled'} aria-label="${escapeHtml(player.name)}の出欠">
+                    <option value="pending" ${status === 'pending' ? 'selected' : ''}>未回答</option>
+                    <option value="attending" ${status === 'attending' ? 'selected' : ''}>参加</option>
+                    <option value="absent" ${status === 'absent' ? 'selected' : ''}>欠席</option>
+                </select>
+            </div>
         `;
     }).join('');
+
+    container.querySelectorAll('.practice-callup-checkbox').forEach(checkbox => {
+        checkbox.onchange = () => {
+            const row = checkbox.closest('.attendance-roster-row');
+            const select = row?.querySelector('.practice-attendance-status');
+            if (select) select.disabled = !checkbox.checked;
+            row?.classList.toggle('is-not-called', !checkbox.checked);
+        };
+    });
+}
+
+export async function copyPracticeShareText(practiceId) {
+    const practice = state.practices.find(item => item.id === practiceId);
+    if (!practice) return;
+    ensureAttendance(practice, state.players.map(player => player.id));
+    const shareText = buildEventShareText(practice, state.players, '練習');
+    try {
+        await navigator.clipboard.writeText(shareText);
+        showToast('保護者共有用の練習案内をコピーしました');
+    } catch (_error) {
+        window.prompt('以下をコピーして保護者へ共有してください。', shareText);
+    }
 }
 
 export function openPracticeModal(practiceId = null) {
@@ -42,6 +74,11 @@ export function openPracticeModal(practiceId = null) {
 
     // ★ 追加: 練習場所フォーム要素の参照
     const locationEl = document.getElementById('practice-location');
+    const templateSelect = document.getElementById('practice-template-select');
+    if (templateSelect) {
+        const currentTemplateId = practiceId ? state.practices.find(practice => practice.id === practiceId)?.appliedTemplateId : null;
+        templateSelect.innerHTML = `<option value="">テンプレートを選ばない</option>${(state.practiceTemplates || []).map(template => `<option value="${template.id}" ${String(currentTemplateId) === String(template.id) ? 'selected' : ''}>${escapeHtml(template.name)}（${(template.menus || []).length}メニュー）</option>`).join('')}`;
+    }
 
     if (practiceId) {
         const p = state.practices.find(prac => prac.id === practiceId);
@@ -52,18 +89,11 @@ export function openPracticeModal(practiceId = null) {
             if (locationEl) locationEl.value = p.location || ''; // ★ 既存の練習場所をセット
             if (title) title.textContent = '練習日情報を編集';
 
-            let activeIds = p.presentPlayerIds;
-            if (!activeIds && p.attendance) {
-                activeIds = state.players.map(pl => pl.id);
-            } else if (!activeIds) {
-                activeIds = [];
-            }
-            renderPracticeRoster(activeIds);
+            renderPracticeRoster(p);
         }
     } else {
         if (locationEl) locationEl.value = ''; // ★ 新規作成時は空にする
-        const allPlayerIds = state.players.map(p => p.id);
-        renderPracticeRoster(allPlayerIds);
+        renderPracticeRoster({ callUpPlayerIds: state.players.map(player => player.id), attendanceByPlayer: {} });
     }
 
     openModal('modal-practice');
@@ -316,16 +346,30 @@ export function initPractices(miniPitchObserver) {
                 `).join('')
                 : '<span class="u-ext-57">出席登録がありません</span>';
 
-            const attendeeCount = p.presentPlayerIds ? p.presentPlayerIds.length : 0;
+            ensureAttendance(p, state.players.map(player => player.id));
+            const attendanceSummary = getAttendanceSummary(p);
+            const attendeeCount = attendanceSummary.attending;
             const menuCount = p.menus ? p.menus.length : 0;
-
-            const actionBtns = isCoach ? `
+            const myPlayerId = localStorage.getItem('coachMgrMyPlayerId');
+            const myPlayer = myPlayerId ? state.players.find(player => String(player.id) === String(myPlayerId)) : null;
+            const myStatus = myPlayer ? (p.attendanceByPlayer?.[String(myPlayer.id)]?.status || 'pending') : null;
+            const parentResponseHtml = !isCoach && myPlayer && p.callUpPlayerIds?.some(id => String(id) === String(myPlayer.id)) ? `
+                <div class="practice-parent-rsvp" aria-label="${escapeHtml(myPlayer.name)}選手の出欠回答">
+                    <span><i class="fa-solid ${getAttendanceStatus(myStatus).icon}" aria-hidden="true"></i> ${escapeHtml(myPlayer.name)}：${getAttendanceStatus(myStatus).label}</span>
+                    <div class="practice-rsvp-actions">
+                        <button type="button" class="btn btn-xs btn-rsvp-attending ${myStatus === 'attending' ? 'is-selected' : ''}" data-id="${p.id}" data-player-id="${myPlayer.id}">参加</button>
+                        <button type="button" class="btn btn-xs btn-rsvp-absent ${myStatus === 'absent' ? 'is-selected' : ''}" data-id="${p.id}" data-player-id="${myPlayer.id}">欠席</button>
+                    </div>
+                </div>` : '';
+            const actionBtns = `
                 <div class="practice-card-actions">
-                    <button class="btn btn-primary btn-xs btn-add-menu" data-id="${p.id}" title="メニュー追加"><i class="fa-solid fa-plus"></i> メニュー</button>
+                    ${isCoach ? `<button class="btn btn-primary btn-xs btn-add-menu" data-id="${p.id}" title="メニュー追加"><i class="fa-solid fa-plus"></i> メニュー</button>
+                    <button class="btn btn-secondary btn-xs btn-save-practice-template" data-id="${p.id}" title="この構成をテンプレートとして保存"><i class="fa-solid fa-bookmark"></i> テンプレート</button>
                     <button class="btn btn-secondary btn-xs btn-edit-practice" data-id="${p.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn btn-danger btn-xs btn-delete-practice" data-id="${p.id}" title="削除"><i class="fa-solid fa-trash"></i></button>
+                    <button class="btn btn-danger btn-xs btn-delete-practice" data-id="${p.id}" title="削除"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    <button class="btn btn-secondary btn-xs btn-share-practice" data-id="${p.id}" title="保護者共有用テキストをコピー"><i class="fa-solid fa-share-nodes"></i> 共有</button>
                 </div>
-            ` : '';
+            `;
 
             html += `
                 <div class="card practice-card" data-practice-id="${p.id}">
@@ -335,7 +379,9 @@ export function initPractices(miniPitchObserver) {
                             <!-- ★2. ${p.date} の直後に ${locationHtml} を追加 -->
                             <div class="practice-card-date"><i class="fa-regular fa-calendar"></i> ${p.date}${locationHtml}</div>
                             <div class="practice-card-summary-badges">
-                                <span class="badge-sub"><i class="fa-solid fa-users"></i> ${attendeeCount}/${state.players.length}名</span>
+                                <span class="badge-sub"><i class="fa-solid fa-user-check"></i> 参加 ${attendanceSummary.attending}名</span>
+                                <span class="badge-sub"><i class="fa-solid fa-user-clock"></i> 未回答 ${attendanceSummary.pending}名</span>
+                                <span class="badge-sub"><i class="fa-solid fa-user-xmark"></i> 欠席 ${attendanceSummary.absent}名</span>
                                 <span class="badge-sub"><i class="fa-solid fa-list-check"></i> ${menuCount}メニュー</span>
                             </div>
                         </div>
@@ -352,10 +398,11 @@ export function initPractices(miniPitchObserver) {
                         <div class="practice-card-expanded-body">
                             <!-- 1. 参加選手領域 -->
                             <div class="practice-detail-section">
-                                <div class="practice-section-label"><i class="fa-solid fa-users"></i> 参加選手 (${attendeeCount}名)</div>
+                                <div class="practice-section-label"><i class="fa-solid fa-users"></i> 招集・出欠（参加 ${attendanceSummary.attending} / 欠席 ${attendanceSummary.absent} / 未回答 ${attendanceSummary.pending}）</div>
                                 <div class="practice-card-attendance-list">
                                     ${attendeesHtml}
                                 </div>
+                                ${parentResponseHtml}
                             </div>
 
                             <!-- 2. 練習メニュー領域 -->
@@ -445,30 +492,40 @@ export function initPractices(miniPitchObserver) {
             const editId = document.getElementById('practice-edit-id').value;
             const locationVal = document.getElementById('practice-location')?.value.trim() || ''; // ★ 練習場所を取得
 
-            const checkedBoxes = document.querySelectorAll('#practice-attendance-roster input[type="checkbox"]:checked');
-            const presentIds = Array.from(checkedBoxes).map(cb => parseInt(cb.value, 10));
-            const attendanceStr = `${presentIds.length}/${state.players.length}`;
+            const calledBoxes = document.querySelectorAll('#practice-attendance-roster .practice-callup-checkbox:checked');
+            const callUpPlayerIds = Array.from(calledBoxes).map(checkbox => parseInt(checkbox.value, 10));
+            const templateId = document.getElementById('practice-template-select')?.value || '';
+            const selectedTemplate = templateId ? (state.practiceTemplates || []).find(template => String(template.id) === templateId) : null;
+            let practice;
 
             if (editId) {
-                const practice = state.practices.find(p => p.id === parseInt(editId, 10));
+                practice = state.practices.find(p => p.id === parseInt(editId, 10));
                 if (practice) {
                     practice.date = document.getElementById('practice-date').value;
-                    practice.location = locationVal; // ★ 練習場所を更新
-                    practice.attendance = attendanceStr;
-                    practice.presentPlayerIds = presentIds;
-                    showToast('練習日情報を更新しました');
+                    practice.location = locationVal;
                 }
             } else {
-                const newPractice = {
+                practice = {
                     id: Date.now(),
                     date: document.getElementById('practice-date').value,
-                    location: locationVal, // ★ 練習場所を新規保存
-                    attendance: attendanceStr,
-                    presentPlayerIds: presentIds,
+                    location: locationVal,
+                    callUpPlayerIds: [],
+                    attendanceByPlayer: {},
+                    presentPlayerIds: [],
                     menus: []
                 };
-                state.practices.unshift(newPractice);
-                showToast('練習日を記録しました');
+                state.practices.unshift(practice);
+            }
+
+            if (practice) {
+                practice.callUpPlayerIds = callUpPlayerIds;
+                ensureAttendance(practice, callUpPlayerIds);
+                document.querySelectorAll('#practice-attendance-roster .practice-attendance-status').forEach(select => {
+                    if (!select.disabled) setAttendanceStatus(practice, parseInt(select.dataset.playerId, 10), select.value, 'coach');
+                });
+                if (selectedTemplate) applyPracticeTemplate(practice, selectedTemplate);
+                else delete practice.appliedTemplateId;
+                showToast(editId ? '練習日情報を更新しました' : '練習日を記録しました');
             }
 
             saveData();
@@ -657,6 +714,40 @@ export function initPractices(miniPitchObserver) {
         btn.addEventListener('click', (e) => {
             const id = parseInt(e.currentTarget.dataset.id, 10);
             openPracticeModal(id);
+        });
+    });
+
+    document.querySelectorAll('.btn-save-practice-template').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const practice = state.practices.find(item => item.id === parseInt(e.currentTarget.dataset.id, 10));
+            if (!practice) return;
+            const name = window.prompt('テンプレート名を入力してください', `${practice.date || ''}の練習テンプレート`);
+            if (!name) return;
+            try {
+                state.practiceTemplates.push(createPracticeTemplate(practice, name));
+                saveData();
+                showToast('練習テンプレートを保存しました');
+            } catch (error) {
+                showToast(error.message || 'テンプレートを保存できませんでした');
+            }
+        });
+    });
+
+    document.querySelectorAll('.btn-share-practice').forEach(btn => {
+        btn.addEventListener('click', event => {
+            copyPracticeShareText(parseInt(event.currentTarget.dataset.id, 10));
+        });
+    });
+
+    document.querySelectorAll('.btn-rsvp-attending, .btn-rsvp-absent').forEach(btn => {
+        btn.addEventListener('click', event => {
+            const practice = state.practices.find(item => item.id === parseInt(event.currentTarget.dataset.id, 10));
+            if (!practice) return;
+            const status = event.currentTarget.classList.contains('btn-rsvp-attending') ? 'attending' : 'absent';
+            setAttendanceStatus(practice, parseInt(event.currentTarget.dataset.playerId, 10), status, 'parent');
+            saveData();
+            showToast(status === 'attending' ? '参加で回答しました' : '欠席で回答しました');
+            initPractices(miniPitchObserver);
         });
     });
 

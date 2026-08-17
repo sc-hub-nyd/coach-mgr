@@ -5,7 +5,7 @@ const BACKUP_VERSION = 2;
 const CURRENT_SCHEMA_VERSION = 2;
 
 const ARRAY_FIELDS = [
-    'matches', 'practices', 'players', 'menuLibrary', 'tactics',
+    'matches', 'practices', 'players', 'menuLibrary', 'tactics', 'practiceTemplates',
     'matchTypes', 'menuCategories', 'tacticsCategories', 'analysisTags',
     'skillMetrics', 'positions', 'positionsCat2', 'customFormations'
 ];
@@ -34,8 +34,29 @@ function migrateSnapshot(input) {
     source.teamFocus = source.teamFocus && typeof source.teamFocus === 'object' ? source.teamFocus : {};
     source.syncMeta = source.syncMeta && typeof source.syncMeta === 'object' ? source.syncMeta : {};
 
+    const normalizeAttendance = event => {
+        if (!event || typeof event !== 'object') return;
+        if (!Array.isArray(event.callUpPlayerIds)) event.callUpPlayerIds = Array.isArray(event.presentPlayerIds) ? [...event.presentPlayerIds] : [];
+        if (!event.attendanceByPlayer || typeof event.attendanceByPlayer !== 'object') event.attendanceByPlayer = {};
+        event.callUpPlayerIds.forEach(id => {
+            const key = String(id);
+            const previous = event.attendanceByPlayer[key] || {};
+            const status = previous.status || (Array.isArray(event.presentPlayerIds) && event.presentPlayerIds.includes(id) ? 'attending' : 'pending');
+            event.attendanceByPlayer[key] = {
+                status: ['attending', 'absent', 'pending'].includes(status) ? status : 'pending',
+                updatedAt: previous.updatedAt || null,
+                updatedBy: previous.updatedBy || null
+            };
+        });
+        event.presentPlayerIds = event.callUpPlayerIds.filter(id => event.attendanceByPlayer[String(id)]?.status === 'attending');
+        event.attendance = `${event.presentPlayerIds.length}/${event.callUpPlayerIds.length}`;
+    };
+
+    source.practices.forEach(normalizeAttendance);
+
     // Normalize match periods so eventHistory is always persisted consistently.
     source.matches.forEach(match => {
+        normalizeAttendance(match);
         if (!match || typeof match !== 'object') return;
         if (!Array.isArray(match.formations)) match.formations = [];
         match.formations.forEach(period => {
@@ -62,6 +83,7 @@ export function createStateSnapshot(state) {
         players: state.players || [],
         menuLibrary: state.menuLibrary || [],
         tactics: state.tactics || [],
+        practiceTemplates: state.practiceTemplates || [],
         matchTypes: state.matchTypes || [],
         menuCategories: state.menuCategories || [],
         tacticsCategories: state.tacticsCategories || [],

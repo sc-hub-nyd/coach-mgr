@@ -3284,3 +3284,45 @@ input[type="checkbox"] {
     .field-network-status { justify-content: flex-start; text-align: left; }
     .field-period-control { width: 100%; justify-content: space-between; }
 }
+
+/* P6: Team operations — call-up, RSVP and practice templates */
+.attendance-roster-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 6.5rem;
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 46px;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--surface-border) 70%, transparent);
+}
+.attendance-roster-row:last-child { border-bottom: 0; }
+.attendance-roster-row.is-not-called { opacity: 0.52; }
+.attendance-roster-row .form-control { min-height: 36px; padding: 0.3rem 0.45rem; font-size: 0.78rem; }
+.practice-parent-rsvp {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    margin-top: 0.7rem;
+    padding: 0.7rem;
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--primary) 7%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--surface-border));
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+.practice-rsvp-actions { display: inline-flex; gap: 0.4rem; }
+.practice-rsvp-actions .btn { min-width: 56px; min-height: 36px; }
+.btn-rsvp-attending.is-selected { color: #fff; background: #15803d; border-color: #15803d; }
+.btn-rsvp-absent.is-selected { color: #fff; background: #b91c1c; border-color: #b91c1c; }
+@media (max-width: 480px) {
+    .attendance-roster-row { grid-template-columns: 1fr; gap: 0.35rem; padding: 0.55rem 0; }
+    .attendance-roster-row .form-control { width: 100%; min-height: 42px; }
+    .practice-card-actions { flex-wrap: wrap; }
+    .practice-card-actions .btn { min-height: 38px; }
+    .practice-parent-rsvp { align-items: stretch; }
+    .practice-rsvp-actions { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+    .practice-rsvp-actions .btn { min-height: 44px; }
+}

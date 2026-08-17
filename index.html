@@ -1887,7 +1887,14 @@
                     <input type="text" id="practice-location" class="form-control" placeholder="例: 八王子小学校G、市民スポーツセンター">
                 </div>
                 <div class="form-group">
-                    <label>選手出欠（名簿） <span class="badge-optional">任意</span></label>
+                    <label><i class="fa-solid fa-bookmark" aria-hidden="true"></i> 練習テンプレート <span class="badge-optional">任意</span></label>
+                    <select id="practice-template-select" class="form-control">
+                        <option value="">テンプレートを選ばない</option>
+                    </select>
+                    <p class="form-help">保存済みのメニュー構成と場所を読み込みます。出欠はこの練習日ごとに設定します。</p>
+                </div>
+                <div class="form-group">
+                    <label>招集・出欠管理 <span class="badge-optional">任意</span></label>
                     <div id="practice-attendance-roster"
                         style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 0.8rem 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
                         <!-- Checkboxes populated dynamically -->
@@ -2658,7 +2665,7 @@
         window.addEventListener('touchmove', function() {}, {passive: false});
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script type="module" src="app.js?v=69"></script>
+    <script type="module" src="app.js?v=70"></script>
     <!-- Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {

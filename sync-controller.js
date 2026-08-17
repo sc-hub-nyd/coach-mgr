@@ -1,5 +1,5 @@
 const SYNC_FIELDS = [
-    'matches', 'practices', 'players', 'menuLibrary', 'tactics',
+    'matches', 'practices', 'players', 'menuLibrary', 'tactics', 'practiceTemplates',
     'matchTypes', 'menuCategories', 'tacticsCategories', 'analysisTags',
     'skillMetrics', 'positions', 'positionsCat2', 'customFormations', 'teamFocus'
 ];
