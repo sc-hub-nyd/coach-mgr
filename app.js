@@ -16,6 +16,7 @@ import { pushCloud, pullCloud, restoreCloudRecovery as restoreCloudRecoveryReque
 import { ensureSyncMeta, markLocalChange, markSyncAttempt, markSyncAcknowledged, markSyncFailure, hasSyncConflict, applyRemoteSnapshot, getExpectedCloudRevision, buildSyncSummary, getSyncStatusLabel } from './sync-controller.js';
 import { showSyncConflictDialog } from './sync-conflict-dialog.js';
 import { buildOperationalDiagnostics } from './operations-service.js';
+import { isParentShareValid } from './parent-operations-service.js';
 import { configureAppContext } from './app-context.js';
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
@@ -2186,6 +2187,9 @@ async function init() {
     const paramApiUrl = urlParams.get('apiUrl');
     const paramSheetName = urlParams.get('sheetName');
     const paramSyncProtocol = urlParams.get('syncProtocol');
+    const parentPlayerId = urlParams.get('parentPlayerId');
+    const parentShareVersion = urlParams.get('parentShareVersion');
+    const parentShareToken = urlParams.get('parentShareToken');
     const hadLegacyAuthToken = urlParams.has('authToken');
 
     let isFromInviteLink = false;
@@ -2204,6 +2208,19 @@ async function init() {
 
     if (hadLegacyAuthToken) {
         showToast('安全のため、共有URLに含まれる認証情報は使用せず削除しました');
+    }
+
+    if (parentPlayerId) {
+        const shareValid = isParentShareValid(state.teamInfo || {}, { version: parentShareVersion, token: parentShareToken });
+        const playerExists = (state.players || []).some(player => String(player.id) === String(parentPlayerId));
+        if (shareValid && playerExists) {
+            localStorage.setItem('coachMgrMyPlayerId', String(parentPlayerId));
+            state.currentUserRole = 'parent';
+            isFromInviteLink = true;
+            showToast('保護者用の選手別表示を適用しました');
+        } else {
+            showToast('この保護者共有リンクは無効・期限切れ、またはこの端末に最新データがありません');
+        }
     }
 
     setupEventListeners();

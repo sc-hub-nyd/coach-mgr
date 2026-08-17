@@ -466,16 +466,27 @@
                     <span id="field-session-status" class="field-network-status" hidden role="status" aria-live="polite"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i> 画面オン</span>
                 </div>
                 <div id="field-action-hint" class="field-action-hint">試合中はここから素早く記録できます</div>
+                <div class="field-live-score" aria-live="polite"><span>LIVE SCORE</span><strong id="field-live-score">0 - 0</strong><small id="field-live-score-detail">合計スコア</small></div>
                 <div class="field-action-bar">
                     <button type="button" class="btn btn-action-score" id="btn-field-score"><i class="fa-solid fa-futbol"></i><span>得点</span></button>
                     <button type="button" class="btn btn-action-concede" id="btn-field-concede"><i class="fa-solid fa-arrow-down"></i><span>失点</span></button>
                     <button type="button" class="btn btn-primary" id="btn-field-substitution"><i class="fa-solid fa-arrows-rotate"></i><span>交代</span></button>
+                    <button type="button" class="btn btn-secondary" id="btn-field-position"><i class="fa-solid fa-people-arrows-left-right"></i><span>配置変更</span></button>
                     <button type="button" class="btn btn-action-card" id="btn-field-card"><i class="fa-regular fa-square"></i><span>警告</span></button>
                     <button type="button" class="btn btn-action-note" id="btn-field-note"><i class="fa-solid fa-pen"></i><span>メモ</span></button>
+                    <button type="button" class="btn btn-secondary" id="btn-field-finish"><i class="fa-solid fa-flag-checkered"></i><span>試合終了</span></button>
+                </div>
+                <div class="field-roster" aria-labelledby="field-roster-title">
+                    <div class="field-roster-header"><h3 id="field-roster-title"><i class="fa-solid fa-users-viewfinder"></i> 出場中・ベンチ</h3><span id="field-roster-playtime">出場時間を計算中</span></div>
+                    <div class="field-roster-groups">
+                        <div><span class="field-roster-label is-active">出場中</span><div id="field-active-roster" class="field-roster-list"></div></div>
+                        <div><span class="field-roster-label is-bench">ベンチ</span><div id="field-bench-roster" class="field-roster-list"></div></div>
+                    </div>
                 </div>
                 <div class="field-event-timeline" aria-labelledby="field-event-title">
                     <div class="field-event-timeline-header">
                         <h3 id="field-event-title"><i class="fa-solid fa-list-check" aria-hidden="true"></i> 試合ログ</h3>
+                        <label class="field-event-filter-label" for="field-event-filter">表示 <select id="field-event-filter" class="form-control"><option value="all">すべて</option><option value="score">得点</option><option value="concede">失点</option><option value="substitution">交代</option><option value="position">配置</option><option value="card">警告</option><option value="memo">メモ</option></select></label>
                         <span id="field-event-count" class="field-event-count">0件</span>
                     </div>
                     <ol id="field-event-list" class="field-event-list" aria-live="polite"></ol>
@@ -867,6 +878,25 @@
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <!-- P20: 保護者共有・RSVP管理 -->
+            <div class="sl-section coach-only" id="parent-share-section">
+                <div class="sl-section-label"><i class="fa-solid fa-people-roof"></i> 保護者共有・RSVP管理</div>
+                <div class="sl-section-body parent-share-body">
+                    <p class="operations-intro">選手別の表示範囲と共有リンクの有効期限を管理し、未回答者への案内文を作成できます。リンクに認証トークンは含めません。</p>
+                    <div class="parent-share-controls">
+                        <label>対象選手<select id="parent-share-player" class="sl-input"></select></label>
+                        <label>リンク有効期限（任意）<input id="parent-share-expires" type="date" class="sl-input"></label>
+                    </div>
+                    <p id="parent-share-status" class="parent-share-status" aria-live="polite"></p>
+                    <div class="operations-actions">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-copy-parent-share-link"><i class="fa-solid fa-link"></i> 選手別リンクをコピー</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-rotate-parent-share-link"><i class="fa-solid fa-arrows-rotate"></i> リンクを再発行・旧リンクを失効</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-rsvp-reminder"><i class="fa-solid fa-bell"></i> 未回答リマインドをコピー</button>
+                    </div>
+                    <p class="parent-share-security-note"><i class="fa-solid fa-circle-info"></i> この機能は共有先画面での表示範囲を指定する運用支援です。静的PWAのみでは、URL自体を本人確認やサーバー側の権限制御として扱えません。認証が必要な外部共有は、今後の保護者認証基盤で対応します。</p>
                 </div>
             </div>
 
@@ -1685,6 +1715,11 @@
                     <input type="date" id="match-date" class="form-control" required>
                 </div>
                 <div class="form-group">
+                    <label>RSVP回答期限 <span class="badge-optional">任意</span></label>
+                    <input type="date" id="match-rsvp-deadline" class="form-control">
+                    <p class="form-help">期限を過ぎても回答は変更できます。未回答者へのリマインド対象を判別するための期限です。</p>
+                </div>
+                <div class="form-group">
                     <label>対戦相手 <span class="badge-required">必須</span></label>
                     <input type="text" id="match-opponent" class="form-control" placeholder="例: FC東京U-12" required>
                 </div>
@@ -1961,6 +1996,11 @@
                 <div class="form-group">
                     <label>日付 <span class="badge-required">必須</span></label>
                     <input type="date" id="practice-date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>RSVP回答期限 <span class="badge-optional">任意</span></label>
+                    <input type="date" id="practice-rsvp-deadline" class="form-control">
+                    <p class="form-help">未回答者へのリマインドを作成するための期限です。</p>
                 </div>
                 <!-- ★ 追加: 練習場所入力フォーム -->
                 <div class="form-group" style="margin-top: 0.8rem;">
@@ -2269,6 +2309,8 @@
                                 class="fa-solid fa-clock-rotate-left"></i> 成長履歴</button>
                         <button class="player-detail-tab" data-tab="pd-tab-goals"><i class="fa-solid fa-bullseye"></i>
                             個人目標 (IDP)</button>
+                        <button class="player-detail-tab" data-tab="pd-tab-notebook"><i class="fa-solid fa-book-open"></i>
+                            成長ノート</button>
                     </div>
 
                     <!-- Tab Pane 1: History -->
@@ -2296,6 +2338,24 @@
                             </div>
                             <button type="submit" class="btn btn-primary" style="align-self:flex-end;"><i
                                     class="fa-solid fa-save"></i> 目標を保存</button>
+                        </form>
+                    </div>
+
+                    <!-- Tab Pane 3: Coaching Notebook -->
+                    <div id="pd-tab-notebook" class="player-detail-tab-pane">
+                        <section class="player-notebook-summary" aria-labelledby="pd-notebook-title">
+                            <div><span class="eyebrow-label">COACHING NOTEBOOK</span><h3 id="pd-notebook-title">成長の現在地</h3></div>
+                            <div id="pd-notebook-trends" class="player-notebook-trends" aria-live="polite"></div>
+                        </section>
+                        <div id="pd-notebook-timeline" class="player-notebook-timeline" aria-live="polite"></div>
+                        <form id="form-player-development-note" class="player-notebook-form">
+                            <input type="hidden" id="development-player-id">
+                            <div class="player-notebook-form-heading"><h3><i class="fa-solid fa-plus"></i> 育成ノートを記録</h3><label>日付 <input id="development-note-date" type="date" class="form-control" required></label></div>
+                            <label>今日のテーマ<input id="development-note-focus" class="form-control" maxlength="80" placeholder="例：守備の寄せる方向を自分で選ぶ"></label>
+                            <label>観察メモ<textarea id="development-note-observation" class="form-control" rows="3" placeholder="成長した行動・事実を短く記録"></textarea></label>
+                            <label>次の一歩<textarea id="development-note-next-step" class="form-control" rows="2" placeholder="次回練習で取り組む具体的な一歩"></textarea></label>
+                            <fieldset class="player-notebook-ratings"><legend>スキル自己評価・コーチ評価（任意）</legend><div id="development-note-ratings"></div></fieldset>
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-bookmark"></i> 成長ノートを保存</button>
                         </form>
                     </div>
                 </div>

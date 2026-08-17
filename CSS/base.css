@@ -475,6 +475,7 @@ body.role-read-only #btn-match-feedback,
 body.role-read-only #btn-add-match-feedback,
 body.role-read-only #btn-add-practice-menu,
 body.role-read-only #form-player-goals button[type="submit"],
+body.role-read-only #form-player-development-note,
 body.role-read-only #form-player-1on1,
 body.role-read-only #data-export-card {
     display: none !important;

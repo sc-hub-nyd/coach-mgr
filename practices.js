@@ -74,6 +74,7 @@ export function openPracticeModal(practiceId = null) {
 
     // ★ 追加: 練習場所フォーム要素の参照
     const locationEl = document.getElementById('practice-location');
+    const deadlineEl = document.getElementById('practice-rsvp-deadline');
     const templateSelect = document.getElementById('practice-template-select');
     if (templateSelect) {
         const currentTemplateId = practiceId ? state.practices.find(practice => practice.id === practiceId)?.appliedTemplateId : null;
@@ -87,12 +88,14 @@ export function openPracticeModal(practiceId = null) {
             const dateEl = document.getElementById('practice-date');
             if (dateEl) dateEl.value = p.date;
             if (locationEl) locationEl.value = p.location || ''; // ★ 既存の練習場所をセット
+            if (deadlineEl) deadlineEl.value = p.rsvpDeadline || '';
             if (title) title.textContent = '練習日情報を編集';
 
             renderPracticeRoster(p);
         }
     } else {
-        if (locationEl) locationEl.value = ''; // ★ 新規作成時は空にする
+                if (locationEl) locationEl.value = ''; // ★ 新規作成時は空にする
+        if (deadlineEl) deadlineEl.value = '';
         renderPracticeRoster({ callUpPlayerIds: state.players.map(player => player.id), attendanceByPlayer: {} });
     }
 
@@ -491,6 +494,7 @@ export function initPractices(miniPitchObserver) {
             e.preventDefault();
             const editId = document.getElementById('practice-edit-id').value;
             const locationVal = document.getElementById('practice-location')?.value.trim() || ''; // ★ 練習場所を取得
+            const rsvpDeadline = document.getElementById('practice-rsvp-deadline')?.value || '';
 
             const calledBoxes = document.querySelectorAll('#practice-attendance-roster .practice-callup-checkbox:checked');
             const callUpPlayerIds = Array.from(calledBoxes).map(checkbox => parseInt(checkbox.value, 10));
@@ -503,12 +507,14 @@ export function initPractices(miniPitchObserver) {
                 if (practice) {
                     practice.date = document.getElementById('practice-date').value;
                     practice.location = locationVal;
+                    practice.rsvpDeadline = rsvpDeadline;
                 }
             } else {
                 practice = {
                     id: Date.now(),
                     date: document.getElementById('practice-date').value,
                     location: locationVal,
+                    rsvpDeadline,
                     callUpPlayerIds: [],
                     attendanceByPlayer: {},
                     presentPlayerIds: [],

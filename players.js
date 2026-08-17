@@ -2,6 +2,50 @@
 import { state } from './state.js';
 import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
 import { saveData, navigate, openModal } from './app-context.js';
+import { addDevelopmentNote, buildDevelopmentSummary, removeDevelopmentNote } from './player-development-service.js';
+
+function renderDevelopmentNotebook(player) {
+    const metrics = state.skillMetrics || [];
+    const summary = buildDevelopmentSummary(player, { matches: state.matches, practices: state.practices, metrics });
+    const trends = document.getElementById('pd-notebook-trends');
+    const timeline = document.getElementById('pd-notebook-timeline');
+    const ratings = document.getElementById('development-note-ratings');
+    const playerId = document.getElementById('development-player-id');
+    const dateInput = document.getElementById('development-note-date');
+    if (playerId) playerId.value = player.id;
+    if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
+    if (ratings) {
+        ratings.innerHTML = metrics.map(metric => `
+            <label><span>${escapeHtml(metric)}</span><select class="form-control development-rating" data-metric="${escapeHtml(metric)}"><option value="">未評価</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>`).join('');
+    }
+    if (trends) {
+        trends.innerHTML = summary.skillTrend.length ? summary.skillTrend.map(trend => {
+            const delta = trend.delta === null ? '—' : trend.delta > 0 ? `+${trend.delta}` : String(trend.delta);
+            const trendClass = trend.delta > 0 ? 'is-up' : trend.delta < 0 ? 'is-down' : 'is-neutral';
+            return `<span class="player-notebook-trend ${trendClass}"><strong>${escapeHtml(trend.metric)}</strong><em>${trend.latest ?? '—'}</em><small>${delta}</small></span>`;
+        }).join('') : '<p class="text-secondary">スキル評価を記録すると、前回との変化を確認できます。</p>';
+    }
+    const labels = { note: '育成ノート', observation: '観察メモ', match: '試合', practice: '練習' };
+    const icons = { note: 'fa-book-open', observation: 'fa-eye', match: 'fa-futbol', practice: 'fa-person-running' };
+    if (timeline) {
+        timeline.innerHTML = summary.timeline.length ? summary.timeline.map(item => `
+            <article class="player-notebook-entry is-${escapeHtml(item.kind)}">
+                <span class="player-notebook-icon"><i class="fa-solid ${icons[item.kind] || 'fa-circle'}"></i></span>
+                <div><small>${escapeHtml(item.date || '')} ・ ${labels[item.kind] || '記録'}</small><strong>${escapeHtml(item.title || '')}</strong><p>${escapeHtml(item.detail || '')}</p></div>
+                ${item.kind === 'note' ? `<button type="button" class="btn btn-secondary btn-remove-development-note" data-development-note-id="${escapeHtml(item.id)}" aria-label="育成ノートを削除"><i class="fa-solid fa-trash"></i></button>` : ''}
+            </article>`).join('') : '<p class="player-notebook-empty">まだ成長ノートはありません。練習・試合後の事実と次の一歩を記録しましょう。</p>';
+        timeline.querySelectorAll('.btn-remove-development-note').forEach(button => {
+            button.onclick = async () => {
+                const proceed = await showCustomConfirm('この育成ノートを削除しますか？', '育成ノートの削除', { okText: '削除する', type: 'danger' });
+                if (!proceed) return;
+                removeDevelopmentNote(player, button.dataset.developmentNoteId);
+                await saveData();
+                renderDevelopmentNotebook(player);
+                showToast('育成ノートを削除しました');
+            };
+        });
+    }
+}
 
 export function openPlayerDetail(id) {
     const p = state.players.find(pl => pl.id === id);
@@ -297,6 +341,30 @@ export function openPlayerDetail(id) {
                 showToast('削除しました');
                 document.getElementById('modal-player-detail').classList.add('hidden');
                 initPlayers();
+            }
+        };
+    }
+
+    renderDevelopmentNotebook(p);
+    const developmentForm = document.getElementById('form-player-development-note');
+    if (developmentForm) {
+        developmentForm.onsubmit = event => {
+            event.preventDefault();
+            const skillRatings = Object.fromEntries([...developmentForm.querySelectorAll('.development-rating')].map(input => [input.dataset.metric, input.value]));
+            try {
+                addDevelopmentNote(p, {
+                    date: document.getElementById('development-note-date').value,
+                    focus: document.getElementById('development-note-focus').value,
+                    observation: document.getElementById('development-note-observation').value,
+                    nextStep: document.getElementById('development-note-next-step').value,
+                    skillRatings
+                });
+                saveData();
+                developmentForm.reset();
+                renderDevelopmentNotebook(p);
+                showToast('成長ノートを保存しました');
+            } catch (error) {
+                showToast(error.message || '成長ノートを保存できませんでした');
             }
         };
     }

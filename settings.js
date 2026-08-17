@@ -4,6 +4,7 @@ import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm } fr
 import { createBackupPayload, parseBackupPayload, savePersistedSnapshot, loadRecoverySnapshot, clearPersistedSnapshot } from './repository.js';
 import { markBackupCreated, buildOperationalDiagnostics, buildOperationsShareText } from './operations-service.js';
 import { listCloudRecoveries } from './sync-service.js';
+import { ensureParentShareSettings, rotateParentShareLink, buildPendingRsvpDigest } from './parent-operations-service.js';
 
 import { saveData, syncPushGasCloud, syncPullGasCloud, restoreCloudRecovery, updateRoleUI, openModal, loadData } from './app-context.js';
 
@@ -420,6 +421,76 @@ export function initSettings() {
             }
         };
     }
+
+    const parentSharePlayer = document.getElementById('parent-share-player');
+    const parentShareExpires = document.getElementById('parent-share-expires');
+    const parentShareStatus = document.getElementById('parent-share-status');
+    const renderParentShare = () => {
+        if (!parentSharePlayer || !parentShareStatus) return null;
+        if (!state.teamInfo) state.teamInfo = {};
+        const share = ensureParentShareSettings(state.teamInfo);
+        const sortedPlayers = [...(state.players || [])].sort((a, b) => (Number(a.number) || 0) - (Number(b.number) || 0));
+        const selected = String(share.defaultPlayerId || parentSharePlayer.value || '');
+        parentSharePlayer.innerHTML = `<option value="">選手を選択してください</option>${sortedPlayers.map(player => `<option value="${player.id}" ${String(player.id) === selected ? 'selected' : ''}>${player.number ? `${player.number}. ` : ''}${escapeHtml(player.name)}</option>`).join('')}`;
+        if (parentShareExpires) parentShareExpires.value = share.expiresAt || '';
+        parentShareStatus.textContent = `共有リンク v${share.version}${share.expiresAt ? ` ・ 有効期限 ${share.expiresAt}` : ' ・ 有効期限なし'}。再発行すると、以前のリンクはこの端末で無効として扱われます。`;
+        return share;
+    };
+    const copyText = async (text, successText) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            showToast(successText);
+        } catch (_error) {
+            window.prompt('以下をコピーしてください。', text);
+        }
+    };
+    const buildParentShareUrl = () => {
+        const share = renderParentShare();
+        const playerId = parentSharePlayer?.value || '';
+        if (!share || !playerId) throw new Error('共有する選手を選択してください');
+        share.defaultPlayerId = playerId;
+        const baseUrl = window.location.origin + window.location.pathname;
+        const params = new URLSearchParams();
+        const apiUrl = gasApiInput?.value.trim() || state.teamInfo.gasApiUrl || '';
+        const sheetName = gasSheetInput?.value.trim() || state.teamInfo.gasSheetName || '';
+        if (apiUrl) params.set('apiUrl', apiUrl);
+        if (sheetName) params.set('sheetName', sheetName);
+        if (getProtocolValue() === 'secure-v2') params.set('syncProtocol', 'secure-v2');
+        params.set('parentPlayerId', playerId);
+        params.set('parentShareVersion', String(share.version));
+        params.set('parentShareToken', share.token);
+        if (share.expiresAt) params.set('parentShareExpires', share.expiresAt);
+        return `${baseUrl}?${params.toString()}`;
+    };
+    const btnCopyParentShareLink = document.getElementById('btn-copy-parent-share-link');
+    const btnRotateParentShareLink = document.getElementById('btn-rotate-parent-share-link');
+    const btnCopyRsvpReminder = document.getElementById('btn-copy-rsvp-reminder');
+    if (parentSharePlayer) {
+        renderParentShare();
+        parentSharePlayer.onchange = () => { const share = ensureParentShareSettings(state.teamInfo); share.defaultPlayerId = parentSharePlayer.value; renderParentShare(); };
+        if (parentShareExpires) parentShareExpires.onchange = () => { const share = ensureParentShareSettings(state.teamInfo); share.expiresAt = parentShareExpires.value; renderParentShare(); };
+    }
+    if (btnCopyParentShareLink) btnCopyParentShareLink.onclick = async () => {
+        try {
+            const url = buildParentShareUrl();
+            await saveData();
+            await copyText(url, '選手別の保護者共有リンクをコピーしました');
+        } catch (error) { showToast(error.message || '共有リンクを作成できませんでした'); }
+    };
+    if (btnRotateParentShareLink) btnRotateParentShareLink.onclick = async () => {
+        const proceed = await showCustomConfirm('新しい共有リンクを発行すると、以前のリンクは同じ端末上で無効として扱われます。新しいリンクを共有し直してください。', '保護者共有リンクを再発行', { okText: '再発行する', type: 'danger' });
+        if (!proceed) return;
+        const share = rotateParentShareLink(state.teamInfo || (state.teamInfo = {}), { expiresAt: parentShareExpires?.value || '' });
+        if (parentSharePlayer?.value) share.defaultPlayerId = parentSharePlayer.value;
+        await saveData();
+        renderParentShare();
+        showToast('新しい共有リンクを発行しました。必要に応じてコピーして共有してください');
+    };
+    if (btnCopyRsvpReminder) btnCopyRsvpReminder.onclick = async () => {
+        const events = [...(state.matches || []), ...(state.practices || [])];
+        const digest = buildPendingRsvpDigest(events, state.players || []);
+        await copyText(digest.text, digest.pendingEvents.length ? '未回答者向けリマインド文をコピーしました' : '未回答がないことを確認しました');
+    };
 
     const btnCopyInviteLink = document.getElementById('btn-copy-invite-link');
     if (btnCopyInviteLink) {

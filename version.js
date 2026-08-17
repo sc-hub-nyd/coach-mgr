@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.12.0';
+export const APP_VERSION = 'v1.13.0';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.13.0',
+        date: '2026-08-18',
+        title: '試合実戦ログ・選手成長ノート・保護者運用・継続テスト',
+        features: [
+            'Field Companionに出場中／ベンチの表示、交代に連動した出場時間、配置変更、失点内訳、ログフィルター、固定スコア、試合終了サマリーを追加',
+            '選手詳細に成長ノートを追加。テーマ、観察事実、次の一歩、スキル評価、試合・練習を含む時系列と前回比を確認可能に改善',
+            '試合・練習にRSVP回答期限を追加。未回答リマインド文、選手別保護者共有リンクの有効期限・再発行を提供（静的PWAのためサーバー側認証ではありません）',
+            'P4からP21の契約テストとPWA公開前スモークテストをGitHub ActionsでPR・main更新時に自動実行'
+        ]
+    },
     {
         version: 'v1.12.0',
         date: '2026-08-18',
