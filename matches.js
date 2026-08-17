@@ -8,6 +8,7 @@ import { registerListener, cleanupScope } from './event-manager.js';
 import { ensureFieldPeriod, getFieldClockSeconds, appendFieldEvent, removeFieldEvent, setFieldClockRunning, initializeFieldRoster, getCurrentFieldRoster, getFieldPlayingSeconds, recordFieldSubstitution, recordFieldPositionChange } from './field-companion-service.js';
 import { ensureAttendance, setAttendanceStatus, getAttendanceSummary } from './team-operations-service.js';
 import { setFieldSessionActive, bindFieldSessionVisibility, triggerFieldHaptic } from './field-session-service.js';
+import { buildMatchdayReadiness, buildMatchdaySaveStatus } from './matchday-ux-service.js';
 
 let ytPlayer = null;
 let currentMatchId = null;
@@ -169,16 +170,30 @@ function renderFieldNetworkStatus() {
     const status = document.getElementById('field-network-status');
     if (!status) return;
     const syncStatus = navigator.onLine === false ? 'offline' : (window.__coachMgrSyncStatus || 'local');
-    const labels = {
-        local: '<i class="fa-solid fa-hard-drive" aria-hidden="true"></i> 端末に保存済み',
-        syncing: '<i class="fa-solid fa-rotate fa-spin" aria-hidden="true"></i> クラウド同期中',
-        success: '<i class="fa-solid fa-cloud-check" aria-hidden="true"></i> クラウド同期済み',
-        offline: '<i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> オフライン：端末に保存',
-        conflict: '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 同期の確認が必要です',
-        error: '<i class="fa-solid fa-cloud-exclamation" aria-hidden="true"></i> 同期に失敗しました'
-    };
-    status.classList.toggle('is-offline', syncStatus === 'offline' || syncStatus === 'error' || syncStatus === 'conflict');
-    status.innerHTML = labels[syncStatus] || labels.local;
+    const outboxCount = Array.isArray(state.syncOutbox?.items) ? state.syncOutbox.items.length : 0;
+    const saveStatus = buildMatchdaySaveStatus({ isOnline: navigator.onLine !== false, outboxCount, syncStatus });
+    status.className = `field-network-status is-${saveStatus.tone}`;
+    status.innerHTML = `<i class="fa-solid ${saveStatus.icon}" aria-hidden="true"></i> ${escapeHtml(saveStatus.label)}`;
+    status.title = saveStatus.description;
+}
+
+function renderFieldMatchdayReadiness(match) {
+    const panel = document.getElementById('field-matchday-readiness');
+    const headline = document.getElementById('field-matchday-headline');
+    const items = document.getElementById('field-matchday-items');
+    if (!panel || !headline || !items) return;
+    const outboxCount = Array.isArray(state.syncOutbox?.items) ? state.syncOutbox.items.length : 0;
+    const readiness = buildMatchdayReadiness({
+        match,
+        periodIndex: fieldPeriodIndex,
+        isOnline: navigator.onLine !== false,
+        outboxCount,
+        hasBackup: Boolean(localStorage.getItem('coachMgrLastBackupAt'))
+    });
+    headline.textContent = readiness.headline;
+    items.innerHTML = readiness.items.map(item => `<div class="field-readiness-item is-${item.ready ? 'ready' : item.optional ? 'optional' : 'attention'}"><i class="fa-solid ${item.ready ? 'fa-circle-check' : item.optional ? 'fa-circle-info' : 'fa-circle-exclamation'}" aria-hidden="true"></i><span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.detail)}</small></span></div>`).join('');
+    const activePeriod = ensureFieldPeriod(match, fieldPeriodIndex);
+    panel.open = !activePeriod.fieldClockRunning;
 }
 
 function initFieldNetworkStatus() {
@@ -205,6 +220,7 @@ function refreshFieldCompanion(match) {
     renderFieldLiveScore(match);
     renderFieldRoster(match);
     renderFieldNetworkStatus();
+    renderFieldMatchdayReadiness(match);
     const scoreBox = document.getElementById('match-detail-score-box');
     if (scoreBox) {
         scoreBox.innerHTML = `

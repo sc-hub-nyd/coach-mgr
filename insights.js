@@ -2,6 +2,7 @@ import { state } from './state.js';
 import { escapeHtml, showToast } from './utils.js';
 import { navigate } from './app-context.js';
 import { buildTeamInsights, buildPlayerInsights, buildPeriodComparison, buildPositionParticipation, buildCoachingRecommendations, getTimelinePresentation, buildInsightsShareText } from './insights-service.js';
+import { buildDecisionCards } from './experience-service.js';
 
 function getSelectedPlayerId() {
     const parentPlayerId = localStorage.getItem('coachMgrMyPlayerId');
@@ -101,6 +102,27 @@ function renderCoachingSignals(comparison, positionParticipation, recommendation
     }
 }
 
+function renderDecisionCards(cards) {
+    const container = document.getElementById('insights-decision-cards');
+    if (!container) return;
+    if (!cards.length) {
+        container.innerHTML = '<div class="insights-empty compact"><p>活動記録が増えると、ここに次の判断と根拠が表示されます。</p></div>';
+        return;
+    }
+    container.innerHTML = cards.map(card => `<article class="decision-card is-${escapeHtml(card.tone || 'neutral')}">
+        <div class="decision-card-icon"><i class="fa-solid ${escapeHtml(card.icon || 'fa-circle-info')}" aria-hidden="true"></i></div>
+        <div><span class="decision-card-label">${escapeHtml(card.title)}</span><p>${escapeHtml(card.evidence)}</p><button type="button" class="btn btn-secondary btn-sm" data-decision-action="${escapeHtml(card.action || '')}" data-decision-id="${escapeHtml(card.id)}">${escapeHtml(card.actionLabel || '確認する')} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
+    </article>`).join('');
+    container.querySelectorAll('[data-decision-action]').forEach(button => {
+        button.onclick = () => {
+            const card = cards.find(item => item.id === button.dataset.decisionId);
+            if (button.dataset.decisionAction === 'open-insights') return renderInsights();
+            if (button.dataset.decisionAction === 'open-matches') return navigate('matches');
+            if (button.dataset.decisionAction === 'create-practice-plan') return window.openCoachMgrPracticePlan?.(card?.recommendation);
+        };
+    });
+}
+
 function renderInsights() {
     const range = document.getElementById('insights-range-select')?.value || '90';
     const teamInsights = buildTeamInsights(state, { days: range === 'all' ? 'all' : Number(range) });
@@ -119,6 +141,7 @@ function renderInsights() {
     const positionParticipation = buildPositionParticipation(state, { days: range === 'all' ? 'all' : Number(range) });
     const recommendations = buildCoachingRecommendations(state, { days: range === 'all' ? 'all' : Number(range) });
     renderCoachingSignals(comparison, positionParticipation, recommendations);
+    renderDecisionCards(buildDecisionCards(state, { rangeDays: range === 'all' ? 90 : Number(range) }));
     renderTimeline(teamInsights);
     renderPlayerHistory(playerInsights);
     return { teamInsights, playerInsights, comparison, positionParticipation, recommendations };

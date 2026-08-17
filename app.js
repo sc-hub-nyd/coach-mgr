@@ -21,6 +21,7 @@ import { ensureWorkspaceState, hydrateActiveWorkspace } from './workspace-servic
 import { mergeSnapshotsByRecord, touchRecordsForSave } from './record-service.js';
 import { acknowledgeSyncOutboxItem, appendSyncAudit, enqueueSyncSnapshot, ensureSyncOutbox, getNextSyncItem, hydrateSyncOutbox, markSyncOutboxFailed, markSyncOutboxSending, refreshSyncOutboxItem } from './sync-outbox-service.js';
 import { configureAppContext } from './app-context.js';
+import { buildCoachActionCenter, buildParentHomeAgenda, buildPracticePlanDraft, ensurePracticePlan, savePracticePlan, loadUiPreferences, applyUiPreferences } from './experience-service.js';
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
     const action = actionLabel && actionId
@@ -1829,6 +1830,9 @@ function initDashboard() {
     }
 
 
+    // P28/P30: ロール別の次の行動と練習計画を、既存の成績カードより先に描画する。
+    renderExperienceDashboard();
+
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // ボタンイベント設定
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1843,6 +1847,96 @@ function initDashboard() {
     if (btnAddMatch) btnAddMatch.onclick = () => openMatchModal(null);
 }
 
+
+let activePracticePlanDraft = null;
+
+function runExperienceAction(action, targetId = null, recommendation = null) {
+    if (action === 'settings-sync') return navigate('settings');
+    if (action === 'open-match' && targetId != null) return openMatchDetail(targetId);
+    if (action === 'open-practice') return navigate('practices', targetId != null ? { practiceId: targetId } : null);
+    if (action === 'open-insights') return navigate('insights');
+    if (action === 'open-matches') return navigate('matches');
+    if (action === 'create-event') return openPracticeModal(null);
+    if (action === 'create-practice-plan') return openPracticePlanDialog(recommendation);
+}
+
+function renderExperienceDashboard() {
+    const isCoach = state.currentUserRole === 'coach';
+    const actionCenter = document.getElementById('dash-action-center');
+    const actionList = document.getElementById('dash-action-center-list');
+    const actionCount = document.getElementById('dash-action-center-count');
+    const planSummary = document.getElementById('dash-practice-plan-summary');
+    const planButton = document.getElementById('btn-dash-create-practice-plan');
+
+    if (isCoach && actionCenter && actionList) {
+        const center = buildCoachActionCenter(state);
+        actionCount.textContent = `${center.actions.length}件`;
+        actionList.innerHTML = center.actions.length ? center.actions.map(item => `
+            <button type="button" class="dash-action-item is-${escapeHtml(item.tone || 'neutral')}" data-experience-action="${escapeHtml(item.action)}" data-experience-id="${escapeHtml(String(item.targetId || ''))}">
+                <span class="dash-action-icon"><i class="fa-solid ${escapeHtml(item.icon || 'fa-arrow-right')}"></i></span>
+                <span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description)}</small></span>
+                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+            </button>`).join('') : '<div class="dash-no-data">今すぐ対応が必要な項目はありません。</div>';
+        actionList.querySelectorAll('[data-experience-action]').forEach(button => {
+            button.onclick = () => runExperienceAction(button.dataset.experienceAction, button.dataset.experienceId || null, center.actions.find(item => item.action === button.dataset.experienceAction)?.recommendation || null);
+        });
+    }
+
+    if (isCoach && planSummary) {
+        const plans = ensurePracticePlan(state);
+        const latest = plans[0];
+        planSummary.innerHTML = latest ? `<div class="dash-plan-summary-item"><i class="fa-solid fa-clipboard-check"></i><span><strong>${escapeHtml(latest.title)}</strong><small>${escapeHtml(latest.date || '日程未設定')} ・ ${Number(latest.durationMinutes || 0)}分 ・ ${escapeHtml(latest.purpose || 'ねらい未設定')}</small></span></div>` : '<div class="dash-no-data">まだ練習案はありません。振り返りの示唆から下書きを作成できます。</div>';
+    }
+    if (isCoach && planButton) planButton.onclick = () => openPracticePlanDialog();
+
+    const parentAgenda = document.getElementById('dash-parent-agenda-list');
+    if (!isCoach && parentAgenda) {
+        const playerId = localStorage.getItem('coachMgrMyPlayerId');
+        const agenda = buildParentHomeAgenda(state, { playerId, scopes: getParentAccessScopes() });
+        parentAgenda.innerHTML = agenda.length ? agenda.map(item => `
+            <button type="button" class="dash-action-item is-neutral" data-parent-agenda-action="${escapeHtml(item.action)}" data-parent-agenda-id="${escapeHtml(String(item.targetId || ''))}">
+                <span class="dash-action-icon"><i class="fa-solid ${escapeHtml(item.icon)}"></i></span>
+                <span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description)}</small></span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+            </button>`).join('') : '<div class="dash-no-data">次の予定や回答待ちはありません。</div>';
+        parentAgenda.querySelectorAll('[data-parent-agenda-action]').forEach(button => {
+            button.onclick = () => runExperienceAction(button.dataset.parentAgendaAction, button.dataset.parentAgendaId || null);
+        });
+    }
+}
+
+function openPracticePlanDialog(recommendation = null) {
+    activePracticePlanDraft = buildPracticePlanDraft(state, { recommendation });
+    const modal = document.getElementById('modal-practice-plan');
+    const form = document.getElementById('form-practice-plan');
+    if (!modal || !form) return;
+    document.getElementById('practice-plan-name').value = activePracticePlanDraft.title;
+    document.getElementById('practice-plan-date').value = activePracticePlanDraft.date;
+    document.getElementById('practice-plan-duration').value = activePracticePlanDraft.durationMinutes;
+    document.getElementById('practice-plan-purpose').value = activePracticePlanDraft.purpose;
+    document.getElementById('practice-plan-contingency').value = activePracticePlanDraft.contingency;
+    document.getElementById('practice-plan-blocks').innerHTML = activePracticePlanDraft.blocks.map(block => `<div class="practice-plan-block"><strong>${escapeHtml(block.label)}</strong><label>時間<input class="form-control" data-practice-plan-block="${escapeHtml(block.id)}" type="number" min="0" max="180" value="${Number(block.minutes || 0)}"></label><small>${escapeHtml(block.note)}</small></div>`).join('');
+    form.onsubmit = async event => {
+        event.preventDefault();
+        const blocks = activePracticePlanDraft.blocks.map(block => ({ ...block, minutes: Number(form.querySelector(`[data-practice-plan-block="${block.id}"]`)?.value || 0) }));
+        const plan = savePracticePlan(state, {
+            ...activePracticePlanDraft,
+            title: document.getElementById('practice-plan-name').value,
+            date: document.getElementById('practice-plan-date').value,
+            durationMinutes: Number(document.getElementById('practice-plan-duration').value || 75),
+            purpose: document.getElementById('practice-plan-purpose').value,
+            contingency: document.getElementById('practice-plan-contingency').value,
+            blocks
+        });
+        await saveData();
+        modal.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+        renderExperienceDashboard();
+        showToast(`「${plan.title}」を練習案として保存しました`);
+    };
+    openModal('modal-practice-plan');
+}
+
+window.openCoachMgrPracticePlan = openPracticePlanDialog;
 
 function setupEventListeners() {
     const sidebar = document.getElementById('sidebar');
@@ -2325,6 +2419,8 @@ async function init() {
     }
     retryPendingSyncOutbox();
 
+    // P32: 端末ごとの可読性・利き手・動きの設定をテーマと同じ初期化段階で反映する。
+    applyUiPreferences(loadUiPreferences());
     // ★ P0: 保存済みテーマの初期化 ★
     applyThemePreset(localStorage.getItem('coachMgrThemePreset') || 'field-green');
 
