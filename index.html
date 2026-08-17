@@ -196,7 +196,7 @@
         <div class="dash-widget-grid">
 
             <!-- P0: 初回セットアップ導線 -->
-            <section id="dash-setup-checklist" class="card setup-checklist coach-only" aria-labelledby="dash-setup-title">
+            <section id="dash-setup-checklist" class="card c-card setup-checklist coach-only" aria-labelledby="dash-setup-title">
                 <div class="setup-checklist-header">
                     <div>
                         <span class="eyebrow-label">START HERE</span>
@@ -209,7 +209,7 @@
             </section>
 
             <!-- P28: 文脈優先のコーチホーム -->
-            <section id="dash-action-center" class="card dash-action-center coach-only" aria-labelledby="dash-action-center-title">
+            <section id="dash-action-center" class="card c-card dash-action-center coach-only" aria-labelledby="dash-action-center-title">
                 <div class="dash-action-center-header">
                     <div><span class="eyebrow-label">TODAY</span><h2 id="dash-action-center-title">今日やること</h2><p>試合準備、出欠、記録の安全性を優先順に確認します。</p></div>
                     <span id="dash-action-center-count" class="dash-action-count">確認中</span>
@@ -218,19 +218,19 @@
             </section>
 
             <!-- P30: 分析から次回練習へつなぐ計画導線 -->
-            <section id="dash-practice-plan" class="card dash-practice-plan coach-only" aria-labelledby="dash-practice-plan-title">
+            <section id="dash-practice-plan" class="card c-card dash-practice-plan coach-only" aria-labelledby="dash-practice-plan-title">
                 <div class="dash-action-center-header"><div><span class="eyebrow-label">NEXT SESSION</span><h2 id="dash-practice-plan-title">次の練習を組み立てる</h2><p id="dash-practice-plan-copy">振り返りの示唆から、編集可能な練習案を作成します。</p></div><button type="button" class="btn btn-primary btn-sm" id="btn-dash-create-practice-plan"><i class="fa-solid fa-clipboard-list"></i> 練習案を作る</button></div>
                 <div id="dash-practice-plan-summary" class="dash-practice-plan-summary" aria-live="polite"></div>
             </section>
 
             <!-- P28: 保護者が最初に行う操作 -->
-            <section id="dash-parent-agenda" class="card dash-parent-agenda parent-only" aria-labelledby="dash-parent-agenda-title">
+            <section id="dash-parent-agenda" class="card c-card dash-parent-agenda parent-only" aria-labelledby="dash-parent-agenda-title">
                 <div class="dash-action-center-header"><div><span class="eyebrow-label">FOR YOU</span><h2 id="dash-parent-agenda-title">次にすること</h2><p>予定の確認、出欠回答、成長ログの確認をここから行えます。</p></div></div>
                 <div id="dash-parent-agenda-list" class="dash-action-center-list" aria-live="polite"></div>
             </section>
 
             <!-- P17: 試合前の運用確認（コーチ専用） -->
-            <section id="dash-preflight-card" class="card dash-preflight-card coach-only" aria-labelledby="dash-preflight-title">
+            <section id="dash-preflight-card" class="card c-card dash-preflight-card coach-only" aria-labelledby="dash-preflight-title">
                 <div class="dash-preflight-header">
                     <div>
                         <span class="eyebrow-label">MATCHDAY READY</span>
@@ -247,7 +247,7 @@
             </section>
 
             <!-- ROW 0: マイ選手 (保護者専用) -->
-            <div id="dash-myplayer-banner" class="card dash-myplayer-card parent-only" style="display:none;">
+            <div id="dash-myplayer-banner" class="card c-card dash-myplayer-card parent-only" style="display:none;">
                 <div class="dash-widget-label"
                     style="justify-content: space-between; margin-bottom:0.5rem; width:100%;">
                     <span><i class="fa-solid fa-child-reaching" style="color:var(--primary);"></i> マイ選手
@@ -271,14 +271,14 @@
             <!-- ROW 2: 今季成績 ＆ チーム強化テーマ (2カラム横並び) -->
             <div class="dash-row-2">
                 <!-- 次の予定 -->
-                <div class="card dash-next-event-card" id="dash-next-event-card">
+                <div class="card c-card dash-next-event-card" id="dash-next-event-card">
                     <div class="dash-widget-label"><i class="fa-solid fa-calendar-day"></i> 次の予定</div>
                     <div id="dash-next-event-content">
                         <div class="dash-no-data">予定はありません</div>
                     </div>
                 </div>
                 <!-- 今季成績 -->
-                <div class="card dash-season-record-card" id="dash-card-matches" style="cursor: pointer;"
+                <div class="card c-card c-card--interactive dash-season-record-card" id="dash-card-matches"
                     onclick="openSeasonRecordModal()">
                     <div class="dash-widget-label" style="justify-content: space-between; width: 100%;">
                         <span><i class="fa-solid fa-trophy"></i> 今季成績</span>
@@ -311,7 +311,7 @@
                 </div>
 
                 <!-- チーム強化テーマ -->
-                <div class="card dash-rank-card" id="dash-team-focus-card">
+                <div class="card c-card dash-rank-card" id="dash-team-focus-card">
                     <div class="dash-widget-label"
                         style="justify-content: space-between; align-items: center; width: 100%; flex-wrap: nowrap; gap: 0.4rem;">
                         <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><i
@@ -328,7 +328,7 @@
             </div>
 
             <!-- ROW 3: 直近の予定・実績 (全幅1列・「直近の試合」と同等UI) -->
-            <div class="card dash-form-card" id="dash-schedule-widget-card">
+            <div class="card c-card dash-form-card" id="dash-schedule-widget-card">
                 <div class="dash-form-header">
                     <div class="dash-widget-label"><i class="fa-solid fa-calendar-days"></i> 直近の予定・実績</div>
                     <div class="dash-schedule-actions coach-only" id="dash-schedule-btn-group"
@@ -474,19 +474,16 @@
         </div>
     </template>
     <template id="tpl-match-detail">
-        <div
-            style="display:flex; flex-direction:column; gap:1.2rem; max-width:1100px; margin:0 auto; padding-bottom:2rem;">
+        <div class="l-page l-page--wide l-stack l-stack--spacious">
 
             <!-- ★【追加】マイ選手（我が子）の出場要約バナー枠 ★ -->
             <div id="my-player-summary-container"></div>
 
             <!-- 試合概要 ＆ スコアサマリー ヒーローバナー -->
-            <div class="card"
-                style="padding:0.6rem 1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem; border-left:4px solid var(--primary);">
-                <div>
-                    <div style="font-size:0.75rem; color:var(--text-secondary);" id="match-detail-meta">日付 | 大会・種別</div>
-                    <h2 style="margin:0; font-size:1.2rem; font-weight:700; color:var(--text-primary);"
-                        id="match-detail-title">vs 対戦相手</h2>
+            <div class="card c-card c-card--accent c-section-header">
+                <div class="c-section-header__content">
+                    <div class="c-section-header__meta" id="match-detail-meta">日付 | 大会・種別</div>
+                    <h2 class="c-section-header__title" id="match-detail-title">vs 対戦相手</h2>
                 </div>
                 <div id="match-detail-score-box"></div>
             </div>
@@ -537,70 +534,47 @@
             </section>
 
             <!-- コーチモード用 試合基本情報 編集エリア -->
-            <div class="card coach-only" style="padding:1.2rem; display:flex; flex-direction:column; gap:0.6rem;">
-                <div style="font-size:0.85rem; font-weight:bold; color:var(--text-primary);"><i
-                        class="fa-solid fa-pen"></i> 試合基本情報</div>
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:0.6rem;">
-                    <div style="display:flex; flex-direction:column; gap:0.2rem;">
-                        <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">日付
-                            <span class="badge-required" style="padding:0.1rem 0.25rem;">必須</span></label>
-                        <input type="date" id="match-detail-date-input" class="form-control"
-                            style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;" required
+            <div class="card c-card coach-only l-stack l-stack--compact">
+                <div class="c-section-header__title"><i class="fa-solid fa-pen"></i> 試合基本情報</div>
+                <div class="l-form-grid">
+                    <div class="c-field">
+                        <label class="c-field__label">日付 <span class="badge-required">必須</span></label>
+                        <input type="date" id="match-detail-date-input" class="form-control" required
                             form="form-match-detail-inline">
                     </div>
-                    <div style="display:flex; flex-direction:column; gap:0.2rem;">
-                        <label style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">対戦相手
-                            <span class="badge-required" style="padding:0.1rem 0.25rem;">必須</span></label>
-                        <input type="text" id="match-detail-opponent-input" class="form-control"
-                            placeholder="例: FC東京U-12"
-                            style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;" required
+                    <div class="c-field">
+                        <label class="c-field__label">対戦相手 <span class="badge-required">必須</span></label>
+                        <input type="text" id="match-detail-opponent-input" class="form-control" placeholder="例: FC東京U-12" required
                             form="form-match-detail-inline">
                     </div>
-                    <div style="display:flex; flex-direction:column; gap:0.2rem;">
-                        <label
-                            style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">試合種別</label>
+                    <div class="c-field">
+                        <label class="c-field__label">試合種別</label>
                         <select id="match-detail-type-select" class="form-control"
-                            style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;"
                             form="form-match-detail-inline"></select>
                     </div>
-                    <div style="display:flex; flex-direction:column; gap:0.2rem;">
-                        <label
-                            style="font-size:0.75rem; color:var(--text-secondary); font-weight:700; margin:0;">大会名・リーグ名</label>
-                        <input type="text" id="match-detail-tournament-input" class="form-control"
-                            placeholder="例: 三多摩大会（任意）"
-                            style="font-size:0.8rem; padding:0.35rem 0.5rem; height:auto; margin:0;"
+                    <div class="c-field">
+                        <label class="c-field__label">大会名・リーグ名</label>
+                        <input type="text" id="match-detail-tournament-input" class="form-control" placeholder="例: 三多摩大会（任意）"
                             form="form-match-detail-inline">
                     </div>
                 </div>
             </div>
 
             <!-- 試合テーマ・総括・出欠インライン編集エリア -->
-            <div class="card" style="padding:1.2rem; margin:0; display:flex; flex-direction:column; gap:0.8rem;">
-                <form id="form-match-detail-inline" style="display:flex; flex-direction:column; gap:0.8rem; margin:0;">
+            <div class="card c-card l-stack">
+                <form id="form-match-detail-inline" class="l-stack l-stack--compact u-no-margin">
                     <!-- テーマ -->
-                    <div style="display:flex; flex-direction:column; gap:0.25rem;">
-                        <label
-                            style="font-size:0.85rem; font-weight:bold; color:var(--text-primary); display:flex; align-items:center; gap:0.3rem;">
-                            <i class="fa-solid fa-bullseye" style="color:var(--primary);"></i> 試合テーマ
-                        </label>
-                        <div class="parent-only" id="match-detail-theme-text"
-                            style="font-size:0.85rem; padding:0.2rem 0;">未設定</div>
-                        <input type="text" id="match-detail-theme-input" class="form-control coach-only"
-                            placeholder="例: ハイプレスからのショートカウンター"
-                            style="font-size:0.85rem; padding:0.4rem 0.6rem; height:auto; margin:0;">
+                    <div class="c-field">
+                        <label class="c-field__label"><i class="fa-solid fa-bullseye"></i> 試合テーマ</label>
+                        <div class="parent-only u-text-muted" id="match-detail-theme-text">未設定</div>
+                        <input type="text" id="match-detail-theme-input" class="form-control coach-only" placeholder="例: ハイプレスからのショートカウンター">
                     </div>
 
                     <!-- 総括 -->
-                    <div style="display:flex; flex-direction:column; gap:0.25rem;">
-                        <label
-                            style="font-size:0.85rem; font-weight:bold; color:var(--text-primary); display:flex; align-items:center; gap:0.3rem;">
-                            <i class="fa-solid fa-comment-dots" style="color:#3b82f6;"></i> 試合総括
-                        </label>
-                        <div class="parent-only" id="match-detail-summary-text"
-                            style="font-size:0.85rem; padding:0.2rem 0; white-space:pre-wrap;">記録なし</div>
-                        <textarea id="match-detail-summary-input" class="form-control coach-only" rows="3"
-                            placeholder="例: ビルドアップは安定していたが、アタッキングサードでの判断力に課題"
-                            style="font-size:0.85rem; padding:0.4rem 0.6rem; line-height:1.4; margin:0;"></textarea>
+                    <div class="c-field">
+                        <label class="c-field__label"><i class="fa-solid fa-comment-dots"></i> 試合総括</label>
+                        <div class="parent-only u-text-muted" id="match-detail-summary-text">記録なし</div>
+                        <textarea id="match-detail-summary-input" class="form-control coach-only" rows="3" placeholder="例: ビルドアップは安定していたが、アタッキングサードでの判断力に課題"></textarea>
                     </div>
 
                     <!-- 出欠管理（アコーディオン） -->
@@ -624,10 +598,8 @@
                     </div>
 
                     <!-- コーチ用インライン保存ボタン -->
-                    <div class="coach-only"
-                        style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.4rem;">
-                        <button type="submit" class="btn btn-primary btn-sm" id="btn-save-match-detail-inline"
-                            style="padding:0.45rem 1.25rem; font-weight:700;">
+                    <div class="coach-only c-action-group c-action-group--end">
+                        <button type="submit" class="btn btn-primary btn-sm" id="btn-save-match-detail-inline">
                             <i class="fa-solid fa-save"></i> 試合テーマ・総括・出欠を保存
                         </button>
                     </div>
@@ -635,14 +607,13 @@
             </div>
 
             <!-- ピリオド一覧セクション -->
-            <div class="card" style="padding:1.2rem; margin:0; display:flex; flex-direction:column; gap:1rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 style="margin:0; font-size:1.05rem;"><i class="fa-solid fa-layer-group"></i> ピリオド一覧</h3>
+            <div class="card c-card l-stack">
+                <div class="c-section-header">
+                    <h3 class="c-section-header__title"><i class="fa-solid fa-layer-group"></i> ピリオド一覧</h3>
                     <button class="btn btn-primary btn-sm" id="btn-add-formation"><i class="fa-solid fa-plus"></i>
                         ピリオド追加</button>
                 </div>
-                <div id="match-period-grid"
-                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
+                <div id="match-period-grid" class="l-grid l-grid--wide">
                     <!-- ピリオドカードが動的に注入されます -->
                 </div>
             </div>
@@ -833,10 +804,10 @@
     </template>
 
     <template id="tpl-settings">
-        <div class="sl-settings">
+        <div class="sl-settings l-page l-page--narrow">
 
             <!-- P28: 長い設定画面を目的別に移動できるハブ -->
-            <section class="settings-hub card coach-only" aria-labelledby="settings-hub-title">
+            <section class="settings-hub card c-card coach-only" aria-labelledby="settings-hub-title">
                 <div><span class="eyebrow-label">SETTINGS</span><h2 id="settings-hub-title">何を設定しますか？</h2><p>目的を選ぶと、必要な設定まで移動します。</p></div>
                 <div class="settings-hub-grid">
                     <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="workspace-management-section"><i class="fa-solid fa-layer-group"></i><span>チーム・年度</span><small>切替と年度管理</small></button>
@@ -1356,7 +1327,7 @@
     </template>
 
     <template id="tpl-insights">
-        <section class="insights-page" aria-labelledby="insights-page-title">
+            <section class="insights-page l-page l-page--wide l-stack l-stack--spacious" aria-labelledby="insights-page-title">
             <header class="insights-hero">
                 <div>
                     <span class="eyebrow-label">REVIEW</span>
@@ -1365,7 +1336,7 @@
                 </div>
                 <button type="button" class="btn btn-primary" id="btn-copy-insights-report"><i class="fa-solid fa-share-nodes"></i> レポートをコピー</button>
             </header>
-            <div class="insights-toolbar card">
+            <div class="insights-toolbar card c-card">
                 <label class="form-group"><span>対象期間</span><select id="insights-range-select" class="form-control"><option value="30">直近30日</option><option value="90" selected>直近90日</option><option value="180">直近180日</option><option value="all">すべて</option></select></label>
                 <label class="form-group insights-player-filter"><span>選手別に見る</span><select id="insights-player-select" class="form-control"></select></label>
             </div>
@@ -1377,8 +1348,8 @@
                 <div class="insights-section-header"><div><span class="eyebrow-label">COACHING SIGNALS</span><h2 id="insights-coaching-title">比較分析と次の練習テーマ</h2></div><span class="insights-hint">同じ日数の直前期間と比較します</span></div>
                 <div id="insights-comparison" class="insights-comparison-grid"></div>
                 <div class="insights-coaching-grid">
-                    <article class="card insights-panel"><div class="insights-section-header"><div><span class="eyebrow-label">POSITION LOAD</span><h3>ポジション別出場時間</h3></div></div><div id="insights-position-participation" class="insights-position-list"></div></article>
-                    <article class="card insights-panel"><div class="insights-section-header"><div><span class="eyebrow-label">NEXT SESSION</span><h3>次の練習テーマ</h3></div></div><div id="insights-recommendations" class="insights-recommendations"></div></article>
+                    <article class="card c-card insights-panel"><div class="insights-section-header"><div><span class="eyebrow-label">POSITION LOAD</span><h3>ポジション別出場時間</h3></div></div><div id="insights-position-participation" class="insights-position-list"></div></article>
+                    <article class="card c-card insights-panel"><div class="insights-section-header"><div><span class="eyebrow-label">NEXT SESSION</span><h3>次の練習テーマ</h3></div></div><div id="insights-recommendations" class="insights-recommendations"></div></article>
                 </div>
                 <!-- P31: 数値を次の意思決定へつなぐ根拠付きカード -->
                 <section class="decision-cards-section coach-only" aria-labelledby="decision-cards-title">
@@ -1387,11 +1358,11 @@
                 </section>
             </section>
             <div class="insights-content-grid">
-                <section class="card insights-panel" aria-labelledby="insights-timeline-title">
+                <section class="card c-card insights-panel" aria-labelledby="insights-timeline-title">
                     <div class="insights-section-header"><div><span class="eyebrow-label">RECENT LOG</span><h2 id="insights-timeline-title">直近の記録</h2></div><span class="insights-hint">項目をタップして試合詳細へ</span></div>
                     <div id="insights-timeline" class="insight-timeline"></div>
                 </section>
-                <section class="card insights-panel" aria-labelledby="insights-player-history-title">
+                <section class="card c-card insights-panel" aria-labelledby="insights-player-history-title">
                     <div class="insights-section-header"><div><span class="eyebrow-label">PLAYER JOURNEY</span><h2 id="insights-player-history-title">選手を選択してください</h2></div></div>
                     <div id="insights-player-history"></div>
                 </section>

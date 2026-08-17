@@ -1,9 +1,14 @@
 /* css/main.css */
+/* CSS Architecture order: foundation → layout → components → pages → utilities */
 @import url('base.css');
+@import url('tokens.css');
+@import url('layouts.css');
 @import url('components.css');
+@import url('components-standard.css');
 @import url('dashboard.css');
 @import url('tactical.css');
 @import url('drawing.css');
+@import url('utilities.css');
 
 @keyframes timelinePulse {
     0% {
