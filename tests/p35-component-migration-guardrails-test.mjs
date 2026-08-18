@@ -85,6 +85,14 @@ requireAll(source.index, [
     'id="btn-field-timer-toggle"',
     'id="field-period-select"',
     'id="field-event-filter"',
+    'c-action-group--field',
+    'id="btn-field-score"',
+    'id="btn-field-concede"',
+    'id="btn-field-substitution"',
+    'id="btn-field-position"',
+    'id="btn-field-card"',
+    'id="btn-field-note"',
+    'id="btn-field-finish"',
     'id="field-event-list"',
     'c-data-list" aria-live="polite"',
     'id="field-active-roster"',
@@ -372,7 +380,8 @@ requireAll(source.system, [
     '\\.pk-shootout-editor',
     '\\.pk-kicker-row__controls',
     '\\.c-roster-row--field',
-    '\\.field-event-list\\.c-data-list'
+    '\\.field-event-list\\.c-data-list',
+    '\\.c-action-group--field'
 ], 'システム部品');
 
 console.log('P35 component migration guardrails passed');

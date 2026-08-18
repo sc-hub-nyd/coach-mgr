@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.28.6';
+export const APP_VERSION = 'v1.28.7';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.28.7',
+        date: '2026-08-18',
+        title: 'Field Companionのクイック操作群を標準化',
+        features: [
+            '得点、失点、交代、配置変更、警告、メモ、試合終了をc-action-groupの安全優先グリッドへ移行',
+            '既存の操作ID、片手操作の優先度、最小タップ面、記録ロジックを維持',
+            '小型端末では2列、広い画面では3列の操作配置へ統一し、誤タップを抑制',
+            '波4のライブ情報・名簿・ログ・クイック操作の限定共通化を完了'
+        ]
+    },
     {
         version: 'v1.28.6',
         date: '2026-08-18',
