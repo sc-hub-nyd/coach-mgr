@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.28.2';
+export const APP_VERSION = 'v1.28.3';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.28.3',
+        date: '2026-08-18',
+        title: '試合ピリオドのタイムラインを標準化',
+        features: [
+            '試合ピリオドのタイムラインをc-data-listとc-form-fieldの標準構造へ移行',
+            'イベント順、時刻ジャンプ、種別変更、本文編集、削除の既存ロジックを維持',
+            '空状態と編集行の余白・操作サイズを共通のレスポンシブ規則へ統一',
+            '動画ワークスペースと再生・保存ロジックは画面固有のまま保持'
+        ]
+    },
     {
         version: 'v1.28.2',
         date: '2026-08-18',

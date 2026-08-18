@@ -3034,9 +3034,9 @@ function renderPeriodTimelineList(period) {
 
     if (memos.length === 0) {
         container.innerHTML = `
-            <div class="u-ext-115" >
-                <i class="u-ext-116 fa-regular fa-clock" ></i>
-                タイムライン記録がありません。
+            <div class="c-empty-state c-empty-state--compact">
+                <i class="fa-regular fa-clock c-empty-state__icon" aria-hidden="true"></i>
+                <p class="c-empty-state__text">タイムライン記録がありません。</p>
             </div>`;
         return;
     }
@@ -3044,26 +3044,26 @@ function renderPeriodTimelineList(period) {
     container.innerHTML = memos.map((m, idx) => {
         const currentTag = m.tag || (state.analysisTags && state.analysisTags[0]) || 'メモ';
         const disabledAttr = isCoach ? '' : 'disabled';
-        const deleteBtnHtml = isCoach
-            ? `<button type="button" class="u-ext-117 btn btn-danger btn-sm btn-delete-memo"  title="削除"><i class="fa-solid fa-trash-can"></i></button>`
+const deleteBtnHtml = isCoach
+            ? `<button type="button" class="btn btn-danger btn-sm btn-delete-memo" title="削除" aria-label="タイムラインイベントを削除"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>`
             : '';
         const tagOptionHtml = (state.analysisTags || []).map(t => `<option value="${escapeHtml(t)}" ${currentTag === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('');
 
         return `
-            <div class="u-ext-118 timeline-edit-row" data-index="${idx}" >
-                <div class="u-ext-119" >
-                    <button type="button" class="u-ext-120 btn btn-secondary btn-sm btn-seek-timestamp" data-time="${escapeHtml(m.time || '00:00')}" >
-                        <i class="fa-solid fa-play"></i> ${escapeHtml(m.time || '00:00')}
+            <div class="timeline-edit-row c-data-list__item" data-index="${idx}">
+                <div class="c-data-list__header period-timeline-edit__controls">
+                    <button type="button" class="btn btn-secondary btn-sm period-timeline-edit__seek btn-seek-timestamp" data-time="${escapeHtml(m.time || '00:00')}">
+                        <i class="fa-solid fa-play" aria-hidden="true"></i> ${escapeHtml(m.time || '00:00')}
                     </button>
-
-                    <select class="u-ext-121 form-control memo-tag-val" ${disabledAttr} >
-                        ${tagOptionHtml}
-                    </select>
-
+                    <div class="c-form-field c-form-field--compact">
+                        <label class="u-visually-hidden" for="period-memo-tag-${idx}">イベント種別</label>
+                        <select id="period-memo-tag-${idx}" class="form-control memo-tag-val" ${disabledAttr}>${tagOptionHtml}</select>
+                    </div>
                     ${deleteBtnHtml}
                 </div>
-                <div>
-                    <input type="text" class="u-ext-122 form-control memo-text-val" value="${escapeHtml(m.text || '')}" ${disabledAttr} placeholder="${isCoach ? 'メモ（例: 左サイドからの崩し）' : 'メモなし'}" >
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="u-visually-hidden" for="period-memo-text-${idx}">タイムラインメモ</label>
+                    <input type="text" id="period-memo-text-${idx}" class="form-control memo-text-val" value="${escapeHtml(m.text || '')}" ${disabledAttr} placeholder="${isCoach ? 'メモ（例: 左サイドからの崩し）' : 'メモなし'}">
                 </div>
             </div>
         `;
