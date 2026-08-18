@@ -73,7 +73,8 @@ requireAll(source.index, [
     'id="canvas-pitch-template"',
     'id="canvas-snap-grid"',
     'id="anim-save"',
-    'c-form-field--fluid'
+    'c-form-field--fluid',
+    'c-choice-field'
 ], '作図設定');
 
 requireAll(source.index, [

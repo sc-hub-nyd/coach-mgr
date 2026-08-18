@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.25.4';
+export const APP_VERSION = 'v1.25.5';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.25.5',
+        date: '2026-08-18',
+        title: '作図画面のグリッド設定標準化',
+        features: [
+            '作図画面のグリッド吸着チェックをc-choice-fieldへ移行し、キーボード操作とフォーカス表現を標準化',
+            '既存のcanvas-snap-grid IDと描画挙動を維持し、P35部品契約で作図設定を保護',
+            '15種色×light/darkテーマ、5ビューポート×5画面のレスポンシブ検証で違反0件を確認'
+        ]
+    },
     {
         version: 'v1.25.4',
         date: '2026-08-18',
