@@ -87,7 +87,7 @@ function renderFieldRoster(match) {
         if (!player) return '';
         const seconds = secondsByPlayer[String(id)] || 0;
         const position = kind === 'active' ? getFieldPositionLabel(period, id) : 'ベンチ';
-        return `<span class="field-roster-chip is-${kind}"><strong>${escapeHtml(`${player.number || ''} ${player.name}`.trim())}</strong><small>${escapeHtml(position)} ・ ${formatSeconds(seconds)}</small></span>`;
+        return `<div class="field-roster-chip c-roster-row c-roster-row--field is-${kind}"><div class="c-roster-row__identity"><span class="c-roster-row__name">${escapeHtml(`${player.number || ''} ${player.name}`.trim())}</span></div><span class="c-roster-row__meta">${escapeHtml(position)} ・ ${formatSeconds(seconds)}</span></div>`;
     };
     if (active) active.innerHTML = roster.activePlayerIds.length ? roster.activePlayerIds.map(id => playerCard(id, 'active')).join('') : '<span class="field-roster-empty">フォーメーションまたは参加選手を登録すると表示されます</span>';
     if (bench) bench.innerHTML = roster.benchPlayerIds.length ? roster.benchPlayerIds.map(id => playerCard(id, 'bench')).join('') : '<span class="field-roster-empty">ベンチの選手はいません</span>';
@@ -109,11 +109,11 @@ function renderFieldTimeline(match) {
     }
     const canEdit = state.currentUserRole === 'coach';
     list.innerHTML = events.slice(0, 8).map(event => `
-        <li class="field-event-item field-event-${escapeHtml(event.type || 'other')}">
+        <li class="field-event-item c-data-list__item field-event-${escapeHtml(event.type || 'other')}">
             <time>${formatSeconds(event.elapsedSeconds || 0)}</time>
             <i class="fa-solid ${getFieldEventIcon(event)}" aria-hidden="true"></i>
             <span>${escapeHtml(getFieldEventLabel(event))}</span>
-            ${canEdit ? `<button type="button" class="btn field-event-delete" data-field-event-id="${escapeHtml(event.id)}" aria-label="${escapeHtml(getFieldEventLabel(event))}を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>` : ''}
+            ${canEdit ? `<button type="button" class="btn btn-danger field-event-delete" data-field-event-id="${escapeHtml(event.id)}" aria-label="${escapeHtml(getFieldEventLabel(event))}を削除"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>` : ''}
         </li>`).join('');
     if (canEdit) {
         list.querySelectorAll('[data-field-event-id]').forEach(button => {
@@ -172,7 +172,7 @@ function renderFieldNetworkStatus() {
     const syncStatus = navigator.onLine === false ? 'offline' : (window.__coachMgrSyncStatus || 'local');
     const outboxCount = Array.isArray(state.syncOutbox?.items) ? state.syncOutbox.items.length : 0;
     const saveStatus = buildMatchdaySaveStatus({ isOnline: navigator.onLine !== false, outboxCount, syncStatus });
-    status.className = `field-network-status is-${saveStatus.tone}`;
+    status.className = `field-network-status c-status is-${saveStatus.tone}`;
     status.innerHTML = `<i class="fa-solid ${saveStatus.icon}" aria-hidden="true"></i> ${escapeHtml(saveStatus.label)}`;
     status.title = saveStatus.description;
 }

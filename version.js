@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.28.5';
+export const APP_VERSION = 'v1.28.6';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.28.6',
+        date: '2026-08-18',
+        title: 'Field Companionのライブ情報構造を標準化',
+        features: [
+            '試合時計、出場中・ベンチ、試合ログ、保存状態を共通数値・名簿・データ一覧・状態部品へ接続',
+            'イベント順、削除確認、出場時間、時計制御、同期／保留状態の既存ロジックを維持',
+            '試合中の操作面を44px以上に維持し、主操作へFrosted Glass・Liquid UIを導入しない安全規約を遵守',
+            '波4のField Companionを安全優先で限定共通化'
+        ]
+    },
     {
         version: 'v1.28.5',
         date: '2026-08-18',

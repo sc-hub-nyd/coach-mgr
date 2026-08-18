@@ -86,6 +86,11 @@ requireAll(source.index, [
     'id="field-period-select"',
     'id="field-event-filter"',
     'id="field-event-list"',
+    'c-data-list" aria-live="polite"',
+    'id="field-active-roster"',
+    'id="field-bench-roster"',
+    'field-roster-list c-roster-list',
+    'c-match-score__result',
     'id="match-detail-date-input"',
     'id="match-detail-opponent-input"',
     'id="match-detail-type-select"',
@@ -179,6 +184,9 @@ requireAll(source.matches, [
     'c-match-score-actions',
     'pk-kicker-row c-data-list__item',
     'pk-kicker-row__controls',
+    'c-roster-row c-roster-row--field',
+    'field-event-item c-data-list__item',
+    'field-network-status c-status',
     'btn-add-match',
     'btn-add-match'
 ], '試合空状態');
@@ -362,7 +370,9 @@ requireAll(source.system, [
     '\\.c-match-score',
     '\\.c-match-score__result',
     '\\.pk-shootout-editor',
-    '\\.pk-kicker-row__controls'
+    '\\.pk-kicker-row__controls',
+    '\\.c-roster-row--field',
+    '\\.field-event-list\\.c-data-list'
 ], 'システム部品');
 
 console.log('P35 component migration guardrails passed');
