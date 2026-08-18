@@ -1372,7 +1372,7 @@
 
                         <!-- 5a. Filmstrip Timeline Card Strip (Item 08: フィルムスリップ型タイムライン) -->
                         <div id="filmstrip-timeline-wrapper" class="filmstrip-timeline-wrapper">
-                            <div id="filmstrip-cards-container" class="filmstrip-cards-container"></div>
+                            <div id="filmstrip-cards-container" class="filmstrip-cards-container c-data-list"></div>
                         </div>
 
                         <!-- 5b. Floating Compact Player Bar Timeline (Centered Inside Pitch Canvas) -->
@@ -1382,7 +1382,7 @@
                                 style="padding:0 0.5rem; font-size:0.75rem; height:30px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center;"><i
                                     class="fa-solid fa-film"></i></button>
                             <!-- Left Group: Play / Stop -->
-                            <div class="player-bar-group player-bar-left">
+                            <div class="player-bar-group player-bar-left c-action-group">
                                 <button class="btn btn-primary btn-xs" id="anim-play" title="アニメーション再生"><i
                                         class="fa-solid fa-play"></i> 再生</button>
                                 <button class="btn btn-secondary btn-xs" id="anim-stop" title="停止"><i
@@ -1392,7 +1392,7 @@
                             <span class="player-bar-divider"></span>
 
                             <!-- Center Group: Prev / Select Scene Dropdown / Edit Title / Next -->
-                            <div class="player-bar-group player-bar-center">
+                            <div class="player-bar-group player-bar-center c-action-group">
                                 <button class="btn btn-secondary btn-xs" id="anim-prev-frame" title="前のシーンへ"><i
                                         class="fa-solid fa-chevron-left"></i> 前へ</button>
                                 <select id="anim-frame-select" title="シーン切替プルダウン"></select>
@@ -1405,7 +1405,7 @@
                             <span class="player-bar-divider"></span>
 
                             <!-- Right Group: Add Scene / Delete Scene / Video Export -->
-                            <div class="player-bar-group player-bar-right">
+                            <div class="player-bar-group player-bar-right c-action-group">
                                 <button class="btn btn-primary btn-xs" id="anim-add-frame" title="現在のシーンの次に新しいシーンを挿入"><i
                                         class="fa-solid fa-plus"></i> 追加</button>
                                 <button class="btn btn-danger btn-xs" id="anim-delete-frame" title="現在のシーンを削除"><i

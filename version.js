@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.28.7';
+export const APP_VERSION = 'v1.28.8';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.28.8',
+        date: '2026-08-18',
+        title: '作図フィルムストリップ・アニメーション操作群を標準化',
+        features: [
+            'アニメーションのフィルムストリップをc-data-list、フレーム操作群をc-action-groupへ接続',
+            'フレーム順、選択、ドラッグ、削除、再生、停止、追加、出力の既存IDとロジックを維持',
+            'キャンバス座標、描画エンジン、Undo／Redo、動画出力形式には変更を加えない',
+            '波5の作図・アニメーション通常UIを外側から共通化'
+        ]
+    },
     {
         version: 'v1.28.7',
         date: '2026-08-18',

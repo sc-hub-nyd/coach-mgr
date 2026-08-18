@@ -12,6 +12,7 @@ const source = Object.fromEntries(await Promise.all([
     ['players', '../players.js'],
     ['insights', '../insights.js'],
     ['matches', '../matches.js'],
+    ['drawing', '../drawing.js'],
     ['app', '../app.js'],
     ['standard', '../CSS/components-standard.css'],
     ['system', '../CSS/components-system.css']
@@ -74,6 +75,16 @@ requireAll(source.index, [
     'template id="tpl-animation"',
     'id="canvas-pitch-template"',
     'id="canvas-snap-grid"',
+    'id="filmstrip-cards-container"',
+    'filmstrip-cards-container c-data-list',
+    'id="anim-play"',
+    'id="anim-stop"',
+    'id="anim-prev-frame"',
+    'id="anim-frame-select"',
+    'id="anim-next-frame"',
+    'id="anim-add-frame"',
+    'id="anim-delete-frame"',
+    'id="anim-export-video"',
     'id="anim-save"',
     'c-form-field--fluid',
     'c-choice-field'
@@ -180,6 +191,17 @@ requireAll(source.app, [
     'c-empty-state--compact',
     "compact = false"
 ], '共通空状態');
+
+requireAll(source.drawing, [
+    'filmstrip-card c-data-list__item',
+    'filmstrip-card-header c-data-list__header',
+    'filmstrip-card__meta c-action-group',
+    'btn-card-delete',
+    'anim-frame-select',
+    'anim-add-frame',
+    'anim-delete-frame',
+    'anim-export-video'
+], '作図フィルムストリップ・フレーム操作');
 
 requireAll(source.matches, [
     'c-empty-state',
@@ -381,7 +403,9 @@ requireAll(source.system, [
     '\\.pk-kicker-row__controls',
     '\\.c-roster-row--field',
     '\\.field-event-list\\.c-data-list',
-    '\\.c-action-group--field'
+    '\\.c-action-group--field',
+    '\\.filmstrip-cards-container\\.c-data-list',
+    '\\.filmstrip-cards-container \\.filmstrip-card\\.c-data-list__item'
 ], 'システム部品');
 
 console.log('P35 component migration guardrails passed');

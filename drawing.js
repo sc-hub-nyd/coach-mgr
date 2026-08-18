@@ -165,18 +165,16 @@ function updateFrameCount() {
             const captionStr = isObj && f.caption ? f.caption : '';
 
             return `
-                <div class="filmstrip-card ${idx === currentFrameIndex ? 'active' : ''}" data-frame-index="${idx}" draggable="true">
-                    <div class="filmstrip-card-header">
+                <div class="filmstrip-card c-data-list__item ${idx === currentFrameIndex ? 'active' : ''}" data-frame-index="${idx}" draggable="true">
+                    <div class="filmstrip-card-header c-data-list__header">
                         <span class="filmstrip-frame-num">S${idx + 1}</span>
-                        <div style="display:flex; gap:3px;">
-                            ${pauseVal > 0 ? `<span class="filmstrip-badge pause-badge" title="停止時間 ${pauseVal}秒"><i class="fa-solid fa-clock"></i> ${pauseVal}s</span>` : ''}
-                            ${captionStr ? `<span class="filmstrip-badge caption-badge" title="${escapeHtml(captionStr)}"><i class="fa-solid fa-comment-dots"></i></span>` : ''}
+                        <div class="filmstrip-card__meta c-action-group">
+                            ${pauseVal > 0 ? `<span class="filmstrip-badge pause-badge" title="停止時間 ${pauseVal}秒"><i class="fa-solid fa-clock" aria-hidden="true"></i> ${pauseVal}s</span>` : ''}
+                            ${captionStr ? `<span class="filmstrip-badge caption-badge" title="${escapeHtml(captionStr)}"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i><span class="u-visually-hidden">キャプションあり</span></span>` : ''}
                         </div>
                     </div>
-                    <div class="filmstrip-card-title">${escapeHtml(titleStr)}</div>
-                    <div class="filmstrip-card-actions">
-                        <button type="button" class="btn-card-delete" data-idx="${idx}" title="削除"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
+                    <div class="filmstrip-card-title c-data-list__body">${escapeHtml(titleStr)}</div>
+                    <div class="filmstrip-card-actions c-action-group"><button type="button" class="btn btn-danger btn-card-delete" data-idx="${idx}" title="削除" aria-label="${escapeHtml(titleStr)}を削除"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
                 </div>
             `;
         }).join('');

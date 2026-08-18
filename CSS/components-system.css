@@ -1539,3 +1539,39 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
+
+/* Animation filmstrip: frame sequence and drag behavior remain domain-specific; card presentation uses shared list/action contracts. */
+.filmstrip-cards-container.c-data-list {
+    display: flex;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    overflow-x: auto;
+    padding: var(--space-2);
+    scroll-snap-type: x proximity;
+}
+
+.filmstrip-cards-container .filmstrip-card.c-data-list__item {
+    flex: 0 0 min(12rem, 72vw);
+    gap: var(--space-2);
+    min-block-size: 6.5rem;
+    padding: var(--space-3);
+    scroll-snap-align: start;
+    cursor: grab;
+}
+
+.filmstrip-cards-container .filmstrip-card.c-data-list__item:active {
+    cursor: grabbing;
+}
+
+.filmstrip-card__meta {
+    justify-content: flex-end;
+    gap: var(--space-1);
+}
+
+.filmstrip-card-actions {
+    justify-content: flex-end;
+}
+
+.filmstrip-card-actions .btn {
+    min-block-size: 2rem;
+}
