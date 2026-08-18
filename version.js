@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.23.0';
+export const APP_VERSION = 'v1.24.0';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.24.0',
+        date: '2026-08-18',
+        title: '標準部品への段階移行：設定・一覧・空状態',
+        features: [
+            '設定画面の表示設定、チームテーマ、ワークスペース、シーズンレポート、同期、保護者共有、運用チェックをc-settings-section・c-settings-form・c-form-field・c-action-groupへ統一',
+            '練習・試合の検索と詳細絞り込みをc-filter-barへ移行し、既存のDOM ID・イベント接続を維持したまま一覧操作の構造を共通化',
+            '練習管理と動的ダッシュボードの空状態をc-empty-stateへ統合し、空状態からの主操作を一貫した見た目とアクセシビリティで提供',
+            '移行ガードレール、CSS設計、15種色×light/darkテーマ、5ビューポート×5画面の自動検証を実施'
+        ]
+    },
     {
         version: 'v1.23.0',
         date: '2026-08-18',

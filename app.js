@@ -25,9 +25,9 @@ import { buildCoachActionCenter, buildParentHomeAgenda, buildPracticePlanDraft, 
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
     const action = actionLabel && actionId
-        ? `<button type="button" class="btn btn-primary empty-state-action" id="${actionId}">${actionLabel}</button>`
+        ? `<button type="button" class="btn btn-primary" id="${actionId}">${actionLabel}</button>`
         : '';
-    return `<div class="empty-state" role="status"><div class="empty-state-icon" aria-hidden="true"><i class="fa-solid ${icon}"></i></div><h3>${title}</h3>${description ? `<p>${description}</p>` : ''}${action}</div>`;
+    return `<section class="c-empty-state" role="status"><div class="c-empty-state__body"><i class="c-empty-state__icon fa-solid ${icon}" aria-hidden="true"></i><h3 class="c-empty-state__title">${title}</h3>${description ? `<p class="c-empty-state__text">${description}</p>` : ''}${action}</div></section>`;
 }
 
 function setupGlobalUi() {

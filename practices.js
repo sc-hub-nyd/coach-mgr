@@ -10,7 +10,15 @@ export function renderPracticeRoster(event = {}) {
     if (!container) return;
 
     if (!state.players || state.players.length === 0) {
-        container.innerHTML = '<p class="text-secondary empty-state-text">登録されている選手がいません。「選手一覧」から選手を登録してください。</p>';
+        container.innerHTML = `
+            <section class="c-empty-state c-empty-state--compact" role="status">
+                <div class="c-empty-state__body">
+                    <i class="c-empty-state__icon fa-solid fa-users" aria-hidden="true"></i>
+                    <h3 class="c-empty-state__title">登録されている選手がいません</h3>
+                    <p class="c-empty-state__text">「選手一覧」から選手を登録してください。</p>
+                </div>
+            </section>
+        `;
         return;
     }
 
@@ -476,14 +484,14 @@ export function initPractices(miniPitchObserver) {
     if (sortedMonths.length === 0) {
         const isSearchActive = !!currentPracticeSearch || currentPracticeCategory !== 'all' || currentPracticePlayer !== 'all' || currentPracticeNendo !== 'all' || currentPracticeMonth !== 'all';
         html = `
-            <div class="u-ext-144 card" >
-                <div class="u-ext-145" ><i class="fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-calendar-check'}"></i></div>
-                <h3 class="u-ext-146" >${isSearchActive ? '該当する練習記録がありません' : 'まだ練習記録がありません'}</h3>
-                <p class="u-ext-169" >
-                    ${isSearchActive ? '検索キーワードまたは絞り込み条件（年度・月・カテゴリ・参加選手）を変更してお試しください。' : '日々の練習日を作成し、テーマに応じたトレーニングメニューのアサインや、戦術ボードでの作図を行いましょう。'}
-                </p>
-                ${!isSearchActive ? `<button class="u-ext-170 btn btn-primary" id="btn-empty-add-practice" ><i class="fa-solid fa-plus"></i> 最初の練習日を追加</button>` : ''}
-            </div>
+            <section class="c-empty-state practice-empty-state" aria-live="polite">
+                <div class="c-empty-state__body">
+                    <i class="c-empty-state__icon fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-calendar-check'}" aria-hidden="true"></i>
+                    <h3 class="c-empty-state__title">${isSearchActive ? '該当する練習記録がありません' : 'まだ練習記録がありません'}</h3>
+                    <p class="c-empty-state__text">${isSearchActive ? '検索キーワードまたは絞り込み条件（年度・月・カテゴリ・参加選手）を変更してお試しください。' : '日々の練習日を作成し、テーマに応じたトレーニングメニューのアサインや、戦術ボードでの作図を行いましょう。'}</p>
+                    ${!isSearchActive ? `<button class="btn btn-primary" id="btn-empty-add-practice"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の練習日を追加</button>` : ''}
+                </div>
+            </section>
         `;
     }
 

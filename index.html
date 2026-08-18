@@ -415,61 +415,29 @@
     </template>
 
     <template id="tpl-matches">
-        <div class="filter-bar-container">
-            <div class="filter-main-row">
-                <div class="filter-search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="search" id="input-match-search" placeholder="試合をキーワード検索..."
-                        class="form-control filter-search-input">
+        <section class="c-filter-bar" aria-label="試合の検索と絞り込み">
+            <div class="c-filter-bar__main">
+                <div class="c-filter-bar__search">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <input type="search" id="input-match-search" placeholder="試合をキーワード検索..." class="form-control filter-search-input">
                 </div>
-                <div class="filter-btn-group">
-                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-matches" title="絞り込み条件">
-                        <i class="fa-solid fa-sliders"></i> 絞り込み<span class="filter-count-badge hidden"
-                            id="badge-filter-matches">0</span>
-                    </button>
-                    <button class="btn btn-secondary" id="btn-sort-match" title="日付昇順/降順切り替え"
-                        style="padding:0.4rem 0.65rem;">
-                        <i class="fa-solid fa-arrow-down-wide-short"></i>
-                    </button>
-                    <button class="btn btn-primary" id="btn-add-match"><i class="fa-solid fa-plus"></i> 追加</button>
+                <div class="c-action-group c-filter-bar__actions">
+                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-matches" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="filter-count-badge hidden" id="badge-filter-matches">0</span></button>
+                    <button class="btn btn-secondary" id="btn-sort-match" title="日付昇順/降順切り替え"><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><span class="u-visually-hidden">並び順を切り替え</span></button>
+                    <button class="btn btn-primary" id="btn-add-match"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                 </div>
             </div>
-            <!-- Active Filter Tags Bar -->
             <div class="active-tags-bar hidden" id="active-tags-matches"></div>
-            <!-- Accordion Filter Panel -->
-            <div class="filter-accordion-panel hidden" id="filter-accordion-matches">
-                <div class="filter-accordion-grid">
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-calendar-days"></i> 対象年度</label>
-                        <select id="filter-nendo-match" class="form-control"></select>
-                    </div>
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-trophy"></i> 試合種別</label>
-                        <select id="filter-type-match" class="form-control"></select>
-                    </div>
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-user-group"></i> 対戦相手</label>
-                        <select id="filter-opponent-match" class="form-control"></select>
-                    </div>
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-futbol"></i> 勝敗結果</label>
-                        <select id="filter-result-match" class="form-control">
-                            <option value="all">すべての勝敗</option>
-                            <option value="win">勝利 (Win)</option>
-                            <option value="loss">敗北 (Loss)</option>
-                            <option value="draw">引き分け (Draw)</option>
-                            <option value="upcoming">試合予定</option>
-                        </select>
-                    </div>
+            <div class="c-filter-bar__filters filter-accordion-panel hidden" id="filter-accordion-matches">
+                <div class="c-form-grid filter-accordion-grid">
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-nendo-match"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> 対象年度</label><select id="filter-nendo-match" class="form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-type-match"><i class="fa-solid fa-trophy" aria-hidden="true"></i> 試合種別</label><select id="filter-type-match" class="form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-opponent-match"><i class="fa-solid fa-user-group" aria-hidden="true"></i> 対戦相手</label><select id="filter-opponent-match" class="form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-result-match"><i class="fa-solid fa-futbol" aria-hidden="true"></i> 勝敗結果</label><select id="filter-result-match" class="form-control"><option value="all">すべての勝敗</option><option value="win">勝利（Win）</option><option value="loss">敗北（Loss）</option><option value="draw">引き分け（Draw）</option><option value="upcoming">試合予定</option></select></div>
                 </div>
-                <div class="filter-accordion-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-matches"
-                        style="font-size:0.75rem; padding:0.2rem 0.6rem;">
-                        <i class="fa-solid fa-rotate-left"></i> 条件をリセット
-                    </button>
-                </div>
+                <div class="c-filter-bar__filter-actions"><button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-matches"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 条件をリセット</button></div>
             </div>
-        </div>
+        </section>
         <div id="match-list" style="display:flex; flex-direction:column; gap:1.5rem;">
             <!-- Grouped by month cards injected here -->
         </div>
@@ -622,55 +590,29 @@
         </div>
     </template>
     <template id="tpl-practices">
-        <div class="filter-bar-container">
-            <div class="filter-main-row">
-                <div class="filter-search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="search" id="input-practice-search" placeholder="練習・メモをキーワード検索..."
-                        class="form-control filter-search-input">
+        <section class="c-filter-bar" aria-label="練習の検索と絞り込み">
+            <div class="c-filter-bar__main">
+                <div class="c-filter-bar__search">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <input type="search" id="input-practice-search" placeholder="練習・メモをキーワード検索..." class="form-control filter-search-input">
                 </div>
-                <div class="filter-btn-group">
-                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-practices" title="絞り込み条件">
-                        <i class="fa-solid fa-sliders"></i> 絞り込み<span class="filter-count-badge hidden"
-                            id="badge-filter-practices">0</span>
-                    </button>
-                    <button class="btn btn-secondary" id="btn-sort-practice" title="日付昇順/降順切り替え"
-                        style="padding:0.4rem 0.65rem;">
-                        <i class="fa-solid fa-arrow-down-wide-short"></i>
-                    </button>
-                    <button class="btn btn-primary" id="btn-add-practice"><i class="fa-solid fa-plus"></i> 追加</button>
+                <div class="c-action-group c-filter-bar__actions">
+                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-practices" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="filter-count-badge hidden" id="badge-filter-practices">0</span></button>
+                    <button class="btn btn-secondary" id="btn-sort-practice" title="日付昇順/降順切り替え"><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><span class="u-visually-hidden">並び順を切り替え</span></button>
+                    <button class="btn btn-primary" id="btn-add-practice"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                 </div>
             </div>
-            <!-- Active Filter Tags Bar -->
             <div class="active-tags-bar hidden" id="active-tags-practices"></div>
-            <!-- Accordion Filter Panel -->
-            <div class="filter-accordion-panel hidden" id="filter-accordion-practices">
-                <div class="filter-accordion-grid">
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-calendar-days"></i> 対象年度</label>
-                        <select id="filter-nendo-practice" class="form-control"></select>
-                    </div>
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-calendar-minus"></i> 実施月</label>
-                        <select id="filter-month-practice" class="form-control"></select>
-                    </div>
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-bullseye"></i> 練習カテゴリ</label>
-                        <select id="filter-category-practice" class="form-control"></select>
-                    </div>
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-user-check"></i> 参加選手</label>
-                        <select id="filter-player-practice" class="form-control"></select>
-                    </div>
+            <div class="c-filter-bar__filters filter-accordion-panel hidden" id="filter-accordion-practices">
+                <div class="c-form-grid filter-accordion-grid">
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-nendo-practice"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> 対象年度</label><select id="filter-nendo-practice" class="form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-month-practice"><i class="fa-solid fa-calendar-minus" aria-hidden="true"></i> 実施月</label><select id="filter-month-practice" class="form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-category-practice"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> 練習カテゴリ</label><select id="filter-category-practice" class="form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-player-practice"><i class="fa-solid fa-user-check" aria-hidden="true"></i> 参加選手</label><select id="filter-player-practice" class="form-control"></select></div>
                 </div>
-                <div class="filter-accordion-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-practices"
-                        style="font-size:0.75rem; padding:0.2rem 0.6rem;">
-                        <i class="fa-solid fa-rotate-left"></i> 条件をリセット
-                    </button>
-                </div>
+                <div class="c-filter-bar__filter-actions"><button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-practices"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 条件をリセット</button></div>
             </div>
-        </div>
+        </section>
         <div id="practice-list" class="c-page-list c-page-list--bottom-safe">
             <!-- Grouped by date cards injected here -->
         </div>
@@ -820,8 +762,10 @@
             </section>
 
             <!-- P32: 個別表示設定とアクセシビリティ -->
-            <section class="sl-section c-settings-section" id="ui-preferences-section">
-                <div class="sl-section-label"><i class="fa-solid fa-universal-access"></i> 表示・操作の個別設定</div>
+            <section class="sl-section c-settings-section" id="ui-preferences-section" aria-labelledby="ui-preferences-title">
+                <div class="c-section-header c-settings-section__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> DISPLAY</span><h2 class="c-section-header__title" id="ui-preferences-title">表示・操作の個別設定</h2></div>
+                </div>
                 <div class="sl-section-body c-settings-section__body">
                     <p class="c-settings-section__intro operations-intro">端末ごとに、文字の大きさ、利き手、動きの量を調整できます。記録データや他の利用者の表示は変わりません。</p>
                         <div class="c-form-grid ui-preferences-grid">
@@ -831,13 +775,15 @@
                         <label class="c-choice-field ui-preference-check"><input id="ui-reduce-motion" type="checkbox"><span>動きを控えめにする</span></label>
                         <label class="c-choice-field ui-preference-check"><input id="ui-compact-mode" type="checkbox"><span>情報をコンパクトに表示</span></label>
                     </div>
-                    <div class="c-action-group operations-actions"><button type="button" class="btn btn-primary btn-sm" id="btn-save-ui-preferences"><i class="fa-solid fa-check"></i> 表示設定を保存</button></div>
+                    <div class="c-action-group c-action-group--mobile-stretch operations-actions"><button type="button" class="btn btn-primary btn-sm" id="btn-save-ui-preferences"><i class="fa-solid fa-check" aria-hidden="true"></i> 表示設定を保存</button></div>
                 </div>
             </section>
 
             <!-- Team theme: seed color is transformed into accessible roles at runtime. -->
             <section class="sl-section c-settings-section" id="team-theme-section" aria-labelledby="team-theme-title">
-                <div class="sl-section-label"><i class="fa-solid fa-palette"></i> チームテーマ</div>
+                <div class="c-section-header c-settings-section__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-palette" aria-hidden="true"></i> TEAM THEME</span><h2 class="c-section-header__title" id="team-theme-section-title">チームテーマ</h2></div>
+                </div>
                 <div class="sl-section-body c-settings-section__body">
                     <form id="form-team-info">
                         <div class="sl-row">
@@ -862,8 +808,10 @@
             </section>
 
             <!-- P22: チーム・シーズン管理 -->
-            <div class="sl-section c-settings-section coach-only" id="workspace-management-section">
-                <div class="sl-section-label"><i class="fa-solid fa-layer-group"></i> チーム・シーズン管理</div>
+            <section class="sl-section c-settings-section coach-only" id="workspace-management-section" aria-labelledby="workspace-management-title">
+                <div class="c-section-header c-settings-section__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> WORKSPACE</span><h2 class="c-section-header__title" id="workspace-management-title">チーム・シーズン管理</h2></div>
+                </div>
                 <div class="sl-section-body c-settings-section__body workspace-management-body">
                     <p class="c-settings-section__intro operations-intro">チームと年度を切り替えます。切替前のデータは自動保存され、年度アーカイブからいつでも再表示できます。</p>
                     <div class="c-form-grid workspace-select-grid">
@@ -871,7 +819,7 @@
                         <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-season-select">シーズン</label><select id="workspace-season-select" class="sl-input"></select></div>
                     </div>
                     <p id="workspace-context-status" class="workspace-context-status" aria-live="polite"></p>
-                    <div class="c-action-group workspace-actions">
+                    <div class="c-action-group c-action-group--mobile-stretch workspace-actions">
                         <button type="button" class="btn btn-primary btn-sm" id="btn-workspace-switch"><i class="fa-solid fa-arrow-right-arrow-left"></i> このシーズンへ切替</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-workspace-new-season"><i class="fa-solid fa-calendar-plus"></i> 新年度を作成</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-workspace-new-team"><i class="fa-solid fa-people-group"></i> チームを追加</button>
@@ -879,87 +827,64 @@
                     </div>
                     <p class="workspace-help"><i class="fa-solid fa-circle-info"></i> 新年度では選手・設定を引き継ぎ、試合・練習・年度ごとの目標は空の状態から始めます。</p>
                 </div>
-            </div>
+            </section>
 
             <!-- P24: シーズンレポート -->
-            <div class="sl-section coach-only" id="season-report-section">
-                <div class="sl-section-label"><i class="fa-solid fa-chart-column"></i> シーズンレポート・出力</div>
+            <section class="sl-section c-settings-section coach-only" id="season-report-section" aria-labelledby="season-report-title">
+                <div class="c-section-header c-settings-section__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> REPORT</span><h2 class="c-section-header__title" id="season-report-title">シーズンレポート・出力</h2></div>
+                </div>
                 <div class="sl-section-body season-report-body">
                     <p id="season-report-context" class="operations-intro">現在選択中のチーム・シーズンを集計します。</p>
                     <div id="season-report-summary" class="season-report-summary" aria-live="polite"></div>
-                    <div class="season-report-actions">
+                    <div class="c-action-group c-action-group--mobile-stretch season-report-actions">
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-season-report"><i class="fa-solid fa-rotate"></i> 集計を更新</button>
                         <button type="button" class="btn btn-primary btn-sm" id="btn-export-season-report-csv"><i class="fa-solid fa-file-csv"></i> CSVを出力</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-print-season-report"><i class="fa-solid fa-print"></i> 印刷用レポート</button>
                     </div>
                     <p class="season-report-help"><i class="fa-solid fa-circle-info"></i> CSVは表計算ソフト用、印刷用レポートはスタッフ会議・保護者説明用の要約です。出力前に対象のチーム・シーズンを確認してください。</p>
                 </div>
-            </div>
+            </section>
 
             <!-- Section: クラウド自動同期 (GAS) -->
-            <div class="sl-section" id="gas-sync-section">
-                <div class="sl-section-label"><i class="fa-solid fa-cloud-arrow-up"></i> クラウド無料同期 (GAS)</div>
-                <div class="sl-section-body">
-                    <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.75rem;">
-                        ※ 試合・練習・選手・練習メニュー・<strong>戦術管理</strong>・チームテーマ・各種設定マスタがクラウド同期の対象となります。
-                    </div>
-                    <form id="form-gas-sync">
-                        <div class="sl-row">
-                            <span class="sl-row-label">Web API URL</span>
-                            <input type="url" id="gas-api-url" class="sl-input"
-                                placeholder="https://script.google.com/macros/s/.../exec" style="flex:1; min-width:0;">
+            <section class="sl-section c-settings-section" id="gas-sync-section" aria-labelledby="gas-sync-title">
+                <div class="c-section-header c-settings-section__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> CLOUD SYNC</span><h2 class="c-section-header__title" id="gas-sync-title">クラウド無料同期（GAS）</h2></div>
+                </div>
+                <div class="sl-section-body c-settings-section__body">
+                    <p class="c-settings-section__intro">試合・練習・選手・練習メニュー・<strong>戦術管理</strong>・チームテーマ・各種設定マスタがクラウド同期の対象となります。</p>
+                    <form id="form-gas-sync" class="c-settings-form">
+                        <div class="c-form-grid">
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-api-url">Web API URL</label><input type="url" id="gas-api-url" class="sl-input" placeholder="https://script.google.com/macros/s/.../exec"></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-sheet-name">シート名（任意）</label><input type="text" id="gas-sheet-name" class="sl-input" placeholder="例: 2026年度 または データ（空欄の場合は最初のシート）"></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-auth-token">認証トークン</label><input type="password" id="gas-auth-token" class="sl-input" placeholder="任意の合い言葉（例: mysecret123）" autocomplete="off"></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-sync-protocol">同期プロトコル</label><select id="gas-sync-protocol" class="sl-input"><option value="secure-v2">安全モード（POST認証・推奨）</option><option value="legacy-v1">互換モード（旧GAS用・認証情報がURLに含まれます）</option></select></div>
                         </div>
-                        <div class="sl-row">
-                            <span class="sl-row-label">シート名（任意）</span>
-                            <input type="text" id="gas-sheet-name" class="sl-input"
-                                placeholder="例: 2026年度 または データ (空欄の場合は最初のシート)" style="flex:1; min-width:0;">
-                        </div>
-                        <div class="sl-row">
-                            <span class="sl-row-label">認証トークン</span>
-                            <input type="password" id="gas-auth-token" class="sl-input"
-                                placeholder="任意の合い言葉（例: mysecret123）" autocomplete="off" style="flex:1; min-width:0;">
-                        </div>
-                        <div class="sl-row">
-                            <span class="sl-row-label">同期プロトコル</span>
-                            <select id="gas-sync-protocol" class="sl-input" style="flex:1; min-width:0;">
-                                <option value="secure-v2">安全モード（POST認証・推奨）</option>
-                                <option value="legacy-v1">互換モード（旧GAS用・認証情報がURLに含まれます）</option>
-                            </select>
-                        </div>
-                        <p id="gas-security-guidance" style="margin:0 0 0.75rem; font-size:0.75rem; color:var(--text-secondary); line-height:1.5;">安全モードを使うには、P10のGASテンプレートをデプロイしてください。認証トークンは共有リンクに含まれません。</p>
-                        <div class="sl-row sl-row-last gas-actions-row">
-                            <button type="button" class="btn btn-secondary btn-sm btn-copy-link"
-                                id="btn-copy-invite-link">
-                                <i class="fa-solid fa-share-nodes"></i> 保護者用設定リンクをコピー
-                            </button>
-                            <div class="gas-actions-group">
-                                <button type="button" class="btn btn-secondary btn-sm" id="btn-manual-sync-pull">
-                                    <i class="fa-solid fa-cloud-arrow-down"></i> クラウドから復元
-                                </button>
-                                <button type="button" class="btn btn-primary btn-sm" id="btn-manual-sync-push">
-                                    <i class="fa-solid fa-cloud-arrow-up"></i> クラウドへ送信
-                                </button>
-                                <button type="submit" class="btn btn-secondary btn-sm btn-save">
-                                    保存
-                                </button>
-                            </div>
+                        <p id="gas-security-guidance" class="c-settings-section__intro">安全モードを使うには、P10のGASテンプレートをデプロイしてください。認証トークンは共有リンクに含まれません。</p>
+                        <div class="c-action-group c-action-group--mobile-stretch gas-actions-group">
+                            <button type="button" class="btn btn-secondary btn-sm btn-copy-link" id="btn-copy-invite-link"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> 保護者用設定リンクをコピー</button>
+                            <button type="button" class="btn btn-secondary btn-sm" id="btn-manual-sync-pull"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> クラウドから復元</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="btn-manual-sync-push"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> クラウドへ送信</button>
+                            <button type="submit" class="btn btn-secondary btn-sm btn-save">保存</button>
                         </div>
                     </form>
                 </div>
-            </div>
+            </section>
 
             <!-- P20: 保護者共有・RSVP管理 -->
-            <div class="sl-section coach-only" id="parent-share-section">
-                <div class="sl-section-label"><i class="fa-solid fa-people-roof"></i> 保護者共有・RSVP管理</div>
-                <div class="sl-section-body parent-share-body">
-                    <p class="operations-intro">選手別の表示範囲と共有リンクの有効期限を管理し、未回答者への案内文を作成できます。リンクに認証トークンは含めません。</p>
-                    <div class="parent-share-controls">
-                        <label>対象選手<select id="parent-share-player" class="sl-input"></select></label>
-                        <label>リンク有効期限（任意）<input id="parent-share-expires" type="date" class="sl-input"></label>
+            <section class="sl-section c-settings-section coach-only" id="parent-share-section" aria-labelledby="parent-share-title">
+                <div class="c-section-header c-settings-section__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-people-roof" aria-hidden="true"></i> FAMILY ACCESS</span><h2 class="c-section-header__title" id="parent-share-title">保護者共有・RSVP管理</h2></div>
+                </div>
+                <div class="sl-section-body c-settings-section__body parent-share-body">
+                    <p class="c-settings-section__intro">選手別の表示範囲と共有リンクの有効期限を管理し、未回答者への案内文を作成できます。リンクに認証トークンは含めません。</p>
+                    <div class="c-form-grid parent-share-controls">
+                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-player">対象選手</label><select id="parent-share-player" class="sl-input"></select></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-expires">リンク有効期限（任意）</label><input id="parent-share-expires" type="date" class="sl-input"></div>
                     </div>
                     <p id="parent-share-status" class="parent-share-status" aria-live="polite"></p>
-                    <div class="operations-actions">
-                        <button type="button" class="btn btn-primary btn-sm" id="btn-copy-parent-share-link"><i class="fa-solid fa-link"></i> 選手別リンクをコピー</button>
+                    <div class="c-action-group c-action-group--mobile-stretch operations-actions">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-copy-parent-share-link"><i class="fa-solid fa-link" aria-hidden="true"></i> 選手別リンクをコピー</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-rotate-parent-share-link"><i class="fa-solid fa-arrows-rotate"></i> リンクを再発行・旧リンクを失効</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-rsvp-reminder"><i class="fa-solid fa-bell"></i> 未回答リマインドをコピー</button>
                     </div>
@@ -970,21 +895,23 @@
                             <label>招待の表示名（任意）<input id="parent-access-label" class="sl-input" type="text" placeholder="例：山田様"></label>
                             <fieldset class="parent-access-scopes"><legend>閲覧範囲</legend><label><input type="checkbox" value="schedule" checked>予定・結果</label><label><input type="checkbox" value="attendance" checked>出欠</label><label><input type="checkbox" value="development" checked>本人の成長ログ</label></fieldset>
                         </div>
-                        <div class="operations-actions"><button type="button" class="btn btn-primary btn-sm" id="btn-create-parent-access"><i class="fa-solid fa-user-plus"></i> 個別招待リンクを作成</button></div>
+                        <div class="c-action-group c-action-group--mobile-stretch operations-actions"><button type="button" class="btn btn-primary btn-sm" id="btn-create-parent-access"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 個別招待リンクを作成</button></div>
                         <div id="parent-access-invites" class="parent-access-invites" aria-live="polite"></div>
                     </div>
                     <p class="parent-share-security-note"><i class="fa-solid fa-circle-info"></i> 個別招待はこの端末・同期データ上で有効性と閲覧範囲を確認する運用基盤です。静的PWAと公開URLだけでは、URL受領者の本人確認やサーバー側アクセス遮断はできません。機微な個人情報を扱う外部公開では、認証付きバックエンドを導入してください。</p>
                 </div>
-            </div>
+            </section>
 
             <!-- Section: 運用チェック -->
-            <div class="sl-section operations-section">
-                <div class="sl-section-label"><i class="fa-solid fa-shield-heart"></i> 運用チェック</div>
-                <div class="sl-section-body operations-body">
-                    <p class="operations-intro">端末保存、クラウド同期、バックアップの状態を確認し、シーズン中の記録を安全に維持します。</p>
+            <section class="sl-section c-settings-section operations-section" id="operations-section" aria-labelledby="operations-title">
+                <div class="c-section-header c-settings-section__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i> OPERATIONS</span><h2 class="c-section-header__title" id="operations-title">運用チェック</h2></div>
+                </div>
+                <div class="sl-section-body c-settings-section__body operations-body">
+                    <p class="c-settings-section__intro">端末保存、クラウド同期、バックアップの状態を確認し、シーズン中の記録を安全に維持します。</p>
                     <div id="operations-diagnostics" class="operations-diagnostics" aria-live="polite"></div>
-                    <div class="operations-actions">
-                        <button type="button" class="btn btn-primary btn-sm" id="btn-operations-backup"><i class="fa-solid fa-download"></i> 今すぐバックアップ</button>
+                    <div class="c-action-group c-action-group--mobile-stretch operations-actions">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-operations-backup"><i class="fa-solid fa-download" aria-hidden="true"></i> 今すぐバックアップ</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-export-recovery" disabled><i class="fa-solid fa-clock-rotate-left"></i> 復旧用データを保存</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-cloud-recoveries"><i class="fa-solid fa-clock-rotate-left"></i> クラウド復旧世代</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-operations-check"><i class="fa-solid fa-copy"></i> 状態をコピー</button>
@@ -993,7 +920,7 @@
                     <div class="sync-audit-history" id="sync-audit-history" aria-live="polite"></div>
                     <div class="cloud-recovery-history" id="cloud-recovery-history" aria-live="polite"></div>
                 </div>
-            </div>
+            </section>
 
             <!-- Section: 試合種別 -->
             <div class="sl-section">

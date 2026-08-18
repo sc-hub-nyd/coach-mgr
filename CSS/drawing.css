@@ -709,21 +709,7 @@ body[data-route="animation"] .bottom-nav {
     display: none;
 }
 
-/* Sync Status Buttons in Settings */
-.gas-actions-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: center;
-}
 
-.gas-actions-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: center;
-    margin-left: auto;
-}
 
 .sync-status-btn {
     width: 32px;
