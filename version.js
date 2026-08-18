@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.25.2';
+export const APP_VERSION = 'v1.25.3';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.25.3',
+        date: '2026-08-18',
+        title: 'Field Companionフォーム標準化',
+        features: [
+            '試合時計の記録先と試合ログの表示フィルターをc-form-fieldへ移行し、試合中の入力構造を統一',
+            '試合時計・記録先・ログフィルター・ログ一覧の既存IDを維持し、P35部品契約で試合当日UIを保護',
+            '15種色×light/darkテーマ、5ビューポート×5画面のレスポンシブ検証で違反0件を確認'
+        ]
+    },
     {
         version: 'v1.25.2',
         date: '2026-08-18',

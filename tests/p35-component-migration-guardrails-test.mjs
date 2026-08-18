@@ -69,6 +69,16 @@ requireAll(source.settings, [
 ], '設定イベント');
 
 requireAll(source.index, [
+    'template id="tpl-match-detail"',
+    'id="field-match-timer"',
+    'id="btn-field-timer-toggle"',
+    'id="field-period-select"',
+    'id="field-event-filter"',
+    'id="field-event-list"',
+    'c-form-field--compact'
+], 'Field Companion');
+
+requireAll(source.index, [
     'template id="tpl-insights"',
     'id="insights-range-select"',
     'id="insights-player-select"',

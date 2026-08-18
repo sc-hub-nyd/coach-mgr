@@ -465,7 +465,7 @@
                         <strong id="field-match-timer" class="field-timer-value">00:00</strong>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-field-timer-toggle" aria-label="試合時計を開始">開始</button>
                     </div>
-                    <label class="field-period-control" for="field-period-select">記録先 <select id="field-period-select" class="form-control" aria-label="記録するピリオド"></select></label>
+                    <div class="c-form-field c-form-field--compact field-period-control"><label class="c-form-field__label" for="field-period-select">記録先</label><select id="field-period-select" class="form-control" aria-label="記録するピリオド"></select></div>
                     <span id="field-network-status" class="field-network-status" role="status" aria-live="polite"><i class="fa-solid fa-wifi" aria-hidden="true"></i> 保存済み</span>
                     <span id="field-session-status" class="field-network-status" hidden role="status" aria-live="polite"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i> 画面オン</span>
                 </div>
@@ -495,7 +495,7 @@
                 <div class="field-event-timeline" aria-labelledby="field-event-title">
                     <div class="field-event-timeline-header">
                         <h3 id="field-event-title"><i class="fa-solid fa-list-check" aria-hidden="true"></i> 試合ログ</h3>
-                        <label class="field-event-filter-label" for="field-event-filter">表示 <select id="field-event-filter" class="form-control"><option value="all">すべて</option><option value="score">得点</option><option value="concede">失点</option><option value="substitution">交代</option><option value="position">配置</option><option value="card">警告</option><option value="memo">メモ</option></select></label>
+                        <div class="c-form-field c-form-field--compact field-event-filter-label"><label class="c-form-field__label" for="field-event-filter">表示</label><select id="field-event-filter" class="form-control"><option value="all">すべて</option><option value="score">得点</option><option value="concede">失点</option><option value="substitution">交代</option><option value="position">配置</option><option value="card">警告</option><option value="memo">メモ</option></select></div>
                         <span id="field-event-count" class="field-event-count">0件</span>
                     </div>
                     <ol id="field-event-list" class="field-event-list" aria-live="polite"></ol>
