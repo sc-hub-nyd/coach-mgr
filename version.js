@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.24.2';
+export const APP_VERSION = 'v1.25.0';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.25.0',
+        date: '2026-08-18',
+        title: 'ダッシュボード空状態の共通化',
+        features: [
+            '次の予定、出場時間、得点・出席率・練習記録のデータ未登録状態をc-empty-state--compactへ統一',
+            'ダッシュボードの高密度カード内でも見出し・補助文・アイコンの階層を共通トークンで提供',
+            '共通空状態生成関数にcompact指定を追加し、P35契約テストで部品マークアップと利用形態を保護',
+            '15種色×light/darkテーマ、5ビューポート×5画面のレスポンシブ検証で違反0件を確認'
+        ]
+    },
     {
         version: 'v1.24.2',
         date: '2026-08-18',

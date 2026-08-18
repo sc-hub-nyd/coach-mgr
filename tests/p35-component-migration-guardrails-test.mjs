@@ -71,7 +71,9 @@ requireAll(source.app, [
     'c-empty-state',
     'c-empty-state__body',
     'c-empty-state__title',
-    'c-empty-state__text'
+    'c-empty-state__text',
+    'c-empty-state--compact',
+    "compact = false"
 ], '共通空状態');
 
 requireAll(source.library, [

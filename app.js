@@ -23,11 +23,12 @@ import { acknowledgeSyncOutboxItem, appendSyncAudit, enqueueSyncSnapshot, ensure
 import { configureAppContext } from './app-context.js';
 import { buildCoachActionCenter, buildParentHomeAgenda, buildPracticePlanDraft, ensurePracticePlan, savePracticePlan, loadUiPreferences, saveUiPreferences, applyUiPreferences } from './experience-service.js';
 
-function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
+function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '', compact = false }) {
     const action = actionLabel && actionId
         ? `<button type="button" class="btn btn-primary" id="${actionId}">${actionLabel}</button>`
         : '';
-    return `<section class="c-empty-state" role="status"><div class="c-empty-state__body"><i class="c-empty-state__icon fa-solid ${icon}" aria-hidden="true"></i><h3 class="c-empty-state__title">${title}</h3>${description ? `<p class="c-empty-state__text">${description}</p>` : ''}${action}</div></section>`;
+    const modifier = compact ? ' c-empty-state--compact' : '';
+    return `<section class="c-empty-state${modifier}" role="status"><div class="c-empty-state__body"><i class="c-empty-state__icon fa-solid ${icon}" aria-hidden="true"></i><h3 class="c-empty-state__title">${title}</h3>${description ? `<p class="c-empty-state__text">${description}</p>` : ''}${action}</div></section>`;
 }
 
 function setupGlobalUi() {
@@ -1499,10 +1500,10 @@ function initDashboard() {
                     </div>
                 `).join('');
             } else {
-                playtimeContent.innerHTML = '<div class="u-ext-29 dash-no-data">フォーメーション登録データがありません</div>';
+                playtimeContent.innerHTML = renderEmptyState({ icon: 'fa-people-group', title: 'フォーメーション登録データがありません', compact: true });
             }
         } else {
-            playtimeContent.innerHTML = '<div class="u-ext-29 dash-no-data">出場時間の集計対象となる最近の試合データがありません</div>';
+            playtimeContent.innerHTML = renderEmptyState({ icon: 'fa-chart-column', title: '出場時間の集計対象となる最近の試合データがありません', compact: true });
         }
     }
 
@@ -1583,7 +1584,7 @@ function initDashboard() {
                     : navigate('practices', { date: nextEvent.date });
             }
         } else {
-            nextEventContent.innerHTML = '<div class="dash-no-data">予定はありません</div>';
+            nextEventContent.innerHTML = renderEmptyState({ icon: 'fa-calendar', title: '予定はありません', compact: true });
         }
     }
 
@@ -1700,7 +1701,7 @@ function initDashboard() {
                     <span class="dash-rank-count">${item.count}<span class="dash-rank-count-unit">${unit}</span></span>
                 </div>
             `).join('')
-            : '<div class="dash-no-data">記録なし</div>';
+            : renderEmptyState({ icon: 'fa-chart-line', title: '記録なし', compact: true });
     };
     renderRankList(scorerCounts, '得点', 'dash-top-scorers');
     renderRankList(assistCounts, 'A', 'dash-top-assists');
@@ -1801,7 +1802,7 @@ function initDashboard() {
                         <span class="dash-rank-count">${item.pct}<span class="dash-rank-count-unit">%</span></span>
                     </div>
                 `).join('')
-                : '<div class="dash-no-data">過去1ヶ月の出席記録なし</div>';
+                : renderEmptyState({ icon: 'fa-user-check', title: '過去1か月の出席記録なし', compact: true });
         }
 
         const practiceFocusEl = document.getElementById('dash-recent-practice-focus');
@@ -1825,7 +1826,7 @@ function initDashboard() {
                         </div>
                     `;
                 }).join('')
-                : '<div class="dash-no-data">練習記録なし</div>';
+                : renderEmptyState({ icon: 'fa-clipboard', title: '練習記録なし', compact: true });
         }
     }
 
