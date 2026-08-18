@@ -50,3 +50,13 @@
 .u-page-bottom-safe {
     padding-block-end: var(--bottom-nav-reserve);
 }
+
+/* Typography utilities: apply only where numeric comparison is part of the task. */
+.u-tabular-nums {
+    font-family: var(--font-numeric);
+    font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.u-mono {
+    font-family: var(--font-mono);
+}

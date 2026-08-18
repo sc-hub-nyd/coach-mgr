@@ -371,8 +371,10 @@
 
 .c-data-list__metric-value {
     color: var(--color-text);
+    font-family: var(--font-numeric);
     font-size: var(--text-dense-size);
-    font-weight: 800;
+    font-weight: var(--font-weight-emphasis);
+    font-variant-numeric: tabular-nums slashed-zero;
     line-height: var(--text-dense-leading);
 }
 

@@ -33,6 +33,19 @@ CSSクラスは、役割を先頭辞で表す。IDはJavaScriptのイベント�
 
 各ブロック内部は`block__element`、意味のある差分は`block--modifier`を使う。連番の`u-ext-*`、見た目だけを表すクラス、深い子孫セレクタの新規追加は行わない。
 
+## タイポグラフィトークン
+
+CoachMgrの日本語本文とUIには`Noto Sans JP`、英数字・成績・時刻など比較可能な数値には`Inter`を使う。具体的なフォント名、ウェイト、サイズ、行間は`tokens.css`の`--font-*`および`--text-*`で管理し、画面固有のCSSへ重複指定しない。
+
+| 役割 | トークン | 利用規則 |
+|---|---|---|
+| 標準UI | `--font-ui` | 本文、入力、ボタン、ナビゲーション。InterからNoto Sans JPへグリフ単位でフォールバックする。 |
+| 見出し | `--font-heading` | 別の装飾書体ではなく、700ウェイトと0.01emの字間で階層を作る。 |
+| 数値 | `--font-numeric` | 成績・得点・時刻・順位には`tabular-nums slashed-zero`を併用する。 |
+| コード | `--font-mono` | JSON、同期ログ、診断情報だけに使う。 |
+
+本文は16px / 1.65、密度の高い情報は14px / 1.40、メタ情報は13px / 1.45を基準とする。文字を縮めて情報量を増やさず、レイアウト部品で構造を変える。詳細な規約と検証ゲートは[`TYPOGRAPHY_SYSTEM.md`](./TYPOGRAPHY_SYSTEM.md)を正本とする。
+
 ## 標準レイアウト部品
 
 | 部品 | 役割 | 利用画面 |
@@ -76,7 +89,7 @@ CSSクラスは、役割を先頭辞で表す。IDはJavaScriptのイベント�
 
 高コントラストモードは設けない。通常のlight/dark出力について、本文・補助本文・主操作ラベルは4.5:1以上（実装目標5:1）、意味を持つ境界とフォーカスは3:1以上（実装目標3.5:1）をテストする。状態の意味とチームカラーが衝突しないよう、成功・注意・危険・情報は監査済みの静的ロールを使う。
 
-詳細な色階層、既定赤のフォールバック、アイコン、既存チームの保護、禁止事項は[`NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md`](./NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md)を正本とする。
+詳細な色階層、既定赤のフォールバック、アイコン、既存チームの保護、禁止事項は[`NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md`](./NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md)を正本とする。フォントの役割と読み込み規約は[`TYPOGRAPHY_SYSTEM.md`](./TYPOGRAPHY_SYSTEM.md)を正本とする。
 
 ## 品質規則
 

@@ -75,7 +75,13 @@ body {
     min-height: 100vh;
     min-height: 100dvh;
     /* Design */
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    font-family: var(--font-ui);
+    font-size: var(--text-body-size);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--text-body-leading);
+    letter-spacing: var(--tracking-body);
+    font-synthesis: none;
+    font-kerning: normal;
     background-color: var(--bg-color);
     color: var(--text-primary);
 }
@@ -83,6 +89,17 @@ body {
 body.modal-open {
     /* Layout */
     overflow: hidden !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+    letter-spacing: var(--tracking-heading);
 }
 
 input,

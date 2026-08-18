@@ -16,7 +16,8 @@ const files = {
     app: '../app.js',
     serviceWorker: '../sw.js',
     architecture: '../CSS_ARCHITECTURE.md',
-    brandStandard: '../NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md'
+    brandStandard: '../NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md',
+    typographyStandard: '../TYPOGRAPHY_SYSTEM.md'
 };
 
 const source = Object.fromEntries(await Promise.all(
@@ -38,6 +39,13 @@ assert.match(source.tokens, /--color-brand:\s*var\(--theme-primary\)/);
 assert.match(source.tokens, /--color-brand-surface:\s*var\(--theme-primary-soft\)/);
 assert.match(source.tokens, /--color-text-on-brand:\s*var\(--theme-on-primary\)/);
 assert.match(source.tokens, /--text-dense-leading/);
+assert.match(source.tokens, /--font-jp:\s*'Noto Sans JP'/);
+assert.match(source.tokens, /--font-latin:\s*'Inter'/);
+assert.match(source.tokens, /--font-ui/);
+assert.match(source.tokens, /--font-heading/);
+assert.match(source.tokens, /--font-numeric/);
+assert.match(source.tokens, /--font-mono/);
+assert.match(source.tokens, /--font-weight-heading/);
 assert.match(source.base, /--theme-primary/);
 assert.match(source.base, /data-color-mode="dark"/);
 assert.doesNotMatch(source.base, /high-contrast-mode/);
@@ -74,8 +82,15 @@ assert.match(source.index, /c-page-list--bottom-safe/);
 assert.match(source.index, /btn-toggle-color-mode/);
 assert.match(source.index, /ui-color-mode/);
 assert.match(source.index, /team-theme-preview/);
+assert.match(source.index, /family=Noto\+Sans\+JP/);
+assert.match(source.index, /family=Inter/);
+assert.match(source.index, /fonts\.gstatic\.com/);
 assert.doesNotMatch(source.index, /btn-toggle-contrast/);
 assert.match(source.systemComponents, /\.c-theme-preview/);
+assert.match(source.systemComponents, /\.c-data-list__metric-value/);
+assert.match(source.systemComponents, /font-variant-numeric:\s*tabular-nums slashed-zero/);
+assert.match(source.utilities, /\.u-tabular-nums/);
+assert.match(source.utilities, /\.u-mono/);
 assert.match(source.iconSystem, /\.c-icon\s*\{/);
 assert.match(source.iconSystem, /c-icon--team-signal/);
 assert.match(source.iconSystem, /c-icon--brand/);
@@ -98,6 +113,10 @@ assert.match(source.architecture, /NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD/);
 assert.match(source.brandStandard, /#EF3340/);
 assert.match(source.brandStandard, /--color-brand/);
 assert.match(source.brandStandard, /既存チームの保存済み種色/);
+assert.match(source.brandStandard, /TYPOGRAPHY_SYSTEM/);
+assert.match(source.typographyStandard, /Noto Sans JP/);
+assert.match(source.typographyStandard, /Inter/);
+assert.match(source.typographyStandard, /tabular-nums/);
 
 const iconDirectories = ['custom', 'ui', 'activity', 'family'];
 const iconCount = (await Promise.all(iconDirectories.map(async directory => (

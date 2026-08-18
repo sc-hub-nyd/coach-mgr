@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.22.0';
+export const APP_VERSION = 'v1.23.0';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.23.0',
+        date: '2026-08-18',
+        title: '日本語業務UIのタイポグラフィ体系',
+        features: [
+            'Noto Sans JPを日本語本文・UI、Interを英数字・スコア・時刻・比較可能な数値へ役割分担して導入',
+            'font family、ウェイト、文字間、本文・高密度・メタ・一行操作のサイズと行間をデザイントークンとして統合',
+            'c-data-listの数値をInterとtabular-nums / slashed-zeroへ移行。必要箇所だけへ適用するu-tabular-numsとu-monoを追加',
+            'フォント読み込み、トークン、部品、標準書を契約テスト化。P33、動的テーマ、5ビューポート×5画面の検証を実施'
+        ]
+    },
     {
         version: 'v1.22.0',
         date: '2026-08-18',
