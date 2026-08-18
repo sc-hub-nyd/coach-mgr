@@ -341,7 +341,7 @@ export function initPractices(miniPitchObserver) {
                 <!-- ★ 試合管理と同様に library-grid で3列レスポンシブ表示 -->
                 <div class="library-grid">
         `;
-        grouped[month].forEach(p => {
+        grouped[month].map(p => {
             const isCoach = state.currentUserRole === 'coach';
             const safeMenus = Array.isArray(p.menus) ? p.menus : [];
 
