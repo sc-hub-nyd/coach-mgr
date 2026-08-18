@@ -12,12 +12,12 @@ function getSelectedPlayerId() {
 
 function renderMetric(label, value, icon, tone = 'neutral', note = '') {
     return `
-        <article class="insight-metric insight-metric-${tone}">
-            <div class="insight-metric-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></div>
-            <div>
-                <span>${label}</span>
-                <strong>${value}</strong>
-                ${note ? `<small>${note}</small>` : ''}
+        <article class="c-metric c-metric--${tone}">
+            <div class="c-metric__icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></div>
+            <div class="c-metric__content">
+                <span class="c-metric__label">${label}</span>
+                <strong class="c-metric__value">${value}</strong>
+                ${note ? `<small class="c-metric__note">${note}</small>` : ''}
             </div>
         </article>`;
 }

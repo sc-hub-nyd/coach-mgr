@@ -113,6 +113,8 @@ requireAll(source.insights, [
     'c-data-list__item',
     'c-data-list__item--button',
     'c-data-list__kind',
+    'c-metric c-metric--',
+    'c-metric__value',
     'data-route="match-detail"'
 ], '振り返り空状態・履歴');
 
@@ -122,7 +124,9 @@ requireAll(source.index, [
     'id="dash-attendance-rank"',
     'id="dash-playtime-content"',
     'c-data-list dash-rank-list',
-    'c-card--interactive'
+    'c-card--interactive',
+    'c-metric-grid--inline',
+    'c-metric__value'
 ], 'ダッシュボードランキング');
 
 requireAll(source.app, [

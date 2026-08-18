@@ -287,13 +287,10 @@
                                 class="fa-solid fa-chevron-right"></i> 詳細</span>
                     </div>
                     <div class="dash-season-record-body">
-                        <div class="dash-record-numbers">
-                            <span class="dash-record-win" id="dash-record-win">0</span><span
-                                class="dash-record-sep">勝</span>
-                            <span class="dash-record-loss" id="dash-record-loss">0</span><span
-                                class="dash-record-sep">敗</span>
-                            <span class="dash-record-draw" id="dash-record-draw">0</span><span
-                                class="dash-record-sep">分</span>
+                        <div class="dash-record-numbers c-metric-grid c-metric-grid--inline">
+                            <span class="c-metric c-metric--inline c-metric--positive"><strong class="c-metric__value dash-record-win" id="dash-record-win">0</strong><span class="c-metric__label dash-record-sep">勝</span></span>
+                            <span class="c-metric c-metric--inline"><strong class="c-metric__value dash-record-loss" id="dash-record-loss">0</strong><span class="c-metric__label dash-record-sep">敗</span></span>
+                            <span class="c-metric c-metric--inline"><strong class="c-metric__value dash-record-draw" id="dash-record-draw">0</strong><span class="c-metric__label dash-record-sep">分</span></span>
                         </div>
                         <!-- 得点・失点の右側に勝率を配置 -->
                         <div class="dash-record-meta"
@@ -1192,7 +1189,7 @@
             </div>
             <section class="insights-section" aria-labelledby="insights-overview-title">
                 <div class="insights-section-header"><div><span class="eyebrow-label">TEAM OVERVIEW</span><h2 id="insights-overview-title">活動サマリー</h2></div></div>
-                <div id="insights-team-metrics" class="insight-metric-grid"></div>
+                <div id="insights-team-metrics" class="c-metric-grid insight-metric-grid"></div>
             </section>
             <section class="insights-section coaching-insights-section coach-only" aria-labelledby="insights-coaching-title">
                 <div class="insights-section-header"><div><span class="eyebrow-label">COACHING SIGNALS</span><h2 id="insights-coaching-title">比較分析と次の練習テーマ</h2></div><span class="insights-hint">同じ日数の直前期間と比較します</span></div>

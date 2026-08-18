@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.27.3';
+export const APP_VERSION = 'v1.27.4';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.27.4',
+        date: '2026-08-18',
+        title: '共通メトリクス部品の導入',
+        features: [
+            'c-metric-gridとc-metricを追加し、KPIの余白・数値・意味トーンを標準化',
+            '振り返りの活動サマリーとダッシュボードの今季成績へ同じ数値部品を展開',
+            '勝敗・活動数・得失点差などの既存数値IDと集計ロジックを維持',
+            '波1の表示プリミティブをランキング・履歴・KPIまで拡張'
+        ]
+    },
     {
         version: 'v1.27.3',
         date: '2026-08-18',
