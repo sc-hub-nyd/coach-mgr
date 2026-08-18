@@ -83,6 +83,8 @@ body {
     font-synthesis: none;
     font-kerning: normal;
     background-color: var(--bg-color);
+    background-image: var(--liquid-veil);
+    background-attachment: fixed;
     color: var(--text-primary);
 }
 
@@ -131,11 +133,12 @@ a,
 
 .glass {
     /* Design */
-    background: var(--surface-color);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid var(--surface-border);
-    border-radius: var(--border-radius);
+    background: var(--glass-surface);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glass-shadow);
 }
 
 .app-container {
@@ -158,10 +161,11 @@ a,
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
     /* Design */
-    background: var(--surface-color);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border-right: 1px solid var(--surface-border);
+    background: var(--glass-surface-strong);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-right: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
     transition: transform var(--transition);
 }
 
@@ -280,10 +284,11 @@ a,
     top: 0;
     z-index: 90;
     /* Design */
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border-bottom: 1px solid var(--surface-border);
+    background: var(--glass-surface-strong);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 0.35rem 1.4rem color-mix(in srgb, var(--color-text) 6%, transparent);
 }
 
 .menu-toggle {
@@ -601,12 +606,12 @@ body.role-read-only #pd-tab-goals textarea {
         justify-content: space-around !important;
         align-items: center !important;
         z-index: 900 !important;
-        background: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-        border: 1px solid var(--surface-border) !important;
-                border-radius: 16px 16px 0 0 !important;
-        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1) !important;
+        background: var(--glass-surface-strong) !important;
+        backdrop-filter: var(--glass-blur) !important;
+        -webkit-backdrop-filter: var(--glass-blur) !important;
+        border: 1px solid var(--glass-border) !important;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+        box-shadow: 0 -0.45rem 1.5rem color-mix(in srgb, var(--color-text) 12%, transparent) !important;
         box-sizing: border-box !important;
         padding: 4px 4px var(--safe-bottom) !important;
 

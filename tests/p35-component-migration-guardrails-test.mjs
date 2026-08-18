@@ -109,6 +109,13 @@ requireAll(source.insights, [
     'insights-player-select'
 ], '振り返り空状態');
 
+requireAll(source.index, [
+    'id="dash-action-center"',
+    'id="dash-practice-plan"',
+    'id="dash-parent-agenda"',
+    'c-liquid-panel'
+], 'Liquid UIダッシュボード');
+
 requireAll(source.app, [
     'function renderEmptyState',
     'c-empty-state',

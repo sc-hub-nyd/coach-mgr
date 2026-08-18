@@ -18,7 +18,8 @@ const files = {
     serviceWorker: '../sw.js',
     architecture: '../CSS_ARCHITECTURE.md',
     brandStandard: '../NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md',
-    typographyStandard: '../TYPOGRAPHY_SYSTEM.md'
+    typographyStandard: '../TYPOGRAPHY_SYSTEM.md',
+    surfaceDesign: '../NEUMORPHISM_DESIGN_SYSTEM.md'
 };
 
 const source = Object.fromEntries(await Promise.all(
@@ -54,8 +55,14 @@ assert.match(source.tokens, /--shadow-neo-pressed/);
 assert.match(source.tokens, /--surface-inset-inline/);
 assert.match(source.tokens, /--control-inset-inline/);
 assert.match(source.tokens, /--icon-control-size/);
+assert.match(source.tokens, /--glass-surface/);
+assert.match(source.tokens, /--glass-border/);
+assert.match(source.tokens, /--glass-blur/);
+assert.match(source.tokens, /--liquid-veil/);
 assert.match(source.base, /--theme-primary/);
 assert.match(source.base, /data-color-mode="dark"/);
+assert.match(source.base, /--glass-surface-strong/);
+assert.match(source.base, /--liquid-veil/);
 assert.doesNotMatch(source.base, /high-contrast-mode/);
 assert.doesNotMatch(source.tokens, /high-contrast-mode/);
 assert.match(source.layouts, /\.l-page/);
@@ -67,6 +74,8 @@ assert.match(source.components, /\.c-action-group/);
 assert.match(source.components, /\.c-empty-state/);
 assert.match(source.components, /\.c-card--flat/);
 assert.match(source.components, /--shadow-neo-raised/);
+assert.match(source.components, /\.c-glass-surface/);
+assert.match(source.components, /\.c-liquid-panel/);
 assert.match(source.tokens, /--control-radius/);
 assert.match(source.systemComponents, /\.c-form-field/);
 assert.match(source.systemComponents, /\.c-fieldset/);
@@ -127,7 +136,14 @@ assert.match(source.architecture, /`is-`/);
 assert.match(source.architecture, /#EF3340/);
 assert.match(source.architecture, /NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD/);
 assert.match(source.brandStandard, /#EF3340/);
-assert.match(source.brandStandard, /--color-brand/);
+assert.match(source.architecture, /--color-brand/);
+assert.match(source.architecture, /サーフェスシステム/);
+assert.match(source.architecture, /--glass-\*/);
+assert.match(source.architecture, /c-liquid-panel/);
+assert.match(source.surfaceDesign, /Neumorphism 2\.0 × Liquid UI \/ Frosted Glass/);
+assert.match(source.surfaceDesign, /--glass-surface-strong/);
+assert.match(source.surfaceDesign, /--liquid-veil/);
+assert.match(source.surfaceDesign, /backdrop-filter/);
 assert.match(source.brandStandard, /既存チームの保存済み種色/);
 assert.match(source.brandStandard, /TYPOGRAPHY_SYSTEM/);
 assert.match(source.typographyStandard, /Noto Sans JP/);

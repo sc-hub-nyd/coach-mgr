@@ -98,6 +98,15 @@
     --shadow-neo-raised-hover: -0.45rem -0.45rem 0.95rem var(--neo-highlight), 0.55rem 0.55rem 1.05rem var(--neo-shadow);
     --shadow-neo-pressed: inset 0.24rem 0.24rem 0.55rem var(--neo-shadow-soft), inset -0.2rem -0.2rem 0.45rem var(--neo-highlight);
 
+    /* Liquid UI / Frosted Glass: translucent layers are reserved for navigation and overlays, never primary text surfaces. */
+    --glass-surface: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    --glass-surface-strong: color-mix(in srgb, var(--color-surface) 94%, transparent);
+    --glass-border: color-mix(in srgb, #ffffff 58%, var(--color-border));
+    --glass-shadow: 0 1rem 2.6rem color-mix(in srgb, var(--color-text) 13%, transparent);
+    --glass-blur: blur(1.25rem) saturate(145%);
+    --liquid-veil: linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 10%, transparent) 0%, transparent 44%, color-mix(in srgb, var(--theme-companion) 9%, transparent) 100%);
+    --liquid-sheen: linear-gradient(115deg, transparent 10%, color-mix(in srgb, #ffffff 38%, transparent) 48%, transparent 78%);
+
     --content-max: 78rem;
     --content-narrow: 68rem;
     --content-wide: 92rem;
@@ -124,6 +133,12 @@
     --neo-shadow: color-mix(in srgb, #000000 62%, transparent);
     --neo-shadow-soft: color-mix(in srgb, #000000 42%, transparent);
     --neo-surface: color-mix(in srgb, var(--color-surface) 84%, var(--color-surface-raised));
+    --glass-surface: color-mix(in srgb, var(--color-surface) 86%, transparent);
+    --glass-surface-strong: color-mix(in srgb, var(--color-surface) 93%, transparent);
+    --glass-border: color-mix(in srgb, #ffffff 22%, var(--color-border));
+    --glass-shadow: 0 1rem 2.6rem color-mix(in srgb, #000000 54%, transparent);
+    --liquid-veil: linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 17%, transparent) 0%, transparent 44%, color-mix(in srgb, var(--theme-companion) 14%, transparent) 100%);
+    --liquid-sheen: linear-gradient(115deg, transparent 10%, color-mix(in srgb, #ffffff 12%, transparent) 48%, transparent 78%);
 }
 
 @media (min-width: 48rem) {

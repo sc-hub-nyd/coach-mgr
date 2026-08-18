@@ -41,6 +41,25 @@
     border-inline-start: 4px solid var(--primary);
 }
 
+/* Glass is reserved for contextual layers. Primary reading surfaces remain opaque enough for predictable contrast. */
+.c-glass-surface {
+    background: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.c-glass-surface--strong {
+    background: var(--glass-surface-strong);
+}
+
+.c-liquid-panel {
+    background-image: var(--liquid-veil);
+    background-origin: border-box;
+    background-clip: padding-box;
+}
+
 .c-section-header {
     display: flex;
     align-items: flex-start;

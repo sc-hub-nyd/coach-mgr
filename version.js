@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.26.1';
+export const APP_VERSION = 'v1.27.0';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.27.0',
+        date: '2026-08-18',
+        title: 'Neumorphism 2.0 × Liquid UI / Frosted Glass統合',
+        features: [
+            'ニューモーフィズム2.0、Liquid UI、Frosted Glassの役割分担・トークン・共通部品・禁止事項をデザインシステムの正本へ統合',
+            '上部バー、サイドバー、モバイルナビゲーション、モーダル、ボトムシートを強いフロストガラスの文脈レイヤーへ統一',
+            'ダッシュボードの今日・次回計画・保護者向け導線へ、チームカラーに追従する控えめなLiquid UI文脈層を適用',
+            'P33・P35の契約を拡張し、サーフェストークン、共通部品、ダッシュボード文脈カードの接続を保護'
+        ]
+    },
     {
         version: 'v1.26.1',
         date: '2026-08-18',
