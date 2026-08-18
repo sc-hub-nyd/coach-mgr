@@ -11,6 +11,7 @@ const source = Object.fromEntries(await Promise.all([
     ['tactics', '../tactics.js'],
     ['players', '../players.js'],
     ['insights', '../insights.js'],
+    ['matches', '../matches.js'],
     ['app', '../app.js'],
     ['standard', '../CSS/components-standard.css'],
     ['system', '../CSS/components-system.css']
@@ -92,6 +93,12 @@ requireAll(source.app, [
     'c-empty-state--compact',
     "compact = false"
 ], '共通空状態');
+
+requireAll(source.matches, [
+    'c-empty-state',
+    'btn-empty-add-match',
+    'btn-add-match'
+], '試合空状態');
 
 requireAll(source.library, [
     'c-empty-state',

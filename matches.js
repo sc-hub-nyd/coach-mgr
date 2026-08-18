@@ -3510,11 +3510,14 @@ export function initMatches() {
         }
 
         const emptyHtml = `
-            <div class="u-ext-144 card" >
-                <div class="u-ext-145" ><i class="fa-solid fa-trophy"></i></div>
-                <h3 class="u-ext-146" >該当する試合記録がありません</h3>
-                <button class="btn btn-primary" id="btn-empty-add-match" style="margin-top:0.5rem; display:${isCoach ? 'inline-block' : 'none'};"><i class="fa-solid fa-plus"></i> 最初の試合を追加</button>
-            </div>
+            <section class="c-empty-state" aria-live="polite">
+                <div class="c-empty-state__body">
+                    <i class="c-empty-state__icon fa-solid fa-trophy" aria-hidden="true"></i>
+                    <h3 class="c-empty-state__title">該当する試合記録がありません</h3>
+                    <p class="c-empty-state__text">検索条件を変更するか、最初の試合を追加してください。</p>
+                    ${isCoach ? '<button class="btn btn-primary" id="btn-empty-add-match"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の試合を追加</button>' : ''}
+                </div>
+            </section>
         `;
 
         matchList.innerHTML = h2hHtml + (html || emptyHtml);
@@ -3576,7 +3579,6 @@ export function initMatches() {
 
     const btnEmptyAddMatch = document.getElementById('btn-empty-add-match');
     if (btnEmptyAddMatch) {
-        btnEmptyAddMatch.style.display = isCoach ? 'inline-block' : 'none';
         btnEmptyAddMatch.onclick = () => openMatchModal(null);
     }
 

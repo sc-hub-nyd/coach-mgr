@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.25.1';
+export const APP_VERSION = 'v1.25.2';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.25.2',
+        date: '2026-08-18',
+        title: '試合一覧の空状態標準化',
+        features: [
+            '試合一覧の検索結果なし・初回状態をc-empty-stateへ移行し、利用者が次に取る操作を明確化',
+            'コーチ権限時のみ最初の試合作成導線を表示し、既存のbtn-empty-add-matchとイベント接続を維持',
+            '試合管理の空状態と作成操作をP35部品契約へ追加し、回帰を自動検証',
+            '15種色×light/darkテーマ、5ビューポート×5画面のレスポンシブ検証で違反0件を確認'
+        ]
+    },
     {
         version: 'v1.25.1',
         date: '2026-08-18',
