@@ -14,7 +14,7 @@ export const state = {
     skillMetrics: ['シュート', 'パス', 'ドリブル', '守備', 'フィジカル', 'メンタル'],
     positions: ['GK', 'DF', 'MF', 'FW'],
     positionsCat2: ['CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH'],
-    teamInfo: { name: 'My Team', color: '#13795b', theme: { seed: '#13795b', algorithm: 'coachmgr-tonal-v1', algorithmVersion: 1 }, passcode: '7064' },
+    teamInfo: { name: 'My Team', color: '#ef3340', theme: { seed: '#ef3340', algorithm: 'coachmgr-tonal-v1', algorithmVersion: 1 }, passcode: '7064' },
     teamFocus: { mainTheme: '', points: [], note: '', updatedAt: '' },
     teams: [],
     workspaces: {},

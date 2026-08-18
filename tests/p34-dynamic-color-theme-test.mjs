@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { buildTeamTheme, contrastRatio, normalizeHex, validateThemePalette } from '../color-theme-service.js';
 
 const SEEDS = [
-    '#000000', '#ffffff', '#808080', '#ff0000', '#ff7a00', '#fff000', '#00a86b',
+    '#000000', '#ffffff', '#808080', '#ef3340', '#ff0000', '#ff7a00', '#fff000', '#00a86b',
     '#0066ff', '#6f2dbd', '#ff00aa', '#00ffff', '#13795b', '#155eef', '#9f2d2d'
 ];
 

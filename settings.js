@@ -503,7 +503,7 @@ export function initSettings() {
         const name = window.prompt('新しいチーム名を入力してください。新しいチームは空の記録から始まります。', '新しいチーム');
         if (name === null) return;
         try {
-            createTeam(state, { name, color: state.teamInfo?.theme?.seed || state.teamInfo?.color || '#13795b' });
+            createTeam(state, { name, color: state.teamInfo?.theme?.seed || state.teamInfo?.color || '#ef3340' });
             await saveData();
             updateWorkspaceSidebar();
             applyCurrentTeamTheme();

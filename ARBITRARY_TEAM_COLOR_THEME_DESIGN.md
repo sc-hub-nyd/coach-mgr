@@ -96,7 +96,7 @@ MaterialはUIの役割を`primary`、`on primary`、`primary container`、`on pr
 ```css
 :root {
   /* ユーザーが選ぶのはseedだけ。以下は生成値。 */
-  --team-seed: #13795b;
+  --team-seed: #ef3340;
 
   /* brand-derived */
   --color-action: var(--role-primary);
@@ -176,13 +176,13 @@ function chooseOnColor(background, minimum = 5.0) {
 
 ```js
 teamInfo.theme = {
-  seed: '#13795b',
+  seed: '#ef3340',
   algorithm: 'tonal-v1',
   algorithmVersion: 1
 };
 ```
 
-既存の`teamInfo.color`は移行時に`theme.seed`へコピーします。値がないチームは既定のField Greenを使います。
+既存の`teamInfo.color`は移行時に`theme.seed`へコピーします。値がないチームは、南陽台FC公式サイトの赤系を表す既定種色`#EF3340`を使います。利用者は設定画面から任意のチームカラーへ変更できます。
 
 ### 7.2 生成・適用の責務
 

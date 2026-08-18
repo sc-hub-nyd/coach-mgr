@@ -1,4 +1,4 @@
-const DEFAULT_SEED = '#13795b';
+const DEFAULT_SEED = '#ef3340';
 const THEME_ALGORITHM = 'coachmgr-tonal-v1';
 const THEME_ALGORITHM_VERSION = 1;
 const TEXT_LIGHT = '#14201c';
@@ -116,7 +116,7 @@ function buildActionColor({ hue, saturation, mode, canvas }) {
 
     const safe = mode === 'dark'
         ? { color: '#5bd3a5', on: TEXT_LIGHT }
-        : { color: '#13795b', on: '#ffffff' };
+        : { color: '#ef3340', on: '#ffffff' };
     return { ...safe, lightness: target, onRatio: contrastRatio(safe.on, safe.color), surfaceRatio: contrastRatio(safe.color, canvas) };
 }
 

@@ -1,22 +1,22 @@
 /* css/base.css */
 :root {
     /* Dynamic theme primitive API. color-theme-service.js sets --theme-* at runtime. */
-    --theme-primary: #13795b;
-    --theme-primary-hover: #095c43;
-    --theme-primary-soft: #ddf3e9;
+    --theme-primary: #c72c38;
+    --theme-primary-hover: #a92330;
+    --theme-primary-soft: #fde8eb;
     --theme-on-primary: #ffffff;
     --theme-on-primary-hover: #ffffff;
-    --theme-on-primary-soft: #14201c;
-    --theme-companion: #3d7462;
-    --theme-canvas: #f3f7f4;
+    --theme-on-primary-soft: #24171a;
+    --theme-companion: #a82b36;
+    --theme-canvas: #faf6f6;
     --theme-surface: #ffffff;
     --theme-surface-raised: #ffffff;
-    --theme-surface-subtle: #eaf1ed;
-    --theme-border: #9ab0a4;
-    --theme-border-strong: #658173;
-    --theme-text: #14201c;
-    --theme-text-muted: #52635a;
-    --theme-focus: #13795b;
+    --theme-surface-subtle: #f7eff0;
+    --theme-border: #b9a5a8;
+    --theme-border-strong: #85666c;
+    --theme-text: #24171a;
+    --theme-text-muted: #635257;
+    --theme-focus: #c72c38;
     --theme-success: #167c5a;
     --theme-warning: #925f00;
     --theme-danger: #b42318;
