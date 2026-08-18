@@ -40,7 +40,9 @@ requireAll(source.index, [
     'id="btn-workspace-switch"',
     'id="gas-sync-section"',
     'id="form-gas-sync"',
-    'id="parent-share-section"'
+    'id="parent-share-section"',
+    'id="data-management-settings-section"',
+    'c-card c-data-management__operation'
 ], '設定画面');
 
 // Practices: preserve filtering, creation, editing, attendance, and drawing-preview entry points.
