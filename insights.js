@@ -22,11 +22,15 @@ function renderMetric(label, value, icon, tone = 'neutral', note = '') {
         </article>`;
 }
 
+function renderCompactEmptyState({ icon = 'fa-inbox', title, description = '' }) {
+    return `<section class="c-empty-state c-empty-state--compact" role="status"><div class="c-empty-state__body"><i class="c-empty-state__icon fa-solid ${icon}" aria-hidden="true"></i><h3 class="c-empty-state__title">${title}</h3>${description ? `<p class="c-empty-state__text">${description}</p>` : ''}</div></section>`;
+}
+
 function renderTimeline(insights) {
     const container = document.getElementById('insights-timeline');
     if (!container) return;
     if (!insights.timeline.length) {
-        container.innerHTML = '<div class="insights-empty"><i class="fa-solid fa-clock-rotate-left"></i><p>対象期間の試合・練習記録はまだありません。</p></div>';
+        container.innerHTML = renderCompactEmptyState({ icon: 'fa-clock-rotate-left', title: '対象期間の試合・練習記録はまだありません。' });
         return;
     }
     container.innerHTML = insights.timeline.map(event => {
@@ -52,7 +56,7 @@ function renderPlayerHistory(playerInsights) {
     if (!container || !title) return;
     if (!playerInsights?.player) {
         title.textContent = '選手を選択してください';
-        container.innerHTML = '<div class="insights-empty"><i class="fa-solid fa-user"></i><p>選手を選択すると、出欠・出場・試合イベントをまとめて確認できます。</p></div>';
+        container.innerHTML = renderCompactEmptyState({ icon: 'fa-user', title: '選手を選択してください', description: '選手を選択すると、出欠・出場・試合イベントをまとめて確認できます。' });
         return;
     }
     title.textContent = `${playerInsights.player.number ? `${playerInsights.player.number}. ` : ''}${playerInsights.player.name} 選手の活動履歴`;
@@ -73,7 +77,7 @@ function renderPlayerHistory(playerInsights) {
                 const icons = { goal: 'fa-futbol', 'match-attendance': 'fa-trophy', 'practice-attendance': 'fa-clipboard-check' };
                 const label = activity.status === 'attending' ? '参加' : activity.status === 'absent' ? '欠席' : activity.status === 'pending' ? '未回答' : '';
                 return `<div class="insight-activity"><i class="fa-solid ${icons[activity.kind] || 'fa-circle'}" aria-hidden="true"></i><span><strong>${escapeHtml(activity.title)}</strong><small>${escapeHtml(activity.date || '')}${label ? ` ・ ${label}` : ''}</small></span></div>`;
-            }).join('') : '<div class="insights-empty compact"><p>対象期間の活動記録はありません。</p></div>'}
+            }).join('') : renderCompactEmptyState({ icon: 'fa-clipboard', title: '対象期間の活動記録はありません。' })}
         </div>`;
 }
 
@@ -81,7 +85,7 @@ function renderCoachingSignals(comparison, positionParticipation, recommendation
     const comparisonContainer = document.getElementById('insights-comparison');
     if (comparisonContainer) {
         if (!comparison.previous) {
-            comparisonContainer.innerHTML = '<div class="insights-empty compact"><p>「すべて」の期間では、前期間との比較は表示されません。</p></div>';
+            comparisonContainer.innerHTML = renderCompactEmptyState({ icon: 'fa-chart-simple', title: '前期間との比較は表示されません', description: '「すべて」の期間では比較できません。' });
         } else {
             const sign = value => `${value > 0 ? '+' : ''}${value}`;
             comparisonContainer.innerHTML = [
@@ -94,7 +98,7 @@ function renderCoachingSignals(comparison, positionParticipation, recommendation
     }
     const positionContainer = document.getElementById('insights-position-participation');
     if (positionContainer) {
-        positionContainer.innerHTML = positionParticipation.length ? positionParticipation.map(item => `<div class="insight-position-row"><span>${escapeHtml(item.position)}</span><strong>${item.minutes}分</strong><small>${item.playerCount}名が出場</small></div>`).join('') : '<div class="insights-empty compact"><p>Field Companionで時計・交代を記録すると、ポジション別の出場時間を表示できます。</p></div>';
+        positionContainer.innerHTML = positionParticipation.length ? positionParticipation.map(item => `<div class="insight-position-row"><span>${escapeHtml(item.position)}</span><strong>${item.minutes}分</strong><small>${item.playerCount}名が出場</small></div>`).join('') : renderCompactEmptyState({ icon: 'fa-stopwatch', title: 'ポジション別の出場時間はまだありません', description: 'Field Companionで時計・交代を記録すると表示できます。' });
     }
     const recommendationsContainer = document.getElementById('insights-recommendations');
     if (recommendationsContainer) {
@@ -106,7 +110,7 @@ function renderDecisionCards(cards) {
     const container = document.getElementById('insights-decision-cards');
     if (!container) return;
     if (!cards.length) {
-        container.innerHTML = '<div class="insights-empty compact"><p>活動記録が増えると、ここに次の判断と根拠が表示されます。</p></div>';
+        container.innerHTML = renderCompactEmptyState({ icon: 'fa-lightbulb', title: '次の判断はまだありません', description: '活動記録が増えると、ここに根拠とともに表示されます。' });
         return;
     }
     container.innerHTML = cards.map(card => `<article class="decision-card is-${escapeHtml(card.tone || 'neutral')}">

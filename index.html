@@ -1178,17 +1178,17 @@
 
     <template id="tpl-insights">
             <section class="insights-page l-page l-page--wide l-stack l-stack--spacious" aria-labelledby="insights-page-title">
-            <header class="insights-hero">
-                <div>
-                    <span class="eyebrow-label">REVIEW</span>
-                    <h1 id="insights-page-title">チームの振り返り</h1>
-                    <p>試合・練習・出欠・Field Companionの記録を、次の指導と共有につなげます。</p>
+            <header class="insights-hero c-section-header">
+                <div class="c-section-header__content">
+                    <span class="c-kicker">REVIEW</span>
+                    <h1 class="c-section-header__title" id="insights-page-title">チームの振り返り</h1>
+                    <p class="c-section-header__meta">試合・練習・出欠・Field Companionの記録を、次の指導と共有につなげます。</p>
                 </div>
-                <button type="button" class="btn btn-primary" id="btn-copy-insights-report"><i class="fa-solid fa-share-nodes"></i> レポートをコピー</button>
+                <div class="c-action-group"><button type="button" class="btn btn-primary" id="btn-copy-insights-report"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> レポートをコピー</button></div>
             </header>
-            <div class="insights-toolbar card c-card">
-                <label class="form-group"><span>対象期間</span><select id="insights-range-select" class="form-control"><option value="30">直近30日</option><option value="90" selected>直近90日</option><option value="180">直近180日</option><option value="all">すべて</option></select></label>
-                <label class="form-group insights-player-filter"><span>選手別に見る</span><select id="insights-player-select" class="form-control"></select></label>
+            <div class="insights-toolbar card c-card c-form-grid">
+                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="insights-range-select">対象期間</label><select id="insights-range-select" class="form-control"><option value="30">直近30日</option><option value="90" selected>直近90日</option><option value="180">直近180日</option><option value="all">すべて</option></select></div>
+                <div class="c-form-field c-form-field--fluid insights-player-filter"><label class="c-form-field__label" for="insights-player-select">選手別に見る</label><select id="insights-player-select" class="form-control"></select></div>
             </div>
             <section class="insights-section" aria-labelledby="insights-overview-title">
                 <div class="insights-section-header"><div><span class="eyebrow-label">TEAM OVERVIEW</span><h2 id="insights-overview-title">活動サマリー</h2></div></div>

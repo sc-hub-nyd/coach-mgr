@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.25.0';
+export const APP_VERSION = 'v1.25.1';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.25.1',
+        date: '2026-08-18',
+        title: '振り返り画面の標準部品移行',
+        features: [
+            '振り返り画面のページ見出し、レポート操作、対象期間・選手フィルターをc-section-header、c-action-group、c-form-fieldへ統一',
+            'タイムライン、選手履歴、期間比較、ポジション別出場時間、判断カードの空状態をc-empty-state--compactへ統合',
+            '対象期間・選手選択・レポート共有の既存IDを維持し、P35で画面および空状態の部品契約を検証',
+            '15種色×light/darkテーマ、5ビューポート×5画面のレスポンシブ検証で違反0件を確認'
+        ]
+    },
     {
         version: 'v1.25.0',
         date: '2026-08-18',

@@ -10,6 +10,7 @@ const source = Object.fromEntries(await Promise.all([
     ['library', '../library.js'],
     ['tactics', '../tactics.js'],
     ['players', '../players.js'],
+    ['insights', '../insights.js'],
     ['app', '../app.js'],
     ['standard', '../CSS/components-standard.css'],
     ['system', '../CSS/components-system.css']
@@ -65,6 +66,22 @@ requireAll(source.settings, [
     'btn-workspace-switch',
     'form-gas-sync'
 ], '設定イベント');
+
+requireAll(source.index, [
+    'template id="tpl-insights"',
+    'id="insights-range-select"',
+    'id="insights-player-select"',
+    'id="btn-copy-insights-report"',
+    'c-section-header',
+    'c-form-field'
+], '振り返り画面');
+
+requireAll(source.insights, [
+    'function renderCompactEmptyState',
+    'c-empty-state--compact',
+    'insights-range-select',
+    'insights-player-select'
+], '振り返り空状態');
 
 requireAll(source.app, [
     'function renderEmptyState',
