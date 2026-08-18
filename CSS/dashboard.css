@@ -542,19 +542,19 @@ body[data-route="tactics"] .library-grid {
     }
 
     .practice-card-header {
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-between !important;
-        align-items: flex-start !important;
-        gap: 0.25rem !important;
-        padding-bottom: 0.3rem !important;
-        margin-bottom: 0.3rem !important;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.25rem;
+        padding-bottom: 0.3rem;
+        margin-bottom: 0.3rem;
     }
 
     .practice-card-actions {
-        flex-shrink: 0 !important;
-        display: flex !important;
-        gap: 0.25rem !important;
+        flex-shrink: 0;
+        display: flex;
+        gap: 0.25rem;
     }
 
     .practice-card-header-title {
