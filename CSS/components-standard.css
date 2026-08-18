@@ -110,6 +110,16 @@
     justify-content: flex-end;
 }
 
+.c-action-group--compact {
+    gap: var(--space-1);
+}
+
+.c-action-group--compact > .btn {
+    min-block-size: 2rem;
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.8rem;
+}
+
 .c-metric-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));

@@ -260,6 +260,7 @@ requireAll(source.library, [
     'c-data-list__item',
     'c-data-list__meta',
     'c-data-list__actions',
+    'c-action-group--compact',
     'btn-execute-assign',
     'btn-assign-add-practice'
 ], 'メニュー空状態・アサイン先一覧');
@@ -271,8 +272,11 @@ requireAll(source.index, [
 
 requireAll(source.tactics, [
     'c-empty-state',
-    'btn-empty-add-tactic'
-], '戦術空状態');
+    'btn-empty-add-tactic',
+    'c-action-group--compact',
+    'btn-edit-tactic',
+    'btn-delete-tactic'
+], '戦術空状態・コンパクト操作群');
 
 requireAll(source.players, [
     'c-empty-state',

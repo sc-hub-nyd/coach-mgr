@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.8';
+export const APP_VERSION = 'v1.30.9';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.9',
+        date: '2026-08-18',
+        title: 'ライブラリ・戦術のコンパクト操作群を標準化',
+        features: [
+            'ライブラリと戦術のカード操作をc-action-group--compactへ統一',
+            '編集、作図、ライブラリ追加、削除、練習日アサインの既存操作クラスとイベント導線を維持',
+            '旧u-ext-182を削除し、完全一致監査で未参照規則0件を確認',
+            'P33、P34、P35、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.30.8',
         date: '2026-08-18',

@@ -315,12 +315,12 @@ export function initLibrary(miniPitchObserver) {
             const menus = grouped[cat];
             const cardsHtml = menus.map(m => {
                 const actionBtns = isCoach ? `
-                    <button class="u-ext-182 btn btn-secondary btn-assign-library" data-id="${m.id}"  title="練習日にアサイン"><i class="fa-solid fa-calendar-plus"></i></button>
-                    <button class="u-ext-182 btn btn-secondary btn-edit-library" data-id="${m.id}"  title="編集"><i class="fa-solid fa-pen"></i></button>
-                    <button class="u-ext-182 btn btn-secondary btn-anim-library" data-id="${m.id}"  title="${m.frames && m.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
-                    <button class="u-ext-182 btn btn-danger btn-delete-library" data-id="${m.id}" ><i class="fa-solid fa-trash"></i></button>
+                    <button type="button" class="btn btn-secondary btn-assign-library" data-id="${m.id}" title="練習日にアサイン"><i class="fa-solid fa-calendar-plus"></i></button>
+                    <button type="button" class="btn btn-secondary btn-edit-library" data-id="${m.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
+                    <button type="button" class="btn btn-secondary btn-anim-library" data-id="${m.id}" title="${m.frames && m.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
+                    <button type="button" class="btn btn-danger btn-delete-library" data-id="${m.id}"><i class="fa-solid fa-trash"></i></button>
                 ` : `
-                    <button class="u-ext-182 btn btn-secondary btn-anim-library" data-id="${m.id}"  title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
+                    <button type="button" class="btn btn-secondary btn-anim-library" data-id="${m.id}" title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
                 `;
 
                 return `
@@ -330,7 +330,7 @@ export function initLibrary(miniPitchObserver) {
                             <div>
                                 <span class="u-ext-185 badge" >${cat}</span>
                             </div>
-                            <div class="u-ext-156 library-card-actions" style="display:flex; justify-content:flex-end; gap:0.25rem; width:100%;">
+                            <div class="u-ext-156 library-card-actions c-action-group c-action-group--end c-action-group--compact" style="width:100%;">
                                 ${actionBtns}
                             </div>
                         </div>

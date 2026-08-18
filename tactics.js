@@ -121,12 +121,12 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
 
         const cardsHtml = tactics.map(t => {
             const actionBtns = isCoach ? `
-                <button class="u-ext-182 btn btn-secondary btn-edit-tactic" data-id="${t.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
-                <button class="u-ext-182 btn btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="${t.frames && t.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
-                <button class="u-ext-182 btn btn-secondary btn-add-to-library" data-id="${t.id}" title="練習メニューライブラリに追加"><i class="fa-solid fa-plus"></i></button>
-                <button class="u-ext-182 btn btn-danger btn-delete-tactic" data-id="${t.id}" title="削除"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" class="btn btn-secondary btn-edit-tactic" data-id="${t.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
+                <button type="button" class="btn btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="${t.frames && t.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
+                <button type="button" class="btn btn-secondary btn-add-to-library" data-id="${t.id}" title="練習メニューライブラリに追加"><i class="fa-solid fa-plus"></i></button>
+                <button type="button" class="btn btn-danger btn-delete-tactic" data-id="${t.id}" title="削除"><i class="fa-solid fa-trash"></i></button>
             ` : `
-                <button class="u-ext-182 btn btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
+                <button type="button" class="btn btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
             `;
 
             return `
@@ -136,7 +136,7 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
                         <div>
                             <span class="u-ext-185 badge">${cat}</span>
                         </div>
-                        <div class="u-ext-156 library-card-actions" style="display:flex; justify-content:flex-end; gap:0.25rem; width:100%;">
+                        <div class="u-ext-156 library-card-actions c-action-group c-action-group--end c-action-group--compact" style="width:100%;">
                             ${actionBtns}
                         </div>
                     </div>
