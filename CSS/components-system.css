@@ -801,7 +801,13 @@
     grid-column: 1 / -1;
 }
 
-.c-modal.modal-player-form {
+.c-input--mono {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.c-modal.modal-player-form,
+.c-modal.modal-player-csv-import {
     padding: 0;
 }
 

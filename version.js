@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.27.5';
+export const APP_VERSION = 'v1.27.6';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.27.6',
+        date: '2026-08-18',
+        title: 'CSV一括登録モーダルの標準化',
+        features: [
+            'CSV一括登録をc-modal、c-form-field、c-card、c-action-groupへ移行',
+            'ファイル選択、直接入力、プレビュー、エラー、登録操作の既存IDとJavaScript制御を維持',
+            'CSVフォーマット例・貼り付け入力・スクロールプレビューの余白と文字体系を共通化',
+            '波2のフォーム・モーダル統合をCSV登録導線へ展開'
+        ]
+    },
     {
         version: 'v1.27.5',
         date: '2026-08-18',

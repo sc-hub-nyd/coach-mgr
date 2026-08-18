@@ -2611,53 +2611,31 @@
     </div>
 
     <!-- Player CSV Bulk Import Modal -->
-    <div id="modal-import-players-csv" class="modal-overlay hidden" style="z-index: 1002;">
-        <div class="modal" style="max-width: 580px; width: 92%;">
-            <button class="btn-close-modal"
-                onclick="document.getElementById('modal-import-players-csv').classList.add('hidden')"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
-            <h2 style="margin-bottom:0.4rem; font-size:1.2rem; color:var(--primary);"><i
-                    class="fa-solid fa-file-csv"></i> 選手データ一括登録 (CSV)</h2>
-            <p class="text-secondary" style="font-size:0.8rem; margin-bottom:1rem;">
-                CSVファイルを選択するか、テキスト入力エリアに直接貼り付けて一括登録できます。
-            </p>
-
-            <div
-                style="background:rgba(0,0,0,0.03); border:1px solid var(--surface-border); border-radius:8px; padding:0.75rem; margin-bottom:1rem; font-size:0.75rem; color:var(--text-secondary);">
-                <div style="font-weight:bold; color:var(--text-primary); margin-bottom:0.25rem;"><i
-                        class="fa-solid fa-circle-info"></i> CSVフォーマット例（1行1選手）</div>
-                <code>背番号, 氏名, 学年, ポジション</code><br>
-                <code>10, 山田 太郎, 6年, FW</code><br>
-                <code>7, 佐藤 健太, 5年, MF</code>
+    <div id="modal-import-players-csv" class="modal-overlay hidden">
+        <div class="modal c-modal modal-player-csv-import" role="dialog" aria-modal="true" aria-labelledby="csv-import-modal-title">
+            <div class="c-modal__header">
+                <div><h2 id="csv-import-modal-title" class="c-modal__title"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> 選手データ一括登録（CSV）</h2><p class="c-form-field__help">CSVファイルを選択するか、テキスト入力エリアに直接貼り付けて一括登録できます。</p></div>
+                <button type="button" class="c-modal__close btn-close-modal" onclick="document.getElementById('modal-import-players-csv').classList.add('hidden')" aria-label="CSV一括登録を閉じる">&times;</button>
             </div>
-
-            <form id="form-import-players-csv">
-                <div class="form-group" style="margin-bottom:1rem;">
-                    <label style="font-size:0.85rem; font-weight:600; margin-bottom:0.4rem;">CSVファイルの選択 または 直接入力</label>
-                    <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
-                        <input type="file" id="input-csv-file" accept=".csv, .txt" class="form-control"
-                            style="padding:0.4rem 0.6rem; font-size:0.8rem;">
-                    </div>
-                    <textarea id="textarea-csv-data" class="form-control" rows="5"
-                        placeholder="背番号, 氏名, 学年, ポジション&#10;10, 山田 太郎, 6年, FW&#10;7, 佐藤 健太, 5年, MF"
-                        style="font-family:monospace; font-size:0.8rem;"></textarea>
+            <form id="form-import-players-csv" class="c-modal__body c-settings-form">
+                <section class="c-card c-card--flat" aria-label="CSVフォーマット例">
+                    <p class="c-form-field__label"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> CSVフォーマット例（1行1選手）</p>
+                    <p class="c-form-field__example"><code>背番号, 氏名, 学年, ポジション</code><br><code>10, 山田 太郎, 6年, FW</code><br><code>7, 佐藤 健太, 5年, MF</code></p>
+                </section>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="input-csv-file">CSVファイルの選択 または 直接入力</label>
+                    <input type="file" id="input-csv-file" accept=".csv, .txt" class="form-control">
+                    <textarea id="textarea-csv-data" class="form-control c-input--mono" rows="5" placeholder="背番号, 氏名, 学年, ポジション&#10;10, 山田 太郎, 6年, FW&#10;7, 佐藤 健太, 5年, MF"></textarea>
                 </div>
-
-                <div id="csv-preview-container"
-                    style="display:none; margin-bottom:1rem; max-height:180px; overflow-y:auto; border:1px solid var(--surface-border); border-radius:8px; padding:0.5rem; background:#fff;">
+                <div id="csv-preview-container" class="c-data-list c-data-list--scrollable">
                     <!-- CSV parsed preview table injected here -->
                 </div>
-
-                <div id="csv-error-msg" style="display:none; color:#ef4444; font-size:0.8rem; margin-bottom:0.75rem;">
-                </div>
-
-                <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
-                    <button type="button" class="btn btn-secondary btn-close-modal"
-                        onclick="document.getElementById('modal-import-players-csv').classList.add('hidden')">キャンセル</button>
-                    <button type="submit" class="btn btn-primary" id="btn-submit-csv-import"><i
-                            class="fa-solid fa-upload"></i> 一括登録する</button>
-                </div>
+                <p id="csv-error-msg" class="c-form-field__error" role="alert"></p>
             </form>
+            <div class="c-modal__footer c-action-group">
+                <button type="button" class="btn btn-secondary btn-close-modal" onclick="document.getElementById('modal-import-players-csv').classList.add('hidden')">キャンセル</button>
+                <button type="submit" form="form-import-players-csv" class="btn btn-primary" id="btn-submit-csv-import"><i class="fa-solid fa-upload" aria-hidden="true"></i> 一括登録する</button>
+            </div>
         </div>
     </div>
 

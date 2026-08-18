@@ -214,6 +214,14 @@ requireAll(source.index, [
     'id="player-position-container"',
     'id="player-position-cat2-container"',
     'c-modal__footer',
+    'id="modal-import-players-csv"',
+    'modal c-modal modal-player-csv-import',
+    'id="form-import-players-csv"',
+    'id="input-csv-file"',
+    'id="textarea-csv-data"',
+    'id="csv-preview-container"',
+    'id="csv-error-msg"',
+    'id="btn-submit-csv-import"',
     'c-view-switcher'
 ], '選手ビュー切替');
 
