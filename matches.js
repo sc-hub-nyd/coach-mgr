@@ -224,11 +224,9 @@ function refreshFieldCompanion(match) {
     const scoreBox = document.getElementById('match-detail-score-box');
     if (scoreBox) {
         scoreBox.innerHTML = `
-            <div style="display:flex; align-items:center; gap:0.5rem;">
+            <div class="c-action-group c-match-score-actions">
                 ${renderMatchScoreHeaderBadge(match)}
-                <button type="button" class="btn btn-secondary btn-sm" onclick="copyMatchShareText(${match.id})" title="LINE共有用テキストをコピー" style="padding:0.35rem 0.6rem; font-size:0.8rem;">
-                    <i class="fa-solid fa-share-nodes" style="color:var(--primary);"></i> 共有
-                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="copyMatchShareText(${match.id})" title="LINE共有用テキストをコピー"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> 共有</button>
             </div>`;
     }
     renderPeriodGrid(match);
@@ -1280,21 +1278,16 @@ export function renderMatchScoreHeaderBadge(m) {
     const status = getMatchStatus(m);
     let badgeHtml = '';
     if (status === 'win') {
-        badgeHtml = '<span class="badge" style="background:var(--primary); color:var(--color-text-on-action); font-size:0.75rem; padding:0.2rem 0.5rem; font-weight:700; border-radius:4px;"><i class="fa-solid fa-trophy"></i> WIN</span>';
+        badgeHtml = '<span class="c-status"><i class="fa-solid fa-trophy" aria-hidden="true"></i> WIN</span>';
     } else if (status === 'loss') {
-        badgeHtml = '<span class="badge" style="background:#64748b; color:#fff; font-size:0.75rem; padding:0.2rem 0.5rem; font-weight:700; border-radius:4px;"><i class="fa-solid fa-xmark"></i> LOSE</span>';
+        badgeHtml = '<span class="c-status c-status--muted"><i class="fa-solid fa-xmark" aria-hidden="true"></i> LOSE</span>';
     } else if (status === 'draw') {
-        badgeHtml = '<span class="badge" style="background:#f59e0b; color:#fff; font-size:0.75rem; padding:0.2rem 0.5rem; font-weight:700; border-radius:4px;"><i class="fa-solid fa-handshake"></i> DRAW</span>';
+        badgeHtml = '<span class="c-status c-status--warning"><i class="fa-solid fa-handshake" aria-hidden="true"></i> DRAW</span>';
     }
 
     const resultStr = m.result || `${m.scoreUs || 0}-${m.scoreThem || 0}`;
 
-    return `
-        <div style="display:inline-flex; align-items:center; gap:0.5rem;">
-            ${badgeHtml}
-            <span style="font-size:1.2rem; font-weight:800; color:var(--text-primary);">${escapeHtml(resultStr)}</span>
-        </div>
-    `;
+    return `<div class="c-match-score">${badgeHtml}<span class="c-match-score__result">${escapeHtml(resultStr)}</span></div>`;
 }
 
 export function initMatchDetailView(matchId) {
@@ -1362,13 +1355,10 @@ export function initMatchDetailView(matchId) {
     const scoreBox = document.getElementById('match-detail-score-box');
     if (scoreBox) {
         scoreBox.innerHTML = `
-        <div style="display:flex; align-items:center; gap:0.5rem;">
-            ${renderMatchScoreHeaderBadge(m)}
-            <button type="button" class="btn btn-secondary btn-sm" onclick="copyMatchShareText(${m.id})" title="LINE共有用テキストをコピー" style="padding:0.35rem 0.6rem; font-size:0.8rem;">
-                <i class="fa-solid fa-share-nodes" style="color:var(--primary);"></i> 共有
-            </button>
-        </div>
-    `;
+            <div class="c-action-group c-match-score-actions">
+                ${renderMatchScoreHeaderBadge(m)}
+                <button type="button" class="btn btn-secondary btn-sm" onclick="copyMatchShareText(${m.id})" title="LINE共有用テキストをコピー"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> 共有</button>
+            </div>`;
     }
 
     // P1 Field Companion: 専用Bottom sheetへ接続

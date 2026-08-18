@@ -1333,3 +1333,30 @@
         flex: 1 1 auto;
     }
 }
+
+/* Match score: score calculation remains domain logic; presentation uses semantic status and numeric type. */
+.c-match-score {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    min-inline-size: 0;
+}
+
+.c-match-score__result {
+    color: var(--color-text);
+    font-family: var(--font-numeric);
+    font-size: 1.25rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.c-match-score-actions {
+    justify-content: flex-end;
+}
+
+.c-match-score-actions .btn {
+    min-block-size: var(--tap-target-min);
+}

@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.28.3';
+export const APP_VERSION = 'v1.28.4';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.28.4',
+        date: '2026-08-18',
+        title: '試合スコア・結果・共有導線を標準化',
+        features: [
+            '試合詳細の結果ラベルをc-status、スコア数値を共通数値トークンへ移行',
+            '共有操作をc-action-groupへ統合し、得点計算・結果判定・共有テキスト生成を維持',
+            '勝利・敗北・引分を任意チームカラーとlight/darkに追従する意味トーンで表示',
+            '波3のスコア周辺操作を構造と見た目だけ安全に共通化'
+        ]
+    },
     {
         version: 'v1.28.3',
         date: '2026-08-18',
