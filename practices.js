@@ -24,18 +24,19 @@ export function renderPracticeRoster(event = {}) {
     container.innerHTML = sortedPlayers.map(player => {
         const invited = rosterEvent.callUpPlayerIds.includes(player.id);
         const status = rosterEvent.attendanceByPlayer[String(player.id)]?.status || 'pending';
+        const playerLabelId = `practice-roster-player-${player.id}`;
         return `
-            <div class="attendance-roster-row ${invited ? '' : 'is-not-called'}">
-                <label class="roster-checkbox-label">
-                    <input type="checkbox" value="${player.id}" ${invited ? 'checked' : ''} class="practice-callup-checkbox" aria-label="${escapeHtml(player.name)}を招集対象にする">
-                    <span class="roster-player-name">${player.number ? `${player.number}. ` : ''}${escapeHtml(player.name)}</span>
+            <article class="c-roster-row attendance-roster-row ${invited ? '' : 'is-not-called'}">
+                <label class="c-roster-row__identity roster-checkbox-label">
+                    <input type="checkbox" value="${player.id}" ${invited ? 'checked' : ''} class="practice-callup-checkbox" aria-labelledby="${playerLabelId}">
+                    <span id="${playerLabelId}" class="c-roster-row__name roster-player-name">${player.number ? `${player.number}. ` : ''}${escapeHtml(player.name)}</span>
                 </label>
-                <select class="form-control practice-attendance-status" data-player-id="${player.id}" ${invited ? '' : 'disabled'} aria-label="${escapeHtml(player.name)}の出欠">
+                <select class="form-control c-roster-row__status practice-attendance-status" data-player-id="${player.id}" ${invited ? '' : 'disabled'} aria-labelledby="${playerLabelId}">
                     <option value="pending" ${status === 'pending' ? 'selected' : ''}>未回答</option>
                     <option value="attending" ${status === 'attending' ? 'selected' : ''}>参加</option>
                     <option value="absent" ${status === 'absent' ? 'selected' : ''}>欠席</option>
                 </select>
-            </div>
+            </article>
         `;
     }).join('');
 
@@ -365,7 +366,7 @@ export function initPractices(miniPitchObserver) {
                     </div>
                 </div>` : '';
             const actionBtns = `
-                <div class="practice-card-actions">
+                <div class="c-practice-card__actions practice-card-actions">
                     ${isCoach ? `<button class="btn btn-primary btn-xs btn-add-menu" data-id="${p.id}" title="メニュー追加"><i class="fa-solid fa-plus"></i> メニュー</button>
                     <button class="btn btn-secondary btn-xs btn-save-practice-template" data-id="${p.id}" title="この構成をテンプレートとして保存"><i class="fa-solid fa-bookmark"></i> テンプレート</button>
                     <button class="btn btn-secondary btn-xs btn-edit-practice" data-id="${p.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
@@ -375,13 +376,13 @@ export function initPractices(miniPitchObserver) {
             `;
 
             html += `
-                <div class="card practice-card" data-practice-id="${p.id}">
+                <article class="card c-card c-practice-card practice-card" data-practice-id="${p.id}">
                     <!-- カードヘッダー（常時表示） -->
-                    <div class="practice-card-header">
-                        <div class="practice-card-header-main">
+                    <div class="c-practice-card__header practice-card-header">
+                        <div class="c-practice-card__identity practice-card-header-main">
                             <!-- ★2. ${p.date} の直後に ${locationHtml} を追加 -->
-                            <div class="practice-card-date"><i class="fa-regular fa-calendar"></i> ${p.date}${locationHtml}</div>
-                            <div class="practice-card-summary-badges">
+                            <div class="c-practice-card__title practice-card-date"><i class="fa-regular fa-calendar"></i> ${p.date}${locationHtml}</div>
+                            <div class="c-practice-card__meta practice-card-summary-badges">
                                 <span class="badge-sub"><i class="fa-solid fa-user-check"></i> 参加 ${attendanceSummary.attending}名</span>
                                 <span class="badge-sub"><i class="fa-solid fa-user-clock"></i> 未回答 ${attendanceSummary.pending}名</span>
                                 <span class="badge-sub"><i class="fa-solid fa-user-xmark"></i> 欠席 ${attendanceSummary.absent}名</span>
@@ -392,7 +393,7 @@ export function initPractices(miniPitchObserver) {
                     </div>
 
                     <!-- ★ 参加者と練習メニューをまとめて開閉するアコーディオン -->
-                    <details class="practice-card-details">
+                    <details class="c-practice-card__details practice-card-details">
                         <summary class="practice-card-summary">
                             <i class="fa-solid fa-chevron-down summary-icon"></i>
                             <span>詳細を表示 (参加者・メニュー)</span>
@@ -455,9 +456,9 @@ export function initPractices(miniPitchObserver) {
                             </div>
                         </div>
                     </details>
-                </div>
+                </article>
             `;
-        });
+        }).join('');
         html += `</div></div>`;
     });
 

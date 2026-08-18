@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
-    <link rel="stylesheet" href="./CSS/main.css?v=63">
+    <link rel="stylesheet" href="./CSS/main.css?v=65">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- PWA Manifest -->
@@ -670,7 +670,7 @@
                 </div>
             </div>
         </div>
-        <div id="practice-list" style="display:flex; flex-direction:column; gap:1.5rem;">
+        <div id="practice-list" class="c-page-list c-page-list--bottom-safe">
             <!-- Grouped by date cards injected here -->
         </div>
     </template>
@@ -818,17 +818,17 @@
             </section>
 
             <!-- P32: 個別表示設定とアクセシビリティ -->
-            <section class="sl-section" id="ui-preferences-section">
+            <section class="sl-section c-settings-section" id="ui-preferences-section">
                 <div class="sl-section-label"><i class="fa-solid fa-universal-access"></i> 表示・操作の個別設定</div>
-                <div class="sl-section-body">
-                    <p class="operations-intro">端末ごとに、文字の大きさ、利き手、動きの量を調整できます。記録データや他の利用者の表示は変わりません。</p>
-                    <div class="ui-preferences-grid">
-                        <label>文字の大きさ<select id="ui-font-scale" class="sl-input"><option value="normal">標準</option><option value="large">大きめ</option><option value="xlarge">最大</option></select></label>
-                        <label>Field Companionの利き手<select id="ui-preferred-hand" class="sl-input"><option value="right">右手（標準）</option><option value="left">左手</option></select></label>
-                        <label class="ui-preference-check"><input id="ui-reduce-motion" type="checkbox"> 動きを控えめにする</label>
-                        <label class="ui-preference-check"><input id="ui-compact-mode" type="checkbox"> 情報をコンパクトに表示</label>
+                <div class="sl-section-body c-settings-section__body">
+                    <p class="c-settings-section__intro operations-intro">端末ごとに、文字の大きさ、利き手、動きの量を調整できます。記録データや他の利用者の表示は変わりません。</p>
+                    <div class="c-form-grid ui-preferences-grid">
+                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-font-scale">文字の大きさ</label><select id="ui-font-scale" class="sl-input"><option value="normal">標準</option><option value="large">大きめ</option><option value="xlarge">最大</option></select></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-preferred-hand">Field Companionの利き手</label><select id="ui-preferred-hand" class="sl-input"><option value="right">右手（標準）</option><option value="left">左手</option></select></div>
+                        <label class="c-choice-field ui-preference-check"><input id="ui-reduce-motion" type="checkbox"><span>動きを控えめにする</span></label>
+                        <label class="c-choice-field ui-preference-check"><input id="ui-compact-mode" type="checkbox"><span>情報をコンパクトに表示</span></label>
                     </div>
-                    <div class="operations-actions"><button type="button" class="btn btn-primary btn-sm" id="btn-save-ui-preferences"><i class="fa-solid fa-check"></i> 表示設定を保存</button></div>
+                    <div class="c-action-group operations-actions"><button type="button" class="btn btn-primary btn-sm" id="btn-save-ui-preferences"><i class="fa-solid fa-check"></i> 表示設定を保存</button></div>
                 </div>
             </section>
 
@@ -870,16 +870,16 @@
             </div>
 
             <!-- P22: チーム・シーズン管理 -->
-            <div class="sl-section coach-only" id="workspace-management-section">
+            <div class="sl-section c-settings-section coach-only" id="workspace-management-section">
                 <div class="sl-section-label"><i class="fa-solid fa-layer-group"></i> チーム・シーズン管理</div>
-                <div class="sl-section-body workspace-management-body">
-                    <p class="operations-intro">チームと年度を切り替えます。切替前のデータは自動保存され、年度アーカイブからいつでも再表示できます。</p>
-                    <div class="workspace-select-grid">
-                        <label>チーム<select id="workspace-team-select" class="sl-input" aria-label="チームを選択"></select></label>
-                        <label>シーズン<select id="workspace-season-select" class="sl-input" aria-label="シーズンを選択"></select></label>
+                <div class="sl-section-body c-settings-section__body workspace-management-body">
+                    <p class="c-settings-section__intro operations-intro">チームと年度を切り替えます。切替前のデータは自動保存され、年度アーカイブからいつでも再表示できます。</p>
+                    <div class="c-form-grid workspace-select-grid">
+                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-team-select">チーム</label><select id="workspace-team-select" class="sl-input"></select></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-season-select">シーズン</label><select id="workspace-season-select" class="sl-input"></select></div>
                     </div>
                     <p id="workspace-context-status" class="workspace-context-status" aria-live="polite"></p>
-                    <div class="workspace-actions">
+                    <div class="c-action-group workspace-actions">
                         <button type="button" class="btn btn-primary btn-sm" id="btn-workspace-switch"><i class="fa-solid fa-arrow-right-arrow-left"></i> このシーズンへ切替</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-workspace-new-season"><i class="fa-solid fa-calendar-plus"></i> 新年度を作成</button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-workspace-new-team"><i class="fa-solid fa-people-group"></i> チームを追加</button>
@@ -2087,43 +2087,57 @@
 
     <!-- Practice Form Modal -->
     <div id="modal-practice" class="modal-overlay hidden">
-        <div class="modal modal-practice-form">
-            <button type="button" class="btn-close-modal practice-modal-close" aria-label="閉じる">&times;</button>
-            <h2 id="practice-modal-title" class="practice-modal-title">練習日を追加</h2>
-            <form id="form-practice">
+        <div class="modal c-modal modal-practice-form" role="dialog" aria-modal="true" aria-labelledby="practice-modal-title">
+            <div class="c-modal__header">
+                <h2 id="practice-modal-title" class="c-modal__title practice-modal-title">練習日を追加</h2>
+                <button type="button" class="btn-close-modal c-modal__close practice-modal-close" aria-label="閉じる">&times;</button>
+            </div>
+            <form id="form-practice" class="c-modal__body modal-practice-form__body">
                 <input type="hidden" id="practice-edit-id">
-                <div class="form-group">
-                    <label>日付 <span class="badge-required">必須</span></label>
+                <div class="c-form-field c-form-field--fluid">
+                    <div class="c-form-field__heading">
+                        <label class="c-form-field__label" for="practice-date">日付</label>
+                        <span class="c-status-label c-status-label--required">必須</span>
+                    </div>
                     <input type="date" id="practice-date" class="form-control" required>
                 </div>
-                <div class="form-group">
-                    <label>RSVP回答期限 <span class="badge-optional">任意</span></label>
-                    <input type="date" id="practice-rsvp-deadline" class="form-control">
-                    <p class="form-help">未回答者へのリマインドを作成するための期限です。</p>
+                <div class="c-form-field c-form-field--fluid">
+                    <div class="c-form-field__heading">
+                        <label class="c-form-field__label" for="practice-rsvp-deadline">RSVP回答期限</label>
+                        <span class="c-status-label">任意</span>
+                    </div>
+                    <input type="date" id="practice-rsvp-deadline" class="form-control" aria-describedby="practice-rsvp-help">
+                    <p id="practice-rsvp-help" class="c-form-field__help">未回答者へのリマインドを作成するための期限です。</p>
                 </div>
-                <!-- ★ 追加: 練習場所入力フォーム -->
-                <div class="form-group" style="margin-top: 0.8rem;">
-                    <label>練習場所 <span class="badge-optional">任意</span></label>
+                <div class="c-form-field c-form-field--fluid">
+                    <div class="c-form-field__heading">
+                        <label class="c-form-field__label" for="practice-location">練習場所</label>
+                        <span class="c-status-label">任意</span>
+                    </div>
                     <input type="text" id="practice-location" class="form-control" placeholder="例: 八王子小学校G、市民スポーツセンター">
                 </div>
-                <div class="form-group">
-                    <label><i class="fa-solid fa-bookmark" aria-hidden="true"></i> 練習テンプレート <span class="badge-optional">任意</span></label>
-                    <select id="practice-template-select" class="form-control">
+                <div class="c-form-field c-form-field--fluid">
+                    <div class="c-form-field__heading">
+                        <label class="c-form-field__label" for="practice-template-select"><i class="fa-solid fa-bookmark" aria-hidden="true"></i> 練習テンプレート</label>
+                        <span class="c-status-label">任意</span>
+                    </div>
+                    <select id="practice-template-select" class="form-control" aria-describedby="practice-template-help">
                         <option value="">テンプレートを選ばない</option>
                     </select>
-                    <p class="form-help">保存済みのメニュー構成と場所を読み込みます。出欠はこの練習日ごとに設定します。</p>
+                    <p id="practice-template-help" class="c-form-field__help">保存済みのメニュー構成と場所を読み込みます。出欠はこの練習日ごとに設定します。</p>
                 </div>
-                <div class="form-group">
-                    <label>招集・出欠管理 <span class="badge-optional">任意</span></label>
-                    <div id="practice-attendance-roster" class="practice-attendance-roster">
+                <fieldset class="c-fieldset">
+                    <legend class="c-fieldset__legend">招集・出欠管理 <span class="c-status-label">任意</span></legend>
+                    <p id="practice-attendance-error" class="c-fieldset__error-summary" hidden></p>
+                    <div id="practice-attendance-roster" class="c-roster-list practice-attendance-roster" aria-describedby="practice-attendance-error">
                         <!-- Checkboxes populated dynamically -->
                     </div>
-                </div>
-                <div class="practice-modal-actions">
-                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                    <button type="submit" class="btn btn-primary">保存する</button>
-                </div>
+                </fieldset>
             </form>
+            <div class="c-modal__footer practice-modal-actions">
+                <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
+                <button type="submit" class="btn btn-primary" form="form-practice">保存する</button>
+            </div>
         </div>
     </div>
 

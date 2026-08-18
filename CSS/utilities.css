@@ -1,5 +1,6 @@
-/* CSS Architecture: single-purpose utilities
-   Use only when a layout or component primitive cannot express the exception. */
+/* CSS Architecture: single-purpose utilities.
+   Components own presentation; utilities never encode a page, route, or component exception. */
+
 .u-visually-hidden {
     position: absolute;
     width: 1px;
@@ -21,7 +22,7 @@
 }
 
 .u-text-muted {
-    color: var(--text-muted);
+    color: var(--color-text-muted);
 }
 
 .u-text-truncate {
@@ -32,7 +33,7 @@
 }
 
 .u-surface-muted {
-    background: var(--surface-muted);
+    background: var(--color-surface-subtle);
 }
 
 .u-scroll-x {
@@ -46,166 +47,6 @@
     overscroll-behavior-block: contain;
 }
 
-/* P33.3: 実画面スクリーンショット基準のモバイル最終補正 */
-@media (max-width: 600px) {
-    body[data-route="practices"] #practice-list {
-        padding-bottom: calc(5.5rem + var(--safe-bottom, env(safe-area-inset-bottom)));
-    }
-
-    body[data-route="practices"] #practice-list .practice-card-header {
-        align-items: stretch;
-        flex-direction: column;
-        gap: 0.65rem;
-    }
-
-    body[data-route="practices"] #practice-list .practice-card-header-main {
-        min-width: 0;
-        width: 100%;
-    }
-
-    body[data-route="practices"] #practice-list .practice-card-actions {
-        display: grid;
-        width: 100%;
-        grid-template-columns: minmax(0, 1.25fr) repeat(3, minmax(2.5rem, 0.55fr)) minmax(0, 1fr);
-        gap: 0.35rem;
-        margin: 0;
-    }
-
-    body[data-route="practices"] #practice-list .practice-card-actions .btn {
-        width: 100%;
-        min-width: 0;
-        min-height: 42px;
-        justify-content: center;
-        overflow: hidden;
-        padding-inline: 0.35rem;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    #modal-practice .practice-attendance-roster,
-    #modal-practice #practice-attendance-roster {
-        width: 100%;
-        max-height: 34dvh;
-        box-sizing: border-box;
-        overflow-x: hidden;
-    }
-
-    #modal-practice #practice-attendance-roster .attendance-roster-row {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(7rem, 8.5rem);
-        align-items: center;
-        gap: 0.55rem;
-        min-width: 0;
-        padding: 0.45rem 0;
-    }
-
-    #modal-practice #practice-attendance-roster .roster-checkbox-label {
-        display: flex;
-        min-width: 0;
-        min-height: 42px;
-        align-items: center;
-        gap: 0.55rem;
-        overflow: hidden;
-        padding: 0.35rem 0.45rem;
-    }
-
-    #modal-practice #practice-attendance-roster .roster-checkbox-label input[type="checkbox"] {
-        flex: 0 0 24px;
-        width: 24px;
-        height: 24px;
-        margin: 0;
-    }
-
-    #modal-practice #practice-attendance-roster .roster-player-name {
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    #modal-practice #practice-attendance-roster .practice-attendance-status {
-        width: 100%;
-        min-width: 0;
-        min-height: 42px;
-        font-size: 16px;
-    }
-}
-
-@media (max-width: 390px) {
-    body[data-route="practices"] #practice-list .practice-card-actions {
-        grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(2.45rem, 0.55fr)) minmax(0, 0.9fr);
-    }
-
-    body[data-route="practices"] #practice-list .practice-card-actions .btn {
-        font-size: 0.68rem;
-    }
-
-    #modal-practice #practice-attendance-roster .attendance-roster-row {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 0.25rem;
-    }
-}
-
-/* P33.4: 最新スクリーンショットに基づく最終レイアウト補正 */
-@media (max-width: 600px) {
-    #ui-preferences-section .sl-section-body {
-        display: block;
-        min-height: 0;
-        padding: 0.75rem;
-    }
-
-    #ui-preferences-section .operations-intro {
-        margin: 0 0 0.65rem;
-        font-size: 0.78rem;
-        line-height: 1.45;
-    }
-
-    #ui-preferences-section .ui-preferences-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-auto-rows: min-content;
-        align-content: start;
-        gap: 0.45rem;
-        min-height: 0;
-    }
-
-    #ui-preferences-section .ui-preferences-grid > label {
-        display: grid;
-        min-height: 0;
-        gap: 0.3rem;
-        align-content: start;
-        line-height: 1.3;
-    }
-
-    #ui-preferences-section .ui-preferences-grid > label:not(.ui-preference-check) .sl-input {
-        min-height: 44px;
-        height: 44px;
-        box-sizing: border-box;
-    }
-
-    #ui-preferences-section .ui-preferences-grid > .ui-preference-check {
-        display: flex;
-        min-height: 52px;
-        height: 52px;
-        box-sizing: border-box;
-        align-items: center;
-        padding: 0.65rem;
-    }
-
-    #ui-preferences-section .operations-actions {
-        margin-top: 0.65rem;
-    }
-
-    #ui-preferences-section .operations-actions .btn {
-        min-height: 46px;
-    }
-
-    body[data-route="practices"] #practice-list .practice-card-actions {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        align-items: stretch;
-    }
-
-    body[data-route="practices"] #practice-list .practice-card-actions .btn-share-practice {
-        grid-column: 1 / -1;
-    }
+.u-page-bottom-safe {
+    padding-block-end: var(--bottom-nav-reserve);
 }
