@@ -609,14 +609,14 @@ export function initPlayers() {
 
     if (state.players.length === 0) {
         playerGrid.innerHTML = `
-            <div class="card" style="grid-column: 1 / -1; padding:3rem 2rem; text-align:center; border: 1.5px dashed var(--surface-border); display:flex; flex-direction:column; align-items:center; gap:1rem; box-sizing:border-box;">
-                <div style="font-size:3rem; color:var(--text-secondary); opacity:0.6;"><i class="fa-solid fa-users"></i></div>
-                <h3 style="font-size:1.15rem; margin:0; color:var(--text-primary); font-weight:600;">登録選手がいません</h3>
-                <p style="font-size:0.85rem; color:var(--text-secondary); max-width:340px; margin:0; line-height:1.4;">
-                    選手を登録して、強みや指導フォーカスの設定、試合での出場ポジション設定、成長履歴の管理を始めましょう。
-                </p>
-                <button class="btn btn-primary" id="btn-empty-add-player" style="margin-top:0.5rem;"><i class="fa-solid fa-user-plus"></i> 最初の選手を追加</button>
-            </div>
+            <section class="c-empty-state" aria-live="polite">
+                <div class="c-empty-state__body">
+                    <i class="c-empty-state__icon fa-solid fa-users" aria-hidden="true"></i>
+                    <h3 class="c-empty-state__title">登録選手がいません</h3>
+                    <p class="c-empty-state__text">選手を登録して、強みや指導フォーカスの設定、試合での出場ポジション設定、成長履歴の管理を始めましょう。</p>
+                    <button class="btn btn-primary" id="btn-empty-add-player"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 最初の選手を追加</button>
+                </div>
+            </section>
         `;
         setTimeout(() => {
             const btnEmptyAdd = document.getElementById('btn-empty-add-player');

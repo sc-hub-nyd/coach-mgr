@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.24.1';
+export const APP_VERSION = 'v1.24.2';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.24.2',
+        date: '2026-08-18',
+        title: '一覧空状態の標準化',
+        features: [
+            'メニュー・戦術・選手管理の初回状態と検索結果なしの表示をc-empty-stateへ統一',
+            '初回作成の既存操作IDとイベント接続を維持しながら、画面固有のカード装飾・インラインスタイルを削減',
+            '各一覧の空状態と主操作をP35部品契約へ追加し、将来の改修で導線が失われないよう自動検証',
+            '15種色×light/darkテーマ、5ビューポート×5画面のレスポンシブ検証で違反0件を確認'
+        ]
+    },
     {
         version: 'v1.24.1',
         date: '2026-08-18',

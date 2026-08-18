@@ -7,6 +7,9 @@ const source = Object.fromEntries(await Promise.all([
     ['index', '../index.html'],
     ['settings', '../settings.js'],
     ['practices', '../practices.js'],
+    ['library', '../library.js'],
+    ['tactics', '../tactics.js'],
+    ['players', '../players.js'],
     ['app', '../app.js'],
     ['standard', '../CSS/components-standard.css'],
     ['system', '../CSS/components-system.css']
@@ -70,6 +73,22 @@ requireAll(source.app, [
     'c-empty-state__title',
     'c-empty-state__text'
 ], '共通空状態');
+
+requireAll(source.library, [
+    'c-empty-state',
+    'btn-empty-add-library'
+], 'メニュー空状態');
+
+requireAll(source.tactics, [
+    'c-empty-state',
+    'btn-empty-add-tactic'
+], '戦術空状態');
+
+requireAll(source.players, [
+    'c-empty-state',
+    'btn-empty-add-player',
+    'player-view-tab'
+], '選手空状態');
 
 requireAll(source.practices, [
     'btn-add-practice',

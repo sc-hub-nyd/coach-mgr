@@ -292,14 +292,14 @@ export function initLibrary(miniPitchObserver) {
     if (filteredMenus.length === 0) {
         const isSearchActive = !!currentLibrarySearch || currentLibraryCategory !== 'all' || currentLibraryMedia !== 'all' || currentLibraryAssigned !== 'all' || currentLibraryRating !== 'all';
         libraryList.innerHTML = `
-            <div class="u-ext-144 card" >
-                <div class="u-ext-145" ><i class="fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-book'}"></i></div>
-                <h3 class="u-ext-146" >${isSearchActive ? '該当する練習メニューが見つかりません' : 'メニューライブラリが空です'}</h3>
-                <p class="u-ext-169" >
-                    ${isSearchActive ? '検索キーワードまたは絞り込み条件（カテゴリ・メディア・アサイン・評価）を変更してお試しください。' : '練習のテーマ、オーガナイズ、キーファクターをライブラリ化し、戦術ボードで作図しておくことで、いつでも練習日へコピーして計画を立てられます。'}
-                </p>
-                ${!isSearchActive ? `<button class="btn btn-primary" id="btn-empty-add-library" style="margin-top:0.5rem; display:${isCoach ? 'inline-block' : 'none'};"><i class="fa-solid fa-plus"></i> 最初のライブラリ作成</button>` : ''}
-            </div>
+            <section class="c-empty-state" aria-live="polite">
+                <div class="c-empty-state__body">
+                    <i class="c-empty-state__icon fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-book'}" aria-hidden="true"></i>
+                    <h3 class="c-empty-state__title">${isSearchActive ? '該当する練習メニューが見つかりません' : 'メニューライブラリが空です'}</h3>
+                    <p class="c-empty-state__text">${isSearchActive ? '検索キーワードまたは絞り込み条件（カテゴリ・メディア・アサイン・評価）を変更してお試しください。' : '練習のテーマ、オーガナイズ、キーファクターをライブラリ化し、戦術ボードで作図しておくことで、いつでも練習日へコピーして計画を立てられます。'}</p>
+                    ${!isSearchActive && isCoach ? `<button class="btn btn-primary" id="btn-empty-add-library"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初のライブラリ作成</button>` : ''}
+                </div>
+            </section>
         `;
     } else {
         libraryList.innerHTML = sortedCategories.map(cat => {

@@ -96,14 +96,14 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
         tacticsList.style.flexDirection = 'column';
         tacticsList.style.gap = '1.5rem';
         tacticsList.innerHTML = `
-            <div class="u-ext-144 card">
-                <div class="u-ext-145"><i class="fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-chess-knight'}"></i></div>
-                <h3 class="u-ext-146">${isSearchActive ? '該当する戦術が見つかりません' : '戦術が登録されていません'}</h3>
-                <p class="u-ext-169">
-                    ${isSearchActive ? '検索キーワードまたはカテゴリフィルタを変更してお試しください。' : 'チームの戦術方針（攻撃・守備・ビルドアップ等）の狙いやキーファクターを記録・作図し、いつでも振り返ることができます。'}
-                </p>
-                ${!isSearchActive && isCoach ? `<button class="btn btn-primary" id="btn-empty-add-tactic" style="margin-top:0.5rem;"><i class="fa-solid fa-plus"></i> 最初の戦術作成</button>` : ''}
-            </div>
+            <section class="c-empty-state" aria-live="polite">
+                <div class="c-empty-state__body">
+                    <i class="c-empty-state__icon fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-chess-knight'}" aria-hidden="true"></i>
+                    <h3 class="c-empty-state__title">${isSearchActive ? '該当する戦術が見つかりません' : '戦術が登録されていません'}</h3>
+                    <p class="c-empty-state__text">${isSearchActive ? '検索キーワードまたはカテゴリフィルタを変更してお試しください。' : 'チームの戦術方針（攻撃・守備・ビルドアップ等）の狙いやキーファクターを記録・作図し、いつでも振り返ることができます。'}</p>
+                    ${!isSearchActive && isCoach ? `<button class="btn btn-primary" id="btn-empty-add-tactic"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の戦術作成</button>` : ''}
+                </div>
+            </section>
         `;
         const btnEmptyAdd = document.getElementById('btn-empty-add-tactic');
         if (btnEmptyAdd) btnEmptyAdd.onclick = () => openTacticModal();
