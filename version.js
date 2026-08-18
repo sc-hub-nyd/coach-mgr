@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.6';
+export const APP_VERSION = 'v1.30.7';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.7',
+        date: '2026-08-18',
+        title: '移行済みダッシュボードの旧u-ext規則を削除',
+        features: [
+            'ランキング、年度成績、チーム強化テーマ、直近練習の実行時未参照u-ext規則を削除',
+            'ランキングモーダルの重複した旧レイアウト規則も削除し、c-data-listとc-progress-barを唯一の正本へ統一',
+            '完全一致監査で実行時未参照のu-ext規則が0件であることを確認',
+            'P33、P34、P35、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.30.6',
         date: '2026-08-18',

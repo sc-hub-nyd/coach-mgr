@@ -991,33 +991,7 @@ body #leader-ranking-grid-cols {
     align-items: start;
 }
 
-body #modal-leader-ranking .u-ext-1 {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.4rem 0.6rem;
-    font-size: 0.85rem;
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
-    gap: 0.5rem;
-}
 
-body #modal-leader-ranking .u-ext-2 {
-    font-weight: 700;
-    min-width: 20px;
-    color: var(--text-secondary);
-}
-
-body #modal-leader-ranking .u-ext-3 {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    flex: 1;
-    min-width: 0;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 
 body #modal-leader-ranking .u-ext-5 {
     font-weight: 700;
@@ -1358,39 +1332,7 @@ body #app .dash-widget-grid #dash-form-bar .dash-form-opponent {
     width: 100%;
 }
 
-/* 1行のレイアウト */
-#modal-leader-ranking .u-ext-1 {
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-    width: 100%;
-    break-inside: avoid;
-    page-break-inside: avoid;
-    padding: 0.35rem 0.2rem;
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
-    cursor: pointer;
-}
 
-/* ① 順位数字 (1. 〜 10.)：幅固定 ＋ 右揃え ＋ 数字の等幅化 */
-#modal-leader-ranking .u-ext-2 {
-    display: inline-block;
-    width: 26px;
-    text-align: right;
-    margin-right: 0.5rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-secondary);
-    flex-shrink: 0;
-}
-
-/* 選手情報領域 */
-#modal-leader-ranking .u-ext-3 {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
-    gap: 0.35rem;
-}
 
 /* ② 背番号 (#9, #60)：幅を固定して名前の開始位置を完璧に揃える */
 #modal-leader-ranking .rank-player-num {
