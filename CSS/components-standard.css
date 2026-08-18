@@ -3,14 +3,23 @@
 .card.c-card {
     min-width: 0;
     padding: var(--space-4);
-    background: var(--card-bg);
-    border: 1px solid var(--surface-border);
+    background: var(--neo-surface);
+    border: 1px solid color-mix(in srgb, var(--surface-border) 74%, var(--neo-highlight));
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-neo-raised);
 }
 
 .card.c-card--compact {
     padding: var(--space-3);
+}
+
+.card.c-card--flat {
+    background: var(--card-bg);
+    box-shadow: none;
+}
+
+.card.c-card--pressed {
+    box-shadow: var(--shadow-neo-pressed);
 }
 
 .card.c-card--interactive {
@@ -20,11 +29,12 @@
 
 .card.c-card--interactive:hover {
     border-color: color-mix(in srgb, var(--primary) 38%, var(--surface-border));
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-neo-raised-hover);
 }
 
 .card.c-card--interactive:active {
     transform: scale(0.99);
+    box-shadow: var(--shadow-neo-pressed);
 }
 
 .card.c-card--accent {

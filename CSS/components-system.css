@@ -102,10 +102,11 @@
     min-inline-size: 0;
     min-block-size: var(--form-control-height);
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--color-border);
+    border: 1px solid color-mix(in srgb, var(--color-border) 78%, var(--neo-highlight));
     border-radius: var(--radius-sm);
-    background: var(--color-surface);
+    background: var(--neo-surface);
     color: var(--color-text);
+    box-shadow: var(--shadow-neo-raised);
     font-size: var(--text-dense-size);
     font-weight: 700;
     line-height: var(--text-dense-leading);
@@ -259,10 +260,10 @@
     gap: var(--space-3);
     min-inline-size: 0;
     padding: var(--space-4);
-    border: 1px solid var(--color-border);
+    border: 1px solid color-mix(in srgb, var(--color-border) 78%, var(--neo-highlight));
     border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-sm);
+    background: var(--neo-surface);
+    box-shadow: var(--shadow-neo-raised);
     container-type: inline-size;
 }
 
@@ -358,9 +359,10 @@
     gap: var(--space-2);
     min-inline-size: 0;
     padding: var(--space-3);
-    border: 1px solid var(--color-border);
+    border: 1px solid color-mix(in srgb, var(--color-border) 78%, var(--neo-highlight));
     border-radius: var(--radius-md);
-    background: var(--color-surface);
+    background: var(--neo-surface);
+    box-shadow: var(--shadow-neo-raised);
 }
 
 .c-data-list__identity {
@@ -384,7 +386,8 @@
     min-inline-size: 0;
     padding: var(--space-2);
     border-radius: var(--radius-sm);
-    background: var(--color-surface-subtle);
+    background: var(--neo-surface);
+    box-shadow: var(--shadow-neo-pressed);
 }
 
 .c-data-list__metric-label {
@@ -439,9 +442,10 @@
     gap: var(--space-3);
     min-inline-size: 0;
     padding: var(--space-3);
-    border: 1px solid var(--color-border);
+    border: 1px solid color-mix(in srgb, var(--color-border) 78%, var(--neo-highlight));
     border-radius: var(--radius-md);
-    background: var(--color-surface);
+    background: var(--neo-surface);
+    box-shadow: var(--shadow-neo-raised);
 }
 
 .c-filter-bar__main {
@@ -461,9 +465,10 @@
     min-block-size: var(--form-control-height);
     padding-inline: var(--space-3);
     color: var(--color-text-muted);
-    border: 1px solid var(--color-border);
+    border: 1px solid color-mix(in srgb, var(--color-border) 78%, var(--neo-highlight));
     border-radius: var(--radius-sm);
-    background: var(--color-surface-raised);
+    background: var(--neo-surface);
+    box-shadow: var(--shadow-neo-pressed);
 }
 
 .c-filter-bar__search:focus-within {
