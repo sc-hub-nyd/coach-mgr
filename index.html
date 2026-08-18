@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
-    <link rel="stylesheet" href="./CSS/main.css?v=66">
+    <link rel="stylesheet" href="./CSS/main.css?v=67">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- PWA Manifest -->
@@ -24,16 +24,16 @@
         <!-- Sidebar -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-header" style="cursor:pointer;" id="sidebar-team-brand">
-                <h2><i class="fa-solid fa-futbol"></i> CoachMgr</h2>
+                <h2><span class="c-icon c-icon--team-signal c-icon--md" aria-hidden="true"></span> CoachMgr</h2>
             </div>
             <ul class="nav-links">
-                <li class="active" data-route="dashboard"><i class="fa-solid fa-chart-line"></i> ダッシュボード</li>
-                <li data-route="matches"><i class="fa-solid fa-trophy"></i> 試合記録</li>
-                <li data-route="practices"><i class="fa-solid fa-calendar-check"></i> 練習管理</li>
-                <li data-route="insights"><i class="fa-solid fa-chart-pie"></i> 振り返り</li>
-                <li data-route="library"><i class="fa-solid fa-book"></i> メニュー管理</li>
-                <li data-route="tactics"><i class="fa-solid fa-chess-knight"></i> 戦術管理</li>
-                <li data-route="players"><i class="fa-solid fa-users"></i> 選手管理</li>
+                <li class="active" data-route="dashboard"><span class="c-icon c-icon--home c-icon--sm" aria-hidden="true"></span> ダッシュボード</li>
+                <li data-route="matches"><span class="c-icon c-icon--trophy c-icon--sm" aria-hidden="true"></span> 試合記録</li>
+                <li data-route="practices"><span class="c-icon c-icon--cone c-icon--sm" aria-hidden="true"></span> 練習管理</li>
+                <li data-route="insights"><span class="c-icon c-icon--rising-pass c-icon--sm" aria-hidden="true"></span> 振り返り</li>
+                <li data-route="library"><span class="c-icon c-icon--document c-icon--sm" aria-hidden="true"></span> メニュー管理</li>
+                <li data-route="tactics"><span class="c-icon c-icon--pass-ladder c-icon--sm" aria-hidden="true"></span> 戦術管理</li>
+                <li data-route="players"><span class="c-icon c-icon--team c-icon--sm" aria-hidden="true"></span> 選手管理</li>
                 <li data-route="settings"><i class="fa-solid fa-gear"></i> 設定</li>
             </ul>
         </nav>
@@ -100,19 +100,19 @@
             <!-- スマホ用5項目ナビゲーション。詳細機能は「その他」に集約 -->
             <nav class="bottom-nav" id="bottom-nav" aria-label="主要ナビゲーション">
                 <a href="#" class="nav-item active" data-route="dashboard" aria-label="ホーム">
-                    <i class="fa-solid fa-house"></i>
+                    <span class="c-icon c-icon--home c-icon--sm" aria-hidden="true"></span>
                     <span>ホーム</span>
                 </a>
                 <a href="#" class="nav-item" data-route="practices" aria-label="予定">
-                    <i class="fa-solid fa-calendar-check"></i>
+                    <span class="c-icon c-icon--calendar c-icon--sm" aria-hidden="true"></span>
                     <span>予定</span>
                 </a>
                 <a href="#" class="nav-item" data-route="matches" aria-label="試合">
-                    <i class="fa-solid fa-futbol"></i>
+                    <span class="c-icon c-icon--trophy c-icon--sm" aria-hidden="true"></span>
                     <span>試合</span>
                 </a>
                 <a href="#" class="nav-item" data-route="players" aria-label="選手">
-                    <i class="fa-solid fa-users"></i>
+                    <span class="c-icon c-icon--team c-icon--sm" aria-hidden="true"></span>
                     <span>選手</span>
                 </a>
                 <a href="#" class="nav-item" data-route="more" aria-label="その他">

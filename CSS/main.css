@@ -9,6 +9,7 @@
 @import url('tactical.css');
 @import url('drawing.css');
 @import url('components-system.css');
+@import url('icon-system.css');
 @import url('utilities.css');
 
 @keyframes timelinePulse {

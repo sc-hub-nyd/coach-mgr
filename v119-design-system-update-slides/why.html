@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>任意色でも、迷わない見え方へ</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .slide-container { width:1280px; min-height:720px; background:#f7faf8; color:#15251e; }
+    .frame { padding:52px 48px 0; }
+    .eyebrow { color:#0f766e; font:700 14px/1 Arial,'Noto Sans JP',sans-serif; letter-spacing:.15em; }
+    h1 { margin:12px 0 8px; color:#0b3d32; font:800 38px/1.2 Arial,'Noto Sans JP',sans-serif; letter-spacing:-.03em; }
+    .lead { margin:0; color:#53685d; font:400 18px/1.5 Arial,'Noto Sans JP',sans-serif; }
+    .comparison { margin-top:24px; display:grid; grid-template-columns:1fr 56px 1fr; align-items:stretch; min-height:320px; }
+    .panel { padding:20px 20px 18px; border-top:3px solid #aab9b0; background:#ffffff; }
+    .panel.after { border-top-color:#0f766e; background:#eaf4ee; }
+    .label { color:#698076; font:700 14px/1 Arial,'Noto Sans JP',sans-serif; letter-spacing:.12em; }
+    h2 { margin:12px 0 16px; font:800 27px/1.25 Arial,'Noto Sans JP',sans-serif; color:#183b2e; }
+    .item { display:grid; grid-template-columns:28px 1fr; gap:10px; margin:12px 0; color:#3e5448; font:400 17px/1.45 Arial,'Noto Sans JP',sans-serif; }
+    .mark { width:22px; height:22px; margin-top:2px; border:1.5px solid currentColor; color:#8f554d; display:grid; place-items:center; font:700 15px/1 Arial,sans-serif; }
+    .after .mark { color:#0f766e; }
+    .arrow { display:flex; align-items:center; justify-content:center; color:#0f766e; font:700 38px/1 Arial,sans-serif; }
+    .outcomes { margin-top:18px; border-top:1px solid #bfcec5; display:grid; grid-template-columns:repeat(3, 1fr); column-gap:20px; padding-top:12px; }
+    .outcome { display:flex; gap:8px; align-items:flex-start; color:#355145; font:700 15px/1.45 Arial,'Noto Sans JP',sans-serif; }
+    .outcome img { width:20px; height:20px; object-fit:contain; }
+    .footer { margin-top:12px; color:#75887e; font:400 12px/1.3 Arial,'Noto Sans JP',sans-serif; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">01 / PURPOSE</div>
+      <h1>任意色でも、迷わない見え方へ</h1>
+      <p class="lead">選んだ色はブランドの出発点であり、UIの完成色ではない。</p>
+      <div class="comparison">
+        <section class="panel">
+          <div class="label">BEFORE</div>
+          <h2>HEXを <code>--primary</code> へ直接適用</h2>
+          <div class="item"><span class="mark">×</span><span>黄・白・蛍光色で主操作の文字が読めない</span></div>
+          <div class="item"><span class="mark">×</span><span>light/darkで背景・境界・選択状態がばらつく</span></div>
+          <div class="item"><span class="mark">×</span><span>チーム色と危険・警告の意味が衝突する</span></div>
+        </section>
+        <div class="arrow">→</div>
+        <section class="panel after">
+          <div class="label">AFTER</div>
+          <h2>種色から用途別の役割色を生成</h2>
+          <div class="item"><span class="mark">✓</span><span>主操作と前景を対で決め、コントラストを検査</span></div>
+          <div class="item"><span class="mark">✓</span><span>light/darkを独立した表示モードとして合成</span></div>
+          <div class="item"><span class="mark">✓</span><span>状態色はチーム色から分離し、意味を守る</span></div>
+        </section>
+      </div>
+      <div class="outcomes">
+        <div class="outcome"><img src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/ui-check.svg" alt=""><span>チームらしさを保持</span></div>
+        <div class="outcome"><img src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/ui-check.svg" alt=""><span>通常モードでWCAG 2.1 AAを担保</span></div>
+        <div class="outcome"><img src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/ui-check.svg" alt=""><span>部品ごとの表現を統一</span></div>
+      </div>
+      <p class="footer">根拠：color-theme-service.js / DYNAMIC COLOR THEME設計 / P34コントラストテスト</p>
+    </div>
+  </div>
+</body>
+</html>

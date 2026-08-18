@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>検証を設計の一部にする</title>
+  <style>
+    * { box-sizing: border-box; }
+    html,body{height:100%;margin:0;padding:0}
+    .slide-container { width: 1280px; min-height: 720px; background: #f7faf8; color: #15251e; }
+    .frame { padding: 52px 76px 0; }
+    .eyebrow { color: #0f766e; font: 700 14px/1 Arial, 'Noto Sans JP', sans-serif; letter-spacing: .15em; }
+    h1 { margin: 12px 0 8px; color: #0b3d32; font: 800 38px/1.18 Arial, 'Noto Sans JP', sans-serif; letter-spacing: -.03em; }
+    .lead { margin: 0; color: #53685d; font: 400 18px/1.5 Arial, 'Noto Sans JP', sans-serif; }
+    /* reduced vertical spacing and inner padding to fit within min-height */
+    .metrics { margin-top: 24px; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #abc1b4; border-bottom: 1px solid #abc1b4; }
+    .metric { min-height: 200px; padding: 18px 20px 12px; border-right: 1px solid #abc1b4; }
+    .metric:last-child { border-right: 0; }
+    .metric-top { display: flex; align-items: center; gap: 8px; color: #0f766e; }
+    .metric-top img { width: 30px; height: 30px; object-fit: contain; }
+    .metric-label { font: 700 14px/1.2 Arial, 'Noto Sans JP', sans-serif; letter-spacing: .08em; }
+    .number { margin-top: 18px; color: #0b3d32; font: 800 70px/.9 Arial, 'Noto Sans JP', sans-serif; letter-spacing: -.06em; }
+    .unit { margin-left: 8px; color: #315446; font: 700 20px/1 Arial, 'Noto Sans JP', sans-serif; letter-spacing: 0; }
+    .metric p { margin: 12px 0 0; color: #4a6256; font: 400 16px/1.5 Arial, 'Noto Sans JP', sans-serif; }
+    .gate { margin-top: 28px; display: grid; grid-template-columns: 1fr 54px 1fr 54px 1.25fr; align-items: center; }
+    .gate-step { min-height: 86px; padding: 14px 16px; background: #e9f3ed; }
+    .gate-step.strong { background: #0b3d32; color: #fff; }
+    .gate-label { color: #4f7664; font: 700 12px/1 Arial, 'Noto Sans JP', sans-serif; letter-spacing: .13em; }
+    .strong .gate-label { color: #b9dfc8; }
+    .gate-step b { display: block; margin-top: 9px; font: 800 20px/1.25 Arial, 'Noto Sans JP', sans-serif; }
+    .gate-step span { display: block; margin-top: 6px; font: 400 14px/1.4 Arial, 'Noto Sans JP', sans-serif; }
+    .arrow { text-align: center; color: #0f766e; font: 700 30px/1 Arial, sans-serif; }
+    .result { display: flex; align-items: center; gap: 12px; }
+    .result img { width: 48px; height: 48px; object-fit: contain; filter: brightness(0) invert(1); }
+    .zero { color: #ffffff; font: 800 42px/.9 Arial, sans-serif; letter-spacing: -.04em; }
+    .zero-note { color: #d6ebdd; font: 700 14px/1.4 Arial, 'Noto Sans JP', sans-serif; }
+    .footer { margin-top: 12px; display: flex; justify-content: space-between; color: #71867a; font: 400 12px/1.3 Arial, 'Noto Sans JP', sans-serif; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">06 / QUALITY GATES</div>
+      <h1>検証を設計の一部にする</h1>
+      <p class="lead">「動く」を確認するだけでなく、色・部品・表示幅をリリース条件として自動で追跡する。</p>
+      <div class="metrics">
+        <section class="metric">
+          <div class="metric-top"><img src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/nanyodai-rising-pass.svg" alt=""><span class="metric-label">DYNAMIC THEME</span></div>
+          <div class="number">28<span class="unit">ケース</span></div>
+          <p>14種の種色 × light/dark。文字、主操作、境界、状態色のコントラストを検査。</p>
+        </section>
+        <section class="metric">
+          <div class="metric-top"><img src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/nanyodai-team-signal.svg" alt=""><span class="metric-label">ICON SYSTEM</span></div>
+          <div class="number">44<span class="unit">SVG</span></div>
+          <p>南陽台FCの全資産、`c-icon`のマッピング、主要ナビゲーションへの適用を確認。</p>
+        </section>
+        <section class="metric">
+          <div class="metric-top"><img src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/ui-home.svg" alt=""><span class="metric-label">RESPONSIVE UI</span></div>
+          <div class="number">25<span class="unit">チェック</span></div>
+          <p>5ビューポート × 5画面で横方向のはみ出しと主要操作の表示を確認。</p>
+        </section>
+      </div>
+      <div class="gate">
+        <section class="gate-step"><div class="gate-label">INPUT</div><b>種色・モード・部品</b><span>変更を小さく保つ</span></section>
+        <div class="arrow">→</div>
+        <section class="gate-step"><div class="gate-label">AUTOMATED</div><b>P33 / P34 / UI検証</b><span>コントラスト・契約・表示幅</span></section>
+        <div class="arrow">→</div>
+        <section class="gate-step strong"><div class="gate-label">RELEASE GATE</div><div class="result"><img src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/ui-check.svg" alt=""><div><div class="zero">違反 0件</div><div class="zero-note">レスポンシブ検証：25 / 25 合格</div></div></div></section>
+      </div>
+      <div class="footer"><span>実行結果：P33 CSS契約テスト / P34動的テーマテスト / run-responsive-validation.mjs</span><span>2026.08.18</span></div>
+    </div>
+  </div>
+</body>
+</html>

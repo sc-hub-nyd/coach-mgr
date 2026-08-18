@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.19.0';
+export const APP_VERSION = 'v1.20.0';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.20.0',
+        date: '2026-08-18',
+        title: '南陽台FCアイコンシステム統合',
+        features: [
+            '南陽台FC提供の44個SVGをカテゴリ・ファイル名を維持してデザインシステム資産へ登録。CSSマスクとcurrentColorでlight/dark・チームテーマへ適応',
+            'チームシグナル、ホーム、試合、練習、振り返り、戦術、選手の主要ナビゲーションを南陽台FCアイコンへ段階移行',
+            'c-iconの意味・サイズ・前景色・アクセシビリティ規約を追加。文字がある操作では装飾扱い、単独操作では日本語aria-labelを必須化',
+            '主要ナビゲーション用アイコンとアイコンCSSをPWAプリキャッシュへ追加。44 SVG資産、契約、テーマ、レスポンシブの自動検証を実施'
+        ]
+    },
     {
         version: 'v1.19.0',
         date: '2026-08-18',

@@ -1,7 +1,7 @@
 // sw.js - Service Worker for CoachMgr PWA
 // Cache-First strategy for offline support
 
-const CACHE_VERSION = 'coachmgr-v69';
+const CACHE_VERSION = 'coachmgr-v70';
 
 // Core app files to pre-cache on install
 const PRECACHE_URLS = [
@@ -50,10 +50,20 @@ const PRECACHE_URLS = [
   './CSS/components.css',
   './CSS/components-standard.css',
   './CSS/components-system.css',
+  './CSS/icon-system.css',
   './CSS/utilities.css',
   './CSS/dashboard.css',
   './CSS/drawing.css',
   './CSS/tactical.css',
+  './assets/icons/nanyodai/custom/nanyodai-rising-pass.svg',
+  './assets/icons/nanyodai/custom/nanyodai-pass-ladder.svg',
+  './assets/icons/nanyodai/custom/nanyodai-team-signal.svg',
+  './assets/icons/nanyodai/ui/ui-home.svg',
+  './assets/icons/nanyodai/ui/ui-calendar.svg',
+  './assets/icons/nanyodai/activity/activity-cone.svg',
+  './assets/icons/nanyodai/activity/activity-team.svg',
+  './assets/icons/nanyodai/activity/activity-trophy.svg',
+  './assets/icons/nanyodai/family/family-document.svg',
   './manifest.json',
   './icons/icon-512x512.jpg'
 ];

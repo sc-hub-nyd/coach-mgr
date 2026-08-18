@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>種色を役割色へ変換する</title>
+  <style>
+    * { box-sizing:border-box; }
+    body { margin:0; }
+    .slide-container { width:1280px; min-height:720px; background:#ffffff; color:#15251e; }
+    .frame { padding:52px 76px 0; }
+    .eyebrow { color:#0f766e; font:700 14px/1 Arial,'Noto Sans JP',sans-serif; letter-spacing:.15em; }
+    h1 { margin:12px 0 10px; color:#0b3d32; font:800 38px/1.18 Arial,'Noto Sans JP',sans-serif; letter-spacing:-.03em; }
+    .lead { margin:0; color:#53685d; font:400 18px/1.5 Arial,'Noto Sans JP',sans-serif; }
+    .flow { margin-top:36px; display:grid; grid-template-columns:208px 58px 232px 58px 320px 58px 226px; align-items:center; }
+    .step { min-height:200px; border-top:3px solid #0f766e; background:#f5f9f6; padding:16px 16px 12px; }
+    .step.dark { background:#0b3d32; color:#fff; border-top-color:#7dca9d; }
+    .step-label { color:#5b7868; font:700 13px/1 Arial,'Noto Sans JP',sans-serif; letter-spacing:.13em; }
+    .dark .step-label { color:#b8ddc7; }
+    h2 { margin:12px 0 11px; font:800 22px/1.25 Arial,'Noto Sans JP',sans-serif; }
+    .step p { margin:0; font:400 15px/1.55 Arial,'Noto Sans JP',sans-serif; }
+    .seed { width:88px; height:78px; background:#13795b; margin:13px 0 10px; border:6px solid #dceee3; }
+    .modes { display:flex; gap:10px; margin-top:16px; }
+    .mode { width:78px; min-height:72px; padding-top:10px; text-align:center; border:1px solid #9eb8aa; font:700 14px/1.35 Arial,'Noto Sans JP',sans-serif; }
+    .mode.light { background:#fff; color:#183b2e; }
+    .mode.night { background:#1b3027; color:#fff; }
+    .arrow { text-align:center; color:#0f766e; font:700 34px/1 Arial,sans-serif; }
+    .role-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:9px; margin-top:12px; }
+    .role { min-height:56px; padding:9px; border:1px solid #a6c2b2; color:#274438; font:700 12px/1.3 Arial,'Noto Sans JP',sans-serif; }
+    .role b { display:block; font-size:17px; }
+    .component { display:flex; gap:10px; align-items:flex-start; margin-top:12px; }
+    .component img { width:36px; height:36px; object-fit:contain; filter:brightness(0) invert(1); }
+    .swatches { margin-top:24px; border-top:1px solid #cadbd0; padding-top:12px; display:grid; grid-template-columns:150px 1fr 1fr; gap:20px; align-items:center; }
+    .swatch-title { color:#466357; font:700 14px/1.4 Arial,'Noto Sans JP',sans-serif; }
+    .swatch-row { display:flex; gap:7px; }
+    .chip { width:50px; height:26px; border:1px solid rgba(0,0,0,.12); }
+    .note { margin-top:13px; color:#72867a; font:400 12px/1.3 Arial,'Noto Sans JP',sans-serif; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">02 / DYNAMIC THEME</div>
+      <h1>種色を役割色へ変換する</h1>
+      <p class="lead">共有するのはチームの種色。見え方を決めるのは、端末ごとの表示モードと検証済みの生成規則。</p>
+      <div class="flow">
+        <section class="step">
+          <div class="step-label">01 / TEAM</div>
+          <h2>チーム種色</h2>
+          <div class="seed"></div>
+          <p><code>teamInfo.theme.seed</code><br>任意のHEXを保存</p>
+        </section>
+        <div class="arrow">→</div>
+        <section class="step">
+          <div class="step-label">02 / DEVICE</div>
+          <h2>表示モード</h2>
+          <div class="modes"><div class="mode light">LIGHT<br>端末設定</div><div class="mode night">DARK<br>端末設定</div></div>
+          <p style="margin-top:10px;">チーム共有データから分離</p>
+        </section>
+        <div class="arrow">→</div>
+        <section class="step">
+          <div class="step-label">03 / ENGINE</div>
+          <h2>役割色を生成</h2>
+          <div class="role-grid">
+            <div class="role"><b>Action</b>主操作</div><div class="role"><b>On action</b>操作上の文字</div>
+            <div class="role"><b>Surface</b>背景・カード</div><div class="role"><b>Border</b>境界・Focus</div>
+          </div>
+          <p style="margin-top:10px;">状態色は固定ロールとして分離</p>
+        </section>
+        <div class="arrow">→</div>
+        <section class="step dark">
+          <div class="step-label">04 / UI</div>
+          <h2>部品へ適用</h2>
+          <div class="component"><img src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/nanyodai-rising-pass.svg" alt=""><p>ボタン、フォーム、カード、アイコンはセマンティックトークンだけを参照</p></div>
+        </section>
+      </div>
+      <div class="swatches">
+        <div class="swatch-title">同じ種色から<br>2つの見え方を生成</div>
+        <div class="swatch-row"><span class="chip" style="background:#f6faf7;"></span><span class="chip" style="background:#ffffff;"></span><span class="chip" style="background:#13795b;"></span><span class="chip" style="background:#15251e;"></span></div>
+        <div class="swatch-row" style="background:#0b3d32;padding:8px 10px;"><span class="chip" style="background:#15251e;"></span><span class="chip" style="background:#203c30;"></span><span class="chip" style="background:#83d4a8;"></span><span class="chip" style="background:#edf6ef;"></span></div>
+      </div>
+      <p class="note">実装：color-theme-service.js ／ 出力：--theme-* → --color-* → c-* コンポーネント</p>
+    </div>
+  </div>
+</body>
+</html>

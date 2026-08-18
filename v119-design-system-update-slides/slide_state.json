@@ -1,0 +1,100 @@
+{
+  "project_info": {
+    "title": "CoachMgr デザインシステム更新",
+    "created": 1787022654.066,
+    "last_updated": 1787023123.255,
+    "total_slides": 8
+  },
+  "slides": [
+    {
+      "id": "cover",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "why",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "theme_engine",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "semantic_contract",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "icon_system",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "experience",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "validation",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "release",
+      "state": "edited",
+      "pageNum": 8
+    }
+  ],
+  "outline": [
+    {
+      "id": "cover",
+      "title": "CoachMgr デザインシステム更新",
+      "summary": "v1.19.0の動的チームテーマ、ライト／ダーク、南陽台FCアイコン統合を示す表紙。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "why",
+      "title": "任意色でも、迷わない見え方へ",
+      "summary": "チームごとの種色をそのまま使う従来方式の課題と、役割色へ変換する更新方針。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "theme_engine",
+      "title": "種色を役割色へ変換する",
+      "summary": "light/darkを独立合成し、操作・表面・文字・境界・フォーカスを生成するテーマエンジン。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "semantic_contract",
+      "title": "部品は意味トークンだけを使う",
+      "summary": "生成プリミティブ、セマンティックトークン、コンポーネントの3層構造と前景コントラストの考え方。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "icon_system",
+      "title": "南陽台FCの44アイコンを正式採用",
+      "summary": "currentColorでテーマ適応するアイコンシステム、カテゴリ、利用規約、主要ナビゲーションへの導入。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "experience",
+      "title": "共有する色、端末ごとに選べる表示",
+      "summary": "チーム共有の種色と端末ローカルのlight/darkを分けた設定体験とプレビュー。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "validation",
+      "title": "検証を設計の一部にする",
+      "summary": "14種色×light/dark、44アイコン、5ビューポート×5画面の自動検証と達成結果。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "release",
+      "title": "v1.20.0：ブランドまで一貫した運用へ",
+      "summary": "公開内容、利用手順、今後のアイコン移行原則を示す締めのページ。",
+      "image_plan": "Use a suitable image if needed"
+    }
+  ]
+}

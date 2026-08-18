@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>部品は意味トークンだけを使う</title>
+  <style>
+    * { box-sizing: border-box; }
+    .slide-container { width:1280px; min-height:720px; background:#f6faf7; color:#16261f; display:grid; grid-template-columns:340px 1fr; }
+    .side { background:#0b3d32; color:#fff; padding:58px 40px 0 52px; }
+    .eyebrow { color:#9cd7b4; font:700 13px/1 Arial,'Noto Sans JP',sans-serif; letter-spacing:.16em; }
+    h1 { margin:15px 0 20px; font:800 36px/1.2 Arial,'Noto Sans JP',sans-serif; letter-spacing:-.04em; }
+    .side p { margin:0; color:#d8ebe0; font:400 17px/1.55 Arial,'Noto Sans JP',sans-serif; }
+    .ratio { margin-top:24px; border-top:1px solid rgba(255,255,255,.35); padding-top:16px; }
+    .ratio strong { display:block; color:#ffffff; font:800 42px/1 Arial,'Noto Sans JP',sans-serif; }
+    .ratio span { display:block; margin-top:8px; color:#b8ddc7; font:700 14px/1.45 Arial,'Noto Sans JP',sans-serif; }
+    .icon { width:54px; height:54px; margin-top:12px; object-fit:contain; filter:brightness(0) invert(1); }
+    .main { padding:32px 64px 0 54px; }
+    .main-lead { margin:0 0 22px; color:#4c6559; font:400 19px/1.5 Arial,'Noto Sans JP',sans-serif; }
+    .layers { display:grid; grid-template-columns:1fr 42px 1fr 42px 1fr; align-items:stretch; gap:12px; }
+    .layer { min-height:220px; border-top:3px solid #8fae9d; background:#ffffff; padding:14px 12px 12px; }
+    .layer.semantic { border-top-color:#0f766e; background:#eaf4ee; }
+    .layer.component { border-top-color:#0b3d32; background:#eef4f0; }
+    .tag { color:#5c786a; font:700 12px/1 Arial,'Noto Sans JP',sans-serif; letter-spacing:.13em; }
+    h2 { margin:10px 0 14px; color:#153c2e; font:800 22px/1.2 Arial,'Noto Sans JP',sans-serif; }
+    .code { display:block; margin:6px 0; color:#264a39; font:700 15px/1.4 'Courier New',monospace; }
+    .body { margin:12px 0 0; color:#4d6559; font:400 15px/1.55 Arial,'Noto Sans JP',sans-serif; }
+    .no { margin-top:12px; color:#9e5148; font:700 13px/1.45 Arial,'Noto Sans JP',sans-serif; }
+    .yes { margin-top:12px; color:#0f766e; font:700 13px/1.45 Arial,'Noto Sans JP',sans-serif; }
+    .arrow { display:flex; align-items:center; justify-content:center; color:#0f766e; font:700 30px/1 Arial,sans-serif; }
+    .pairs { margin-top:18px; border-top:1px solid #c5d7cb; padding-top:12px; display:grid; grid-template-columns:155px repeat(3, 1fr); gap:12px; align-items:center; }
+    .pairs-label { color:#3d5b4d; font:800 15px/1.4 Arial,'Noto Sans JP',sans-serif; }
+    .pair { display:flex; gap:8px; align-items:center; color:#395749; font:700 13px/1.35 Arial,'Noto Sans JP',sans-serif; }
+    .sample { width:40px; height:28px; border:1px solid #b6cbbd; }
+    .sample.dark { background:#13795b; color:#fff; display:grid; place-items:center; font:800 12px/1 Arial,sans-serif; }
+    .sample.light { background:#fff; color:#15251e; display:grid; place-items:center; font:800 12px/1 Arial,sans-serif; }
+    .sample.border { background:#fff; border:3px solid #5d7969; }
+    .footer { margin-top:12px; color:#71877a; font:400 12px/1.3 Arial,'Noto Sans JP',sans-serif; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <aside class="side">
+      <div class="eyebrow">03 / CONTRACT</div>
+      <h1>部品は<br>意味トークン<br>だけを使う</h1>
+      <p>具体色やチーム名を部品へ持ち込まず、役割だけを契約にする。</p>
+      <div class="ratio"><strong>5 : 1</strong><span>主操作ラベル・本文の<br>実装目標コントラスト</span></div>
+      <div class="ratio" style="margin-top:0;"><strong>3.5 : 1</strong><span>境界・フォーカスの<br>実装目標コントラスト</span></div>
+      <img class="icon" src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/nanyodai-pass-ladder.svg" alt="">
+    </aside>
+    <main class="main">
+      <p class="main-lead">生成規則を変えても、部品のHTMLとCSSを変えずに一貫した見え方を保つ。</p>
+      <div class="layers">
+        <section class="layer">
+          <div class="tag">INTERNAL</div>
+          <h2>生成プリミティブ</h2>
+          <span class="code">--theme-primary</span>
+          <span class="code">--theme-surface</span>
+          <span class="code">--theme-on-primary</span>
+          <p class="body">種色とlight/darkから算出する内部値。</p>
+          <p class="no">× コンポーネントから直接参照しない</p>
+        </section>
+        <div class="arrow">→</div>
+        <section class="layer semantic">
+          <div class="tag">PUBLIC CONTRACT</div>
+          <h2>セマンティックトークン</h2>
+          <span class="code">--color-action</span>
+          <span class="code">--color-text-on-action</span>
+          <span class="code">--color-surface / --color-border</span>
+          <p class="body">用途と前景の対を、部品へ公開する。</p>
+          <p class="yes">✓ 色名ではなく役割を参照</p>
+        </section>
+        <div class="arrow">→</div>
+        <section class="layer component">
+          <div class="tag">UI COMPONENT</div>
+          <h2>コンポーネント</h2>
+          <span class="code">.btn-primary</span>
+          <span class="code">.c-form-field</span>
+          <span class="code">.c-icon--on-action</span>
+          <p class="body">ボタン、フォーム、アイコンが同じ意味トークンを使う。</p>
+          <p class="yes">✓ 実装変更の影響範囲を局所化</p>
+        </section>
+      </div>
+      <div class="pairs">
+        <div class="pairs-label">検証する前景対</div>
+        <div class="pair"><span class="sample dark">Aa</span><span>On action<br>× Action</span></div>
+        <div class="pair"><span class="sample light">Aa</span><span>Text<br>× Surface</span></div>
+        <div class="pair"><span class="sample border"></span><span>Border / Focus<br>× Surface</span></div>
+      </div>
+      <p class="footer">契約：CSS_ARCHITECTURE.md ／ 検証：P33 CSS architecture / P34 dynamic theme</p>
+    </main>
+  </div>
+</body>
+</html>

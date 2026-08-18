@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 
 const files = {
     index: '../index.html',
@@ -9,6 +9,7 @@ const files = {
     layouts: '../CSS/layouts.css',
     components: '../CSS/components-standard.css',
     systemComponents: '../CSS/components-system.css',
+    iconSystem: '../CSS/icon-system.css',
     utilities: '../CSS/utilities.css',
     themeService: '../color-theme-service.js',
     settings: '../settings.js',
@@ -71,6 +72,12 @@ assert.match(source.index, /ui-color-mode/);
 assert.match(source.index, /team-theme-preview/);
 assert.doesNotMatch(source.index, /btn-toggle-contrast/);
 assert.match(source.systemComponents, /\.c-theme-preview/);
+assert.match(source.iconSystem, /\.c-icon\s*\{/);
+assert.match(source.iconSystem, /c-icon--team-signal/);
+assert.match(source.iconSystem, /forced-colors/);
+assert.match(source.index, /c-icon--team-signal/);
+assert.match(source.index, /c-icon--home/);
+assert.match(source.index, /c-icon--trophy/);
 assert.match(source.themeService, /export function buildTeamTheme/);
 assert.match(source.themeService, /export function validateThemePalette/);
 assert.match(source.settings, /applyCurrentTeamTheme/);
@@ -81,7 +88,13 @@ assert.match(source.architecture, /`l-`/);
 assert.match(source.architecture, /`c-`/);
 assert.match(source.architecture, /`is-`/);
 
-for (const [name, css] of Object.entries({ tokens: source.tokens, layouts: source.layouts, components: source.components, systemComponents: source.systemComponents, utilities: source.utilities })) {
+const iconDirectories = ['custom', 'ui', 'activity', 'family'];
+const iconCount = (await Promise.all(iconDirectories.map(async directory => (
+    await readdir(new URL(`../assets/icons/nanyodai/${directory}/`, import.meta.url))
+))).then(groups => groups.flat().filter(file => file.endsWith('.svg')).length));
+assert.equal(iconCount, 44, '南陽台FCアイコンは44個すべてを管理対象にする');
+
+for (const [name, css] of Object.entries({ tokens: source.tokens, layouts: source.layouts, components: source.components, systemComponents: source.systemComponents, iconSystem: source.iconSystem, utilities: source.utilities })) {
     const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '');
     assert.doesNotMatch(declarations, /!important/, `${name}.css must not introduce !important`);
     assert.doesNotMatch(declarations, /u-ext-\d+/, `${name}.css must not introduce numbered extension classes`);

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>共有する色、端末ごとに選べる表示</title>
+  <style>
+    * { box-sizing: border-box; }
+    /* pull the slide up slightly so overall page is <720px while keeping min-height */
+    body { margin: -8px 0 0 0; }
+    .slide-container { width:1280px; min-height:720px; background:#f7faf8; color:#15251e; }
+    .frame { padding:36px 76px 0; }
+    .eyebrow { color:#0f766e; font:700 14px/1 Arial,'Noto Sans JP',sans-serif; letter-spacing:.15em; }
+    h1 { margin:12px 0 8px; color:#0b3d32; font:800 38px/1.18 Arial,'Noto Sans JP',sans-serif; letter-spacing:-.03em; }
+    .lead { margin:0; color:#53685d; font:400 18px/1.5 Arial,'Noto Sans JP',sans-serif; }
+    .body-grid { margin-top:20px; display:grid; grid-template-columns:1.08fr .92fr; gap:36px; align-items:start; }
+    .setting-stack { border-top:2px solid #0f766e; }
+    .setting { display:grid; grid-template-columns:92px 1fr; gap:16px; padding-top:20px; min-height:128px; border-bottom:1px solid #bfd0c5; }
+    .setting-index { color:#0f766e; font:800 14px/1.35 Arial,'Noto Sans JP',sans-serif; letter-spacing:.08em; }
+    h2 { margin:0 0 8px; color:#173e30; font:800 25px/1.2 Arial,'Noto Sans JP',sans-serif; }
+    .copy { margin:0; color:#476156; font:400 16px/1.55 Arial,'Noto Sans JP',sans-serif; }
+    .seed-row { display:flex; align-items:center; gap:12px; margin-top:10px; }
+    .seed { width:38px; height:38px; background:#13795b; border:4px solid #d8ecdf; }
+    .code { color:#235443; font:700 14px/1 Arial,monospace; }
+    .mode-row { display:flex; gap:10px; margin-top:10px; }
+    .mode { width:122px; min-height:52px; padding-top:8px; text-align:center; border:1px solid #9bb8a7; font:700 14px/1.25 Arial,'Noto Sans JP',sans-serif; }
+    .mode.light { background:#ffffff; color:#183b2e; }
+    .mode.dark { background:#173328; color:#ffffff; }
+    .result { margin-top:18px; display:grid; grid-template-columns:38px 1fr; gap:12px; align-items:center; color:#204a39; font:700 16px/1.45 Arial,'Noto Sans JP',sans-serif; }
+    .result img { width:32px; height:32px; object-fit:contain; }
+    .screen-area { min-height:430px; border-top:2px solid #0b3d32; padding-top:14px; display:grid; grid-template-columns:190px 1fr; gap:18px; align-items:start; }
+    .screen { width:184px; height:430px; object-fit:cover; object-position:top; border:1px solid #6f897c; }
+    .annotation { padding-top:20px; }
+    .annotation-title { color:#0b3d32; font:800 21px/1.25 Arial,'Noto Sans JP',sans-serif; }
+    .annotation p { margin:10px 0 0; color:#476156; font:400 15px/1.55 Arial,'Noto Sans JP',sans-serif; }
+    .annotation .rule { width:52px; height:3px; margin:14px 0; background:#0f766e; }
+    .annotation img { width:40px; height:40px; object-fit:contain; }
+    .footer { margin-top:8px; color:#72867a; font:400 12px/1.3 Arial,'Noto Sans JP',sans-serif; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">05 / SETTINGS EXPERIENCE</div>
+      <h1>共有する色、端末ごとに選べる表示</h1>
+      <p class="lead">チームの一体感は同期し、見やすさの選択は各利用者の端末へ残す。</p>
+      <div class="body-grid">
+        <section>
+          <div class="setting-stack">
+            <div class="setting">
+              <div class="setting-index">TEAM<br>SYNC</div>
+              <div>
+                <h2>チームカラーは種色として共有</h2>
+                <p class="copy">チーム名と一緒に保存し、年度・チームの切替後も同じブランドの出発点を再現する。</p>
+                <div class="seed-row"><span class="seed"></span><span class="code">#13795B&nbsp;&nbsp;→&nbsp;&nbsp;theme.seed</span></div>
+              </div>
+            </div>
+            <div class="setting">
+              <div class="setting-index">DEVICE<br>LOCAL</div>
+              <div>
+                <h2>light / darkは端末ごとに選択</h2>
+                <p class="copy">共有データを書き換えず、コーチ・保護者それぞれが使う端末で見やすい表示を選べる。</p>
+                <div class="mode-row"><div class="mode light">LIGHT<br><small>明るい環境</small></div><div class="mode dark">DARK<br><small>暗い環境</small></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="result"><img src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/ui-check.svg" alt=""><span>保存時にプレビューと実画面へ即時適用。役割色と前景コントラストは同時に更新される。</span></div>
+        </section>
+        <section class="screen-area">
+          <img class="screen" src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/settings-mobile.png" alt="CoachMgrのモバイル設定画面">
+          <div class="annotation">
+            <img src="/home/ubuntu/coach-mgr-css/v119-design-system-update-slides/assets/nanyodai-team-signal.svg" alt="南陽台FCチームシグナル">
+            <div class="annotation-title">設定は「見た目」ではなく<br>運用ルールとして保存する</div>
+            <div class="rule"></div>
+            <p>チームの色、端末の表示モード、文字サイズ、利き手、動きの抑制を、責務ごとに分離して管理。</p>
+          </div>
+        </section>
+      </div>
+      <p class="footer">実装：teamInfo.theme.seed / coachMgrUiPreferences.colorMode / applyCurrentTeamTheme()</p>
+    </div>
+  </div>
+</body>
+</html>
