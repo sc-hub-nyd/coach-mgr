@@ -62,6 +62,18 @@ function migrateSnapshot(input) {
         event.attendance = `${event.presentPlayerIds.length}/${event.callUpPlayerIds.length}`;
     };
 
+    source.practices = source.practices
+        .filter(practice => practice && typeof practice === 'object')
+        .map(practice => ({
+            ...practice,
+            date: typeof practice.date === 'string' ? practice.date : '',
+            menus: asArray(practice.menus),
+            presentPlayerIds: asArray(practice.presentPlayerIds),
+            callUpPlayerIds: asArray(practice.callUpPlayerIds),
+            attendanceByPlayer: practice.attendanceByPlayer && typeof practice.attendanceByPlayer === 'object'
+                ? practice.attendanceByPlayer
+                : {}
+        }));
     source.practices.forEach(normalizeAttendance);
 
     // Normalize match periods so eventHistory is always persisted consistently.

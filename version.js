@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.11';
+export const APP_VERSION = 'v1.30.12';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.12',
+        date: '2026-08-18',
+        title: '練習一覧の不完全レコード耐性を強化',
+        features: [
+            '練習レコードのmenus・出欠配列・日付を読み込み時に正規化',
+            '不完全な1件があっても練習一覧全体の描画を中断しないよう安全描画を追加',
+            '添付バックアップとクラウドpullの練習6件の形状を比較検証'
+        ]
+    },
     {
         version: 'v1.30.11',
         date: '2026-08-18',

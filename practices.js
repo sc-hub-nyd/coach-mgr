@@ -343,6 +343,7 @@ export function initPractices(miniPitchObserver) {
         `;
         grouped[month].forEach(p => {
             const isCoach = state.currentUserRole === 'coach';
+            const safeMenus = Array.isArray(p.menus) ? p.menus : [];
 
             // ★1. 練習場所バッジの表示用HTMLを定義（ここを追加）
             const locationHtml = p.location
@@ -361,7 +362,7 @@ export function initPractices(miniPitchObserver) {
             ensureAttendance(p, state.players.map(player => player.id));
             const attendanceSummary = getAttendanceSummary(p);
             const attendeeCount = attendanceSummary.attending;
-            const menuCount = p.menus ? p.menus.length : 0;
+            const menuCount = safeMenus.length;
             const myPlayerId = localStorage.getItem('coachMgrMyPlayerId');
             const myPlayer = myPlayerId ? state.players.find(player => String(player.id) === String(myPlayerId)) : null;
             const myStatus = myPlayer ? (p.attendanceByPlayer?.[String(myPlayer.id)]?.status || 'pending') : null;
@@ -421,7 +422,7 @@ export function initPractices(miniPitchObserver) {
                             <div class="practice-detail-section">
                                 <div class="practice-section-label"><i class="fa-solid fa-layer-group"></i> 練習メニュー (${menuCount}件)</div>
                                 <ul class="practice-card-menu-list">
-                                    ${p.menus.length > 0 ? p.menus.map(menu => `
+                                        ${safeMenus.length > 0 ? safeMenus.map(menu => `
                                         <li class="u-ext-150 practice-menu-item">
                                             <details class="u-ext-151 practice-menu-details">
                                                 <summary class="u-ext-152 practice-menu-item-header">
