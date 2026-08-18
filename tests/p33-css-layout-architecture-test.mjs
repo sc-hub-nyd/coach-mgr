@@ -86,6 +86,7 @@ assert.match(source.systemComponents, /\.c-practice-card/);
 assert.match(source.systemComponents, /\.c-data-list/);
 assert.match(source.systemComponents, /\.c-modal/);
 assert.match(source.systemComponents, /\.c-filter-bar/);
+assert.match(source.systemComponents, /\.c-data-list__item--button/);
 assert.match(source.systemComponents, /\.c-data-list__header/);
 assert.match(source.systemComponents, /\.c-data-list__kind/);
 assert.match(source.systemComponents, /\.c-data-list__body/);

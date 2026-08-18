@@ -39,10 +39,12 @@ function renderTimeline(insights) {
             ? `${Math.floor(event.elapsedSeconds / 60)}分` : '';
         const destination = event.matchId ? `data-route="match-detail" data-id="${event.matchId}"` : '';
         return `
-            <button type="button" class="insight-timeline-item ${presentation.className}" ${destination}>
-                <span class="insight-timeline-icon"><i class="fa-solid ${presentation.icon}" aria-hidden="true"></i></span>
-                <span class="insight-timeline-main"><strong>${escapeHtml(presentation.label)}</strong><small>${escapeHtml(event.date || '')}${period ? ` ・ ${period}` : ''}${event.opponent ? ` ・ vs ${escapeHtml(event.opponent)}` : ''}</small></span>
-                <span class="insight-timeline-kind">${event.typeLabel}</span>
+            <button type="button" class="c-data-list__item c-data-list__item--button insight-timeline-item ${presentation.className}" ${destination}>
+                <span class="c-data-list__header">
+                    <span class="c-data-list__identity"><i class="insight-timeline-icon fa-solid ${presentation.icon}" aria-hidden="true"></i>${escapeHtml(presentation.label)}</span>
+                    <span class="c-data-list__kind">${event.typeLabel}</span>
+                </span>
+                <span class="c-data-list__meta">${escapeHtml(event.date || '')}${period ? ` ・ ${period}` : ''}${event.opponent ? ` ・ vs ${escapeHtml(event.opponent)}` : ''}</span>
             </button>`;
     }).join('');
     container.querySelectorAll('[data-route="match-detail"]').forEach(button => {
@@ -72,11 +74,11 @@ function renderPlayerHistory(playerInsights) {
                 <span>得点 <strong>${performance.goals}</strong></span>
             </div>
         </div>
-        <div class="insight-activity-list">
+        <div class="c-data-list insight-activity-list">
             ${playerInsights.activities.length ? playerInsights.activities.map(activity => {
                 const icons = { goal: 'fa-futbol', 'match-attendance': 'fa-trophy', 'practice-attendance': 'fa-clipboard-check' };
                 const label = activity.status === 'attending' ? '参加' : activity.status === 'absent' ? '欠席' : activity.status === 'pending' ? '未回答' : '';
-                return `<div class="insight-activity"><i class="fa-solid ${icons[activity.kind] || 'fa-circle'}" aria-hidden="true"></i><span><strong>${escapeHtml(activity.title)}</strong><small>${escapeHtml(activity.date || '')}${label ? ` ・ ${label}` : ''}</small></span></div>`;
+                return `<article class="c-data-list__item insight-activity"><div class="c-data-list__header"><div class="c-data-list__identity"><i class="fa-solid ${icons[activity.kind] || 'fa-circle'}" aria-hidden="true"></i>${escapeHtml(activity.title)}</div>${label ? `<span class="c-data-list__kind">${label}</span>` : ''}</div><div class="c-data-list__meta">${escapeHtml(activity.date || '')}</div></article>`;
             }).join('') : renderCompactEmptyState({ icon: 'fa-clipboard', title: '対象期間の活動記録はありません。' })}
         </div>`;
 }

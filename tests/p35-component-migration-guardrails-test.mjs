@@ -97,6 +97,9 @@ requireAll(source.index, [
     'template id="tpl-insights"',
     'id="insights-range-select"',
     'id="insights-player-select"',
+    'id="insights-timeline"',
+    'c-data-list insight-timeline',
+    'id="insights-player-history"',
     'id="btn-copy-insights-report"',
     'c-section-header',
     'c-form-field'
@@ -106,8 +109,12 @@ requireAll(source.insights, [
     'function renderCompactEmptyState',
     'c-empty-state--compact',
     'insights-range-select',
-    'insights-player-select'
-], '振り返り空状態');
+    'insights-player-select',
+    'c-data-list__item',
+    'c-data-list__item--button',
+    'c-data-list__kind',
+    'data-route="match-detail"'
+], '振り返り空状態・履歴');
 
 requireAll(source.index, [
     'id="dash-top-scorers"',

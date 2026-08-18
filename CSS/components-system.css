@@ -365,6 +365,18 @@
     box-shadow: var(--shadow-neo-raised);
 }
 
+.c-data-list__item--button {
+    inline-size: 100%;
+    text-align: start;
+    cursor: pointer;
+    font: inherit;
+}
+
+.c-data-list__item--button:hover {
+    border-color: color-mix(in srgb, var(--color-brand) 38%, var(--color-border));
+    box-shadow: var(--shadow-neo-raised-hover);
+}
+
 .c-data-list__header {
     display: flex;
     flex-wrap: wrap;
