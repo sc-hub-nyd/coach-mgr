@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.27.8';
+export const APP_VERSION = 'v1.27.9';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.27.9',
+        date: '2026-08-18',
+        title: '練習メニュー作成・編集モーダルの標準化',
+        features: [
+            '練習メニューの作成・編集をc-modal、c-form-field、c-fieldset、c-action-groupへ移行',
+            'ライブラリコピー、全入力、隠しID、保存・キャンセルの既存DOM接続を維持',
+            '長いフォームを標準モーダルの内部スクロール構造へ統一し、モバイルでの操作性を改善',
+            '波2のフォーム・モーダル統合をメニュー管理導線へ展開'
+        ]
+    },
     {
         version: 'v1.27.8',
         date: '2026-08-18',

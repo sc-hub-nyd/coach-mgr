@@ -809,7 +809,8 @@
 .c-modal.modal-player-form,
 .c-modal.modal-player-csv-import,
 .c-modal.modal-team-focus,
-.c-modal.modal-tactic-form {
+.c-modal.modal-tactic-form,
+.c-modal.modal-menu-form {
     padding: 0;
 }
 

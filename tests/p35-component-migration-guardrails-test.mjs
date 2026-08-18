@@ -239,6 +239,22 @@ requireAll(source.index, [
     'id="tactic-title"',
     'id="tactic-category"',
     'id="tactic-description"',
+    'id="modal-menu"',
+    'modal c-modal modal-menu-form',
+    'id="modal-menu-title"',
+    'id="form-menu"',
+    'id="menu-practice-id"',
+    'id="menu-library-source-id"',
+    'id="menu-edit-id"',
+    'id="menu-library-select"',
+    'id="menu-focus"',
+    'id="menu-category"',
+    'id="menu-organize"',
+    'id="menu-keyfactor"',
+    'id="menu-video-url"',
+    'id="menu-options"',
+    'id="menu-engagement"',
+    'id="menu-reflection"',
     'c-view-switcher'
 ], '選手ビュー切替');
 

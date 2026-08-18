@@ -2012,79 +2012,62 @@
     </div>
 
     <div id="modal-menu" class="modal-overlay hidden">
-        <div class="modal" style="position:relative;">
-            <button type="button" class="btn-close-modal"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
-            <h2 style="margin-bottom:1.5rem;">練習メニューを追加</h2>
-            <div class="form-group"
-                style="margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--surface-border);">
-                <label style="color:var(--primary);"><i class="fa-solid fa-book"></i> ライブラリから選んでコピー <span
-                        class="badge-optional">任意</span></label>
-                <select id="menu-library-select" class="form-control">
-                    <option value="">（新規作成）</option>
-                    <!-- Options injected here -->
-                </select>
-                <p style="font-size:0.8rem; color:#94a3b8; margin-top:0.3rem;">※選択するとテンプレート（作図含む）が読み込まれます。</p>
+        <div class="modal c-modal modal-menu-form" role="dialog" aria-modal="true" aria-labelledby="modal-menu-title">
+            <div class="c-modal__header">
+                <h2 id="modal-menu-title" class="c-modal__title">練習メニューを追加</h2>
+                <button type="button" class="c-modal__close btn-close-modal" aria-label="練習メニューフォームを閉じる">&times;</button>
             </div>
-            <form id="form-menu">
+            <form id="form-menu" class="c-modal__body c-settings-form">
                 <input type="hidden" id="menu-practice-id">
                 <input type="hidden" id="menu-library-source-id">
                 <input type="hidden" id="menu-edit-id">
-                <div class="form-group">
-                    <label>テーマ・フォーカス <span class="badge-required">必須</span></label>
+                <fieldset class="c-fieldset">
+                    <legend class="c-fieldset__legend"><i class="fa-solid fa-book" aria-hidden="true"></i> ライブラリから選んでコピー <span class="badge-optional">任意</span></legend>
+                    <div class="c-form-field c-form-field--fluid">
+                        <label class="u-sr-only" for="menu-library-select">コピー元ライブラリ</label>
+                        <select id="menu-library-select" class="form-control"><option value="">（新規作成）</option><!-- Options injected here --></select>
+                        <p class="c-form-field__help">選択するとテンプレート（作図含む）が読み込まれます。</p>
+                    </div>
+                </fieldset>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="menu-focus">テーマ・フォーカス <span class="badge-required">必須</span></label>
                     <input type="text" id="menu-focus" class="form-control" placeholder="例: ポゼッション 4vs4+フリーマン" required>
                 </div>
-                <div class="form-group">
-                    <label>カテゴリ <span class="badge-optional">任意</span></label>
-                    <select id="menu-category" class="form-control">
-                        <!-- Populated dynamically -->
-                    </select>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="menu-category">カテゴリ <span class="badge-optional">任意</span></label>
+                    <select id="menu-category" class="form-control"><!-- Populated dynamically --></select>
                 </div>
-                <div class="form-group">
-                    <label>オーガナイズ（人数・コートサイズ・ルールなど） <span class="badge-optional">任意</span></label>
-                    <textarea id="menu-organize" class="form-control" rows="2"
-                        placeholder="例: 20m x 20m, 4vs4+1フリーマン"></textarea>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="menu-organize">オーガナイズ（人数・コートサイズ・ルールなど） <span class="badge-optional">任意</span></label>
+                    <textarea id="menu-organize" class="form-control" rows="2" placeholder="例: 20m x 20m, 4vs4+1フリーマン"></textarea>
                 </div>
-                <div class="form-group">
-                    <label>キーファクター（指導のポイント） <span class="badge-optional">任意</span></label>
-                    <textarea id="menu-keyfactor" class="form-control" rows="2"
-                        placeholder="例: ボールを受ける前の身体の向き、プレスの強度"></textarea>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="menu-keyfactor">キーファクター（指導のポイント） <span class="badge-optional">任意</span></label>
+                    <textarea id="menu-keyfactor" class="form-control" rows="2" placeholder="例: ボールを受ける前の身体の向き、プレスの強度"></textarea>
                 </div>
-                <div class="form-group">
-                    <label>参考動画URL (YouTube) <span class="badge-optional">任意</span></label>
-                    <input type="url" id="menu-video-url" class="form-control"
-                        placeholder="https://www.youtube.com/watch?v=...">
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="menu-video-url">参考動画URL（YouTube） <span class="badge-optional">任意</span></label>
+                    <input type="url" id="menu-video-url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
                 </div>
-                <div class="form-group">
-                    <label>練習のオプションの説明 <span class="badge-optional">任意</span></label>
-                    <textarea id="menu-options" class="form-control" rows="2"
-                        placeholder="例: 慣れてきたらタッチ制限（2タッチ以内）を追加"></textarea>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="menu-options">練習のオプションの説明 <span class="badge-optional">任意</span></label>
+                    <textarea id="menu-options" class="form-control" rows="2" placeholder="例: 慣れてきたらタッチ制限（2タッチ以内）を追加"></textarea>
                 </div>
-                <!-- index.html : modal-menu 内に追加 -->
-                <div class="form-group">
-                    <label><i class="fa-solid fa-fire" style="color:var(--primary);"></i> 選手たちの熱量・楽しさ <span
-                            class="badge-optional">任意</span></label>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="menu-engagement"><i class="fa-solid fa-fire" aria-hidden="true"></i> 選手たちの熱量・楽しさ <span class="badge-optional">任意</span></label>
                     <select id="menu-engagement" class="form-control">
-                        <option value="0">未評価 / 未実施</option>
-                        <option value="5">★★★★★ (5: 非常に盛り上がった・全員夢中)</option>
-                        <option value="4">★★★★☆ (4: 楽しそうにプレーしていた)</option>
-                        <option value="3">★★★☆☆ (3: 普通・標準的)</option>
-                        <option value="2">★★☆☆☆ (2: 難易度やルールで少し停滞)</option>
-                        <option value="1">★☆☆☆☆ (1: ウケが良くなかった・要改善)</option>
+                        <option value="0">未評価 / 未実施</option><option value="5">★★★★★（5: 非常に盛り上がった・全員夢中）</option><option value="4">★★★★☆（4: 楽しそうにプレーしていた）</option><option value="3">★★★☆☆（3: 普通・標準的）</option><option value="2">★★☆☆☆（2: 難易度やルールで少し停滞）</option><option value="1">★☆☆☆☆（1: ウケが良くなかった・要改善）</option>
                     </select>
                 </div>
-
-                <div class="form-group">
-                    <label><i class="fa-solid fa-clipboard-user" style="color:var(--primary);"></i> 指導者の振り返り・メモ <span
-                            class="badge-optional">任意</span></label>
-                    <textarea id="menu-reflection" class="form-control" rows="2"
-                        placeholder="例: コートサイズ（15m×15m）が狭く詰まりがちだった。次回は20mに広げてスキャンと判断の時間を確保する。"></textarea>
-                </div>
-                <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
-                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                    <button type="submit" class="btn btn-primary">追加する</button>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="menu-reflection"><i class="fa-solid fa-clipboard-user" aria-hidden="true"></i> 指導者の振り返り・メモ <span class="badge-optional">任意</span></label>
+                    <textarea id="menu-reflection" class="form-control" rows="2" placeholder="例: コートサイズ（15m×15m）が狭く詰まりがちだった。次回は20mに広げてスキャンと判断の時間を確保する。"></textarea>
                 </div>
             </form>
+            <div class="c-modal__footer c-action-group c-action-group--end">
+                <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
+                <button type="submit" form="form-menu" class="btn btn-primary">追加する</button>
+            </div>
         </div>
     </div>
 
