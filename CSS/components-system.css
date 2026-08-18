@@ -1575,3 +1575,18 @@
 .filmstrip-card-actions .btn {
     min-block-size: 2rem;
 }
+
+/* JSON export fallback: keep copied data selectable while sharing modal spacing and semantic feedback. */
+.c-modal.modal-export-fallback {
+    padding: 0;
+}
+
+.c-modal.modal-export-fallback .export-json-textarea {
+    min-block-size: 13.75rem;
+    resize: vertical;
+}
+
+.c-status--success {
+    background: var(--color-success-surface);
+    color: var(--color-success);
+}

@@ -65,6 +65,10 @@ requireAll(source.index, [
 ], '練習管理画面');
 
 requireAll(source.settings, [
+    'modal-export-fallback',
+    'export-json-textarea',
+    'btn-copy-export-json',
+    'export-copy-success',
     'btn-save-ui-preferences',
     'form-team-info',
     'btn-workspace-switch',
@@ -322,6 +326,15 @@ requireAll(source.index, [
 ], '選手ビュー切替');
 
 requireAll(source.index, [
+    'id="modal-export-fallback"',
+    'modal c-modal modal-export-fallback',
+    'id="export-json-textarea"',
+    'id="btn-copy-export-json"',
+    'id="export-copy-success"',
+    'c-modal__footer c-action-group'
+], 'JSON出力フォールバック');
+
+requireAll(source.index, [
     'template id="tpl-data"',
     'c-data-management',
     'id="data-export-card"',
@@ -405,7 +418,10 @@ requireAll(source.system, [
     '\\.field-event-list\\.c-data-list',
     '\\.c-action-group--field',
     '\\.filmstrip-cards-container\\.c-data-list',
-    '\\.filmstrip-cards-container \\.filmstrip-card\\.c-data-list__item'
+    '\\.filmstrip-cards-container \\.filmstrip-card\\.c-data-list__item',
+    '\\.c-modal\\.modal-export-fallback',
+    '\\.export-json-textarea',
+    '\\.c-status--success'
 ], 'システム部品');
 
 console.log('P35 component migration guardrails passed');

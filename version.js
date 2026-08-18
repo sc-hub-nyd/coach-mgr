@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.28.8';
+export const APP_VERSION = 'v1.28.9';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.28.9',
+        date: '2026-08-18',
+        title: 'JSON出力フォールバックを標準モーダル化',
+        features: [
+            'iOS・file://環境向けJSON出力フォールバックをc-modal、c-form-field、c-action-groupへ移行',
+            'JSON本文、コピー、成功表示、閉じる操作の既存ID・style制御・コピー処理を維持',
+            'コピー成功を意味トークンに接続し、長いJSON本文は標準モーダル内で安全にスクロール',
+            '波5の確認・エクスポート通常UIを共通モーダル構造へ統合'
+        ]
+    },
     {
         version: 'v1.28.8',
         date: '2026-08-18',
