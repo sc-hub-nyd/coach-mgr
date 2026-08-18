@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.10';
+export const APP_VERSION = 'v1.30.11';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.11',
+        date: '2026-08-18',
+        title: '復元後の練習一覧フィルタを初期化',
+        features: [
+            'JSONインポート・クラウド復元後に、旧年度・月・カテゴリ・選手・検索条件が残って練習6件を非表示にする問題を修正',
+            '復元後は練習一覧を全件表示へ戻し、ページ番号も先頭へリセット',
+            '添付バックアップのschema v2形式とクラウドpullで練習データ6件を確認'
+        ]
+    },
     {
         version: 'v1.30.10',
         date: '2026-08-18',

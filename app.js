@@ -31,6 +31,15 @@ function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLa
     return `<section class="c-empty-state${modifier}" role="status"><div class="c-empty-state__body"><i class="c-empty-state__icon fa-solid ${icon}" aria-hidden="true"></i><h3 class="c-empty-state__title">${title}</h3>${description ? `<p class="c-empty-state__text">${description}</p>` : ''}${action}</div></section>`;
 }
 
+function resetPracticeListFilters() {
+    uiState.currentPracticeNendo = 'all';
+    uiState.currentPracticeMonth = 'all';
+    uiState.currentPracticeCategory = 'all';
+    uiState.currentPracticePlayer = 'all';
+    uiState.currentPracticeSearch = '';
+    uiState.currentPracticePage = 1;
+}
+
 function setupGlobalUi() {
     document.querySelectorAll('button[title]:not([aria-label]), [role="button"][title]:not([aria-label])').forEach(element => {
         const title = element.getAttribute('title');
@@ -163,6 +172,7 @@ export async function loadData() {
                 state.activeTeamId = parsed.activeTeamId || null;
                 state.activeSeasonId = parsed.activeSeasonId || null;
                 state.syncMeta = parsed.syncMeta || state.syncMeta;
+                resetPracticeListFilters();
             }
             ensureWorkspaceState(state);
             hydrateActiveWorkspace(state, { preferTopLevel: true });
@@ -271,6 +281,7 @@ async function persistRemoteSnapshot(remoteData, { toast = true } = {}) {
     applyRemoteSnapshot(state, remoteData);
     ensureWorkspaceState(state);
     hydrateActiveWorkspace(state, { preferTopLevel: true });
+    resetPracticeListFilters();
     markSyncAcknowledged(state, new Date(), remoteData.syncMeta || {});
     await saveData({ sync: false, markChange: false });
     if (toast) showToast('クラウドから最新データを復元しました！');
@@ -294,6 +305,7 @@ async function resolveSyncConflict(remoteData, { isSilent = false, errorMeta = n
         applyRemoteSnapshot(state, merged);
         ensureWorkspaceState(state);
         hydrateActiveWorkspace(state, { preferTopLevel: true });
+        resetPracticeListFilters();
         await saveData({ sync: false, markChange: true });
         const expectedRevision = Number(errorMeta?.revision ?? remoteData?.syncMeta?.cloudRevision ?? getExpectedCloudRevision(state));
         return syncPushGasCloud(false, { force: true, expectedRevision, resolvedConflict: true });
