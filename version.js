@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.3';
+export const APP_VERSION = 'v1.30.4';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.4',
+        date: '2026-08-18',
+        title: 'チーム強化テーマを共通表示部品へ移行',
+        features: [
+            '強化テーマ、連番ポイント、補足をc-focus-summaryとc-step-listへ移行',
+            '未設定時の設定導線をc-empty-stateへ統一',
+            '既存の編集・設定ボタンIDと保存済みテーマ表示を維持',
+            'P33、P34、P35、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.30.3',
         date: '2026-08-18',

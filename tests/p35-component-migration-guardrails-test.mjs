@@ -176,6 +176,9 @@ requireAll(source.index, [
     'c-card--interactive',
     'c-metric-grid--inline',
     'c-metric__value',
+    'id="dash-team-focus-content"',
+    'id="dash-btn-edit-focus"',
+    'c-page-list',
     'id="season-detail-types-list"',
     'id="season-detail-years-list"',
     'c-data-list c-data-list--scrollable'
@@ -188,6 +191,10 @@ requireAll(source.app, [
     'c-data-list__value--accent',
     'c-data-list__item--selected',
     'c-data-list__kind',
+    'c-focus-summary',
+    'c-step-list__item',
+    'c-step-list__index',
+    'dash-btn-set-focus-empty',
     'renderEmptyState\\(\\{ icon:',
     'openPlayerDetail'
 ], 'ダッシュボードランキング生成');

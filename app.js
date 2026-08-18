@@ -1375,10 +1375,10 @@ function initDashboard() {
             let pointsHtml = '';
             if (focus.points && focus.points.filter(Boolean).length > 0) {
                 pointsHtml = `
-                    <div class="u-ext-18" >
+                    <div class="c-step-list">
                         ${focus.points.filter(Boolean).map((pt, idx) => `
-                            <div class="u-ext-19" >
-                                <span class="u-ext-20" >${idx + 1}</span>
+                            <div class="c-step-list__item">
+                                <span class="c-step-list__index">${idx + 1}</span>
                                 <span>${escapeHtml(pt)}</span>
                             </div>
                         `).join('')}
@@ -1387,22 +1387,21 @@ function initDashboard() {
             }
 
             teamFocusContent.innerHTML = `
-                <div class="u-ext-21" >
-                    <div class="u-ext-22" >🔥 強化テーマ</div>
-                    <div class="u-ext-23" >${escapeHtml(focus.mainTheme)}</div>
+                <div class="c-focus-summary">
+                    <div class="c-focus-summary__kicker"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> 強化テーマ</div>
+                    <div class="c-focus-summary__title">${escapeHtml(focus.mainTheme)}</div>
+                    ${pointsHtml}
+                    ${focus.note ? `<div class="c-focus-summary__note"><i class="fa-solid fa-clock" aria-hidden="true"></i> ${escapeHtml(focus.note)}</div>` : ''}
                 </div>
-                ${pointsHtml}
-                ${focus.note ? `<div class="u-ext-24" ><i class="fa-solid fa-clock"></i> ${escapeHtml(focus.note)}</div>` : ''}
             `;
         } else {
-            teamFocusContent.innerHTML = `
-                <div class="u-ext-25 dash-no-data" >
-                    チーム強化テーマが未設定です<br>
-                    <button class="u-ext-26 btn btn-secondary btn-sm coach-only" id="dash-btn-set-focus-empty" onclick="openTeamFocusModal()" >
-                        <i class="fa-solid fa-plus"></i> テーマを設定する
-                    </button>
-                </div>
-            `;
+            teamFocusContent.innerHTML = renderEmptyState({
+                icon: 'fa-bullseye',
+                title: 'チーム強化テーマが未設定です',
+                actionLabel: 'テーマを設定する',
+                actionId: 'dash-btn-set-focus-empty',
+                compact: true
+            });
             const btnEmpty = document.getElementById('dash-btn-set-focus-empty');
             if (btnEmpty) btnEmpty.onclick = () => openTeamFocusModal();
         }

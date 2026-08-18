@@ -1640,3 +1640,67 @@
     background: var(--color-brand-surface);
     box-shadow: var(--shadow-neo-pressed);
 }
+
+
+/* Focus summary: structured objective, numbered actions, and optional context. */
+.c-focus-summary {
+    display: grid;
+    gap: var(--space-3);
+    min-inline-size: 0;
+    padding: var(--surface-inset-compact-block) var(--surface-inset-compact-inline);
+    border: 1px solid color-mix(in srgb, var(--color-brand) 24%, var(--color-border));
+    border-radius: var(--radius-md);
+    background: var(--color-brand-surface);
+}
+
+.c-focus-summary__kicker {
+    color: var(--color-brand);
+    font-size: var(--text-meta-size);
+    font-weight: 800;
+    line-height: var(--text-meta-leading);
+}
+
+.c-focus-summary__title {
+    color: var(--color-text);
+    font-size: var(--text-dense-size);
+    font-weight: var(--font-weight-emphasis);
+    line-height: var(--text-body-leading);
+    overflow-wrap: anywhere;
+}
+
+.c-step-list {
+    display: grid;
+    gap: var(--space-2);
+    min-inline-size: 0;
+}
+
+.c-step-list__item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-2);
+    color: var(--color-text);
+    font-size: var(--text-dense-size);
+    line-height: var(--text-body-leading);
+    overflow-wrap: anywhere;
+}
+
+.c-step-list__index {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 1.25rem;
+    min-block-size: 1.25rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-brand);
+    color: var(--color-text-on-action);
+    font-family: var(--font-numeric);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.c-focus-summary__note {
+    color: var(--color-text-muted);
+    font-size: var(--text-meta-size);
+    line-height: var(--text-meta-leading);
+}
