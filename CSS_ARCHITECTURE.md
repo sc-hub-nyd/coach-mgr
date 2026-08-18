@@ -16,7 +16,8 @@ CoachMgrのCSSは、既存の静的PWA・テーマ切替・コーチ／保護者
 | 4 | `components.css` | 既存の機能部品。段階的に標準部品へ寄せる。 |
 | 5 | `components-standard.css` | カード、セクション見出し、操作群、空状態、ステータスなどの再利用部品。既存汎用部品より後に読み込み、移行先の規則を明確にする。 |
 | 6 | `dashboard.css`、`tactical.css`、`drawing.css` | 画面・機能固有の表現だけを置く。 |
-| 7 | `utilities.css` | 例外的な表示・配置を最小限に扱う単目的クラス。 |
+| 7 | `components-system.css` | カラートークンを利用するフォーム、名簿、カード、データリスト、モーダルの部品契約。レガシー画面CSSより後に読み込み、移行済み部品の構造を保護する。 |
+| 8 | `utilities.css` | 例外的な表示・配置を最小限に扱う単目的クラス。画面・ルート・部品を直接指定しない。 |
 
 ## 命名規約
 
@@ -44,10 +45,30 @@ CSSクラスは、役割を先頭辞で表す。IDはJavaScriptのイベント�
 | `c-section-header` | ラベル、見出し、補足、操作の見出し構造。 | ダッシュボード、設定、振り返り |
 | `c-action-group` | ボタンの並び、折返し、右寄せ。 | 保存、追加、運用操作 |
 | `c-empty-state` | 空状態のアイコン、説明、主操作。 | 一覧、分析、初回導線 |
+| `c-form-field` | ラベル、要否、補足、入力、エラーを文書フローで束ねる。入力説明をplaceholderだけへ置かない。 | 設定、練習編集、各種追加フォーム |
+| `c-fieldset` | 複数入力の意味的なまとまりとグループエラーを保持する。 | 招集、出欠、複数選択 |
+| `c-roster-row` | 選択、選手識別、出欠状態を別スロットへ分ける。Compactでは選手名を折返し、状態を次行へ置く。 | 練習・試合の名簿 |
+| `c-practice-card` | 情報、統計、操作、詳細を分離するコンテナクエリ対応カード。操作列はカード幅で2列Gridと横並びを切り替える。 | 練習管理 |
+| `c-data-list` | 小画面で縮小すべきでない表を、識別情報と主要指標のリストへ置換する。 | 選手比較、出欠、分析 |
+| `c-modal` | ヘッダー、単一スクロール本文、固定フッターを兄弟要素として扱う。 | 練習編集、確認操作 |
+
+## カラートークン
+
+テーマごとの具体色は`base.css`の`--primary`、`--bg-color`、`--text-primary`、`--success`、`--warning`、`--danger`、`--info`に置く。部品は具体色やテーマ名を参照せず、`tokens.css`のセマンティックトークンを使う。
+
+| トークン群 | 例 | 用途 |
+|---|---|---|
+| 表面 | `--color-canvas`、`--color-surface`、`--color-surface-subtle` | 画面背景、カード、控えめな情報領域 |
+| 文字・境界 | `--color-text`、`--color-text-muted`、`--color-border` | 本文、補助説明、区切り |
+| 操作・フォーカス | `--color-action`、`--color-action-hover`、`--color-focus` | 主操作、hover、キーボードフォーカス |
+| 状態 | `--color-success`、`--color-warning`、`--color-danger`、`--color-info` | 成功、注意、破壊的操作、情報通知 |
+| 状態背景 | `--color-success-surface`、`--color-warning-surface`、`--color-danger-surface`、`--color-info-surface` | バッジ、インライン通知、淡い状態表示 |
+
+テーマ追加時は基礎変数だけを上書きし、セマンティックトークンを再定義しない。これにより、既存のチームテーマ、屋外高コントラスト、ユーザー選択のチームカラーを維持する。
 
 ## 品質規則
 
-新規CSSはトークンを使用し、`!important`を追加しない。キーボードフォーカスを視認可能に保ち、`prefers-reduced-motion`およびアプリの`data-reduce-motion`を尊重する。レイアウトはモバイルを基準にし、`minmax()`を含むGridまたはFlexboxで伸縮へ対応する。
+新規CSSはトークンを使用し、`!important`を追加しない。キーボードフォーカスを視認可能に保ち、`prefers-reduced-motion`およびアプリの`data-reduce-motion`を尊重する。レイアウトはモバイルを基準にし、`minmax()`を含むGridまたはFlexboxで伸縮へ対応する。表示幅ではなくカード・フォームなどの親コンテナ幅で構造を変える必要がある場合は、Container Queryを優先する。
 
 既存のインライン指定は、反復する余白・整列・文字役割から移行する。一回限りの座標、計算されたサイズ、JavaScriptが動的に更新する見た目は、動作を確認した上で次の移行単位として扱う。
 

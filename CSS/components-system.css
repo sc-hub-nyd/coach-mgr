@@ -1,0 +1,634 @@
+/* CoachMgr Design System: form, roster, card, list, and modal contracts.
+   c-* components own presentation; l-* primitives own geometry. */
+
+.c-form-field {
+    display: grid;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    color: var(--color-text);
+}
+
+.c-form-field__heading,
+.c-fieldset__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+    min-inline-size: 0;
+}
+
+.c-form-field__label,
+.c-fieldset__legend {
+    color: var(--color-text);
+    font-size: var(--text-dense-size);
+    font-weight: 700;
+    line-height: var(--text-dense-leading);
+}
+
+.c-status-label {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 1.25rem;
+    padding-inline: var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-subtle);
+    color: var(--color-text-muted);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.c-status-label--required {
+    background: var(--color-danger-surface);
+    color: var(--color-danger);
+}
+
+.c-form-field__help,
+.c-form-field__example,
+.c-form-field__supplementary {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta-size);
+    line-height: var(--text-body-leading);
+}
+
+.c-form-field__error,
+.c-fieldset__error-summary {
+    display: none;
+    margin: 0;
+    color: var(--color-danger);
+    font-size: var(--text-meta-size);
+    font-weight: 700;
+    line-height: var(--text-body-leading);
+}
+
+.c-form-field[data-state="error"] .c-form-field__error,
+.c-fieldset[data-state="error"] .c-fieldset__error-summary {
+    display: block;
+}
+
+.c-form-field[data-state="error"] .form-control,
+.c-form-field[data-state="error"] .c-input {
+    border-color: var(--color-danger);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 13%, transparent);
+}
+
+.c-form-field .form-control,
+.c-form-field .c-input,
+.c-form-field .sl-input {
+    inline-size: min(100%, var(--control-min-inline));
+    min-block-size: var(--form-control-height);
+    margin: 0;
+}
+
+.c-form-field--fluid .form-control,
+.c-form-field--fluid .c-input,
+.c-form-field--fluid .sl-input {
+    inline-size: 100%;
+}
+
+.c-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: var(--space-3);
+    min-inline-size: 0;
+}
+
+.c-choice-field {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    min-block-size: var(--form-control-height);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--text-dense-size);
+    font-weight: 700;
+    line-height: var(--text-dense-leading);
+    cursor: pointer;
+}
+
+.c-choice-field:focus-within {
+    border-color: var(--color-focus);
+    box-shadow: var(--shadow-focus);
+}
+
+.c-choice-field input {
+    flex: 0 0 1.25rem;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    margin: 0;
+    accent-color: var(--color-action);
+}
+
+.c-settings-section .c-settings-section__body {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    min-block-size: 0;
+}
+
+.c-settings-section__intro {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta-size);
+    line-height: var(--text-body-leading);
+}
+
+.c-settings-section .c-action-group {
+    margin-block-start: 0;
+}
+
+.c-fieldset {
+    display: grid;
+    gap: var(--space-3);
+    min-inline-size: 0;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-subtle);
+}
+
+.c-fieldset__legend {
+    float: inline-start;
+    inline-size: 100%;
+    margin-block-end: var(--space-1);
+}
+
+.c-roster-list {
+    display: grid;
+    gap: var(--space-2);
+    min-inline-size: 0;
+}
+
+.c-roster-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+    min-inline-size: 0;
+    padding: var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    transition: border-color var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out);
+}
+
+.c-roster-row:focus-within {
+    border-color: var(--color-focus);
+    box-shadow: var(--shadow-focus);
+}
+
+.c-roster-row.is-not-called {
+    background: var(--color-surface-subtle);
+    opacity: 0.76;
+}
+
+.c-roster-row__identity {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    min-block-size: var(--tap-target-min);
+    padding-block: calc(var(--space-1) / 2);
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+.c-roster-row__identity input[type="checkbox"] {
+    flex: 0 0 1.375rem;
+    inline-size: 1.375rem;
+    block-size: 1.375rem;
+    margin-block-start: 0.0625rem;
+    accent-color: var(--color-action);
+}
+
+.c-roster-row__name {
+    overflow-wrap: anywhere;
+    color: var(--color-text);
+    font-size: var(--text-dense-size);
+    font-weight: 700;
+    line-height: var(--text-dense-leading);
+}
+
+.c-roster-row__meta {
+    display: block;
+    margin-block-start: var(--space-1);
+    color: var(--color-text-muted);
+    font-size: var(--text-meta-size);
+    font-weight: 400;
+}
+
+.c-roster-row__status {
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: var(--form-control-height);
+    margin: 0;
+}
+
+.c-practice-card {
+    display: grid;
+    gap: var(--space-3);
+    min-inline-size: 0;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+    container-type: inline-size;
+}
+
+.c-practice-card__header {
+    display: grid;
+    gap: var(--space-3);
+    min-inline-size: 0;
+    padding-block-end: var(--space-3);
+    border-block-end: 1px solid var(--color-border);
+}
+
+.c-practice-card__identity {
+    display: grid;
+    gap: var(--space-2);
+    min-inline-size: 0;
+}
+
+.c-practice-card__title {
+    min-inline-size: 0;
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: var(--text-dense-leading);
+    overflow-wrap: anywhere;
+}
+
+.c-practice-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    min-inline-size: 0;
+}
+
+.c-practice-card__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+    min-inline-size: 0;
+}
+
+.c-practice-card__actions .btn {
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: var(--tap-target-min);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.c-practice-card__actions .btn-share-practice {
+    grid-column: 1 / -1;
+}
+
+.c-practice-card__details {
+    min-inline-size: 0;
+}
+
+@container (min-width: 31rem) {
+    .c-practice-card__header {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+    }
+
+    .c-practice-card__actions {
+        grid-template-columns: repeat(5, minmax(2.5rem, max-content));
+        justify-content: end;
+    }
+
+    .c-practice-card__actions .btn-share-practice {
+        grid-column: auto;
+    }
+}
+
+.c-page-list {
+    display: grid;
+    gap: var(--space-5);
+    min-inline-size: 0;
+}
+
+.c-page-list--bottom-safe {
+    padding-block-end: var(--bottom-nav-reserve);
+}
+
+.c-data-list {
+    display: grid;
+    gap: var(--space-3);
+    min-inline-size: 0;
+}
+
+.c-data-list__item {
+    display: grid;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+}
+
+.c-data-list__identity {
+    min-inline-size: 0;
+    color: var(--color-text);
+    font-size: var(--text-dense-size);
+    font-weight: 800;
+    line-height: var(--text-dense-leading);
+    overflow-wrap: anywhere;
+}
+
+.c-data-list__metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 6.5rem), 1fr));
+    gap: var(--space-2);
+}
+
+.c-data-list__metric {
+    display: grid;
+    gap: var(--space-1);
+    min-inline-size: 0;
+    padding: var(--space-2);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-subtle);
+}
+
+.c-data-list__metric-label {
+    color: var(--color-text-muted);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: var(--text-meta-leading);
+}
+
+.c-data-list__metric-value {
+    color: var(--color-text);
+    font-size: var(--text-dense-size);
+    font-weight: 800;
+    line-height: var(--text-dense-leading);
+}
+
+.c-modal {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    inline-size: min(94vw, var(--modal-max-inline));
+    max-block-size: min(92dvh, 48rem);
+    min-inline-size: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+}
+
+.c-modal__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4) var(--space-3);
+    border-block-end: 1px solid var(--color-border);
+}
+
+.c-modal__title {
+    min-inline-size: 0;
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.25rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.c-modal__close {
+    flex: 0 0 var(--tap-target-min);
+    inline-size: var(--tap-target-min);
+    block-size: var(--tap-target-min);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.c-modal__body {
+    display: grid;
+    align-content: start;
+    gap: var(--space-4);
+    min-block-size: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: var(--space-4);
+}
+
+.c-modal__footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    border-block-start: 1px solid var(--color-border);
+    background: var(--color-surface);
+}
+
+.c-modal__footer .btn {
+    flex: 1 1 10rem;
+    min-block-size: var(--tap-target-min);
+}
+
+@media (min-width: 40rem) {
+    .c-form-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    }
+
+    .c-roster-row {
+        grid-template-columns: minmax(0, 1fr) minmax(9rem, 12rem);
+        align-items: center;
+    }
+
+    .c-roster-row__status {
+        inline-size: 100%;
+    }
+
+    .c-modal__footer .btn {
+        flex: 0 1 auto;
+        min-inline-size: 10rem;
+    }
+}
+
+@media (max-width: 30rem) {
+    .c-practice-card,
+    .c-modal__body,
+    .c-modal__header {
+        padding: var(--space-3);
+    }
+
+    .c-modal__footer {
+        padding-inline: var(--space-3);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .c-roster-row {
+        transition: none;
+    }
+}
+
+/* Transitional mappings: legacy class names remain for event handlers and tests,
+   while migrated components keep their layout contract without route-specific overrides. */
+.c-roster-row .c-roster-row__identity {
+    display: flex;
+    min-inline-size: 0;
+    min-block-size: var(--tap-target-min);
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: calc(var(--space-1) / 2) 0;
+    overflow: visible;
+}
+
+.c-roster-row .c-roster-row__identity input[type="checkbox"] {
+    flex: 0 0 1.375rem;
+    inline-size: 1.375rem;
+    block-size: 1.375rem;
+    margin-block-start: 0.0625rem;
+}
+
+.c-roster-row .c-roster-row__name {
+    min-inline-size: 0;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.c-practice-card.practice-card {
+    display: grid;
+    gap: var(--space-3);
+    inline-size: 100%;
+    min-inline-size: 0;
+    padding: var(--space-4);
+    background: var(--color-surface);
+}
+
+.c-practice-card .c-practice-card__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    gap: var(--space-3);
+    margin: 0;
+    padding-block-end: var(--space-3);
+}
+
+.c-practice-card .c-practice-card__identity {
+    display: grid;
+    gap: var(--space-2);
+    inline-size: 100%;
+    min-inline-size: 0;
+}
+
+.c-practice-card .c-practice-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    min-inline-size: 0;
+}
+
+.c-practice-card .c-practice-card__actions {
+    position: static;
+    z-index: auto;
+    display: grid;
+    inline-size: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+    margin: 0;
+}
+
+.c-practice-card .c-practice-card__actions .btn {
+    flex: initial;
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: var(--tap-target-min);
+    padding-inline: var(--space-2);
+}
+
+.c-practice-card .c-practice-card__actions .btn-share-practice {
+    grid-column: 1 / -1;
+}
+
+.c-modal.modal-practice-form {
+    position: relative;
+    inline-size: min(94vw, var(--modal-max-inline));
+    max-block-size: min(92dvh, 48rem);
+    padding: 0;
+    overflow: hidden;
+}
+
+.c-modal.modal-practice-form .practice-modal-close {
+    position: static;
+    z-index: auto;
+    inline-size: var(--tap-target-min);
+    block-size: var(--tap-target-min);
+    margin: 0;
+}
+
+.c-modal.modal-practice-form .practice-attendance-roster {
+    display: grid;
+    gap: var(--space-2);
+    max-block-size: none;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.c-modal.modal-practice-form .practice-modal-actions {
+    position: static;
+    z-index: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    margin: 0;
+    padding: var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    border-block-start: 1px solid var(--color-border);
+    background: var(--color-surface);
+}
+
+@container (min-width: 31rem) {
+    .c-practice-card .c-practice-card__header {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+    }
+
+    .c-practice-card .c-practice-card__actions {
+        grid-template-columns: repeat(5, minmax(2.5rem, max-content));
+        justify-content: end;
+        inline-size: auto;
+    }
+
+    .c-practice-card .c-practice-card__actions .btn-share-practice {
+        grid-column: auto;
+    }
+}
+
+@media (min-width: 40rem) {
+    .c-modal.modal-practice-form .practice-modal-actions {
+        padding-inline: var(--space-4);
+    }
+}
+
+@media (max-width: 30rem) {
+    .c-modal.modal-practice-form .practice-modal-actions {
+        padding-inline: var(--space-3);
+    }
+}
