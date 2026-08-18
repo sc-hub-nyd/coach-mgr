@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.27.4';
+export const APP_VERSION = 'v1.27.5';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.27.5',
+        date: '2026-08-18',
+        title: '選手登録モーダルの標準化',
+        features: [
+            '選手登録・編集フォームをc-modal、c-form-field、c-fieldset、c-action-groupへ移行',
+            '名前、背番号、ポジション、観察プロファイルの既存入力IDと保存フォームを維持',
+            'モーダルの見出し、閉じる操作、スクロール本文、固定フッターを標準構造へ統一',
+            '波2のフォーム・モーダル統合を選手管理から開始'
+        ]
+    },
     {
         version: 'v1.27.4',
         date: '2026-08-18',

@@ -801,6 +801,14 @@
     grid-column: 1 / -1;
 }
 
+.c-modal.modal-player-form {
+    padding: 0;
+}
+
+.c-modal.modal-player-form .c-modal__body {
+    padding: var(--space-4);
+}
+
 .c-modal.modal-practice-form {
     position: relative;
     inline-size: min(94vw, var(--modal-max-inline));

@@ -206,6 +206,14 @@ requireAll(source.index, [
     'c-data-list--scrollable',
     'id="btn-import-players-csv"',
     'id="btn-add-player"',
+    'id="modal-player"',
+    'modal c-modal modal-player-form',
+    'id="form-player"',
+    'id="player-name"',
+    'id="player-number"',
+    'id="player-position-container"',
+    'id="player-position-cat2-container"',
+    'c-modal__footer',
     'c-view-switcher'
 ], '選手ビュー切替');
 

@@ -2112,75 +2112,60 @@
 
     <!-- Player Form Modal -->
     <div id="modal-player" class="modal-overlay hidden">
-        <div class="modal" style="position:relative;">
-            <button type="button" class="btn-close-modal"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
-            <h2 id="player-modal-title" style="margin-bottom:1.5rem;">選手を登録</h2>
-            <form id="form-player">
+        <div class="modal c-modal modal-player-form" role="dialog" aria-modal="true" aria-labelledby="player-modal-title">
+            <div class="c-modal__header">
+                <h2 id="player-modal-title" class="c-modal__title">選手を登録</h2>
+                <button type="button" class="c-modal__close btn-close-modal" aria-label="選手登録を閉じる">&times;</button>
+            </div>
+            <form id="form-player" class="c-modal__body c-settings-form">
                 <input type="hidden" id="player-edit-id">
-                <div style="display:flex; gap:1rem; margin-bottom:1rem;">
-                    <div class="form-group" style="flex:2;">
-                        <label>名前 <span class="badge-required">必須</span></label>
+                <div class="c-form-grid">
+                    <div class="c-form-field c-form-field--fluid">
+                        <div class="c-form-field__heading"><label class="c-form-field__label" for="player-name">名前</label><span class="c-status-label c-status-label--required">必須</span></div>
                         <input type="text" id="player-name" class="form-control" required>
                     </div>
-                    <div class="form-group" style="flex:1;">
-                        <label>背番号 <span class="badge-required">必須</span></label>
+                    <div class="c-form-field c-form-field--fluid">
+                        <div class="c-form-field__heading"><label class="c-form-field__label" for="player-number">背番号</label><span class="c-status-label c-status-label--required">必須</span></div>
                         <input type="number" id="player-number" class="form-control" required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>カテゴリ1 ポジション（大分類・複数可） <span class="badge-optional">任意</span></label>
-                    <div id="player-position-container" class="checkbox-group-container" style="margin-bottom:0.75rem;">
+                <fieldset class="c-fieldset">
+                    <legend class="c-fieldset__legend">カテゴリ1 ポジション（大分類・複数可）</legend>
+                    <div id="player-position-container" class="checkbox-group-container">
                         <!-- Checkboxes populated dynamically -->
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>カテゴリ2 ポジション（詳細役割・複数可） <span class="badge-optional">任意</span></label>
+                </fieldset>
+                <fieldset class="c-fieldset">
+                    <legend class="c-fieldset__legend">カテゴリ2 ポジション（詳細役割・複数可）</legend>
                     <div id="player-position-cat2-container" class="checkbox-group-container">
                         <!-- Checkboxes populated dynamically -->
                     </div>
-                </div>
-
-                <!-- ▼ここから差し替え▼ -->
-                <div id="player-profile-section"
-                    style="margin-top:1.5rem; margin-bottom:1rem; padding-top:1.5rem; border-top:1px solid var(--surface-border);">
-                    <h3 style="font-size:1.1rem; margin-bottom:0.8rem;"><i class="fa-solid fa-id-badge"
-                            style="color:var(--primary);"></i> コーチ陣の観察プロファイル</h3>
-
-                    <div class="form-group">
-                        <label>プレースタイル（選手像の言語化） <span class="badge-optional">任意</span></label>
-                        <input type="text" id="player-playstyle" class="form-control"
-                            placeholder="例: 良い準備とスキャニングで中盤を落ち着かせるバランサー">
+                </fieldset>
+                <fieldset id="player-profile-section" class="c-fieldset">
+                    <legend class="c-fieldset__legend"><i class="fa-solid fa-id-badge" aria-hidden="true"></i> コーチ陣の観察プロファイル</legend>
+                    <div class="c-form-field c-form-field--fluid">
+                        <div class="c-form-field__heading"><label class="c-form-field__label" for="player-playstyle">プレースタイル（選手像の言語化）</label><span class="c-status-label">任意</span></div>
+                        <input type="text" id="player-playstyle" class="form-control" placeholder="例: 良い準備とスキャニングで中盤を落ち着かせるバランサー">
                     </div>
-
-                    <div class="form-group">
-                        <label>ストロングポイント（最大の武器） <span class="badge-optional">任意</span></label>
-                        <div style="display:flex; gap:0.4rem; margin-bottom:0.5rem; align-items:center;">
-                            <select id="player-strong-key-1" class="form-control"
-                                style="width: 180px; flex-shrink: 0;"></select>
-                            <input type="text" id="player-strong-text-1" class="form-control"
-                                placeholder="例: 首振りが多く常に選択肢を持てている">
-                        </div>
-                        <div style="display:flex; gap:0.4rem; align-items:center;">
-                            <select id="player-strong-key-2" class="form-control"
-                                style="width: 180px; flex-shrink: 0;"></select>
-                            <input type="text" id="player-strong-text-2" class="form-control"
-                                placeholder="例: ファーストタッチで次のプレーがしやすい位置に置ける">
+                    <div class="c-form-field c-form-field--fluid">
+                        <div class="c-form-field__heading"><label class="c-form-field__label" for="player-strong-key-1">ストロングポイント（最大の武器）</label><span class="c-status-label">任意</span></div>
+                        <div class="c-form-grid">
+                            <select id="player-strong-key-1" class="form-control"></select>
+                            <input type="text" id="player-strong-text-1" class="form-control" placeholder="例: 首振りが多く常に選択肢を持てている">
+                            <select id="player-strong-key-2" class="form-control"></select>
+                            <input type="text" id="player-strong-text-2" class="form-control" placeholder="例: ファーストタッチで次のプレーがしやすい位置に置ける">
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label>ショートターム・フォーカス<span class="badge-optional">任意</span></label>
-                        <input type="text" id="player-short-focus" class="form-control"
-                            placeholder="例: 奪われたあとの最初の1歩目を早くしてパスコースを消す">
+                    <div class="c-form-field c-form-field--fluid">
+                        <div class="c-form-field__heading"><label class="c-form-field__label" for="player-short-focus">ショートターム・フォーカス</label><span class="c-status-label">任意</span></div>
+                        <input type="text" id="player-short-focus" class="form-control" placeholder="例: 奪われたあとの最初の1歩目を早くしてパスコースを消す">
                     </div>
-                </div>
-                <!-- ▲ここまで差し替え▲ -->
-                <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
-                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                    <button type="submit" class="btn btn-primary">保存する</button>
-                </div>
+                </fieldset>
             </form>
+            <div class="c-modal__footer c-action-group">
+                <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
+                <button type="submit" form="form-player" class="btn btn-primary">保存する</button>
+            </div>
         </div>
     </div>
 
