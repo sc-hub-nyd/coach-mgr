@@ -2640,46 +2640,37 @@
     </div>
 
     <!-- Modal: Edit Team Focus & Challenge -->
-    <div id="modal-edit-team-focus" class="modal-overlay hidden" style="z-index: 1002;">
-        <div class="modal" style="max-width:500px; width:92%;">
-            <button class="btn-close-modal"
-                onclick="document.getElementById('modal-edit-team-focus').classList.add('hidden')"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
-            <h2 style="margin-bottom:0.4rem; font-size:1.2rem; color:var(--primary);"><i
-                    class="fa-solid fa-bullseye"></i> チーム強化テーマの設定</h2>
-            <p class="text-secondary" style="font-size:0.8rem; margin-bottom:1.2rem;">チーム全体で共有・意識する目標や強化ポイントを設定します。</p>
-
-            <form id="form-edit-team-focus">
-                <div class="form-group" style="margin-bottom:0.9rem;">
-                    <label style="font-size:0.85rem; font-weight:700; margin-bottom:0.3rem;">メイン強化テーマ <span
-                            class="badge-required">必須</span></label>
-                    <input type="text" id="input-focus-main-theme" class="form-control"
-                        placeholder="例: ハイプレスからのショートカウンター＆素早い切り替え" required>
+    <div id="modal-edit-team-focus" class="modal-overlay hidden">
+        <div class="modal c-modal modal-team-focus" role="dialog" aria-modal="true" aria-labelledby="team-focus-modal-title">
+            <div class="c-modal__header">
+                <div><h2 id="team-focus-modal-title" class="c-modal__title"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> チーム強化テーマの設定</h2><p class="c-form-field__help">チーム全体で共有・意識する目標や強化ポイントを設定します。</p></div>
+                <button type="button" class="c-modal__close btn-close-modal" onclick="document.getElementById('modal-edit-team-focus').classList.add('hidden')" aria-label="チーム強化テーマ設定を閉じる">&times;</button>
+            </div>
+            <form id="form-edit-team-focus" class="c-modal__body c-settings-form">
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="input-focus-main-theme">メイン強化テーマ <span class="badge-required">必須</span></label>
+                    <input type="text" id="input-focus-main-theme" class="form-control" placeholder="例: ハイプレスからのショートカウンター＆素早い切り替え" required>
                 </div>
-                <div class="form-group" style="margin-bottom:0.9rem;">
-                    <label style="font-size:0.85rem; font-weight:700; margin-bottom:0.3rem;">意識するポイント (1〜3項目)</label>
-                    <input type="text" id="input-focus-point-1" class="form-control"
-                        placeholder="ポイント1: 例) 相手ボランチへのファーストDFの限定" style="margin-bottom:0.4rem;">
-                    <input type="text" id="input-focus-point-2" class="form-control"
-                        placeholder="ポイント2: 例) ボール奪取後のファーストパスの精度向上" style="margin-bottom:0.4rem;">
-                    <input type="text" id="input-focus-point-3" class="form-control"
-                        placeholder="ポイント3: 例) 奪われた瞬間の3秒間の即時奪還">
-                </div>
-                <div class="form-group" style="margin-bottom:1.2rem;">
-                    <label style="font-size:0.85rem; font-weight:700; margin-bottom:0.3rem;">対象期間・補足メモ</label>
-                    <input type="text" id="input-focus-note" class="form-control" placeholder="例: 今週〜次節公式戦(8/10)まで">
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:0.75rem;">
-                    <button type="button" class="btn btn-secondary" id="btn-clear-team-focus"
-                        style="color:#ef4444; border-color:#fca5a5;"><i class="fa-solid fa-trash-can"></i>
-                        テーマをクリア</button>
-                    <div style="display:flex; gap:0.5rem;">
-                        <button type="button" class="btn btn-secondary btn-close-modal"
-                            onclick="document.getElementById('modal-edit-team-focus').classList.add('hidden')">キャンセル</button>
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> 設定を保存する</button>
+                <fieldset class="c-fieldset">
+                    <legend class="c-fieldset__legend">意識するポイント（1〜3項目）</legend>
+                    <div class="c-fieldset__body c-settings-form">
+                        <div class="c-form-field c-form-field--fluid"><label class="u-sr-only" for="input-focus-point-1">意識するポイント1</label><input type="text" id="input-focus-point-1" class="form-control" placeholder="ポイント1: 例) 相手ボランチへのファーストDFの限定"></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="u-sr-only" for="input-focus-point-2">意識するポイント2</label><input type="text" id="input-focus-point-2" class="form-control" placeholder="ポイント2: 例) ボール奪取後のファーストパスの精度向上"></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="u-sr-only" for="input-focus-point-3">意識するポイント3</label><input type="text" id="input-focus-point-3" class="form-control" placeholder="ポイント3: 例) 奪われた瞬間の3秒間の即時奪還"></div>
                     </div>
+                </fieldset>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="input-focus-note">対象期間・補足メモ</label>
+                    <input type="text" id="input-focus-note" class="form-control" placeholder="例: 今週〜次節公式戦（8/10）まで">
                 </div>
             </form>
+            <div class="c-modal__footer c-action-group">
+                <button type="button" class="btn btn-danger" id="btn-clear-team-focus"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> テーマをクリア</button>
+                <div class="c-action-group c-action-group--end">
+                    <button type="button" class="btn btn-secondary btn-close-modal" onclick="document.getElementById('modal-edit-team-focus').classList.add('hidden')">キャンセル</button>
+                    <button type="submit" form="form-edit-team-focus" class="btn btn-primary"><i class="fa-solid fa-save" aria-hidden="true"></i> 設定を保存する</button>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Release Notes Modal -->

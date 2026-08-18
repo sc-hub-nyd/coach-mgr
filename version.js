@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.27.6';
+export const APP_VERSION = 'v1.27.7';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.27.7',
+        date: '2026-08-18',
+        title: 'チーム強化テーマ編集モーダルの標準化',
+        features: [
+            'チーム強化テーマ設定をc-modal、c-form-field、c-fieldset、c-action-groupへ移行',
+            'テーマ・3つの重点ポイント・補足メモ・クリア操作の既存IDとイベントを維持',
+            '設定フォームの余白、見出し、アクション配置を共通ルールへ統一',
+            '波2のフォーム・モーダル統合をチーム設定導線へ展開'
+        ]
+    },
     {
         version: 'v1.27.6',
         date: '2026-08-18',

@@ -222,6 +222,15 @@ requireAll(source.index, [
     'id="csv-preview-container"',
     'id="csv-error-msg"',
     'id="btn-submit-csv-import"',
+    'id="modal-edit-team-focus"',
+    'modal c-modal modal-team-focus',
+    'id="form-edit-team-focus"',
+    'id="input-focus-main-theme"',
+    'id="input-focus-point-1"',
+    'id="input-focus-point-2"',
+    'id="input-focus-point-3"',
+    'id="input-focus-note"',
+    'id="btn-clear-team-focus"',
     'c-view-switcher'
 ], '選手ビュー切替');
 
