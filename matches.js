@@ -1418,12 +1418,12 @@ export function initMatchDetailView(matchId) {
     if (detailRosterDisplay) {
         const attendeesHtml = m.presentPlayerIds && m.presentPlayerIds.length > 0
             ? state.players.filter(player => m.presentPlayerIds.includes(player.id)).map(player => `
-                <span class="u-ext-54" >
-                    ${player.number ? `<span class="u-ext-55" >${player.number}</span>` : ''}
-                    <span class="u-ext-56" >${escapeHtml(player.name)}</span>
+                <span class="match-attendance-badge">
+                    ${player.number ? `<span class="match-attendance-badge__number">${player.number}</span>` : ''}
+                    <span>${escapeHtml(player.name)}</span>
                 </span>
             `).join('')
-            : '<span class="u-ext-57" >参加予定はまだありません</span>';
+            : '<span class="c-form-field__help">参加予定はまだありません</span>';
 
         detailRosterDisplay.innerHTML = attendeesHtml;
     }
@@ -1435,13 +1435,13 @@ export function initMatchDetailView(matchId) {
             const invited = m.callUpPlayerIds.includes(player.id);
             const status = m.attendanceByPlayer[String(player.id)]?.status || 'pending';
             return `
-                <div class="attendance-roster-row ${invited ? '' : 'is-not-called'}">
-                    <label class="u-ext-58" >
+                <div class="attendance-roster-row c-roster-row c-roster-row--attendance ${invited ? '' : 'is-not-called'}">
+                    <label class="c-roster-row__identity">
                         <input type="checkbox" class="inline-match-callup-checkbox" value="${player.id}" ${invited ? 'checked' : ''} aria-label="${escapeHtml(player.name)}を招集対象にする">
-                        <span class="u-ext-5" >${player.number || '—'}</span>
-                        <span class="u-ext-60" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</span>
+                        <span class="c-roster-row__number">${player.number || '—'}</span>
+                        <span class="c-roster-row__name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</span>
                     </label>
-                    <select class="form-control inline-match-attendance-status" data-player-id="${player.id}" ${invited ? '' : 'disabled'} aria-label="${escapeHtml(player.name)}の出欠">
+                    <select class="form-control c-roster-row__status inline-match-attendance-status" data-player-id="${player.id}" ${invited ? '' : 'disabled'} aria-label="${escapeHtml(player.name)}の出欠">
                         <option value="pending" ${status === 'pending' ? 'selected' : ''}>未回答</option>
                         <option value="attending" ${status === 'attending' ? 'selected' : ''}>参加</option>
                         <option value="absent" ${status === 'absent' ? 'selected' : ''}>欠席</option>

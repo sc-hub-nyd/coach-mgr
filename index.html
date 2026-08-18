@@ -544,24 +544,13 @@
                     </div>
 
                     <!-- 出欠管理（アコーディオン） -->
-                    <div style="border-top:1px solid var(--surface-border); padding-top:0.6rem; margin-top:0.25rem;">
-                        <details class="practice-attendance-details" style="width: 100%; cursor: pointer;" open>
-                            <summary
-                                style="font-weight:600; font-size:0.8rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.3rem; outline:none; list-style:none; user-select:none;">
-                                <i class="fa-solid fa-chevron-down"
-                                    style="font-size:0.7rem; color:var(--text-secondary); transition:transform 0.2s;"></i>
-                                <span id="match-detail-attendance-summary">参加者 (0/0)</span>
-                            </summary>
-                            <!-- 保護者モード用（バッジ並び） -->
-                            <div id="match-detail-attendance-roster-display" class="parent-only"
-                                style="display:flex; flex-wrap:wrap; gap:0.25rem; padding:0.4rem; border-radius:8px; background:rgba(0,0,0,0.02); margin-top:0.25rem; max-height:100px; overflow-y:auto; box-sizing:border-box;">
-                            </div>
-                            <!-- コーチモード用（チェックボックス名簿） -->
-                            <div id="match-detail-attendance-roster-edit" class="coach-only"
-                                style="display:grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.4rem; padding: 0.6rem; border-radius: 8px; background: rgba(0,0,0,0.02); margin-top: 0.4rem; max-height: 160px; overflow-y: auto; box-sizing: border-box;">
-                            </div>
-                        </details>
-                    </div>
+                    <details class="match-detail-attendance-details" open>
+                        <summary><i class="fa-solid fa-chevron-down" aria-hidden="true"></i><span id="match-detail-attendance-summary">参加者（0/0）</span></summary>
+                        <!-- 保護者モード用（バッジ並び） -->
+                        <div id="match-detail-attendance-roster-display" class="parent-only match-detail-attendance-display"></div>
+                        <!-- コーチモード用（チェックボックス名簿） -->
+                        <div id="match-detail-attendance-roster-edit" class="coach-only c-roster-list match-detail-attendance-roster"></div>
+                    </details>
 
                     <!-- コーチ用インライン保存ボタン -->
                     <div class="coach-only c-action-group c-action-group--end">

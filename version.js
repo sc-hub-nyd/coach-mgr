@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.28.1';
+export const APP_VERSION = 'v1.28.2';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.28.2',
+        date: '2026-08-18',
+        title: '試合詳細の招集・出欠名簿を標準化',
+        features: [
+            '試合詳細の招集・出欠名簿をc-roster-row、c-roster-listの共通情報構造へ移行',
+            '招集選択、出欠状態、選手ID、保存フォーム、保護者向け参加表示の既存接続を維持',
+            '選手名、背番号、状態選択を小型端末でも崩れない共通レスポンシブ規則へ統一',
+            '波3の高リスク移行を試合詳細の招集・出場設定から開始'
+        ]
+    },
     {
         version: 'v1.28.1',
         date: '2026-08-18',

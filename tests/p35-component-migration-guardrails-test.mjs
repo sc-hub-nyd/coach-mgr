@@ -92,6 +92,11 @@ requireAll(source.index, [
     'id="match-detail-tournament-input"',
     'id="match-detail-theme-input"',
     'id="match-detail-summary-input"',
+    'id="form-match-detail-inline"',
+    'id="match-detail-attendance-summary"',
+    'id="match-detail-attendance-roster-display"',
+    'id="match-detail-attendance-roster-edit"',
+    'c-roster-list match-detail-attendance-roster',
     'c-form-field--compact'
 ], 'Field Companion');
 
@@ -156,7 +161,9 @@ requireAll(source.app, [
 
 requireAll(source.matches, [
     'c-empty-state',
-    'btn-empty-add-match',
+    'c-roster-row c-roster-row--attendance',
+    'match-attendance-badge',
+    'btn-add-match',
     'btn-add-match'
 ], '試合空状態');
 
@@ -331,7 +338,9 @@ requireAll(source.system, [
     '\\.c-modal',
     '\\.c-data-management',
     '\\.c-data-management__grid',
-    '\\.c-data-management__danger'
+    '\\.c-data-management__danger',
+    '\\.c-roster-row--attendance',
+    '\\.match-detail-attendance-roster'
 ], 'システム部品');
 
 console.log('P35 component migration guardrails passed');

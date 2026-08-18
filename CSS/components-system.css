@@ -1199,3 +1199,95 @@
         font-size: 1rem;
     }
 }
+
+/* Match detail roster: preserves match-specific selection state while using the shared roster information structure. */
+.match-detail-attendance-details {
+    inline-size: 100%;
+    padding-block-start: var(--space-3);
+    border-block-start: 1px solid var(--color-border);
+}
+
+.match-detail-attendance-details > summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
+    font-size: var(--text-dense-size);
+    font-weight: 700;
+    line-height: var(--text-dense-leading);
+    cursor: pointer;
+}
+
+.match-detail-attendance-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    max-block-size: 10rem;
+    margin-block-start: var(--space-2);
+    padding: var(--space-2);
+    overflow-y: auto;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-subtle);
+}
+
+.match-attendance-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-block-size: 1.5rem;
+    padding-inline: var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--neo-surface);
+    color: var(--color-text);
+    font-size: var(--text-meta-size);
+    font-weight: 700;
+}
+
+.match-attendance-badge__number {
+    color: var(--color-text-muted);
+    font-family: var(--font-numeric);
+    font-variant-numeric: tabular-nums;
+}
+
+.match-detail-attendance-roster {
+    max-block-size: 16rem;
+    margin-block-start: var(--space-2);
+    padding: var(--space-2);
+    overflow-y: auto;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-subtle);
+}
+
+.c-roster-row--attendance {
+    grid-template-columns: minmax(0, 1fr) minmax(6.5rem, 8rem);
+    align-items: center;
+    min-block-size: var(--tap-target-min);
+    padding: var(--space-2) var(--space-3);
+}
+
+.c-roster-row--attendance .c-roster-row__identity {
+    align-items: center;
+    min-block-size: 0;
+    padding-block: 0;
+}
+
+.c-roster-row--attendance .c-roster-row__number {
+    flex: 0 0 1.75rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-numeric);
+    font-size: var(--text-meta-size);
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+}
+
+.c-roster-row--attendance .c-roster-row__status {
+    inline-size: 100%;
+    min-block-size: 2.25rem;
+}
+
+@media (max-width: 32.5rem) {
+    .c-roster-row--attendance {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
