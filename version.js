@@ -1,8 +1,20 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.29.2';
+export const APP_VERSION = 'v1.30.0';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.0',
+        date: '2026-08-18',
+        title: 'Liquid UI・Frosted Glass・テキストモーションを強化',
+        features: [
+            'ダッシュボードの今日・次回練習・保護者導線を、光沢と奥行きを持つc-liquid-panel--immersiveへ強化',
+            '初回セットアップを可読性を保つc-glass-surface--spotlightへ接続',
+            'チームカラーに追従するc-text-effect--liquidとc-kinetic-kicker--revealを追加',
+            'prefers-reduced-motionとアプリの動き軽減設定では静的なテキスト表示へ戻す',
+            '試合中操作、データ表、タイムライン、エラー・警告には演出を適用しない'
+        ]
+    },
     {
         version: 'v1.29.2',
         date: '2026-08-18',

@@ -329,3 +329,103 @@
         flex: 1 1 auto;
     }
 }
+
+
+/* Kinetic Typography / Immersive surfaces: dashboard and onboarding only.
+   The text stays readable without motion; no operational state depends on animation. */
+.c-liquid-panel--immersive {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    background-image: var(--liquid-sheen), var(--liquid-veil);
+    border-color: color-mix(in srgb, var(--color-brand) 22%, var(--surface-border));
+    box-shadow: var(--shadow-neo-raised), 0 1.1rem 2.8rem color-mix(in srgb, var(--color-brand) 12%, transparent);
+}
+
+.c-liquid-panel--immersive > * {
+    position: relative;
+    z-index: 1;
+}
+
+.c-liquid-panel--immersive::before {
+    position: absolute;
+    z-index: 0;
+    inset: -42% -28%;
+    content: '';
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, color-mix(in srgb, var(--color-brand) 15%, transparent) 0%, transparent 66%);
+    opacity: 0.7;
+    transform: translate3d(-5%, -3%, 0);
+}
+
+.c-glass-surface--spotlight {
+    position: relative;
+    overflow: clip;
+    background-image: var(--liquid-sheen);
+    background-color: var(--glass-surface-strong);
+    box-shadow: var(--glass-shadow), 0 0.8rem 2rem color-mix(in srgb, var(--color-brand) 8%, transparent);
+}
+
+.c-text-effect--liquid {
+    display: inline-block;
+    color: var(--color-text);
+    font-weight: var(--font-weight-heading);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .c-text-effect--liquid {
+        background-image: linear-gradient(105deg, var(--color-text) 4%, color-mix(in srgb, var(--color-text) 78%, var(--color-brand)) 38%, var(--color-brand) 52%, color-mix(in srgb, var(--color-text) 78%, var(--color-brand)) 66%, var(--color-text) 96%);
+        background-size: 220% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+}
+
+.c-kinetic-kicker--reveal {
+    display: inline-flex;
+    transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .c-liquid-panel--immersive::before {
+        animation: c-liquid-drift 7.2s var(--ease-in-out) infinite alternate;
+    }
+
+    .c-text-effect--liquid {
+        animation: c-text-liquid-flow 5.4s linear infinite;
+    }
+
+    .c-kinetic-kicker--reveal {
+        animation: c-kicker-reveal 380ms var(--ease-out) both;
+    }
+}
+
+@keyframes c-liquid-drift {
+    from { transform: translate3d(-7%, -4%, 0) scale(0.98); opacity: 0.52; }
+    to { transform: translate3d(7%, 5%, 0) scale(1.06); opacity: 0.86; }
+}
+
+@keyframes c-text-liquid-flow {
+    from { background-position: 0% 50%; }
+    to { background-position: 100% 50%; }
+}
+
+@keyframes c-kicker-reveal {
+    from { opacity: 0; transform: translate3d(0, 0.3rem, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .c-liquid-panel--immersive::before,
+    .c-text-effect--liquid,
+    .c-kinetic-kicker--reveal {
+        animation: none;
+    }
+}
+
+:root[data-reduce-motion="true"] .c-liquid-panel--immersive::before,
+:root[data-reduce-motion="true"] .c-text-effect--liquid,
+:root[data-reduce-motion="true"] .c-kinetic-kicker--reveal {
+    animation: none;
+}

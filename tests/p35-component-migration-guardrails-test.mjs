@@ -180,10 +180,14 @@ requireAll(source.app, [
 ], 'ダッシュボードランキング生成');
 
 requireAll(source.index, [
+    'id="dash-setup-checklist"',
+    'c-glass-surface--spotlight',
     'id="dash-action-center"',
     'id="dash-practice-plan"',
     'id="dash-parent-agenda"',
-    'c-liquid-panel'
+    'c-liquid-panel--immersive',
+    'c-text-effect--liquid',
+    'c-kinetic-kicker--reveal'
 ], 'Liquid UIダッシュボード');
 
 requireAll(source.app, [
