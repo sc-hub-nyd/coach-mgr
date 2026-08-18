@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.0';
+export const APP_VERSION = 'v1.30.1';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.1',
+        date: '2026-08-18',
+        title: '残存u-extの実行時未参照規則を削除',
+        features: [
+            '完全一致の実行時参照監査で0件だったu-ext-5、u-ext-14、u-ext-15、u-ext-17を削除',
+            '残るu-ext規則はすべて実行時参照ありと確認し、画面・機能単位の標準部品移行へ移行',
+            'P33、P34、P35、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.30.0',
         date: '2026-08-18',

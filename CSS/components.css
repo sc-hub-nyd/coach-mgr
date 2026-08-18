@@ -1197,11 +1197,6 @@ input[type="checkbox"] {
     padding: 0.5rem 0;
 }
 
-.u-ext-5 {
-    font-weight: 700;
-    color: var(--primary);
-}
-
 .u-ext-6 {
     display: flex;
     justify-content: space-between;
@@ -1249,25 +1244,8 @@ input[type="checkbox"] {
     font-weight: normal;
 }
 
-.u-ext-14 {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-}
-
-.u-ext-15 {
-    font-size: 0.75rem;
-    font-weight: normal;
-    color: var(--text-secondary);
-}
-
 .u-ext-16 {
     color: #ef4444;
-}
-
-.u-ext-17 {
-    margin-top: 0.3rem;
-    color: var(--text-primary);
-    font-style: italic;
 }
 
 .u-ext-18 {
