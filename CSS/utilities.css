@@ -209,3 +209,39 @@
         grid-column: 1 / -1;
     }
 }
+
+/* P33.5: タブレット・横向き画面の練習カードヘッダー分離 */
+@media (min-width: 601px) and (max-width: 1280px) {
+    body[data-route="practices"] #practice-list .practice-card-header {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 0.65rem;
+    }
+
+    body[data-route="practices"] #practice-list .practice-card-header-main {
+        width: 100%;
+        min-width: 0;
+    }
+
+    body[data-route="practices"] #practice-list .practice-card-actions {
+        display: grid;
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.4rem;
+        margin: 0;
+    }
+
+    body[data-route="practices"] #practice-list .practice-card-actions .btn {
+        width: 100%;
+        min-width: 0;
+        min-height: 40px;
+        justify-content: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    body[data-route="practices"] #practice-list .practice-card-actions .btn-share-practice {
+        grid-column: 1 / -1;
+    }
+}
