@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.29.0';
+export const APP_VERSION = 'v1.29.1';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.29.1',
+        date: '2026-08-18',
+        title: '波6：旧ピッチプレビュー・タイムライン規則を削除',
+        features: [
+            '参照0件を再確認したu-ext-99〜103、u-ext-110〜111、u-ext-115〜122を削除',
+            '作図の現行キャンバス、試合詳細のc-data-listタイムライン、現行の補助表示は維持',
+            '監査台帳を再生成し、削除後も候補が定義されないことを確認',
+            'P33、P34、P35、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.29.0',
         date: '2026-08-18',
