@@ -72,6 +72,8 @@
 .c-icon--photo { --icon-source: url('../assets/icons/nanyodai/family/family-photo.svg'); }
 .c-icon--document { --icon-source: url('../assets/icons/nanyodai/family/family-document.svg'); }
 
+.c-icon--brand { color: var(--color-brand); }
+.c-icon--on-brand { color: var(--color-text-on-brand); }
 .c-icon--on-action { color: var(--color-text-on-action); }
 .c-icon--muted { color: var(--color-text-muted); }
 .c-icon--positive { color: var(--color-success); }

@@ -15,7 +15,7 @@ SVGは`assets/icons/nanyodai/`にカテゴリ・ファイル名を変えずに�
 | ベースクラス | `c-icon`を必ず付ける。 |
 | 意味クラス | `c-icon--home`、`c-icon--trophy`、`c-icon--rising-pass`のように意味で指定する。ファイル名や色名をUIから参照しない。 |
 | サイズ | `c-icon--xs`、`--sm`、`--md`、`--lg`、`--xl`を使う。任意の固定px指定は追加しない。 |
-| 色 | 親要素の`color`を継承する。主操作面では`--color-text-on-action`、本文では`--color-text`、補助情報では`--color-text-muted`を使う。 |
+| 色 | 親要素の`color`を継承する。ブランド表示には`c-icon--brand`と`--color-brand`、ブランド面上には`c-icon--on-brand`と`--color-text-on-brand`、主操作面では`--color-text-on-action`、本文では`--color-text`、補助情報では`--color-text-muted`を使う。 |
 | 装飾 | 隣接テキストが同じ意味を示す場合は`aria-hidden="true"`を付ける。 |
 | 単独アイコン | アイコンだけの操作には、ボタンの`aria-label`で日本語の操作名を必ず与える。アイコンの色だけで状態を示さない。 |
 
@@ -35,10 +35,10 @@ SVGは`assets/icons/nanyodai/`にカテゴリ・ファイル名を変えずに�
 
 ## テーマとアクセシビリティ
 
-アイコンは`currentColor`を継承するため、テーマごとに別のSVGを作成しない。light/darkともに、アイコンを置く親コンポーネントがセマンティック前景トークンを選択する。たとえば主操作ボタンでは`--color-text-on-action`、本文のアイコンは`--color-text`を使う。
+アイコンは`currentColor`を継承するため、テーマごとに別のSVGを作成しない。南陽台FC向けの新規・未設定チームでは公式サイトの赤系`#EF3340`を種色とするが、SVGへ赤を固定しない。light/darkともに、アイコンを置く親コンポーネントがセマンティック前景トークンを選択する。ブランド表示では`--color-brand`、主操作ボタンでは`--color-text-on-action`、本文のアイコンは`--color-text`を使う。利用者がチーム色を変えた場合も同じ役割が追随する。
 
 強制配色モードでは`CanvasText`へ委譲する。状態を色やアイコンだけで伝えず、日本語の状態名、ボタンラベル、数値などを併記する。キーボードフォーカスはアイコン自体でなく、操作要素の可視フォーカスで提示する。
 
 ## 導入・検証
 
-新しいアイコンを使う前に、`CSS/icon-system.css`のマッピング、サイズ、表示コンテキストを確認する。導入後は、アイコンシステム契約テスト、light/darkでの目視、320px幅のボトムナビゲーション表示、PWAオフラインキャッシュを確認する。
+新しいアイコンを使う前に、`CSS/icon-system.css`のマッピング、サイズ、表示コンテキストと`c-icon--brand`／`c-icon--on-brand`の役割を確認する。導入後は、アイコンシステム契約テスト、light/darkでの目視、320px幅のボトムナビゲーション表示、PWAオフラインキャッシュを確認する。

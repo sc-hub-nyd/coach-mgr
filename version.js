@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.21.0';
+export const APP_VERSION = 'v1.22.0';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.22.0',
+        date: '2026-08-18',
+        title: '南陽台FCブランド・デザインシステム正式統合',
+        features: [
+            '南陽台FC公式サイトの赤系を既定ブランド種色とするカラー階層、任意色拡張、既存チーム保護、禁止事項を標準仕様として文書化',
+            'ブランド用のセマンティックトークン --color-brand / --color-brand-surface / --color-text-on-brand を追加。アプリシェルのチームシグナルをbrandロールへ接続',
+            'アイコンのbrand / on-brand修飾子、CSSアーキテクチャ、44 SVGアイコン規約、コントラスト・レスポンシブ検証ゲートを統合',
+            'ブランド標準・トークン・アイコン修飾子の契約テストを追加し、具体色を部品へ直接書かない規約を再発防止'
+        ]
+    },
     {
         version: 'v1.21.0',
         date: '2026-08-18',

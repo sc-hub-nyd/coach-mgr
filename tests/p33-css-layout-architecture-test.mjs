@@ -15,7 +15,8 @@ const files = {
     settings: '../settings.js',
     app: '../app.js',
     serviceWorker: '../sw.js',
-    architecture: '../CSS_ARCHITECTURE.md'
+    architecture: '../CSS_ARCHITECTURE.md',
+    brandStandard: '../NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md'
 };
 
 const source = Object.fromEntries(await Promise.all(
@@ -33,6 +34,9 @@ assert.match(source.tokens, /--color-canvas/);
 assert.match(source.tokens, /--color-success-surface/);
 assert.match(source.tokens, /--color-text-on-action:\s*var\(--theme-on-primary\)/);
 assert.match(source.tokens, /--color-text-on-action-hover:\s*var\(--theme-on-primary-hover\)/);
+assert.match(source.tokens, /--color-brand:\s*var\(--theme-primary\)/);
+assert.match(source.tokens, /--color-brand-surface:\s*var\(--theme-primary-soft\)/);
+assert.match(source.tokens, /--color-text-on-brand:\s*var\(--theme-on-primary\)/);
 assert.match(source.tokens, /--text-dense-leading/);
 assert.match(source.base, /--theme-primary/);
 assert.match(source.base, /data-color-mode="dark"/);
@@ -74,6 +78,8 @@ assert.doesNotMatch(source.index, /btn-toggle-contrast/);
 assert.match(source.systemComponents, /\.c-theme-preview/);
 assert.match(source.iconSystem, /\.c-icon\s*\{/);
 assert.match(source.iconSystem, /c-icon--team-signal/);
+assert.match(source.iconSystem, /c-icon--brand/);
+assert.match(source.iconSystem, /c-icon--on-brand/);
 assert.match(source.iconSystem, /forced-colors/);
 assert.match(source.index, /c-icon--team-signal/);
 assert.match(source.index, /c-icon--home/);
@@ -87,6 +93,11 @@ assert.match(source.serviceWorker, /color-theme-service\.js/);
 assert.match(source.architecture, /`l-`/);
 assert.match(source.architecture, /`c-`/);
 assert.match(source.architecture, /`is-`/);
+assert.match(source.architecture, /#EF3340/);
+assert.match(source.architecture, /NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD/);
+assert.match(source.brandStandard, /#EF3340/);
+assert.match(source.brandStandard, /--color-brand/);
+assert.match(source.brandStandard, /既存チームの保存済み種色/);
 
 const iconDirectories = ['custom', 'ui', 'activity', 'family'];
 const iconCount = (await Promise.all(iconDirectories.map(async directory => (
