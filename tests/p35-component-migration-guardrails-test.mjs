@@ -175,7 +175,10 @@ requireAll(source.index, [
     'c-data-list dash-rank-list',
     'c-card--interactive',
     'c-metric-grid--inline',
-    'c-metric__value'
+    'c-metric__value',
+    'id="season-detail-types-list"',
+    'id="season-detail-years-list"',
+    'c-data-list c-data-list--scrollable'
 ], 'ダッシュボードランキング');
 
 requireAll(source.app, [
@@ -183,6 +186,8 @@ requireAll(source.app, [
     'c-data-list__metric',
     'c-data-list__rank',
     'c-data-list__value--accent',
+    'c-data-list__item--selected',
+    'c-data-list__kind',
     'renderEmptyState\\(\\{ icon:',
     'openPlayerDetail'
 ], 'ダッシュボードランキング生成');

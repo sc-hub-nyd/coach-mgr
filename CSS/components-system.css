@@ -1633,3 +1633,10 @@
 .c-data-list__value--accent {
     color: var(--color-brand);
 }
+
+
+.c-data-list__item--selected {
+    border-color: color-mix(in srgb, var(--color-brand) 46%, var(--color-border));
+    background: var(--color-brand-surface);
+    box-shadow: var(--shadow-neo-pressed);
+}

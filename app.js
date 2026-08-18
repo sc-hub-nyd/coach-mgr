@@ -722,17 +722,16 @@ export function openSeasonRecordModal() {
                 const total = stat.win + stat.loss + stat.draw;
                 const winRate = total > 0 ? Math.round((stat.win / total) * 100) : 0;
                 return `
-                    <div class="u-ext-6" >
-                        <span class="u-ext-7" >${escapeHtml(type)}</span>
-                        <div class="u-ext-8" >
-                            <span class="u-ext-9" >${stat.win}勝</span>
-                            <span class="u-ext-10" >${stat.loss}敗 ${stat.draw}分</span>
-                            <span class="u-ext-11" >(得失: ${stat.goals}-${stat.concede} / 勝率: ${winRate}%)</span>
+                    <div class="c-data-list__item">
+                        <div class="c-data-list__header">
+                            <span class="c-data-list__identity">${escapeHtml(type)}</span>
+                            <span class="c-data-list__value-group"><strong class="c-data-list__value c-data-list__value--accent">${stat.win}勝</strong><span>${stat.loss}敗 ${stat.draw}分</span></span>
                         </div>
+                        <span class="c-data-list__meta">得失: ${stat.goals}-${stat.concede} / 勝率: ${winRate}%</span>
                     </div>
                 `;
             }).join('')
-            : '<div class="u-ext-12" >今年度の試合データがありません。</div>';
+            : renderEmptyState({ icon: 'fa-chart-pie', title: '今年度の試合データがありません。', compact: true });
     }
 
     // ── 2. 過去年度の成績推移 ──
@@ -764,17 +763,16 @@ export function openSeasonRecordModal() {
                 const winRate = total > 0 ? Math.round((stat.win / total) * 100) : 0;
                 const isCurrent = parseInt(year, 10) === currentNendo;
                 return `
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:${isCurrent ? 'rgba(242,57,50,0.04)' : 'rgba(0,0,0,0.01)'}; padding:0.4rem 0.6rem; border-radius:6px; font-size:0.8rem; border:1px solid ${isCurrent ? 'var(--primary)' : 'var(--surface-border)'};">
-                        <span style="font-weight:700; color:${isCurrent ? 'var(--primary)' : 'var(--text-primary)'};">${year}年度 ${isCurrent ? '<span class="u-ext-13" >(今年度)</span>' : ''}</span>
-                        <div class="u-ext-8" >
-                            <span style="font-weight:600; color:${isCurrent ? 'var(--primary)' : 'var(--text-primary)'};">${stat.win}勝</span>
-                            <span class="u-ext-10" >${stat.loss}敗 ${stat.draw}分</span>
-                            <span class="u-ext-11" >(得失: ${stat.goals}-${stat.concede} / 勝率: ${winRate}%)</span>
+                    <div class="c-data-list__item${isCurrent ? ' c-data-list__item--selected' : ''}">
+                        <div class="c-data-list__header">
+                            <span class="c-data-list__identity">${year}年度${isCurrent ? ' <span class="c-data-list__kind">今年度</span>' : ''}</span>
+                            <span class="c-data-list__value-group"><strong class="c-data-list__value${isCurrent ? ' c-data-list__value--accent' : ''}">${stat.win}勝</strong><span>${stat.loss}敗 ${stat.draw}分</span></span>
                         </div>
+                        <span class="c-data-list__meta">得失: ${stat.goals}-${stat.concede} / 勝率: ${winRate}%</span>
                     </div>
                 `;
             }).join('')
-            : '<div class="u-ext-12" >試合履歴データがありません。</div>';
+            : renderEmptyState({ icon: 'fa-history', title: '試合履歴データがありません。', compact: true });
     }
 
     openModal('modal-season-record-detail');

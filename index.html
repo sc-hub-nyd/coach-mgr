@@ -2449,8 +2449,8 @@
                         style="font-size:0.85rem; color:var(--text-secondary); margin:0 0 0.6rem 0; font-weight:600; border-bottom:1px solid var(--surface-border); padding-bottom:0.3rem;">
                         <i class="fa-solid fa-filter"></i> 試合種別ごとの成績 (今年度)
                     </h4>
-                    <div id="season-detail-types-list"
-                        style="display:flex; flex-direction:column; gap:0.5rem; max-height:180px; overflow-y:auto;">
+                    <div id="season-detail-types-list" class="c-data-list c-data-list--scrollable"
+                        aria-live="polite">
                         <!-- 種別ごとの勝敗情報 -->
                     </div>
                 </div>
@@ -2461,8 +2461,8 @@
                         style="font-size:0.85rem; color:var(--text-secondary); margin:0 0 0.6rem 0; font-weight:600; border-bottom:1px solid var(--surface-border); padding-bottom:0.3rem;">
                         <i class="fa-solid fa-history"></i> 年度別の成績推移
                     </h4>
-                    <div id="season-detail-years-list"
-                        style="display:flex; flex-direction:column; gap:0.5rem; max-height:180px; overflow-y:auto;">
+                    <div id="season-detail-years-list" class="c-data-list c-data-list--scrollable"
+                        aria-live="polite">
                         <!-- 年度ごとの勝敗推移 -->
                     </div>
                 </div>

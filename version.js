@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.2';
+export const APP_VERSION = 'v1.30.3';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.3',
+        date: '2026-08-18',
+        title: '年度成績モーダルを標準リスト化',
+        features: [
+            '試合種別・年度別成績の行をc-data-listへ移行',
+            '当年度の強調、勝敗・得失・勝率、空状態を共通部品で表現',
+            '既存の集計ロジック、一覧ID、モーダル導線を維持',
+            'P33、P34、P35、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.30.2',
         date: '2026-08-18',
