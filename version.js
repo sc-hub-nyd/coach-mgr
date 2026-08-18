@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.1';
+export const APP_VERSION = 'v1.30.2';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.2',
+        date: '2026-08-18',
+        title: 'ダッシュボードランキングを標準リスト化',
+        features: [
+            '得点・アシスト・出席率のランキング行をc-data-listへ移行',
+            '順位、選手識別、数値強調、空状態を共通部品の契約へ統一',
+            '選手詳細への遷移と既存ランキングIDを維持',
+            'P33、P34、P35、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.30.1',
         date: '2026-08-18',

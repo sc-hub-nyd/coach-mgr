@@ -479,17 +479,15 @@ export function openLeaderRankingModal(type = 'all') {
         .filter(x => x.p)
         .sort((a, b) => b.count - a.count || ((parseInt(a.p.number, 10) || 0) - (parseInt(b.p.number, 10) || 0)));
 
-    const renderRankingItem = (item, idx, unit = '') => {
+    const renderRankingItem = (item, idx, value = item.count, unit = '', accent = false) => {
         const numStr = item.p.number ? `#${item.p.number}` : '';
         return `
-            <div class="u-ext-1" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
-                <span class="u-ext-2">${idx + 1}.</span>
-                <span class="u-ext-3">
-                    <span class="rank-player-num">${numStr}</span>
-                    <span class="rank-player-name">${escapeHtml(item.p.name)}</span>
-                    <span class="rank-player-count">(${item.count}${unit})</span>
+            <button type="button" class="c-data-list__item c-data-list__item--button dash-ranking-item" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
+                <span class="c-data-list__header">
+                    <span class="c-data-list__identity"><span class="c-data-list__rank">${idx + 1}.</span><span class="rank-player-num">${numStr}</span> <span class="rank-player-name">${escapeHtml(item.p.name)}</span></span>
+                    <span class="c-data-list__value-group"><strong class="c-data-list__value${accent ? ' c-data-list__value--accent' : ''}">${value}${unit}</strong></span>
                 </span>
-            </div>
+            </button>
         `;
     };
 
@@ -573,31 +571,22 @@ export function openLeaderRankingModal(type = 'all') {
     const elRankingScorers = document.getElementById('ranking-scorers-list');
     if (elRankingScorers) {
         elRankingScorers.innerHTML = allScorers.length > 0
-            ? allScorers.map((item, idx) => renderRankingItem(item, idx, '')).join('')
-            : '<div class="u-ext-4">得点記録がありません。</div>';
+            ? allScorers.map((item, idx) => renderRankingItem(item, idx, item.count)).join('')
+            : renderEmptyState({ icon: 'fa-futbol', title: '得点記録がありません。', compact: true });
     }
 
     const elRankingAssists = document.getElementById('ranking-assists-list');
     if (elRankingAssists) {
         elRankingAssists.innerHTML = allAssists.length > 0
-            ? allAssists.map((item, idx) => renderRankingItem(item, idx, '')).join('')
-            : '<div class="u-ext-4">アシスト記録がありません。</div>';
+            ? allAssists.map((item, idx) => renderRankingItem(item, idx, item.count)).join('')
+            : renderEmptyState({ icon: 'fa-shoe-prints', title: 'アシスト記録がありません。', compact: true });
     }
 
     const elRankingAttendance = document.getElementById('ranking-attendance-list');
     if (elRankingAttendance) {
         elRankingAttendance.innerHTML = totalRecentEvents > 0 && allAttendance.some(item => item.count > 0)
-            ? allAttendance.map((item, idx) => `
-                <div class="u-ext-1" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
-                    <span class="u-ext-2">${idx + 1}.</span>
-                    <span class="u-ext-3">
-                        <span class="rank-player-num">${item.p.number ? '#' + item.p.number : ''}</span>
-                        <span class="rank-player-name">${escapeHtml(item.p.name)}</span>
-                        <span class="rank-player-count" style="color:var(--primary); font-weight:700;">${item.pct}%</span>
-                    </span>
-                </div>
-            `).join('')
-            : '<div class="u-ext-4">過去1ヶ月の出席データがありません。</div>';
+            ? allAttendance.map((item, idx) => renderRankingItem(item, idx, item.pct, '%', true)).join('')
+            : renderEmptyState({ icon: 'fa-users', title: '過去1か月の出席データがありません。', compact: true });
     }
 
     const elRankingPlaytime = document.getElementById('ranking-playtime-list');

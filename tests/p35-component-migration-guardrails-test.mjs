@@ -167,6 +167,11 @@ requireAll(source.index, [
     'id="dash-top-assists"',
     'id="dash-attendance-rank"',
     'id="dash-playtime-content"',
+    'id="ranking-scorers-list"',
+    'id="ranking-assists-list"',
+    'id="ranking-attendance-list"',
+    'id="ranking-playtime-list"',
+    'c-data-list c-data-list--ranking',
     'c-data-list dash-rank-list',
     'c-card--interactive',
     'c-metric-grid--inline',
@@ -176,6 +181,9 @@ requireAll(source.index, [
 requireAll(source.app, [
     'c-data-list__item',
     'c-data-list__metric',
+    'c-data-list__rank',
+    'c-data-list__value--accent',
+    'renderEmptyState\\(\\{ icon:',
     'openPlayerDetail'
 ], 'ダッシュボードランキング生成');
 
