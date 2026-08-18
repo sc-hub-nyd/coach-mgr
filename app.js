@@ -593,17 +593,15 @@ export function openLeaderRankingModal(type = 'all') {
     if (elRankingPlaytime) {
         elRankingPlaytime.innerHTML = totalPeriods > 0
             ? allPlaytimes.map((item, idx) => `
-                <div class="u-ext-1" style="flex-direction:column; align-items:stretch; gap:0.25rem; padding:0.4rem 0.6rem;" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
-                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;">
-                        <span><strong style="color:var(--text-secondary); margin-right:0.3rem;">${idx + 1}.</strong> <strong>${item.p.number ? '#' + item.p.number : ''} ${escapeHtml(item.p.name)}</strong></span>
-                        <span style="font-weight:700; color:${item.pct < 30 ? 'var(--primary)' : 'var(--text-primary)'};">${item.pct}% <span style="font-size:0.72rem; color:var(--text-secondary); font-weight:normal;">(${item.count}P / ${totalPeriods}P)</span></span>
-                    </div>
-                    <div class="dash-playtime-bar-outer" style="height:5px;">
-                        <div class="dash-playtime-bar-inner" style="width: ${item.pct}%; background:${item.pct < 30 ? 'var(--primary)' : '#3b82f6'};"></div>
-                    </div>
-                </div>
+                <button type="button" class="c-data-list__item c-data-list__item--button dash-ranking-item" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
+                    <span class="c-data-list__header">
+                        <span class="c-data-list__identity"><span class="c-data-list__rank">${idx + 1}.</span>${item.p.number ? '#' + item.p.number : ''} ${escapeHtml(item.p.name)}</span>
+                        <span class="c-data-list__value-group"><strong class="c-data-list__value${item.pct < 30 ? ' c-data-list__value--accent' : ''}">${item.pct}%</strong><span>(${item.count}P / ${totalPeriods}P)</span></span>
+                    </span>
+                    <span class="c-progress-bar" aria-hidden="true"><span class="c-progress-bar__indicator${item.pct < 30 ? ' c-progress-bar__indicator--attention' : ''}" style="width:${item.pct}%"></span></span>
+                </button>
             `).join('')
-            : '<div class="u-ext-4">直近5試合のピリオド記録がありません。</div>';
+            : renderEmptyState({ icon: 'fa-stopwatch', title: '直近5試合のピリオド記録がありません。', compact: true });
     }
 
     // 表示ターゲットに応じた表示切り替え ＆ 縦並び2列（マルチカラム）化

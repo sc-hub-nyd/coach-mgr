@@ -1704,3 +1704,25 @@
     font-size: var(--text-meta-size);
     line-height: var(--text-meta-leading);
 }
+
+
+.c-progress-bar {
+    display: block;
+    inline-size: 100%;
+    block-size: 0.375rem;
+    overflow: clip;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-selected);
+    box-shadow: var(--shadow-neo-pressed);
+}
+
+.c-progress-bar__indicator {
+    display: block;
+    block-size: 100%;
+    border-radius: inherit;
+    background: var(--color-brand);
+}
+
+.c-progress-bar__indicator--attention {
+    background: var(--color-warning);
+}

@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.4';
+export const APP_VERSION = 'v1.30.5';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.5',
+        date: '2026-08-18',
+        title: '出場時間ランキングを標準リスト化',
+        features: [
+            '出場時間・出場率のランキング行をc-data-listへ移行',
+            '動的な割合バーをc-progress-barへ統一',
+            '低い出場率の注意表示、選手詳細遷移、空状態を維持',
+            'P33、P34、P35、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.30.4',
         date: '2026-08-18',

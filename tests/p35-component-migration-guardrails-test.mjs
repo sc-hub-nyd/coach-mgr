@@ -189,6 +189,8 @@ requireAll(source.app, [
     'c-data-list__metric',
     'c-data-list__rank',
     'c-data-list__value--accent',
+    'c-progress-bar',
+    'c-progress-bar__indicator--attention',
     'c-data-list__item--selected',
     'c-data-list__kind',
     'c-focus-summary',
