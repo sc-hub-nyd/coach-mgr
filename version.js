@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.28.9';
+export const APP_VERSION = 'v1.29.0';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.29.0',
+        date: '2026-08-18',
+        title: '波6：監査済みレガシーCSS削除を開始',
+        features: [
+            '非CSS参照が0件と確認したu-ext-27〜37、u-ext-58〜60の旧規則を削除',
+            '使用箇所を再計測する監査スクリプトを追加し、推測による一括削除を防止',
+            '通常一覧・招集表示はc-data-listとc-roster-rowへの移行済み構造を維持',
+            'P33、P34、P35、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.28.9',
         date: '2026-08-18',

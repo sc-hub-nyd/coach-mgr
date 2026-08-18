@@ -1337,37 +1337,9 @@ input[type="checkbox"] {
     font-size: 0.75rem;
 }
 
-.u-ext-27 {
-    font-weight: 600;
-    width: 5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.u-ext-28 {
-    font-size: 0.68rem;
-    font-weight: normal;
-}
-
-.u-ext-29 {
-    padding: 0.5rem 0;
-}
-
 .u-ext-30 {
     font-size: 0.7rem;
     color: var(--text-secondary);
-}
-
-.u-ext-31 {
-    padding: 0.1rem 0.3rem;
-    font-size: 0.62rem;
-    height: 20px;
-}
-
-.u-ext-32 {
-    text-align: center;
-    padding: 1rem 0;
 }
 
 .u-ext-33 {
@@ -1391,12 +1363,6 @@ input[type="checkbox"] {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.u-ext-37 {
-    color: #fff;
-    text-align: center;
-    padding: 2rem;
 }
 
 .u-ext-38 {
@@ -1544,33 +1510,6 @@ input[type="checkbox"] {
     color: var(--text-secondary);
     font-style: italic;
     padding: 0.2rem 0;
-}
-
-.u-ext-58 {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.78rem;
-    cursor: pointer;
-    background: #fff;
-    padding: 0.3rem 0.5rem;
-    border-radius: 6px;
-    border: 1px solid var(--surface-border);
-    user-select: none;
-    margin: 0;
-}
-
-.u-ext-59 {
-    margin: 0;
-    width: 14px;
-    height: 14px;
-    cursor: pointer;
-}
-
-.u-ext-60 {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .u-ext-61 {
