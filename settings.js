@@ -8,6 +8,7 @@ import { ensureParentShareSettings, rotateParentShareLink, buildPendingRsvpDiges
 import { archiveSeason, createSeason, createTeam, ensureWorkspaceState, getActiveSeason, getActiveTeam, switchWorkspace } from './workspace-service.js';
 import { buildSeasonReport, buildSeasonReportCsv, buildSeasonReportPrintHtml } from './season-report-service.js';
 import { loadUiPreferences, saveUiPreferences, applyUiPreferences } from './experience-service.js';
+import { applyTeamTheme, buildTeamTheme, normalizeHex, normalizeTeamTheme } from './color-theme-service.js';
 
 import { saveData, syncPushGasCloud, syncPullGasCloud, restoreCloudRecovery, updateRoleUI, openModal, loadData } from './app-context.js';
 
@@ -129,7 +130,7 @@ export function initData() {
                 await savePersistedSnapshot(parsed, { encryptData });
 
                 await loadData();
-                document.documentElement.style.setProperty('--primary', state.teamInfo.color);
+                applyCurrentTeamTheme();
                 const sidebarTitle = document.querySelector('.sidebar-header h2');
                 if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name)}`;
                 showToast('データをインポートしました。ページを再読み込みします...');
@@ -177,15 +178,38 @@ export function initData() {
     }
 }
 
-export function applyThemePreset(preset = 'field-green') {
-    const body = document.body;
-        body.classList.remove('theme-midnight', 'theme-high-visibility', 'theme-ocean-blue', 'theme-redline', 'theme-warm-notebook');
-    if (preset === 'midnight') body.classList.add('theme-midnight');
-    if (preset === 'high-visibility') body.classList.add('theme-high-visibility');
-    if (preset === 'ocean-blue') body.classList.add('theme-ocean-blue');
-    if (preset === 'redline') body.classList.add('theme-redline');
-    if (preset === 'warm-notebook') body.classList.add('theme-warm-notebook');
-    localStorage.setItem('coachMgrThemePreset', preset);
+export function applyCurrentTeamTheme({ colorMode = loadUiPreferences().colorMode } = {}) {
+    if (!state.teamInfo || typeof state.teamInfo !== 'object') state.teamInfo = {};
+    const theme = normalizeTeamTheme(state.teamInfo);
+    state.teamInfo.theme = theme;
+    // Keep color as a backward-compatible mirror for existing exports and workspace records.
+    state.teamInfo.color = theme.seed;
+    return applyTeamTheme({ teamInfo: state.teamInfo, colorMode });
+}
+
+function renderThemePreview(seed) {
+    const preview = document.getElementById('team-theme-preview');
+    const hex = document.getElementById('team-theme-hex');
+    const status = document.getElementById('team-theme-contrast-status');
+    const normalizedSeed = normalizeHex(seed);
+    const palettes = ['light', 'dark'].map(mode => buildTeamTheme(normalizedSeed, mode));
+    if (hex) hex.textContent = normalizedSeed.toUpperCase();
+    if (preview) {
+        preview.innerHTML = palettes.map(palette => `
+            <section class="c-theme-preview__mode" style="--preview-canvas:${palette.canvas};--preview-surface:${palette.surface};--preview-text:${palette.text};--preview-muted:${palette.textMuted};--preview-border:${palette.border};--preview-primary:${palette.primary};--preview-on-primary:${palette.onPrimary};">
+                <header><span>${palette.mode === 'dark' ? 'ダーク' : 'ライト'}</span><span>${palette.mode === 'dark' ? '夜間の表示' : '日中の表示'}</span></header>
+                <div class="c-theme-preview__surface"><strong>練習の準備を確認</strong><span class="c-theme-preview__muted">文字・境界・選択状態を役割ごとに調整します。</span><button type="button" class="c-theme-preview__button" tabindex="-1">主操作</button></div>
+            </section>`).join('');
+    }
+    if (status) {
+        const checks = palettes.flatMap(palette => palette.validation.checks);
+        const passed = checks.every(check => check.ratio >= check.minimum);
+        status.classList.toggle('is-pass', passed);
+        status.classList.toggle('is-fallback', !passed);
+        status.innerHTML = passed
+            ? '<i class="fa-solid fa-shield-halved" aria-hidden="true"></i> ライト／ダークの必須文字・UIコントラストを確認済みです。'
+            : '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 安全な標準トーンで表示します。';
+    }
 }
 
 export function initSettings() {
@@ -211,10 +235,12 @@ export function initSettings() {
 
     // P32: 表示設定は端末にだけ保存し、チームの共有データや他の利用者の画面へ影響させない。
     const uiPreferences = loadUiPreferences();
+    const colorMode = document.getElementById('ui-color-mode');
     const fontScale = document.getElementById('ui-font-scale');
     const preferredHand = document.getElementById('ui-preferred-hand');
     const reduceMotion = document.getElementById('ui-reduce-motion');
     const compactMode = document.getElementById('ui-compact-mode');
+    if (colorMode) colorMode.value = uiPreferences.colorMode;
     if (fontScale) fontScale.value = uiPreferences.fontScale;
     if (preferredHand) preferredHand.value = uiPreferences.preferredHand;
     if (reduceMotion) reduceMotion.checked = Boolean(uiPreferences.reduceMotion);
@@ -222,12 +248,15 @@ export function initSettings() {
     const saveUiPreferencesButton = document.getElementById('btn-save-ui-preferences');
     if (saveUiPreferencesButton) saveUiPreferencesButton.onclick = () => {
         const saved = saveUiPreferences({
+            colorMode: colorMode?.value === 'dark' ? 'dark' : 'light',
             fontScale: fontScale?.value || 'normal',
             preferredHand: preferredHand?.value || 'right',
             reduceMotion: Boolean(reduceMotion?.checked),
             compactMode: Boolean(compactMode?.checked)
         });
         applyUiPreferences(saved);
+        applyCurrentTeamTheme({ colorMode: saved.colorMode });
+        window.dispatchEvent(new CustomEvent('coachmgr:color-mode-changed', { detail: { colorMode: saved.colorMode } }));
         showToast('この端末の表示・操作設定を保存しました');
     };
 
@@ -372,15 +401,13 @@ export function initSettings() {
     const teamNameInput = document.getElementById('team-info-name');
     const teamColorInput = document.getElementById('team-info-color');
     const teamPasscodeInput = document.getElementById('team-info-passcode');
-    const themePresetInput = document.getElementById('theme-preset');
 
     if (teamNameInput && teamColorInput) {
+        const currentTheme = normalizeTeamTheme(state.teamInfo);
         teamNameInput.value = state.teamInfo.name;
-        teamColorInput.value = state.teamInfo.color || '#13795b';
-        if (themePresetInput) {
-            themePresetInput.value = localStorage.getItem('coachMgrThemePreset') || 'field-green';
-            themePresetInput.onchange = () => applyThemePreset(themePresetInput.value);
-        }
+        teamColorInput.value = currentTheme.seed;
+        renderThemePreview(currentTheme.seed);
+        teamColorInput.oninput = () => renderThemePreview(teamColorInput.value);
         if (teamPasscodeInput) teamPasscodeInput.value = state.teamInfo.passcode || '7064';
 
         const formTeamInfo = document.getElementById('form-team-info');
@@ -388,18 +415,20 @@ export function initSettings() {
             formTeamInfo.onsubmit = (e) => {
                 e.preventDefault();
                 state.teamInfo.name = document.getElementById('team-info-name').value;
-                state.teamInfo.color = document.getElementById('team-info-color').value;
+                state.teamInfo.theme = normalizeTeamTheme({ color: document.getElementById('team-info-color').value });
+                state.teamInfo.color = state.teamInfo.theme.seed;
                 const activeTeam = getActiveTeam(state);
                 activeTeam.name = state.teamInfo.name;
                 activeTeam.color = state.teamInfo.color;
+                activeTeam.theme = { ...state.teamInfo.theme };
                 const newPasscode = document.getElementById('team-info-passcode') ? document.getElementById('team-info-passcode').value.trim() : '';
                 if (newPasscode) {
                     state.teamInfo.passcode = newPasscode;
                 }
                 saveData();
-                showToast('チーム基本情報を保存しました');
-                applyThemePreset(themePresetInput ? themePresetInput.value : (localStorage.getItem('coachMgrThemePreset') || 'field-green'));
-                document.documentElement.style.setProperty('--primary', state.teamInfo.color || '#13795b');
+                applyCurrentTeamTheme();
+                renderThemePreview(state.teamInfo.theme.seed);
+                showToast('チームテーマを保存しました');
                 const sidebarTitle = document.querySelector('.sidebar-header h2');
                 if (sidebarTitle) {
                     const icon = document.createElement('i');
@@ -449,6 +478,7 @@ export function initSettings() {
             switchWorkspace(state, workspaceTeamSelect.value, workspaceSeasonSelect.value);
             await saveData();
             updateWorkspaceSidebar();
+            applyCurrentTeamTheme();
             showToast(`${getActiveTeam(state).name} / ${getActiveSeason(state).name} に切り替えました`);
             if (typeof window.navigate === 'function') window.navigate('dashboard');
         } catch (error) { showToast(error?.message || 'チーム・シーズンを切り替えられませんでした'); }
@@ -462,6 +492,7 @@ export function initSettings() {
             createSeason(state, { name, copyPlayers: true, copyTeamSetup: true });
             await saveData();
             updateWorkspaceSidebar();
+            applyCurrentTeamTheme();
             renderWorkspaceManagement();
             showToast('新しいシーズンを作成して切り替えました');
             if (typeof window.navigate === 'function') window.navigate('dashboard');
@@ -472,9 +503,10 @@ export function initSettings() {
         const name = window.prompt('新しいチーム名を入力してください。新しいチームは空の記録から始まります。', '新しいチーム');
         if (name === null) return;
         try {
-            createTeam(state, { name, color: state.teamInfo?.color || '#13795b' });
+            createTeam(state, { name, color: state.teamInfo?.theme?.seed || state.teamInfo?.color || '#13795b' });
             await saveData();
             updateWorkspaceSidebar();
+            applyCurrentTeamTheme();
             renderWorkspaceManagement();
             showToast('新しいチームを作成して切り替えました');
             if (typeof window.navigate === 'function') window.navigate('dashboard');
@@ -492,6 +524,7 @@ export function initSettings() {
             if (alternative) switchWorkspace(state, team.id, alternative.id);
             await saveData();
             updateWorkspaceSidebar();
+            applyCurrentTeamTheme();
             renderWorkspaceManagement();
             showToast('シーズンのアーカイブ状態を更新しました');
         } catch (error) { showToast(error?.message || 'アーカイブ状態を更新できませんでした'); }

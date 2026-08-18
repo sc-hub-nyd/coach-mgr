@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>色名ではなく役割で定義</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #0f172a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding-top: 48px; padding-left: 64px; padding-right: 64px; }
+    .kicker { font-size: 14px; letter-spacing: .12em; color: #0077c7; font-weight: 800; }
+    h1 { margin-top: 10px; font-size: 45px; line-height: 1.15; letter-spacing: -.035em; font-weight: 800; }
+    .lead { margin-top: 18px; font-size: 21px; line-height: 1.5; color: #334155; }
+    .lead strong { color: #0077c7; }
+    .divider { height: 2px; background: #0f172a; margin-top: 24px; }
+    .layout { margin-top: 26px; display: grid; grid-template-columns: 5fr 7fr; gap: 34px; }
+    .flow { border: 2px solid #0f172a; min-height: 410px; display: grid; grid-template-rows: 1fr 36px 1fr 36px 1fr; }
+    .flow-stage { padding: 20px 22px; display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: center; }
+    .flow-stage:nth-child(1) { background: #f8fafc; }
+    .flow-stage:nth-child(3) { background: #e7f3fb; border-top: 2px solid #0f172a; }
+    .flow-stage:nth-child(5) { border-top: 2px solid #0f172a; }
+    .stage-no { font-size: 14px; font-weight: 800; letter-spacing: .08em; color: #64748b; }
+    .stage-title { font-size: 23px; font-weight: 800; line-height: 1.25; }
+    .stage-body { margin-top: 5px; font-size: 15px; line-height: 1.45; color: #475569; }
+    .arrow { background: #0f172a; color: #ffffff; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 800; }
+    .tokens { border-top: 2px solid #0f172a; }
+    .token { min-height: 72px; border-bottom: 2px solid #cbd5e1; display: grid; grid-template-columns: 82px 200px 1fr; align-items: center; gap: 16px; }
+    .swatch { width: 62px; height: 38px; border: 2px solid #0f172a; }
+    .token-name { font-size: 18px; font-weight: 800; }
+    .token-code { margin-top: 4px; font-size: 13px; color: #64748b; font-family: 'SFMono-Regular', Consolas, monospace; }
+    .usage { font-size: 16px; color: #334155; line-height: 1.35; }
+    .canvas { background: #eef2f7; }
+    .text { background: #0f172a; }
+    .action { background: #0077c7; border-color: #0077c7; }
+    .status { background: linear-gradient(90deg, #16a34a 0 25%, #f59e0b 25% 50%, #dc2626 50% 75%, #0284c7 75%); }
+    .focus { background: #fde047; }
+    .note { margin-top: 16px; padding-top: 14px; border-top: 2px solid #0f172a; display: flex; justify-content: space-between; gap: 24px; font-size: 14px; color: #475569; line-height: 1.45; }
+    .note strong { color: #0f172a; }
+    .source { font-size: 12px; color: #64748b; white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="kicker">04 / COLOR SYSTEM</div>
+      <h1>色名ではなく、役割で定義する</h1>
+      <p class="lead">部品はテーマ固有色を直接参照せず、<strong>意味を持つカラーAPI</strong>だけを参照する。</p>
+      <div class="divider"></div>
+      <div class="layout">
+        <section class="flow" aria-label="カラートークンの参照フロー">
+          <div class="flow-stage">
+            <div class="stage-no">01<br>THEME</div>
+            <div><div class="stage-title">チームテーマ</div><p class="stage-body">Field Green、Midnight Pitch、High Visibilityなどの基礎色を定義する。</p></div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="flow-stage">
+            <div class="stage-no">02<br>SEMANTIC</div>
+            <div><div class="stage-title">意味トークン</div><p class="stage-body">`--color-action`、`--color-surface`のように用途を抽象化する。</p></div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="flow-stage">
+            <div class="stage-no">03<br>COMPONENT</div>
+            <div><div class="stage-title">共通部品</div><p class="stage-body">フォーム、名簿、カード、モーダルが同じ意味の色を再利用する。</p></div>
+          </div>
+        </section>
+        <section class="tokens" aria-label="CoachMgrの主要カラートークン">
+          <div class="token"><span class="swatch canvas"></span><div><div class="token-name">表面</div><div class="token-code">canvas / surface / border</div></div><div class="usage">画面背景、カード、モーダル、区切り。情報階層を色数ではなく明度差でつくる。</div></div>
+          <div class="token"><span class="swatch text"></span><div><div class="token-name">文字</div><div class="token-code">text / text-muted</div></div><div class="usage">本文、補足、メタ情報。文字色と背景色を必ず対として指定する。</div></div>
+          <div class="token"><span class="swatch action"></span><div><div class="token-name">主操作</div><div class="token-code">action / action-hover</div></div><div class="usage">保存、追加、切替。重要な動線へ限定し、過度なアクセント使用を避ける。</div></div>
+          <div class="token"><span class="swatch status"></span><div><div class="token-name">状態</div><div class="token-code">success / warning / danger / info</div></div><div class="usage">出欠、同期、警告、通知。色だけでなくアイコン・状態テキストを併用する。</div></div>
+          <div class="token"><span class="swatch focus"></span><div><div class="token-name">視認性</div><div class="token-code">focus / shadow-focus</div></div><div class="usage">キーボードフォーカス。テーマ変更時も一貫して明確な操作位置を示す。</div></div>
+        </section>
+      </div>
+      <div class="note"><div><strong>効用：</strong>テーマ追加は基礎色の差替えだけで完結し、部品の色指定を変更しない。</div><div class="source">参考：デジタル庁DADS [1] ／ SmartHR Design System [2]</div></div>
+    </div>
+  </div>
+</body>
+</html>

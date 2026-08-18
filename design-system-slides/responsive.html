@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>レスポンシブは部品幅で判断</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #0f172a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding-top: 46px; padding-left: 64px; padding-right: 64px; }
+    .kicker { font-size: 14px; font-weight: 800; letter-spacing: .12em; color: #0077c7; }
+    h1 { margin-top: 10px; font-size: 44px; line-height: 1.15; letter-spacing: -.035em; font-weight: 800; }
+    .sub { margin-top: 12px; font-size: 19px; color: #475569; line-height: 1.5; }
+    .rule { margin-top: 22px; height: 2px; background: #0f172a; }
+    .layout { margin-top: 18px; display: grid; grid-template-columns: 7fr 5fr; gap: 34px; }
+    .left-title, .right-title { font-size: 13px; font-weight: 800; letter-spacing: .1em; color: #64748b; border-top: 2px solid #0f172a; padding-top: 10px; }
+    .cards { margin-top: 14px; display: grid; grid-template-columns: 1fr 1.15fr; gap: 10px; }
+    .card-demo { border: 2px solid #0f172a; min-height: 270px; }
+    .card-head { min-height: 52px; padding: 13px 15px; border-bottom: 2px solid #0f172a; display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 800; }
+    .card-head span { color: #64748b; font-size: 12px; letter-spacing: .07em; }
+    .wide .card-head { background: #e7f3fb; }
+    .stats { min-height: 58px; padding: 10px 12px; border-bottom: 2px solid #cbd5e1; display: flex; gap: 7px; }
+    .stat { flex: 1; border: 2px solid #cbd5e1; padding: 6px; color: #475569; font-size: 11px; line-height: 1.2; }
+    .stat strong { display: block; color: #0f172a; font-size: 14px; }
+    .actions { padding-top: 8px; padding-left: 12px; padding-right: 12px; display: grid; gap: 8px; }
+    .narrow .actions { grid-template-columns: 1fr 1fr; }
+    .narrow .share { grid-column: 1 / -1; }
+    .wide .actions { grid-template-columns: 1.4fr 1.2fr .55fr .55fr .7fr; }
+    .action { min-height: 36px; border: 2px solid #0f172a; display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: 800; text-align: center; }
+    .action.primary { background: #0077c7; color: #ffffff; border-color: #0077c7; }
+    .action.soft { background: #f8fafc; }
+    .caption { padding-top: 10px; padding-left: 12px; padding-right: 12px; color: #475569; font-size: 13px; line-height: 1.4; }
+    .condition { margin-top: 20px; border: 2px solid #0077c7; min-height: 72px; padding: 16px; display: grid; grid-template-columns: 94px 1fr; gap: 12px; align-items: center; }
+    .condition strong { color: #0077c7; font-size: 18px; }
+    .condition span { color: #334155; font-size: 15px; line-height: 1.42; }
+    .contracts { margin-top: 14px; border: 2px solid #0f172a; }
+    .contract { min-height: 105px; display: grid; grid-template-columns: 62px 1fr; border-bottom: 2px solid #0f172a; }
+    .contract:last-child { border-bottom: 0; }
+    .contract-no { background: #f8fafc; border-right: 2px solid #0f172a; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; color: #0077c7; }
+    .contract-body { padding: 14px 18px; }
+    .contract-body h2 { font-size: 18px; line-height: 1.2; }
+    .contract-body p { margin-top: 8px; font-size: 14px; line-height: 1.45; color: #475569; }
+    .contract-body code { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 12px; color: #0077c7; }
+    .footer { margin-top: 20px; border-top: 2px solid #0f172a; padding-top: 14px; display: grid; grid-template-columns: 170px 1fr; gap: 18px; }
+    .footer strong { font-size: 16px; color: #0077c7; }
+    .footer p { font-size: 15px; line-height: 1.45; color: #334155; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="kicker">08 / RESPONSIVE CONTRACTS</div>
+      <h1>レスポンシブは「部品幅」で判断</h1>
+      <p class="sub">端末名や画面幅の例外を増やさず、部品が利用できる幅に応じて情報と操作の構造を切り替える。</p>
+      <div class="rule"></div>
+      <div class="layout">
+        <section>
+          <div class="left-title">PRACTICE CARD / CONTAINER QUERY</div>
+          <div class="cards">
+            <div class="card-demo narrow">
+              <div class="card-head">2026-08-09 <span>狭いカード幅</span></div>
+              <div class="stats"><div class="stat"><strong>7名</strong>参加</div><div class="stat"><strong>0名</strong>未回答</div><div class="stat"><strong>7件</strong>メニュー</div></div>
+              <div class="actions"><div class="action primary">＋ メニュー</div><div class="action soft">テンプレート</div><div class="action soft">編集</div><div class="action soft">削除</div><div class="action share">共有</div></div>
+              <div class="caption">操作は2列Gridへ再配置。共有は全幅で独立させ、統計領域と衝突させない。</div>
+            </div>
+            <div class="card-demo wide">
+              <div class="card-head">2026-08-09 <span>広いカード幅</span></div>
+              <div class="stats"><div class="stat"><strong>7名</strong>参加</div><div class="stat"><strong>0名</strong>未回答</div><div class="stat"><strong>0名</strong>欠席</div><div class="stat"><strong>7件</strong>メニュー</div></div>
+              <div class="actions"><div class="action primary">＋ メニュー</div><div class="action soft">テンプレート</div><div class="action soft">編集</div><div class="action soft">削除</div><div class="action share">共有</div></div>
+              <div class="caption">同じ部品でも、利用できる幅があれば操作を横一列へ戻す。</div>
+            </div>
+          </div>
+          <div class="condition"><strong>KEY RULE</strong><span><code>c-practice-card</code> の幅で切替えるため、2列レイアウト内の狭いカードにも、単独表示にも同じ契約が働く。</span></div>
+        </section>
+        <aside>
+          <div class="right-title">THREE COMPONENT CONTRACTS</div>
+          <div class="contracts">
+            <div class="contract"><div class="contract-no">01</div><div class="contract-body"><h2>名簿は「次行」へ逃がす</h2><p>チェック、選手名、出欠を別スロットに分離。狭幅では選手名を折返し、状態セレクトを次行へ移す。<br><code>c-roster-row</code></p></div></div>
+            <div class="contract"><div class="contract-no">02</div><div class="contract-body"><h2>モーダルは本文だけをスクロール</h2><p>ヘッダーと保存・キャンセルは固定し、長い名簿でも操作を隠さない。<br><code>c-modal__body / c-modal__footer</code></p></div></div>
+            <div class="contract"><div class="contract-no">03</div><div class="contract-body"><h2>安全領域を共通レイアウト化</h2><p>ボトムナビと端末のsafe-areaを一覧末尾の余白へ反映し、最後の操作を覆わない。<br><code>--bottom-nav-reserve</code></p></div></div>
+          </div>
+        </aside>
+      </div>
+      <div class="footer"><strong>RESULT</strong><p>「小さい画面を縮小する」のではなく、部品の情報優先順位を保ったまま、必要な場所だけ構造を再配置する。</p></div>
+    </div>
+  </div>
+</body>
+</html>

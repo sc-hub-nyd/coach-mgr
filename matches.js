@@ -1280,7 +1280,7 @@ export function renderMatchScoreHeaderBadge(m) {
     const status = getMatchStatus(m);
     let badgeHtml = '';
     if (status === 'win') {
-        badgeHtml = '<span class="badge" style="background:var(--primary); color:#fff; font-size:0.75rem; padding:0.2rem 0.5rem; font-weight:700; border-radius:4px;"><i class="fa-solid fa-trophy"></i> WIN</span>';
+        badgeHtml = '<span class="badge" style="background:var(--primary); color:var(--color-text-on-action); font-size:0.75rem; padding:0.2rem 0.5rem; font-weight:700; border-radius:4px;"><i class="fa-solid fa-trophy"></i> WIN</span>';
     } else if (status === 'loss') {
         badgeHtml = '<span class="badge" style="background:#64748b; color:#fff; font-size:0.75rem; padding:0.2rem 0.5rem; font-weight:700; border-radius:4px;"><i class="fa-solid fa-xmark"></i> LOSE</span>';
     } else if (status === 'draw') {
@@ -1673,7 +1673,7 @@ function renderPeriodGrid(m) {
             : '<div class="u-ext-64" >記録なし</div>';
 
         const systemBadge = isPkPeriod
-            ? `<span class="badge" style="background:var(--primary); color:#fff;">PK戦 (キッカー順)</span>`
+            ? `<span class="badge" style="background:var(--primary); color:var(--color-text-on-action);">PK戦 (キッカー順)</span>`
             : `<span class="u-ext-71 badge">陣形: ${escapeHtml(f.system || '未設定')}</span>`;
 
         // ★【追加】途中交代（OUT ➔ IN）の表示用HTML生成
@@ -1915,7 +1915,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     <div class="side-info-card">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
                             <span class="side-info-label" style="margin:0;"><i class="fa-solid fa-bullseye"></i> PKキッカー記録</span>
-                            <span id="side-pk-score-badge" class="badge" style="background:var(--primary); color:#fff; font-size:0.75rem;">PK 0 - 0</span>
+                            <span id="side-pk-score-badge" class="badge" style="background:var(--primary); color:var(--color-text-on-action); font-size:0.75rem;">PK 0 - 0</span>
                         </div>
                         <div id="side-pk-rows-container" style="max-height:220px; overflow-y:auto; margin-bottom:0.4rem;"></div>
                         <button type="button" class="btn btn-secondary btn-xs" id="btn-side-add-pk" style="width:100%;">

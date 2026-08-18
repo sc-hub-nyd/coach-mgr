@@ -54,21 +54,24 @@ CSSクラスは、役割を先頭辞で表す。IDはJavaScriptのイベント�
 
 ## カラートークン
 
-テーマごとの具体色は`base.css`の`--primary`、`--bg-color`、`--text-primary`、`--success`、`--warning`、`--danger`、`--info`に置く。部品は具体色やテーマ名を参照せず、`tokens.css`のセマンティックトークンを使う。
+利用者が選択するのは`teamInfo.theme.seed`だけである。`color-theme-service.js`が種色からlight/dark別の`--theme-*`プリミティブを生成し、`base.css`はレガシー互換の`--primary`などをこの生成値へ接続する。部品は具体色、種色、テーマ名を参照せず、`tokens.css`のセマンティックトークンだけを使う。
 
 | トークン群 | 例 | 用途 |
 |---|---|---|
+| 生成プリミティブ | `--theme-primary`、`--theme-canvas`、`--theme-text` | 種色・端末モードから生成する内部値。部品から参照しない。 |
 | 表面 | `--color-canvas`、`--color-surface`、`--color-surface-subtle` | 画面背景、カード、控えめな情報領域 |
 | 文字・境界 | `--color-text`、`--color-text-muted`、`--color-border` | 本文、補助説明、区切り |
-| 操作・フォーカス | `--color-action`、`--color-action-hover`、`--color-focus` | 主操作、hover、キーボードフォーカス |
-| 状態 | `--color-success`、`--color-warning`、`--color-danger`、`--color-info` | 成功、注意、破壊的操作、情報通知 |
+| 操作・フォーカス | `--color-action`、`--color-text-on-action`、`--color-action-hover`、`--color-focus` | 主操作、その前景、hover、キーボードフォーカス |
+| 状態 | `--color-success`、`--color-warning`、`--color-danger`、`--color-info` | 成功、注意、破壊的操作、情報通知。チーム種色から生成しない。 |
 | 状態背景 | `--color-success-surface`、`--color-warning-surface`、`--color-danger-surface`、`--color-info-surface` | バッジ、インライン通知、淡い状態表示 |
 
-テーマ追加時は基礎変数だけを上書きし、セマンティックトークンを再定義しない。これにより、既存のチームテーマ、屋外高コントラスト、ユーザー選択のチームカラーを維持する。
+チーム種色とカラーモードは独立して合成する。チーム種色は共有データ、light/darkは端末ごとの`coachMgrUiPreferences.colorMode`である。黒、白、グレー、黄、蛍光色を含む任意の種色を拒否せず、主操作・前景・ニュートラル境界のトーンを調整する。`--color-text-on-action`を固定白にしてはならない。
+
+高コントラストモードは設けない。通常のlight/dark出力について、本文・補助本文・主操作ラベルは4.5:1以上（実装目標5:1）、意味を持つ境界とフォーカスは3:1以上（実装目標3.5:1）をテストする。状態の意味とチームカラーが衝突しないよう、成功・注意・危険・情報は監査済みの静的ロールを使う。
 
 ## 品質規則
 
-新規CSSはトークンを使用し、`!important`を追加しない。キーボードフォーカスを視認可能に保ち、`prefers-reduced-motion`およびアプリの`data-reduce-motion`を尊重する。レイアウトはモバイルを基準にし、`minmax()`を含むGridまたはFlexboxで伸縮へ対応する。表示幅ではなくカード・フォームなどの親コンテナ幅で構造を変える必要がある場合は、Container Queryを優先する。
+新規CSSはトークンを使用し、`!important`を追加しない。キーボードフォーカスを視認可能に保ち、`prefers-reduced-motion`およびアプリの`data-reduce-motion`を尊重する。レイアウトはモバイルを基準にし、`minmax()`を含むGridまたはFlexboxで伸縮へ対応する。表示幅ではなくカード・フォームなどの親コンテナ幅で構造を変える必要がある場合は、Container Queryを優先する。動的テーマを変更した場合は、代表種色群×light/darkのコントラストテスト、CSS契約テスト、5ビューポートのレスポンシブ検証を全て実行する。
 
 既存のインライン指定は、反復する余白・整列・文字役割から移行する。一回限りの座標、計算されたサイズ、JavaScriptが動的に更新する見た目は、動作を確認した上で次の移行単位として扱う。
 

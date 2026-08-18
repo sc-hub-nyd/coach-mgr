@@ -1,23 +1,49 @@
 /* css/base.css */
 :root {
-    /* Design: Colors */
-    /* Theme tokens: Field Green (P0 default) */
-    --primary: #13795b;
-    --primary-hover: #095c43;
-    --primary-soft: #ddf3e9;
-    --accent: #f0c75e;
-    --bg-color: #f3f7f4;
-    --surface-color: rgba(255, 255, 255, 0.9);
-    --surface-border: rgba(22, 35, 30, 0.10);
-    --text-primary: #16231e;
-    --text-secondary: #60736a;
-    --card-bg: #ffffff;
-    --success: #167c5a;
-    --warning: #a56a00;
-    --danger: #b42318;
-    --danger-hover: #8f1d14;
-    --info: #1769aa;
-    --focus-ring: #0b5fff;
+    /* Dynamic theme primitive API. color-theme-service.js sets --theme-* at runtime. */
+    --theme-primary: #13795b;
+    --theme-primary-hover: #095c43;
+    --theme-primary-soft: #ddf3e9;
+    --theme-on-primary: #ffffff;
+    --theme-on-primary-hover: #ffffff;
+    --theme-on-primary-soft: #14201c;
+    --theme-companion: #3d7462;
+    --theme-canvas: #f3f7f4;
+    --theme-surface: #ffffff;
+    --theme-surface-raised: #ffffff;
+    --theme-surface-subtle: #eaf1ed;
+    --theme-border: #9ab0a4;
+    --theme-border-strong: #658173;
+    --theme-text: #14201c;
+    --theme-text-muted: #52635a;
+    --theme-focus: #13795b;
+    --theme-success: #167c5a;
+    --theme-warning: #925f00;
+    --theme-danger: #b42318;
+    --theme-danger-hover: #8f1d14;
+    --theme-info: #1769aa;
+    --theme-success-surface: #e6f5ee;
+    --theme-warning-surface: #fff5d9;
+    --theme-danger-surface: #fcebea;
+    --theme-info-surface: #e8f2fc;
+
+    /* Legacy aliases remain until every component consumes semantic tokens. */
+    --primary: var(--theme-primary);
+    --primary-hover: var(--theme-primary-hover);
+    --primary-soft: var(--theme-primary-soft);
+    --accent: var(--theme-companion);
+    --bg-color: var(--theme-canvas);
+    --surface-color: var(--theme-surface-raised);
+    --surface-border: var(--theme-border);
+    --text-primary: var(--theme-text);
+    --text-secondary: var(--theme-text-muted);
+    --card-bg: var(--theme-surface);
+    --success: var(--theme-success);
+    --warning: var(--theme-warning);
+    --danger: var(--theme-danger);
+    --danger-hover: var(--theme-danger-hover);
+    --info: var(--theme-info);
+    --focus-ring: var(--theme-focus);
     --tap-target: 44px;
 
     /* Layout & Design: Variables */
@@ -26,7 +52,10 @@
     --border-radius: 16px;
     --transition: 0.2s cubic-bezier(0.23, 1, 0.32, 1);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
 
+:root[data-color-mode="dark"] {
+    color-scheme: dark;
 }
 
 * {
@@ -78,85 +107,6 @@ a,
     outline-offset: 2px;
 }
 
-body.theme-midnight {
-    --primary: #45c98a;
-    --primary-hover: #6ce0a7;
-    --primary-soft: #1e3a30;
-    --bg-color: #0f1715;
-    --surface-color: rgba(24, 37, 34, 0.96);
-    --surface-border: rgba(255, 255, 255, 0.12);
-    --text-primary: #f4f7f5;
-    --text-secondary: #b3c4bc;
-    --card-bg: #182522;
-    --focus-ring: #f2c14e;
-}
-
-body.theme-high-visibility {
-    --primary: #005a3c;
-    --primary-hover: #003d2a;
-    --primary-soft: #d9f2e7;
-    --bg-color: #ffffff;
-    --surface-color: #ffffff;
-    --surface-border: #9aa9a1;
-    --text-primary: #101820;
-    --text-secondary: #36443d;
-    --card-bg: #ffffff;
-    --focus-ring: #003d2a;
-}
-
-body.theme-ocean-blue {
-    --primary: #155eef;
-    --primary-hover: #0f4bc4;
-    --primary-soft: #e8f0ff;
-    --accent: #58c7d9;
-    --bg-color: #f4f8fc;
-    --surface-color: rgba(255, 255, 255, 0.94);
-    --surface-border: rgba(21, 94, 239, 0.14);
-    --text-primary: #102a43;
-    --text-secondary: #52667a;
-    --card-bg: #ffffff;
-    --success: #16825d;
-    --warning: #a15c00;
-    --danger: #c0342b;
-    --info: #155eef;
-    --focus-ring: #155eef;
-}
-
-body.theme-redline {
-    --primary: #9f2d2d;
-    --primary-hover: #7f2020;
-    --primary-soft: #fbe9e7;
-    --accent: #f0b44d;
-    --bg-color: #faf7f5;
-    --surface-color: rgba(255, 255, 255, 0.95);
-    --surface-border: rgba(92, 55, 45, 0.14);
-    --text-primary: #2e211e;
-    --text-secondary: #725c55;
-    --card-bg: #ffffff;
-    --success: #24724c;
-    --warning: #9b5c00;
-    --danger: #a51d2d;
-    --info: #2563a8;
-    --focus-ring: #7f2020;
-}
-
-body.theme-warm-notebook {
-    --primary: #8a5a2b;
-    --primary-hover: #6f451f;
-    --primary-soft: #f6ead9;
-    --accent: #c98d3d;
-    --bg-color: #fbf7ef;
-    --surface-color: rgba(255, 253, 247, 0.96);
-    --surface-border: rgba(111, 69, 31, 0.16);
-    --text-primary: #34291f;
-    --text-secondary: #776959;
-    --card-bg: #fffdf7;
-    --success: #3a7d44;
-    --warning: #9a6500;
-    --danger: #a83232;
-    --info: #4c6f9e;
-    --focus-ring: #6f451f;
-}
 
 .hidden {
     display: none !important;
@@ -722,97 +672,7 @@ body .library-category-section h3 {
 }
 
 
-/* ==========================================
-   屋外用高コントラストモード（!important 完全不使用）
-   ========================================== */
 
-/* 1. ベース背景と文字色 */
-body.high-contrast-mode,
-body.high-contrast-mode .main-content,
-body.high-contrast-mode .view-container {
-    background-color: #f1f5f9;
-    color: #000000;
-}
-
-/* 2. カード類：白背景 ＋ 濃紺極太枠 ＋ クッキリ影 */
-body.high-contrast-mode .card,
-body.high-contrast-mode .modal,
-body.high-contrast-mode aside#period-info-side-panel {
-    background-color: #ffffff;
-    border: 2px solid #0f172a;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    color: #000000;
-}
-
-/* 3. 薄い文字・サブテキスト・日付の黒文字化 */
-body.high-contrast-mode p,
-body.high-contrast-mode span,
-body.high-contrast-mode label,
-body.high-contrast-mode h1,
-body.high-contrast-mode h2,
-body.high-contrast-mode h3,
-body.high-contrast-mode h4,
-body.high-contrast-mode h5,
-body.high-contrast-mode h6,
-body.high-contrast-mode i,
-body.high-contrast-mode .text-secondary,
-body.high-contrast-mode .match-card-date {
-    color: #0f172a;
-    font-weight: 600;
-}
-
-/* 4. 入力フォーム・セレクトボックス */
-body.high-contrast-mode input.form-control,
-body.high-contrast-mode select.form-control,
-body.high-contrast-mode textarea.form-control,
-body.high-contrast-mode .practice-attendance-details summary {
-    background-color: #ffffff;
-    color: #000000;
-    border: 2px solid #334155;
-    font-weight: bold;
-}
-
-/* 5. プライマリボタン（濃紺×白） */
-body.high-contrast-mode button.btn-primary,
-body.high-contrast-mode #btn-add-match,
-body.high-contrast-mode .btn-open-analysis {
-    background-color: #0f172a;
-    border-color: #0f172a;
-    color: #ffffff;
-    font-weight: bold;
-}
-
-/* 6. セカンダリボタン（白背景＋黒枠） */
-body.high-contrast-mode button.btn-secondary,
-body.high-contrast-mode .btn-detail-match,
-body.high-contrast-mode .btn-filter-detail {
-    background-color: #ffffff;
-    border: 2px solid #0f172a;
-    color: #0f172a;
-    font-weight: bold;
-}
-
-/* 7. ヘッダー・サイドバー */
-body.high-contrast-mode .topbar,
-body.high-contrast-mode header {
-    background-color: #ffffff;
-    border-bottom: 3px solid #0f172a;
-}
-
-body.high-contrast-mode .sidebar {
-    background-color: #ffffff;
-    border-right: 3px solid #0f172a;
-}
-
-body.high-contrast-mode .sidebar .nav-links li.active {
-    background-color: #0f172a;
-    color: #ffffff;
-}
-
-body.high-contrast-mode .sidebar .nav-links li.active i,
-body.high-contrast-mode .sidebar .nav-links li.active span {
-    color: #ffffff;
-}
 
 /* ==========================================
    練習管理：一括アコーディオン＆カードデザイン

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>検出できる設計へ</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #0f172a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding-top: 42px; padding-left: 64px; padding-right: 64px; }
+    .kicker { font-size: 14px; font-weight: 800; letter-spacing: .12em; color: #0077c7; }
+    h1 { margin-top: 10px; font-size: 43px; line-height: 1.15; letter-spacing: -.035em; font-weight: 800; }
+    .sub { margin-top: 12px; max-width: 950px; font-size: 19px; line-height: 1.48; color: #475569; }
+    .rule { margin-top: 21px; height: 2px; background: #0f172a; }
+    .main { margin-top: 24px; display: grid; grid-template-columns: 6.5fr 5.5fr; gap: 30px; }
+    .metrics-label, .loop-label { border-top: 2px solid #0f172a; padding-top: 10px; color: #64748b; font-size: 13px; font-weight: 800; letter-spacing: .1em; }
+    .metrics { margin-top: 13px; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid #0f172a; border-left: 2px solid #0f172a; }
+    .metric { min-height: 172px; border-right: 2px solid #0f172a; border-bottom: 2px solid #0f172a; padding-top: 20px; padding-left: 18px; padding-right: 16px; }
+    .metric:nth-child(2) { background: #e7f3fb; }
+    .metric .value { color: #0077c7; font-size: 42px; line-height: 1; font-weight: 800; letter-spacing: -.04em; }
+    .metric .value small { font-size: 21px; }
+    .metric h2 { margin-top: 13px; font-size: 17px; line-height: 1.22; }
+    .metric p { margin-top: 7px; color: #475569; font-size: 13px; line-height: 1.42; }
+    .quality-note { margin-top: 16px; border: 2px solid #0077c7; min-height: 86px; padding-top: 15px; padding-left: 17px; padding-right: 17px; }
+    .quality-note strong { color: #0077c7; font-size: 14px; letter-spacing: .07em; }
+    .quality-note p { margin-top: 7px; color: #334155; font-size: 15px; line-height: 1.4; font-weight: 700; }
+    .loop-area { margin-top: 13px; border: 2px solid #0f172a; min-height: 270px; display: grid; grid-template-columns: 192px 1fr; }
+    .loop-image { border-right: 2px solid #0f172a; background: #f8fafc; display: flex; justify-content: center; align-items: center; }
+    .loop-image img { width: 172px; height: 222px; object-fit: contain; }
+    .loop-content { padding-top: 18px; padding-left: 20px; padding-right: 18px; }
+    .cycle { display: grid; grid-template-columns: 1fr 30px 1fr; align-items: center; gap: 5px; }
+    .step { min-height: 55px; border: 2px solid #0f172a; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 14px; line-height: 1.25; font-weight: 800; }
+    .step.primary { background: #0077c7; color: #fff; border-color: #0077c7; }
+    .arrow { color: #0077c7; text-align: center; font-size: 21px; font-weight: 800; }
+    .cycle-row { margin-top: 10px; display: grid; grid-template-columns: 1fr 30px 1fr; align-items: center; gap: 5px; }
+    .loop-content p { margin-top: 15px; color: #475569; font-size: 13px; line-height: 1.45; }
+    .bottom { margin-top: 18px; border-top: 2px solid #0f172a; display: grid; grid-template-columns: 1.55fr 1fr; gap: 28px; padding-top: 14px; }
+    .conclusion { border-left: 6px solid #0077c7; padding-left: 16px; }
+    .conclusion strong { font-size: 20px; line-height: 1.35; }
+    .conclusion p { margin-top: 7px; color: #475569; font-size: 14px; line-height: 1.42; }
+    .refs { color: #64748b; font-size: 11px; line-height: 1.45; }
+    .refs strong { color: #334155; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="kicker">10 / QUALITY & OPERATIONS</div>
+      <h1>検出できる設計へ</h1>
+      <p class="sub">デザインシステムは、見た目をそろえる完成品ではない。変更時に壊れ方を検出し、部品へ戻して改善を続ける運用基盤である。</p>
+      <div class="rule"></div>
+      <div class="main">
+        <section>
+          <div class="metrics-label">V1.18.0 VALIDATION RESULTS</div>
+          <div class="metrics">
+            <article class="metric"><div class="value">24 <small>/ 24</small></div><h2>契約テスト</h2><p>既存の同期、記録、保護者、運用機能を含む回帰確認。</p></article>
+            <article class="metric"><div class="value">25</div><h2>レスポンシブチェック</h2><p>320pxから1440pxまで、主要画面の横溢れと重要操作を検証。</p></article>
+            <article class="metric"><div class="value">0</div><h2>違反</h2><p>全チェックで横溢れ違反なし。部品契約の継続検証へ接続。</p></article>
+          </div>
+          <div class="quality-note"><strong>PWA DELIVERY</strong><p>CSSクエリを更新し、Service Workerキャッシュを <code>coachmgr-v68</code> へ更新。新しい部品CSSを確実に配信する。</p></div>
+        </section>
+        <aside>
+          <div class="loop-label">COMPONENT-FIRST CHANGE LOOP</div>
+          <div class="loop-area">
+            <div class="loop-image"><img src="/home/ubuntu/upload/Screenshot_20260818_090705_Soul.jpg" alt="CoachMgrの設定およびシーズンレポート画面" /></div>
+            <div class="loop-content">
+              <div class="cycle"><div class="step primary">共通部品を<br>更新</div><div class="arrow">→</div><div class="step">最悪ケースを<br>追加</div></div>
+              <div class="cycle-row"><div class="step">自動検証で<br>確認</div><div class="arrow">→</div><div class="step primary">画面へ安全に<br>展開</div></div>
+              <p>画面固有の上書きを増やさず、トークン・部品・検証フィクスチャのいずれかへ修正を戻す。</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+      <div class="bottom">
+        <section class="conclusion"><strong>次のUIは、画面からではなく部品からつくる。</strong><p>テーマ追加は基礎色だけで完結させる。新しいデータ表示は、リスト・カード・モバイル再配置を同時に設計する。新しい不具合は、対応する部品契約と最悪ケースへ追加する。</p></section>
+        <section class="refs"><strong>References</strong><br>[1] デジタル庁デザインシステムβ版「カラー（概要・アクセシビリティ）」<br>https://design.digital.go.jp/dads/foundations/color/<br>[2] SmartHR Design System「デザイントークン／色」<br>https://smarthr.design/products/design-tokens/color/<br>[3] CoachMgr v1.18.0：CSS_ARCHITECTURE.md、tokens.css、components-system.css</section>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

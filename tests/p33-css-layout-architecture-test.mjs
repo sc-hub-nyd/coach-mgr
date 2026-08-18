@@ -10,6 +10,10 @@ const files = {
     components: '../CSS/components-standard.css',
     systemComponents: '../CSS/components-system.css',
     utilities: '../CSS/utilities.css',
+    themeService: '../color-theme-service.js',
+    settings: '../settings.js',
+    app: '../app.js',
+    serviceWorker: '../sw.js',
     architecture: '../CSS_ARCHITECTURE.md'
 };
 
@@ -26,7 +30,13 @@ assert.match(source.tokens, /--content-wide/);
 assert.match(source.tokens, /--duration-base/);
 assert.match(source.tokens, /--color-canvas/);
 assert.match(source.tokens, /--color-success-surface/);
+assert.match(source.tokens, /--color-text-on-action:\s*var\(--theme-on-primary\)/);
+assert.match(source.tokens, /--color-text-on-action-hover:\s*var\(--theme-on-primary-hover\)/);
 assert.match(source.tokens, /--text-dense-leading/);
+assert.match(source.base, /--theme-primary/);
+assert.match(source.base, /data-color-mode="dark"/);
+assert.doesNotMatch(source.base, /high-contrast-mode/);
+assert.doesNotMatch(source.tokens, /high-contrast-mode/);
 assert.match(source.layouts, /\.l-page/);
 assert.match(source.layouts, /\.l-stack/);
 assert.match(source.layouts, /\.l-grid/);
@@ -56,6 +66,17 @@ assert.match(source.index, /c-form-field--fluid/);
 assert.match(source.index, /c-fieldset/);
 assert.match(source.index, /c-modal__body/);
 assert.match(source.index, /c-page-list--bottom-safe/);
+assert.match(source.index, /btn-toggle-color-mode/);
+assert.match(source.index, /ui-color-mode/);
+assert.match(source.index, /team-theme-preview/);
+assert.doesNotMatch(source.index, /btn-toggle-contrast/);
+assert.match(source.systemComponents, /\.c-theme-preview/);
+assert.match(source.themeService, /export function buildTeamTheme/);
+assert.match(source.themeService, /export function validateThemePalette/);
+assert.match(source.settings, /applyCurrentTeamTheme/);
+assert.match(source.app, /applyCurrentTeamTheme/);
+assert.doesNotMatch(source.app, /applyThemePreset/);
+assert.match(source.serviceWorker, /color-theme-service\.js/);
 assert.match(source.architecture, /`l-`/);
 assert.match(source.architecture, /`c-`/);
 assert.match(source.architecture, /`is-`/);

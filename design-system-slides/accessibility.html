@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>テーマ性とアクセシビリティを両立</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #0f172a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding-top: 48px; padding-left: 64px; padding-right: 64px; }
+    .eyebrow { font-size: 14px; font-weight: 800; letter-spacing: .12em; color: #0077c7; }
+    h1 { margin-top: 12px; font-size: 44px; line-height: 1.15; letter-spacing: -.035em; font-weight: 800; }
+    .sub { margin-top: 12px; max-width: 890px; font-size: 19px; line-height: 1.5; color: #334155; }
+    .rule { height: 2px; background: #0f172a; margin-top: 24px; }
+    /* reduced vertical spacing and paddings to avoid overflow */
+    .main { margin-top: 12px; display: grid; grid-template-columns: 7fr 5fr; gap: 20px; }
+    .theme-panel { border: 2px solid #0f172a; min-height: 360px; }
+    .panel-head { padding: 12px 16px; border-bottom: 2px solid #0f172a; display: flex; justify-content: space-between; align-items: center; }
+    .panel-head h2 { font-size: 20px; font-weight: 800; }
+    .panel-head span { color: #0077c7; font-size: 13px; font-weight: 800; letter-spacing: .08em; }
+    .flow { padding-top: 16px; padding-left: 18px; padding-right: 18px; display: grid; grid-template-columns: 1fr 42px 1fr; align-items: center; }
+    .theme-stack { display: grid; gap: 8px; }
+    .theme { min-height: 48px; display: flex; align-items: center; padding-left: 16px; font-size: 16px; font-weight: 800; border: 2px solid #0f172a; }
+    .field { background: #16794c; color: #fff; border-color: #16794c; }
+    .midnight { background: #172554; color: #fff; border-color: #172554; }
+    .high { background: #facc15; color: #0f172a; border-color: #facc15; }
+    .arrow { font-size: 28px; text-align: center; color: #0077c7; font-weight: 800; }
+    .semantic { border: 2px solid #0077c7; min-height: 170px; display: grid; grid-template-rows: repeat(5, 1fr); }
+    .semantic div { padding-left: 12px; display: flex; align-items: center; font-weight: 800; font-size: 15px; border-bottom: 1px solid #cbd5e1; }
+    .semantic div:last-child { border-bottom: 0; }
+    .semantic small { margin-left: auto; padding-right: 10px; color: #64748b; font-size: 11px; letter-spacing: .06em; }
+    .contrast { border: 2px solid #0f172a; min-height: 340px; display: grid; grid-template-rows: auto 1fr auto; }
+    .contrast-title { padding: 12px 16px; border-bottom: 2px solid #0f172a; font-size: 20px; font-weight: 800; }
+    .ratios { padding-top: 12px; padding-left: 18px; padding-right: 18px; display: grid; gap: 10px; align-content: center; }
+    .ratio { border: 2px solid #0f172a; padding: 12px; }
+    .ratio strong { display: block; font-size: 37px; line-height: 1; color: #0077c7; font-weight: 800; }
+    .ratio span { display: block; margin-top: 7px; font-size: 15px; line-height: 1.4; color: #334155; }
+    .source { border-top: 2px solid #0f172a; padding: 10px 16px; color: #64748b; font-size: 11px; line-height: 1.35; }
+    .bottom { margin-top: 8px; border-top: 2px solid #0f172a; display: grid; grid-template-columns: 66px 1fr 1fr 1fr; }
+    .bottom-label { background: #0077c7; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; writing-mode: vertical-rl; letter-spacing: .08em; }
+    .principle { min-height: 88px; padding-top: 12px; padding-left: 16px; padding-right: 14px; border-right: 2px solid #0f172a; }
+    .principle:last-child { border-right: 0; }
+    .principle strong { font-size: 17px; }
+    .principle p { margin-top: 8px; color: #475569; font-size: 14px; line-height: 1.42; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">05 / ACCESSIBILITY & THEME</div>
+      <h1>テーマ性とアクセシビリティを両立</h1>
+      <p class="sub">チームカラーを残しながら、色の役割・コントラスト・状態テキストを共通ルールで扱う。</p>
+      <div class="rule"></div>
+      <div class="main">
+        <section class="theme-panel" aria-label="テーマからセマンティックカラーへの変換">
+          <div class="panel-head"><h2>テーマは基礎色だけを差し替える</h2><span>PRIMITIVES → SEMANTICS</span></div>
+          <div class="flow">
+            <div class="theme-stack">
+              <div class="theme field">Field Green</div>
+              <div class="theme midnight">Midnight Pitch</div>
+              <div class="theme high">High Visibility</div>
+            </div>
+            <div class="arrow">→</div>
+            <div class="semantic">
+              <div>Canvas / Surface <small>表面</small></div>
+              <div>Text / Border <small>可読性</small></div>
+              <div>Action / Focus <small>操作</small></div>
+              <div>Success / Warning <small>状態</small></div>
+              <div>Danger / Info <small>通知</small></div>
+            </div>
+          </div>
+        </section>
+        <aside class="contrast" aria-label="コントラスト判断基準">
+          <div class="contrast-title">コントラストの判断基準</div>
+          <div class="ratios">
+            <div class="ratio"><strong>4.5 : 1</strong><span>本文・ラベル・状態テキストなど、文字情報と背景の最小基準</span></div>
+            <div class="ratio"><strong>3 : 1</strong><span>境界線・フォーカス・アイコンなど、非テキストUIの最小基準</span></div>
+          </div>
+          <div class="source">出典：デジタル庁デザインシステムβ版「カラー（アクセシビリティ）」[1]</div>
+        </aside>
+      </div>
+      <div class="bottom">
+        <div class="bottom-label">運用原則</div>
+        <div class="principle"><strong>色だけで伝えない</strong><p>出欠・同期・警告にはアイコンと状態テキストを併記する。</p></div>
+        <div class="principle"><strong>高コントラストは構造を変えない</strong><p>表面・境界・影を強め、操作の位置と意味は共通に保つ。</p></div>
+        <div class="principle"><strong>フォーカスを見失わせない</strong><p>キーボード操作の輪郭を独立したトークンとして一貫して表示する。</p></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

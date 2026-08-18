@@ -59,7 +59,8 @@ export function ensureWorkspaceState(state) {
         state.teams = [{
             id: teamId,
             name: state.teamInfo?.name || 'My Team',
-            color: state.teamInfo?.color || '#13795b',
+            color: state.teamInfo?.theme?.seed || state.teamInfo?.color || '#13795b',
+            theme: clone(state.teamInfo?.theme) || { seed: state.teamInfo?.color || '#13795b', algorithm: 'coachmgr-tonal-v1', algorithmVersion: 1 },
             createdAt: new Date().toISOString(),
             archivedAt: null,
             seasons: [{ id: seasonId, name: getSeasonLabel(), startsOn: '', endsOn: '', archivedAt: null, createdAt: new Date().toISOString() }]
@@ -72,6 +73,8 @@ export function ensureWorkspaceState(state) {
 
     state.teams = state.teams.map(team => ({
         ...team,
+        color: team.theme?.seed || team.color || '#13795b',
+        theme: clone(team.theme) || { seed: team.color || '#13795b', algorithm: 'coachmgr-tonal-v1', algorithmVersion: 1 },
         id: team.id || createId('team'),
         seasons: Array.isArray(team.seasons) && team.seasons.length ? team.seasons.map(season => ({
             ...season,
@@ -132,15 +135,16 @@ export function switchWorkspace(state, teamId, seasonId) {
     return { team, season };
 }
 
-export function createTeam(state, { name, color = '#13795b' }) {
+export function createTeam(state, { name, color = '#13795b', theme = null }) {
     ensureWorkspaceState(state);
-    const team = { id: createId('team'), name: String(name || '').trim() || '新しいチーム', color, createdAt: new Date().toISOString(), archivedAt: null, seasons: [] };
+    const teamTheme = clone(theme) || { seed: color, algorithm: 'coachmgr-tonal-v1', algorithmVersion: 1 };
+    const team = { id: createId('team'), name: String(name || '').trim() || '新しいチーム', color: teamTheme.seed || color, theme: teamTheme, createdAt: new Date().toISOString(), archivedAt: null, seasons: [] };
     const season = { id: createId('season'), name: getSeasonLabel(), startsOn: '', endsOn: '', archivedAt: null, createdAt: new Date().toISOString() };
     team.seasons.push(season);
     state.teams.push(team);
     state.workspaces[workspaceKey(team.id, season.id)] = normalizeWorkspace({
         ...readWorkspace(state), matches: [], practices: [], players: [], menuLibrary: [], tactics: [], practiceTemplates: [],
-        teamInfo: { ...clone(state.teamInfo), name: team.name, color: team.color }, teamFocus: {}
+        teamInfo: { ...clone(state.teamInfo), name: team.name, color: team.color, theme: clone(team.theme) }, teamFocus: {}
     });
     return switchWorkspace(state, team.id, season.id);
 }

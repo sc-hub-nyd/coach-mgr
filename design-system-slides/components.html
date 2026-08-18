@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>業務UIを支える6つの共通部品</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #0f172a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding-top: 46px; padding-left: 64px; padding-right: 64px; }
+    .kicker { color: #0077c7; font-size: 14px; font-weight: 800; letter-spacing: .12em; }
+    h1 { margin-top: 10px; font-size: 43px; line-height: 1.15; letter-spacing: -.035em; font-weight: 800; }
+    .lead { margin-top: 12px; font-size: 19px; line-height: 1.5; color: #475569; }
+    .lead strong { color: #0077c7; }
+    .rule { margin-top: 22px; height: 2px; background: #0f172a; }
+    .layout { margin-top: 24px; display: grid; grid-template-columns: 7.2fr 4.8fr; gap: 30px; }
+    .component-grid { border-top: 2px solid #0f172a; border-left: 2px solid #0f172a; display: grid; grid-template-columns: 1fr 1fr; }
+    .component { min-height: 128px; border-right: 2px solid #0f172a; border-bottom: 2px solid #0f172a; padding-top: 14px; padding-left: 20px; padding-right: 18px; }
+    .component:nth-child(1), .component:nth-child(4) { background: #e7f3fb; }
+    .component:nth-child(3), .component:nth-child(6) { background: #f8fafc; }
+    .component .code { color: #0077c7; font-family: 'SFMono-Regular', Consolas, monospace; font-size: 14px; font-weight: 800; }
+    .component h2 { margin-top: 7px; font-size: 22px; line-height: 1.15; font-weight: 800; }
+    .component p { margin-top: 8px; font-size: 14px; line-height: 1.42; color: #334155; }
+    .visual { border: 2px solid #0f172a; min-height: 390px; display: grid; grid-template-rows: auto 1fr auto; }
+    .visual-head { padding: 12px 17px; border-bottom: 2px solid #0f172a; display: flex; justify-content: space-between; align-items: center; }
+    .visual-head strong { font-size: 18px; }
+    .visual-head span { font-size: 12px; color: #0077c7; font-weight: 800; letter-spacing: .08em; }
+    .visual-body { display: grid; grid-template-columns: 190px 1fr; gap: 16px; padding-top: 12px; padding-left: 16px; padding-right: 16px; align-items: center; }
+    .visual-body img { width: 180px; height: 280px; object-fit: contain; object-position: top center; border: 2px solid #cbd5e1; }
+    .callouts { display: grid; gap: 12px; }
+    .callout { border-top: 2px solid #0f172a; padding-top: 9px; }
+    .callout strong { font-size: 14px; color: #0077c7; }
+    .callout p { margin-top: 4px; font-size: 13px; line-height: 1.42; color: #475569; }
+    .visual-foot { border-top: 2px solid #0f172a; padding: 8px 17px; font-size: 13px; line-height: 1.4; color: #334155; }
+    .conclusion { margin-top: 12px; border-top: 2px solid #0f172a; display: grid; grid-template-columns: 176px 1fr; }
+    .conclusion-label { background: #0077c7; color: #fff; min-height: 72px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; letter-spacing: .06em; }
+    .conclusion p { padding-top: 18px; padding-left: 22px; padding-right: 22px; font-size: 18px; line-height: 1.45; font-weight: 700; color: #334155; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="kicker">07 / COMPONENT SYSTEM</div>
+      <h1>業務UIを支える6つの共通部品</h1>
+      <p class="lead">個別画面のレイアウトではなく、<strong>情報と操作の責務を持つ部品</strong>として設計する。</p>
+      <div class="rule"></div>
+      <div class="layout">
+        <section class="component-grid" aria-label="CoachMgrの共通コンポーネント一覧">
+          <article class="component"><div class="code">c-form-field</div><h2>フォーム項目</h2><p>ラベル・補足・入力・エラーを一体化。設定画面の空白と行ずれを防ぐ。</p></article>
+          <article class="component"><div class="code">c-fieldset</div><h2>入力グループ</h2><p>複数入力の意味をまとめ、招集・出欠の説明とエラーを整理する。</p></article>
+          <article class="component"><div class="code">c-roster-row</div><h2>名簿行</h2><p>選択・選手識別・出欠状態を分離し、checkboxと名前の重なりを防ぐ。</p></article>
+          <article class="component"><div class="code">c-practice-card</div><h2>練習カード</h2><p>情報・統計・操作・詳細を分け、操作ボタンとバッジの衝突を防ぐ。</p></article>
+          <article class="component"><div class="code">c-data-list</div><h2>データリスト</h2><p>狭幅で縮めるべきでない表を、主要指標の縦リストとして再配置する。</p></article>
+          <article class="component"><div class="code">c-modal</div><h2>モーダル</h2><p>ヘッダー・単一スクロール本文・固定フッターを分離し、保存操作を守る。</p></article>
+        </section>
+        <aside class="visual" aria-label="練習管理画面への部品適用例">
+          <div class="visual-head"><strong>練習管理への適用</strong><span>LIVE STRUCTURE</span></div>
+          <div class="visual-body">
+            <img src="/home/ubuntu/upload/Screenshot_20260818_082633_Soul.jpg" alt="CoachMgrの練習管理画面" />
+            <div class="callouts">
+              <div class="callout"><strong>c-practice-card</strong><p>日付、統計、操作、詳細を別スロットにして、カード内の競合を局所化する。</p></div>
+              <div class="callout"><strong>c-roster-row</strong><p>名簿では選手名と出欠選択を別のレイアウト領域に置く。</p></div>
+              <div class="callout"><strong>c-modal</strong><p>長い出欠名簿でも保存操作を常に確認できる構成にする。</p></div>
+            </div>
+          </div>
+          <div class="visual-foot">部品の責務を固定することで、カード幅・名簿量・画面幅が変わっても操作の優先順位を維持する。</div>
+        </aside>
+      </div>
+      <div class="conclusion"><div class="conclusion-label">DESIGN RULE</div><p>不具合は「画面のCSS」ではなく、対応する部品の構造・トークン・検証ケースへ戻して解決する。</p></div>
+    </div>
+  </div>
+</body>
+</html>

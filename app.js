@@ -7,7 +7,7 @@ import { initPlayers, openPlayerDetail } from './players.js';
 import { initLibrary } from './library.js';
 import { initTactics } from './tactics.js';
 import { initInsights } from './insights.js';
-import { initSettings, initData, applyThemePreset } from './settings.js';
+import { initSettings, initData, applyCurrentTeamTheme } from './settings.js';
 import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
 import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
@@ -21,7 +21,7 @@ import { ensureWorkspaceState, hydrateActiveWorkspace } from './workspace-servic
 import { mergeSnapshotsByRecord, touchRecordsForSave } from './record-service.js';
 import { acknowledgeSyncOutboxItem, appendSyncAudit, enqueueSyncSnapshot, ensureSyncOutbox, getNextSyncItem, hydrateSyncOutbox, markSyncOutboxFailed, markSyncOutboxSending, refreshSyncOutboxItem } from './sync-outbox-service.js';
 import { configureAppContext } from './app-context.js';
-import { buildCoachActionCenter, buildParentHomeAgenda, buildPracticePlanDraft, ensurePracticePlan, savePracticePlan, loadUiPreferences, applyUiPreferences } from './experience-service.js';
+import { buildCoachActionCenter, buildParentHomeAgenda, buildPracticePlanDraft, ensurePracticePlan, savePracticePlan, loadUiPreferences, saveUiPreferences, applyUiPreferences } from './experience-service.js';
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '' }) {
     const action = actionLabel && actionId
@@ -1176,7 +1176,7 @@ function initDashboard() {
                     <!-- ヘッダー（名前・背番号・ポジション・変更ボタン） -->
                     <div class="dash-myplayer-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.1rem 0;">
                         <div style="display:flex; align-items:center; gap:0.6rem;">
-                            <div class="player-number" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, var(--primary), #e83029);color:white;border-radius:50%;font-weight:900;font-size:0.9rem;">
+                            <div class="player-number" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--primary);color:var(--color-text-on-action);border-radius:50%;font-weight:900;font-size:0.9rem;">
                                 ${player.number}
                             </div>
                             <div style="display:flex; align-items:baseline; gap:0.4rem;">
@@ -2419,29 +2419,33 @@ async function init() {
     }
     retryPendingSyncOutbox();
 
-    // P32: 端末ごとの可読性・利き手・動きの設定をテーマと同じ初期化段階で反映する。
-    applyUiPreferences(loadUiPreferences());
-    // ★ P0: 保存済みテーマの初期化 ★
-    applyThemePreset(localStorage.getItem('coachMgrThemePreset') || 'field-green');
+    // P33: 表示設定は端末単位、チーム種色は共有データとして独立して合成する。
+    const uiPreferences = applyUiPreferences(loadUiPreferences());
+    applyCurrentTeamTheme({ colorMode: uiPreferences.colorMode });
+    // v1.19.0: 屋外高コントラストモードは通常のlight/darkテーマのコントラスト保証へ統合。
+    localStorage.removeItem('high_contrast_mode');
+    document.body.classList.remove('high-contrast-mode');
 
-    // ★【追加】屋外高コントラストモードの初期化と切り替え処理 ★
-    const isHighContrast = localStorage.getItem('high_contrast_mode') === 'true';
-    if (isHighContrast) {
-        document.body.classList.add('high-contrast-mode');
-    }
-
-    const toggleContrastBtn = document.getElementById('btn-toggle-contrast');
-    if (toggleContrastBtn) {
-        toggleContrastBtn.onclick = () => {
-            document.body.classList.toggle('high-contrast-mode');
-            const active = document.body.classList.contains('high-contrast-mode');
-            localStorage.setItem('high_contrast_mode', active);
-            showToast(active ? '屋外用高コントラストモードに切り替えました' : '通常モードに戻しました');
+    const toggleColorModeBtn = document.getElementById('btn-toggle-color-mode');
+    const updateColorModeToggle = mode => {
+        if (!toggleColorModeBtn) return;
+        const isDark = mode === 'dark';
+        toggleColorModeBtn.innerHTML = `<i class="fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}" aria-hidden="true"></i><span>${isDark ? 'ライト' : 'ダーク'}</span>`;
+        toggleColorModeBtn.setAttribute('aria-label', `${isDark ? 'ライト' : 'ダーク'}表示へ切り替えます`);
+        toggleColorModeBtn.title = `${isDark ? 'ライト' : 'ダーク'}表示へ切り替えます`;
+    };
+    updateColorModeToggle(uiPreferences.colorMode);
+    window.addEventListener('coachmgr:color-mode-changed', event => updateColorModeToggle(event.detail?.colorMode));
+    if (toggleColorModeBtn) {
+        toggleColorModeBtn.onclick = () => {
+            const current = loadUiPreferences();
+            const next = { ...current, colorMode: current.colorMode === 'dark' ? 'light' : 'dark' };
+            saveUiPreferences(next);
+            applyUiPreferences(next);
+            applyCurrentTeamTheme({ colorMode: next.colorMode });
+            updateColorModeToggle(next.colorMode);
+            showToast(`${next.colorMode === 'dark' ? 'ダーク' : 'ライト'}表示に切り替えました`);
         };
-    }
-
-    if (state.teamInfo && state.teamInfo.color) {
-        document.documentElement.style.setProperty('--primary', state.teamInfo.color);
     }
     const sidebarTitle = document.querySelector('.sidebar-header h2');
     if (sidebarTitle && state.teamInfo) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name || 'My Team')}`;

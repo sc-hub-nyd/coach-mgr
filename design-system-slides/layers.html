@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>6つの層でUIを安定化</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #0f172a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding-top: 48px; padding-left: 64px; padding-right: 64px; }
+    .kicker { color: #0077c7; font-size: 14px; font-weight: 800; letter-spacing: .12em; }
+    h1 { margin-top: 12px; font-size: 45px; line-height: 1.15; letter-spacing: -.035em; font-weight: 800; }
+    .rule { margin-top: 24px; height: 2px; background: #0f172a; }
+    .content { margin-top: 30px; display: grid; grid-template-columns: 760px 1fr; gap: 48px; }
+    .stack { border: 2px solid #0f172a; display: grid; grid-template-rows: repeat(6, 68px); }
+    .layer { display: grid; grid-template-columns: 64px 226px 1fr; align-items: center; border-bottom: 2px solid #0f172a; }
+    .layer:last-child { border-bottom: 0; }
+    .index { min-height: 64px; display: flex; align-items: center; justify-content: center; border-right: 2px solid #0f172a; color: #64748b; font-size: 16px; font-weight: 800; }
+    .name { padding-left: 20px; font-size: 21px; font-weight: 800; }
+    .desc { padding-right: 20px; color: #475569; font-size: 16px; line-height: 1.35; }
+    .layer.theme { background: #e7f3fb; }
+    .layer.tokens { background: #d4eafb; }
+    .layer.components { background: #b8ddf7; }
+    .layer.tests { background: #0077c7; color: #fff; }
+    .layer.tests .index { color: #fff; border-color: #fff; }
+    .layer.tests .desc { color: #fff; }
+    .aside { border-top: 2px solid #0f172a; }
+    .aside h2 { margin-top: 22px; font-size: 25px; line-height: 1.3; }
+    .aside p { margin-top: 16px; color: #475569; font-size: 17px; line-height: 1.58; }
+    .principle { margin-top: 28px; border: 2px solid #0f172a; padding: 20px; }
+    .principle .label { color: #0077c7; font-size: 13px; font-weight: 800; letter-spacing: .1em; }
+    .principle strong { display: block; margin-top: 12px; font-size: 22px; line-height: 1.4; }
+    .arrow { margin-top: 26px; display: flex; align-items: center; gap: 12px; color: #0077c7; font-size: 16px; font-weight: 800; }
+    .arrow-line { width: 110px; height: 2px; background: #0077c7; }
+    .note { margin-top: 18px; font-size: 14px; line-height: 1.45; color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="kicker">03 / ARCHITECTURE</div>
+      <h1>6つの層でUIを安定化</h1>
+      <div class="rule"></div>
+      <div class="content">
+        <section class="stack" aria-label="CoachMgrデザインシステムの6層">
+          <div class="layer theme"><div class="index">01</div><div class="name">テーマプリミティブ</div><div class="desc">チームカラーと表示テーマの基礎値</div></div>
+          <div class="layer tokens"><div class="index">02</div><div class="name">セマンティックトークン</div><div class="desc">色・文字・余白・操作サイズを役割で定義</div></div>
+          <div class="layer components"><div class="index">03</div><div class="name">レイアウトプリミティブ</div><div class="desc">ページ、スタック、グリッド、クラスター</div></div>
+          <div class="layer components"><div class="index">04</div><div class="name">共通コンポーネント</div><div class="desc">フォーム、名簿、カード、モーダルの責務</div></div>
+          <div class="layer"><div class="index">05</div><div class="name">画面実装</div><div class="desc">設定、練習、選手比較、試合当日UI</div></div>
+          <div class="layer tests"><div class="index">06</div><div class="name">契約テスト</div><div class="desc">禁止上書き・横溢れ・重要操作を継続確認</div></div>
+        </section>
+        <aside class="aside">
+          <h2>画面ではなく、<br>下位層を直す。</h2>
+          <p>設定画面で起きた崩れも、名簿で起きた崩れも、共通部品とトークンへ戻して解決する。</p>
+          <div class="principle">
+            <div class="label">OPERATING PRINCIPLE</div>
+            <strong>一度直せば、<br>同じ構造の画面へ反映される。</strong>
+          </div>
+          <div class="arrow"><span>テーマ</span><span class="arrow-line"></span><span>検証</span></div>
+          <p class="note">画面固有の例外を増やさず、部品契約と検証フィクスチャを更新する。</p>
+        </aside>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

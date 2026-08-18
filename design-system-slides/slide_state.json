@@ -1,0 +1,125 @@
+{
+  "project_info": {
+    "title": "CoachMgr デザインシステム",
+    "created": 1787015098.917,
+    "last_updated": 1787015408.436,
+    "total_slides": 11
+  },
+  "slides": [
+    {
+      "id": "cover",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "why",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "principles",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "layers",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "colors",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "accessibility",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "type_spacing",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "components",
+      "state": "edited",
+      "pageNum": 8
+    },
+    {
+      "id": "responsive",
+      "state": "edited",
+      "pageNum": 9
+    },
+    {
+      "id": "migration",
+      "state": "edited",
+      "pageNum": 10
+    },
+    {
+      "id": "quality",
+      "state": "edited",
+      "pageNum": 11
+    }
+  ],
+  "outline": [
+    {
+      "id": "cover",
+      "title": "CoachMgr デザインシステム",
+      "summary": "現場で迷わず使える、一貫したチーム運営PWAへ。v1.18.0の設計基盤を紹介する表紙。"
+    },
+    {
+      "id": "why",
+      "title": "なぜ今、デザインシステムか",
+      "summary": "画面固有の応急CSSを脱し、日本語可変長・操作密度・固定領域に耐える構造と検証契約を導入する背景。"
+    },
+    {
+      "id": "principles",
+      "title": "意味と契約で設計する",
+      "summary": "意味で選ぶトークン、構造で守る共通部品、最悪条件で確認する検証という三原則。"
+    },
+    {
+      "id": "layers",
+      "title": "6つの層でUIを安定化",
+      "summary": "テーマから契約テストまでの6層アーキテクチャを図解する。"
+    },
+    {
+      "id": "colors",
+      "title": "色名ではなく役割で定義",
+      "summary": "CoachMgrのセマンティックカラートークンと、部品がテーマ固有色を直接参照しない設計を説明する。"
+    },
+    {
+      "id": "accessibility",
+      "title": "テーマ性とアクセシビリティを両立",
+      "summary": "チームテーマ、高コントラスト、色覚多様性、テキストと非テキストのコントラスト判断を説明する。"
+    },
+    {
+      "id": "type_spacing",
+      "title": "日本語の密度に耐える文字と余白",
+      "summary": "文字役割、8段階スペーシング、フォームの文書フローによって可変長の日本語を扱う方針。"
+    },
+    {
+      "id": "components",
+      "title": "業務UIを支える6つの共通部品",
+      "summary": "フォーム、fieldset、名簿、練習カード、データリスト、モーダルの責務と解消する課題を整理する。",
+      "image_plan": "/home/ubuntu/upload/Screenshot_20260818_082633_Soul.jpg - Slide 7 lists 6 components (form-field, fieldset, roster-row, practice-card, data-list, modal); Image 3 shows the practice cards and list interface."
+    },
+    {
+      "id": "responsive",
+      "title": "レスポンシブは部品幅で判断",
+      "summary": "Container Query、名簿の再配置、単一スクロールモーダル、安全領域で実現するレスポンシブ契約。"
+    },
+    {
+      "id": "migration",
+      "title": "設定と練習を移行済み",
+      "summary": "設定、チーム・シーズン管理、練習編集、出欠名簿、練習カードの実装移行範囲を示す。",
+      "image_plan": "/home/ubuntu/upload/Screenshot_20260818_090648_Soul.jpg - Slide 9 discusses settings and practice screen migration; Image 9 shows the practice date/roster edit modal."
+    },
+    {
+      "id": "quality",
+      "title": "検出できる設計へ",
+      "summary": "契約テスト、全幅レスポンシブ検証、PWAキャッシュ、今後の部品中心の運用を説明し、出典を付記する。",
+      "image_plan": "/home/ubuntu/upload/Screenshot_20260818_090705_Soul.jpg - Slide 10 discusses responsive verification across device sizes; Image 8 shows seasonal report and settings UI."
+    }
+  ]
+}

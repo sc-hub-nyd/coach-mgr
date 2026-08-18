@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>なぜ今、デザインシステムか</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fff; color: #0f172a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding-top: 50px; padding-left: 64px; padding-right: 64px; }
+    .kicker { font-size: 14px; font-weight: 800; color: #0077c7; letter-spacing: .12em; }
+    h1 { margin-top: 14px; font-size: 45px; line-height: 1.15; letter-spacing: -.035em; font-weight: 800; }
+    .rule { width: 100%; height: 2px; background: #0f172a; margin-top: 30px; }
+    .content { margin-top: 34px; display: grid; grid-template-columns: 7fr 5fr; gap: 54px; }
+    .statement { font-size: 26px; line-height: 1.55; color: #334155; max-width: 670px; }
+    .statement strong { color: #0077c7; font-weight: 800; }
+    .issues { margin-top: 30px; display: grid; gap: 0; border-top: 2px solid #0f172a; }
+    .issue { min-height: 70px; padding: 15px 0; border-bottom: 2px solid #cbd5e1; display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; }
+    .num { font-size: 20px; font-weight: 800; color: #0077c7; }
+    .issue p { font-size: 17px; line-height: 1.45; color: #334155; }
+    .shift { border: 2px solid #0f172a; display: grid; grid-template-rows: auto 48px auto; align-content: center; min-height: 370px; }
+    .shift-box { padding: 22px; }
+    .shift-box .tag { font-size: 13px; letter-spacing: .08em; font-weight: 800; color: #64748b; }
+    .shift-box h2 { margin-top: 10px; font-size: 27px; line-height: 1.25; }
+    .shift-box p { margin-top: 12px; color: #475569; font-size: 16px; line-height: 1.5; }
+    .arrow { background: #0f172a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 23px; font-weight: 800; }
+    .to { background: #e7f3fb; border-top: 2px solid #0f172a; }
+    .to .tag { color: #0077c7; }
+    .goal { margin-top: 30px; border-left: 6px solid #0077c7; padding-left: 16px; font-size: 19px; line-height: 1.5; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="kicker">01 / WHY NOW</div>
+      <h1>なぜ今、デザインシステムか</h1>
+      <div class="rule"></div>
+      <div class="content">
+        <section>
+          <p class="statement">画面ごとの応急CSSでは、<strong>設定・名簿・練習カード</strong>の崩れを繰り返しやすい。</p>
+          <div class="issues">
+            <div class="issue"><span class="num">01</span><p>日本語の可変長ラベルと、人名・場所名が同時にレイアウトへ影響する。</p></div>
+            <div class="issue"><span class="num">02</span><p>出欠操作、複数ボタン、固定ナビゲーションが狭い画面で競合する。</p></div>
+            <div class="issue"><span class="num">03</span><p>テーマやデータ量が変わるたびに、既存の画面固有ルールが壊れやすい。</p></div>
+          </div>
+          <p class="goal">目標：表示幅・データ量・テーマが変わっても、情報と操作の優先順位を保つ。</p>
+        </section>
+        <aside class="shift" aria-label="画面単位の修正から部品契約への移行">
+          <div class="shift-box">
+            <div class="tag">BEFORE</div>
+            <h2>画面ごとの<br>応急修正</h2>
+            <p>特定幅・特定画面だけにルールを追加。別画面で再発しやすい。</p>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="shift-box to">
+            <div class="tag">AFTER</div>
+            <h2>共通部品の<br>レスポンシブ契約</h2>
+            <p>部品の構造と最悪ケースを定義し、全画面へ再利用する。</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

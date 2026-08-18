@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>意味と契約で設計する</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #0f172a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding-top: 48px; padding-left: 64px; padding-right: 64px; }
+    .kicker { font-size: 14px; font-weight: 800; letter-spacing: .12em; color: #0077c7; }
+    h1 { margin-top: 14px; font-size: 46px; line-height: 1.15; letter-spacing: -.035em; font-weight: 800; }
+    .lead { margin-top: 12px; font-size: 20px; line-height: 1.5; color: #475569; }
+    .principles { margin-top: 34px; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid #0f172a; border-bottom: 2px solid #0f172a; }
+    .principle { min-height: 292px; padding: 27px 28px; border-right: 2px solid #0f172a; }
+    .principle:last-child { border-right: 0; }
+    .index { font-size: 15px; font-weight: 800; color: #0077c7; letter-spacing: .1em; }
+    h2 { margin-top: 26px; font-size: 30px; line-height: 1.2; letter-spacing: -.03em; }
+    .principle p { margin-top: 16px; color: #334155; font-size: 17px; line-height: 1.55; }
+    .example { margin-top: 24px; padding-top: 14px; border-top: 2px solid #cbd5e1; color: #64748b; font-size: 14px; line-height: 1.45; }
+    .flow-label { margin-top: 30px; font-size: 14px; color: #64748b; font-weight: 800; letter-spacing: .08em; }
+    .flow { margin-top: 14px; display: grid; grid-template-columns: 1fr 46px 1fr 46px 1fr 46px 1fr 46px 1fr; align-items: center; }
+    .step { min-height: 76px; border: 2px solid #0f172a; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 17px; font-weight: 800; }
+    .step.action { background: #0077c7; border-color: #0077c7; color: #fff; }
+    .arrow { color: #0077c7; text-align: center; font-size: 26px; font-weight: 800; }
+    .note { margin-top: 20px; border-left: 6px solid #0077c7; padding-left: 15px; font-size: 18px; line-height: 1.45; font-weight: 700; color: #334155; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="kicker">02 / PRINCIPLES</div>
+      <h1>意味と契約で設計する</h1>
+      <p class="lead">見た目の一貫性ではなく、変更しても壊れない<strong>判断基準</strong>を部品へ埋め込む。</p>
+      <section class="principles" aria-label="三つの設計原則">
+        <article class="principle">
+          <div class="index">PRINCIPLE 01</div>
+          <h2>意味で選ぶ</h2>
+          <p>色・余白・文字を具体値で指定せず、用途に対応するトークンで選ぶ。</p>
+          <div class="example">例：`--color-action`、`--color-text-muted`、`--space-4`</div>
+        </article>
+        <article class="principle">
+          <div class="index">PRINCIPLE 02</div>
+          <h2>構造で守る</h2>
+          <p>フォーム、名簿、カード、モーダルの責務を分け、画面固有の上書きを増やさない。</p>
+          <div class="example">例：`c-form-field`、`c-roster-row`、`c-modal`</div>
+        </article>
+        <article class="principle">
+          <div class="index">PRINCIPLE 03</div>
+          <h2>最悪条件で確かめる</h2>
+          <p>小型端末、長い日本語、複数操作、固定領域を基準に、意図した再配置を確認する。</p>
+          <div class="example">例：320px・横向きタブレット・名簿最大量</div>
+        </article>
+      </section>
+      <div class="flow-label">DESIGN SYSTEM FLOW</div>
+      <div class="flow" aria-label="デザインシステムの工程">
+        <div class="step">テーマ</div><div class="arrow">→</div><div class="step action">意味トークン</div><div class="arrow">→</div><div class="step">共通部品</div><div class="arrow">→</div><div class="step">レスポンシブ契約</div><div class="arrow">→</div><div class="step">自動検証</div>
+      </div>
+      <p class="note">不具合は画面だけで塞がず、トークン・部品・検証フィクスチャへ戻して修正する。</p>
+    </div>
+  </div>
+</body>
+</html>

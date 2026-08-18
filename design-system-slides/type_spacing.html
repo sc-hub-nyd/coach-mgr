@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>日本語の密度に耐える文字と余白</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #0f172a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding-top: 46px; padding-left: 64px; padding-right: 64px; }
+    .kicker { font-size: 14px; letter-spacing: .12em; font-weight: 800; color: #0077c7; }
+    h1 { margin-top: 10px; font-size: 43px; line-height: 1.16; letter-spacing: -.035em; font-weight: 800; }
+    .subtitle { margin-top: 12px; font-size: 18px; line-height: 1.5; color: #475569; }
+    .main { margin-top: 26px; display: grid; grid-template-columns: 7fr 5fr; gap: 34px; }
+    .section-label { font-size: 13px; letter-spacing: .1em; color: #64748b; font-weight: 800; border-top: 2px solid #0f172a; padding-top: 10px; }
+    .type-list { margin-top: 12px; border: 2px solid #0f172a; }
+    .type-row { min-height: 58px; display: grid; grid-template-columns: 120px 1fr 105px; align-items: center; border-bottom: 2px solid #cbd5e1; }
+    .type-row:last-child { border-bottom: 0; }
+    .role { min-height: 56px; padding: 16px; background: #f8fafc; border-right: 2px solid #cbd5e1; font-size: 15px; font-weight: 800; }
+    .example { padding-left: 16px; color: #334155; }
+    .example.body { font-size: 18px; line-height: 1.45; }
+    .example.dense { font-size: 16px; line-height: 1.3; }
+    .example.meta { font-size: 14px; line-height: 1.35; color: #64748b; }
+    .example.one { font-size: 16px; line-height: 1; font-weight: 700; }
+    .token { padding-left: 12px; padding-right: 12px; color: #0077c7; font-size: 12px; font-weight: 800; border-left: 2px solid #cbd5e1; }
+    .scale { margin-top: 12px; border: 2px solid #0f172a; min-height: 278px; padding-top: 18px; padding-left: 18px; padding-right: 18px; }
+    .scale-caption { font-size: 16px; font-weight: 800; color: #334155; }
+    .steps { margin-top: 25px; display: grid; grid-template-columns: repeat(8, 1fr); align-items: end; gap: 7px; height: 124px; }
+    .step { background: #0077c7; min-height: 12px; position: relative; }
+    .step span { position: absolute; top: -24px; left: 0; font-size: 12px; font-weight: 800; color: #0f172a; }
+    .s1 { height: 12px; } .s2 { height: 20px; } .s3 { height: 29px; } .s4 { height: 40px; } .s5 { height: 58px; } .s6 { height: 78px; } .s7 { height: 102px; } .s8 { height: 124px; }
+    .scale-note { margin-top: 20px; font-size: 14px; line-height: 1.45; color: #475569; }
+    /* Reduced top margin to pull the flow section up and avoid overflow. Calculation: original main bottom 512px + form-flow margin-top 28px = 540px start. Reducing margin-top to 15px moves form-flow start to 527px (512+15), lowering page bottom from 732 to 719 (<720). */
+    .form-flow { margin-top: 15px; border-top: 2px solid #0f172a; padding-top: 14px; }
+    .flow-grid { margin-top: 12px; display: grid; grid-template-columns: 1.2fr .32fr 1.3fr .32fr 1.45fr .32fr 1.2fr; align-items: stretch; }
+    .flow-item { min-height: 102px; border: 2px solid #0f172a; padding: 15px; }
+    .flow-item strong { display: block; color: #0077c7; font-size: 13px; letter-spacing: .08em; }
+    .flow-item p { margin-top: 8px; color: #334155; font-size: 15px; line-height: 1.35; font-weight: 700; }
+    .flow-item.input { background: #e7f3fb; }
+    .flow-arrow { display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #0077c7; }
+    .bottom-note { margin-top: 12px; color: #475569; font-size: 14px; line-height: 1.4; }
+    .bottom-note strong { color: #0f172a; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="kicker">06 / TYPE & SPACING</div>
+      <h1>日本語の密度に耐える文字と余白</h1>
+      <p class="subtitle">可変長ラベルを「縮めて押し込む」のではなく、役割別の文字組みと文書フローで受け止める。</p>
+      <div class="main">
+        <section>
+          <div class="section-label">TYPOGRAPHY ROLES</div>
+          <div class="type-list">
+            <div class="type-row"><div class="role">本文</div><div class="example body">チームと年度を切り替えます。変更前のデータは保存されます。</div><div class="token">1rem / 1.55</div></div>
+            <div class="type-row"><div class="role">高密度データ</div><div class="example dense">参加 8名　未回答 0名　欠席 0名　メニュー 7件</div><div class="token">0.875rem / 1.3</div></div>
+            <div class="type-row"><div class="role">メタ情報</div><div class="example meta">最終更新：2026-08-18　｜　同期済み　｜　編集可能</div><div class="token">0.8125rem / 1.35</div></div>
+            <div class="type-row"><div class="role">一行操作</div><div class="example one">このシーズンへ切替</div><div class="token">0.875rem / 1</div></div>
+          </div>
+        </section>
+        <section>
+          <div class="section-label">8-STEP SPACING SCALE</div>
+          <div class="scale">
+            <div class="scale-caption">4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 px</div>
+            <div class="steps" aria-label="8段階の余白スケール"><div class="step s1"><span>1</span></div><div class="step s2"><span>2</span></div><div class="step s3"><span>3</span></div><div class="step s4"><span>4</span></div><div class="step s5"><span>5</span></div><div class="step s6"><span>6</span></div><div class="step s7"><span>7</span></div><div class="step s8"><span>8</span></div></div>
+            <p class="scale-note">入力・タップ領域は <strong>2.75rem</strong> を最小基準とし、密度と操作性を両立する。</p>
+          </div>
+        </section>
+      </div>
+      <section class="form-flow">
+        <div class="section-label">FORM DOCUMENT FLOW</div>
+        <div class="flow-grid">
+          <div class="flow-item"><strong>LABEL</strong><p>何を入力するかを先に示す</p></div><div class="flow-arrow">→</div>
+          <div class="flow-item"><strong>HELP</strong><p>要否・補足・判断基準を残す</p></div><div class="flow-arrow">→</div>
+          <div class="flow-item input"><strong>CONTROL</strong><p>幅を縮めず、説明を隠さない入力</p></div><div class="flow-arrow">→</div>
+          <div class="flow-item"><strong>ERROR</strong><p>必要なときだけ同じ流れで伝える</p></div>
+        </div>
+        <p class="bottom-note"><strong>設計規則：</strong>placeholderだけに説明を置かない。長い日本語は折り返し可能な文書フローへ置き、固定高に依存しない。</p>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

@@ -12,29 +12,31 @@
     --text-one-line-size: 0.875rem;
     --text-one-line-leading: 1;
 
-    /* Semantic color API. Themes only need to override base.css primitives. */
-    --color-canvas: var(--bg-color);
-    --color-surface: var(--card-bg);
-    --color-surface-raised: var(--surface-color);
-    --color-surface-subtle: color-mix(in srgb, var(--card-bg) 76%, var(--bg-color));
-    --color-surface-selected: var(--primary-soft);
-    --color-border: var(--surface-border);
-    --color-border-strong: color-mix(in srgb, var(--text-primary) 22%, var(--surface-border));
-    --color-text: var(--text-primary);
-    --color-text-muted: var(--text-secondary);
-    --color-text-on-action: #ffffff;
-    --color-action: var(--primary);
-    --color-action-hover: var(--primary-hover);
-    --color-focus: var(--focus-ring);
-    --color-success: var(--success);
-    --color-warning: var(--warning);
-    --color-danger: var(--danger);
-    --color-danger-hover: var(--danger-hover);
-    --color-info: var(--info);
-    --color-success-surface: color-mix(in srgb, var(--success) 12%, var(--card-bg));
-    --color-warning-surface: color-mix(in srgb, var(--warning) 13%, var(--card-bg));
-    --color-danger-surface: color-mix(in srgb, var(--danger) 11%, var(--card-bg));
-    --color-info-surface: color-mix(in srgb, var(--info) 10%, var(--card-bg));
+    /* Semantic color API. Components consume these roles, never a team HEX directly. */
+    --color-canvas: var(--theme-canvas);
+    --color-surface: var(--theme-surface);
+    --color-surface-raised: var(--theme-surface-raised);
+    --color-surface-subtle: var(--theme-surface-subtle);
+    --color-surface-selected: var(--theme-primary-soft);
+    --color-border: var(--theme-border);
+    --color-border-strong: var(--theme-border-strong);
+    --color-text: var(--theme-text);
+    --color-text-muted: var(--theme-text-muted);
+    --color-text-on-action: var(--theme-on-primary);
+    --color-text-on-action-hover: var(--theme-on-primary-hover);
+    --color-text-on-selected: var(--theme-on-primary-soft);
+    --color-action: var(--theme-primary);
+    --color-action-hover: var(--theme-primary-hover);
+    --color-focus: var(--theme-focus);
+    --color-success: var(--theme-success);
+    --color-warning: var(--theme-warning);
+    --color-danger: var(--theme-danger);
+    --color-danger-hover: var(--theme-danger-hover);
+    --color-info: var(--theme-info);
+    --color-success-surface: var(--theme-success-surface);
+    --color-warning-surface: var(--theme-warning-surface);
+    --color-danger-surface: var(--theme-danger-surface);
+    --color-info-surface: var(--theme-info-surface);
 
     /* Spacing and dimensions. */
     --space-1: 0.25rem;
@@ -74,13 +76,6 @@
     --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
     --duration-fast: 140ms;
     --duration-base: 200ms;
-}
-
-body.high-contrast-mode {
-    --color-surface-subtle: #ffffff;
-    --color-border-strong: #0f172a;
-    --shadow-sm: 0 0 0 1px #0f172a;
-    --shadow-md: 0 2px 0 #0f172a;
 }
 
 @media (min-width: 48rem) {

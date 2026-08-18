@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>設定と練習を移行済み</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #0f172a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding-top: 45px; padding-left: 64px; padding-right: 64px; }
+    .kicker { font-size: 14px; font-weight: 800; letter-spacing: .12em; color: #0077c7; }
+    h1 { margin-top: 10px; font-size: 44px; line-height: 1.16; letter-spacing: -.035em; font-weight: 800; }
+    .lead { margin-top: 12px; color: #475569; font-size: 19px; line-height: 1.45; }
+    .lead strong { color: #0077c7; }
+    .rule { height: 2px; background: #0f172a; margin-top: 22px; }
+    .main { margin-top: 25px; display: grid; grid-template-columns: 420px 1fr; gap: 34px; }
+    .capture { border: 2px solid #0f172a; min-height: 370px; display: grid; grid-template-rows: auto 1fr; }
+    .capture-label { border-bottom: 2px solid #0f172a; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 800; }
+    .capture-label span { color: #0077c7; letter-spacing: .08em; font-size: 12px; }
+    .capture-body { padding-top: 12px; display: flex; justify-content: center; align-items: center; background: #f8fafc; }
+    .capture img { width: 365px; height: 294px; object-fit: contain; }
+    .map { border-top: 2px solid #0f172a; }
+    .map-head { padding-top: 12px; display: grid; grid-template-columns: 220px 1fr; gap: 16px; color: #64748b; font-size: 13px; font-weight: 800; letter-spacing: .08em; }
+    .map-row { min-height: 73px; display: grid; grid-template-columns: 220px 1fr 122px; gap: 16px; align-items: center; border-bottom: 2px solid #cbd5e1; }
+    .screen { font-size: 19px; font-weight: 800; }
+    .components { display: flex; flex-wrap: wrap; gap: 8px; }
+    .component { border: 2px solid #0f172a; padding: 6px 9px; font-size: 13px; font-weight: 800; background: #fff; }
+    .component.primary { border-color: #0077c7; color: #0077c7; background: #e7f3fb; }
+    .status { justify-self: end; min-width: 104px; text-align: center; padding: 7px 8px; background: #0077c7; color: #fff; font-size: 13px; font-weight: 800; }
+    /* Reduced gap between main and bottom to remove overflow while keeping title spacing */
+    .bottom { margin-top: 11px; display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid #0f172a; border-bottom: 2px solid #0f172a; }
+    .outcome { min-height: 116px; padding-top: 18px; padding-left: 20px; padding-right: 20px; }
+    .outcome:first-child { border-right: 2px solid #0f172a; }
+    .outcome .label { color: #0077c7; font-size: 13px; font-weight: 800; letter-spacing: .1em; }
+    .outcome h2 { margin-top: 8px; font-size: 21px; line-height: 1.25; }
+    .outcome p { margin-top: 8px; color: #475569; font-size: 14px; line-height: 1.42; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="kicker">09 / MIGRATION</div>
+      <h1>設定と練習を移行済み</h1>
+      <p class="lead">崩れやすかった画面を、<strong>フォーム・名簿・カード・モーダルの共通部品</strong>へ段階移行した。</p>
+      <div class="rule"></div>
+      <div class="main">
+        <section class="capture" aria-label="移行済みの練習編集モーダル">
+          <div class="capture-label"><strong>練習編集モーダル</strong><span>LIVE STRUCTURE</span></div>
+          <div class="capture-body"><img src="/home/ubuntu/upload/Screenshot_20260818_090648_Soul.jpg" alt="練習日情報を編集するモーダル。日付、場所、テンプレート、招集・出欠名簿、保存・キャンセルの固定フッターが表示されている。"></div>
+        </section>
+        <section class="map" aria-label="画面と共通部品の対応">
+          <div class="map-head"><span>移行済み画面</span><span>適用した共通部品</span></div>
+          <div class="map-row"><div class="screen">表示・操作設定</div><div class="components"><span class="component primary">c-form-field</span><span class="component">c-form-grid</span><span class="component">c-action-group</span></div><span class="status">移行済み</span></div>
+          <div class="map-row"><div class="screen">チーム・シーズン管理</div><div class="components"><span class="component primary">c-form-field</span><span class="component">c-settings-section</span><span class="component">c-action-group</span></div><span class="status">移行済み</span></div>
+          <div class="map-row"><div class="screen">練習編集・出欠名簿</div><div class="components"><span class="component primary">c-modal</span><span class="component primary">c-fieldset</span><span class="component primary">c-roster-row</span></div><span class="status">移行済み</span></div>
+          <div class="map-row"><div class="screen">練習一覧カード</div><div class="components"><span class="component primary">c-practice-card</span><span class="component">c-action-group</span><span class="component">l-list-safe-area</span></div><span class="status">移行済み</span></div>
+        </section>
+      </div>
+      <section class="bottom" aria-label="移行による改善">
+        <div class="outcome"><div class="label">SETTINGS</div><h2>内容に合わせて伸縮するフォームへ</h2><p>説明文、入力、選択、保存操作が固定高ではなく文書フローで並び、日本語の文字数変動を受け止める。</p></div>
+        <div class="outcome"><div class="label">PRACTICE</div><h2>長い名簿でも操作が隠れないモーダルへ</h2><p>ヘッダー・単一スクロール本文・固定フッターを分離し、名簿行も選択・選手名・出欠状態へ構造化する。</p></div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

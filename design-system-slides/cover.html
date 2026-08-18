@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>CoachMgr デザインシステム</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #0f172a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding-top: 54px; padding-left: 64px; padding-right: 64px; display: grid; grid-template-columns: 7fr 5fr; gap: 28px; }
+    .eyebrow { font-size: 15px; font-weight: 800; letter-spacing: 0.14em; color: #0077c7; text-transform: uppercase; border-left: 6px solid #0077c7; padding-left: 14px; }
+    h1 { margin-top: 50px; font-size: 66px; line-height: 1.12; letter-spacing: -0.045em; font-weight: 800; }
+    .lead { margin-top: 22px; max-width: 650px; font-size: 25px; line-height: 1.65; color: #334155; }
+    .meta { margin-top: 70px; display: flex; gap: 16px; align-items: center; font-size: 16px; color: #64748b; font-weight: 700; }
+    .meta strong { color: #0f172a; }
+    .visual { border: 2px solid #0f172a; align-self: center; min-height: 460px; display: grid; grid-template-rows: auto 1fr auto; }
+    .visual-head { padding: 18px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; }
+    .visual-head span { color: #64748b; font-size: 14px; font-weight: 700; }
+    .visual-head strong { font-size: 20px; line-height: 1.2; }
+    .system-map { padding-top: 20px; padding-left: 18px; padding-right: 18px; display: grid; gap: 8px; align-content: center; }
+    .node { border: 2px solid #0f172a; padding: 12px 14px; font-size: 19px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+    .node.primary { background: #0077c7; color: #fff; border-color: #0077c7; }
+    .node small { font-size: 12px; letter-spacing: 0.08em; }
+    .connector { width: 2px; height: 14px; background: #0f172a; justify-self: center; }
+    .visual-foot { border-top: 2px solid #0f172a; padding: 12px 18px; display: flex; gap: 9px; align-items: center; font-size: 15px; color: #334155; }
+    .dot { width: 12px; height: 12px; background: #16a34a; display: inline-block; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <section>
+        <div class="eyebrow">Design System / v1.18.0</div>
+        <h1>CoachMgr<br>デザインシステム</h1>
+        <p class="lead">現場で迷わず使える、<br><strong>一貫したチーム運営PWA</strong>へ。</p>
+        <div class="meta"><strong>2026.08</strong><span>｜</span><span>Theme · Tokens · Components · Contracts</span></div>
+      </section>
+      <aside class="visual" aria-label="デザインシステムの概念図">
+        <div class="visual-head"><span>COACHMGR UI SYSTEM</span><strong>運用可能な<br>デザイン基盤</strong></div>
+        <div class="system-map">
+          <div class="node primary">チームテーマ <small>PRIMITIVES</small></div>
+          <div class="connector"></div>
+          <div class="node">意味トークン <small>SEMANTICS</small></div>
+          <div class="connector"></div>
+          <div class="node">共通部品 <small>COMPONENTS</small></div>
+          <div class="connector"></div>
+          <div class="node">検証契約 <small>QUALITY</small></div>
+        </div>
+        <div class="visual-foot"><span class="dot"></span><span>現場条件に耐えるUI運用へ移行</span></div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

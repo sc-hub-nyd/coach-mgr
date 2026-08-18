@@ -3,6 +3,7 @@ import { buildPeriodComparison, buildPositionParticipation, buildCoachingRecomme
 export const UI_PREFERENCES_KEY = 'coachMgrUiPreferences';
 
 export const DEFAULT_UI_PREFERENCES = Object.freeze({
+    colorMode: 'light',
     fontScale: 'normal',
     preferredHand: 'right',
     reduceMotion: false,
@@ -276,6 +277,7 @@ export function saveUiPreferences(preferences, storage = globalThis.localStorage
 export function applyUiPreferences(preferences, root = document.documentElement) {
     const next = { ...DEFAULT_UI_PREFERENCES, ...(preferences && typeof preferences === 'object' ? preferences : {}) };
     if (!root) return next;
+    root.dataset.colorMode = next.colorMode === 'dark' ? 'dark' : 'light';
     root.dataset.fontScale = ['normal', 'large', 'xlarge'].includes(next.fontScale) ? next.fontScale : 'normal';
     root.dataset.preferredHand = next.preferredHand === 'left' ? 'left' : 'right';
     root.dataset.reduceMotion = next.reduceMotion ? 'true' : 'false';

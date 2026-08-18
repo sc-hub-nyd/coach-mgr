@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
-    <link rel="stylesheet" href="./CSS/main.css?v=65">
+    <link rel="stylesheet" href="./CSS/main.css?v=66">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- PWA Manifest -->
@@ -54,9 +54,8 @@
                         style="background:rgba(34, 197, 94, 0.15); color:#15803d;">
                         <i class="fa-solid fa-eye"></i><span>保護者モード</span>
                     </div>
-                    <!-- ★【追加】屋外高コントラストモード切替ボタン ★ -->
-                    <button class="btn btn-secondary topbar-btn" id="btn-toggle-contrast" title="屋外高コントラストモード切替">
-                        <i class="fa-solid fa-sun"></i><span>屋外モード</span>
+                    <button class="btn btn-secondary topbar-btn" id="btn-toggle-color-mode" title="ライト／ダーク表示を切り替えます" aria-label="ライト／ダーク表示を切り替えます">
+                        <i class="fa-solid fa-moon" aria-hidden="true"></i><span>ダーク</span>
                     </button>
                     <button class="btn btn-secondary topbar-btn" id="btn-toggle-role" title="モードを切り替えます">
                         <i class="fa-solid fa-right-left"></i><span>モード切替</span>
@@ -813,6 +812,7 @@
                     <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="workspace-management-section"><i class="fa-solid fa-layer-group"></i><span>チーム・年度</span><small>切替と年度管理</small></button>
                     <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="gas-sync-section"><i class="fa-solid fa-cloud-arrow-up"></i><span>同期・復旧</span><small>保存の安全性</small></button>
                     <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="parent-share-section"><i class="fa-solid fa-people-roof"></i><span>保護者共有</span><small>招待と閲覧範囲</small></button>
+                    <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="team-theme-section"><i class="fa-solid fa-palette"></i><span>チームテーマ</span><small>色と見え方</small></button>
                     <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="ui-preferences-section"><i class="fa-solid fa-universal-access"></i><span>表示・操作</span><small>文字・利き手・動き</small></button>
                 </div>
             </section>
@@ -822,8 +822,9 @@
                 <div class="sl-section-label"><i class="fa-solid fa-universal-access"></i> 表示・操作の個別設定</div>
                 <div class="sl-section-body c-settings-section__body">
                     <p class="c-settings-section__intro operations-intro">端末ごとに、文字の大きさ、利き手、動きの量を調整できます。記録データや他の利用者の表示は変わりません。</p>
-                    <div class="c-form-grid ui-preferences-grid">
-                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-font-scale">文字の大きさ</label><select id="ui-font-scale" class="sl-input"><option value="normal">標準</option><option value="large">大きめ</option><option value="xlarge">最大</option></select></div>
+                        <div class="c-form-grid ui-preferences-grid">
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-color-mode">カラーモード</label><select id="ui-color-mode" class="sl-input"><option value="light">ライト</option><option value="dark">ダーク</option></select><small class="c-form-field__hint">この端末だけの表示設定です。</small></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-font-scale">文字の大きさ</label><select id="ui-font-scale" class="sl-input"><option value="normal">標準</option><option value="large">大きめ</option><option value="xlarge">最大</option></select></div>
                         <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-preferred-hand">Field Companionの利き手</label><select id="ui-preferred-hand" class="sl-input"><option value="right">右手（標準）</option><option value="left">左手</option></select></div>
                         <label class="c-choice-field ui-preference-check"><input id="ui-reduce-motion" type="checkbox"><span>動きを控えめにする</span></label>
                         <label class="c-choice-field ui-preference-check"><input id="ui-compact-mode" type="checkbox"><span>情報をコンパクトに表示</span></label>
@@ -832,42 +833,31 @@
                 </div>
             </section>
 
-            <!-- Section: Team Info -->
-            <div class="sl-section">
-                <div class="sl-section-label"><i class="fa-solid fa-building-flag"></i> チーム基本情報</div>
-                <div class="sl-section-body">
+            <!-- Team theme: seed color is transformed into accessible roles at runtime. -->
+            <section class="sl-section c-settings-section" id="team-theme-section" aria-labelledby="team-theme-title">
+                <div class="sl-section-label"><i class="fa-solid fa-palette"></i> チームテーマ</div>
+                <div class="sl-section-body c-settings-section__body">
                     <form id="form-team-info">
                         <div class="sl-row">
-                            <span class="sl-row-label">チーム名 <span class="badge-required">必須</span></span>
+                            <label class="sl-row-label" for="team-info-name">チーム名 <span class="badge-required">必須</span></label>
                             <input type="text" id="team-info-name" class="sl-input" required>
                         </div>
                         <div class="sl-row">
-                            <span class="sl-row-label">コーチパスコード</span>
-                            <input type="password" id="team-info-passcode" class="sl-input" placeholder="パスコードを入力"
-                                style="max-width:140px; text-align:center;">
+                            <label class="sl-row-label" for="team-info-passcode">コーチパスコード</label>
+                            <input type="password" id="team-info-passcode" class="sl-input" placeholder="パスコードを入力" style="max-width:140px; text-align:center;">
                         </div>
-                        <div class="sl-row">
-                            <span class="sl-row-label">表示テーマ</span>
-                            <select id="theme-preset" class="form-control settings-theme-select" aria-label="表示テーマ">
-                                <option value="field-green">Field Green（標準）</option>
-                                <option value="midnight">Midnight Pitch（試合・分析）</option>
-                                <option value="high-visibility">High Visibility（屋外）</option>
-                                <option value="ocean-blue">Ocean Blue（分析・データ）</option>
-                                <option value="redline">Redline（競技モード）</option>
-                                <option value="warm-notebook">Warm Notebook（育成記録）</option>
-                            </select>
-                        </div>
-                        <div class="sl-row sl-row-last">
-                            <span class="sl-row-label">チームカラー</span>
-                            <div style="display:flex; align-items:center; gap:0.75rem; margin-left:auto;">
-                                <input type="color" id="team-info-color"
-                                    style="width:52px; height:32px; border:none; border-radius:6px; cursor:pointer; background:none; padding:0;">
-                                <button type="submit" class="btn btn-primary btn-sm">保存</button>
+                        <div class="team-theme-editor">
+                            <div class="team-theme-editor__heading"><div><h2 id="team-theme-title">チームカラー</h2><p>選んだ色を種色として、操作・背景・文字をライト／ダーク両方で自動調整します。</p></div><output id="team-theme-hex" class="team-theme-editor__hex" aria-live="polite">#13795b</output></div>
+                            <div class="team-theme-editor__controls">
+                                <label class="team-theme-editor__picker" for="team-info-color"><span class="u-visually-hidden">チームカラーを選択</span><input type="color" id="team-info-color" value="#13795b"><span>色を選ぶ</span></label>
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> チームテーマを保存</button>
                             </div>
+                            <div id="team-theme-preview" class="c-theme-preview" aria-live="polite"></div>
+                            <p id="team-theme-contrast-status" class="team-theme-editor__status"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> 必須の文字・UIコントラストを確認します。</p>
                         </div>
                     </form>
                 </div>
-            </div>
+            </section>
 
             <!-- P22: チーム・シーズン管理 -->
             <div class="sl-section c-settings-section coach-only" id="workspace-management-section">
@@ -1196,7 +1186,7 @@
                 style="padding:1.5rem; background:linear-gradient(135deg, rgba(242,57,50,0.05), rgba(30,41,59,0.03)); border:1px solid var(--surface-border);">
                 <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
                     <div
-                        style="width:48px; height:48px; border-radius:12px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0;">
+                        style="width:48px; height:48px; border-radius:12px; background:var(--primary); color:var(--color-text-on-action); display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0;">
                         <i class="fa-solid fa-database"></i>
                     </div>
                     <div style="flex:1; min-width:240px;">
@@ -2058,7 +2048,7 @@
                             <i class="fa-solid fa-bullseye"></i> PK戦 キッカー記録 (3人制＋サドンデス)
                         </label>
                         <span id="pk-summary-badge" class="badge"
-                            style="background:var(--primary); color:#fff; font-size:0.8rem; padding:0.25rem 0.6rem; border-radius:12px;">PK
+                            style="background:var(--primary); color:var(--color-text-on-action); font-size:0.8rem; padding:0.25rem 0.6rem; border-radius:12px;">PK
                             0 - 0</span>
                     </div>
 
