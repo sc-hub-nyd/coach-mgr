@@ -147,7 +147,7 @@ body[data-route="animation"] .bottom-nav {
     z-index: 3000;
     /* Design */
     background: #ffffff;
-    border: 1px solid var(--surface-border);
+    border: none;
     border-radius: 10px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
@@ -191,7 +191,7 @@ body[data-route="animation"] .bottom-nav {
     width: 38px;
     height: 38px;
     flex-shrink: 0;
-    border: 1px solid transparent;
+    border: none;
     border-radius: 8px;
     background: transparent;
     color: var(--text-primary);
@@ -267,7 +267,7 @@ body[data-route="animation"] .bottom-nav {
     padding: 0.5rem;
     background: var(--surface-color);
     border-radius: var(--border-radius);
-    border: 1px solid var(--surface-border);
+    border: none;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     height: 100%;
     min-height: 480px;
@@ -422,7 +422,7 @@ body[data-route="animation"] .bottom-nav {
     width: 32px;
     height: 40px;
     background: #ffffff;
-    border: 1px solid var(--surface-border);
+    border: none;
     border-right: none;
     border-radius: 8px 0 0 8px;
     display: flex;
@@ -458,7 +458,7 @@ body[data-route="animation"] .bottom-nav {
 
 .side-info-card {
     background: var(--surface-ground, #f8fafc);
-    border: 1px solid var(--surface-border);
+    border: none;
     border-radius: 10px;
     padding: 0.8rem 1rem;
 }
@@ -519,7 +519,7 @@ body[data-route="animation"] .bottom-nav {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(12px) saturate(180%);
     -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    border: none;
     border-radius: 10px;
     padding: 0.35rem 0.55rem;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
@@ -544,7 +544,7 @@ body[data-route="animation"] .bottom-nav {
 .popover-input-num {
     width: 44px;
     height: 26px;
-    border: 1px solid var(--surface-border);
+    border: none;
     border-radius: 6px;
     text-align: center;
     font-size: 0.85rem;
@@ -624,7 +624,7 @@ body[data-route="animation"] .bottom-nav {
     background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(14px) saturate(180%);
     -webkit-backdrop-filter: blur(14px) saturate(180%);
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    border: none;
     border-radius: 22px;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
 }
@@ -648,7 +648,7 @@ body[data-route="animation"] .bottom-nav {
     font-weight: 700;
     padding: 0 0.6rem;
     border-radius: 10px;
-    border: 1px solid var(--surface-border);
+    border: none;
     background: #ffffff;
     color: var(--text-primary);
     cursor: pointer;
@@ -749,7 +749,7 @@ body[data-route="animation"] .bottom-nav {
     right: 0;
     width: 230px;
     background: #ffffff;
-    border: 1px solid var(--surface-border);
+    border: none;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     padding: 0.8rem 1rem;
@@ -826,7 +826,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         height: 40px;
         z-index: 600;
         background: #ffffff;
-        border: 1px solid #e5e7eb;
+        border: none;
         border-right: none;
         border-radius: 8px 0 0 8px;
         display: flex;
@@ -1074,7 +1074,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
     gap: 0.25rem;
     padding: 0.35rem 0.5rem;
     background: #ffffff;
-    border: 1px solid var(--surface-border);
+    border: none;
     border-radius: 6px;
     margin-bottom: 0.3rem;
 }
@@ -1238,7 +1238,7 @@ aside#period-info-side-panel textarea#side-form-summary {
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.12));
+    border: none;
     border-radius: 16px;
     padding: 12px 18px;
     box-shadow: 0 12px 36px rgba(15, 23, 42, 0.16);
@@ -1305,7 +1305,7 @@ aside#period-info-side-panel textarea#side-form-summary {
 
 .drawer-field input, .drawer-field select {
     background: #ffffff;
-    border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.15));
+    border: none;
     color: var(--text-primary, #1e293b);
     border-radius: 8px;
     padding: 6px 10px;
@@ -1335,7 +1335,7 @@ aside#period-info-side-panel textarea#side-form-summary {
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(12px) saturate(180%);
     -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.12));
+    border: none;
     border-radius: 20px;
     box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
     transition: all 0.25s ease;
@@ -1361,7 +1361,7 @@ aside#period-info-side-panel textarea#side-form-summary {
     height: 28px;
     padding: 0 8px;
     background: #ffffff;
-    border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.12));
+    border: none;
     border-radius: 14px;
     cursor: grab;
     user-select: none;
@@ -1490,7 +1490,7 @@ aside#period-info-side-panel textarea#side-form-summary {
 .preset-chip {
     flex: 0 0 auto;
     background: rgba(15, 23, 42, 0.05);
-    border: 1px solid var(--surface-border, rgba(0, 0, 0, 0.1));
+    border: none;
     border-radius: 12px;
     padding: 3px 8px;
     font-size: 0.7rem;

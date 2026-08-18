@@ -6,7 +6,7 @@
     padding: var(--surface-inset-block) var(--surface-inset-inline);
     /* Design */
     background: var(--card-bg);
-    border: 1px solid var(--surface-border);
+    border: none;
     border-radius: var(--radius-lg);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
@@ -18,7 +18,7 @@
 
 .detail-box {
     background: rgba(0, 0, 0, 0.02);
-    border: 1px solid var(--surface-border);
+    border: none;
     border-radius: var(--radius-md);
     padding: var(--surface-inset-compact-block) var(--surface-inset-compact-inline);
     text-align: left;
@@ -38,7 +38,7 @@
     background: rgba(0, 0, 0, 0.03);
     padding: var(--surface-inset-compact-block) var(--surface-inset-compact-inline);
     border-radius: var(--radius-md);
-    border: 1px solid var(--surface-border);
+    border: none;
 }
 
 .info-callout {
@@ -48,7 +48,7 @@
     margin-top: 1rem;
     font-size: 0.85rem;
     color: var(--text-secondary);
-    border: 1px solid var(--surface-border);
+    border: none;
 }
 
 .info-callout strong {
@@ -344,7 +344,7 @@
     display: block;
     padding: 0.55rem 0.65rem;
     border-bottom: none;
-    border: 1px solid var(--surface-border);
+    border: none;
 }
 
 .no-practice-menu {
@@ -417,7 +417,7 @@
     background: var(--card-bg);
     border-radius: var(--border-radius);
     padding: 1.5rem;
-    border: 1px solid var(--surface-border);
+    border: none;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     display: flex;
     flex-direction: column;
@@ -442,7 +442,7 @@
 .player-position {
     background: rgba(0, 0, 0, 0.05);
     padding: 0.2rem 0.5rem;
-    border-radius: 9999px;
+    border-radius: var(--radius-md);
     font-size: 0.8rem;
     font-weight: bold;
 }
@@ -647,7 +647,7 @@ body[data-route="tactics"] .library-grid {
     justify-content: space-between;
     align-items: center;
     background: rgba(0, 0, 0, 0.02);
-    border: 1px solid var(--surface-border);
+    border: none;
     border-radius: 12px;
     padding: 0.75rem 1rem;
     transition: var(--transition);
@@ -864,7 +864,7 @@ body[data-route="tactics"] .library-grid {
     background: rgba(0, 0, 0, 0.03);
     padding: 0.3rem 0.75rem;
     border-radius: 12px;
-    border: 1px solid var(--surface-border);
+    border: none;
 }
 
 .filter-box select {
@@ -1173,7 +1173,7 @@ summary {
     justify-content: space-between;
     gap: 0.75rem;
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(251, 191, 36, 0.1) 100%);
-    border: 1px solid rgba(245, 158, 11, 0.4);
+    border: none;
     border-radius: var(--border-radius);
     padding: 0.75rem 1rem;
     animation: dash-alert-pulse 2s ease-in-out infinite;
@@ -1256,7 +1256,7 @@ summary {
     font-size: 0.65rem;
     font-weight: 700;
     padding: 0.1rem 0.45rem;
-    border-radius: 999px;
+    border-radius: var(--radius-md);
     display: inline-block;
     margin-bottom: 0.2rem;
 }
@@ -1295,7 +1295,7 @@ summary {
     color: var(--primary);
     background: rgba(242, 57, 50, 0.1);
     padding: 0.1rem 0.45rem;
-    border-radius: 999px;
+    border-radius: var(--radius-md);
     margin-top: 0;
     /* 上余白を解除して横並びに最適化 */
 }
@@ -1468,7 +1468,7 @@ summary {
     padding: 0.35rem 0.55rem;
     border-radius: 8px;
     background: rgba(0, 0, 0, 0.02);
-    border: 1px solid var(--surface-border);
+    border: none;
     cursor: pointer;
     transition: background 0.15s, transform 0.15s;
     text-decoration: none;
@@ -1544,7 +1544,7 @@ summary {
     padding: 0.55rem 0.75rem;
     border-radius: 10px;
     background: rgba(0, 0, 0, 0.02);
-    border: 1px solid var(--surface-border);
+    border: none;
     transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 
@@ -1662,7 +1662,7 @@ summary {
 
 .dash-myplayer-metric-box {
     background: rgba(0, 0, 0, 0.02);
-    border: 1px solid var(--surface-border);
+    border: none;
     border-radius: 8px;
     padding: 0.4rem 0.6rem;
     display: flex;
@@ -1696,7 +1696,7 @@ summary {
     padding: 0.35rem 0.5rem;
     border-radius: 6px;
     background: rgba(0, 0, 0, 0.02);
-    border: 1px solid var(--surface-border);
+    border: none;
 }
 
 .dash-playtime-bar-outer {

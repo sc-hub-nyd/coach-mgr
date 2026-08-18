@@ -3,8 +3,8 @@
 .card.c-card {
     min-width: 0;
     padding: var(--surface-inset-block) var(--surface-inset-inline);
-    background: var(--neo-surface);
-    border: 1px solid color-mix(in srgb, var(--surface-border) 74%, var(--neo-highlight));
+    background: var(--neo-surface-gradient);
+    border: none;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-neo-raised);
 }
@@ -15,25 +15,29 @@
 
 .card.c-card--flat {
     background: var(--card-bg);
+    border: none;
     box-shadow: none;
 }
 
 .card.c-card--pressed {
+    background: var(--neo-surface-pressed);
+    border: none;
     box-shadow: var(--shadow-neo-pressed);
 }
 
 .card.c-card--interactive {
     cursor: pointer;
-    transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out);
+    transition: transform var(--duration-fast) var(--ease-spring), box-shadow var(--duration-base) var(--ease-spring);
 }
 
 .card.c-card--interactive:hover {
-    border-color: color-mix(in srgb, var(--primary) 38%, var(--surface-border));
     box-shadow: var(--shadow-neo-raised-hover);
+    transform: translateY(-1px);
 }
 
 .card.c-card--interactive:active {
-    transform: scale(0.99);
+    transform: translateY(1.5px) scale(0.985);
+    background: var(--neo-surface-pressed);
     box-shadow: var(--shadow-neo-pressed);
 }
 
@@ -44,7 +48,7 @@
 /* Glass is reserved for contextual layers. Primary reading surfaces remain opaque enough for predictable contrast. */
 .c-glass-surface {
     background: var(--glass-surface);
-    border: 1px solid var(--glass-border);
+    border: none;
     box-shadow: var(--glass-shadow);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
@@ -142,9 +146,9 @@
     min-inline-size: 0;
     min-block-size: 6.5rem;
     padding: var(--surface-inset-compact-block) var(--surface-inset-compact-inline);
-    border: 1px solid color-mix(in srgb, var(--color-border) 78%, var(--neo-highlight));
+    border: none;
     border-radius: var(--radius-md);
-    background: var(--neo-surface);
+    background: var(--neo-surface-gradient);
     box-shadow: var(--shadow-neo-raised);
 }
 
@@ -241,7 +245,7 @@
     gap: var(--space-1);
     min-height: 1.75rem;
     padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-md);
     background: var(--primary-soft);
     color: var(--primary);
     font-size: 0.75rem;
@@ -397,6 +401,26 @@
     transform: translate3d(0, 0, 0);
 }
 
+/* Text Animations (Liquid Reveal & Metric Glow) */
+.c-text-reveal {
+    display: inline-block;
+    mask-image: linear-gradient(to top, transparent 0%, black 100%);
+    mask-size: 100% 200%;
+    mask-position: 0 100%;
+    -webkit-mask-image: linear-gradient(to top, transparent 0%, black 100%);
+    -webkit-mask-size: 100% 200%;
+    -webkit-mask-position: 0 100%;
+    opacity: 0;
+}
+
+.c-text-glow {
+    background: linear-gradient(110deg, var(--color-text) 30%, color-mix(in srgb, #ffffff 60%, var(--color-text)) 50%, var(--color-text) 70%);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
 @media (prefers-reduced-motion: no-preference) {
     .c-liquid-panel--immersive::before {
         animation: c-liquid-drift 7.2s var(--ease-in-out) infinite alternate;
@@ -408,6 +432,14 @@
 
     .c-kinetic-kicker--reveal {
         animation: c-kicker-reveal 380ms var(--ease-out) both;
+    }
+
+    .c-text-reveal {
+        animation: c-text-reveal-anim 600ms var(--ease-out) forwards;
+    }
+
+    .c-text-glow {
+        animation: c-text-glow-anim 2.5s linear infinite;
     }
 }
 
@@ -426,9 +458,31 @@
     to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
+@keyframes c-text-reveal-anim {
+    from {
+        opacity: 0;
+        transform: translateY(0.5rem);
+        mask-position: 0 100%;
+        -webkit-mask-position: 0 100%;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        mask-position: 0 0;
+        -webkit-mask-position: 0 0;
+    }
+}
+
+@keyframes c-text-glow-anim {
+    0% { background-position: 200% center; }
+    100% { background-position: -200% center; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .c-liquid-panel--immersive::before,
     .c-text-effect--liquid,
+    .c-text-reveal,
+    .c-text-glow,
     .c-kinetic-kicker--reveal {
         animation: none;
     }
@@ -436,6 +490,29 @@
 
 :root[data-reduce-motion="true"] .c-liquid-panel--immersive::before,
 :root[data-reduce-motion="true"] .c-text-effect--liquid,
+:root[data-reduce-motion="true"] .c-text-reveal,
+:root[data-reduce-motion="true"] .c-text-glow,
 :root[data-reduce-motion="true"] .c-kinetic-kicker--reveal {
     animation: none;
 }
+
+/* Override filter bar elements to ensure they use rounded rectangles */
+.c-filter-bar__search,
+.c-filter-bar__search input,
+.filter-search-input,
+.btn-filter-detail,
+.filter-btn-group .btn,
+.filter-btn-group select {
+    border-radius: var(--radius-md) !important;
+}
+
+/* Override filter bar elements to ensure they use rounded rectangles */
+.c-filter-bar__search,
+.c-filter-bar__search input,
+.filter-search-input,
+.btn-filter-detail,
+.filter-btn-group .btn,
+.filter-btn-group select {
+    border-radius: var(--radius-md) !important;
+}
+

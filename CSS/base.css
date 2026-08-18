@@ -136,7 +136,7 @@ a,
     background: var(--glass-surface);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
+    border: none;
     border-radius: var(--radius-lg);
     box-shadow: var(--glass-shadow);
 }
@@ -603,13 +603,19 @@ body.role-read-only #pd-tab-goals textarea {
         /* 親指操作とSafe Areaを優先 */
 
         flex-direction: row !important;
-        justify-content: space-around !important;
+        justify-content: flex-start !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        scroll-padding-left: 0.5rem !important;
+        padding-left: 0.2rem !important;
+        padding-right: 0.2rem !important;
         align-items: center !important;
         z-index: 900 !important;
         background: var(--glass-surface-strong) !important;
         backdrop-filter: var(--glass-blur) !important;
         -webkit-backdrop-filter: var(--glass-blur) !important;
-        border: 1px solid var(--glass-border) !important;
+        border: none;
                 border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
         box-shadow: 0 -0.45rem 1.5rem color-mix(in srgb, var(--color-text) 12%, transparent) !important;
         box-sizing: border-box !important;
@@ -622,7 +628,8 @@ body.role-read-only #pd-tab-goals textarea {
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        flex: 1 !important;
+        flex: 0 0 auto !important;
+        min-width: calc(100vw / 5.5) !important;
                 min-height: var(--tap-target) !important;
         height: 100% !important;
         gap: 3px !important;
@@ -636,7 +643,7 @@ body.role-read-only #pd-tab-goals textarea {
         box-sizing: border-box !important;
     }
 
-    .bottom-nav .nav-item i {
+    .bottom-nav .nav-item i, .bottom-nav .nav-item .c-icon {
         font-size: 1.05rem !important;
         /* アイコンサイズも少しスリムに調整 */
         line-height: 1 !important;
@@ -714,7 +721,7 @@ body .practice-card {
     display: flex;
     flex-direction: column;
     background: #ffffff;
-    border: 1px solid var(--surface-border);
+    border: none;
     border-radius: 12px;
     padding: 0.85rem;
     box-sizing: border-box;
@@ -1026,7 +1033,7 @@ body #app .dash-widget-grid .dash-schedule-item-chip {
     gap: 0.5rem;
     padding: 0.45rem 0.75rem;
     background: rgba(0, 0, 0, 0.02);
-    border: 1px solid var(--surface-border);
+    border: none;
     border-radius: 10px;
     white-space: nowrap;
     flex-shrink: 0;
@@ -1439,3 +1446,8 @@ body #app .dash-widget-grid #dash-form-bar .dash-form-opponent {
         display: none !important;
     }
 }
+
+body.role-read-only .bottom-nav .coach-only {
+    display: none !important;
+}
+
