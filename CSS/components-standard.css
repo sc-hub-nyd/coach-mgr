@@ -503,16 +503,6 @@
 .btn-filter-detail,
 .filter-btn-group .btn,
 .filter-btn-group select {
-    border-radius: var(--radius-md) !important;
-}
-
-/* Override filter bar elements to ensure they use rounded rectangles */
-.c-filter-bar__search,
-.c-filter-bar__search input,
-.filter-search-input,
-.btn-filter-detail,
-.filter-btn-group .btn,
-.filter-btn-group select {
-    border-radius: var(--radius-md) !important;
+    border-radius: var(--radius-md);
 }
 
