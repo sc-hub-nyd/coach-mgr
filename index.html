@@ -1037,123 +1037,61 @@
     </template>
 
     <template id="tpl-data">
-        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+        <div class="c-data-management">
             <!-- Header Banner Card -->
-            <div class="card"
-                style="padding:1.5rem; background:linear-gradient(135deg, rgba(242,57,50,0.05), rgba(30,41,59,0.03)); border:1px solid var(--surface-border);">
-                <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
-                    <div
-                        style="width:48px; height:48px; border-radius:12px; background:var(--primary); color:var(--color-text-on-action); display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0;">
-                        <i class="fa-solid fa-database"></i>
-                    </div>
-                    <div style="flex:1; min-width:240px;">
-                        <h2 style="font-size:1.2rem; font-weight:bold; margin:0 0 0.3rem 0; color:var(--text-primary);">
-                            データ連携・バックアップ管理</h2>
-                        <p class="text-secondary" style="font-size:0.85rem; margin:0; line-height:1.4;">
-                            試合記録、練習予定、フォーメーション、選手プロフィールのすべてのデータをファイル（JSON）として出力・共有・保存できます。
-                        </p>
+            <section class="c-card c-liquid-panel">
+                <div class="c-data-management__hero">
+                    <div class="c-data-management__hero-icon"><i class="fa-solid fa-database" aria-hidden="true"></i></div>
+                    <div class="c-data-management__hero-content">
+                        <h2 class="c-data-management__title">データ連携・バックアップ管理</h2>
+                        <p class="c-data-management__intro">試合記録、練習予定、フォーメーション、選手プロフィールのすべてのデータをファイル（JSON）として出力・共有・保存できます。</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- Two Main Operations Cards -->
-            <div class="library-grid">
+            <div class="c-data-management__grid">
                 <!-- Export Card -->
-                <div class="card" id="data-export-card"
-                    style="padding:1.5rem; display:flex; flex-direction:column; justify-content:space-between; gap:1.25rem;">
-                    <div>
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
-                            <div style="display:flex; align-items:center; gap:0.6rem;">
-                                <div
-                                    style="width:36px; height:36px; border-radius:8px; background:rgba(34,197,94,0.12); color:#16a34a; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
-                                    <i class="fa-solid fa-file-export"></i>
-                                </div>
-                                <div>
-                                    <h3 style="font-size:1.05rem; font-weight:bold; margin:0;">データをエクスポート</h3>
-                                    <span class="text-secondary" style="font-size:0.75rem;">バックアップファイルの作成</span>
-                                </div>
+                <section class="c-card c-data-management__operation" id="data-export-card">
+                    <div class="c-data-management__operation-content">
+                        <div class="c-data-management__operation-header">
+                            <div class="c-data-management__hero">
+                                <div class="c-data-management__operation-icon"><i class="fa-solid fa-file-export" aria-hidden="true"></i></div>
+                                <div class="c-data-management__operation-content"><h3 class="c-data-management__operation-title">データをエクスポート</h3><p class="c-data-management__operation-meta">バックアップファイルの作成</p></div>
                             </div>
-                            <span class="badge"
-                                style="background:rgba(34,197,94,0.15); color:#15803d; font-size:0.7rem;">出力</span>
+                            <span class="badge">出力</span>
                         </div>
-
-                        <p class="text-secondary" style="font-size:0.85rem; line-height:1.5; margin-bottom:1rem;">
-                            現在登録されているチームの全データ（試合記録、練習日、メニュー、選手情報、各フォーメーション等）をまとめたJSON形式のファイルを生成・保存します。
-                        </p>
-
-                        <div
-                            style="background:rgba(0,0,0,0.03); border:1px solid var(--surface-border); border-radius:8px; padding:0.8rem; font-size:0.8rem; color:var(--text-secondary);">
-                            <div style="font-weight:bold; margin-bottom:0.25rem; color:var(--text-primary);"><i
-                                    class="fa-solid fa-circle-info"></i> 利用シーン</div>
-                            ・保護者やスタッフへ最新データを共有するとき<br>
-                            ・端末変更やバックアップとして保管するとき
-                        </div>
+                        <p class="c-data-management__description">現在登録されているチームの全データ（試合記録、練習日、メニュー、選手情報、各フォーメーション等）をまとめたJSON形式のファイルを生成・保存します。</p>
+                        <p class="c-data-management__note"><strong><i class="fa-solid fa-circle-info" aria-hidden="true"></i> 利用シーン</strong><br>保護者やスタッフへ最新データを共有するとき<br>端末変更やバックアップとして保管するとき</p>
                     </div>
-
-                    <button class="btn btn-primary" id="btn-data-view-export"
-                        style="width:100%; padding:0.75rem; justify-content:center; font-size:0.95rem; font-weight:bold;">
-                        <i class="fa-solid fa-download"></i> エクスポート (JSONダウンロード)
-                    </button>
-                </div>
+                    <div class="c-action-group c-action-group--mobile-stretch"><button type="button" class="btn btn-primary" id="btn-data-view-export"><i class="fa-solid fa-download" aria-hidden="true"></i> エクスポート（JSONダウンロード）</button></div>
+                </section>
 
                 <!-- Import Card -->
-                <div class="card"
-                    style="padding:1.5rem; display:flex; flex-direction:column; justify-content:space-between; gap:1.25rem;">
-                    <div>
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
-                            <div style="display:flex; align-items:center; gap:0.6rem;">
-                                <div
-                                    style="width:36px; height:36px; border-radius:8px; background:rgba(245,158,11,0.12); color:#d97706; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
-                                    <i class="fa-solid fa-file-import"></i>
-                                </div>
-                                <div>
-                                    <h3 style="font-size:1.05rem; font-weight:bold; margin:0;">データをインポート</h3>
-                                    <span class="text-secondary" style="font-size:0.75rem;">データの読込・復元</span>
-                                </div>
+                <section class="c-card c-data-management__operation">
+                    <div class="c-data-management__operation-content">
+                        <div class="c-data-management__operation-header">
+                            <div class="c-data-management__hero">
+                                <div class="c-data-management__operation-icon c-data-management__operation-icon--restore"><i class="fa-solid fa-file-import" aria-hidden="true"></i></div>
+                                <div class="c-data-management__operation-content"><h3 class="c-data-management__operation-title">データをインポート</h3><p class="c-data-management__operation-meta">データの読込・復元</p></div>
                             </div>
-                            <span class="badge"
-                                style="background:rgba(245,158,11,0.15); color:#b45309; font-size:0.7rem;">取込</span>
+                            <span class="badge">取込</span>
                         </div>
-
-                        <p class="text-secondary" style="font-size:0.85rem; line-height:1.5; margin-bottom:1rem;">
-                            コーチから受け取ったJSONファイルを取り込み、アプリ内の試合情報や練習予定を最新状態に更新します。
-                        </p>
-
-                        <div
-                            style="background:rgba(239,68,68,0.05); border:1px solid rgba(239,68,68,0.2); border-radius:8px; padding:0.8rem; font-size:0.8rem; color:#b91c1c;">
-                            <div style="font-weight:bold; margin-bottom:0.25rem;"><i
-                                    class="fa-solid fa-triangle-exclamation"></i> 注意事項</div>
-                            インポートを実行すると、現在このブラウザに表示されているデータは取り込んだ内容に上書き更新されます。
-                        </div>
+                        <p class="c-data-management__description">コーチから受け取ったJSONファイルを取り込み、アプリ内の試合情報や練習予定を最新状態に更新します。</p>
+                        <p class="c-data-management__note c-data-management__note--warning"><strong><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 注意事項</strong><br>インポートを実行すると、現在このブラウザに表示されているデータは取り込んだ内容に上書き更新されます。</p>
                     </div>
-
-                    <label class="btn btn-secondary"
-                        style="width:100%; padding:0.75rem; justify-content:center; font-size:0.95rem; font-weight:bold; cursor:pointer; margin:0; box-sizing:border-box;">
-                        <i class="fa-solid fa-upload"></i> インポート (ファイルを選択)
-                        <input type="file" id="input-data-view-import" accept=".json" style="display:none;">
-                    </label>
-                </div>
+                    <div class="c-action-group c-action-group--mobile-stretch"><label class="btn btn-secondary c-data-management__file-action"><i class="fa-solid fa-upload" aria-hidden="true"></i> インポート（ファイルを選択）<input type="file" id="input-data-view-import" accept=".json" class="u-visually-hidden"></label></div>
+                </section>
             </div>
 
             <!-- Clear / Reset Section -->
-            <div class="card"
-                style="padding:1.5rem; border:1px solid rgba(239,68,68,0.3); background:rgba(239,68,68,0.02);">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
-                    <div>
-                        <h3 style="font-size:1.05rem; font-weight:bold; margin:0 0 0.3rem 0; color:#ef4444;"><i
-                                class="fa-solid fa-trash-can"></i> 入力データのオールクリア（初期化）</h3>
-                        <p class="text-secondary" style="font-size:0.85rem; margin:0; line-height:1.4;">
-                            登録済みの試合記録、練習管理、選手情報、メニューなどをすべて削除し、初期状態にクリアします。
-                        </p>
-                    </div>
-                    <button class="btn btn-danger" id="btn-data-all-clear"
-                        style="padding:0.65rem 1.25rem; font-size:0.9rem; font-weight:bold; white-space:nowrap;">
-                        <i class="fa-solid fa-rotate-left"></i> データをオールクリア
-                    </button>
+            <section class="c-card c-data-management__danger">
+                <div class="c-data-management__operation-content">
+                    <h3 class="c-data-management__operation-title c-data-management__danger-title"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> 入力データのオールクリア（初期化）</h3>
+                    <p class="c-data-management__description">登録済みの試合記録、練習管理、選手情報、メニューなどをすべて削除し、初期状態にクリアします。</p>
                 </div>
-            </div>
+                <div class="c-action-group c-action-group--mobile-stretch"><button type="button" class="btn btn-danger" id="btn-data-all-clear"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> データをオールクリア</button></div>
+            </section>
             <!-- App Version & Info Section -->
             <div class="card" style="padding:1.25rem 1.5rem; background:var(--surface); border:1px solid var(--surface-border);">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">

@@ -1066,3 +1066,136 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Data management: backup, restore, and destructive actions share a consistent operational hierarchy. */
+.c-data-management {
+    display: grid;
+    gap: var(--space-5);
+    min-inline-size: 0;
+}
+
+.c-data-management__hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.c-data-management__hero-icon,
+.c-data-management__operation-icon {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    inline-size: 3rem;
+    block-size: 3rem;
+    border-radius: var(--radius-md);
+    background: var(--color-brand-surface);
+    color: var(--color-brand);
+    font-size: 1.25rem;
+}
+
+.c-data-management__hero-content,
+.c-data-management__operation-content {
+    display: grid;
+    gap: var(--space-1);
+    min-inline-size: 0;
+}
+
+.c-data-management__title,
+.c-data-management__operation-title {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.125rem;
+    font-weight: 800;
+    line-height: var(--text-dense-leading);
+    overflow-wrap: anywhere;
+}
+
+.c-data-management__intro,
+.c-data-management__operation-meta,
+.c-data-management__description {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-dense-size);
+    line-height: var(--text-body-leading);
+}
+
+.c-data-management__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: var(--space-4);
+    min-inline-size: 0;
+}
+
+.c-data-management__operation {
+    display: grid;
+    align-content: space-between;
+    gap: var(--space-4);
+    min-inline-size: 0;
+}
+
+.c-data-management__operation-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.c-data-management__operation-icon--restore {
+    background: var(--color-warning-surface);
+    color: var(--color-warning);
+}
+
+.c-data-management__note {
+    margin: 0;
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-subtle);
+    color: var(--color-text-muted);
+    font-size: var(--text-meta-size);
+    line-height: var(--text-body-leading);
+}
+
+.c-data-management__note--warning {
+    border-color: color-mix(in srgb, var(--color-danger) 34%, var(--color-border));
+    background: var(--color-danger-surface);
+    color: var(--color-danger);
+}
+
+.c-data-management__file-action {
+    justify-content: center;
+    inline-size: 100%;
+}
+
+.c-data-management__danger {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    border-color: color-mix(in srgb, var(--color-danger) 34%, var(--color-border));
+    background: color-mix(in srgb, var(--color-danger-surface) 62%, var(--color-surface));
+}
+
+.c-data-management__danger-title {
+    color: var(--color-danger);
+}
+
+@media (max-width: 30rem) {
+    .c-data-management {
+        gap: var(--space-4);
+    }
+
+    .c-data-management__hero {
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+
+    .c-data-management__hero-icon,
+    .c-data-management__operation-icon {
+        inline-size: 2.5rem;
+        block-size: 2.5rem;
+        font-size: 1rem;
+    }
+}

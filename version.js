@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.27.9';
+export const APP_VERSION = 'v1.28.0';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.28.0',
+        date: '2026-08-18',
+        title: 'データ管理導線の標準化',
+        features: [
+            'バックアップ出力、JSON復元、全データ初期化をc-card、c-action-groupの共通構造へ移行',
+            '出力・復元・初期化の既存IDとイベント接続を維持し、操作の意味トーンを標準化',
+            '復元の注意事項と初期化の危険状態をセマンティックなサーフェス・色トークンへ接続',
+            '波2のフォーム・モーダル・データ管理導線統合をデータ管理画面へ展開'
+        ]
+    },
     {
         version: 'v1.27.9',
         date: '2026-08-18',

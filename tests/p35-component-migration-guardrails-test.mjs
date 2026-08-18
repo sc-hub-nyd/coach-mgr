@@ -259,6 +259,16 @@ requireAll(source.index, [
 ], '選手ビュー切替');
 
 requireAll(source.index, [
+    'template id="tpl-data"',
+    'c-data-management',
+    'id="data-export-card"',
+    'id="btn-data-view-export"',
+    'id="input-data-view-import"',
+    'id="btn-data-all-clear"',
+    'c-card c-data-management__danger'
+], 'データ管理画面');
+
+requireAll(source.index, [
     'template id="tpl-tactics"',
     'id="input-tactics-search"',
     'id="filter-tactics-category"',
@@ -316,7 +326,10 @@ requireAll(source.system, [
     '\\.c-data-list',
     '\\.c-filter-bar',
     '\\.c-view-switcher',
-    '\\.c-modal'
+    '\\.c-modal',
+    '\\.c-data-management',
+    '\\.c-data-management__grid',
+    '\\.c-data-management__danger'
 ], 'システム部品');
 
 console.log('P35 component migration guardrails passed');
