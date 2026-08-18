@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.5';
+export const APP_VERSION = 'v1.30.6';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.6',
+        date: '2026-08-18',
+        title: '直近練習履歴を標準データリスト化',
+        features: [
+            '直近練習の日付とメニュー概要をc-data-listのメタ・本文へ移行',
+            '日付指定で練習管理へ遷移する既存導線を維持',
+            'P33、P34、P35、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.30.5',
         date: '2026-08-18',

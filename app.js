@@ -1811,13 +1811,10 @@ function initDashboard() {
                         ? p.menus.map(mn => escapeHtml(mn.focus)).join(' / ')
                         : 'メニュー未記録';
                     return `
-                        <div class="dash-rank-item" onclick="event.stopPropagation(); navigate('practices', { date: '${p.date}' })">
-                            <span class="u-ext-33 dash-rank-medal" >📅</span>
-                            <div class="u-ext-34" >
-                                <div class="u-ext-35" >${p.date}</div>
-                                <div class="u-ext-36" >${focuses}</div>
-                            </div>
-                        </div>
+                        <article class="c-data-list__item dash-rank-item" onclick="event.stopPropagation(); navigate('practices', { date: '${p.date}' })">
+                            <div class="c-data-list__meta">${p.date}</div>
+                            <div class="c-data-list__body">${focuses}</div>
+                        </article>
                     `;
                 }).join('')
                 : renderEmptyState({ icon: 'fa-clipboard', title: '練習記録なし', compact: true });
