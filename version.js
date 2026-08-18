@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.12';
+export const APP_VERSION = 'v1.30.13';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.13',
+        date: '2026-08-18',
+        title: '練習カード描画エラーを修正',
+        features: [
+            '練習カード生成でforEachの戻り値にjoinを呼んでいたため一覧全体が描画されない問題を修正',
+            '添付バックアップの練習6件をカード一覧として描画可能に修正'
+        ]
+    },
     {
         version: 'v1.30.12',
         date: '2026-08-18',
