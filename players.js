@@ -837,18 +837,12 @@ export function initPlayers() {
                 const targetView = e.currentTarget.dataset.view;
 
                 tabsContainer.querySelectorAll('.player-view-tab').forEach(t => {
-                    t.classList.remove('active');
-                    t.style.background = 'transparent';
-                    t.style.color = 'var(--text-secondary)';
-                    t.style.fontWeight = '600';
-                    t.style.boxShadow = 'none';
+                    t.classList.remove('active', 'is-active');
+                    t.setAttribute('aria-selected', 'false');
                 });
 
-                e.currentTarget.classList.add('active');
-                e.currentTarget.style.background = 'var(--surface-color)';
-                e.currentTarget.style.color = 'var(--text-primary)';
-                e.currentTarget.style.fontWeight = '700';
-                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                e.currentTarget.classList.add('active', 'is-active');
+                e.currentTarget.setAttribute('aria-selected', 'true');
 
                 document.querySelectorAll('.player-subview').forEach(view => {
                     view.classList.add('hidden');

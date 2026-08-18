@@ -89,6 +89,41 @@ requireAll(source.index, [
 ], '練習フィルター');
 
 requireAll(source.index, [
+    'template id="tpl-players"',
+    'id="player-view-tabs"',
+    'player-view-tab',
+    'id="player-grid"',
+    'id="player-view-participation"',
+    'id="btn-import-players-csv"',
+    'id="btn-add-player"',
+    'c-view-switcher'
+], '選手ビュー切替');
+
+requireAll(source.index, [
+    'template id="tpl-tactics"',
+    'id="input-tactics-search"',
+    'id="filter-tactics-category"',
+    'id="btn-add-tactic"',
+    'c-filter-bar__search',
+    'c-filter-bar__actions'
+], '戦術フィルター');
+
+requireAll(source.index, [
+    'template id="tpl-library"',
+    'id="input-library-search"',
+    'id="btn-toggle-filter-library"',
+    'id="filter-accordion-library"',
+    'id="filter-library-category"',
+    'id="filter-library-media"',
+    'id="filter-library-assigned"',
+    'id="filter-library-rating"',
+    'id="btn-reset-filter-library"',
+    'id="btn-add-library-menu"',
+    'c-filter-bar__search',
+    'c-filter-bar__filters'
+], 'メニューフィルター');
+
+requireAll(source.index, [
     'template id="tpl-matches"',
     'id="input-match-search"',
     'id="btn-toggle-filter-matches"',
@@ -121,6 +156,7 @@ requireAll(source.system, [
     '\\.c-practice-card',
     '\\.c-data-list',
     '\\.c-filter-bar',
+    '\\.c-view-switcher',
     '\\.c-modal'
 ], 'システム部品');
 

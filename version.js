@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.24.0';
+export const APP_VERSION = 'v1.24.1';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.24.1',
+        date: '2026-08-18',
+        title: '一覧共通基盤の拡張：メニュー・戦術・選手管理',
+        features: [
+            'メニュー管理と戦術管理の検索・絞り込み・追加操作をc-filter-bar、c-form-field、c-action-groupで統一し、既存のイベントIDを維持',
+            '選手管理の表示切替をc-view-switcherへ移行。選択状態をCSSクラスとARIA属性で管理し、画面内インライン装飾への依存を削減',
+            '一覧操作の部品契約をP35へ追加し、検索・フィルター・ビュー切替・主操作のDOM接続を自動検証',
+            '15種色×light/darkテーマ、5ビューポート×5画面のレスポンシブ検証で違反0件を確認'
+        ]
+    },
     {
         version: 'v1.24.0',
         date: '2026-08-18',

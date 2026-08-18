@@ -619,26 +619,12 @@
     </template>
 
     <template id="tpl-players">
-        <div
-            style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
-            <!-- Cross-sectional Analysis View Switcher Tabs -->
-            <div class="player-view-tabs" id="player-view-tabs"
-                style="display:flex; gap:0.4rem; background:rgba(0,0,0,0.03); padding:0.3rem; border-radius:10px; border:1px solid var(--surface-border); flex-wrap:wrap;">
-                <button type="button" class="btn btn-sm player-view-tab active" data-view="cards"
-                    style="font-size:0.8rem; padding:0.4rem 0.8rem; border-radius:8px; border:none; background:var(--surface-color); color:var(--text-primary); font-weight:700; box-shadow:0 1px 3px rgba(0,0,0,0.1); cursor:pointer;">
-                    <i class="fa-solid fa-address-card" style="color:var(--primary);"></i> 選手カルテ一覧
-                </button>
-                <button type="button" class="btn btn-sm player-view-tab" data-view="participation"
-                    style="font-size:0.8rem; padding:0.4rem 0.8rem; border-radius:8px; border:none; background:transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
-                    <i class="fa-solid fa-chart-column" style="color:#9333ea;"></i> 出場＆スタッツ比較
-                </button>
+        <div class="l-cluster l-cluster--space-between l-cluster--spacious">
+            <div class="c-view-switcher player-view-tabs" id="player-view-tabs" role="tablist" aria-label="選手表示を切り替え">
+                <button type="button" class="btn btn-sm c-view-switcher__option player-view-tab active" data-view="cards" role="tab" aria-selected="true" aria-controls="player-grid"><i class="fa-solid fa-address-card" aria-hidden="true"></i> 選手カルテ一覧</button>
+                <button type="button" class="btn btn-sm c-view-switcher__option player-view-tab" data-view="participation" role="tab" aria-selected="false" aria-controls="player-view-participation"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> 出場＆スタッツ比較</button>
             </div>
-
-            <div class="header-actions" style="gap:0.5rem;">
-                <button class="btn btn-secondary" id="btn-import-players-csv"><i class="fa-solid fa-file-csv"></i>
-                    CSVから一括登録</button>
-                <button class="btn btn-primary" id="btn-add-player"><i class="fa-solid fa-user-plus"></i> 追加</button>
-            </div>
+            <div class="c-action-group header-actions"><button class="btn btn-secondary" id="btn-import-players-csv"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> CSVから一括登録</button><button class="btn btn-primary" id="btn-add-player"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 追加</button></div>
         </div>
 
         <!-- View 1: Card Grid (Default) -->
@@ -658,89 +644,34 @@
     </template>
 
     <template id="tpl-library">
-        <div class="filter-bar-container">
-            <div class="filter-main-row">
-                <div class="filter-search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="search" id="input-library-search" placeholder="メニューをキーワード検索..."
-                        class="form-control filter-search-input">
-                </div>
-                <div class="filter-btn-group">
-                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-library" title="絞り込み条件">
-                        <i class="fa-solid fa-sliders"></i> 絞り込み<span class="filter-count-badge hidden"
-                            id="badge-filter-library">0</span>
-                    </button>
-                    <button class="btn btn-primary" id="btn-add-library-menu"><i class="fa-solid fa-plus"></i>
-                        追加</button>
-                </div>
+        <section class="c-filter-bar" aria-label="メニューの検索と絞り込み">
+            <div class="c-filter-bar__main">
+                <div class="c-filter-bar__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="input-library-search" placeholder="メニューをキーワード検索..." class="form-control filter-search-input"></div>
+                <div class="c-action-group c-filter-bar__actions"><button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-library" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="filter-count-badge hidden" id="badge-filter-library">0</span></button><button class="btn btn-primary" id="btn-add-library-menu"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button></div>
             </div>
-            <!-- Active Filter Tags Bar -->
             <div class="active-tags-bar hidden" id="active-tags-library"></div>
-            <!-- Accordion Filter Panel -->
-            <div class="filter-accordion-panel hidden" id="filter-accordion-library">
-                <div class="filter-accordion-grid">
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-bullseye"></i> 練習カテゴリ</label>
-                        <select id="filter-library-category" class="form-control"></select>
-                    </div>
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-photo-film"></i> メディアの有無</label>
-                        <select id="filter-library-media" class="form-control">
-                            <option value="all">すべてのメディア</option>
-                            <option value="anim">作図アニメあり</option>
-                            <option value="video">参考動画あり</option>
-                            <option value="any">作図/動画いずれかあり</option>
-                        </select>
-                    </div>
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-list-check"></i> アサイン状態</label>
-                        <select id="filter-library-assigned" class="form-control">
-                            <option value="all">すべてのアサイン状態</option>
-                            <option value="frequent">🔥 よく使う定番 (5回以上)</option>
-                            <option value="assigned">練習アサイン実績あり</option>
-                            <option value="unassigned">未アサイン (ストック)</option>
-                        </select>
-                    </div>
-                    <div class="filter-accordion-item">
-                        <label><i class="fa-solid fa-star"></i> ★評価（関心度）</label>
-                        <select id="filter-library-rating" class="form-control">
-                            <option value="all">すべての評価 (★)</option>
-                            <option value="5">★★★★★ (★5のみ)</option>
-                            <option value="4">★★★★☆ 以上 (★4+)</option>
-                            <option value="3">★★★☆☆ 以上 (★3+)</option>
-                            <option value="rated">評価登録あり</option>
-                        </select>
-                    </div>
+            <div class="c-filter-bar__filters filter-accordion-panel hidden" id="filter-accordion-library">
+                <div class="c-form-grid filter-accordion-grid">
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-category"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> 練習カテゴリ</label><select id="filter-library-category" class="form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-media"><i class="fa-solid fa-photo-film" aria-hidden="true"></i> メディアの有無</label><select id="filter-library-media" class="form-control"><option value="all">すべてのメディア</option><option value="anim">作図アニメあり</option><option value="video">参考動画あり</option><option value="any">作図/動画いずれかあり</option></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-assigned"><i class="fa-solid fa-list-check" aria-hidden="true"></i> アサイン状態</label><select id="filter-library-assigned" class="form-control"><option value="all">すべてのアサイン状態</option><option value="frequent">よく使う定番（5回以上）</option><option value="assigned">練習アサイン実績あり</option><option value="unassigned">未アサイン（ストック）</option></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-rating"><i class="fa-solid fa-star" aria-hidden="true"></i> 評価（関心度）</label><select id="filter-library-rating" class="form-control"><option value="all">すべての評価</option><option value="5">★★★★★（★5のみ）</option><option value="4">★★★★☆ 以上（★4+）</option><option value="3">★★★☆☆ 以上（★3+）</option><option value="rated">評価登録あり</option></select></div>
                 </div>
-                <div class="filter-accordion-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-library"
-                        style="font-size:0.75rem; padding:0.2rem 0.6rem;">
-                        <i class="fa-solid fa-rotate-left"></i> 条件をリセット
-                    </button>
-                </div>
+                <div class="c-filter-bar__filter-actions"><button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-library"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 条件をリセット</button></div>
             </div>
-        </div>
+        </section>
         <div id="library-list" style="display:flex; flex-direction:column; gap:1.5rem;">
             <!-- Library items grouped by category injected here -->
         </div>
     </template>
 
     <template id="tpl-tactics">
-        <div class="filter-bar-container">
-            <div class="filter-main-row">
-                <div class="filter-search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="search" id="input-tactics-search" placeholder="戦術をキーワード検索..."
-                        class="form-control filter-search-input">
-                </div>
-                <div class="filter-btn-group">
-                    <select id="filter-tactics-category" class="form-control">
-                        <option value="all">すべてのカテゴリ</option>
-                    </select>
-                    <button class="btn btn-primary" id="btn-add-tactic"><i class="fa-solid fa-plus"></i> 追加</button>
-                </div>
+        <section class="c-filter-bar" aria-label="戦術の検索と絞り込み">
+            <div class="c-filter-bar__main">
+                <div class="c-filter-bar__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="input-tactics-search" placeholder="戦術をキーワード検索..." class="form-control filter-search-input"></div>
+                <div class="c-action-group c-filter-bar__actions"><div class="c-form-field c-form-field--compact"><label class="u-visually-hidden" for="filter-tactics-category">カテゴリ</label><select id="filter-tactics-category" class="form-control"><option value="all">すべてのカテゴリ</option></select></div><button class="btn btn-primary" id="btn-add-tactic"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button></div>
             </div>
-        </div>
+        </section>
         <div id="tactics-list" style="display:flex; flex-direction:column; gap:1.5rem; margin-top:1rem;">
             <!-- Tactics items injected here -->
         </div>
