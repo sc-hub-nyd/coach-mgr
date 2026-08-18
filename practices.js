@@ -366,14 +366,7 @@ export function initPractices(miniPitchObserver) {
             const myPlayerId = localStorage.getItem('coachMgrMyPlayerId');
             const myPlayer = myPlayerId ? state.players.find(player => String(player.id) === String(myPlayerId)) : null;
             const myStatus = myPlayer ? (p.attendanceByPlayer?.[String(myPlayer.id)]?.status || 'pending') : null;
-            const parentResponseHtml = !isCoach && myPlayer && p.callUpPlayerIds?.some(id => String(id) === String(myPlayer.id)) ? `
-                <div class="practice-parent-rsvp" aria-label="${escapeHtml(myPlayer.name)}選手の出欠回答">
-                    <span><i class="fa-solid ${getAttendanceStatus(myStatus).icon}" aria-hidden="true"></i> ${escapeHtml(myPlayer.name)}：${getAttendanceStatus(myStatus).label}</span>
-                    <div class="practice-rsvp-actions">
-                        <button type="button" class="btn btn-xs btn-rsvp-attending ${myStatus === 'attending' ? 'is-selected' : ''}" data-id="${p.id}" data-player-id="${myPlayer.id}">参加</button>
-                        <button type="button" class="btn btn-xs btn-rsvp-absent ${myStatus === 'absent' ? 'is-selected' : ''}" data-id="${p.id}" data-player-id="${myPlayer.id}">欠席</button>
-                    </div>
-                </div>` : '';
+            const parentResponseHtml = '';
             const actionBtns = `
                 <div class="c-practice-card__actions practice-card-actions">
                     ${isCoach ? `<button class="btn btn-primary btn-xs btn-add-menu" data-id="${p.id}" title="メニュー追加"><i class="fa-solid fa-plus"></i> メニュー</button>
@@ -572,7 +565,6 @@ export function initPractices(miniPitchObserver) {
 
             const engagementInp = document.getElementById('menu-engagement');
             const engagementVal = engagementInp ? parseInt(engagementInp.value, 10) : 0;
-            const reflectionInp = document.getElementById('menu-reflection');
             const reflectionVal = reflectionInp ? reflectionInp.value.trim() : '';
 
             const newMenuObj = {
@@ -794,8 +786,6 @@ export function initPractices(miniPitchObserver) {
             if (vInp) vInp.value = '';
             const engInp = document.getElementById('menu-engagement');
             if (engInp) engInp.value = 0;
-            const refInp = document.getElementById('menu-reflection');
-            if (refInp) refInp.value = '';
 
             const select = document.getElementById('menu-library-select');
             if (select) {
@@ -898,7 +888,6 @@ export function initPractices(miniPitchObserver) {
 
                     const engInp = document.getElementById('menu-engagement');
                     if (engInp) engInp.value = menu.engagement || 0;
-                    const refInp = document.getElementById('menu-reflection');
                     if (refInp) refInp.value = menu.reflection || '';
 
                     const libSel = document.getElementById('menu-library-select');

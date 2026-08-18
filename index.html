@@ -32,7 +32,6 @@
                 <li class="active" data-route="dashboard"><span class="c-icon c-icon--home c-icon--sm" aria-hidden="true"></span> ダッシュボード</li>
                 <li data-route="matches"><span class="c-icon c-icon--trophy c-icon--sm" aria-hidden="true"></span> 試合記録</li>
                 <li data-route="practices"><span class="c-icon c-icon--cone c-icon--sm" aria-hidden="true"></span> 練習管理</li>
-                <li data-route="insights"><span class="c-icon c-icon--rising-pass c-icon--sm" aria-hidden="true"></span> 振り返り</li>
                 <li data-route="library"><span class="c-icon c-icon--document c-icon--sm" aria-hidden="true"></span> メニュー管理</li>
                 <li data-route="tactics"><span class="c-icon c-icon--pass-ladder c-icon--sm" aria-hidden="true"></span> 戦術管理</li>
                 <li data-route="players"><span class="c-icon c-icon--team c-icon--sm" aria-hidden="true"></span> 選手管理</li>
@@ -101,25 +100,33 @@
             </div>
             <!-- スマホ用5項目ナビゲーション。詳細機能は「その他」に集約 -->
             <nav class="bottom-nav" id="bottom-nav" aria-label="主要ナビゲーション">
-                <a href="#" class="nav-item active" data-route="dashboard" aria-label="ホーム">
+                <a href="#" class="nav-item active" data-route="dashboard" aria-label="ダッシュボード">
                     <span class="c-icon c-icon--home c-icon--sm" aria-hidden="true"></span>
                     <span>ホーム</span>
                 </a>
-                <a href="#" class="nav-item" data-route="practices" aria-label="予定">
-                    <span class="c-icon c-icon--calendar c-icon--sm" aria-hidden="true"></span>
-                    <span>予定</span>
-                </a>
-                <a href="#" class="nav-item" data-route="matches" aria-label="試合">
+                <a href="#" class="nav-item" data-route="matches" aria-label="試合記録">
                     <span class="c-icon c-icon--trophy c-icon--sm" aria-hidden="true"></span>
                     <span>試合</span>
                 </a>
-                <a href="#" class="nav-item" data-route="players" aria-label="選手">
+                <a href="#" class="nav-item" data-route="practices" aria-label="練習管理">
+                    <span class="c-icon c-icon--cone c-icon--sm" aria-hidden="true"></span>
+                    <span>練習</span>
+                </a>
+                <a href="#" class="nav-item" data-route="library" aria-label="メニュー管理">
+                    <span class="c-icon c-icon--document c-icon--sm" aria-hidden="true"></span>
+                    <span>メニュー</span>
+                </a>
+                <a href="#" class="nav-item coach-only" data-route="tactics" aria-label="戦術管理">
+                    <span class="c-icon c-icon--pass-ladder c-icon--sm" aria-hidden="true"></span>
+                    <span>戦術</span>
+                </a>
+                <a href="#" class="nav-item coach-only" data-route="players" aria-label="選手管理">
                     <span class="c-icon c-icon--team c-icon--sm" aria-hidden="true"></span>
                     <span>選手</span>
                 </a>
-                <a href="#" class="nav-item" data-route="more" aria-label="その他">
-                    <i class="fa-solid fa-ellipsis"></i>
-                    <span>その他</span>
+                <a href="#" class="nav-item coach-only" data-route="settings" aria-label="設定">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>設定</span>
                 </a>
             </nav>
         </main>
@@ -136,7 +143,6 @@
             <div class="mobile-more-grid">
                 <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="library"><i class="fa-solid fa-book"></i><span>メニュー管理</span></button>
                 <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="tactics"><i class="fa-solid fa-chess-knight"></i><span>戦術管理</span></button>
-                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="insights"><i class="fa-solid fa-chart-pie"></i><span>振り返り</span></button>
                 <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="settings"><i class="fa-solid fa-gear"></i><span>設定</span></button>
                 <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="dashboard"><i class="fa-solid fa-house"></i><span>ホームへ戻る</span></button>
             </div>
@@ -207,44 +213,6 @@
                     <span id="dash-setup-progress" class="setup-progress">0/3 完了</span>
                 </div>
                 <div id="dash-setup-items" class="setup-checklist-items"></div>
-            </section>
-
-            <!-- P28: 文脈優先のコーチホーム -->
-            <section id="dash-action-center" class="card c-card c-liquid-panel c-liquid-panel--immersive dash-action-center coach-only" aria-labelledby="dash-action-center-title">
-                <div class="dash-action-center-header">
-                    <div><span class="eyebrow-label c-kinetic-kicker--reveal">TODAY</span><h2 id="dash-action-center-title" class="c-text-effect--liquid">今日やること</h2><p>試合準備、出欠、記録の安全性を優先順に確認します。</p></div>
-                    <span id="dash-action-center-count" class="dash-action-count">確認中</span>
-                </div>
-                <div id="dash-action-center-list" class="dash-action-center-list" aria-live="polite"></div>
-            </section>
-
-            <!-- P30: 分析から次回練習へつなぐ計画導線 -->
-            <section id="dash-practice-plan" class="card c-card c-liquid-panel c-liquid-panel--immersive dash-practice-plan coach-only" aria-labelledby="dash-practice-plan-title">
-                <div class="dash-action-center-header"><div><span class="eyebrow-label c-kinetic-kicker--reveal">NEXT SESSION</span><h2 id="dash-practice-plan-title" class="c-text-effect--liquid">次の練習を組み立てる</h2><p id="dash-practice-plan-copy">振り返りの示唆から、編集可能な練習案を作成します。</p></div><button type="button" class="btn btn-primary btn-sm" id="btn-dash-create-practice-plan"><i class="fa-solid fa-clipboard-list"></i> 練習案を作る</button></div>
-                <div id="dash-practice-plan-summary" class="dash-practice-plan-summary" aria-live="polite"></div>
-            </section>
-
-            <!-- P28: 保護者が最初に行う操作 -->
-            <section id="dash-parent-agenda" class="card c-card c-liquid-panel c-liquid-panel--immersive dash-parent-agenda parent-only" aria-labelledby="dash-parent-agenda-title">
-                <div class="dash-action-center-header"><div><span class="eyebrow-label c-kinetic-kicker--reveal">FOR YOU</span><h2 id="dash-parent-agenda-title" class="c-text-effect--liquid">次にすること</h2><p>予定の確認、出欠回答、成長ログの確認をここから行えます。</p></div></div>
-                <div id="dash-parent-agenda-list" class="dash-action-center-list" aria-live="polite"></div>
-            </section>
-
-            <!-- P17: 試合前の運用確認（コーチ専用） -->
-            <section id="dash-preflight-card" class="card c-card dash-preflight-card coach-only" aria-labelledby="dash-preflight-title">
-                <div class="dash-preflight-header">
-                    <div>
-                        <span class="eyebrow-label">MATCHDAY READY</span>
-                        <h2 id="dash-preflight-title"><i class="fa-solid fa-shield-heart"></i> 試合前チェック</h2>
-                        <p id="dash-preflight-headline">保存・同期・復旧状態を確認しています。</p>
-                    </div>
-                    <span id="dash-preflight-progress" class="dash-preflight-progress">確認中</span>
-                </div>
-                <div id="dash-preflight-items" class="dash-preflight-items" aria-live="polite"></div>
-                <div class="dash-preflight-actions">
-                    <button type="button" class="btn btn-primary btn-sm" id="btn-dash-preflight-action"><i class="fa-solid fa-play"></i> 確認する</button>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-dash-preflight-settings"><i class="fa-solid fa-gear"></i> 運用設定</button>
-                </div>
             </section>
 
             <!-- ROW 0: マイ選手 (保護者専用) -->
@@ -449,7 +417,7 @@
             <div class="card c-card c-card--accent c-section-header">
                 <div class="c-section-header__content">
                     <div class="c-section-header__meta" id="match-detail-meta">日付 | 大会・種別</div>
-                    <h2 class="c-section-header__title" id="match-detail-title">vs 対戦相手</h2>
+                    <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="match-detail-title">vs 対戦相手</h2>
                 </div>
                 <div id="match-detail-score-box"></div>
             </div>
@@ -501,7 +469,7 @@
 
             <!-- コーチモード用 試合基本情報 編集エリア -->
             <div class="card c-card coach-only l-stack l-stack--compact">
-                <div class="c-section-header__title"><i class="fa-solid fa-pen"></i> 試合基本情報</div>
+                <div class="c-section-header__title c-card__title c-text-effect--shimmer"><i class="fa-solid fa-pen"></i> 試合基本情報</div>
                 <div class="l-form-grid">
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="match-detail-date-input">日付 <span class="badge-required">必須</span></label>
@@ -564,7 +532,7 @@
             <!-- ピリオド一覧セクション -->
             <div class="card c-card l-stack">
                 <div class="c-section-header">
-                    <h3 class="c-section-header__title"><i class="fa-solid fa-layer-group"></i> ピリオド一覧</h3>
+                    <h3 class="c-section-header__title c-card__title c-text-effect--shimmer"><i class="fa-solid fa-layer-group"></i> ピリオド一覧</h3>
                     <button class="btn btn-primary btn-sm" id="btn-add-formation"><i class="fa-solid fa-plus"></i>
                         ピリオド追加</button>
                 </div>
@@ -668,7 +636,7 @@
 
             <!-- P28: 長い設定画面を目的別に移動できるハブ -->
             <section class="settings-hub card c-card coach-only" aria-labelledby="settings-hub-title">
-                <div><span class="eyebrow-label">SETTINGS</span><h2 id="settings-hub-title">何を設定しますか？</h2><p>目的を選ぶと、必要な設定まで移動します。</p></div>
+                <div><span class="eyebrow-label">SETTINGS</span><h2 id="settings-hub-title" class="c-text-effect--liquid">何を設定しますか？</h2><p>目的を選ぶと、必要な設定まで移動します。</p></div>
                 <div class="settings-hub-grid">
                     <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="workspace-management-section"><i class="fa-solid fa-layer-group"></i><span>チーム・年度</span><small>切替と年度管理</small></button>
                     <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="gas-sync-section"><i class="fa-solid fa-cloud-arrow-up"></i><span>同期・復旧</span><small>保存の安全性</small></button>
@@ -679,11 +647,11 @@
             </section>
 
             <!-- P32: 個別表示設定とアクセシビリティ -->
-            <section class="sl-section c-settings-section" id="ui-preferences-section" aria-labelledby="ui-preferences-title">
-                <div class="c-section-header c-settings-section__header">
-                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> DISPLAY</span><h2 class="c-section-header__title" id="ui-preferences-title">表示・操作の個別設定</h2></div>
+            <section class="sl-section c-settings-section card c-card" id="ui-preferences-section" aria-labelledby="ui-preferences-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> DISPLAY</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="ui-preferences-title">表示・操作の個別設定</h2></div>
                 </div>
-                <div class="sl-section-body c-settings-section__body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <p class="c-settings-section__intro operations-intro">端末ごとに、文字の大きさ、利き手、動きの量を調整できます。記録データや他の利用者の表示は変わりません。</p>
                         <div class="c-form-grid ui-preferences-grid">
                             <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-color-mode">カラーモード</label><select id="ui-color-mode" class="sl-input"><option value="light">ライト</option><option value="dark">ダーク</option></select><small class="c-form-field__hint">この端末だけの表示設定です。</small></div>
@@ -697,11 +665,11 @@
             </section>
 
             <!-- Team theme: seed color is transformed into accessible roles at runtime. -->
-            <section class="sl-section c-settings-section" id="team-theme-section" aria-labelledby="team-theme-title">
-                <div class="c-section-header c-settings-section__header">
-                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-palette" aria-hidden="true"></i> TEAM THEME</span><h2 class="c-section-header__title" id="team-theme-section-title">チームテーマ</h2></div>
+            <section class="sl-section c-settings-section card c-card" id="team-theme-section" aria-labelledby="team-theme-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-palette" aria-hidden="true"></i> TEAM THEME</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="team-theme-section-title">チームテーマ</h2></div>
                 </div>
-                <div class="sl-section-body c-settings-section__body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <form id="form-team-info">
                         <div class="sl-row">
                             <label class="sl-row-label" for="team-info-name">チーム名 <span class="badge-required">必須</span></label>
@@ -725,11 +693,11 @@
             </section>
 
             <!-- P22: チーム・シーズン管理 -->
-            <section class="sl-section c-settings-section coach-only" id="workspace-management-section" aria-labelledby="workspace-management-title">
-                <div class="c-section-header c-settings-section__header">
-                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> WORKSPACE</span><h2 class="c-section-header__title" id="workspace-management-title">チーム・シーズン管理</h2></div>
+            <section class="sl-section c-settings-section card c-card coach-only" id="workspace-management-section" aria-labelledby="workspace-management-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> WORKSPACE</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="workspace-management-title">チーム・シーズン管理</h2></div>
                 </div>
-                <div class="sl-section-body c-settings-section__body workspace-management-body">
+                <div class="sl-section-body c-settings-section__body c-card__body workspace-management-body">
                     <p class="c-settings-section__intro operations-intro">チームと年度を切り替えます。切替前のデータは自動保存され、年度アーカイブからいつでも再表示できます。</p>
                     <div class="c-form-grid workspace-select-grid">
                         <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-team-select">チーム</label><select id="workspace-team-select" class="sl-input"></select></div>
@@ -747,9 +715,9 @@
             </section>
 
             <!-- P24: シーズンレポート -->
-            <section class="sl-section c-settings-section coach-only" id="season-report-section" aria-labelledby="season-report-title">
-                <div class="c-section-header c-settings-section__header">
-                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> REPORT</span><h2 class="c-section-header__title" id="season-report-title">シーズンレポート・出力</h2></div>
+            <section class="sl-section c-settings-section card c-card coach-only" id="season-report-section" aria-labelledby="season-report-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> REPORT</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="season-report-title">シーズンレポート・出力</h2></div>
                 </div>
                 <div class="sl-section-body season-report-body">
                     <p id="season-report-context" class="operations-intro">現在選択中のチーム・シーズンを集計します。</p>
@@ -764,11 +732,11 @@
             </section>
 
             <!-- Section: クラウド自動同期 (GAS) -->
-            <section class="sl-section c-settings-section" id="gas-sync-section" aria-labelledby="gas-sync-title">
-                <div class="c-section-header c-settings-section__header">
-                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> CLOUD SYNC</span><h2 class="c-section-header__title" id="gas-sync-title">クラウド無料同期（GAS）</h2></div>
+            <section class="sl-section c-settings-section card c-card" id="gas-sync-section" aria-labelledby="gas-sync-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> CLOUD SYNC</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="gas-sync-title">クラウド無料同期（GAS）</h2></div>
                 </div>
-                <div class="sl-section-body c-settings-section__body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <p class="c-settings-section__intro">試合・練習・選手・練習メニュー・<strong>戦術管理</strong>・チームテーマ・各種設定マスタがクラウド同期の対象となります。</p>
                     <form id="form-gas-sync" class="c-settings-form">
                         <div class="c-form-grid">
@@ -789,11 +757,11 @@
             </section>
 
             <!-- P20: 保護者共有・RSVP管理 -->
-            <section class="sl-section c-settings-section coach-only" id="parent-share-section" aria-labelledby="parent-share-title">
-                <div class="c-section-header c-settings-section__header">
-                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-people-roof" aria-hidden="true"></i> FAMILY ACCESS</span><h2 class="c-section-header__title" id="parent-share-title">保護者共有・RSVP管理</h2></div>
+            <section class="sl-section c-settings-section card c-card coach-only" id="parent-share-section" aria-labelledby="parent-share-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-people-roof" aria-hidden="true"></i> FAMILY ACCESS</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="parent-share-title">保護者共有・RSVP管理</h2></div>
                 </div>
-                <div class="sl-section-body c-settings-section__body parent-share-body">
+                <div class="sl-section-body c-settings-section__body c-card__body parent-share-body">
                     <p class="c-settings-section__intro">選手別の表示範囲と共有リンクの有効期限を管理し、未回答者への案内文を作成できます。リンクに認証トークンは含めません。</p>
                     <div class="c-form-grid parent-share-controls">
                         <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-player">対象選手</label><select id="parent-share-player" class="sl-input"></select></div>
@@ -820,11 +788,11 @@
             </section>
 
             <!-- Section: 運用チェック -->
-            <section class="sl-section c-settings-section operations-section" id="operations-section" aria-labelledby="operations-title">
-                <div class="c-section-header c-settings-section__header">
-                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i> OPERATIONS</span><h2 class="c-section-header__title" id="operations-title">運用チェック</h2></div>
+            <section class="sl-section c-settings-section card c-card operations-section" id="operations-section" aria-labelledby="operations-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i> OPERATIONS</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="operations-title">運用チェック</h2></div>
                 </div>
-                <div class="sl-section-body c-settings-section__body operations-body">
+                <div class="sl-section-body c-settings-section__body c-card__body operations-body">
                     <p class="c-settings-section__intro">端末保存、クラウド同期、バックアップの状態を確認し、シーズン中の記録を安全に維持します。</p>
                     <div id="operations-diagnostics" class="operations-diagnostics" aria-live="polite"></div>
                     <div class="c-action-group c-action-group--mobile-stretch operations-actions">
@@ -998,11 +966,11 @@
             </div>
 
             <!-- Section: データ連携・バックアップ管理 -->
-            <section class="sl-section c-settings-section" id="data-management-settings-section" aria-labelledby="data-management-settings-title">
-                <div class="c-section-header c-settings-section__header">
-                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-database" aria-hidden="true"></i> DATA SAFETY</span><h2 class="c-section-header__title" id="data-management-settings-title">データ連携・バックアップ管理</h2></div>
+            <section class="sl-section c-settings-section card c-card" id="data-management-settings-section" aria-labelledby="data-management-settings-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-database" aria-hidden="true"></i> DATA SAFETY</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="data-management-settings-title">データ連携・バックアップ管理</h2></div>
                 </div>
-                <div class="sl-section-body c-settings-section__body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <div class="c-card c-data-management__operation">
                         <p class="c-settings-section__intro">全データ（試合記録、練習予定、メニュー、選手情報等）をJSONファイルとしてダウンロード・バックアップ、または取込・一括削除が行えます。大切な試合の前後や端末変更前には、必ずバックアップを作成してください。</p>
                         <div class="c-action-group c-action-group--mobile-stretch">
@@ -1090,50 +1058,6 @@
                 </div>
             </div>
         </div>
-    </template>
-
-    <template id="tpl-insights">
-            <section class="insights-page l-page l-page--wide l-stack l-stack--spacious" aria-labelledby="insights-page-title">
-            <header class="insights-hero c-section-header">
-                <div class="c-section-header__content">
-                    <span class="c-kicker">REVIEW</span>
-                    <h1 class="c-section-header__title" id="insights-page-title">チームの振り返り</h1>
-                    <p class="c-section-header__meta">試合・練習・出欠・Field Companionの記録を、次の指導と共有につなげます。</p>
-                </div>
-                <div class="c-action-group"><button type="button" class="btn btn-primary" id="btn-copy-insights-report"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> レポートをコピー</button></div>
-            </header>
-            <div class="insights-toolbar card c-card c-form-grid">
-                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="insights-range-select">対象期間</label><select id="insights-range-select" class="form-control"><option value="30">直近30日</option><option value="90" selected>直近90日</option><option value="180">直近180日</option><option value="all">すべて</option></select></div>
-                <div class="c-form-field c-form-field--fluid insights-player-filter"><label class="c-form-field__label" for="insights-player-select">選手別に見る</label><select id="insights-player-select" class="form-control"></select></div>
-            </div>
-            <section class="insights-section" aria-labelledby="insights-overview-title">
-                <div class="insights-section-header"><div><span class="eyebrow-label">TEAM OVERVIEW</span><h2 id="insights-overview-title">活動サマリー</h2></div></div>
-                <div id="insights-team-metrics" class="c-metric-grid insight-metric-grid"></div>
-            </section>
-            <section class="insights-section coaching-insights-section coach-only" aria-labelledby="insights-coaching-title">
-                <div class="insights-section-header"><div><span class="eyebrow-label">COACHING SIGNALS</span><h2 id="insights-coaching-title">比較分析と次の練習テーマ</h2></div><span class="insights-hint">同じ日数の直前期間と比較します</span></div>
-                <div id="insights-comparison" class="insights-comparison-grid"></div>
-                <div class="insights-coaching-grid">
-                    <article class="card c-card insights-panel"><div class="insights-section-header"><div><span class="eyebrow-label">POSITION LOAD</span><h3>ポジション別出場時間</h3></div></div><div id="insights-position-participation" class="insights-position-list"></div></article>
-                    <article class="card c-card insights-panel"><div class="insights-section-header"><div><span class="eyebrow-label">NEXT SESSION</span><h3>次の練習テーマ</h3></div></div><div id="insights-recommendations" class="insights-recommendations"></div></article>
-                </div>
-                <!-- P31: 数値を次の意思決定へつなぐ根拠付きカード -->
-                <section class="decision-cards-section coach-only" aria-labelledby="decision-cards-title">
-                    <div class="insights-section-header"><div><span class="eyebrow-label">DECISION SUPPORT</span><h2 id="decision-cards-title">次の判断</h2></div><span class="insights-hint">対象期間と記録件数を根拠として表示します</span></div>
-                    <div id="insights-decision-cards" class="decision-cards" aria-live="polite"></div>
-                </section>
-            </section>
-            <div class="insights-content-grid">
-                <section class="card c-card insights-panel" aria-labelledby="insights-timeline-title">
-                    <div class="insights-section-header"><div><span class="eyebrow-label">RECENT LOG</span><h2 id="insights-timeline-title">直近の記録</h2></div><span class="insights-hint">項目をタップして試合詳細へ</span></div>
-                    <div id="insights-timeline" class="c-data-list insight-timeline"></div>
-                </section>
-                <section class="card c-card insights-panel" aria-labelledby="insights-player-history-title">
-                    <div class="insights-section-header"><div><span class="eyebrow-label">PLAYER JOURNEY</span><h2 id="insights-player-history-title">選手を選択してください</h2></div></div>
-                    <div id="insights-player-history"></div>
-                </section>
-            </div>
-        </section>
     </template>
 
     <template id="tpl-animation">
@@ -1811,7 +1735,7 @@
                 <!-- PK戦専用のキッカー・結果入力エリア -->
                 <section id="pk-shootout-container" class="c-card pk-shootout-editor" style="display:none;">
                     <div class="c-section-header pk-shootout-editor__header">
-                        <h3 class="c-section-header__title"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> PK戦 キッカー記録（3人制＋サドンデス）</h3>
+                        <h3 class="c-section-header__title c-card__title c-text-effect--shimmer"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> PK戦 キッカー記録（3人制＋サドンデス）</h3>
                         <span id="pk-summary-badge" class="c-status">PK 0 - 0</span>
                     </div>
                     <div id="pk-kickers-list" class="c-data-list c-data-list--scrollable pk-kickers-list">
@@ -1964,10 +1888,6 @@
                     <select id="menu-engagement" class="form-control">
                         <option value="0">未評価 / 未実施</option><option value="5">★★★★★（5: 非常に盛り上がった・全員夢中）</option><option value="4">★★★★☆（4: 楽しそうにプレーしていた）</option><option value="3">★★★☆☆（3: 普通・標準的）</option><option value="2">★★☆☆☆（2: 難易度やルールで少し停滞）</option><option value="1">★☆☆☆☆（1: ウケが良くなかった・要改善）</option>
                     </select>
-                </div>
-                <div class="c-form-field c-form-field--fluid">
-                    <label class="c-form-field__label" for="menu-reflection"><i class="fa-solid fa-clipboard-user" aria-hidden="true"></i> 指導者の振り返り・メモ <span class="badge-optional">任意</span></label>
-                    <textarea id="menu-reflection" class="form-control" rows="2" placeholder="例: コートサイズ（15m×15m）が狭く詰まりがちだった。次回は20mに広げてスキャンと判断の時間を確保する。"></textarea>
                 </div>
             </form>
             <div class="c-modal__footer c-action-group c-action-group--end">
