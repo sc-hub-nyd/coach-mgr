@@ -101,20 +101,20 @@
     --neo-surface-pressed: color-mix(in srgb, var(--color-surface) 94%, var(--color-text));
 
     /* Multi-layer floating shadow: crisp proximity shadow + soft diffuse ambient shadow + top-left highlight + micro bevel */
-    --shadow-neo-raised: 
+    --shadow-neo-raised:
         -0.25rem -0.25rem 0.6rem var(--neo-highlight),
         0.3rem 0.35rem 0.75rem var(--neo-shadow-soft),
         0.08rem 0.12rem 0.25rem var(--neo-shadow),
         inset 0 1px 1px var(--neo-highlight-crisp);
 
-    --shadow-neo-raised-hover: 
+    --shadow-neo-raised-hover:
         -0.35rem -0.35rem 0.85rem var(--neo-highlight),
         0.45rem 0.55rem 1.1rem var(--neo-shadow),
         0.12rem 0.2rem 0.4rem var(--neo-shadow-soft),
         inset 0 1px 1.5px var(--neo-highlight-crisp);
 
     /* Tactile silicone press & inset screen display */
-    --shadow-neo-pressed: 
+    --shadow-neo-pressed:
         inset 0.2rem 0.22rem 0.45rem var(--neo-shadow),
         inset 0.08rem 0.1rem 0.2rem var(--neo-shadow-soft),
         inset -0.15rem -0.15rem 0.35rem var(--neo-highlight);
@@ -160,19 +160,19 @@
     --neo-surface-gradient: linear-gradient(175deg, color-mix(in srgb, #ffffff 5%, var(--neo-surface)) 0%, var(--neo-surface) 60%, color-mix(in srgb, #000000 12%, var(--neo-surface)) 100%);
     --neo-surface-pressed: color-mix(in srgb, var(--color-surface) 92%, #000000);
 
-    --shadow-neo-raised: 
+    --shadow-neo-raised:
         -0.22rem -0.22rem 0.55rem var(--neo-highlight),
         0.35rem 0.4rem 0.85rem var(--neo-shadow),
         0.1rem 0.15rem 0.3rem var(--neo-shadow-soft),
         inset 0 1px 1px var(--neo-highlight-crisp);
 
-    --shadow-neo-raised-hover: 
+    --shadow-neo-raised-hover:
         -0.3rem -0.3rem 0.75rem var(--neo-highlight),
         0.45rem 0.55rem 1.15rem var(--neo-shadow),
         0.15rem 0.22rem 0.45rem var(--neo-shadow-soft),
         inset 0 1px 1.2px var(--neo-highlight-crisp);
 
-    --shadow-neo-pressed: 
+    --shadow-neo-pressed:
         inset 0.22rem 0.25rem 0.5rem var(--neo-shadow),
         inset 0.1rem 0.12rem 0.25rem var(--neo-shadow-soft),
         inset -0.15rem -0.15rem 0.35rem var(--neo-highlight);
