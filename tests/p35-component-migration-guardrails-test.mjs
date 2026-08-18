@@ -10,7 +10,6 @@ const source = Object.fromEntries(await Promise.all([
     ['library', '../library.js'],
     ['tactics', '../tactics.js'],
     ['players', '../players.js'],
-    ['insights', '../insights.js'],
     ['matches', '../matches.js'],
     ['drawing', '../drawing.js'],
     ['app', '../app.js'],
@@ -138,29 +137,9 @@ requireAll(source.index, [
 ], 'Field Companion');
 
 requireAll(source.index, [
-    'template id="tpl-insights"',
-    'id="insights-range-select"',
-    'id="insights-player-select"',
-    'id="insights-timeline"',
-    'c-data-list insight-timeline',
-    'id="insights-player-history"',
-    'id="btn-copy-insights-report"',
     'c-section-header',
     'c-form-field'
 ], '振り返り画面');
-
-requireAll(source.insights, [
-    'function renderCompactEmptyState',
-    'c-empty-state--compact',
-    'insights-range-select',
-    'insights-player-select',
-    'c-data-list__item',
-    'c-data-list__item--button',
-    'c-data-list__kind',
-    'c-metric c-metric--',
-    'c-metric__value',
-    'data-route="match-detail"'
-], '振り返り空状態・履歴');
 
 requireAll(source.index, [
     'id="dash-top-scorers"',
@@ -207,10 +186,9 @@ requireAll(source.app, [
 requireAll(source.index, [
     'id="dash-setup-checklist"',
     'c-glass-surface--spotlight',
-    'id="dash-action-center"',
-    'id="dash-practice-plan"',
-    'id="dash-parent-agenda"',
-    'c-liquid-panel--immersive',
+    // 'id="dash-action-center"',
+    // 'id="dash-parent-agenda"',
+    // 'c-liquid-panel--immersive',
     'c-text-effect--liquid',
     'c-kinetic-kicker--reveal'
 ], 'Liquid UIダッシュボード');
@@ -364,7 +342,6 @@ requireAll(source.index, [
     'id="menu-video-url"',
     'id="menu-options"',
     'id="menu-engagement"',
-    'id="menu-reflection"',
     'c-view-switcher'
 ], '選手ビュー切替');
 

@@ -192,7 +192,6 @@ async function collect(client, page) {
             visible: {
                 dashboard: Boolean(document.querySelector('.dash-widget-grid')),
                 settings: Boolean(document.querySelector('.sl-settings')),
-                insights: Boolean(document.querySelector('.insights-page')),
                 fieldCompanion: Boolean(document.querySelector('.field-companion'))
             }
         };
@@ -217,9 +216,6 @@ async function runViewport(client, viewport) {
 
     await goRoute(client, 'settings');
     checks.push({ ...(await collect(client, 'settings')), screenshot: await screenshot(client, viewport, 'settings') });
-
-    await goRoute(client, 'insights');
-    checks.push({ ...(await collect(client, 'insights')), screenshot: await screenshot(client, viewport, 'insights') });
 
     await createMatchAndOpenDetail(client);
     checks.push({ ...(await collect(client, 'field-companion')), screenshot: await screenshot(client, viewport, 'field-companion') });

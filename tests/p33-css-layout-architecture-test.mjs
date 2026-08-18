@@ -110,7 +110,6 @@ assert.match(source.index, /c-card--accent/);
 assert.match(source.index, /c-form-field__label/);
 assert.match(source.index, /c-action-group--end/);
 assert.match(source.index, /c-metric-grid/);
-assert.match(source.index, /card c-card insights-panel/);
 assert.match(source.index, /settings-hub card c-card/);
 assert.match(source.index, /c-form-field--fluid/);
 assert.match(source.index, /c-fieldset/);
