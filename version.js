@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.25.5';
+export const APP_VERSION = 'v1.25.6';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.25.6',
+        date: '2026-08-18',
+        title: '試合詳細フォーム標準化',
+        features: [
+            '試合詳細の基本情報（日付、対戦相手、種別、大会名）をc-form-fieldへ移行し、ラベルと入力欄の構造を統一',
+            '既存の入力IDとフォーム送信接続を維持し、P35部品契約で試合詳細の基本情報編集を保護',
+            '15種色×light/darkテーマ、5ビューポート×5画面のレスポンシブ検証で違反0件を確認'
+        ]
+    },
     {
         version: 'v1.25.5',
         date: '2026-08-18',

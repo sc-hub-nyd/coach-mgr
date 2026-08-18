@@ -84,6 +84,10 @@ requireAll(source.index, [
     'id="field-period-select"',
     'id="field-event-filter"',
     'id="field-event-list"',
+    'id="match-detail-date-input"',
+    'id="match-detail-opponent-input"',
+    'id="match-detail-type-select"',
+    'id="match-detail-tournament-input"',
     'c-form-field--compact'
 ], 'Field Companion');
 
