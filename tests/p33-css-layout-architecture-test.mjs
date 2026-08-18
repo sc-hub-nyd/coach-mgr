@@ -19,7 +19,9 @@ const files = {
     architecture: '../CSS_ARCHITECTURE.md',
     brandStandard: '../NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md',
     typographyStandard: '../TYPOGRAPHY_SYSTEM.md',
-    surfaceDesign: '../NEUMORPHISM_DESIGN_SYSTEM.md'
+    surfaceDesign: '../NEUMORPHISM_DESIGN_SYSTEM.md',
+    migrationLedger: '../CSS_MIGRATION_LEDGER.md',
+    inlineStyleRegister: '../INLINE_STYLE_MIGRATION_REGISTER.md'
 };
 
 const source = Object.fromEntries(await Promise.all(
@@ -144,6 +146,11 @@ assert.match(source.surfaceDesign, /Neumorphism 2\.0 × Liquid UI \/ Frosted Gla
 assert.match(source.surfaceDesign, /--glass-surface-strong/);
 assert.match(source.surfaceDesign, /--liquid-veil/);
 assert.match(source.surfaceDesign, /backdrop-filter/);
+assert.match(source.migrationLedger, /移行台帳/);
+assert.match(source.migrationLedger, /共通化待ち/);
+assert.match(source.migrationLedger, /固有維持/);
+assert.match(source.inlineStyleRegister, /469件/);
+assert.match(source.inlineStyleRegister, /動的維持/);
 assert.match(source.brandStandard, /既存チームの保存済み種色/);
 assert.match(source.brandStandard, /TYPOGRAPHY_SYSTEM/);
 assert.match(source.typographyStandard, /Noto Sans JP/);
