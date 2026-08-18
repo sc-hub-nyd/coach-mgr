@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.25.6';
+export const APP_VERSION = 'v1.25.7';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.25.7',
+        date: '2026-08-18',
+        title: '試合テーマ・総括フォーム標準化',
+        features: [
+            '試合詳細のテーマ・総括入力をc-form-fieldへ移行し、コーチ編集と保護者閲覧の既存IDを維持',
+            'P33の画面標準部品契約を旧c-fieldではなくc-form-field基準へ更新し、移行後の構造を継続検証',
+            'P35、動的テーマ、5ビューポート×5画面のレスポンシブ検証で違反0件を確認'
+        ]
+    },
     {
         version: 'v1.25.6',
         date: '2026-08-18',

@@ -88,6 +88,8 @@ requireAll(source.index, [
     'id="match-detail-opponent-input"',
     'id="match-detail-type-select"',
     'id="match-detail-tournament-input"',
+    'id="match-detail-theme-input"',
+    'id="match-detail-summary-input"',
     'c-form-field--compact'
 ], 'Field Companion');
 

@@ -71,7 +71,7 @@ assert.match(source.tokens, /data-reduce-motion/);
 assert.match(source.index, /l-page--wide/);
 assert.match(source.index, /l-stack--spacious/);
 assert.match(source.index, /c-card--accent/);
-assert.match(source.index, /c-field__label/);
+assert.match(source.index, /c-form-field__label/);
 assert.match(source.index, /c-action-group--end/);
 assert.match(source.index, /card c-card insights-panel/);
 assert.match(source.index, /settings-hub card c-card/);
