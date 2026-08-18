@@ -110,6 +110,21 @@ requireAll(source.insights, [
 ], '振り返り空状態');
 
 requireAll(source.index, [
+    'id="dash-top-scorers"',
+    'id="dash-top-assists"',
+    'id="dash-attendance-rank"',
+    'id="dash-playtime-content"',
+    'c-data-list dash-rank-list',
+    'c-card--interactive'
+], 'ダッシュボードランキング');
+
+requireAll(source.app, [
+    'c-data-list__item',
+    'c-data-list__metric',
+    'openPlayerDetail'
+], 'ダッシュボードランキング生成');
+
+requireAll(source.index, [
     'id="dash-action-center"',
     'id="dash-practice-plan"',
     'id="dash-parent-agenda"',

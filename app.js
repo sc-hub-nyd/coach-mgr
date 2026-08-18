@@ -1489,15 +1489,17 @@ function initDashboard() {
             // 出場時間が特に少ない下位3名を表示（他ランキングと100%構造・高さを統一）
             const alertPlayers = playRateList.slice(0, 3);
             if (alertPlayers.length > 0 && totalPeriods > 0) {
-                playtimeContent.className = 'dash-rank-list';
+                playtimeContent.className = 'c-data-list dash-rank-list';
                 playtimeContent.innerHTML = alertPlayers.map((item, idx) => `
-                    <div class="dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
-                        <span class="dash-rank-medal" style="margin-right: 0.5rem; display: inline-flex; align-items: center; justify-content: center; width: 22px;">⚠️</span>
-                        <span class="dash-rank-name">${item.p.number} ${escapeHtml(item.p.name)}</span>
-                        <span class="dash-rank-count" style="color:${item.pct < 30 ? 'var(--primary)' : 'var(--text-primary)'};">
-                            ${item.pct}<span class="dash-rank-count-unit">%</span>
-                        </span>
-                    </div>
+                    <article class="c-data-list__item dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                        <div class="c-data-list__header">
+                            <div class="c-data-list__identity"><span class="dash-rank-medal">⚠️</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
+                            <div class="c-data-list__metric ${item.pct < 30 ? 'is-danger' : ''}">
+                                <span class="c-data-list__metric-label">出場率</span>
+                                <span class="c-data-list__metric-value">${item.pct}%</span>
+                            </div>
+                        </div>
+                    </article>
                 `).join('');
             } else {
                 playtimeContent.innerHTML = renderEmptyState({ icon: 'fa-people-group', title: 'フォーメーション登録データがありません', compact: true });
@@ -1695,11 +1697,15 @@ function initDashboard() {
             .slice(0, 3);
         el.innerHTML = top.length > 0
             ? top.map((item, idx) => `
-                <div class="dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
-                    <span class="dash-rank-medal">${medals[idx] || (idx + 1) + '.'}</span>
-                    <span class="dash-rank-name">${item.p.number} ${escapeHtml(item.p.name)}</span>
-                    <span class="dash-rank-count">${item.count}<span class="dash-rank-count-unit">${unit}</span></span>
-                </div>
+                <article class="c-data-list__item dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                    <div class="c-data-list__header">
+                        <div class="c-data-list__identity"><span class="dash-rank-medal">${medals[idx] || (idx + 1) + '.'}</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
+                        <div class="c-data-list__metric">
+                            <span class="c-data-list__metric-label">${unit}</span>
+                            <span class="c-data-list__metric-value">${item.count}</span>
+                        </div>
+                    </div>
+                </article>
             `).join('')
             : renderEmptyState({ icon: 'fa-chart-line', title: '記録なし', compact: true });
     };
@@ -1796,11 +1802,15 @@ function initDashboard() {
 
             attendanceRankEl.innerHTML = totalRecentEvents > 0 && top.some(item => item.count > 0)
                 ? top.map((item, idx) => `
-                    <div class="dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
-                        <span class="dash-rank-medal">${medals[idx] || (idx + 1) + '.'}</span>
-                        <span class="dash-rank-name">${item.p.number} ${escapeHtml(item.p.name)}</span>
-                        <span class="dash-rank-count">${item.pct}<span class="dash-rank-count-unit">%</span></span>
-                    </div>
+                    <article class="c-data-list__item dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                        <div class="c-data-list__header">
+                            <div class="c-data-list__identity"><span class="dash-rank-medal">${medals[idx] || (idx + 1) + '.'}</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
+                            <div class="c-data-list__metric">
+                                <span class="c-data-list__metric-label">出席率</span>
+                                <span class="c-data-list__metric-value">${item.pct}%</span>
+                            </div>
+                        </div>
+                    </article>
                 `).join('')
                 : renderEmptyState({ icon: 'fa-user-check', title: '過去1か月の出席記録なし', compact: true });
         }
