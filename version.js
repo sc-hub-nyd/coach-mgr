@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.27.0';
+export const APP_VERSION = 'v1.27.1';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.27.1',
+        date: '2026-08-18',
+        title: '選手履歴の標準データ一覧化',
+        features: [
+            '選手のスキル評価・試合評価履歴をc-data-listの標準構造へ統一',
+            '履歴ヘッダー、種別、本文、操作列、スクロール領域を共通部品として追加',
+            '評価の編集・削除・作図表示の既存イベントIDとdata属性を維持',
+            '波0の移行台帳を基準に、波1の表示プリミティブ共通化へ着手'
+        ]
+    },
     {
         version: 'v1.27.0',
         date: '2026-08-18',

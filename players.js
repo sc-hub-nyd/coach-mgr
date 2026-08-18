@@ -163,31 +163,30 @@ export function openPlayerDetail(id) {
         historyList.innerHTML = timeline.length > 0 ? timeline.map(item => {
             if (item.type === 'assessment') {
                 const hId = item.data ? item.data.id : null;
-                const editBtn = hId ? `<button type="button" class="btn btn-secondary btn-edit-assessment" data-history-id="${hId}" style="padding:0.15rem 0.4rem; font-size:0.7rem; margin-left:auto;"><i class="fa-solid fa-pen"></i> 編集</button>` : '';
-                const delBtn = hId ? `<button type="button" class="btn btn-danger btn-delete-assessment" data-history-id="${hId}" style="padding:0.15rem 0.4rem; font-size:0.7rem; margin-left:0.25rem;"><i class="fa-solid fa-trash"></i> 削除</button>` : '';
+                const editBtn = hId ? `<button type="button" class="btn btn-secondary btn-edit-assessment" data-history-id="${hId}"><i class="fa-solid fa-pen"></i> 編集</button>` : '';
+                const delBtn = hId ? `<button type="button" class="btn btn-danger btn-delete-assessment" data-history-id="${hId}"><i class="fa-solid fa-trash"></i> 削除</button>` : '';
                 return `
-                    <div class="timeline-item">
-                        <div class="timeline-item-date" style="display:flex; align-items:center;">
-                            <span>${item.date} <span class="timeline-item-badge">スキル評価</span></span>
-                            ${editBtn}
-                            ${delBtn}
+                    <article class="c-data-list__item player-history-item">
+                        <div class="c-data-list__header">
+                            <div class="c-data-list__identity">${item.date}<span class="c-data-list__kind">スキル評価</span></div>
+                            ${hId ? `<div class="c-data-list__actions c-action-group">${editBtn}${delBtn}</div>` : ''}
                         </div>
-                        <div class="timeline-item-comment" style="white-space:pre-wrap;">${item.comment}</div>
-                    </div>
+                        <div class="c-data-list__body">${item.comment}</div>
+                    </article>
                 `;
             } else {
                 const matchingMatch = state.matches.find(m => m.id === item.matchId);
                 const firstForm = (matchingMatch && matchingMatch.formations && matchingMatch.formations.length > 0) ? matchingMatch.formations[0] : null;
-                const linkBtn = firstForm ? `<button class="btn btn-secondary btn-timeline-anim" data-match-id="${matchingMatch.id}" data-form-id="${firstForm.id}" style="padding:0.25rem 0.5rem; font-size:0.75rem; margin-top:0.35rem; display:inline-flex; align-items:center; gap:0.2rem;"><i class="fa-solid fa-person-running"></i> 作図を見る</button>` : '';
+                const linkBtn = firstForm ? `<button type="button" class="btn btn-secondary btn-timeline-anim" data-match-id="${matchingMatch.id}" data-form-id="${firstForm.id}"><i class="fa-solid fa-person-running"></i> 作図を見る</button>` : '';
                 return `
-                    <div class="timeline-item match-timeline-item">
-                        <div class="timeline-item-date">
-                            ${item.date} <span class="timeline-item-badge">試合評価</span>
+                    <article class="c-data-list__item player-history-item match-timeline-item">
+                        <div class="c-data-list__header">
+                            <div class="c-data-list__identity">${item.date}<span class="c-data-list__kind">試合評価</span></div>
+                            ${linkBtn ? `<div class="c-data-list__actions c-action-group">${linkBtn}</div>` : ''}
                         </div>
-                        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.3rem;">${item.matchDetails}</p>
-                        <p>${item.comment}</p>
-                        ${linkBtn}
-                    </div>
+                        <p class="c-data-list__meta">${item.matchDetails}</p>
+                        <p class="c-data-list__body">${item.comment}</p>
+                    </article>
                 `;
             }
         }).join('') : '<p class="text-secondary">記録がありません。</p>';
