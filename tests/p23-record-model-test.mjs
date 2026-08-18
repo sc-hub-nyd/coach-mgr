@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { createStateSnapshot, parseBackupPayload, CURRENT_SCHEMA_VERSION } from '../repository.js';
 import { ensureRecordMetadata, mergeSnapshotsByRecord, softDeleteRecord, touchRecordsForSave } from '../record-service.js';
 import { applyRemoteSnapshot } from '../sync-controller.js';
-import { ensureWorkspaceState } from '../workspace-service.js';
+import { ensureWorkspaceState, hydrateActiveWorkspace } from '../workspace-service.js';
 import { readFile } from 'node:fs/promises';
 
 const state = {
@@ -49,6 +49,20 @@ assert.equal(merged.players.length, 0);
 const tokenRetentionState = { syncMeta: {}, workspaces: { 'team:season': { teamInfo: { gasAuthToken: 'device-only-token' } } }, teamInfo: {}, matches: [], practices: [], players: [] };
 applyRemoteSnapshot(tokenRetentionState, { workspaces: { 'team:season': { teamInfo: { name: 'クラウドチーム' }, players: [] } }, syncMeta: {} });
 assert.equal(tokenRetentionState.workspaces['team:season'].teamInfo.gasAuthToken, 'device-only-token');
+
+const importedPractice = { id: 9001, date: '2026-08-18', location: '南陽台グラウンド', menus: [] };
+const importedState = {
+    activeTeamId: 'team', activeSeasonId: 'season',
+    teams: [{ id: 'team', name: 'テスト', seasons: [{ id: 'season', name: '2026年度' }] }],
+    workspaces: { 'team:season': { practices: [], matches: [], players: [] } },
+    practices: [importedPractice], matches: [], players: [], menuLibrary: [], tactics: [], practiceTemplates: [],
+    matchTypes: [], menuCategories: [], tacticsCategories: [], analysisTags: [], skillMetrics: [], positions: [], positionsCat2: [], customFormations: [],
+    teamInfo: { name: 'テスト' }, teamFocus: {}, syncMeta: {}
+};
+hydrateActiveWorkspace(importedState, { preferTopLevel: true });
+assert.equal(importedState.practices.length, 1);
+assert.equal(importedState.practices[0].id, importedPractice.id);
+assert.equal(importedState.workspaces['team:season'].practices.length, 1);
 
 const [app, controller, dialog] = await Promise.all([
     readFile(new URL('../app.js', import.meta.url), 'utf8'),

@@ -102,10 +102,22 @@ export function captureActiveWorkspace(state) {
     return state.workspaces[workspaceKey(state.activeTeamId, state.activeSeasonId)];
 }
 
-export function hydrateActiveWorkspace(state) {
+export function hydrateActiveWorkspace(state, { preferTopLevel = false } = {}) {
     ensureWorkspaceState(state);
-    const workspace = normalizeWorkspace(state.workspaces[workspaceKey(state.activeTeamId, state.activeSeasonId)]);
-    state.workspaces[workspaceKey(state.activeTeamId, state.activeSeasonId)] = workspace;
+    const key = workspaceKey(state.activeTeamId, state.activeSeasonId);
+    const workspace = normalizeWorkspace(state.workspaces[key]);
+    const topLevelHasRecords = preferTopLevel && WORKSPACE_FIELDS.some(keyName => Array.isArray(state[keyName]) && state[keyName].length > 0);
+    const workspaceHasRecords = WORKSPACE_FIELDS.some(keyName => Array.isArray(workspace[keyName]) && workspace[keyName].length > 0);
+
+    // 旧バックアップ／旧クラウド世代では、トップレベルの配列だけが更新され、
+    // active workspaceが空のまま残ることがある。復元直後は実データを空配列で上書きしない。
+    if (topLevelHasRecords && !workspaceHasRecords) {
+        const recoveredWorkspace = normalizeWorkspace(readWorkspace(state));
+        state.workspaces[key] = recoveredWorkspace;
+        return recoveredWorkspace;
+    }
+
+    state.workspaces[key] = workspace;
     writeWorkspace(state, workspace);
     return workspace;
 }

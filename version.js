@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.9';
+export const APP_VERSION = 'v1.30.10';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.10',
+        date: '2026-08-18',
+        title: '練習データのインポート・クラウド復元を修正',
+        features: [
+            'JSONインポートとクラウド復元後に、トップレベルの練習配列が空のactive workspaceで上書きされる問題を修正',
+            '旧バックアップ・旧クラウド世代でも、復元直後の実データを優先してactive workspaceへ再構成',
+            '練習データ1件以上の保持をP23回帰テストへ追加',
+            'JSON、同期、部品契約、テーマ、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.30.9',
         date: '2026-08-18',

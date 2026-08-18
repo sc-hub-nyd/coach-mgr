@@ -165,7 +165,7 @@ export async function loadData() {
                 state.syncMeta = parsed.syncMeta || state.syncMeta;
             }
             ensureWorkspaceState(state);
-            hydrateActiveWorkspace(state);
+            hydrateActiveWorkspace(state, { preferTopLevel: true });
             state.matches.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
             state.practices.sort((a, b) => ((b && b.date) || '').localeCompare((a && a.date) || ''));
             ensureSyncMeta(state);
@@ -270,7 +270,7 @@ function createConflictError(message, code = 'revision_conflict') {
 async function persistRemoteSnapshot(remoteData, { toast = true } = {}) {
     applyRemoteSnapshot(state, remoteData);
     ensureWorkspaceState(state);
-    hydrateActiveWorkspace(state);
+    hydrateActiveWorkspace(state, { preferTopLevel: true });
     markSyncAcknowledged(state, new Date(), remoteData.syncMeta || {});
     await saveData({ sync: false, markChange: false });
     if (toast) showToast('クラウドから最新データを復元しました！');
@@ -293,7 +293,7 @@ async function resolveSyncConflict(remoteData, { isSilent = false, errorMeta = n
         const merged = mergeSnapshotsByRecord(createCloudSnapshot(state), remoteData);
         applyRemoteSnapshot(state, merged);
         ensureWorkspaceState(state);
-        hydrateActiveWorkspace(state);
+        hydrateActiveWorkspace(state, { preferTopLevel: true });
         await saveData({ sync: false, markChange: true });
         const expectedRevision = Number(errorMeta?.revision ?? remoteData?.syncMeta?.cloudRevision ?? getExpectedCloudRevision(state));
         return syncPushGasCloud(false, { force: true, expectedRevision, resolvedConflict: true });
