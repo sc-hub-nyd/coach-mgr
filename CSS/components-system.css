@@ -808,12 +808,14 @@
 
 .c-modal.modal-player-form,
 .c-modal.modal-player-csv-import,
-.c-modal.modal-team-focus {
+.c-modal.modal-team-focus,
+.c-modal.modal-tactic-form {
     padding: 0;
 }
 
 .c-modal.modal-player-form .c-modal__body,
-.c-modal.modal-team-focus .c-modal__body {
+.c-modal.modal-team-focus .c-modal__body,
+.c-modal.modal-tactic-form .c-modal__body {
     padding: var(--space-4);
 }
 

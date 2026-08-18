@@ -1982,29 +1982,32 @@
         </div>
     </div>
 
-    <!-- Menu Form Modal -->
+    <!-- Tactic Form Modal -->
     <div id="modal-tactic" class="modal-overlay hidden">
-        <div class="modal">
-            <h2 id="modal-tactic-title">新しい戦術を作成</h2>
-            <form id="form-tactic">
+        <div class="modal c-modal modal-tactic-form" role="dialog" aria-modal="true" aria-labelledby="modal-tactic-title">
+            <div class="c-modal__header">
+                <h2 id="modal-tactic-title" class="c-modal__title">新しい戦術を作成</h2>
+                <button type="button" class="c-modal__close btn-close-modal" aria-label="戦術フォームを閉じる">&times;</button>
+            </div>
+            <form id="form-tactic" class="c-modal__body c-settings-form">
                 <input type="hidden" id="tactic-id" value="">
-                <div class="form-group">
-                    <label>タイトル <span class="badge-required">必須</span></label>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="tactic-title">タイトル <span class="badge-required">必須</span></label>
                     <input type="text" id="tactic-title" class="form-control" placeholder="例: ビルドアップパターンA" required>
                 </div>
-                <div class="form-group">
-                    <label>カテゴリ</label>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="tactic-category">カテゴリ</label>
                     <select id="tactic-category" class="form-control"></select>
                 </div>
-                <div class="form-group">
-                    <label>説明・キーファクター</label>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="tactic-description">説明・キーファクター</label>
                     <textarea id="tactic-description" class="form-control" rows="3" placeholder="狙いや注意点を記述"></textarea>
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> 保存</button>
-                </div>
             </form>
+            <div class="c-modal__footer c-action-group c-action-group--end">
+                <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
+                <button type="submit" form="form-tactic" class="btn btn-primary"><i class="fa-solid fa-save" aria-hidden="true"></i> 保存</button>
+            </div>
         </div>
     </div>
 

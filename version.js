@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.27.7';
+export const APP_VERSION = 'v1.27.8';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.27.8',
+        date: '2026-08-18',
+        title: '戦術作成・編集モーダルの標準化',
+        features: [
+            '戦術の作成・編集をc-modal、c-form-field、c-action-groupへ移行',
+            'タイトル、カテゴリ、説明、隠しID、保存・キャンセルの既存DOM接続を維持',
+            '見出し、閉じる操作、本文、フッターを共通モーダル構造へ統一',
+            '波2のフォーム・モーダル統合を戦術管理導線へ展開'
+        ]
+    },
     {
         version: 'v1.27.7',
         date: '2026-08-18',

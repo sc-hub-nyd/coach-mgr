@@ -231,6 +231,14 @@ requireAll(source.index, [
     'id="input-focus-point-3"',
     'id="input-focus-note"',
     'id="btn-clear-team-focus"',
+    'id="modal-tactic"',
+    'modal c-modal modal-tactic-form',
+    'id="modal-tactic-title"',
+    'id="form-tactic"',
+    'id="tactic-id"',
+    'id="tactic-title"',
+    'id="tactic-category"',
+    'id="tactic-description"',
     'c-view-switcher'
 ], '選手ビュー切替');
 
