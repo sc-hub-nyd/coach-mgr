@@ -2716,27 +2716,18 @@ function renderPkShootoutEditor() {
         const labelText = isSuddenDeath ? `${idx + 1}本目 (サドンデス)` : `${idx + 1}本目`;
 
         return `
-            <div class="pk-kicker-row" data-idx="${idx}">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.8rem; font-weight:bold; color:var(--text-primary);">${labelText}</span>
-                    ${isSuddenDeath ? `<button type="button" class="btn-remove-pk-row" data-idx="${idx}" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.75rem;"><i class="fa-solid fa-trash"></i> 削除</button>` : ''}
+            <div class="pk-kicker-row c-data-list__item" data-idx="${idx}">
+                <div class="pk-kicker-row__header">
+                    <span class="pk-kicker-row__label">${labelText}</span>
+                    ${isSuddenDeath ? `<button type="button" class="btn btn-danger btn-sm btn-remove-pk-row" data-idx="${idx}" aria-label="${labelText}を削除"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> 削除</button>` : ''}
                 </div>
-                <div style="display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap;">
-                    <div style="flex:1.5; min-width:140px;">
-                        <select class="form-control form-control-sm pk-kicker-select" data-idx="${idx}" style="font-size:0.78rem;">
-                            ${playerOptionsHtml}
-                        </select>
+                <div class="pk-kicker-row__controls">
+                    <div class="c-form-field c-form-field--compact pk-kicker-row__select">
+                        <label class="u-visually-hidden" for="pk-kicker-select-${idx}">${labelText}のキッカー</label>
+                        <select id="pk-kicker-select-${idx}" class="form-control form-control-sm pk-kicker-select" data-idx="${idx}">${playerOptionsHtml}</select>
                     </div>
-                    <div style="display:flex; align-items:center; gap:0.3rem;">
-                        <span style="font-size:0.75rem; color:var(--text-secondary);">自:</span>
-                        <button type="button" class="btn btn-sm pk-btn-us ${k.isUsGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true" style="padding:0.15rem 0.4rem; font-size:0.75rem;">○ 成功</button>
-                        <button type="button" class="btn btn-sm pk-btn-us ${k.isUsGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false" style="padding:0.15rem 0.4rem; font-size:0.75rem;">✕ 失敗</button>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:0.3rem;">
-                        <span style="font-size:0.75rem; color:var(--text-secondary);">相手:</span>
-                        <button type="button" class="btn btn-sm pk-btn-them ${k.isThemGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true" style="padding:0.15rem 0.4rem; font-size:0.75rem;">○ 成功</button>
-                        <button type="button" class="btn btn-sm pk-btn-them ${k.isThemGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false" style="padding:0.15rem 0.4rem; font-size:0.75rem;">✕ 失敗</button>
-                    </div>
+                    <div class="pk-kicker-row__side c-action-group"><span class="pk-kicker-row__side-label">自</span><button type="button" class="btn btn-sm pk-btn-us ${k.isUsGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true">○ 成功</button><button type="button" class="btn btn-sm pk-btn-us ${k.isUsGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false">✕ 失敗</button></div>
+                    <div class="pk-kicker-row__side c-action-group"><span class="pk-kicker-row__side-label">相手</span><button type="button" class="btn btn-sm pk-btn-them ${k.isThemGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true">○ 成功</button><button type="button" class="btn btn-sm pk-btn-them ${k.isThemGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false">✕ 失敗</button></div>
                 </div>
             </div>
         `;

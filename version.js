@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.28.4';
+export const APP_VERSION = 'v1.28.5';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.28.5',
+        date: '2026-08-18',
+        title: 'PKキッカー記録を標準化',
+        features: [
+            'PK戦キッカー記録をc-card、c-section-header、c-data-list、c-action-groupへ移行',
+            'キッカー順、選手選択、成功・失敗切替、サドンデス追加・削除、PK集計の既存ロジックを維持',
+            '各キッカー行の数値・入力・結果操作を共通のモバイル対応構造へ統一',
+            '波3の招集、タイムライン、スコア、PK編集の高リスク通常UI移行を完了'
+        ]
+    },
     {
         version: 'v1.28.4',
         date: '2026-08-18',

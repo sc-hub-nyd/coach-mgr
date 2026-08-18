@@ -1360,3 +1360,81 @@
 .c-match-score-actions .btn {
     min-block-size: var(--tap-target-min);
 }
+
+/* PK shootout editor: preserves shot order and result logic while standardizing the surrounding form controls. */
+.pk-shootout-editor {
+    display: grid;
+    gap: var(--space-3);
+    margin-block-end: var(--space-5);
+}
+
+.pk-shootout-editor__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+
+.pk-kickers-list {
+    max-block-size: 15rem;
+    padding-inline-end: var(--space-1);
+    overflow-y: auto;
+}
+
+.pk-kicker-row {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.pk-kicker-row__header,
+.pk-kicker-row__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    min-inline-size: 0;
+}
+
+.pk-kicker-row__label {
+    color: var(--color-text);
+    font-size: var(--text-dense-size);
+    font-weight: 800;
+    line-height: var(--text-dense-leading);
+}
+
+.pk-kicker-row__select {
+    flex: 1 1 10rem;
+    min-inline-size: 0;
+}
+
+.pk-kicker-row__select .form-control {
+    inline-size: 100%;
+    min-block-size: 2.25rem;
+}
+
+.pk-kicker-row__side {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.pk-kicker-row__side-label {
+    color: var(--color-text-muted);
+    font-size: var(--text-meta-size);
+    font-weight: 700;
+}
+
+.pk-kicker-row__side .btn {
+    min-block-size: 2.25rem;
+}
+
+@media (max-width: 32.5rem) {
+    .pk-kicker-row__side {
+        flex: 1 1 100%;
+    }
+
+    .pk-kicker-row__side .btn {
+        flex: 1 1 auto;
+    }
+}

@@ -1809,28 +1809,16 @@
                 </div>
 
                 <!-- PK戦専用のキッカー・結果入力エリア -->
-                <div id="pk-shootout-container"
-                    style="display:none; margin-bottom: 1.5rem; background:rgba(0,0,0,0.02); padding:0.8rem; border-radius:12px; border:1px solid var(--surface-border);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                        <label
-                            style="font-size:0.85rem; font-weight:700; color:var(--primary); margin:0; display:flex; align-items:center; gap:0.4rem;">
-                            <i class="fa-solid fa-bullseye"></i> PK戦 キッカー記録 (3人制＋サドンデス)
-                        </label>
-                        <span id="pk-summary-badge" class="badge"
-                            style="background:var(--primary); color:var(--color-text-on-action); font-size:0.8rem; padding:0.25rem 0.6rem; border-radius:12px;">PK
-                            0 - 0</span>
+                <section id="pk-shootout-container" class="c-card pk-shootout-editor" style="display:none;">
+                    <div class="c-section-header pk-shootout-editor__header">
+                        <h3 class="c-section-header__title"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> PK戦 キッカー記録（3人制＋サドンデス）</h3>
+                        <span id="pk-summary-badge" class="c-status">PK 0 - 0</span>
                     </div>
-
-                    <div id="pk-kickers-list"
-                        style="display:flex; flex-direction:column; gap:0.6rem; max-height:240px; overflow-y:auto; padding-right:0.2rem;">
-                        <!-- JSでキッカー行（1本目, 2本目, 3本目, 4本目...）を生成 -->
+                    <div id="pk-kickers-list" class="c-data-list c-data-list--scrollable pk-kickers-list">
+                        <!-- JSでキッカー行（1本目、2本目、3本目、4本目…）を生成 -->
                     </div>
-
-                    <button type="button" id="btn-add-pk-kicker" class="btn btn-secondary btn-sm"
-                        style="width:100%; margin-top:0.8rem; font-size:0.8rem;">
-                        <i class="fa-solid fa-plus"></i> サドンデス枠を追加
-                    </button>
-                </div>
+                    <div class="c-action-group c-action-group--mobile-stretch"><button type="button" id="btn-add-pk-kicker" class="btn btn-secondary btn-sm"><i class="fa-solid fa-plus" aria-hidden="true"></i> サドンデス枠を追加</button></div>
+                </section>
 
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <button type="button" class="btn btn-danger btn-sm" id="btn-delete-formation-modal"
