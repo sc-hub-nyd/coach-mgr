@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.25.3';
+export const APP_VERSION = 'v1.25.4';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.25.4',
+        date: '2026-08-18',
+        title: '作図画面のピッチ設定標準化',
+        features: [
+            '作図画面のピッチタイプ選択をc-form-fieldへ移行し、ラベルと入力欄の構造を統一',
+            'ピッチタイプ、グリッド吸着、保存の既存IDを維持し、P35部品契約で描画設定を保護',
+            '15種色×light/darkテーマ、5ビューポート×5画面のレスポンシブ検証で違反0件を確認'
+        ]
+    },
     {
         version: 'v1.25.3',
         date: '2026-08-18',

@@ -69,6 +69,14 @@ requireAll(source.settings, [
 ], '設定イベント');
 
 requireAll(source.index, [
+    'template id="tpl-animation"',
+    'id="canvas-pitch-template"',
+    'id="canvas-snap-grid"',
+    'id="anim-save"',
+    'c-form-field--fluid'
+], '作図設定');
+
+requireAll(source.index, [
     'template id="tpl-match-detail"',
     'id="field-match-timer"',
     'id="btn-field-timer-toggle"',
