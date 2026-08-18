@@ -16,13 +16,15 @@ export function openAssignPracticeModal(menuId) {
     if (state.practices.length > 0) {
         const sortedPractices = [...state.practices].sort((a, b) => new Date(b.date) - new Date(a.date));
         practicesList.innerHTML = sortedPractices.map(p => `
-            <div class="u-ext-178" >
-                <div>
-                    <strong><i class="fa-regular fa-calendar"></i> ${p.date}</strong>
-                    <div class="u-ext-179" ><i class="fa-solid fa-users"></i> ${p.attendance} | メニュー数: ${p.menus.length}</div>
+            <article class="c-data-list__item">
+                <div class="c-data-list__header">
+                    <div class="c-data-list__identity"><i class="fa-regular fa-calendar" aria-hidden="true"></i> ${p.date}</div>
+                    <div class="c-data-list__actions">
+                        <button type="button" class="btn btn-primary btn-execute-assign" data-pid="${p.id}"><i class="fa-solid fa-check" aria-hidden="true"></i> アサイン</button>
+                    </div>
                 </div>
-                <button class="u-ext-180 btn btn-primary btn-execute-assign" data-pid="${p.id}" ><i class="fa-solid fa-check"></i> アサイン</button>
-            </div>
+                <div class="c-data-list__meta"><i class="fa-solid fa-users" aria-hidden="true"></i> ${p.attendance} | メニュー数: ${p.menus.length}</div>
+            </article>
         `).join('');
 
         document.querySelectorAll('.btn-execute-assign').forEach(btn => {
@@ -62,7 +64,14 @@ export function openAssignPracticeModal(menuId) {
             };
         });
     } else {
-        practicesList.innerHTML = '<p class="u-ext-181 text-secondary" >練習予定・記録がありません。</p>';
+        practicesList.innerHTML = `
+            <section class="c-empty-state c-empty-state--compact" aria-live="polite">
+                <div class="c-empty-state__body">
+                    <i class="c-empty-state__icon fa-solid fa-calendar-xmark" aria-hidden="true"></i>
+                    <p class="c-empty-state__text">練習予定・記録がありません。</p>
+                </div>
+            </section>
+        `;
     }
 
     const btnAddPractice = document.getElementById('btn-assign-add-practice');

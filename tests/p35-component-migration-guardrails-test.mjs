@@ -256,8 +256,18 @@ requireAll(source.matches, [
 
 requireAll(source.library, [
     'c-empty-state',
-    'btn-empty-add-library'
-], 'メニュー空状態');
+    'btn-empty-add-library',
+    'c-data-list__item',
+    'c-data-list__meta',
+    'c-data-list__actions',
+    'btn-execute-assign',
+    'btn-assign-add-practice'
+], 'メニュー空状態・アサイン先一覧');
+
+requireAll(source.index, [
+    'id="modal-assign-practice"',
+    'id="assign-practices-list" class="c-data-list c-data-list--modal-compact"'
+], 'ライブラリアサインモーダル');
 
 requireAll(source.tactics, [
     'c-empty-state',

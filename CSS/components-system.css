@@ -444,6 +444,13 @@
     padding-inline-end: var(--space-3);
 }
 
+.c-data-list--modal-compact {
+    max-block-size: 15.625rem;
+    overflow-y: auto;
+    margin-block-end: var(--space-6);
+    padding-inline-end: var(--space-2);
+}
+
 .c-data-list__metrics {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 6.5rem), 1fr));

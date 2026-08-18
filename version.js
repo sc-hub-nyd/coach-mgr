@@ -1,8 +1,20 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.7';
+export const APP_VERSION = 'v1.30.8';
 export const RELEASE_DATE = '2026-08-18';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.8',
+        date: '2026-08-18',
+        title: 'ライブラリアサイン先練習一覧を標準化',
+        features: [
+            'アサイン先の練習日一覧をc-data-listの識別・メタ・操作構造へ移行',
+            '空状態をc-empty-stateへ統一し、新規練習日作成とアサイン操作の既存導線を維持',
+            'モーダル内リストに再利用可能なコンパクトスクロール修飾子を追加',
+            '旧u-ext-178〜181を削除し、完全一致監査で未参照規則0件を確認',
+            'P33、P34、P35、25件のレスポンシブ検証を通過'
+        ]
+    },
     {
         version: 'v1.30.7',
         date: '2026-08-18',
