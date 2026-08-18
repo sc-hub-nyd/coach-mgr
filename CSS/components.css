@@ -3,12 +3,14 @@
 /* Buttons */
 .btn {
     /* Layout */
-    padding: 0.5rem 1.25rem;
+    min-block-size: var(--tap-target-min);
+    padding: var(--control-inset-block) var(--control-inset-inline);
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: var(--space-2);
     /* Design */
-    border-radius: 8px;
+    border-radius: var(--control-radius);
     border: none;
     font-weight: 500;
     cursor: pointer;
@@ -60,8 +62,18 @@
 }
 
 .btn-sm {
-    padding: 0.35rem 0.9rem;
+    min-block-size: 2rem;
+    padding: var(--space-1) var(--surface-inset-compact-inline);
     font-size: 0.82rem;
+}
+
+/* Circular controls are reserved for icon-only actions; text buttons always use the shared rounded rectangle. */
+.btn-icon {
+    inline-size: var(--icon-control-size);
+    min-inline-size: var(--icon-control-size);
+    min-block-size: var(--icon-control-size);
+    padding: 0;
+    border-radius: var(--radius-pill);
 }
 
 .header-actions {
@@ -257,9 +269,10 @@
 .form-control {
     /* Layout */
     width: 100%;
-    padding: 0.75rem 1rem;
+    min-block-size: var(--form-control-height);
+    padding: var(--control-inset-block) var(--control-inset-inline);
     /* Design */
-    border-radius: 12px;
+    border-radius: var(--control-radius);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     color: var(--color-text);

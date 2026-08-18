@@ -3,11 +3,11 @@
 /* Cards Base */
 .card {
     /* Layout */
-    padding: 1.5rem;
+    padding: var(--surface-inset-block) var(--surface-inset-inline);
     /* Design */
     background: var(--card-bg);
     border: 1px solid var(--surface-border);
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-lg);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
@@ -19,8 +19,8 @@
 .detail-box {
     background: rgba(0, 0, 0, 0.02);
     border: 1px solid var(--surface-border);
-    border-radius: 12px;
-    padding: 0.9rem 1.1rem;
+    border-radius: var(--radius-md);
+    padding: var(--surface-inset-compact-block) var(--surface-inset-compact-inline);
     text-align: left;
 }
 
@@ -36,15 +36,15 @@
 
 .feedback-box {
     background: rgba(0, 0, 0, 0.03);
-    padding: 0.8rem 1rem;
-    border-radius: 12px;
+    padding: var(--surface-inset-compact-block) var(--surface-inset-compact-inline);
+    border-radius: var(--radius-md);
     border: 1px solid var(--surface-border);
 }
 
 .info-callout {
     background: rgba(0, 0, 0, 0.03);
-    padding: 1rem;
-    border-radius: 12px;
+    padding: var(--surface-inset-compact-block) var(--surface-inset-compact-inline);
+    border-radius: var(--radius-md);
     margin-top: 1rem;
     font-size: 0.85rem;
     color: var(--text-secondary);

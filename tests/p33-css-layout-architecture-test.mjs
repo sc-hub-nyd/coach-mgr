@@ -9,6 +9,7 @@ const files = {
     layouts: '../CSS/layouts.css',
     components: '../CSS/components-standard.css',
     systemComponents: '../CSS/components-system.css',
+    dashboard: '../CSS/dashboard.css',
     iconSystem: '../CSS/icon-system.css',
     utilities: '../CSS/utilities.css',
     themeService: '../color-theme-service.js',
@@ -50,6 +51,9 @@ assert.match(source.tokens, /--neo-highlight/);
 assert.match(source.tokens, /--neo-shadow/);
 assert.match(source.tokens, /--shadow-neo-raised/);
 assert.match(source.tokens, /--shadow-neo-pressed/);
+assert.match(source.tokens, /--surface-inset-inline/);
+assert.match(source.tokens, /--control-inset-inline/);
+assert.match(source.tokens, /--icon-control-size/);
 assert.match(source.base, /--theme-primary/);
 assert.match(source.base, /data-color-mode="dark"/);
 assert.doesNotMatch(source.base, /high-contrast-mode/);
@@ -63,6 +67,7 @@ assert.match(source.components, /\.c-action-group/);
 assert.match(source.components, /\.c-empty-state/);
 assert.match(source.components, /\.c-card--flat/);
 assert.match(source.components, /--shadow-neo-raised/);
+assert.match(source.tokens, /--control-radius/);
 assert.match(source.systemComponents, /\.c-form-field/);
 assert.match(source.systemComponents, /\.c-fieldset/);
 assert.match(source.systemComponents, /\.c-roster-row/);
@@ -71,6 +76,9 @@ assert.match(source.systemComponents, /\.c-data-list/);
 assert.match(source.systemComponents, /\.c-modal/);
 assert.match(source.systemComponents, /\.c-filter-bar/);
 assert.match(source.systemComponents, /--shadow-neo-pressed/);
+assert.match(source.systemComponents, /--surface-inset-compact-inline/);
+assert.match(source.dashboard, /--surface-inset-inline/);
+assert.match(source.dashboard, /--surface-inset-compact-inline/);
 assert.match(source.utilities, /\.u-visually-hidden/);
 assert.match(source.base, /:focus-visible/);
 assert.match(source.tokens, /prefers-reduced-motion/);

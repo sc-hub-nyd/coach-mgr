@@ -75,6 +75,16 @@
     --radius-lg: var(--border-radius);
     --radius-pill: 999px;
 
+    /* Surface geometry: text never begins against a rounded corner. */
+    --surface-inset-inline: var(--space-4);
+    --surface-inset-block: var(--space-4);
+    --surface-inset-compact-inline: var(--space-3);
+    --surface-inset-compact-block: var(--space-2);
+    --control-inset-inline: var(--space-3);
+    --control-inset-block: var(--space-2);
+    --control-radius: var(--radius-sm);
+    --icon-control-size: var(--tap-target-min);
+
     --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
     --shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
     --shadow-focus: 0 0 0 3px color-mix(in srgb, var(--color-focus) 30%, transparent);
@@ -120,6 +130,8 @@
     :root {
         --space-4: 1.125rem;
         --space-5: 1.75rem;
+        --surface-inset-inline: var(--space-5);
+        --surface-inset-block: var(--space-5);
         --bottom-nav-reserve: var(--space-5);
     }
 }

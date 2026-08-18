@@ -2,7 +2,7 @@
    Components are intentionally low-specificity so page styles can extend them without !important. */
 .card.c-card {
     min-width: 0;
-    padding: var(--space-4);
+    padding: var(--surface-inset-block) var(--surface-inset-inline);
     background: var(--neo-surface);
     border: 1px solid color-mix(in srgb, var(--surface-border) 74%, var(--neo-highlight));
     border-radius: var(--radius-lg);
@@ -10,7 +10,7 @@
 }
 
 .card.c-card--compact {
-    padding: var(--space-3);
+    padding: var(--surface-inset-compact-block) var(--surface-inset-compact-inline);
 }
 
 .card.c-card--flat {
@@ -118,7 +118,7 @@
     display: grid;
     place-items: center;
     min-height: 8rem;
-    padding: var(--space-5);
+    padding: var(--surface-inset-block) var(--surface-inset-inline);
     border: 1px dashed var(--surface-border);
     border-radius: var(--radius-md);
     background: var(--surface-muted);
@@ -128,7 +128,7 @@
 
 .c-empty-state--compact {
     min-block-size: 0;
-    padding: var(--space-3);
+    padding: var(--surface-inset-compact-block) var(--surface-inset-compact-inline);
 }
 
 .c-empty-state--compact .c-empty-state__body {
@@ -180,7 +180,7 @@
 
 @media (max-width: 640px) {
     .card.c-card {
-        padding: var(--space-3);
+        padding: var(--surface-inset-compact-block) var(--surface-inset-compact-inline);
     }
 
     .c-section-header {
