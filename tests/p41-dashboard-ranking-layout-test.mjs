@@ -29,7 +29,7 @@ requireAll(system, [
     '@media \\(max-width: 40rem\\) \\{[\\s\\S]*?#dash-coach-row\\.c-dashboard-grid__row--ranking-pair \\{\\s*grid-template-columns: repeat\\(2, minmax\\(0, 1fr\\)\\);',
     '\\.c-dashboard-rank-item \\.c-data-list__header \\{[\\s\\S]*?flex-wrap: nowrap;[\\s\\S]*?min-inline-size: 0;',
     '\\.c-dashboard-rank-item \\.c-data-list__identity \\{[\\s\\S]*?flex: 1 1 0;[\\s\\S]*?text-overflow: ellipsis;[\\s\\S]*?white-space: nowrap;',
-    '\\.c-dashboard-rank-item \\.c-data-list__metric \\{[\\s\\S]*?flex: 0 0 4\\.5rem;[\\s\\S]*?justify-content: flex-end;[\\s\\S]*?margin-inline-start: auto;',
+    '\\.c-dashboard-rank-item \\.c-data-list__metric \\{[\\s\\S]*?box-sizing: border-box;[\\s\\S]*?flex: 0 1 4\\.75rem;[\\s\\S]*?inline-size: 4\\.75rem;[\\s\\S]*?min-inline-size: 0;[\\s\\S]*?max-inline-size: 100%;[\\s\\S]*?gap: var\\(--space-1\\);[\\s\\S]*?padding-inline: var\\(--space-1\\);[\\s\\S]*?margin-inline-start: auto;',
     '\\.c-dashboard-rank-item \\.c-data-list__metric-label,[\\s\\S]*?\\.c-dashboard-rank-item \\.c-data-list__metric-value \\{[\\s\\S]*?white-space: nowrap;'
 ], '共通2列レイアウト・右揃え指標');
 
