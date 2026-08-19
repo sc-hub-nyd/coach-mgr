@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.56';
+export const APP_VERSION = 'v1.30.57';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.57',
+        date: '2026-08-19',
+        title: '試合詳細のピリオド一覧閲覧を復旧',
+        features: [
+            'v1.30.56でField Companion撤去後に残った未定義初期化呼び出しを除去し、試合詳細の初期化がピリオド一覧描画まで正常に到達するよう修正',
+            '登録済みのピリオド、交代記録、スコア、総括、動画分析への導線を再び閲覧可能化',
+            'P39へピリオド一覧描画と撤去済み初期化参照の回帰防止契約を追加'
+        ]
+    },
     {
         version: 'v1.30.56',
         date: '2026-08-19',

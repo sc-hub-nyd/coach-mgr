@@ -858,9 +858,6 @@ export function initMatchDetailView(matchId) {
             </div>`;
     }
 
-    // P1 Field Companion: 専用Bottom sheetへ接続
-    initFieldCompanionActions(m.id, isCoach);
-
     // ★【追加】マイ選手出場要約の描写実行 ★
 
     const summaryContainer = document.getElementById('my-player-summary-container');

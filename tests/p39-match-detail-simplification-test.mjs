@@ -22,6 +22,9 @@ assert.match(html, /id="btn-add-timeline-event"/);
 assert.match(html, /id="period-timeline-list"/);
 assert.doesNotMatch(html, /field-companion|field-matchday-readiness|dash-preflight-card/);
 
+assert.match(source, /renderPeriodGrid\(m\);/);
+assert.doesNotMatch(source, /initFieldCompanionActions|refreshFieldCompanion/);
+
 assert.match(source, /let substitutionDraft = Array\.isArray\(period\.substitutions\)/);
 assert.match(source, /id="side-substitutions-container"/);
 assert.match(source, /id="btn-add-side-sub"/);
@@ -35,4 +38,4 @@ assert.match(source, /sortTimelineMemos\(period\.analysisMemos\)/);
 assert.match(systemCss, /\.period-timeline-edit__seconds/);
 assert.match(systemCss, /\.btn-use-current-timestamp/);
 
-console.log('P39 match detail simplification and editable timeline tests passed');
+console.log('P39 match detail period-view recovery and editable timeline tests passed');
