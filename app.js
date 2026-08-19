@@ -2378,7 +2378,7 @@ export function navigate(route, params = null, isBack = false) {
         const isActive = link.dataset.route === route || (route === 'match-detail' && link.dataset.route === 'matches') || (route === 'player-detail' && link.dataset.route === 'players');
         link.classList.toggle('active', isActive);
         if (isActive && topbarTitle) {
-            topbarTitle.textContent = (route === 'match-detail') ? '試合詳細' : (route === 'player-detail') ? '選手カルテ' : link.textContent.trim();
+            topbarTitle.textContent = (route === 'match-detail') ? '試合詳細' : (route === 'player-detail') ? '育成ノート' : link.textContent.trim();
         }
     });
 
@@ -2413,7 +2413,7 @@ export function navigate(route, params = null, isBack = false) {
                 } else if (route === 'player-detail') {
                     const playerId = params && (typeof params === 'object') ? params.playerId : params;
                     const player = (state.players || []).find(p => p.id === parseInt(playerId, 10));
-                    mobileContextTitle.textContent = player ? `選手: #${player.number} ${player.name}` : '選手カルテ';
+                    mobileContextTitle.textContent = player ? `育成ノート: #${player.number} ${player.name}` : '育成ノート';
                 } else {
                     mobileContextTitle.textContent = topbarTitle ? topbarTitle.textContent : '';
                 }

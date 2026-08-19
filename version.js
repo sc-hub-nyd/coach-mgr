@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.53';
+export const APP_VERSION = 'v1.30.54';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.54',
+        date: '2026-08-19',
+        title: '選手個別ページのタイトルを「育成ノート」へ刷新',
+        features: [
+            '「選手カルテ」の表記を親しみやすく育成の温かみが伝わる「育成ノート」へ統一（トップバー、選手一覧タブ、下部コンテキストバー等）'
+        ]
+    },
     {
         version: 'v1.30.53',
         date: '2026-08-19',
