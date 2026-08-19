@@ -1904,12 +1904,40 @@ function setupEventListeners() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const route = e.currentTarget.dataset.route;
-            
-            navigate(route);
+            if (route) {
+                navigate(route);
+            }
         });
     });
 
-    
+    const btnBottomNavMore = document.getElementById('btn-bottom-nav-more');
+    if (btnBottomNavMore) {
+        btnBottomNavMore.addEventListener('click', () => {
+            openModal('modal-mobile-more');
+        });
+    }
+
+    document.querySelectorAll('.mobile-more-item[data-mobile-route]').forEach(item => {
+        item.addEventListener('click', (e) => {
+            const route = e.currentTarget.dataset.mobileRoute;
+            if (route) {
+                const modal = document.getElementById('modal-mobile-more');
+                if (modal) modal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+                navigate(route);
+            }
+        });
+    });
+
+    const mobileBtnMyPlayer = document.getElementById('mobile-btn-my-player');
+    if (mobileBtnMyPlayer) {
+        mobileBtnMyPlayer.addEventListener('click', () => {
+            const modal = document.getElementById('modal-mobile-more');
+            if (modal) modal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+            openMyPlayerSelectModal();
+        });
+    }
 
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
@@ -1924,66 +1952,63 @@ function setupEventListeners() {
         sidebarOverlay.addEventListener('click', closeSidebar);
     }
 
+    const handleToggleRoleClick = (e) => {
+        e.preventDefault();
+
+        // モバイルその他メニューが開いていれば閉じる
+        const mobileModal = document.getElementById('modal-mobile-more');
+        if (mobileModal) mobileModal.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+
+        // 現在がコーチモードの場合：パスコード不要で保護者モードへ
+        if (state.currentUserRole === 'coach') {
+            state.currentUserRole = 'parent';
+            localStorage.removeItem('currentUserRole');
+
+            updateRoleUI();
+            if (typeof renderCurrentView === 'function') {
+                renderCurrentView();
+            } else if (typeof navigate === 'function' && uiState.currentRoute) {
+                navigate(uiState.currentRoute);
+            }
+
+            showToast('保護者モード（閲覧専用）に切り替えました');
+        }
+        // 現在が保護者モードの場合：パスコードモーダルを開く
+        else {
+            const errorMsg = document.getElementById('passcode-error-msg');
+            const inputPass = document.getElementById('input-coach-passcode');
+
+            if (errorMsg) errorMsg.style.display = 'none';
+            if (inputPass) inputPass.value = '';
+
+            openModal('modal-coach-passcode');
+        }
+    };
+
     const btnToggleRole = document.getElementById('btn-toggle-role');
+    if (btnToggleRole) {
+        btnToggleRole.onclick = handleToggleRoleClick;
+    }
+
+    const mobileBtnToggleRole = document.getElementById('mobile-btn-toggle-role');
+    if (mobileBtnToggleRole) {
+        mobileBtnToggleRole.onclick = handleToggleRoleClick;
+    }
+
     const modalPasscode = document.getElementById('modal-coach-passcode');
     const formPasscode = document.getElementById('form-coach-passcode');
     const inputPasscode = document.getElementById('input-coach-passcode');
     const errorMsg = document.getElementById('passcode-error-msg');
 
-    if (btnToggleRole) {
-        // 既存のEventListenerの影響を受けないよう onclick で上書き設定
-        btnToggleRole.onclick = (e) => {
-            e.preventDefault();
-
-            // 現在がコーチモードの場合：パスコード不要で保護者モードへ
-            if (state.currentUserRole === 'coach') {
-                state.currentUserRole = 'parent';
-                localStorage.removeItem('currentUserRole');
-
-                // UIのバッジやボタン状態を更新する関数（プロジェクト内の既存関数）
-                if (typeof updateRoleUI === 'function') {
-                    updateRoleUI();
-                } else {
-                    // 手動での表示切り替え（フォールバック）
-                    const badge = document.getElementById('user-role-badge');
-                    if (badge) {
-                        badge.style.background = 'rgba(34, 197, 94, 0.15)';
-                        badge.style.color = '#15803d';
-                        badge.innerHTML = '<i class="fa-solid fa-eye"></i><span>保護者モード</span>';
-                    }
-                }
-
-                // 画面表示を再描画
-                if (typeof renderCurrentView === 'function') {
-                    renderCurrentView();
-                } else if (typeof navigate === 'function' && uiState.currentRoute) {
-                    navigate(uiState.currentRoute);
-                }
-
-                showToast('保護者モード（閲覧専用）に切り替えました');
-            }
-            // 現在が保護者モードの場合：パスコードモーダルを開く
-            else {
-                const errorMsg = document.getElementById('passcode-error-msg');
-                const inputPass = document.getElementById('input-coach-passcode');
-
-                if (errorMsg) errorMsg.style.display = 'none';
-                if (inputPass) inputPass.value = '';
-
-                openModal('modal-coach-passcode');
-            }
-        };
-    }
-
     if (formPasscode) {
         formPasscode.onsubmit = (e) => {
             e.preventDefault();
-            e.stopPropagation(); // ★ 追加: イベント伝播を停止
+            e.stopPropagation();
 
             const val = inputPasscode ? inputPasscode.value.trim() : '';
             const targetPass = (state.teamInfo && state.teamInfo.passcode) ? state.teamInfo.passcode : '7064';
 
-            // 空文字での誤送信時は何もせずモーダルを維持
             if (!val) {
                 return false;
             }
@@ -2024,22 +2049,27 @@ function getParentAccessScopes() {
 export function updateRoleUI() {
     const badge = document.getElementById('user-role-badge');
     const btnToggle = document.getElementById('btn-toggle-role');
+    const mobileRoleLabel = document.getElementById('mobile-user-role-label');
     const isCoach = state.currentUserRole === 'coach';
 
     if (badge) {
         if (isCoach) {
             badge.style.background = 'rgba(242, 57, 50, 0.15)';
             badge.style.color = '#ef4444';
-            badge.innerHTML = '<i class="fa-solid fa-user-shield"></i> <span>コーチモード</span>';
+            badge.innerHTML = '<i class="fa-solid fa-user-shield" aria-hidden="true"></i> <span>コーチモード</span>';
         } else {
             badge.style.background = 'rgba(34, 197, 94, 0.15)';
             badge.style.color = '#15803d';
-            badge.innerHTML = '<i class="fa-solid fa-eye"></i> <span>保護者モード</span>';
+            badge.innerHTML = '<i class="fa-solid fa-eye" aria-hidden="true"></i> <span>保護者モード</span>';
         }
     }
 
+    if (mobileRoleLabel) {
+        mobileRoleLabel.textContent = isCoach ? 'コーチモード（編集可能）' : '保護者モード（閲覧専用）';
+    }
+
     if (btnToggle) {
-        btnToggle.innerHTML = '<i class="fa-solid fa-right-left"></i> <span>モード切替</span>';
+        btnToggle.innerHTML = '<i class="fa-solid fa-right-left" aria-hidden="true"></i> <span>切替</span>';
     }
 
     const btnSyncStatus = document.getElementById('btn-topbar-sync-status');
@@ -2083,7 +2113,7 @@ export function updateRoleUI() {
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // PCサイドバーのリンク制御（コーチ専用画面を非表示）
+    // PCサイドバーおよびモバイルシートのリンク制御
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     const parentScopes = getParentAccessScopes();
     document.body.dataset.parentScopes = isCoach ? 'coach' : parentScopes.join(',');
@@ -2099,6 +2129,14 @@ export function updateRoleUI() {
         if (practicesLink) practicesLink.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
     }
 
+    // モバイルその他メニュー内の coach-only / parent-only 表示制御
+    document.querySelectorAll('#modal-mobile-more .coach-only').forEach(el => {
+        el.style.display = isCoach ? 'flex' : 'none';
+    });
+    document.querySelectorAll('#modal-mobile-more .parent-only').forEach(el => {
+        el.style.display = !isCoach ? 'flex' : 'none';
+    });
+
     const libraryLink = document.querySelector('.nav-links li[data-route="library"]');
     if (libraryLink) libraryLink.style.display = isCoach ? 'flex' : 'none';
 
@@ -2107,19 +2145,6 @@ export function updateRoleUI() {
 
     const dataLink = document.querySelector('.nav-links li[data-route="data"]');
     if (dataLink) dataLink.style.display = isCoach ? 'flex' : 'none';
-
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // スマホ下部ナビゲーションのリンク制御（コーチ専用画面を非表示）
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    const bottomPlayers = document.querySelector('.bottom-nav .nav-item[data-route="players"]');
-    if (bottomPlayers) bottomPlayers.style.display = isCoach ? 'flex' : 'none'; // ★ 追加: 選手管理を非表示
-
-    const bottomLibrary = document.querySelector('.bottom-nav .nav-item[data-route="library"]');
-    const bottomTactics = document.querySelector('.bottom-nav .nav-item[data-route="tactics"]');
-    const bottomSettings = document.querySelector('.bottom-nav .nav-item[data-route="settings"]');
-    if (bottomLibrary) bottomLibrary.style.display = isCoach ? 'flex' : 'none';
-    if (bottomTactics) bottomTactics.style.display = isCoach ? 'flex' : 'none';
-    if (bottomSettings) bottomSettings.style.display = isCoach ? 'flex' : 'none';
 
     const goalShort = document.getElementById('player-goal-short');
     const goalLong = document.getElementById('player-goal-long');
@@ -2138,7 +2163,7 @@ export function updateRoleUI() {
     } else {
         document.body.classList.add('role-read-only');
 
-        // ★ 追加: 保護者モード切り替え時に選手管理画面を開いていた場合はダッシュボードへ退避
+        // 保護者モード切り替え時に選手管理画面を開いていた場合はダッシュボードへ退避
         if (uiState.currentRoute === 'players') {
             navigate('dashboard');
             return;
@@ -2150,6 +2175,7 @@ export function updateRoleUI() {
         initDashboard();
     }
 }
+
 
 export function navigate(route, params = null) {
     if (uiState.currentRoute === 'match-detail' && route !== 'match-detail') releaseFieldCompanionSession();
@@ -2209,10 +2235,33 @@ export function navigate(route, params = null) {
         }
     });
 
+    const topbarBreadcrumb = document.getElementById('topbar-breadcrumb');
+    if (topbarBreadcrumb) {
+        if (route === 'dashboard') {
+            topbarBreadcrumb.innerHTML = '';
+        } else if (route === 'match-detail') {
+            topbarBreadcrumb.innerHTML = `<a href="#" onclick="event.preventDefault(); navigate('dashboard');" style="color:var(--text-secondary); text-decoration:none;">ホーム</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <a href="#" onclick="event.preventDefault(); navigate('matches');" style="color:var(--text-secondary); text-decoration:none;">試合記録</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <span>試合詳細</span>`;
+        } else if (route === 'player-detail') {
+            topbarBreadcrumb.innerHTML = `<a href="#" onclick="event.preventDefault(); navigate('dashboard');" style="color:var(--text-secondary); text-decoration:none;">ホーム</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <a href="#" onclick="event.preventDefault(); navigate('players');" style="color:var(--text-secondary); text-decoration:none;">選手管理</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <span>選手カルテ</span>`;
+        } else {
+            const routeNames = {
+                matches: '試合記録',
+                practices: '練習管理',
+                library: 'メニュー管理',
+                tactics: '戦術管理',
+                players: '選手管理',
+                settings: '設定'
+            };
+            const currentName = routeNames[route] || route;
+            topbarBreadcrumb.innerHTML = `<a href="#" onclick="event.preventDefault(); navigate('dashboard');" style="color:var(--text-secondary); text-decoration:none;">ホーム</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <span>${currentName}</span>`;
+        }
+    }
+
     bottomNavLinks.forEach(link => {
         const isActive = link.dataset.route === route || (route === 'match-detail' && link.dataset.route === 'matches') || (route === 'player-detail' && link.dataset.route === 'players');
         link.classList.toggle('active', isActive);
     });
+
 
     const viewContainer = document.getElementById('view-container');
 
@@ -2363,34 +2412,51 @@ async function init() {
     document.body.classList.remove('high-contrast-mode');
 
     const toggleColorModeBtn = document.getElementById('btn-toggle-color-mode');
+    const mobileToggleColorModeBtn = document.getElementById('mobile-btn-toggle-color-mode');
+    const mobileColorModeText = document.getElementById('mobile-color-mode-text');
+
     const updateColorModeToggle = mode => {
-        if (!toggleColorModeBtn) return;
         const isDark = mode === 'dark';
-        toggleColorModeBtn.innerHTML = `<i class="fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}" aria-hidden="true"></i><span>${isDark ? 'ライト' : 'ダーク'}</span>`;
-        toggleColorModeBtn.setAttribute('aria-label', `${isDark ? 'ライト' : 'ダーク'}表示へ切り替えます`);
-        toggleColorModeBtn.title = `${isDark ? 'ライト' : 'ダーク'}表示へ切り替えます`;
+        if (toggleColorModeBtn) {
+            toggleColorModeBtn.innerHTML = `<i class="fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}" aria-hidden="true"></i>`;
+            toggleColorModeBtn.setAttribute('aria-label', `${isDark ? 'ライト' : 'ダーク'}表示へ切り替えます`);
+            toggleColorModeBtn.title = `${isDark ? 'ライト' : 'ダーク'}表示へ切り替えます`;
+        }
+        if (mobileToggleColorModeBtn) {
+            mobileToggleColorModeBtn.innerHTML = `<i class="fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}" aria-hidden="true"></i> <span>${isDark ? 'ライト表示' : 'ダーク表示'}</span>`;
+        }
     };
     updateColorModeToggle(uiPreferences.colorMode);
     window.addEventListener('coachmgr:color-mode-changed', event => updateColorModeToggle(event.detail?.colorMode));
+
+    const handleColorModeToggle = () => {
+        const current = loadUiPreferences();
+        const next = { ...current, colorMode: current.colorMode === 'dark' ? 'light' : 'dark' };
+        saveUiPreferences(next);
+        applyUiPreferences(next);
+        applyCurrentTeamTheme({ colorMode: next.colorMode });
+        updateColorModeToggle(next.colorMode);
+        showToast(`${next.colorMode === 'dark' ? 'ダーク' : 'ライト'}表示に切り替えました`);
+    };
+
     if (toggleColorModeBtn) {
-        toggleColorModeBtn.onclick = () => {
-            const current = loadUiPreferences();
-            const next = { ...current, colorMode: current.colorMode === 'dark' ? 'light' : 'dark' };
-            saveUiPreferences(next);
-            applyUiPreferences(next);
-            applyCurrentTeamTheme({ colorMode: next.colorMode });
-            updateColorModeToggle(next.colorMode);
-            showToast(`${next.colorMode === 'dark' ? 'ダーク' : 'ライト'}表示に切り替えました`);
-        };
+        toggleColorModeBtn.onclick = handleColorModeToggle;
     }
+    if (mobileToggleColorModeBtn) {
+        mobileToggleColorModeBtn.onclick = handleColorModeToggle;
+    }
+
     const sidebarTitle = document.querySelector('.sidebar-header h2');
     if (sidebarTitle && state.teamInfo) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name || 'My Team')}`;
 
-    // ★ バージョン表示とリリースノートモーダル初期化
+    // バージョン表示とリリースノートモーダル初期化
     const topbarVersionText = document.getElementById('topbar-version-text');
     if (topbarVersionText) topbarVersionText.textContent = `${APP_VERSION}`;
+    const mobileVersionText = document.getElementById('mobile-version-text');
+    if (mobileVersionText) mobileVersionText.textContent = `${APP_VERSION}`;
 
     window.openReleaseNotesModal = openReleaseNotesModal;
+
 
     navigate('dashboard');
 

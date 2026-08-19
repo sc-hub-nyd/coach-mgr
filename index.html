@@ -37,6 +37,29 @@
                 <li data-route="players"><span class="c-icon c-icon--team c-icon--sm" aria-hidden="true"></span> 選手管理</li>
                 <li data-route="settings"><i class="fa-solid fa-gear"></i> 設定</li>
             </ul>
+
+            <!-- PC用サイドバーフッター（システム設定・モード切替・バージョン） -->
+            <div class="sidebar-footer" id="sidebar-footer">
+                <div class="sidebar-user-card">
+                    <div id="user-role-badge" class="sidebar-role-badge"
+                        style="background:rgba(34, 197, 94, 0.15); color:#15803d;">
+                        <i class="fa-solid fa-eye" aria-hidden="true"></i><span>保護者モード</span>
+                    </div>
+                    <div class="sidebar-footer-actions">
+                        <button type="button" class="btn btn-secondary btn-sm sidebar-footer-btn" id="btn-toggle-role" title="モードを切り替えます">
+                            <i class="fa-solid fa-right-left" aria-hidden="true"></i><span>切替</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm sidebar-footer-btn" id="btn-toggle-color-mode" title="ライト／ダーク表示を切り替えます" aria-label="ライト／ダーク表示を切り替えます">
+                            <i class="fa-solid fa-moon" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="sidebar-version-row">
+                    <button type="button" class="btn-link sidebar-version-btn" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span id="topbar-version-text">v1.30.25</span>
+                    </button>
+                </div>
+            </div>
         </nav>
 
         <!-- Sidebar Overlay (for mobile & side-menu open state) -->
@@ -45,48 +68,40 @@
         <!-- Main Content -->
         <main class="main-content">
             <header class="topbar">
-                <button id="menu-toggle" class="menu-toggle"><i class="fa-solid fa-bars"></i></button>
-                <button id="topbar-back" class="btn btn-secondary btn-sm hidden"
-                    style="padding:0.25rem 0.6rem; font-size:0.8rem; margin-right:0.5rem;"><i
-                        class="fa-solid fa-arrow-left"></i> 戻る</button>
-                <div class="topbar-title" id="topbar-title">ダッシュボード</div>
-                <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <div id="user-role-badge" class="topbar-badge"
-                        style="background:rgba(34, 197, 94, 0.15); color:#15803d;">
-                        <i class="fa-solid fa-eye"></i><span>保護者モード</span>
-                    </div>
-                    <button class="btn btn-secondary topbar-btn" id="btn-toggle-color-mode" title="ライト／ダーク表示を切り替えます" aria-label="ライト／ダーク表示を切り替えます">
-                        <i class="fa-solid fa-moon" aria-hidden="true"></i><span>ダーク</span>
-                    </button>
-                    <button class="btn btn-secondary topbar-btn" id="btn-toggle-role" title="モードを切り替えます">
-                        <i class="fa-solid fa-right-left"></i><span>モード切替</span>
-                    </button>
+                <button id="menu-toggle" class="menu-toggle u-visually-hidden" aria-hidden="true"><i class="fa-solid fa-bars"></i></button>
+                <button id="topbar-back" class="btn btn-secondary btn-sm hidden topbar-back-btn" aria-label="前の画面に戻る">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <span>戻る</span>
+                </button>
+
+                <div class="topbar-title-group">
+                    <div class="topbar-breadcrumb" id="topbar-breadcrumb" aria-label="階層ナビゲーション"></div>
+                    <h1 class="topbar-title" id="topbar-title">ダッシュボード</h1>
+                </div>
+
+                <div class="topbar-actions">
                     <!-- ▼ コンパクトなクラウド同期ステータスボタン & ポップオーバー -->
                     <div class="sync-status-wrapper" style="position:relative;">
                         <button class="btn btn-secondary topbar-btn sync-status-btn" id="btn-topbar-sync-status"
-                            title="クラウド同期ステータス">
-                            <i class="fa-solid fa-cloud-arrow-down" id="sync-status-icon"></i>
+                            title="クラウド同期ステータス" aria-label="クラウド同期ステータス">
+                            <i class="fa-solid fa-cloud-arrow-down" id="sync-status-icon" aria-hidden="true"></i>
                             <span class="sync-status-dot" id="sync-status-dot"></span>
                         </button>
 
                         <!-- タップ時に開くステータスポップオーバー -->
                         <div id="sync-popover" class="sync-popover hidden">
                             <div class="sync-popover-header">
-                                <i class="fa-solid fa-cloud"></i> クラウド同期ステータス
+                                <i class="fa-solid fa-cloud" aria-hidden="true"></i> クラウド同期ステータス
                             </div>
                             <div class="sync-popover-body">
                                 <div class="sync-time-label">最終同期: <span id="sync-last-time">未実施</span></div>
                                 <div class="sync-status-text" id="sync-status-text">最新状態です</div>
                                 <button class="btn btn-primary btn-sm sync-action-btn" id="btn-popover-sync-now"
                                     style="width:100%; margin-top:0.6rem; justify-content:center;">
-                                    <i class="fa-solid fa-cloud-arrow-down"></i> 手動同期を実行
+                                    <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> 手動同期を実行
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-secondary topbar-btn" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <i class="fa-solid fa-circle-info"></i><span id="topbar-version-text">v1.4.0</span>
-                    </button>
                 </div>
             </header>
 
@@ -98,7 +113,8 @@
                     <div style="font-size:0.8rem;">クラウドから最新情報を取得しています</div>
                 </div>
             </div>
-            <!-- スマホ用5項目ナビゲーション。詳細機能は「その他」に集約 -->
+
+            <!-- スマホ用5項目ナビゲーション（片手親指リーチ設計） -->
             <nav class="bottom-nav" id="bottom-nav" aria-label="主要ナビゲーション">
                 <a href="#" class="nav-item active" data-route="dashboard" aria-label="ダッシュボード">
                     <span class="c-icon c-icon--home c-icon--sm" aria-hidden="true"></span>
@@ -116,35 +132,67 @@
                     <span class="c-icon c-icon--document c-icon--sm" aria-hidden="true"></span>
                     <span>メニュー</span>
                 </a>
-                <a href="#" class="nav-item coach-only" data-route="tactics" aria-label="戦術管理">
-                    <span class="c-icon c-icon--pass-ladder c-icon--sm" aria-hidden="true"></span>
-                    <span>戦術</span>
-                </a>
-                <a href="#" class="nav-item coach-only" data-route="players" aria-label="選手管理">
-                    <span class="c-icon c-icon--team c-icon--sm" aria-hidden="true"></span>
-                    <span>選手</span>
-                </a>
-                <a href="#" class="nav-item coach-only" data-route="settings" aria-label="設定">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>設定</span>
-                </a>
+                <button type="button" class="nav-item nav-item--more" id="btn-bottom-nav-more" aria-label="その他のメニューを開く">
+                    <i class="fa-solid fa-ellipsis" aria-hidden="true" style="font-size:1.1rem; margin-bottom:0.15rem;"></i>
+                    <span>その他</span>
+                </button>
             </nav>
         </main>
 
     </div><!-- /#app -->
 
-    <!-- Mobile overflow menu -->
+    <!-- Mobile More Bottom Sheet (親指で届く片手操作コントロールセンター) -->
     <div id="modal-mobile-more" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-more-title">
-        <div class="bottom-sheet-modal mobile-more-sheet">
-            <div class="modal-header">
-                <h2 id="mobile-more-title">その他</h2>
-                <button type="button" class="btn btn-secondary btn-close-modal" aria-label="その他メニューを閉じる"><i class="fa-solid fa-xmark"></i></button>
+        <div class="bottom-sheet-modal mobile-more-sheet c-modal">
+            <div class="modal-header c-modal__header" style="padding:0.75rem 1rem; border-bottom:1px solid var(--surface-border);">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <i class="fa-solid fa-grip" aria-hidden="true" style="color:var(--primary);"></i>
+                    <h2 id="mobile-more-title" style="font-size:1rem; font-weight:700; margin:0;">その他メニュー</h2>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm btn-close-modal" aria-label="メニューを閉じる"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="mobile-more-grid">
-                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="library"><i class="fa-solid fa-book"></i><span>メニュー管理</span></button>
-                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="tactics"><i class="fa-solid fa-chess-knight"></i><span>戦術管理</span></button>
-                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="settings"><i class="fa-solid fa-gear"></i><span>設定</span></button>
-                <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="dashboard"><i class="fa-solid fa-house"></i><span>ホームへ戻る</span></button>
+
+            <div class="mobile-more-body" style="padding:1rem;">
+                <!-- ロール切替カード -->
+                <div class="mobile-more-role-card c-card" style="margin-bottom:1rem; padding:0.75rem 1rem; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">現在のモード</div>
+                        <div id="mobile-user-role-label" style="font-weight:700; font-size:0.95rem; color:var(--text-primary);">保護者モード</div>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" id="mobile-btn-toggle-role" style="font-size:0.8rem;">
+                        <i class="fa-solid fa-right-left" aria-hidden="true"></i> モード切替
+                    </button>
+                </div>
+
+                <!-- ナビゲーショングリッド -->
+                <div class="mobile-more-grid">
+                    <button type="button" class="btn btn-secondary mobile-more-item coach-only" data-mobile-route="tactics">
+                        <span class="c-icon c-icon--pass-ladder c-icon--md" aria-hidden="true"></span>
+                        <span>戦術管理</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary mobile-more-item coach-only" data-mobile-route="players">
+                        <span class="c-icon c-icon--team c-icon--md" aria-hidden="true"></span>
+                        <span>選手管理</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary mobile-more-item coach-only" data-mobile-route="settings">
+                        <i class="fa-solid fa-gear" style="font-size:1.2rem;" aria-hidden="true"></i>
+                        <span>設定</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary mobile-more-item parent-only" id="mobile-btn-my-player">
+                        <i class="fa-solid fa-user-gear" style="font-size:1.2rem;" aria-hidden="true"></i>
+                        <span>マイ選手選択</span>
+                    </button>
+                </div>
+
+                <!-- ユーティリティ行（テーマ切替・手動同期・バージョン） -->
+                <div class="mobile-more-utility-row" style="margin-top:1.2rem; padding-top:0.8rem; border-top:1px dashed var(--surface-border); display:flex; justify-content:space-between; align-items:center;">
+                    <button type="button" class="btn btn-secondary btn-sm" id="mobile-btn-toggle-color-mode">
+                        <i class="fa-solid fa-moon" aria-hidden="true"></i> <span id="mobile-color-mode-text">ダーク表示</span>
+                    </button>
+                    <button type="button" class="btn-link" id="mobile-version-badge" style="font-size:0.75rem; color:var(--text-secondary);" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
+                        <span id="mobile-version-text">v1.30.25</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
