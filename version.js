@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.19';
+export const APP_VERSION = 'v1.30.20';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.20',
+        date: '2026-08-19',
+        title: '設定画面全体のフォーム入力欄・Neumorphism 2.0スタイル統一',
+        features: [
+            '設定画面・チームテーマ内の入力欄（sl-input/form-control）にNeumorphism 2.0のインセット影・枠線・余白トークンを適用',
+            '文字が枠線の端で切れて見える問題や背景色の不整合を解消し、美しい入力フィールドデザインを確立'
+        ]
+    },
     {
         version: 'v1.30.19',
         date: '2026-08-19',
