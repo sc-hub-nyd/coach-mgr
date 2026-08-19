@@ -1991,13 +1991,7 @@ function setupEventListeners() {
         topbarBackBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (uiState.currentRoute === 'match-detail') {
-                navigate('matches');
-            } else if (uiState.currentRoute === 'player-detail') {
-                navigate('players');
-            } else {
-                navigate('dashboard');
-            }
+            navigateBack();
         });
     }
 
@@ -2277,7 +2271,23 @@ export function updateRoleUI() {
 }
 
 
-export function navigate(route, params = null) {
+export function navigateBack() {
+    if (!state.navHistory) state.navHistory = [];
+    if (state.navHistory.length > 0) {
+        let prev = state.navHistory.pop();
+        // 直前と同じルートならさらに1つ遡る
+        while (prev && prev.route === uiState.currentRoute && state.navHistory.length > 0) {
+            prev = state.navHistory.pop();
+        }
+        if (prev && prev.route && prev.route !== uiState.currentRoute) {
+            navigate(prev.route, prev.params, true);
+            return;
+        }
+    }
+    navigate('dashboard', null, true);
+}
+
+export function navigate(route, params = null, isBack = false) {
     if (uiState.currentRoute === 'match-detail' && route !== 'match-detail') releaseFieldCompanionSession();
     cleanupCanvasEvents();
     // Cleanup scoped event listeners from the previous view
@@ -2302,8 +2312,20 @@ export function navigate(route, params = null) {
         }
     }
 
+    // 履歴スタックの管理（戻る操作でない場合、直前のルートを記録）
+    if (!state.navHistory) state.navHistory = [];
+    if (!isBack && uiState.currentRoute && uiState.currentRoute !== route) {
+        state.navHistory.push({
+            route: uiState.currentRoute,
+            params: uiState.currentParams || null
+        });
+        // 履歴上限
+        if (state.navHistory.length > 20) state.navHistory.shift();
+    }
+
     state.currentRoute = route;
     uiState.currentRoute = route;
+    uiState.currentParams = params;
 
     document.querySelectorAll('.modal-overlay').forEach(el => el.classList.add('hidden'));
     document.body.classList.remove('modal-open');
@@ -2318,16 +2340,15 @@ export function navigate(route, params = null) {
         if (route === 'dashboard') {
             topbarBack.classList.add('hidden');
             topbarBack.onclick = null;
-        } else if (route === 'match-detail') {
-            topbarBack.classList.remove('hidden');
-            topbarBack.onclick = () => navigate('matches');
-        } else if (route === 'player-detail') {
-            topbarBack.classList.remove('hidden');
-            topbarBack.onclick = () => navigate('players');
         } else {
-            // 通常一覧画面（matches, practices, library, tactics, players, settings等）
             topbarBack.classList.remove('hidden');
-            topbarBack.onclick = () => navigate('dashboard');
+            topbarBack.onclick = (e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                navigateBack();
+            };
         }
     }
 

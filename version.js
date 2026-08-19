@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.36';
+export const APP_VERSION = 'v1.30.37';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.37',
+        date: '2026-08-19',
+        title: '練習管理ボタン配置の整頓＆戻るボタンの画面履歴スタック導入',
+        features: [
+            '練習管理一覧のカード内ボタン配置を刷新し、複数行の崩れを解消して美しい1行ツールバーレイアウトへ改善',
+            '画面遷移履歴スタック（navHistory）を導入し、ダッシュボード経由・一覧経由を問わず「戻る」ボタンで100%確実に直前の画面へ復帰できるよう修正'
+        ]
+    },
     {
         version: 'v1.30.36',
         date: '2026-08-19',

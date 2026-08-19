@@ -3359,17 +3359,17 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
     }
 }
 
-/* P33.2: 練習カード操作と編集モーダルのモバイル安定化 */
+/* P33.2: 練習カード操作のスタイリング */
 .practice-card-actions {
-    position: relative;
-    z-index: 1;
     display: flex;
+    align-items: center;
+    gap: 0.35rem;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: calc(1rem + env(safe-area-inset-bottom));
 }
 
-.practice-card-actions .btn { min-height: 42px; }
+.practice-card-actions .btn {
+    min-height: 32px;
+}
 
 .modal-practice-form {
     position: relative;
@@ -3445,15 +3445,6 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
 }
 
 @media (max-width: 600px) {
-    .practice-card-actions {
-        margin-bottom: calc(4.75rem + env(safe-area-inset-bottom));
-    }
-
-    .practice-card-actions .btn {
-        flex: 1 1 calc(50% - 0.5rem);
-        min-width: 0;
-    }
-
     .modal-practice-form {
         width: min(94vw, 640px);
         max-height: calc(100dvh - 1rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
@@ -3479,8 +3470,4 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
         flex: 1 1 0;
         min-height: 46px;
     }
-}
-
-@media (max-width: 360px) {
-    .practice-card-actions .btn { flex-basis: 100%; }
 }

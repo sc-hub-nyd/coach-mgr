@@ -369,11 +369,22 @@ export function initPractices(miniPitchObserver) {
             const parentResponseHtml = '';
             const actionBtns = `
                 <div class="c-practice-card__actions practice-card-actions">
-                    ${isCoach ? `<button class="btn btn-primary btn-xs btn-add-menu" data-id="${p.id}" title="メニュー追加"><i class="fa-solid fa-plus"></i> メニュー</button>
-                    <button class="btn btn-secondary btn-xs btn-save-practice-template" data-id="${p.id}" title="この構成をテンプレートとして保存"><i class="fa-solid fa-bookmark"></i> テンプレート</button>
-                    <button class="btn btn-secondary btn-xs btn-edit-practice" data-id="${p.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn btn-danger btn-xs btn-delete-practice" data-id="${p.id}" title="削除"><i class="fa-solid fa-trash"></i></button>` : ''}
-                    <button class="btn btn-secondary btn-xs btn-share-practice" data-id="${p.id}" title="保護者共有用テキストをコピー"><i class="fa-solid fa-share-nodes"></i> 共有</button>
+                    ${isCoach ? `
+                    <button type="button" class="btn btn-primary btn-xs btn-add-menu" data-id="${p.id}" title="メニュー追加">
+                        <i class="fa-solid fa-plus"></i> メニュー
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-xs btn-save-practice-template" data-id="${p.id}" title="この構成をテンプレートとして保存">
+                        <i class="fa-solid fa-bookmark"></i> テンプレ
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-xs btn-edit-practice" data-id="${p.id}" title="練習情報を編集">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-xs btn-delete-practice" data-id="${p.id}" title="練習を削除">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>` : ''}
+                    <button type="button" class="btn btn-secondary btn-xs btn-share-practice" data-id="${p.id}" title="保護者共有用テキストをコピー">
+                        <i class="fa-solid fa-share-nodes"></i> 共有
+                    </button>
                 </div>
             `;
 
@@ -382,8 +393,9 @@ export function initPractices(miniPitchObserver) {
                     <!-- カードヘッダー（常時表示） -->
                     <div class="c-practice-card__header practice-card-header">
                         <div class="c-practice-card__identity practice-card-header-main">
-                            <!-- ★2. ${p.date} の直後に ${locationHtml} を追加 -->
-                            <div class="c-practice-card__title practice-card-date"><i class="fa-regular fa-calendar"></i> ${p.date}${locationHtml}</div>
+                            <div class="c-practice-card__title practice-card-date">
+                                <i class="fa-regular fa-calendar"></i> ${p.date}${locationHtml}
+                            </div>
                             <div class="c-practice-card__meta practice-card-summary-badges">
                                 <span class="badge-sub"><i class="fa-solid fa-user-check"></i> 参加 ${attendanceSummary.attending}名</span>
                                 <span class="badge-sub"><i class="fa-solid fa-user-clock"></i> 未回答 ${attendanceSummary.pending}名</span>
@@ -400,7 +412,7 @@ export function initPractices(miniPitchObserver) {
                             <i class="fa-solid fa-chevron-down summary-icon"></i>
                             <span>詳細を表示 (参加者・メニュー)</span>
                         </summary>
-                        
+
                         <div class="practice-card-expanded-body">
                             <!-- 1. 参加選手領域 -->
                             <div class="practice-detail-section">

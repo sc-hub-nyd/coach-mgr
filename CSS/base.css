@@ -1018,34 +1018,71 @@ body .practice-card-date {
     white-space: nowrap;
 }
 
+body .practice-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+body .practice-card-header-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
 /* サマリーバッジ（参加人数・メニュー数） */
 body .practice-card-summary-badges {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    font-size: 0.72rem;
     color: var(--text-secondary);
 }
 
 body .practice-card-summary-badges .badge-sub {
     background: rgba(0, 0, 0, 0.04);
-    padding: 0.1rem 0.35rem;
+    padding: 0.15rem 0.4rem;
     border-radius: 4px;
     font-weight: 600;
 }
 
-/* 操作ボタン群 */
+/* 操作ボタン群（美しい1行ツールバー設計） */
 body .practice-card-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    flex-shrink: 0;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    width: 100% !important;
+    margin-top: 0.2rem !important;
+    margin-bottom: 0 !important;
 }
 
 body .practice-card-actions .btn {
-    padding: 0.25rem 0.45rem;
-    font-size: 0.72rem;
-    white-space: nowrap;
+    min-height: 30px !important;
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.3rem !important;
+}
+
+body .practice-card-actions .btn-add-menu,
+body .practice-card-actions .btn-save-practice-template,
+body .practice-card-actions .btn-share-practice {
+    flex: 1 1 0 !important;
+}
+
+body .practice-card-actions .btn-edit-practice,
+body .practice-card-actions .btn-delete-practice {
+    flex: 0 0 32px !important;
+    padding: 0 !important;
+    width: 32px !important;
+    height: 30px !important;
 }
 
 /* 一括アコーディオン（details/summary） */
