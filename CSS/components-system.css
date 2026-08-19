@@ -1835,7 +1835,44 @@
     min-inline-size: 0;
 }
 
+/* Dashboard rankings share a two-column pair and a stable identity/value alignment. */
+.c-dashboard-grid__row--ranking-pair,
+#dash-coach-row.c-dashboard-grid__row--ranking-pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.c-dashboard-rank-item .c-data-list__header {
+    flex: 1 1 100%;
+    flex-wrap: nowrap;
+    align-items: center;
+    min-inline-size: 0;
+}
+
+.c-dashboard-rank-item .c-data-list__identity {
+    flex: 1 1 0;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.c-dashboard-rank-item .c-data-list__metric {
+    flex: 0 0 4.5rem;
+    justify-content: flex-end;
+    margin-inline-start: auto;
+}
+
+.c-dashboard-rank-item .c-data-list__metric-label,
+.c-dashboard-rank-item .c-data-list__metric-value {
+    white-space: nowrap;
+}
+
 @media (max-width: 40rem) {
+    .c-dashboard-grid__row--ranking-pair,
+    #dash-coach-row.c-dashboard-grid__row--ranking-pair {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .c-dashboard-grid__row {
         grid-template-columns: minmax(0, 1fr);
     }

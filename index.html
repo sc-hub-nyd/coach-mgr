@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
-    <link rel="stylesheet" href="./CSS/main.css?v=81">
+    <link rel="stylesheet" href="./CSS/main.css?v=82">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -407,7 +407,7 @@
             </div>
 
             <!-- ROW 5: 得点 + アシスト ランキング (2カラム) -->
-            <div class="c-dashboard-grid__row">
+            <div class="c-dashboard-grid__row c-dashboard-grid__row--ranking-pair">
                 <!-- 得点ランキング -->
                 <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--rank" onclick="openLeaderRankingModal('scorers')">
                     <div class="c-dashboard-widget__label c-static-style--184">
@@ -429,7 +429,7 @@
             </div>
 
             <!-- ROW 6: 出席率 + 出場時間アラート (コーチ専用・横並び) -->
-            <div class="c-dashboard-grid__row coach-only" id="dash-coach-row">
+            <div class="c-dashboard-grid__row c-dashboard-grid__row--ranking-pair coach-only" id="dash-coach-row">
                 <!-- 出席率ランキング (左) -->
                 <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--rank"
                     onclick="openLeaderRankingModal('attendance')">
