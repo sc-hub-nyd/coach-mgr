@@ -1970,6 +1970,13 @@ function setupEventListeners() {
         });
     }
 
+    const mobileTopBarRoleBadge = document.getElementById('mobile-topbar-role-badge');
+    if (mobileTopBarRoleBadge) {
+        mobileTopBarRoleBadge.addEventListener('click', () => {
+            openModal('modal-mobile-more');
+        });
+    }
+
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
             if (sidebar) {
@@ -2081,6 +2088,7 @@ export function updateRoleUI() {
     const badge = document.getElementById('user-role-badge');
     const btnToggle = document.getElementById('btn-toggle-role');
     const mobileRoleLabel = document.getElementById('mobile-user-role-label');
+    const mobileTopBarRole = document.getElementById('mobile-topbar-role-badge');
     const isCoach = state.currentUserRole === 'coach';
 
     if (badge) {
@@ -2092,6 +2100,16 @@ export function updateRoleUI() {
             badge.style.background = 'rgba(34, 197, 94, 0.15)';
             badge.style.color = '#15803d';
             badge.innerHTML = '<i class="fa-solid fa-eye" aria-hidden="true"></i> <span>保護者モード</span>';
+        }
+    }
+
+    if (mobileTopBarRole) {
+        if (isCoach) {
+            mobileTopBarRole.classList.add('is-coach');
+            mobileTopBarRole.innerHTML = '<i class="fa-solid fa-user-shield" aria-hidden="true"></i> <span>コーチ</span>';
+        } else {
+            mobileTopBarRole.classList.remove('is-coach');
+            mobileTopBarRole.innerHTML = '<i class="fa-solid fa-eye" aria-hidden="true"></i> <span>保護者</span>';
         }
     }
 
@@ -2128,12 +2146,12 @@ export function updateRoleUI() {
             if (syncPopover) syncPopover.classList.toggle('hidden');
         };
 
-        const wrapper = document.querySelector('.sync-status-wrapper');
-        if (wrapper && !wrapper._outsideClickBound) {
-            wrapper._outsideClickBound = true;
+        const syncRow = document.querySelector('.sidebar-sync-row');
+        if (syncRow && !syncRow._outsideClickBound) {
+            syncRow._outsideClickBound = true;
             document.addEventListener('click', (e) => {
                 if (syncPopover && !syncPopover.classList.contains('hidden')) {
-                    if (!wrapper.contains(e.target)) {
+                    if (!syncRow.contains(e.target)) {
                         syncPopover.classList.add('hidden');
                     }
                 }
@@ -2151,6 +2169,7 @@ export function updateRoleUI() {
             }
         };
     }
+
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // PCサイドバー、スマホボトムバー、モバイルシートのリンク制御

@@ -38,7 +38,7 @@
                 <li data-route="settings"><i class="fa-solid fa-gear"></i> 設定</li>
             </ul>
 
-            <!-- PC用サイドバーフッター（システム設定・モード切替・バージョン） -->
+            <!-- PC用サイドバーフッター（システム設定・モード切替・同期・バージョン） -->
             <div class="sidebar-footer" id="sidebar-footer">
                 <div class="sidebar-user-card">
                     <div id="user-role-badge" class="sidebar-role-badge"
@@ -54,9 +54,36 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- PC用サイドバークラウド同期ステータス -->
+                <div class="sidebar-sync-row" style="position:relative;">
+                    <button type="button" class="btn btn-secondary btn-sm sidebar-sync-btn" id="btn-topbar-sync-status" title="クラウド同期ステータス" aria-label="クラウド同期ステータス" style="width:100%; justify-content:space-between; font-size:0.75rem;">
+                        <span style="display:flex; align-items:center; gap:0.4rem;">
+                            <i class="fa-solid fa-cloud-arrow-down" id="sync-status-icon" aria-hidden="true"></i>
+                            <span id="sidebar-sync-label">クラウド同期</span>
+                        </span>
+                        <span class="sync-status-dot" id="sync-status-dot"></span>
+                    </button>
+
+                    <!-- タップ時に開くステータスポップオーバー -->
+                    <div id="sync-popover" class="sync-popover hidden" style="bottom:100%; left:0; margin-bottom:0.5rem;">
+                        <div class="sync-popover-header">
+                            <i class="fa-solid fa-cloud" aria-hidden="true"></i> クラウド同期ステータス
+                        </div>
+                        <div class="sync-popover-body">
+                            <div class="sync-time-label">最終同期: <span id="sync-last-time">未実施</span></div>
+                            <div class="sync-status-text" id="sync-status-text">最新状態です</div>
+                            <button class="btn btn-primary btn-sm sync-action-btn" id="btn-popover-sync-now"
+                                style="width:100%; margin-top:0.6rem; justify-content:center;">
+                                <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> 手動同期を実行
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="sidebar-version-row">
                     <button type="button" class="btn-link sidebar-version-btn" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span id="topbar-version-text">v1.30.25</span>
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span id="topbar-version-text">v1.30.29</span>
                     </button>
                 </div>
             </div>
@@ -73,6 +100,10 @@
                     <button id="topbar-back" class="btn btn-secondary btn-sm hidden topbar-back-btn" aria-label="前の画面に戻る">
                         <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <span>戻る</span>
                     </button>
+                    <!-- スマホ向け常時モードバッジ（ひと目でモードを判別可能） -->
+                    <button type="button" class="topbar-mobile-role-pill" id="mobile-topbar-role-badge" title="タップしてモードを変更" aria-label="現在の利用モード">
+                        <i class="fa-solid fa-eye" aria-hidden="true"></i> <span>保護者</span>
+                    </button>
                 </div>
 
                 <div class="topbar-center">
@@ -80,30 +111,8 @@
                     <h1 class="topbar-title" id="topbar-title">ダッシュボード</h1>
                 </div>
 
-                <div class="topbar-actions topbar-end">
-                    <!-- ▼ コンパクトなクラウド同期ステータスボタン & ポップオーバー -->
-                    <div class="sync-status-wrapper" style="position:relative;">
-                        <button class="btn btn-secondary topbar-btn sync-status-btn" id="btn-topbar-sync-status"
-                            title="クラウド同期ステータス" aria-label="クラウド同期ステータス">
-                            <i class="fa-solid fa-cloud-arrow-down" id="sync-status-icon" aria-hidden="true"></i>
-                            <span class="sync-status-dot" id="sync-status-dot"></span>
-                        </button>
-
-                        <!-- タップ時に開くステータスポップオーバー -->
-                        <div id="sync-popover" class="sync-popover hidden">
-                            <div class="sync-popover-header">
-                                <i class="fa-solid fa-cloud" aria-hidden="true"></i> クラウド同期ステータス
-                            </div>
-                            <div class="sync-popover-body">
-                                <div class="sync-time-label">最終同期: <span id="sync-last-time">未実施</span></div>
-                                <div class="sync-status-text" id="sync-status-text">最新状態です</div>
-                                <button class="btn btn-primary btn-sm sync-action-btn" id="btn-popover-sync-now"
-                                    style="width:100%; margin-top:0.6rem; justify-content:center;">
-                                    <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> 手動同期を実行
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="topbar-end">
+                    <!-- 右端のスペーサー（中央完全固定を維持） -->
                 </div>
             </header>
 

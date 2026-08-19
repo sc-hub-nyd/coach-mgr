@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.29';
+export const APP_VERSION = 'v1.30.30';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.30',
+        date: '2026-08-19',
+        title: 'PCサイドバー同期集約＆スマホ常時モードバッジ導入',
+        features: [
+            'トップバーから同期ボタンを完全撤廃し、PC表示時は左サイドバー下部（ユーザーフッター内）へクラウド同期ステータスを集約',
+            'スマホ表示時のトップバー左上に「保護者」「コーチ」常時モードバッジを新設し、現在のモードが一目で判別可能＆タップで即座に切替メニューが開くよう改善'
+        ]
+    },
     {
         version: 'v1.30.29',
         date: '2026-08-19',

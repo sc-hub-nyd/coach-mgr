@@ -13,17 +13,19 @@ test('P38-1: PCサイドバーフッターの配置と機能契約検証', () =>
     assert.match(indexHtml, /id="user-role-badge"/, 'user-role-badge exists in sidebar');
     assert.match(indexHtml, /id="btn-toggle-role"/, 'btn-toggle-role exists in sidebar');
     assert.match(indexHtml, /id="btn-toggle-color-mode"/, 'btn-toggle-color-mode exists in sidebar');
+    assert.match(indexHtml, /id="btn-topbar-sync-status"/, 'sync-status exists in sidebar');
     assert.match(indexHtml, /id="topbar-version-badge"/, 'topbar-version-badge exists in sidebar');
     assert.match(baseCss, /\.sidebar-footer\s*\{/, 'CSS defines .sidebar-footer');
     assert.match(baseCss, /\.sidebar-user-card\s*\{/, 'CSS defines .sidebar-user-card');
 });
 
-test('P38-2: トップバーのスリム化とパンくずナビゲーション検証', () => {
+test('P38-2: トップバーのスリム化とパンくずナビゲーション＆スマホモード表示検証', () => {
     assert.match(indexHtml, /id="topbar-breadcrumb"/, 'topbar-breadcrumb exists in topbar');
     assert.match(indexHtml, /id="topbar-title"/, 'topbar-title exists in topbar');
     assert.match(indexHtml, /id="topbar-back"/, 'topbar-back exists in topbar');
-    assert.match(indexHtml, /id="btn-topbar-sync-status"/, 'sync-status exists in topbar');
+    assert.match(indexHtml, /id="mobile-topbar-role-badge"/, 'mobile-topbar-role-badge exists in topbar');
     assert.match(appJs, /topbarBreadcrumb\.innerHTML =/, 'app.js updates topbar-breadcrumb');
+    assert.match(appJs, /mobileTopBarRoleBadge\.addEventListener\('click'/, 'app.js binds mobile role badge');
 });
 
 test('P38-3: スマホ向けボトムナビゲーション（5項目親指最適化＆権限制御）検証', () => {

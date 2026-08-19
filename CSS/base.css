@@ -305,6 +305,21 @@ a,
     font-size: 0.75rem !important;
 }
 
+.sidebar-sync-row {
+    width: 100%;
+}
+
+.sidebar-sync-btn {
+    padding: 0.35rem 0.6rem !important;
+    background: var(--surface-card) !important;
+    border: 1px solid var(--surface-border) !important;
+    border-radius: 8px !important;
+}
+
+.sidebar-sync-btn:hover {
+    border-color: var(--primary) !important;
+}
+
 .sidebar-version-row {
     display: flex;
     justify-content: flex-end;
@@ -332,6 +347,28 @@ a,
     align-items: center;
     justify-content: flex-start;
     min-width: 0;
+}
+
+.topbar-mobile-role-pill {
+    display: none; /* PCでは非表示 */
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.45rem;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    background: rgba(34, 197, 94, 0.15);
+    color: #15803d;
+    white-space: nowrap;
+    line-height: 1;
+    transition: var(--transition);
+}
+
+.topbar-mobile-role-pill.is-coach {
+    background: rgba(242, 57, 50, 0.15);
+    color: #ef4444;
 }
 
 .topbar-center {
@@ -366,13 +403,12 @@ a,
     flex-shrink: 0;
 }
 
-.topbar-end,
-.topbar-actions {
+.topbar-end {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 0.5rem;
 }
+
 
 
 .mobile-more-sheet {
@@ -658,12 +694,17 @@ body.role-read-only #pd-tab-goals textarea {
         padding-right: 0.6rem !important;
         height: 52px !important;
         display: grid !important;
-        grid-template-columns: 48px 1fr 48px !important;
+        grid-template-columns: 64px 1fr 64px !important;
         align-items: center !important;
         width: 100% !important;
     }
 
-    .topbar-actions {
+    .topbar-mobile-role-pill {
+        display: inline-flex !important;
+    }
+
+    /* 戻るボタンが表示されているときは戻るボタンを優先 */
+    .topbar-back-btn:not(.hidden) ~ .topbar-mobile-role-pill {
         display: none !important;
     }
 
@@ -680,6 +721,7 @@ body.role-read-only #pd-tab-goals textarea {
         font-size: 0.68rem !important;
         text-align: center !important;
     }
+
 
     .view-container {
         padding: 1rem;
