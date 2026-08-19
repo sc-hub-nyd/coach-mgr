@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.80';
+export const APP_VERSION = 'v1.30.81';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.81',
+        date: '2026-08-20',
+        title: 'ダッシュボード：ランキング指標の幅拡張と役割表示の簡潔化',
+        features: [
+            'ランキング4カードの指標ピルを5.5remへ広げ、氏名側の余白を活用して出席率・出場率を余裕を持って表示',
+            '左サイドメニュー下部の役割バッジを「コーチ／保護者」へ簡潔化し、冗長な「モード」表記を削除',
+            'P38で役割表示の簡潔表記を、P41で拡張後の指標幅を自動検証'
+        ]
+    },
     {
         version: 'v1.30.80',
         date: '2026-08-20',

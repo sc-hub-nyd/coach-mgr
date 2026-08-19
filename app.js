@@ -2074,11 +2074,11 @@ export function updateRoleUI() {
         if (isCoach) {
             badge.style.background = 'rgba(242, 57, 50, 0.15)';
             badge.style.color = '#ef4444';
-            badge.innerHTML = '<i class="fa-solid fa-user-shield" aria-hidden="true"></i> <span>コーチモード</span>';
+            badge.innerHTML = '<i class="fa-solid fa-user-shield" aria-hidden="true"></i> <span>コーチ</span>';
         } else {
             badge.style.background = 'rgba(34, 197, 94, 0.15)';
             badge.style.color = '#15803d';
-            badge.innerHTML = '<i class="fa-solid fa-eye" aria-hidden="true"></i> <span>保護者モード</span>';
+            badge.innerHTML = '<i class="fa-solid fa-eye" aria-hidden="true"></i> <span>保護者</span>';
         }
     }
 

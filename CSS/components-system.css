@@ -1858,8 +1858,8 @@
 
 .c-dashboard-rank-item .c-data-list__metric {
     box-sizing: border-box;
-    flex: 0 1 4.75rem;
-    inline-size: 4.75rem;
+    flex: 0 0 5.5rem;
+    inline-size: 5.5rem;
     min-inline-size: 0;
     max-inline-size: 100%;
     justify-content: flex-end;

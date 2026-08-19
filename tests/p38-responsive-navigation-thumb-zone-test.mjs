@@ -20,6 +20,9 @@ test('P38-1: PCサイドバーフッターの配置と機能契約検証', () =>
     assert.match(baseCss, /\.c-sidebar__footer\s*\{/, 'CSS defines c-sidebar footer');
     assert.match(baseCss, /\.c-sidebar__user-card\s*\{/, 'CSS defines c-sidebar user card');
     assert.match(indexHtml, /class="c-sidebar"/, 'sidebar uses the common app-shell class');
+    assert.match(appJs, /badge\.innerHTML = .*?<span>コーチ<\/span>';/, 'sidebar role badge uses the concise coach label');
+    assert.match(appJs, /badge\.innerHTML = .*?<span>保護者<\/span>';/, 'sidebar role badge uses the concise guardian label');
+    assert.doesNotMatch(appJs, /badge\.innerHTML = .*?<span>(?:コーチ|保護者)モード<\/span>';/, 'sidebar role badge must not restore the redundant モード suffix');
 });
 
 test('P38-2: トップバーのスリム化とタイトル＆スマホモード表示検証', () => {
