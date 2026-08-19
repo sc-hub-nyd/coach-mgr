@@ -55,11 +55,10 @@ test('P38-4: スマホ向けモバイルスライドシート（片手操作コ�
     assert.match(appJs, /mobileBtnSyncNow\.addEventListener\('click'/, 'app.js binds mobile sync button');
 });
 
-test('P38-5: ナビゲーション履歴スタック（navHistory）＆戻るボタン（navigateBack）契約検証', () => {
+test('P38-5: ナビゲーション階層設計＆戻るボタン（navigateBack）契約検証', () => {
     assert.match(appJs, /export function navigateBack\(\)/, 'app.js exports navigateBack function');
-    assert.match(appJs, /state\.navHistory\.push/, 'app.js records navigation history');
-    assert.match(appJs, /state\.navHistory\.pop/, 'app.js pops previous route on back navigation');
-    assert.match(appJs, /prev\.route !== 'animation'/, 'app.js skips animation route when going back');
+    assert.match(appJs, /const detailRoutes = \['player-detail', 'match-detail'\];/, 'app.js identifies detail routes');
+    assert.match(appJs, /navigate\('dashboard', null, true\);/, 'app.js returns to dashboard from main menu pages');
     assert.match(appJs, /topbarBack\.onclick\s*=\s*\(e\)\s*=>\s*\{[\s\S]*?navigateBack\(\)/, 'topbarBack.onclick triggers navigateBack');
 });
 

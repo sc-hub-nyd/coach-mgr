@@ -2263,21 +2263,31 @@ export function updateRoleUI() {
 
 
 export function navigateBack() {
-    if (!state.navHistory) state.navHistory = [];
-    while (state.navHistory.length > 0) {
-        const prev = state.navHistory.pop();
-        // animation（作図画面）や現在のルートと同じものはスキップして直前の通常画面へ復帰
-        if (prev && prev.route && prev.route !== uiState.currentRoute && prev.route !== 'animation') {
-            navigate(prev.route, prev.params, true);
-            return;
+    const current = uiState.currentRoute;
+    const detailRoutes = ['player-detail', 'match-detail'];
+
+    if (detailRoutes.includes(current)) {
+        // 詳細画面の場合：直前の親画面（ダッシュボード または 各一覧画面）へ戻る
+        if (!state.navHistory) state.navHistory = [];
+        while (state.navHistory.length > 0) {
+            const prev = state.navHistory.pop();
+            if (prev && prev.route && prev.route !== current && prev.route !== 'animation') {
+                navigate(prev.route, prev.params, true);
+                return;
+            }
         }
-    }
-    // 履歴が空または同ルートのみだった場合の安全なフォールバック
-    if (uiState.currentRoute === 'player-detail') {
-        navigate('players', null, true);
-    } else if (uiState.currentRoute === 'match-detail') {
-        navigate('matches', null, true);
+        // フォールバック
+        if (current === 'player-detail') {
+            navigate('players', null, true);
+        } else if (current === 'match-detail') {
+            navigate('matches', null, true);
+        } else {
+            navigate('dashboard', null, true);
+        }
     } else {
+        // 主要一覧画面（matches, practices, library, tactics, players, settings等）の場合：
+        // どのメニューを経由してきたかに関わらず、戻るボタン押下時は常に「ダッシュボード」へ復帰
+        state.navHistory = [];
         navigate('dashboard', null, true);
     }
 }
@@ -2307,19 +2317,16 @@ export function navigate(route, params = null, isBack = false) {
         }
     }
 
-    // 履歴スタックの管理（戻る操作でない場合、直前のルートを記録）
-    // ※ animation（作図画面）は子画面のため、履歴の戻り先スタックには積まない
+    // 履歴スタックの管理（詳細画面への遷移時のみ直前の親画面を記録、主要メニュー遷移時はリセット）
+    const detailRoutes = ['player-detail', 'match-detail'];
     if (!state.navHistory) state.navHistory = [];
-    if (!isBack && uiState.currentRoute && uiState.currentRoute !== route && uiState.currentRoute !== 'animation') {
-        const lastEntry = state.navHistory[state.navHistory.length - 1];
-        if (!lastEntry || lastEntry.route !== uiState.currentRoute) {
-            state.navHistory.push({
-                route: uiState.currentRoute,
-                params: uiState.currentParams || null
-            });
-        }
-        // 履歴上限
-        if (state.navHistory.length > 20) state.navHistory.shift();
+    if (detailRoutes.includes(route) && !isBack) {
+        state.navHistory.push({
+            route: uiState.currentRoute || 'dashboard',
+            params: uiState.currentParams || null
+        });
+    } else if (!detailRoutes.includes(route) && !isBack && route !== 'animation') {
+        state.navHistory = [];
     }
 
     state.currentRoute = route;

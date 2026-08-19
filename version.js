@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.40';
+export const APP_VERSION = 'v1.30.41';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.41',
+        date: '2026-08-19',
+        title: '主要メニュー階層ナビゲーションの最適化',
+        features: [
+            '主要メニュー画面（練習管理・メニュー管理・試合記録・戦術管理・選手管理・設定）において、どのメニューを経由してきた場合でも「戻る」ボタンを押した際は常にホーム（ダッシュボード）へ戻る階層型ルーティングへ改善'
+        ]
+    },
     {
         version: 'v1.30.40',
         date: '2026-08-19',
