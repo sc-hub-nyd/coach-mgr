@@ -7,7 +7,7 @@ const [index, sw, version, app, syncService, css, workflow] = await Promise.all(
     readFile(new URL('../version.js', import.meta.url), 'utf8'),
     readFile(new URL('../app.js', import.meta.url), 'utf8'),
     readFile(new URL('../sync-service.js', import.meta.url), 'utf8'),
-    readFile(new URL('../CSS/components.css', import.meta.url), 'utf8'),
+    readFile(new URL('../CSS/components-system.css', import.meta.url), 'utf8'),
     readFile(new URL('../.github/workflows/contract-tests.yml', import.meta.url), 'utf8')
 ]);
 
@@ -39,7 +39,8 @@ assert.match(version, /APP_VERSION/);
 assert.match(app, /syncPullGasCloud/);
 assert.match(app, /renderExperienceDashboard/);
 assert.match(syncService, /secure-v2/);
-assert.match(css, /@media \(max-width: 620px\)/);
+assert.match(css, /c-data-list--participation/);
+assert.match(css, /@media \(max-width: 37\.5rem\)/);
 assert.match(workflow, /run-contract-tests\.mjs/);
 assert.match(workflow, /pull_request/);
 assert.match(workflow, /push/);

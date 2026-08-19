@@ -1394,17 +1394,17 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 };
 
                 sideBody.innerHTML = `
-                    <div class="side-info-card">
-                        <span class="side-info-label">ピリオド名</span>
+                    <div class="c-inspector-panel__item">
+                        <span class="c-inspector-panel__label">ピリオド名</span>
                         <input type="text" id="side-form-name" class="c-input form-control form-control-sm" value="${escapeHtml(period.name || 'PK戦')}">
                     </div>
-                    <div class="side-info-card">
-                        <span class="side-info-label">YouTube動画 URL</span>
+                    <div class="c-inspector-panel__item">
+                        <span class="c-inspector-panel__label">YouTube動画 URL</span>
                         <input type="url" id="side-form-video" class="c-input form-control form-control-sm" value="${escapeHtml((period.videoUrls && period.videoUrls[0]) || period.videoUrl || '')}" placeholder="https://youtu.be/...">
                     </div>
-                    <div class="side-info-card">
+                    <div class="c-inspector-panel__item">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                            <span class="side-info-label" style="margin:0;"><i class="fa-solid fa-bullseye"></i> PKキッカー記録</span>
+                            <span class="c-inspector-panel__label" style="margin:0;"><i class="fa-solid fa-bullseye"></i> PKキッカー記録</span>
                             <span id="side-pk-score-badge" class="c-status c-status--solid c-status--compact">PK 0 - 0</span>
                         </div>
                         <div id="side-pk-rows-container" style="max-height:220px; overflow-y:auto; margin-bottom:0.4rem;"></div>
@@ -1412,8 +1412,8 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                             <i class="fa-solid fa-plus"></i> サドンデス枠を追加
                         </button>
                     </div>
-                    <div class="side-info-card">
-                        <span class="side-info-label">ピリオド総括</span>
+                    <div class="c-inspector-panel__item">
+                        <span class="c-inspector-panel__label">ピリオド総括</span>
                         <textarea id="side-form-summary" class="c-input form-control form-control-sm" rows="3">${escapeHtml(period.summary || period.reflection || '')}</textarea>
                     </div>
                     <div style="margin-top:0.6rem;">
@@ -1481,20 +1481,20 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 }).join('') || '<div style="font-size:0.8rem; color:var(--text-secondary);">記録なし</div>';
 
                 sideBody.innerHTML = `
-                    <div class="side-info-card">
-                        <span class="side-info-label">ピリオド名</span>
+                    <div class="c-inspector-panel__item">
+                        <span class="c-inspector-panel__label">ピリオド名</span>
                         <div style="font-size:0.9rem; font-weight:bold;">${escapeHtml(period.name || 'PK戦')}</div>
                     </div>
-                    <div class="side-info-card">
-                        <span class="side-info-label">スコア</span>
+                    <div class="c-inspector-panel__item">
+                        <span class="c-inspector-panel__label">スコア</span>
                         <div style="font-size:1.1rem; font-weight:bold; color:var(--primary);">PK ${period.scoreUs || 0} - ${period.scoreThem || 0}</div>
                     </div>
-                    <div class="side-info-card">
-                        <span class="side-info-label"><i class="fa-solid fa-bullseye"></i> キッカー記録</span>
+                    <div class="c-inspector-panel__item">
+                        <span class="c-inspector-panel__label"><i class="fa-solid fa-bullseye"></i> キッカー記録</span>
                         <div style="margin-top:0.4rem;">${rowsHtml}</div>
                     </div>
-                    <div class="side-info-card">
-                        <span class="side-info-label">ピリオド総括</span>
+                    <div class="c-inspector-panel__item">
+                        <span class="c-inspector-panel__label">ピリオド総括</span>
                         <div style="font-size:0.85rem; color:var(--text-primary); white-space:pre-wrap;">${escapeHtml(period.summary || period.reflection || 'コメントなし')}</div>
                     </div>
                 `;
@@ -1542,7 +1542,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     return `
                         <div class="side-sub-row c-data-list__item" data-index="${sIdx}">
                             <div class="c-data-list__header">
-                                <span class="side-info-label"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> 交代 #${sIdx + 1}</span>
+                                <span class="c-inspector-panel__label"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> 交代 #${sIdx + 1}</span>
                                 <button type="button" class="c-button btn c-button--danger btn-danger btn-xs btn-remove-side-sub" title="この交代を削除" aria-label="交代 #${sIdx + 1} を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
                             </div>
                             <div class="l-cluster l-cluster--compact">
@@ -1621,16 +1621,16 @@ export function openPeriodAnalysis(matchId, periodIndex) {
             }
 
             sideBody.innerHTML = `
-                <div class="side-info-card">
-                    <span class="side-info-label">ピリオド名</span>
+                <div class="c-inspector-panel__item">
+                    <span class="c-inspector-panel__label">ピリオド名</span>
                     <input type="text" id="side-form-name" class="c-input form-control form-control-sm" value="${escapeHtml(period.name || '')}">
                 </div>
-                <div class="side-info-card">
-                    <span class="side-info-label">YouTube動画 URL</span>
+                <div class="c-inspector-panel__item">
+                    <span class="c-inspector-panel__label">YouTube動画 URL</span>
                     <input type="url" id="side-form-video" class="c-input form-control form-control-sm" value="${escapeHtml((period.videoUrls && period.videoUrls[0]) || period.videoUrl || '')}" placeholder="https://youtu.be/...">
                 </div>
-                <div class="side-info-card">
-                    <span class="side-info-label">スコア (自 - 相手)</span>
+                <div class="c-inspector-panel__item">
+                    <span class="c-inspector-panel__label">スコア (自 - 相手)</span>
                     <div class="u-ext-88" >
                         <div class="u-ext-89" >
                             <span class="u-ext-90" >自</span>
@@ -1647,22 +1647,22 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         </div>
                     </div>
                 </div>
-                <div class="side-info-card">
+                <div class="c-inspector-panel__item">
                     <div class="u-ext-94" >
-                        <span class="u-ext-95 side-info-label" >得点者・アシスト記録</span>
+                        <span class="u-ext-95 c-inspector-panel__label" >得点者・アシスト記録</span>
                         <button type="button" class="u-ext-96 c-button btn c-button--primary btn-primary btn-xs" id="btn-add-side-goal" ><i class="fa-solid fa-plus"></i> 追加</button>
                     </div>
                     <div class="u-ext-97" id="side-goal-records-container" >
                         ${goalRowsHtml || '<div class="u-ext-57" >得点記録なし</div>'}
                     </div>
                 </div>
-                <div class="side-info-card">
-                    <span class="side-info-label">ピリオド総括</span>
+                <div class="c-inspector-panel__item">
+                    <span class="c-inspector-panel__label">ピリオド総括</span>
                     <textarea id="side-form-summary" class="c-input form-control form-control-sm" rows="3">${escapeHtml(period.summary || period.reflection || '')}</textarea>
                 </div>
-                <section class="side-info-card" aria-labelledby="side-substitutions-title">
+                <section class="c-inspector-panel__item" aria-labelledby="side-substitutions-title">
                     <div class="c-section-header c-section-header--compact">
-                        <span id="side-substitutions-title" class="side-info-label"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> このピリオドの交代選手</span>
+                        <span id="side-substitutions-title" class="c-inspector-panel__label"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> このピリオドの交代選手</span>
                         <button type="button" class="c-button btn c-button--primary btn-primary btn-xs" id="btn-add-side-sub"><i class="fa-solid fa-plus" aria-hidden="true"></i> 交代を追加</button>
                     </div>
                     <p class="c-form-field__hint">OUT選手とIN選手の組を、実施したピリオドごとに記録します。</p>
@@ -1670,12 +1670,12 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         ${sideSubRowsHtml || '<div class="c-empty-state c-empty-state--compact"><p class="c-empty-state__text">このピリオドの交代記録はありません。</p></div>'}
                     </div>
                 </section>
-                <div class="side-info-card">
-                    <span class="side-info-label">システム (陣形)</span>
+                <div class="c-inspector-panel__item">
+                    <span class="c-inspector-panel__label">システム (陣形)</span>
                     <select id="side-form-system" class="c-input form-control form-control-sm">${systemOptions}</select>
                 </div>
-                <div class="side-info-card">
-                    <span class="u-ext-98 side-info-label" >ポジション配置（ミニピッチ図）</span>
+                <div class="c-inspector-panel__item">
+                    <span class="u-ext-98 c-inspector-panel__label" >ポジション配置（ミニピッチ図）</span>
                     <div class="tactical-pitch pitch-half-bottom" id="side-mini-pitch" style="max-width: 320px; width: 100%; margin: 0 auto 0.5rem;">
                         <div class="penalty-area-bottom"></div>
                         <div class="goal-area-bottom"></div>
@@ -1982,35 +1982,35 @@ export function openPeriodAnalysis(matchId, periodIndex) {
             }
 
             sideBody.innerHTML = `
-                <div class="side-info-card">
-                    <span class="side-info-label">ピリオド名</span>
-                    <div class="u-ext-109 side-info-val" >${escapeHtml(period.name || '未設定')}</div>
+                <div class="c-inspector-panel__item">
+                    <span class="c-inspector-panel__label">ピリオド名</span>
+                    <div class="u-ext-109 c-inspector-panel__value" >${escapeHtml(period.name || '未設定')}</div>
                 </div>
-                <div class="side-info-card">
-                    <span class="side-info-label"><i class="fa-brands fa-youtube" style="color:#ef4444;"></i> YouTube動画 URL</span>
+                <div class="c-inspector-panel__item">
+                    <span class="c-inspector-panel__label"><i class="fa-brands fa-youtube" style="color:#ef4444;"></i> YouTube動画 URL</span>
                     <div style="display:flex; gap:0.4rem; align-items:center; margin-top:0.3rem;">
                         <input type="url" id="side-form-video-parent" class="c-input form-control form-control-sm" value="${escapeHtml(videoUrl)}" placeholder="https://youtu.be/..." style="flex:1;">
                         <button type="button" class="c-button btn c-button--primary btn-primary btn-xs" id="btn-save-video-parent" style="padding:0.25rem 0.55rem; font-size:0.75rem; white-space:nowrap; font-weight:600;"><i class="fa-solid fa-save"></i> 保存</button>
                     </div>
                 </div>
-                <div class="side-info-card">
-                    <span class="side-info-label">スコア (自 - 相手)</span>
-                    <div class="u-ext-112 side-info-val" >${period.scoreUs || 0} - ${period.scoreThem || 0}</div>
+                <div class="c-inspector-panel__item">
+                    <span class="c-inspector-panel__label">スコア (自 - 相手)</span>
+                    <div class="u-ext-112 c-inspector-panel__value" >${period.scoreUs || 0} - ${period.scoreThem || 0}</div>
                 </div>
-                <div class="side-info-card">
-                    <span class="u-ext-98 side-info-label" >得点者・アシスト記録</span>
+                <div class="c-inspector-panel__item">
+                    <span class="u-ext-98 c-inspector-panel__label" >得点者・アシスト記録</span>
                     ${goalDetailsHtml ? `<div class="u-ext-113" >${goalDetailsHtml}</div>` : '<div class="u-ext-64" >得点記録なし</div>'}
                 </div>
-                <div class="side-info-card">
-                    <span class="side-info-label">ピリオド総括</span>
-                    <div class="u-ext-114 side-info-val" >${escapeHtml(period.summary || period.reflection || '総括コメントはありません。')}</div>
+                <div class="c-inspector-panel__item">
+                    <span class="c-inspector-panel__label">ピリオド総括</span>
+                    <div class="u-ext-114 c-inspector-panel__value" >${escapeHtml(period.summary || period.reflection || '総括コメントはありません。')}</div>
                 </div>
-                <div class="side-info-card">
-                    <span class="side-info-label">システム (陣形)</span>
-                    <div class="u-ext-109 side-info-val" >${escapeHtml(period.system || '未設定')}</div>
+                <div class="c-inspector-panel__item">
+                    <span class="c-inspector-panel__label">システム (陣形)</span>
+                    <div class="u-ext-109 c-inspector-panel__value" >${escapeHtml(period.system || '未設定')}</div>
                 </div>
-                <div class="side-info-card">
-                    <span class="u-ext-98 side-info-label" >ポジション配置（ミニピッチ図）</span>
+                <div class="c-inspector-panel__item">
+                    <span class="u-ext-98 c-inspector-panel__label" >ポジション配置（ミニピッチ図）</span>
                     <div class="tactical-pitch pitch-half-bottom" id="side-mini-pitch-parent" style="max-width: 320px; width: 100%; margin: 0 auto 0.5rem;">
                         <div class="penalty-area-bottom"></div>
                         <div class="goal-area-bottom"></div>

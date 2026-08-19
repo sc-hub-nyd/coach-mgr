@@ -131,7 +131,7 @@ export function initData() {
 
                 await loadData();
                 applyCurrentTeamTheme();
-                const sidebarTitle = document.querySelector('.sidebar-header h2');
+                const sidebarTitle = document.querySelector('.c-sidebar__header h2');
                 if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name)}`;
                 showToast('データをインポートしました。ページを再読み込みします...');
                 setTimeout(() => location.reload(), 1500);
@@ -447,7 +447,7 @@ export function initSettings() {
                 applyCurrentTeamTheme();
                 renderThemePreview(state.teamInfo.theme.seed);
                 showToast('チームテーマを保存しました');
-                const sidebarTitle = document.querySelector('.sidebar-header h2');
+                const sidebarTitle = document.querySelector('.c-sidebar__header h2');
                 if (sidebarTitle) {
                     const icon = document.createElement('i');
                     icon.className = 'fa-solid fa-futbol';
@@ -480,7 +480,7 @@ export function initSettings() {
     const updateWorkspaceSidebar = () => {
         const team = getActiveTeam(state);
         const season = getActiveSeason(state);
-        const sidebarTitle = document.querySelector('.sidebar-header h2');
+        const sidebarTitle = document.querySelector('.c-sidebar__header h2');
         if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(team.name)}`;
         const topbarTitle = document.getElementById('topbar-title');
         if (topbarTitle) topbarTitle.dataset.workspace = season.name;

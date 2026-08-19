@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.63';
+export const APP_VERSION = 'v1.30.64';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.64',
+        date: '2026-08-19',
+        title: '選手詳細・アプリシェル・作図周辺UIを共通部品へ統一',
+        features: [
+            '育成ノートと選手参加実績をc-focus-summary、c-metric-grid、c-data-list、c-progress-barの合成へ移行し、記録・削除・選手詳細遷移を維持',
+            'サイドバー、トップバー、モバイル戻るバー、ボトムナビ、同期ポップオーバーをc-sidebar、c-topbar、c-context-bar、c-bottom-nav、c-popoverへ統一',
+            '作図のツールドック、設定ポップオーバー、クイックドロワー、詳細インスペクタと試合ピリオド情報をc-tool-dock、c-drawer、c-inspector-panelへ統合し、P19・P21・P35・P38で回帰を防止'
+        ]
+    },
     {
         version: 'v1.30.63',
         date: '2026-08-19',

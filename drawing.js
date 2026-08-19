@@ -113,7 +113,7 @@ function updateUndoRedoButtons() {
 }
 
 function updateToolDockActive() {
-    const dockBtns = document.querySelectorAll('.anim-tool-dock .tool-btn, .canvas-toolbar .tool-btn');
+    const dockBtns = document.querySelectorAll('.c-tool-dock .c-tool-dock__button, .canvas-toolbar .tool-btn');
     dockBtns.forEach(btn => {
         if (btn.dataset.tool === currentTool) {
             btn.classList.add('active');
@@ -361,7 +361,7 @@ function initQuickDrawerEvents() {
     const btnClose = document.getElementById('btn-close-quick-drawer');
     if (btnClose) btnClose.onclick = closeQuickDrawer;
 
-    const presetChips = document.querySelectorAll('.preset-chip');
+    const presetChips = document.querySelectorAll('.c-drawer__preset-chip');
     presetChips.forEach(chip => {
         chip.onclick = () => {
             if (currentFrameIndex >= 0 && currentFrameIndex < frames.length) {

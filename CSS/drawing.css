@@ -3,7 +3,7 @@
 /* -------------------------------------------
    Override Default App Layout for Drawing Mode
    ------------------------------------------- */
-body[data-route="animation"] .topbar,
+body[data-route="animation"] .c-topbar,
 body[data-route="animation"] .global-header {
     display: none !important;
 }
@@ -14,9 +14,9 @@ body[data-route="animation"] #view-container {
     overflow: hidden !important;
 }
 
-body[data-route="animation"] .sidebar,
+body[data-route="animation"] .c-sidebar,
 body[data-route="animation"] #sidebar,
-body[data-route="animation"] .sidebar-overlay {
+body[data-route="animation"] .c-sidebar-overlay {
     /* Completely disable sidebar in drawing mode */
     display: none !important;
     visibility: hidden !important;
@@ -34,7 +34,7 @@ body[data-route="animation"] .main-content {
     padding-left: 0 !important;
 }
 
-body[data-route="animation"] .bottom-nav {
+body[data-route="animation"] .c-bottom-nav {
     /* Hide bottom nav on mobile in drawing mode */
     display: none !important;
 }
@@ -133,7 +133,7 @@ body[data-route="animation"] .bottom-nav {
 }
 
 /* Settings Popover */
-.anim-settings-popover {
+.c-popover--canvas {
     /* Layout */
     position: absolute;
     right: 0;
@@ -152,12 +152,12 @@ body[data-route="animation"] .bottom-nav {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-.anim-settings-popover.hidden {
+.c-popover--canvas.hidden {
     display: none;
 }
 
 /* Tool Dock */
-.anim-tool-dock {
+.c-tool-dock {
     /* Layout */
     width: 50px;
     flex-shrink: 0;
@@ -180,14 +180,14 @@ body[data-route="animation"] .bottom-nav {
 }
 
 /* Tactics Mode: hide equipment tools (marker, cone, ladder, minigoal) */
-.is-tactics-mode .anim-tool-dock [data-tool="marker"],
-.is-tactics-mode .anim-tool-dock [data-tool="cone"],
-.is-tactics-mode .anim-tool-dock [data-tool="ladder"],
-.is-tactics-mode .anim-tool-dock [data-tool="minigoal"] {
+.is-tactics-mode .c-tool-dock [data-tool="marker"],
+.is-tactics-mode .c-tool-dock [data-tool="cone"],
+.is-tactics-mode .c-tool-dock [data-tool="ladder"],
+.is-tactics-mode .c-tool-dock [data-tool="minigoal"] {
     display: none !important;
 }
 
-.dock-btn {
+.c-tool-dock__button {
     width: 38px;
     height: 38px;
     flex-shrink: 0;
@@ -204,7 +204,7 @@ body[data-route="animation"] .bottom-nav {
     position: relative;
 }
 
-.dock-btn .dock-text {
+.c-tool-dock__button .c-tool-dock__label {
     display: none;
     font-size: 0.68rem;
     font-weight: 700;
@@ -213,28 +213,28 @@ body[data-route="animation"] .bottom-nav {
     letter-spacing: -0.03em;
 }
 
-.dock-btn:hover {
+.c-tool-dock__button:hover {
     background: rgba(0, 0, 0, 0.06);
 }
 
-.dock-btn.active {
+.c-tool-dock__button.active {
     background: var(--primary);
     color: #ffffff;
     border-color: var(--primary);
     box-shadow: none;
 }
 
-.dock-btn.active i,
-.dock-btn.active span:not(.dock-text) {
+.c-tool-dock__button.active i,
+.c-tool-dock__button.active span:not(.c-tool-dock__label) {
     display: none;
 }
 
-.dock-btn.active .dock-text {
+.c-tool-dock__button.active .c-tool-dock__label {
     display: block;
     color: #ffffff;
 }
 
-.dock-btn[data-tooltip]::after {
+.c-tool-dock__button[data-tooltip]::after {
     content: attr(data-tooltip);
     position: absolute;
     left: 100%;
@@ -255,7 +255,7 @@ body[data-route="animation"] .bottom-nav {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.dock-btn[data-tooltip]:hover::after {
+.c-tool-dock__button[data-tooltip]:hover::after {
     opacity: 1;
 }
 
@@ -335,7 +335,7 @@ body[data-route="animation"] .bottom-nav {
     padding-bottom: 45px;
 }
 
-.anim-main-workspace:has(.anim-detail-side-panel:not(.collapsed)) .anim-canvas-area {
+.anim-main-workspace:has(.c-inspector-panel:not(.collapsed)) .anim-canvas-area {
     padding-right: 290px;
 }
 
@@ -391,7 +391,7 @@ body[data-route="animation"] .bottom-nav {
 }
 
 /* Side Panel */
-.anim-detail-side-panel {
+.c-inspector-panel {
     /* Layout */
     width: 350px;
     max-width: 85vw;
@@ -411,11 +411,11 @@ body[data-route="animation"] .bottom-nav {
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.08);
 }
 
-.anim-detail-side-panel.collapsed {
+.c-inspector-panel.collapsed {
     transform: translateX(100%);
 }
 
-.side-panel-toggle-btn {
+.c-inspector-panel__toggle {
     position: absolute;
     top: 70px;
     left: -32px;
@@ -434,21 +434,21 @@ body[data-route="animation"] .bottom-nav {
     z-index: 510;
 }
 
-.side-panel-toggle-btn i {
+.c-inspector-panel__toggle i {
     transform: rotate(0deg);
     transition: transform 0.3s ease;
 }
 
-.anim-detail-side-panel.collapsed .side-panel-toggle-btn i {
+.c-inspector-panel.collapsed .c-inspector-panel__toggle i {
     transform: rotate(180deg);
 }
 
-.side-panel-header {
+.c-inspector-panel__header {
     padding: 1rem;
     border-bottom: 1px solid var(--surface-border);
 }
 
-.side-panel-body {
+.c-inspector-panel__body {
     padding: 1rem;
     display: flex;
     flex-direction: column;
@@ -456,14 +456,14 @@ body[data-route="animation"] .bottom-nav {
     overflow-y: auto;
 }
 
-.side-info-card {
+.c-inspector-panel__item {
     background: var(--surface-ground, #f8fafc);
     border: none;
     border-radius: 10px;
     padding: 0.8rem 1rem;
 }
 
-.side-info-label {
+.c-inspector-panel__label {
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--text-secondary);
@@ -473,7 +473,7 @@ body[data-route="animation"] .bottom-nav {
     margin-bottom: 0.3rem;
 }
 
-.side-info-val {
+.c-inspector-panel__value {
     font-size: 0.85rem;
     color: var(--text-primary);
     line-height: 1.4;
@@ -489,7 +489,7 @@ body[data-route="animation"] .bottom-nav {
 }
 
 /* URLなどのリンク要素が含まれている場合の対策 */
-.side-info-val a {
+.c-inspector-panel__value a {
     display: inline-block;
     max-width: 100%;
     word-break: break-all;
@@ -743,7 +743,7 @@ body[data-route="animation"] .bottom-nav {
     background: #ef4444;
 }
 
-.sync-popover {
+.c-popover--sync {
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
@@ -757,11 +757,11 @@ body[data-route="animation"] .bottom-nav {
     z-index: 2000;
 }
 
-.sync-popover.hidden {
+.c-popover--sync.hidden {
     display: none;
 }
 
-.sync-popover-header {
+.c-popover--sync .c-popover__header {
     font-size: 0.8rem;
     font-weight: 700;
     color: var(--text-primary);
@@ -787,22 +787,22 @@ body[data-route="animation"] .bottom-nav {
 
 /* Drawing Responsive */
 @media (max-width: 1024px) {
-    .anim-detail-side-panel {
+    .c-inspector-panel {
         transform: translateX(100%);
     }
 
-    .anim-detail-side-panel.open {
+    .c-inspector-panel.open {
         transform: translateX(0);
     }
 
-    .anim-main-workspace:has(.anim-detail-side-panel:not(.collapsed)) .anim-canvas-area {
+    .anim-main-workspace:has(.c-inspector-panel:not(.collapsed)) .anim-canvas-area {
         padding-right: 1rem;
     }
 }
 
 @media screen and (max-height: 500px) and (orientation: landscape),
 screen and (max-width: 1024px) and (orientation: landscape) {
-    .anim-detail-side-panel {
+    .c-inspector-panel {
         position: absolute;
         top: 0;
         right: 0;
@@ -815,11 +815,11 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .anim-detail-side-panel.open {
+    .c-inspector-panel.open {
         transform: translateX(0);
     }
 
-    .side-panel-toggle-btn {
+    .c-inspector-panel__toggle {
         position: absolute;
         left: -32px;
         top: 10px;
@@ -884,19 +884,19 @@ screen and (max-width: 1024px) and (orientation: landscape) {
        1. 作図モード（左側にツールドックがある場合）
           ⇒ 横並び（左ツール / 右ピッチ）を維持
        ========================================== */
-    .anim-main-workspace:has(.anim-tool-dock) {
+    .anim-main-workspace:has(.c-tool-dock) {
         flex-direction: row;
         height: 100%;
         overflow: hidden;
     }
 
-    .anim-main-workspace:has(.anim-tool-dock) .anim-tool-dock {
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock {
         width: 44px;
         padding: 0.25rem 0;
         gap: 0.25rem;
     }
 
-    .anim-main-workspace:has(.anim-tool-dock) .anim-canvas-area {
+    .anim-main-workspace:has(.c-tool-dock) .anim-canvas-area {
         flex: 1;
         width: auto;
         height: 100%;
@@ -907,7 +907,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         overflow: hidden;
     }
 
-    .anim-main-workspace:has(.anim-tool-dock) .canvas-wrapper {
+    .anim-main-workspace:has(.c-tool-dock) .canvas-wrapper {
         width: 100%;
         height: 100%;
         max-width: 100%;
@@ -916,7 +916,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         margin: auto;
     }
 
-    .anim-main-workspace:has(.anim-tool-dock) .anim-detail-side-panel {
+    .anim-main-workspace:has(.c-tool-dock) .c-inspector-panel {
         position: absolute;
         top: 0;
         right: 0;
@@ -930,7 +930,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         box-shadow: -4px 0 20px rgba(0, 0, 0, 0.25);
     }
 
-    .anim-main-workspace:has(.anim-tool-dock) .anim-detail-side-panel.open {
+    .anim-main-workspace:has(.c-tool-dock) .c-inspector-panel.open {
         transform: translateX(0);
     }
 
@@ -939,14 +939,14 @@ screen and (max-width: 1024px) and (orientation: landscape) {
        2. 動画分析モード（ツールドックが無い場合）
           ⇒ 上下に縦並び（上が動画 / 下がタイムライン）
        ========================================== */
-    .anim-main-workspace:not(:has(.anim-tool-dock)) {
+    .anim-main-workspace:not(:has(.c-tool-dock)) {
         flex-direction: column;
         height: auto;
         min-height: 100dvh;
         overflow-y: auto;
     }
 
-    .anim-main-workspace:not(:has(.anim-tool-dock)) .anim-canvas-area {
+    .anim-main-workspace:not(:has(.c-tool-dock)) .anim-canvas-area {
         width: 100%;
         height: auto;
         min-height: 250px;
@@ -954,7 +954,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         padding: 0.5rem;
     }
 
-    .anim-main-workspace:not(:has(.anim-tool-dock)) .anim-detail-side-panel {
+    .anim-main-workspace:not(:has(.c-tool-dock)) .c-inspector-panel {
         position: relative;
         top: auto;
         right: auto;
@@ -969,13 +969,13 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         flex-shrink: 0;
     }
 
-    .anim-main-workspace:not(:has(.anim-tool-dock)) .anim-detail-side-panel.collapsed,
-    .anim-main-workspace:not(:has(.anim-tool-dock)) .anim-detail-side-panel.open {
+    .anim-main-workspace:not(:has(.c-tool-dock)) .c-inspector-panel.collapsed,
+    .anim-main-workspace:not(:has(.c-tool-dock)) .c-inspector-panel.open {
         transform: none;
     }
 
-    .anim-main-workspace:not(:has(.anim-tool-dock)) .side-panel-toggle-btn,
-    .anim-main-workspace:not(:has(.anim-tool-dock)) #anim-side-panel-toggle-btn {
+    .anim-main-workspace:not(:has(.c-tool-dock)) .c-inspector-panel__toggle,
+    .anim-main-workspace:not(:has(.c-tool-dock)) #anim-side-panel-toggle-btn {
         display: none;
     }
 
@@ -1085,23 +1085,23 @@ screen and (max-width: 1024px) and (orientation: landscape) {
    ========================================== */
 
 /* 1. サイドパネル全体のヘッダーとパディングを極小化 */
-aside#period-info-side-panel div.side-panel-header {
+aside#period-info-side-panel div.c-inspector-panel__header {
     padding: 0.35rem 0.6rem;
 }
 
-aside#period-info-side-panel div.side-panel-body {
+aside#period-info-side-panel div.c-inspector-panel__body {
     padding: 0.25rem 0.5rem;
     gap: 0.25rem;
 }
 
 /* 2. 各カード枠の余白と内側パディングをギリギリまで縮小 */
-aside#period-info-side-panel div.side-info-card {
+aside#period-info-side-panel div.c-inspector-panel__item {
     padding: 0.25rem 0.45rem;
     margin-bottom: 0;
 }
 
 /* 3. 各ラベル（ピリオド名、YouTube動画URL等）のマージン消去 */
-aside#period-info-side-panel span.side-info-label {
+aside#period-info-side-panel span.c-inspector-panel__label {
     font-size: 0.65rem;
     margin-bottom: 0;
     line-height: 1.1;
@@ -1154,7 +1154,7 @@ aside#period-info-side-panel textarea#side-form-summary {
     padding: 0.15rem 0.3rem;
 }
 /* Fix for popovers in tool dock */
-.anim-main-workspace:has(.anim-tool-dock) .anim-tool-dock {
+.anim-main-workspace:has(.c-tool-dock) .c-tool-dock {
     overflow: visible;
 }
 
@@ -1220,7 +1220,7 @@ aside#period-info-side-panel textarea#side-form-summary {
         font-size: 0.9rem;
     }
 
-    .anim-quick-drawer {
+    .c-drawer {
         bottom: 48px;
         width: 95%;
         padding: 8px 12px;
@@ -1228,7 +1228,7 @@ aside#period-info-side-panel textarea#side-form-summary {
 }
 
 /* Quick Edit Drawer (Item 09: ボトムシート) */
-.anim-quick-drawer {
+.c-drawer {
     position: absolute;
     bottom: 135px;
     left: 50%;
@@ -1246,13 +1246,13 @@ aside#period-info-side-panel textarea#side-form-summary {
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.anim-quick-drawer.hidden {
+.c-drawer.hidden {
     opacity: 0;
     pointer-events: none;
     transform: translateX(-50%) translateY(20px);
 }
 
-.drawer-header {
+.c-drawer__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1261,13 +1261,13 @@ aside#period-info-side-panel textarea#side-form-summary {
     border-bottom: 1px solid var(--surface-border, rgba(0, 0, 0, 0.08));
 }
 
-.drawer-title {
+.c-drawer__title {
     color: var(--primary, #f23932);
     font-size: 0.88rem;
     font-weight: 700;
 }
 
-.drawer-close-btn {
+.c-drawer__close-button {
     background: none;
     border: none;
     color: var(--text-secondary, #64748b);
@@ -1277,34 +1277,34 @@ aside#period-info-side-panel textarea#side-form-summary {
     transition: color 0.18s ease;
 }
 
-.drawer-close-btn:hover {
+.c-drawer__close-button:hover {
     color: var(--text-primary, #1e293b);
 }
 
-.drawer-body {
+.c-drawer__body {
     display: flex;
     gap: 12px;
     align-items: center;
 }
 
-.drawer-field {
+.c-drawer__field {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-.drawer-field-short {
+.c-drawer__field--short {
     flex: 0 0 110px;
 }
 
-.drawer-field label {
+.c-drawer__field label {
     font-size: 0.74rem;
     color: var(--text-secondary, #64748b);
     font-weight: 700;
 }
 
-.drawer-field input, .drawer-field select {
+.c-drawer__field input, .c-drawer__field select {
     background: #ffffff;
     border: none;
     color: var(--text-primary, #1e293b);
@@ -1316,13 +1316,13 @@ aside#period-info-side-panel textarea#side-form-summary {
     transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
-.drawer-field input:focus, .drawer-field select:focus {
+.c-drawer__field input:focus, .c-drawer__field select:focus {
     border-color: var(--primary, #f23932);
     box-shadow: 0 0 0 3px rgba(242, 57, 50, 0.15);
 }
 
 /* Preset Chips */
-.drawer-preset-chips {
+.c-drawer__preset-chips {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -1331,10 +1331,10 @@ aside#period-info-side-panel textarea#side-form-summary {
     padding-bottom: 4px;
     scrollbar-width: none;
 }
-.drawer-preset-chips::-webkit-scrollbar {
+.c-drawer__preset-chips::-webkit-scrollbar {
     display: none;
 }
-.preset-chip {
+.c-drawer__preset-chip {
     flex: 0 0 auto;
     background: rgba(15, 23, 42, 0.05);
     border: none;
@@ -1346,13 +1346,13 @@ aside#period-info-side-panel textarea#side-form-summary {
     transition: all 0.15s ease;
     white-space: nowrap;
 }
-.preset-chip:hover, .preset-chip:active {
+.c-drawer__preset-chip:hover, .c-drawer__preset-chip:active {
     background: rgba(242, 57, 50, 0.08);
     border-color: var(--primary, #f23932);
     color: var(--primary, #f23932);
 }
 
 /* Swipe interaction for drawer */
-.anim-quick-drawer {
+.c-drawer {
     touch-action: pan-y;
 }

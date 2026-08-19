@@ -16,24 +16,24 @@ function renderDevelopmentNotebook(player) {
     if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
     if (ratings) {
         ratings.innerHTML = metrics.map(metric => `
-            <label><span>${escapeHtml(metric)}</span><select class="c-input form-control development-rating" data-metric="${escapeHtml(metric)}"><option value="">未評価</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>`).join('');
+            <label class="c-form-field"><span class="c-form-field__label">${escapeHtml(metric)}</span><select class="c-input form-control development-rating" data-metric="${escapeHtml(metric)}"><option value="">未評価</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>`).join('');
     }
     if (trends) {
         trends.innerHTML = summary.skillTrend.length ? summary.skillTrend.map(trend => {
             const delta = trend.delta === null ? '—' : trend.delta > 0 ? `+${trend.delta}` : String(trend.delta);
-            const trendClass = trend.delta > 0 ? 'is-up' : trend.delta < 0 ? 'is-down' : 'is-neutral';
-            return `<span class="player-notebook-trend ${trendClass}"><strong>${escapeHtml(trend.metric)}</strong><em>${trend.latest ?? '—'}</em><small>${delta}</small></span>`;
-        }).join('') : '<p class="text-secondary">スキル評価を記録すると、前回との変化を確認できます。</p>';
+            const trendClass = trend.delta > 0 ? 'c-metric--positive' : trend.delta < 0 ? 'c-metric--negative' : '';
+            return `<article class="c-metric c-metric--inline ${trendClass}"><div class="c-metric__content"><span class="c-metric__label">${escapeHtml(trend.metric)}</span><strong class="c-metric__value">${trend.latest ?? '—'}</strong><small class="c-metric__note">${delta}</small></div></article>`;
+        }).join('') : '<p class="c-focus-summary__note">スキル評価を記録すると、前回との変化を確認できます。</p>';
     }
     const labels = { note: '育成ノート', observation: '観察メモ', match: '試合', practice: '練習' };
     const icons = { note: 'fa-book-open', observation: 'fa-eye', match: 'fa-futbol', practice: 'fa-person-running' };
     if (timeline) {
         timeline.innerHTML = summary.timeline.length ? summary.timeline.map(item => `
-            <article class="player-notebook-entry is-${escapeHtml(item.kind)}">
-                <span class="player-notebook-icon"><i class="fa-solid ${icons[item.kind] || 'fa-circle'}"></i></span>
-                <div><small>${escapeHtml(item.date || '')} ・ ${labels[item.kind] || '記録'}</small><strong>${escapeHtml(item.title || '')}</strong><p>${escapeHtml(item.detail || '')}</p></div>
-                ${item.kind === 'note' ? `<button type="button" class="c-button btn c-button--secondary btn-secondary btn-remove-development-note" data-development-note-id="${escapeHtml(item.id)}" aria-label="育成ノートを削除"><i class="fa-solid fa-trash"></i></button>` : ''}
-            </article>`).join('') : '<p class="player-notebook-empty">まだ成長ノートはありません。練習・試合後の事実と次の一歩を記録しましょう。</p>';
+            <article class="c-data-list__item is-${escapeHtml(item.kind)}">
+                <span class="c-data-list__identity"><i class="fa-solid ${icons[item.kind] || 'fa-circle'}" aria-hidden="true"></i></span>
+                <div class="c-data-list__content"><span class="c-data-list__meta">${escapeHtml(item.date || '')} ・ ${labels[item.kind] || '記録'}</span><strong>${escapeHtml(item.title || '')}</strong><p class="c-data-list__body">${escapeHtml(item.detail || '')}</p></div>
+                ${item.kind === 'note' ? `<div class="c-data-list__actions"><button type="button" class="c-button btn c-button--secondary btn-secondary btn-remove-development-note" data-development-note-id="${escapeHtml(item.id)}" aria-label="育成ノートを削除"><i class="fa-solid fa-trash"></i></button></div>` : ''}
+            </article>`).join('') : '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="fa-solid fa-book-open c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">まだ成長ノートはありません。練習・試合後の事実と次の一歩を記録しましょう。</p></div></div>';
         timeline.querySelectorAll('.btn-remove-development-note').forEach(button => {
             button.onclick = async () => {
                 const proceed = await showCustomConfirm('この育成ノートを削除しますか？', '育成ノートの削除', { okText: '削除する', type: 'danger' });
@@ -866,39 +866,21 @@ export function renderParticipationGraph() {
         const positionsStr = cat1Positions.join(', ');
 
         return `
-            <div class="player-participation-row" onclick="openPlayerDetail(${p.id})">
-                <div class="player-participation-player">
-                    <span class="heatmap-player-num">${p.number}</span>
-                    <div class="player-participation-player-meta">
-                        <strong>${escapeHtml(p.name)}</strong>
-                        <span>${positionsStr || '-'}</span>
-                    </div>
-                </div>
-                <div class="player-participation-metrics">
-                    <div class="player-participation-metric-labels">
-                        <span>試合参加: <strong>${p.matchCount}試合 (${p.matchPct}%)</strong></span>
-                        <span>30日出席率: <strong>${p.attPct}%</strong></span>
-                    </div>
-                    <div class="stat-bar-outer">
-                        <div class="stat-bar-inner" style="width:${p.matchPct}%; background:linear-gradient(90deg, #3b82f6, #9333ea);"></div>
-                    </div>
-                </div>
-                <div class="player-participation-stats">
-                    <span title="得点"><i class="fa-solid fa-futbol" style="color:var(--primary);"></i> <strong>${p.goals}</strong></span>
-                    <span title="アシスト"><i class="fa-solid fa-shoe-prints" style="color:#22c55e; transform:rotate(45deg);"></i> <strong>${p.assists}</strong></span>
-                </div>
-            </div>
+            <button type="button" class="c-data-list__item c-data-list__item--button" data-player-detail-id="${Number(p.id)}">
+                <span class="c-data-list__identity">${escapeHtml(String(p.number || '-'))}</span>
+                <span class="c-data-list__content"><strong>${escapeHtml(p.name)}</strong><span class="c-data-list__meta">${escapeHtml(positionsStr || '-')}</span><span class="c-data-list__meta">試合参加 ${p.matchCount}試合 (${p.matchPct}%) ・ 30日出席率 ${p.attPct}%</span><span class="c-progress-bar" aria-label="試合参加率 ${p.matchPct}%"><span class="c-progress-bar__indicator" style="width:${p.matchPct}%"></span></span></span>
+                <span class="c-data-list__value-group" aria-label="得点とアシスト"><span title="得点"><i class="fa-solid fa-futbol" aria-hidden="true"></i> <strong class="c-data-list__value">${p.goals}</strong></span><span title="アシスト"><i class="fa-solid fa-shoe-prints" aria-hidden="true"></i> <strong class="c-data-list__value">${p.assists}</strong></span></span>
+            </button>
         `;
     }).join('');
 
     container.innerHTML = `
-            <div class="card c-card player-participation-panel">
-            <h3 class="player-participation-title">
-                <i class="fa-solid fa-chart-column" style="color:#9333ea;"></i> 試合出場機会＆スタッツ比較
-            </h3>
-            <div class="player-participation-list">
-                ${rowsHTML}
-            </div>
-        </div>
+        <section class="c-card" aria-labelledby="player-participation-title">
+            <div class="c-section-header c-card__header"><div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> PARTICIPATION</span><h3 class="c-section-header__title c-card__title" id="player-participation-title">試合出場機会＆スタッツ比較</h3></div></div>
+            <div class="c-card__body"><div class="c-data-list c-data-list--participation">${rowsHTML}</div></div>
+        </section>
     `;
+    container.querySelectorAll('[data-player-detail-id]').forEach(button => {
+        button.addEventListener('click', () => openPlayerDetail(Number(button.dataset.playerDetailId)));
+    });
 }

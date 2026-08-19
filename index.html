@@ -24,11 +24,11 @@
 <body>
     <div id="app" class="app-container">
         <!-- Sidebar -->
-        <nav class="sidebar" id="sidebar">
-            <div class="sidebar-header" style="cursor:pointer;" id="sidebar-team-brand">
+        <nav class="c-sidebar" id="sidebar">
+            <div class="c-sidebar__header" style="cursor:pointer;" id="sidebar-team-brand">
                 <h2><span class="c-icon c-icon--team-signal c-icon--md c-icon--brand" aria-hidden="true"></span> CoachMgr</h2>
             </div>
-            <ul class="nav-links">
+            <ul class="c-sidebar__nav">
                 <li class="active" data-route="dashboard"><span class="c-icon c-icon--home c-icon--sm" aria-hidden="true"></span> ダッシュボード</li>
                 <li data-route="matches"><span class="c-icon c-icon--trophy c-icon--sm" aria-hidden="true"></span> 試合記録</li>
                 <li data-route="practices"><span class="c-icon c-icon--cone c-icon--sm" aria-hidden="true"></span> 練習管理</li>
@@ -39,25 +39,25 @@
             </ul>
 
             <!-- PC用サイドバーフッター（システム設定・モード切替・同期・バージョン） -->
-            <div class="sidebar-footer" id="sidebar-footer">
-                <div class="sidebar-user-card">
-                    <div id="user-role-badge" class="sidebar-role-badge"
+            <div class="c-sidebar__footer" id="sidebar-footer">
+                <div class="c-sidebar__user-card">
+                    <div id="user-role-badge" class="c-sidebar__role-badge"
                         style="background:rgba(34, 197, 94, 0.15); color:#15803d;">
                         <i class="fa-solid fa-eye" aria-hidden="true"></i><span>保護者モード</span>
                     </div>
-                    <div class="sidebar-footer-actions">
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm sidebar-footer-btn" id="btn-toggle-role" title="モードを切り替えます">
+                    <div class="c-sidebar__footer-actions">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-sidebar__footer-button" id="btn-toggle-role" title="モードを切り替えます">
                             <i class="fa-solid fa-right-left" aria-hidden="true"></i><span>切替</span>
                         </button>
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm sidebar-footer-btn" id="btn-toggle-color-mode" title="ライト／ダーク表示を切り替えます" aria-label="ライト／ダーク表示を切り替えます">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-sidebar__footer-button" id="btn-toggle-color-mode" title="ライト／ダーク表示を切り替えます" aria-label="ライト／ダーク表示を切り替えます">
                             <i class="fa-solid fa-moon" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- PC用サイドバークラウド同期ステータス -->
-                <div class="sidebar-sync-row" style="position:relative;">
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm sidebar-sync-btn" id="btn-topbar-sync-status" title="クラウド同期ステータス" aria-label="クラウド同期ステータス" style="width:100%; justify-content:space-between; font-size:0.75rem;">
+                <div class="c-sidebar__sync-row" style="position:relative;">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-sidebar__sync-button" id="btn-topbar-sync-status" title="クラウド同期ステータス" aria-label="クラウド同期ステータス" style="width:100%; justify-content:space-between; font-size:0.75rem;">
                         <span style="display:flex; align-items:center; gap:0.45rem;">
                             <span class="sync-icon-wrapper" style="position:relative; display:inline-flex; align-items:center;">
                                 <i class="fa-solid fa-cloud-arrow-down" id="sync-status-icon" aria-hidden="true"></i>
@@ -69,11 +69,11 @@
                     </button>
 
                     <!-- タップ時に開くステータスポップオーバー -->
-                    <div id="sync-popover" class="sync-popover hidden" style="bottom:100%; left:0; margin-bottom:0.5rem;">
-                        <div class="sync-popover-header">
+                    <div id="sync-popover" class="c-popover c-popover--sync hidden" style="bottom:100%; left:0; margin-bottom:0.5rem;">
+                        <div class="c-popover__header">
                             <i class="fa-solid fa-cloud" aria-hidden="true"></i> クラウド同期ステータス
                         </div>
-                        <div class="sync-popover-body">
+                        <div class="c-popover__body">
                             <div class="sync-time-label">最終同期: <span id="sync-last-time">未実施</span></div>
                             <div class="sync-status-text" id="sync-status-text">最新状態です</div>
                             <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm sync-action-btn" id="btn-popover-sync-now"
@@ -84,8 +84,8 @@
                     </div>
                 </div>
 
-                <div class="sidebar-version-row">
-                    <button type="button" class="btn-link sidebar-version-btn" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
+                <div class="c-sidebar__version-row">
+                    <button type="button" class="btn-link c-sidebar__version-button" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
                         <i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span id="topbar-version-text">v1.30.33</span>
                     </button>
                 </div>
@@ -93,25 +93,25 @@
         </nav>
 
         <!-- Sidebar Overlay (for mobile & side-menu open state) -->
-        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <div class="c-sidebar-overlay" id="sidebar-overlay"></div>
 
         <!-- Main Content -->
         <main class="main-content">
-            <header class="topbar">
-                <div class="topbar-start">
+            <header class="c-topbar">
+                <div class="c-topbar__start">
                     <button type="button" id="menu-toggle" class="menu-toggle u-visually-hidden" aria-hidden="true"><i class="fa-solid fa-bars"></i></button>
-                    <button type="button" id="topbar-back" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm hidden topbar-back-btn" aria-label="前の画面に戻る">
+                    <button type="button" id="topbar-back" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm hidden c-topbar__back-button" aria-label="前の画面に戻る">
                         <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <span>戻る</span>
                     </button>
                 </div>
 
-                <div class="topbar-center">
-                    <h1 class="topbar-title" id="topbar-title">ダッシュボード</h1>
+                <div class="c-topbar__center">
+                    <h1 class="c-topbar__title" id="topbar-title">ダッシュボード</h1>
                 </div>
 
-                <div class="topbar-end">
+                <div class="c-topbar__end">
                     <!-- スマホ向け常時モードバッジ（画面右上に配置） -->
-                    <button type="button" class="topbar-mobile-role-pill" id="mobile-topbar-role-badge" title="タップしてモードを変更" aria-label="現在の利用モード">
+                    <button type="button" class="c-topbar__role-toggle" id="mobile-topbar-role-badge" title="タップしてモードを変更" aria-label="現在の利用モード">
                         <i class="fa-solid fa-eye" aria-hidden="true"></i> <span>保護者</span>
                     </button>
                 </div>
@@ -127,32 +127,32 @@
             </div>
 
             <!-- スマホ用スリム戻るコンテキストバー（詳細階層時にボトムナビ直上に出現） -->
-            <div id="mobile-context-bar" class="mobile-context-bar hidden" aria-label="サブナビゲーション">
-                <div id="mobile-context-title" class="mobile-context-title" aria-live="polite"></div>
-                <button type="button" id="mobile-context-back-btn" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm mobile-context-back-btn" aria-label="前の画面に戻る">
+            <div id="mobile-context-bar" class="c-context-bar hidden" aria-label="サブナビゲーション">
+                <div id="mobile-context-title" class="c-context-bar__title" aria-live="polite"></div>
+                <button type="button" id="mobile-context-back-btn" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-context-bar__back-button" aria-label="前の画面に戻る">
                     <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <span>戻る</span>
                 </button>
             </div>
 
             <!-- スマホ用5項目ナビゲーション（片手親指リーチ設計） -->
-            <nav class="bottom-nav" id="bottom-nav" aria-label="主要ナビゲーション">
-                <a href="#" class="nav-item active" data-route="dashboard" aria-label="ダッシュボード">
+            <nav class="c-bottom-nav" id="bottom-nav" aria-label="主要ナビゲーション">
+                <a href="#" class="c-bottom-nav__item active" data-route="dashboard" aria-label="ダッシュボード">
                     <span class="c-icon c-icon--home c-icon--sm" aria-hidden="true"></span>
                     <span>ホーム</span>
                 </a>
-                <a href="#" class="nav-item" data-route="matches" aria-label="試合記録">
+                <a href="#" class="c-bottom-nav__item" data-route="matches" aria-label="試合記録">
                     <span class="c-icon c-icon--trophy c-icon--sm" aria-hidden="true"></span>
                     <span>試合</span>
                 </a>
-                <a href="#" class="nav-item" data-route="practices" aria-label="練習管理">
+                <a href="#" class="c-bottom-nav__item" data-route="practices" aria-label="練習管理">
                     <span class="c-icon c-icon--cone c-icon--sm" aria-hidden="true"></span>
                     <span>練習</span>
                 </a>
-                <a href="#" class="nav-item coach-only" data-route="library" aria-label="メニュー管理">
+                <a href="#" class="c-bottom-nav__item coach-only" data-route="library" aria-label="メニュー管理">
                     <span class="c-icon c-icon--document c-icon--sm" aria-hidden="true"></span>
                     <span>メニュー</span>
                 </a>
-                <button type="button" class="nav-item nav-item--more" id="btn-bottom-nav-more" aria-label="その他のメニューを開く">
+                <button type="button" class="c-bottom-nav__item c-bottom-nav__item--more" id="btn-bottom-nav-more" aria-label="その他のメニューを開く">
                     <i class="fa-solid fa-ellipsis" aria-hidden="true" style="font-size:1.1rem; margin-bottom:0.15rem;"></i>
                     <span>その他</span>
                 </button>
@@ -737,21 +737,23 @@
                     </div>
                 </div>
                 <div class="c-card__body">
-                    <section class="player-notebook-summary" aria-labelledby="pd-notebook-title">
-                        <div id="pd-notebook-trends" class="player-notebook-trends" aria-live="polite"></div>
+                    <section class="c-focus-summary" aria-labelledby="pd-notebook-title">
+                        <div id="pd-notebook-trends" class="c-metric-grid c-metric-grid--inline" aria-live="polite"></div>
                     </section>
-                    <div id="pd-notebook-timeline" class="player-notebook-timeline" aria-live="polite"></div>
-                    <form id="form-player-development-note" class="player-notebook-form">
+                    <div id="pd-notebook-timeline" class="c-data-list c-data-list--scrollable c-data-list--notebook" aria-live="polite"></div>
+                    <form id="form-player-development-note" class="c-settings-form">
                         <input type="hidden" id="development-player-id">
-                        <div class="player-notebook-form-heading">
-                            <h3><i class="fa-solid fa-plus"></i> 育成ノートを記録</h3>
-                            <label>日付 <input id="development-note-date" type="date" class="c-input form-control" required></label>
+                        <div class="c-section-header c-section-header--compact">
+                            <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-plus" aria-hidden="true"></i> NEW NOTE</span><h4 class="c-section-header__title">育成ノートを記録</h4></div>
                         </div>
-                        <label>今日のテーマ<input id="development-note-focus" class="c-input form-control" maxlength="80" placeholder="例：守備の寄せる方向を自分で選ぶ"></label>
-                        <label>観察メモ<textarea id="development-note-observation" class="c-input form-control" rows="3" placeholder="成長した行動・事実を短く記録"></textarea></label>
-                        <label>次の一歩<textarea id="development-note-next-step" class="c-input form-control" rows="2" placeholder="次回練習で取り組む具体的な一歩"></textarea></label>
-                        <fieldset class="player-notebook-ratings"><legend>スキル自己評価・コーチ評価（任意）</legend><div id="development-note-ratings"></div></fieldset>
-                        <button type="submit" class="c-button btn c-button--primary btn-primary"><i class="fa-solid fa-bookmark"></i> 保存</button>
+                        <div class="c-form-grid">
+                            <div class="c-form-field"><label class="c-form-field__label" for="development-note-date">日付</label><input id="development-note-date" type="date" class="c-input form-control" required></div>
+                            <div class="c-form-field"><label class="c-form-field__label" for="development-note-focus">今日のテーマ</label><input id="development-note-focus" class="c-input form-control" maxlength="80" placeholder="例：守備の寄せる方向を自分で選ぶ"></div>
+                        </div>
+                        <div class="c-form-field"><label class="c-form-field__label" for="development-note-observation">観察メモ</label><textarea id="development-note-observation" class="c-input form-control" rows="3" placeholder="成長した行動・事実を短く記録"></textarea></div>
+                        <div class="c-form-field"><label class="c-form-field__label" for="development-note-next-step">次の一歩</label><textarea id="development-note-next-step" class="c-input form-control" rows="2" placeholder="次回練習で取り組む具体的な一歩"></textarea></div>
+                        <fieldset class="c-fieldset"><legend class="c-fieldset__legend">スキル自己評価・コーチ評価（任意）</legend><div id="development-note-ratings" class="c-form-grid"></div></fieldset>
+                        <div class="c-action-group"><button type="submit" class="c-button btn c-button--primary btn-primary"><i class="fa-solid fa-bookmark"></i> 保存</button></div>
                     </form>
                 </div>
             </section>
@@ -1302,7 +1304,7 @@
                     <div class="dropdown-settings-wrapper" style="position:relative;">
                         <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="anim-settings-btn" title="設定 (ピッチ・グリッド)"><i
                                 class="fa-solid fa-gear"></i> 設定</button>
-                        <div id="anim-settings-popover" class="anim-settings-popover hidden">
+                        <div id="anim-settings-popover" class="c-popover c-popover--canvas hidden">
                             <div class="c-form-field c-form-field--fluid setting-item">
                                 <label class="c-form-field__label" for="canvas-pitch-template">ピッチタイプ</label>
                                 <select id="canvas-pitch-template" class="c-input form-control form-control-sm">
@@ -1333,18 +1335,18 @@
             <div class="anim-main-workspace">
 
                 <!-- Region 2: Left Icon Dock (Width ~50px, Restored All Tools, Vertical Scroll) -->
-                <nav class="anim-tool-dock" id="anim-tool-dock">
-                    <button class="dock-btn tool-btn active" data-tool="select" data-tooltip="選択 (👆)"
+                <nav class="c-tool-dock" id="anim-tool-dock">
+                    <button class="c-tool-dock__button active" data-tool="select" data-tooltip="選択 (👆)"
                         title="選択 (👆)"><i class="fa-solid fa-hand-pointer"></i><span
-                            class="dock-text">選択</span></button>
-                    <button class="dock-btn tool-btn" data-tool="player" data-tooltip="選手配置 (👤)" title="選手配置 (👤)"><i
-                            class="fa-solid fa-user-plus"></i><span class="dock-text">選手</span></button>
+                            class="c-tool-dock__label">選択</span></button>
+                    <button class="c-tool-dock__button" data-tool="player" data-tooltip="選手配置 (👤)" title="選手配置 (👤)"><i
+                            class="fa-solid fa-user-plus"></i><span class="c-tool-dock__label">選手</span></button>
 
                     <!-- Tactics Tools (Placed right below Player tool) -->
                     <!-- Bulk Formation Placement Dropdown -->
                     <div class="dropdown-settings-wrapper tactics-only" style="position:relative;">
-                        <button class="dock-btn" id="anim-bulk-formation-btn" title="フォーメーション一括配置"><i class="fa-solid fa-users-gear"></i><span class="dock-text">一括配置</span></button>
-                        <div id="anim-bulk-formation-popover" class="anim-settings-popover hidden" style="width:260px; left:100%; top:0; margin-left:8px; z-index:3000;">
+                        <button class="c-tool-dock__button" id="anim-bulk-formation-btn" title="フォーメーション一括配置"><i class="fa-solid fa-users-gear"></i><span class="c-tool-dock__label">一括配置</span></button>
+                        <div id="anim-bulk-formation-popover" class="c-popover c-popover--canvas hidden" style="width:260px; left:100%; top:0; margin-left:8px; z-index:3000;">
                             <div style="font-size:0.8rem; font-weight:700; color:var(--text-primary); margin-bottom:8px;"><i class="fa-solid fa-users-gear"></i> フォーメーション一括配置</div>
                             <div style="display:flex; flex-direction:column; gap:8px;">
                                 <div>
@@ -1386,8 +1388,8 @@
 
                     <!-- Team Colors Dropdown -->
                     <div class="dropdown-settings-wrapper tactics-only" style="position:relative;">
-                        <button class="dock-btn" id="anim-team-colors-btn" title="チームカラー一括変更"><i class="fa-solid fa-palette"></i><span class="dock-text">カラー</span></button>
-                        <div id="anim-team-colors-popover" class="anim-settings-popover hidden" style="width:240px; left:100%; top:0; margin-left:8px; z-index:3000;">
+                        <button class="c-tool-dock__button" id="anim-team-colors-btn" title="チームカラー一括変更"><i class="fa-solid fa-palette"></i><span class="c-tool-dock__label">カラー</span></button>
+                        <div id="anim-team-colors-popover" class="c-popover c-popover--canvas hidden" style="width:240px; left:100%; top:0; margin-left:8px; z-index:3000;">
                             <div style="font-size:0.8rem; font-weight:700; color:var(--text-primary); margin-bottom:8px;"><i class="fa-solid fa-palette"></i> チームカラーの一括変更</div>
                             <div style="display:flex; flex-direction:column; gap:8px;">
                                 <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1410,44 +1412,44 @@
                     </div>
 
                     <!-- Divider Line -->
-                    <div class="dock-divider tactics-only" style="width: 28px; height: 1px; background: var(--border-color, #e2e8f0); margin: 4px auto; flex-shrink: 0;"></div>
+                    <div class="c-tool-dock__divider tactics-only" style="width: 28px; height: 1px; background: var(--border-color, #e2e8f0); margin: 4px auto; flex-shrink: 0;"></div>
 
-                    <button class="dock-btn tool-btn" data-tool="ball" data-tooltip="ボール (⚽)" title="ボール (⚽)"><i
-                            class="fa-solid fa-futbol"></i><span class="dock-text">ボール</span></button>
+                    <button class="c-tool-dock__button" data-tool="ball" data-tooltip="ボール (⚽)" title="ボール (⚽)"><i
+                            class="fa-solid fa-futbol"></i><span class="c-tool-dock__label">ボール</span></button>
 
-                    <button class="dock-btn tool-btn" data-tool="line-move" data-tooltip="選手移動: 直線 (↗️)"
+                    <button class="c-tool-dock__button" data-tool="line-move" data-tooltip="選手移動: 直線 (↗️)"
                         title="選手移動: 直線 (↗️)"><i class="fa-solid fa-arrow-right"></i><span
-                            class="dock-text">移動</span></button>
-                    <button class="dock-btn tool-btn" data-tool="line-pass" data-tooltip="パス: 点線 (➡️)"
+                            class="c-tool-dock__label">移動</span></button>
+                    <button class="c-tool-dock__button" data-tool="line-pass" data-tooltip="パス: 点線 (➡️)"
                         title="パス: 点線 (➡️)"><i class="fa-solid fa-ellipsis"></i><span
-                            class="dock-text">パス</span></button>
-                    <button class="dock-btn tool-btn" data-tool="line-dribble" data-tooltip="ドリブル: 曲線・ジグザグ (〰️)"
+                            class="c-tool-dock__label">パス</span></button>
+                    <button class="c-tool-dock__button" data-tool="line-dribble" data-tooltip="ドリブル: 曲線・ジグザグ (〰️)"
                         title="ドリブル: 曲線・ジグザグ (〰️)"><i class="fa-solid fa-wave-square"></i><span
-                            class="dock-text">ドリブル</span></button>
+                            class="c-tool-dock__label">ドリブル</span></button>
 
-                    <button class="dock-btn tool-btn" data-tool="marker" data-tooltip="マーカー (🟠)" title="マーカー (🟠)"><i
+                    <button class="c-tool-dock__button" data-tool="marker" data-tooltip="マーカー (🟠)" title="マーカー (🟠)"><i
                             class="fa-solid fa-circle" style="color:#f97316;"></i><span
-                            class="dock-text">マーカー</span></button>
-                    <button class="dock-btn tool-btn" data-tool="cone" data-tooltip="コーン (🔺)" title="コーン (🔺)"><i
+                            class="c-tool-dock__label">マーカー</span></button>
+                    <button class="c-tool-dock__button" data-tool="cone" data-tooltip="コーン (🔺)" title="コーン (🔺)"><i
                             class="fa-solid fa-caret-up" style="color:#facc15;"></i><span
-                            class="dock-text">コーン</span></button>
-                    <button class="dock-btn tool-btn" data-tool="ladder" data-tooltip="ラダー (🪜)" title="ラダー (🪜)"><i
+                            class="c-tool-dock__label">コーン</span></button>
+                    <button class="c-tool-dock__button" data-tool="ladder" data-tooltip="ラダー (🪜)" title="ラダー (🪜)"><i
                             class="fa-solid fa-bars" style="transform: rotate(90deg);"></i><span
-                            class="dock-text">ラダー</span></button>
-                    <button class="dock-btn tool-btn" data-tool="minigoal" data-tooltip="ミニゴール (🥅)"
+                            class="c-tool-dock__label">ラダー</span></button>
+                    <button class="c-tool-dock__button" data-tool="minigoal" data-tooltip="ミニゴール (🥅)"
                         title="ミニゴール (🥅)"><span
                             style="display:inline-block; width:10px; height:6px; border:2px solid currentColor; border-bottom:none;"></span><span
-                            class="dock-text">ゴール</span></button>
+                            class="c-tool-dock__label">ゴール</span></button>
 
-                    <button class="dock-btn tool-btn" data-tool="line-rect" data-tooltip="四角エリア (🔲)"
+                    <button class="c-tool-dock__button" data-tool="line-rect" data-tooltip="四角エリア (🔲)"
                         title="四角エリア (🔲)"><i class="fa-regular fa-square"></i><span
-                            class="dock-text">四角</span></button>
-                    <button class="dock-btn tool-btn" data-tool="line-circle" data-tooltip="円エリア (⭕)"
-                        title="円エリア (⭕)"><i class="fa-regular fa-circle"></i><span class="dock-text">円</span></button>
-                    <button class="dock-btn tool-btn" data-tool="vision" data-tooltip="視野・扇形 (👁️)"
-                        title="視野・扇形 (👁️)"><i class="fa-solid fa-eye"></i><span class="dock-text">視野</span></button>
-                    <button class="dock-btn tool-btn" data-tool="text" data-tooltip="文字 (🔤)" title="文字 (🔤)"><i
-                            class="fa-solid fa-font"></i><span class="dock-text">文字</span></button>
+                            class="c-tool-dock__label">四角</span></button>
+                    <button class="c-tool-dock__button" data-tool="line-circle" data-tooltip="円エリア (⭕)"
+                        title="円エリア (⭕)"><i class="fa-regular fa-circle"></i><span class="c-tool-dock__label">円</span></button>
+                    <button class="c-tool-dock__button" data-tool="vision" data-tooltip="視野・扇形 (👁️)"
+                        title="視野・扇形 (👁️)"><i class="fa-solid fa-eye"></i><span class="c-tool-dock__label">視野</span></button>
+                    <button class="c-tool-dock__button" data-tool="text" data-tooltip="文字 (🔤)" title="文字 (🔤)"><i
+                            class="fa-solid fa-font"></i><span class="c-tool-dock__label">文字</span></button>
                 </nav>
 
                 <!-- 3. Pitch Canvas (100% True Full Bleed) -->
@@ -1563,24 +1565,24 @@
                         </div>
 
                         <!-- 7. Quick Edit Drawer (Item 09: ボトムシート) -->
-                        <div id="anim-quick-drawer" class="anim-quick-drawer hidden">
-                            <div class="drawer-header">
-                                <span class="drawer-title"><i class="fa-solid fa-sliders"></i> シーン設定 (<span id="drawer-scene-num">シーン1</span>)</span>
-                                <button type="button" class="drawer-close-btn" id="btn-close-quick-drawer"><i class="fa-solid fa-xmark"></i></button>
+                        <div id="anim-quick-drawer" class="c-drawer hidden">
+                            <div class="c-drawer__header">
+                                <span class="c-drawer__title"><i class="fa-solid fa-sliders"></i> シーン設定 (<span id="drawer-scene-num">シーン1</span>)</span>
+                                <button type="button" class="c-drawer__close-button" id="btn-close-quick-drawer"><i class="fa-solid fa-xmark"></i></button>
                             </div>
-                            <div class="drawer-body">
-                                <div class="drawer-field">
+                            <div class="c-drawer__body">
+                                <div class="c-drawer__field">
                                     <label for="drawer-caption-text">テロップ (指導ポイント)</label>
                                     <input type="text" id="drawer-caption-text" class="c-input form-control form-control-sm" placeholder="例: 受ける前に首を振る、マークを外す動き">
-                                    <div class="drawer-preset-chips" id="drawer-preset-chips">
-                                        <button type="button" class="preset-chip">スペースを狙え</button>
-                                        <button type="button" class="preset-chip">首を振る</button>
-                                        <button type="button" class="preset-chip">裏を狙え</button>
-                                        <button type="button" class="preset-chip">ラインを上げる</button>
-                                        <button type="button" class="preset-chip">サポート</button>
+                                    <div class="c-drawer__preset-chips" id="drawer-preset-chips">
+                                        <button type="button" class="c-drawer__preset-chip">スペースを狙え</button>
+                                        <button type="button" class="c-drawer__preset-chip">首を振る</button>
+                                        <button type="button" class="c-drawer__preset-chip">裏を狙え</button>
+                                        <button type="button" class="c-drawer__preset-chip">ラインを上げる</button>
+                                        <button type="button" class="c-drawer__preset-chip">サポート</button>
                                     </div>
                                 </div>
-                                <div class="drawer-field drawer-field-short">
+                                <div class="c-drawer__field c-drawer__field--short">
                                     <label for="drawer-pause-duration">停止時間</label>
                                     <select id="drawer-pause-duration" class="c-input form-control form-control-sm">
                                         <option value="0">停止なし</option>
@@ -1596,11 +1598,11 @@
                 </div>
 
                 <!-- Right Collapsible Detail Side Panel (Organize, Key Factors, Options) -->
-                <aside class="anim-detail-side-panel collapsed" id="anim-detail-side-panel">
-                    <button class="side-panel-toggle-btn" id="anim-side-panel-toggle-btn" title="詳細パネルを開閉">
+                <aside class="c-inspector-panel collapsed" id="anim-detail-side-panel">
+                    <button class="c-inspector-panel__toggle" id="anim-side-panel-toggle-btn" title="詳細パネルを開閉">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
-                    <div class="side-panel-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                    <div class="c-inspector-panel__header" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
                         <h4 id="anim-side-panel-title"
                             style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.4rem;">
                             <i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細
@@ -1610,29 +1612,29 @@
                             <i class="fa-solid fa-pen"></i> 編集
                         </button>
                     </div>
-                    <div class="side-panel-body">
-                        <div class="side-info-card">
-                            <span class="side-info-label" id="lbl-side-focus"><i class="fa-solid fa-bullseye"
+                    <div class="c-inspector-panel__body">
+                        <div class="c-inspector-panel__item">
+                            <span class="c-inspector-panel__label" id="lbl-side-focus"><i class="fa-solid fa-bullseye"
                                     style="color:var(--primary);"></i> テーマ・フォーカス</span>
-                            <div id="side-info-focus" class="side-info-val" style="font-weight:700;">未設定</div>
+                            <div id="side-info-focus" class="c-inspector-panel__value" style="font-weight:700;">未設定</div>
                         </div>
 
-                        <div class="side-info-card">
-                            <span class="side-info-label" id="lbl-side-org"><i class="fa-solid fa-users" style="color:#3b82f6;"></i>
+                        <div class="c-inspector-panel__item">
+                            <span class="c-inspector-panel__label" id="lbl-side-org"><i class="fa-solid fa-users" style="color:#3b82f6;"></i>
                                 オーガナイズ</span>
-                            <div id="side-info-organize" class="side-info-val">なし</div>
+                            <div id="side-info-organize" class="c-inspector-panel__value">なし</div>
                         </div>
 
-                        <div class="side-info-card">
-                            <span class="side-info-label" id="lbl-side-kf"><i class="fa-solid fa-key" style="color:#eab308;"></i>
+                        <div class="c-inspector-panel__item">
+                            <span class="c-inspector-panel__label" id="lbl-side-kf"><i class="fa-solid fa-key" style="color:#eab308;"></i>
                                 キーファクター</span>
-                            <div id="side-info-keyfactor" class="side-info-val">なし</div>
+                            <div id="side-info-keyfactor" class="c-inspector-panel__value">なし</div>
                         </div>
 
-                        <div class="side-info-card" id="side-card-opt">
-                            <span class="side-info-label" id="lbl-side-opt"><i class="fa-solid fa-plus-circle" style="color:#10b981;"></i>
+                        <div class="c-inspector-panel__item" id="side-card-opt">
+                            <span class="c-inspector-panel__label" id="lbl-side-opt"><i class="fa-solid fa-plus-circle" style="color:#10b981;"></i>
                                 オプション</span>
-                            <div id="side-info-options" class="side-info-val">なし</div>
+                            <div id="side-info-options" class="c-inspector-panel__value">なし</div>
                         </div>
                     </div>
                 </aside>
@@ -1836,17 +1838,17 @@
                 </div>
 
                 <!-- ★ スライド式サイドパネル（ドロワー） -->
-                <aside class="anim-detail-side-panel collapsed" id="period-info-side-panel">
-                    <button class="side-panel-toggle-btn" id="period-info-side-toggle-btn" title="ピリオド情報パネルを開閉">
+                <aside class="c-inspector-panel collapsed" id="period-info-side-panel">
+                    <button class="c-inspector-panel__toggle" id="period-info-side-toggle-btn" title="ピリオド情報パネルを開閉">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
-                    <div class="side-panel-header">
+                    <div class="c-inspector-panel__header">
                         <h4 id="period-side-panel-heading"
                             style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.4rem;">
                             <i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> ピリオド情報
                         </h4>
                     </div>
-                    <div class="side-panel-body" id="period-side-panel-body">
+                    <div class="c-inspector-panel__body" id="period-side-panel-body">
                         <!-- JSで動的切り替え -->
                     </div>
                 </aside>

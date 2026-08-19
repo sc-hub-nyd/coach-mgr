@@ -139,8 +139,8 @@ button {
 
 button,
 a,
-.nav-links li,
-.bottom-nav .nav-item {
+.c-sidebar__nav li,
+.c-bottom-nav .c-bottom-nav__item {
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -172,7 +172,7 @@ a,
 }
 
 /* Sidebar */
-.sidebar {
+.c-sidebar {
     /* Layout */
     width: var(--sidebar-width);
     display: flex;
@@ -192,7 +192,7 @@ a,
     transition: transform var(--transition);
 }
 
-.sidebar-overlay {
+.c-sidebar-overlay {
     /* Layout */
     position: fixed;
     top: 0;
@@ -210,12 +210,12 @@ a,
     transition: opacity var(--transition), visibility var(--transition);
 }
 
-.sidebar-overlay.open {
+.c-sidebar-overlay.open {
     opacity: 1;
     visibility: visible;
 }
 
-.sidebar-header {
+.c-sidebar__header {
     /* Layout */
     height: var(--header-height);
     display: flex;
@@ -227,14 +227,14 @@ a,
     color: var(--primary);
 }
 
-.nav-links {
+.c-sidebar__nav {
     list-style: none;
     padding: 1rem 0;
     flex-grow: 1;
     overflow-y: auto;
 }
 
-.nav-links li {
+.c-sidebar__nav li {
     /* Layout */
     padding: 0.75rem 1.5rem;
     margin: 0.25rem 1rem;
@@ -249,25 +249,25 @@ a,
     border-left: 3px solid transparent;
 }
 
-.nav-links li i {
+.c-sidebar__nav li i {
     width: 20px;
     text-align: center;
     flex-shrink: 0;
 }
 
-.nav-links li:hover,
-.nav-links li.active {
+.c-sidebar__nav li:hover,
+.c-sidebar__nav li.active {
     background: rgba(242, 57, 50, 0.08);
     color: var(--primary);
 }
 
-.nav-links li.active {
+.c-sidebar__nav li.active {
     border-left: 3px solid var(--primary);
     padding-left: calc(1.5rem - 3px);
 }
 
 /* PC用サイドバーフッター */
-.sidebar-footer {
+.c-sidebar__footer {
     padding: 0.85rem 1rem;
     border-top: 1px solid var(--surface-border);
     margin-top: auto;
@@ -277,14 +277,14 @@ a,
     gap: 0.5rem;
 }
 
-.sidebar-user-card {
+.c-sidebar__user-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.4rem;
 }
 
-.sidebar-role-badge {
+.c-sidebar__role-badge {
     font-size: 0.75rem;
     font-weight: 700;
     padding: 0.25rem 0.55rem;
@@ -294,22 +294,22 @@ a,
     gap: 0.35rem;
 }
 
-.sidebar-footer-actions {
+.c-sidebar__footer-actions {
     display: flex;
     align-items: center;
     gap: 0.3rem;
 }
 
-.sidebar-footer-btn {
+.c-sidebar__footer-button {
     padding: 0.2rem 0.5rem !important;
     font-size: 0.75rem !important;
 }
 
-.sidebar-sync-row {
+.c-sidebar__sync-row {
     width: 100%;
 }
 
-.sidebar-sync-btn {
+.c-sidebar__sync-button {
     width: 100%;
     display: flex !important;
     align-items: center !important;
@@ -357,7 +357,7 @@ a,
 }
 
 /* PCサイドバー下部の同期ポップオーバー（上向きに展開・完全不透明背景） */
-.sidebar-sync-row .sync-popover {
+.c-sidebar__sync-row .c-popover {
     position: absolute !important;
     bottom: calc(100% + 8px) !important;
     top: auto !important;
@@ -373,13 +373,13 @@ a,
     z-index: 2000 !important;
 }
 
-.sidebar-version-row {
+.c-sidebar__version-row {
     display: flex;
     justify-content: flex-end;
     align-items: center;
 }
 
-.sidebar-version-btn {
+.c-sidebar__version-button {
     font-size: 0.72rem;
     color: var(--text-secondary);
     opacity: 0.7;
@@ -390,19 +390,19 @@ a,
     transition: var(--transition);
 }
 
-.sidebar-version-btn:hover {
+.c-sidebar__version-button:hover {
     opacity: 1;
     color: var(--primary);
 }
 
-.topbar-start {
+.c-topbar__start {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     min-width: 0;
 }
 
-.topbar-mobile-role-pill {
+.c-topbar__role-toggle {
     display: none; /* PCでは非表示 */
     align-items: center;
     gap: 0.3rem;
@@ -419,12 +419,12 @@ a,
     transition: var(--transition);
 }
 
-.topbar-mobile-role-pill.is-coach {
+.c-topbar__role-toggle.is-coach {
     background: rgba(242, 57, 50, 0.15);
     color: #ef4444;
 }
 
-.topbar-center {
+.c-topbar__center {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -434,7 +434,7 @@ a,
     padding: 0 0.5rem;
 }
 
-.topbar-breadcrumb {
+.c-topbar__breadcrumb {
     font-size: 0.72rem;
     color: var(--text-secondary);
     font-weight: 500;
@@ -446,11 +446,11 @@ a,
     text-align: center;
 }
 
-.topbar-breadcrumb:empty {
+.c-topbar__breadcrumb:empty {
     display: none;
 }
 
-.topbar-back-btn {
+.c-topbar__back-button {
     padding: 0.25rem 0.6rem !important;
     font-size: 0.82rem !important;
     font-weight: 600 !important;
@@ -463,11 +463,11 @@ a,
     z-index: 10;
 }
 
-.topbar-back-btn.hidden {
+.c-topbar__back-button.hidden {
     display: none !important;
 }
 
-.topbar-end {
+.c-topbar__end {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -503,7 +503,7 @@ a,
     font-size: 1.3rem;
 }
 
-.topbar-version-subtle {
+.c-topbar__version-subtle {
     font-size: 0.72rem;
     font-weight: 500;
     color: var(--text-secondary);
@@ -517,7 +517,7 @@ a,
     white-space: nowrap;
 }
 
-.topbar-version-subtle:hover {
+.c-topbar__version-subtle:hover {
     opacity: 0.95;
     color: var(--primary);
 }
@@ -533,7 +533,7 @@ a,
     min-height: 100dvh;
 }
 
-.topbar {
+.c-topbar {
     /* Layout */
     height: var(--header-height);
     display: grid;
@@ -560,7 +560,7 @@ a,
     cursor: pointer;
 }
 
-.topbar-title {
+.c-topbar__title {
     /* Layout */
     max-width: 100%;
     white-space: nowrap !important;
@@ -590,9 +590,9 @@ a,
 }
 
 /* Topbar Buttons (Unified) */
-.topbar .btn,
-.topbar #user-role-badge,
-.topbar-actions .btn {
+.c-topbar .btn,
+.c-topbar #user-role-badge,
+.c-topbar__actions .btn {
     /* Layout */
     white-space: nowrap !important;
     word-break: keep-all !important;
@@ -600,10 +600,10 @@ a,
     line-height: 1.2 !important;
 }
 
-.topbar-btn,
-.topbar-badge,
-.topbar button.topbar-btn,
-.topbar div.topbar-badge {
+.c-topbar__button,
+.c-topbar__badge,
+.c-topbar button.c-topbar__button,
+.c-topbar div.c-topbar__badge {
     /* Layout */
     height: 32px !important;
     padding: 0 0.65rem !important;
@@ -625,8 +625,8 @@ a,
     -webkit-appearance: none !important;
 }
 
-.topbar-btn *,
-.topbar-badge * {
+.c-topbar__button *,
+.c-topbar__badge * {
     font-size: 0.78rem !important;
     font-weight: 700 !important;
     line-height: 1 !important;
@@ -636,37 +636,37 @@ a,
     vertical-align: middle !important;
 }
 
-.topbar-btn i,
-.topbar-badge i {
+.c-topbar__button i,
+.c-topbar__badge i {
     margin-right: 0.35rem !important;
 }
 
-.topbar .topbar-btn-text,
-.topbar-btn span,
-.topbar-badge span {
+.c-topbar .c-topbar__button-text,
+.c-topbar__button span,
+.c-topbar__badge span {
     display: inline-block !important;
 }
 
-.topbar .btn span,
-.topbar button span,
-.topbar .topbar-btn-text {
+.c-topbar .btn span,
+.c-topbar button span,
+.c-topbar .c-topbar__button-text {
     display: inline-block !important;
     visibility: visible !important;
     opacity: 1 !important;
 }
 
-.topbar .btn span:not(.fa-solid):not(.fa-regular):not(.fas),
-.topbar .topbar-btn-text,
-.topbar-btn span,
-.topbar-badge span {
+.c-topbar .btn span:not(.fa-solid):not(.fa-regular):not(.fas),
+.c-topbar .c-topbar__button-text,
+.c-topbar__button span,
+.c-topbar__badge span {
     display: inline-block !important;
     visibility: visible !important;
     opacity: 1 !important;
 }
 
 /* Bottom Nav & Mobile Context Bar */
-.bottom-nav,
-.mobile-context-bar {
+.c-bottom-nav,
+.c-context-bar {
     display: none !important;
 }
 
@@ -744,18 +744,18 @@ body.role-read-only #pd-tab-goals textarea {
 /* Responsive Base */
 @media (max-width: 1200px) {
 
-    .topbar .btn span:not(.fa-solid):not(.fa-regular):not(.fas),
-    .topbar #role-toggle-btn span {
+    .c-topbar .btn span:not(.fa-solid):not(.fa-regular):not(.fas),
+    .c-topbar #role-toggle-btn span {
         display: none !important;
     }
 
-    .topbar .btn {
+    .c-topbar .btn {
         padding: 0.4rem 0.6rem !important;
     }
 }
 
 @media (max-width: 768px) {
-    .topbar {
+    .c-topbar {
         padding-left: 0.6rem !important;
         padding-right: 0.6rem !important;
         height: 52px !important;
@@ -765,16 +765,16 @@ body.role-read-only #pd-tab-goals textarea {
         width: 100% !important;
     }
 
-    .topbar-mobile-role-pill {
+    .c-topbar__role-toggle {
         display: inline-flex !important;
     }
 
     /* スマホ時はトップバーの戻るボタンを非表示にし、下部コンテキストバーに一本化 */
-    .topbar-back-btn {
+    .c-topbar__back-button {
         display: none !important;
     }
 
-    .topbar-title {
+    .c-topbar__title {
         font-size: 0.95rem !important;
         white-space: nowrap !important;
         overflow: hidden !important;
@@ -783,7 +783,7 @@ body.role-read-only #pd-tab-goals textarea {
         margin: 0 !important;
     }
 
-    .topbar-breadcrumb {
+    .c-topbar__breadcrumb {
         font-size: 0.68rem !important;
         text-align: center !important;
     }
@@ -793,12 +793,12 @@ body.role-read-only #pd-tab-goals textarea {
         padding: 1rem;
     }
 
-    .sidebar {
+    .c-sidebar {
         transform: translateX(-100%);
         display: flex !important;
     }
 
-    .sidebar.open {
+    .c-sidebar.open {
         transform: translateX(0);
         box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
     }
@@ -814,7 +814,7 @@ body.role-read-only #pd-tab-goals textarea {
         display: block !important;
     }
 
-    .topbar>div:last-child {
+    .c-topbar>div:last-child {
         display: flex !important;
         align-items: center !important;
         gap: 0.35rem !important;
@@ -822,7 +822,7 @@ body.role-read-only #pd-tab-goals textarea {
         flex-shrink: 0 !important;
     }
 
-    .topbar .btn {
+    .c-topbar .btn {
         padding: 0.35rem 0.55rem !important;
         font-size: 0.8rem !important;
         height: 32px !important;
@@ -844,25 +844,25 @@ body.role-read-only #pd-tab-goals textarea {
         flex-shrink: 0 !important;
     }
 
-    .topbar .btn span,
-    .topbar-btn span,
-    .topbar-badge span,
-    .topbar .topbar-btn-text,
-    .topbar button span {
+    .c-topbar .btn span,
+    .c-topbar__button span,
+    .c-topbar__badge span,
+    .c-topbar .c-topbar__button-text,
+    .c-topbar button span {
         display: inline-block !important;
     }
 
-    .topbar-btn,
-    .topbar-badge,
-    .topbar button.topbar-btn,
-    .topbar div.topbar-badge {
+    .c-topbar__button,
+    .c-topbar__badge,
+    .c-topbar button.c-topbar__button,
+    .c-topbar div.c-topbar__badge {
         height: 30px !important;
         padding: 0 0.5rem !important;
         font-size: 0.72rem !important;
         gap: 0.25rem !important;
     }
 
-    .bottom-nav {
+    .c-bottom-nav {
         display: flex !important;
         position: fixed !important;
         bottom: 0 !important;
@@ -889,7 +889,7 @@ body.role-read-only #pd-tab-goals textarea {
         padding: 4px 2px var(--safe-bottom) !important;
     }
 
-    .bottom-nav .nav-item {
+    .c-bottom-nav .c-bottom-nav__item {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -907,13 +907,13 @@ body.role-read-only #pd-tab-goals textarea {
         box-sizing: border-box !important;
     }
 
-    .bottom-nav .nav-item i, .bottom-nav .nav-item .c-icon {
+    .c-bottom-nav .c-bottom-nav__item i, .c-bottom-nav .c-bottom-nav__item .c-icon {
         font-size: 1rem !important;
         line-height: 1 !important;
         display: block !important;
     }
 
-    .bottom-nav .nav-item span {
+    .c-bottom-nav .c-bottom-nav__item span {
         font-size: 0.58rem !important;
         line-height: 1.1 !important;
         letter-spacing: -0.02em !important;
@@ -922,18 +922,18 @@ body.role-read-only #pd-tab-goals textarea {
         text-align: center !important;
     }
 
-    .bottom-nav .nav-item.active {
+    .c-bottom-nav .c-bottom-nav__item.active {
         color: var(--primary) !important;
         font-weight: 700 !important;
         background: rgba(242, 57, 50, 0.08) !important;
     }
 
-    .bottom-nav .nav-item[style*="display: none"] {
+    .c-bottom-nav .c-bottom-nav__item[style*="display: none"] {
         display: none !important;
     }
 
     /* Mobile Context Back Bar (Smart Stack above Bottom Nav) */
-    .mobile-context-bar {
+    .c-context-bar {
         display: flex !important;
         position: fixed !important;
         bottom: calc(64px + var(--safe-bottom)) !important;
@@ -958,14 +958,14 @@ body.role-read-only #pd-tab-goals textarea {
         opacity: 1;
     }
 
-    .mobile-context-bar.hidden {
+    .c-context-bar.hidden {
         display: none !important;
         transform: translateY(100%) !important;
         opacity: 0 !important;
         pointer-events: none !important;
     }
 
-    .mobile-context-title {
+    .c-context-bar__title {
         font-size: 0.78rem !important;
         font-weight: 700 !important;
         color: var(--text-primary) !important;
@@ -979,7 +979,7 @@ body.role-read-only #pd-tab-goals textarea {
         letter-spacing: 0.01em !important;
     }
 
-    .mobile-context-back-btn {
+    .c-context-bar__back-button {
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -1000,12 +1000,12 @@ body.role-read-only #pd-tab-goals textarea {
         transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease !important;
     }
 
-    .mobile-context-back-btn:hover {
+    .c-context-bar__back-button:hover {
         background: var(--surface-hover) !important;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
     }
 
-    .mobile-context-back-btn:active {
+    .c-context-bar__back-button:active {
         transform: scale(0.95) !important;
         box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15) !important;
     }
@@ -1719,7 +1719,7 @@ body #app .dash-widget-grid #dash-form-bar .dash-form-opponent {
 
 /* 小型端末では本文幅を守るため、トップバーの補助操作をアイコン主体にする。 */
 @media (max-width: 420px) {
-    .topbar {
+    .c-topbar {
         gap: 0.25rem !important;
         padding-inline: 0.5rem !important;
     }
@@ -1732,41 +1732,41 @@ body #app .dash-widget-grid #dash-form-bar .dash-form-opponent {
         place-items: center;
     }
 
-    .topbar-title {
+    .c-topbar__title {
         min-width: 0;
         margin-right: 0 !important;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    .topbar > div:last-child {
+    .c-topbar > div:last-child {
         min-width: 0;
         gap: 0.2rem !important;
     }
 
-    .topbar #user-role-badge {
+    .c-topbar #user-role-badge {
         display: none !important;
     }
 
-    .topbar-btn,
-    .topbar-badge,
-    .topbar button.topbar-btn,
-    .topbar div.topbar-badge {
+    .c-topbar__button,
+    .c-topbar__badge,
+    .c-topbar button.c-topbar__button,
+    .c-topbar div.c-topbar__badge {
         flex: 0 0 32px;
         width: 32px;
         padding: 0 !important;
     }
 
-    .topbar .btn span:not(.fa-solid):not(.fa-regular):not(.fas),
-    .topbar .topbar-btn-text,
-    .topbar-btn span,
-    .topbar-badge span,
-    .topbar button span {
+    .c-topbar .btn span:not(.fa-solid):not(.fa-regular):not(.fas),
+    .c-topbar .c-topbar__button-text,
+    .c-topbar__button span,
+    .c-topbar__badge span,
+    .c-topbar button span {
         display: none !important;
     }
 
-    .topbar-btn i,
-    .topbar-badge i {
+    .c-topbar__button i,
+    .c-topbar__badge i {
         margin-right: 0 !important;
     }
 }
@@ -1785,7 +1785,7 @@ body #app .dash-widget-grid #dash-form-bar .dash-form-opponent {
     }
 }
 
-body.role-read-only .bottom-nav .coach-only {
+body.role-read-only .c-bottom-nav .coach-only {
     display: none !important;
 }
 

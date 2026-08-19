@@ -54,11 +54,11 @@ function setupGlobalUi() {
         document.body.appendChild(liveRegion);
     }
     document.addEventListener('pointerdown', event => {
-        const button = event.target.closest('button, .btn, .nav-item');
+        const button = event.target.closest('button, .btn, .c-bottom-nav__item');
         if (button && !button.hasAttribute('disabled')) button.classList.add('is-pressing');
     }, { passive: true });
-    document.addEventListener('pointerup', event => event.target.closest('button, .btn, .nav-item')?.classList.remove('is-pressing'), { passive: true });
-    document.addEventListener('pointercancel', event => event.target.closest('button, .btn, .nav-item')?.classList.remove('is-pressing'), { passive: true });
+    document.addEventListener('pointerup', event => event.target.closest('button, .btn, .c-bottom-nav__item')?.classList.remove('is-pressing'), { passive: true });
+    document.addEventListener('pointercancel', event => event.target.closest('button, .btn, .c-bottom-nav__item')?.classList.remove('is-pressing'), { passive: true });
 }
 
 let lastSyncTimeStr = uiState.lastSyncTimeStr;
@@ -1871,8 +1871,8 @@ function setupEventListeners() {
     const sidebar = document.getElementById('sidebar');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
     const menuToggle = document.getElementById('menu-toggle');
-    const navLinks = document.querySelectorAll('.nav-links li');
-    const bottomNavLinks = document.querySelectorAll('.bottom-nav .nav-item');
+    const navLinks = document.querySelectorAll('.c-sidebar__nav li');
+    const bottomNavLinks = document.querySelectorAll('.c-bottom-nav .c-bottom-nav__item');
 
     const closeSidebar = () => {
         if (sidebar) sidebar.classList.remove('open');
@@ -2126,7 +2126,7 @@ export function updateRoleUI() {
             if (syncPopover) syncPopover.classList.toggle('hidden');
         };
 
-        const syncRow = document.querySelector('.sidebar-sync-row');
+        const syncRow = document.querySelector('.c-sidebar__sync-row');
         if (syncRow && !syncRow._outsideClickBound) {
             syncRow._outsideClickBound = true;
             document.addEventListener('click', (e) => {
@@ -2158,13 +2158,13 @@ export function updateRoleUI() {
     document.body.dataset.parentScopes = isCoach ? 'coach' : parentScopes.join(',');
 
     // PCサイドバー
-    const playersLink = document.querySelector('.nav-links li[data-route="players"]');
+    const playersLink = document.querySelector('.c-sidebar__nav li[data-route="players"]');
     if (playersLink) playersLink.style.display = isCoach ? 'flex' : 'none';
 
-    const settingsLink = document.querySelector('.nav-links li[data-route="settings"]');
+    const settingsLink = document.querySelector('.c-sidebar__nav li[data-route="settings"]');
     if (settingsLink) settingsLink.style.display = isCoach ? 'flex' : 'none';
-    const matchesLink = document.querySelector('.nav-links li[data-route="matches"]');
-    const practicesLink = document.querySelector('.nav-links li[data-route="practices"]');
+    const matchesLink = document.querySelector('.c-sidebar__nav li[data-route="matches"]');
+    const practicesLink = document.querySelector('.c-sidebar__nav li[data-route="practices"]');
     if (!isCoach) {
         if (matchesLink) matchesLink.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
         if (practicesLink) practicesLink.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
@@ -2192,13 +2192,13 @@ export function updateRoleUI() {
         el.style.display = !isCoach ? 'flex' : 'none';
     });
 
-    const libraryLink = document.querySelector('.nav-links li[data-route="library"]');
+    const libraryLink = document.querySelector('.c-sidebar__nav li[data-route="library"]');
     if (libraryLink) libraryLink.style.display = isCoach ? 'flex' : 'none';
 
-    const tacticsLink = document.querySelector('.nav-links li[data-route="tactics"]');
+    const tacticsLink = document.querySelector('.c-sidebar__nav li[data-route="tactics"]');
     if (tacticsLink) tacticsLink.style.display = isCoach ? 'flex' : 'none';
 
-    const dataLink = document.querySelector('.nav-links li[data-route="data"]');
+    const dataLink = document.querySelector('.c-sidebar__nav li[data-route="data"]');
     if (dataLink) dataLink.style.display = isCoach ? 'flex' : 'none';
 
 
@@ -2383,8 +2383,8 @@ export function navigate(route, params = null, isBack = false, restoredRouteCont
 
     const topbarTitle = document.getElementById('topbar-title');
     const topbarBack = document.getElementById('topbar-back');
-    const navLinks = document.querySelectorAll('.nav-links li');
-    const bottomNavLinks = document.querySelectorAll('.bottom-nav .nav-item');
+    const navLinks = document.querySelectorAll('.c-sidebar__nav li');
+    const bottomNavLinks = document.querySelectorAll('.c-bottom-nav .c-bottom-nav__item');
 
     if (topbarBack) {
         if (route === 'dashboard') {
@@ -2639,7 +2639,7 @@ async function init() {
         mobileToggleColorModeBtn.onclick = handleColorModeToggle;
     }
 
-    const sidebarTitle = document.querySelector('.sidebar-header h2');
+    const sidebarTitle = document.querySelector('.c-sidebar__header h2');
     if (sidebarTitle && state.teamInfo) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name || 'My Team')}`;
 
     // バージョン表示とリリースノートモーダル初期化

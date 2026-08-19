@@ -451,6 +451,67 @@ requireAll(source.index, [
     'c-filter-bar__filters'
 ], '試合フィルター');
 
+// Wave E: player detail, application shell, and drawing-adjacent controls use common component contracts.
+requireAll(source.index, [
+    'c-focus-summary',
+    'c-metric-grid c-metric-grid--inline',
+    'c-data-list c-data-list--scrollable c-data-list--notebook',
+    'c-settings-form',
+    'c-sidebar',
+    'c-topbar',
+    'c-context-bar',
+    'c-bottom-nav',
+    'c-tool-dock',
+    'c-popover c-popover--canvas',
+    'c-drawer',
+    'c-inspector-panel'
+], '波Eの選手詳細・アプリシェル・作図テンプレート');
+
+requireAll(source.players, [
+    'c-metric--inline',
+    'c-data-list--participation',
+    'data-player-detail-id',
+    'c-progress-bar__indicator'
+], '波Eの選手詳細生成');
+
+requireAll(source.app, [
+    'c-sidebar__nav',
+    'c-bottom-nav .c-bottom-nav__item',
+    'c-sidebar__sync-row',
+    'c-sidebar__header h2'
+], '波Eのアプリシェルイベント');
+
+requireAll(source.drawing, [
+    'c-tool-dock .c-tool-dock__button',
+    'c-drawer__preset-chip'
+], '波Eの作図操作');
+
+requireAll(source.base, [
+    '\\.c-sidebar__footer',
+    '\\.c-topbar__back-button',
+    '\\.c-bottom-nav',
+    '\\.c-context-bar__back-button',
+    '\\.c-sidebar__sync-row \\.c-popover'
+], '波EのアプリシェルCSS');
+
+requireAll(source.drawingCss, [
+    '\\.c-tool-dock',
+    '\\.c-popover--canvas',
+    '\\.c-drawer',
+    '\\.c-inspector-panel',
+    '\\.c-popover--sync'
+], '波Eの作図周辺CSS');
+
+const waveELegacySources = [source.index, source.players, source.app, source.drawing, source.matches, source.components, source.base, source.drawingCss].join('\n');
+requireNone(waveELegacySources, [
+    /\.(?:player-notebook|player-participation)[a-z-]*/,
+    /class=["'][^"']*(?:\s|["'])(?:player-notebook|player-participation)[a-z-]*(?=\s|["'])/,
+    /\.(?:sidebar(?:-[a-z-]+)?|topbar(?:-[a-z-]+)?|bottom-nav|nav-links|nav-item|mobile-context-[a-z-]+|sync-popover)\b/,
+    /class=["'][^"']*(?:\s|["'])(?:sidebar(?:-[a-z-]+)?|topbar(?:-[a-z-]+)?|bottom-nav|nav-links|nav-item|mobile-context-[a-z-]+|sync-popover)(?=\s|["'])/,
+    /\.(?:anim-tool-dock|dock-btn|dock-text|anim-settings-popover|anim-quick-drawer|drawer-(?:header|title|close-btn|body|field|preset)[a-z-]*|preset-chip|anim-detail-side-panel|side-panel-[a-z-]+|side-info-[a-z-]+)\b/,
+    /class=["'][^"']*(?:\s|["'])(?:anim-tool-dock|dock-btn|dock-text|anim-settings-popover|anim-quick-drawer|drawer-(?:header|title|close-btn|body|field|preset)[a-z-]*|preset-chip|anim-detail-side-panel|side-panel-[a-z-]+|side-info-[a-z-]+)(?=\s|["'])/
+], '波Eで廃止した選手詳細・アプリシェル・作図周辺クラス');
+
 // Label-shape contract: only common status labels may represent state, counts, and compact metadata.
 const labelSources = [
     source.index,

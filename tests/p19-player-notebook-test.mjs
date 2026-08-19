@@ -33,14 +33,20 @@ assert.throws(() => addDevelopmentNote(player, {}), /テーマ、観察メモ/);
 const [html, players, css, base] = await Promise.all([
     readFile(new URL('../index.html', import.meta.url), 'utf8'),
     readFile(new URL('../players.js', import.meta.url), 'utf8'),
-    readFile(new URL('../CSS/components.css', import.meta.url), 'utf8'),
+    readFile(new URL('../CSS/components-system.css', import.meta.url), 'utf8'),
     readFile(new URL('../CSS/base.css', import.meta.url), 'utf8')
 ]);
 assert.match(html, /pd-tab-notebook/);
 assert.match(html, /form-player-development-note/);
 assert.match(html, /development-note-ratings/);
+assert.match(html, /c-focus-summary/);
+assert.match(html, /c-data-list--notebook/);
+assert.match(html, /c-settings-form/);
 assert.match(players, /renderDevelopmentNotebook/);
 assert.match(players, /addDevelopmentNote/);
-assert.match(css, /player-notebook-summary/);
+assert.match(players, /c-metric--inline/);
+assert.match(players, /c-data-list__item/);
+assert.match(players, /c-empty-state c-empty-state--compact/);
+assert.match(css, /c-data-list--notebook/);
 assert.match(base, /form-player-development-note/);
 console.log('P19 player notebook tests passed');

@@ -15,8 +15,9 @@ test('P38-1: PCサイドバーフッターの配置と機能契約検証', () =>
     assert.match(indexHtml, /id="btn-toggle-color-mode"/, 'btn-toggle-color-mode exists in sidebar');
     assert.match(indexHtml, /id="btn-topbar-sync-status"/, 'sync-status exists in sidebar');
     assert.match(indexHtml, /id="topbar-version-badge"/, 'topbar-version-badge exists in sidebar');
-    assert.match(baseCss, /\.sidebar-footer\s*\{/, 'CSS defines .sidebar-footer');
-    assert.match(baseCss, /\.sidebar-user-card\s*\{/, 'CSS defines .sidebar-user-card');
+    assert.match(baseCss, /\.c-sidebar__footer\s*\{/, 'CSS defines c-sidebar footer');
+    assert.match(baseCss, /\.c-sidebar__user-card\s*\{/, 'CSS defines c-sidebar user card');
+    assert.match(indexHtml, /class="c-sidebar"/, 'sidebar uses the common app-shell class');
 });
 
 test('P38-2: トップバーのスリム化とタイトル＆スマホモード表示検証', () => {
@@ -31,7 +32,8 @@ test('P38-3: スマホ向けボトムナビゲーション（5項目親指最適
     assert.match(indexHtml, /data-route="dashboard"/, 'bottom-nav has dashboard');
     assert.match(indexHtml, /data-route="matches"/, 'bottom-nav has matches');
     assert.match(indexHtml, /data-route="practices"/, 'bottom-nav has practices');
-    assert.match(indexHtml, /class="nav-item coach-only" data-route="library"/, 'bottom-nav library is coach-only');
+    assert.match(indexHtml, /class="c-bottom-nav__item coach-only" data-route="library"/, 'bottom-nav library is coach-only');
+    assert.match(indexHtml, /class="c-bottom-nav" id="bottom-nav"/, 'bottom-nav uses the common app-shell class');
     assert.match(indexHtml, /id="btn-bottom-nav-more"/, 'bottom-nav has more button');
     assert.match(appJs, /btnBottomNavMore\.addEventListener\('click'/, 'app.js binds bottom nav more button');
     assert.match(appJs, /#bottom-nav \.coach-only/, 'app.js controls bottom-nav coach-only items');
@@ -60,7 +62,7 @@ test('P38-5: ナビゲーション階層設計＆戻るボタン（navigateBack�
 });
 
 test('P38-6: 練習管理カードの1行ツールバー配置＆同期ポップオーバー不透明背景検証', () => {
-    assert.match(baseCss, /\.sidebar-sync-row \.sync-popover[\s\S]*?background-color:\s*var\(--card-bg,\s*#ffffff\)\s*!important;/, 'popover background is solid opaque');
+    assert.match(baseCss, /\.c-sidebar__sync-row \.c-popover[\s\S]*?background-color:\s*var\(--card-bg,\s*#ffffff\)\s*!important;/, 'popover background is solid opaque');
     assert.match(baseCss, /body \.c-practice-card__actions[\s\S]*?flex-wrap:\s*nowrap|display:\s*flex\s*!important;/, 'practice card actions are styled cleanly');
     assert.match(baseCss, /body \.c-practice-card__actions \.btn-edit-practice/, 'compact edit button styled');
     assert.match(baseCss, /body \.c-practice-card__actions \.btn-delete-practice/, 'compact delete button styled');
@@ -70,8 +72,8 @@ test('P38-7: スマホ向けスリム戻るコンテキストバー（Mobile Con
     assert.match(indexHtml, /id="mobile-context-bar"/, 'mobile-context-bar exists in index.html');
     assert.match(indexHtml, /id="mobile-context-back-btn"/, 'mobile-context-back-btn exists in index.html');
     assert.match(indexHtml, /id="mobile-context-title"/, 'mobile-context-title exists in index.html');
-    assert.match(baseCss, /\.mobile-context-bar\s*\{[\s\S]*?display:\s*none\s*!important;/, 'mobile-context-bar is hidden on desktop');
-    assert.match(baseCss, /\.mobile-context-bar\s*\{[\s\S]*?position:\s*fixed/i, 'mobile-context-bar is fixed on mobile');
+    assert.match(baseCss, /\.c-context-bar\s*\{[\s\S]*?display:\s*none\s*!important;/, 'context bar is hidden on desktop');
+    assert.match(baseCss, /\.c-context-bar\s*\{[\s\S]*?position:\s*fixed/i, 'context bar is fixed on mobile');
     assert.match(appJs, /const mobileContextBar = document\.getElementById\('mobile-context-bar'\);/, 'app.js accesses mobile-context-bar');
     assert.match(appJs, /mobileContextBackBtn\.onclick[\s\S]*?navigateBack\(\)/, 'mobile-context-back-btn triggers navigateBack');
 });
@@ -80,12 +82,12 @@ test('P38-7: スマホ向けスリム戻るコンテキストバー（Mobile Con
 test('P38-8: 戻るドックの44px操作領域とセーフエリア配置を検証', () => {
     assert.match(
         baseCss,
-        /\.mobile-context-bar\s*\{[\s\S]*?bottom:\s*calc\(64px\s*\+\s*var\(--safe-bottom\)\)\s*!important;[\s\S]*?height:\s*48px\s*!important;[\s\S]*?min-height:\s*48px\s*!important;/,
+        /\.c-context-bar\s*\{[\s\S]*?bottom:\s*calc\(64px\s*\+\s*var\(--safe-bottom\)\)\s*!important;[\s\S]*?height:\s*48px\s*!important;[\s\S]*?min-height:\s*48px\s*!important;/,
         'mobile context bar reserves the bottom safe area and a 48px bar height'
     );
     assert.match(
         baseCss,
-        /\.mobile-context-back-btn\s*\{[\s\S]*?min-width:\s*var\(--tap-target\)\s*!important;[\s\S]*?min-height:\s*var\(--tap-target\)\s*!important;[\s\S]*?height:\s*var\(--tap-target\)\s*!important;/,
+        /\.c-context-bar__back-button\s*\{[\s\S]*?min-width:\s*var\(--tap-target\)\s*!important;[\s\S]*?min-height:\s*var\(--tap-target\)\s*!important;[\s\S]*?height:\s*var\(--tap-target\)\s*!important;/,
         'mobile context back button uses the shared 44px tap target token'
     );
 });

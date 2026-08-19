@@ -572,6 +572,70 @@
     color: var(--color-success);
 }
 
+.c-data-list--notebook .c-data-list__item {
+    grid-template-columns: 1.875rem minmax(0, 1fr) auto;
+    align-items: start;
+}
+
+.c-data-list--notebook .c-data-list__identity,
+.c-data-list--participation .c-data-list__identity {
+    display: grid;
+    inline-size: 1.875rem;
+    block-size: 1.875rem;
+    place-items: center;
+    color: var(--color-brand);
+    border-radius: 50%;
+    background: var(--color-brand-surface);
+    font-family: var(--font-numeric);
+    font-size: var(--text-meta-size);
+    font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.c-data-list--notebook .c-data-list__item.is-match .c-data-list__identity {
+    color: var(--color-info);
+    background: var(--color-info-surface);
+}
+
+.c-data-list--notebook .c-data-list__item.is-practice .c-data-list__identity {
+    color: var(--color-success);
+    background: var(--color-success-surface);
+}
+
+.c-data-list--notebook .c-data-list__body {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta-size);
+}
+
+.c-data-list--participation .c-data-list__item {
+    grid-template-columns: 1.875rem minmax(0, 1fr) auto;
+    align-items: center;
+    text-decoration: none;
+}
+
+.c-data-list--participation .c-data-list__content {
+    gap: calc(var(--space-1) / 2);
+}
+
+.c-data-list--participation .c-data-list__value-group {
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.c-data-list--participation .c-data-list__value-group > span {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--space-1) / 2);
+}
+
+.c-data-list--participation .c-data-list__value-group .fa-futbol {
+    color: var(--color-brand);
+}
+
+.c-data-list--participation .c-data-list__value-group .fa-shoe-prints {
+    color: var(--color-success);
+}
+
 @media (max-width: 37.5rem) {
     .c-data-list--diagnostics {
         grid-template-columns: 1fr;
@@ -605,6 +669,22 @@
 
     .c-data-list--audit .c-data-list__item {
         grid-template-columns: 1fr;
+    }
+
+    .c-data-list--notebook .c-data-list__item,
+    .c-data-list--participation .c-data-list__item {
+        grid-template-columns: 1.875rem minmax(0, 1fr);
+    }
+
+    .c-data-list--notebook .c-data-list__actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+    }
+
+    .c-data-list--participation .c-data-list__value-group {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+        padding-inline-start: calc(1.875rem + var(--space-2));
     }
 }
 
