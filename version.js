@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.13';
-export const RELEASE_DATE = '2026-08-18';
+export const APP_VERSION = 'v1.30.14';
+export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.14',
+        date: '2026-08-19',
+        title: '見出しテキストアニメーションの視認性向上とスマホ表示を最適化',
+        features: [
+            'ダッシュボード・設定・試合詳細等の見出しテキストアニメーションに光彩ハイライトを追加し視認性を向上',
+            'GPUハードウェアアクセラレーションを有効化し、スマートフォン上での滑らかな動作を確保',
+            'P33/P34/P35のCSSおよびテーマ契約テストに適合'
+        ]
+    },
     {
         version: 'v1.30.13',
         date: '2026-08-18',
