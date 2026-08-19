@@ -18,7 +18,7 @@ const results = [];
 for (const file of testFiles) {
     const target = path.isAbsolute(file) ? file : path.join(testDir, file);
     process.stdout.write(`\n▶ ${path.basename(target)}\n`);
-    const result = spawnSync(process.execPath, [target], { stdio: 'inherit', timeout: 30_000 });
+    const result = spawnSync(process.execPath, ['--experimental-vm-modules', target], { stdio: 'inherit', timeout: 30_000 });
     results.push({ file: path.basename(target), ok: result.status === 0 && !result.error });
     if (result.error || result.status !== 0) break;
 }

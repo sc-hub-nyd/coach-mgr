@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.44';
+export const APP_VERSION = 'v1.30.45';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.45',
+        date: '2026-08-19',
+        title: 'CI契約テスト・スモークテストスイート（P4〜P38）の完全適合',
+        features: [
+            '契約テストランナー（run-contract-tests.mjs）へのVMモジュールフラグ適用と全29テスト（P4〜P38）の完全合格',
+            '設定画面・選手カルテリファクタリング後のCI回帰テスト用識別子・コンテナの完全適合'
+        ]
+    },
     {
         version: 'v1.30.44',
         date: '2026-08-19',
