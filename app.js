@@ -2415,7 +2415,7 @@ export function navigate(route, params = null, isBack = false) {
     const mobileContextBackBtn = document.getElementById('mobile-context-back-btn');
 
     if (mobileContextBar) {
-        const isDetailRoute = (route === 'match-detail' || route === 'player-detail' || route === 'animation');
+        const isDetailRoute = (route === 'match-detail' || route === 'player-detail');
         if (isDetailRoute) {
             mobileContextBar.classList.remove('hidden');
             if (mobileContextBackBtn) {
@@ -2436,8 +2436,6 @@ export function navigate(route, params = null, isBack = false) {
                     const playerId = params && (typeof params === 'object') ? params.playerId : params;
                     const player = (state.players || []).find(p => p.id === parseInt(playerId, 10));
                     mobileContextTitle.textContent = player ? `選手: #${player.number} ${player.name}` : '選手カルテ';
-                } else if (route === 'animation') {
-                    mobileContextTitle.textContent = '作図・アニメーション';
                 } else {
                     mobileContextTitle.textContent = topbarTitle ? topbarTitle.textContent : '';
                 }

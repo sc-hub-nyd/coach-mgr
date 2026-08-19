@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.49';
+export const APP_VERSION = 'v1.30.50';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.50',
+        date: '2026-08-19',
+        title: 'スマホ戻るバーの右側配置＆Neumorphism 2.0デザイン完全適合',
+        features: [
+            'スマホ用スリム戻るバーの「戻る」ボタンを右側（親指最適位置）に再配置し、左側に現在地タイトルを明示',
+            'Neumorphism 2.0デザインシステム（ピル型ボタントークン・シャドウ・アクティブエフェクト）へ完全適合',
+            '作図画面は左上戻るのみとし、それ以外のスマホ画面では左上トップバー戻るを非表示化して下部バーへ一本化'
+        ]
+    },
     {
         version: 'v1.30.49',
         date: '2026-08-19',
