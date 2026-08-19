@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.17';
+export const APP_VERSION = 'v1.30.18';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.18',
+        date: '2026-08-19',
+        title: '設定画面全体のカード構造・デザインシステム完全準拠化',
+        features: [
+            '設定ハブ（最上部カード）のヘッダー・kicker・見出しスタイルをNeumorphism 2.0標準へ統一',
+            'データ連携・バックアップ管理の二重カード構造を解消し、すっきりとした1枚カードへ最適化',
+            'シーズンレポートカードのボディクラス補正および保護者アクセス管理サブパネルのトークン統一'
+        ]
+    },
     {
         version: 'v1.30.17',
         date: '2026-08-19',

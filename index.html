@@ -636,7 +636,11 @@
 
             <!-- P28: 長い設定画面を目的別に移動できるハブ -->
             <section class="settings-hub card c-card coach-only" aria-labelledby="settings-hub-title">
-                <div><span class="eyebrow-label">SETTINGS</span><h2 id="settings-hub-title" class="c-text-effect--liquid">何を設定しますか？</h2><p>目的を選ぶと、必要な設定まで移動します。</p></div>
+                <div class="c-section-header__content">
+                    <span class="c-kicker"><i class="fa-solid fa-compass" aria-hidden="true"></i> SETTINGS HUB</span>
+                    <h2 id="settings-hub-title" class="c-section-header__title c-text-effect--liquid">何を設定しますか？</h2>
+                    <p class="c-section-header__meta">目的を選ぶと、必要な設定まで移動します。</p>
+                </div>
                 <div class="settings-hub-grid">
                     <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="workspace-management-section"><i class="fa-solid fa-layer-group"></i><span>チーム・年度</span><small>切替と年度管理</small></button>
                     <button type="button" class="btn btn-secondary settings-hub-item" data-settings-target="gas-sync-section"><i class="fa-solid fa-cloud-arrow-up"></i><span>同期・復旧</span><small>保存の安全性</small></button>
@@ -719,7 +723,7 @@
                 <div class="c-section-header c-settings-section__header c-card__header">
                     <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> REPORT</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="season-report-title">シーズンレポート・出力</h2></div>
                 </div>
-                <div class="sl-section-body season-report-body">
+                <div class="sl-section-body c-settings-section__body c-card__body season-report-body">
                     <p id="season-report-context" class="operations-intro">現在選択中のチーム・シーズンを集計します。</p>
                     <div id="season-report-summary" class="season-report-summary" aria-live="polite"></div>
                     <div class="c-action-group c-action-group--mobile-stretch season-report-actions">
@@ -982,14 +986,12 @@
                 <div class="c-section-header c-settings-section__header c-card__header">
                     <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-database" aria-hidden="true"></i> DATA SAFETY</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="data-management-settings-title">データ連携・バックアップ管理</h2></div>
                 </div>
-                <div class="sl-section-body c-settings-section__body c-card__body">
-                    <div class="c-card c-data-management__operation">
-                        <p class="c-settings-section__intro">全データ（試合記録、練習予定、メニュー、選手情報等）をJSONファイルとしてダウンロード・バックアップ、または取込・一括削除が行えます。大切な試合の前後や端末変更前には、必ずバックアップを作成してください。</p>
-                        <div class="c-action-group c-action-group--mobile-stretch">
-                            <button type="button" class="btn btn-primary btn-sm" id="btn-data-view-export"><i class="fa-solid fa-download" aria-hidden="true"></i> バックアップ出力（JSON）</button>
-                            <label class="btn btn-secondary btn-sm"><i class="fa-solid fa-upload" aria-hidden="true"></i> ファイルから復元（JSON）<input type="file" id="input-data-view-import" accept=".json" class="u-visually-hidden"></label>
-                            <button type="button" class="btn btn-danger btn-sm" id="btn-data-all-clear"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> 全データ初期化</button>
-                        </div>
+                <div class="sl-section-body c-settings-section__body c-card__body c-data-management__operation">
+                    <p class="c-settings-section__intro">全データ（試合記録、練習予定、メニュー、選手情報等）をJSONファイルとしてダウンロード・バックアップ、または取込・一括削除が行えます。大切な試合の前後や端末変更前には、必ずバックアップを作成してください。</p>
+                    <div class="c-action-group c-action-group--mobile-stretch">
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-data-view-export"><i class="fa-solid fa-download" aria-hidden="true"></i> バックアップ出力（JSON）</button>
+                        <label class="btn btn-secondary btn-sm"><i class="fa-solid fa-upload" aria-hidden="true"></i> ファイルから復元（JSON）<input type="file" id="input-data-view-import" accept=".json" class="u-visually-hidden"></label>
+                        <button type="button" class="btn btn-danger btn-sm" id="btn-data-all-clear"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> 全データ初期化</button>
                     </div>
                 </div>
             </section>
