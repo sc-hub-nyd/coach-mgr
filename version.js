@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.26';
+export const APP_VERSION = 'v1.30.27';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.27',
+        date: '2026-08-19',
+        title: 'トップバー：パンくずリスト固定化＆戻るボタンインライン配置修正',
+        features: [
+            'トップバー左側を2段構造（上段：パンくずリスト、下段：戻るボタン＋タイトル）へ再設計し、詳細画面で「戻るボタン」が表示されてもパンくずリストの開始位置がずれない安定レイアウトへ修正'
+        ]
+    },
     {
         version: 'v1.30.26',
         date: '2026-08-19',

@@ -327,21 +327,39 @@ a,
     color: var(--primary);
 }
 
-.topbar-title-group {
+.topbar-left {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 0.15rem;
+    min-width: 0;
 }
 
 .topbar-breadcrumb {
     font-size: 0.75rem;
     color: var(--text-secondary);
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .topbar-breadcrumb:empty {
     display: none;
 }
+
+.topbar-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.topbar-back-btn {
+    padding: 0.2rem 0.55rem !important;
+    font-size: 0.8rem !important;
+    flex-shrink: 0;
+}
+
 
 .topbar-actions {
     display: flex;
