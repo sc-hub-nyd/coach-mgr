@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.46';
+export const APP_VERSION = 'v1.30.47';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.47',
+        date: '2026-08-19',
+        title: '練習メニュー編集モーダルの送信ボタンラベル改善',
+        features: [
+            '練習メニュー編集時にモーダルの送信ボタンラベルを「追加する」から「更新する」へ動的に変更するようUI改善'
+        ]
+    },
     {
         version: 'v1.30.46',
         date: '2026-08-19',

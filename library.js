@@ -415,6 +415,8 @@ export function initLibrary(miniPitchObserver) {
 
             const title = document.querySelector('#modal-menu h2');
             if (title) title.textContent = '練習メニューを追加';
+            const btnSubmit = document.getElementById('btn-submit-menu');
+            if (btnSubmit) btnSubmit.textContent = '追加する';
 
             openModal('modal-menu');
         };
@@ -486,6 +488,8 @@ export function openLibraryMenuModal(menu) {
 
     const title = document.querySelector('#modal-menu h2');
     if (title) title.textContent = '練習メニューを編集';
+    const btnSubmit = document.getElementById('btn-submit-menu');
+    if (btnSubmit) btnSubmit.textContent = '更新する';
 
     openModal('modal-menu');
 }
