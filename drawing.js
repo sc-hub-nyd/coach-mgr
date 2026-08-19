@@ -169,8 +169,8 @@ function updateFrameCount() {
                     <div class="filmstrip-card-header c-data-list__header">
                         <span class="filmstrip-frame-num">S${idx + 1}</span>
                         <div class="filmstrip-card__meta c-action-group">
-                            ${pauseVal > 0 ? `<span class="filmstrip-badge pause-badge" title="停止時間 ${pauseVal}秒"><i class="fa-solid fa-clock" aria-hidden="true"></i> ${pauseVal}s</span>` : ''}
-                            ${captionStr ? `<span class="filmstrip-badge caption-badge" title="${escapeHtml(captionStr)}"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i><span class="u-visually-hidden">キャプションあり</span></span>` : ''}
+                            ${pauseVal > 0 ? `<span class="c-status c-status--compact c-status--info" title="停止時間 ${pauseVal}秒"><i class="fa-solid fa-clock" aria-hidden="true"></i> ${pauseVal}s</span>` : ''}
+                            ${captionStr ? `<span class="c-status c-status--compact c-status--muted" title="${escapeHtml(captionStr)}"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i><span class="u-visually-hidden">キャプションあり</span></span>` : ''}
                         </div>
                     </div>
                     <div class="filmstrip-card-title c-data-list__body">${escapeHtml(titleStr)}</div>

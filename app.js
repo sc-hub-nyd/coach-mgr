@@ -1617,13 +1617,13 @@ function initDashboard() {
                 const us = mt ? parseInt(mt[1], 10) : 0;
                 const them = mt ? parseInt(mt[2], 10) : 0;
                 const status = getMatchStatus(m);
-                let cls = 'draw', label = '分';
-                if (status === 'win') { cls = 'win'; label = '勝'; }
-                else if (status === 'loss') { cls = 'loss'; label = '負'; }
+                let statusClass = 'c-status--warning', label = '分';
+                if (status === 'win') { statusClass = 'c-status--success'; label = '勝'; }
+                else if (status === 'loss') { statusClass = 'c-status--muted'; label = '負'; }
                 const oppShort = (m.opponent || '').replace(/AFC|SFC|FC|SC/gi, '').trim().slice(0, 4) || 'vs';
                 return `
                     <div class="dash-form-item" title="${escapeHtml(m.opponent)} ${m.result}" onclick="openMatchDetail(${m.id})">
-                        <div class="dash-form-badge-lg ${cls}">${label}</div>
+                        <span class="c-status ${statusClass}">${label}</span>
                         <div class="dash-form-score">${us}-${them}</div>
                         <div class="dash-form-opponent">${escapeHtml(oppShort)}</div>
                     </div>
@@ -1724,7 +1724,7 @@ function initDashboard() {
             // 「直近の試合」と全く同じ dash-form-item 構造・クラスでHTMLを出力
             scheduleList.innerHTML = sortedEvents.map(e => {
                 const isMatch = e.type === 'match';
-                const badgeClass = isMatch ? 'dash-circle-match' : 'dash-circle-practice';
+                const statusClass = isMatch ? 'c-status--solid' : 'c-status--info';
                 const badgeText = isMatch ? '試' : '練';
                 const clickAction = isMatch
                     ? `openMatchDetail(${e.id})`
@@ -1732,7 +1732,7 @@ function initDashboard() {
 
                 return `
                     <div class="dash-form-item" onclick="${clickAction}" style="cursor: pointer;">
-                        <div class="dash-form-badge-lg ${badgeClass}">${badgeText}</div>
+                        <span class="c-status ${statusClass}">${badgeText}</span>
                         <div class="dash-form-score">${formatDateLabel(e.date)}</div>
                         <div class="dash-form-opponent" title="${escapeHtml(e.subText)}">${escapeHtml(e.subText)}</div>
                     </div>

@@ -1401,37 +1401,6 @@ summary {
     transform: translateY(-2px);
 }
 
-.dash-form-badge-lg {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: #fff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-    transition: transform 0.15s, box-shadow 0.15s;
-}
-
-.dash-form-badge-lg.win {
-    background: var(--primary);
-}
-
-.dash-form-badge-lg.loss {
-    background: #64748b;
-}
-
-.dash-form-badge-lg.draw {
-    background: #f59e0b;
-}
-
-.dash-form-item:hover .dash-form-badge-lg {
-    transform: scale(1.12);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
-}
-
 .dash-form-score {
     font-size: 0.68rem;
     font-weight: 600;
@@ -1763,12 +1732,6 @@ summary {
     .dash-record-loss,
     .dash-record-draw {
         font-size: 1.1rem;
-    }
-
-    .dash-form-badge-lg {
-        width: 30px;
-        height: 30px;
-        font-size: 0.75rem;
     }
 
     .dash-rank-card,

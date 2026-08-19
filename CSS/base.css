@@ -1494,33 +1494,6 @@ body #app .dash-widget-grid #dash-form-bar .dash-form-item {
     text-align: center;
 }
 
-/* 4. 丸バッジの基本構造（共通形状・文字中央揃え） */
-body #app .dash-widget-grid .dash-form-badge-lg {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.78rem;
-    font-weight: 700;
-    margin-bottom: 0.2rem;
-    flex-shrink: 0;
-}
-
-/* 5. バッジの背景色と白文字（試合：赤 / 練習：青） */
-body #app .dash-widget-grid .dash-form-badge-lg.dash-circle-match {
-    background-color: var(--primary);
-    color: #ffffff;
-    box-shadow: 0 2px 6px rgba(242, 57, 50, 0.25);
-}
-
-body #app .dash-widget-grid .dash-form-badge-lg.dash-circle-practice {
-    background-color: #3b82f6;
-    color: #ffffff;
-    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
-}
-
 /* 6. 日付・対戦相手（場所）テキストのフォントサイズ＆文字間調整 */
 body #app .dash-widget-grid #dash-schedule-list .dash-form-score,
 body #app .dash-widget-grid #dash-form-bar .dash-form-score {
