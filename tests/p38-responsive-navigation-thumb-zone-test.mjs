@@ -48,6 +48,7 @@ test('P38-4: スマホ向けモバイルスライドシート（片手操作コ�
     assert.match(indexHtml, /id="mobile-sync-status-dot"/, 'mobile-sync-status-dot exists in sheet');
     assert.match(indexHtml, /id="mobile-btn-sync-now"/, 'mobile-btn-sync-now exists in sheet');
     assert.doesNotMatch(indexHtml, /id="mobile-btn-my-player"/, 'mobile-btn-my-player is removed from sheet');
+    assert.match(indexHtml, /class="btn btn-secondary mobile-more-item coach-only" data-mobile-route="settings"/, 'settings in mobile sheet is coach-only');
     assert.match(indexHtml, /id="mobile-btn-toggle-color-mode"/, 'mobile-btn-toggle-color-mode exists in sheet');
     assert.match(indexHtml, /id="mobile-version-badge"/, 'mobile-version-badge exists in sheet');
     assert.match(appJs, /mobileBtnToggleRole\.onclick = handleToggleRoleClick/, 'app.js binds mobile role toggle');

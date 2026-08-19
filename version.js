@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.34';
+export const APP_VERSION = 'v1.30.35';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.35',
+        date: '2026-08-19',
+        title: 'スマホその他メニュー：保護者モード時の設定ボタン非表示化',
+        features: [
+            'スマホその他メニュー（ボトムシート）内の「設定」ボタンに指導者権限（coach-only）を適用し、保護者モードでは非表示となるよう修正'
+        ]
+    },
     {
         version: 'v1.30.34',
         date: '2026-08-19',
