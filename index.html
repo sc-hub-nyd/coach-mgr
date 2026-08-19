@@ -808,162 +808,174 @@
             </section>
 
             <!-- Section: 試合種別 -->
-            <div class="sl-section">
-                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-                    <span><i class="fa-solid fa-list"></i> 試合種別</span>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-match-types" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+            <section class="sl-section c-settings-section card c-card" id="match-types-section" aria-labelledby="match-types-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content">
+                        <span class="c-kicker"><i class="fa-solid fa-list" aria-hidden="true"></i> MATCH TYPES</span>
+                        <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="match-types-title">試合種別</h2>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-match-types">
                         <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                     </button>
                 </div>
-                <div class="sl-section-body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-match-type" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
                             <input type="text" id="new-match-type" class="sl-input" placeholder="新しい試合種別を入力" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i>
-                                追加</button>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
                         </form>
                     </div>
                     <ul id="match-type-list" class="sl-list"></ul>
                 </div>
-            </div>
+            </section>
 
             <!-- Section: 練習カテゴリ -->
-            <div class="sl-section">
-                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-                    <span><i class="fa-solid fa-tags"></i> 練習カテゴリ</span>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-menu-categories" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+            <section class="sl-section c-settings-section card c-card" id="menu-categories-section" aria-labelledby="menu-categories-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content">
+                        <span class="c-kicker"><i class="fa-solid fa-tags" aria-hidden="true"></i> PRACTICE CATEGORIES</span>
+                        <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="menu-categories-title">練習カテゴリ</h2>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-menu-categories">
                         <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                     </button>
                 </div>
-                <div class="sl-section-body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-menu-category" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-menu-category" class="sl-input" placeholder="新しいカテゴリを入力"
-                                required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i>
-                                追加</button>
+                            <input type="text" id="new-menu-category" class="sl-input" placeholder="新しいカテゴリを入力" required>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
                         </form>
                     </div>
                     <ul id="menu-category-list" class="sl-list"></ul>
                 </div>
-            </div>
+            </section>
 
             <!-- Section: 戦術カテゴリ -->
-            <div class="sl-section">
-                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-                    <span><i class="fa-solid fa-chess-knight"></i> 戦術カテゴリ</span>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-tactics-categories" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+            <section class="sl-section c-settings-section card c-card" id="tactics-categories-section" aria-labelledby="tactics-categories-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content">
+                        <span class="c-kicker"><i class="fa-solid fa-chess-knight" aria-hidden="true"></i> TACTICS CATEGORIES</span>
+                        <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="tactics-categories-title">戦術カテゴリ</h2>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-tactics-categories">
                         <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                     </button>
                 </div>
-                <div class="sl-section-body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-tactics-category" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-tactics-category" class="sl-input" placeholder="新しい戦術カテゴリを入力"
-                                required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i>
-                                追加</button>
+                            <input type="text" id="new-tactics-category" class="sl-input" placeholder="新しい戦術カテゴリを入力" required>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
                         </form>
                     </div>
                     <ul id="tactics-category-list" class="sl-list"></ul>
                 </div>
-            </div>
+            </section>
 
             <!-- Section: スキル評価項目 -->
-            <div class="sl-section">
-                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-                    <span><i class="fa-solid fa-chart-pie"></i> スキル評価項目 <span
-                        style="font-weight:400; font-style:italic;">（3項目以上でレーダーチャートが有効）</span></span>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-skill-metrics" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+            <section class="sl-section c-settings-section card c-card" id="skill-metrics-section" aria-labelledby="skill-metrics-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content">
+                        <span class="c-kicker"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> SKILL METRICS</span>
+                        <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="skill-metrics-title">スキル評価項目 <small style="font-size:var(--text-meta-size); font-weight:400; font-style:italic;">（3項目以上でレーダーチャート有効）</small></h2>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-skill-metrics">
                         <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                     </button>
                 </div>
-                <div class="sl-section-body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-skill-metric" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
                             <input type="text" id="new-skill-metric" class="sl-input" placeholder="新しい評価項目を入力" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i>
-                                追加</button>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
                         </form>
                     </div>
                     <ul id="skill-metric-list" class="sl-list"></ul>
                 </div>
-            </div>
+            </section>
 
             <!-- Section: ポジション (カテゴリ1) -->
-            <div class="sl-section">
-                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-                    <span><i class="fa-solid fa-street-view"></i> ポジション (カテゴリ1: 大分類)</span>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-positions" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+            <section class="sl-section c-settings-section card c-card" id="positions-section" aria-labelledby="positions-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content">
+                        <span class="c-kicker"><i class="fa-solid fa-street-view" aria-hidden="true"></i> POSITIONS (CAT 1)</span>
+                        <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="positions-title">ポジション (カテゴリ1: 大分類)</h2>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-positions">
                         <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                     </button>
                 </div>
-                <div class="sl-section-body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-position" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-position" class="sl-input"
-                                placeholder="カテゴリ1のポジションを入力 (例: GK, DF, MF, FW)" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i>
-                                追加</button>
+                            <input type="text" id="new-position" class="sl-input" placeholder="カテゴリ1のポジションを入力 (例: GK, DF, MF, FW)" required>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
                         </form>
                     </div>
                     <ul id="position-list" class="sl-list"></ul>
                 </div>
-            </div>
+            </section>
 
             <!-- Section: ポジション (カテゴリ2) -->
-            <div class="sl-section">
-                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-                    <span><i class="fa-solid fa-person-running"></i> ポジション (カテゴリ2: 詳細役割)</span>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-positions-cat2" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+            <section class="sl-section c-settings-section card c-card" id="positions-cat2-section" aria-labelledby="positions-cat2-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content">
+                        <span class="c-kicker"><i class="fa-solid fa-person-running" aria-hidden="true"></i> POSITIONS (CAT 2)</span>
+                        <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="positions-cat2-title">ポジション (カテゴリ2: 詳細役割)</h2>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-positions-cat2">
                         <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                     </button>
                 </div>
-                <div class="sl-section-body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-position-cat2" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-position-cat2" class="sl-input"
-                                placeholder="カテゴリ2のポジションを入力 (例: CB, SB, CH, SH, ST)" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i>
-                                追加</button>
+                            <input type="text" id="new-position-cat2" class="sl-input" placeholder="カテゴリ2のポジションを入力 (例: CB, SB, CH, SH, ST)" required>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
                         </form>
                     </div>
                     <ul id="position-cat2-list" class="sl-list"></ul>
                 </div>
-            </div>
+            </section>
 
             <!-- Section: 動画分析タグ -->
-            <div class="sl-section">
-                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-                    <span><i class="fa-solid fa-tags"></i> 動画分析タグ</span>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-analysis-tags" style="font-size:0.75rem; padding:0.2rem 0.5rem;">
+            <section class="sl-section c-settings-section card c-card" id="analysis-tags-section" aria-labelledby="analysis-tags-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content">
+                        <span class="c-kicker"><i class="fa-solid fa-tags" aria-hidden="true"></i> VIDEO ANALYSIS TAGS</span>
+                        <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="analysis-tags-title">動画分析タグ</h2>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-analysis-tags">
                         <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                     </button>
                 </div>
-                <div class="sl-section-body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <div class="sl-row sl-add-row">
                         <form id="form-add-analysis-tag" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-analysis-tag" class="sl-input"
-                                placeholder="新しい動画分析タグを入力 (例: チャンス, ピンチ)" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i>
-                                追加</button>
+                            <input type="text" id="new-analysis-tag" class="sl-input" placeholder="新しい動画分析タグを入力 (例: チャンス, ピンチ)" required>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
                         </form>
                     </div>
                     <ul id="analysis-tag-list" class="sl-list"></ul>
                 </div>
-            </div>
+            </section>
 
             <!-- Section: フォーメーション -->
-            <div class="sl-section">
-                <div class="sl-section-label" style="display:flex; justify-content:space-between; align-items:center;">
-                    <span><i class="fa-solid fa-chess-board"></i> フォーメーション</span>
-                    <button type="button" class="btn btn-primary btn-sm" id="btn-add-custom-formation"><i
-                            class="fa-solid fa-plus"></i> 新規作成</button>
+            <section class="sl-section c-settings-section card c-card" id="custom-formations-section" aria-labelledby="custom-formations-title">
+                <div class="c-section-header c-settings-section__header c-card__header">
+                    <div class="c-section-header__content">
+                        <span class="c-kicker"><i class="fa-solid fa-chess-board" aria-hidden="true"></i> FORMATIONS</span>
+                        <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="custom-formations-title">フォーメーション</h2>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-add-custom-formation">
+                        <i class="fa-solid fa-plus"></i> 新規作成
+                    </button>
                 </div>
-                <div class="sl-section-body">
+                <div class="sl-section-body c-settings-section__body c-card__body">
                     <ul id="custom-formation-list" class="sl-list"></ul>
                 </div>
-            </div>
+            </section>
 
             <!-- Section: データ連携・バックアップ管理 -->
             <section class="sl-section c-settings-section card c-card" id="data-management-settings-section" aria-labelledby="data-management-settings-title">

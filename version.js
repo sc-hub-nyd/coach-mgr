@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.16';
+export const APP_VERSION = 'v1.30.17';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.17',
+        date: '2026-08-19',
+        title: '設定画面のマスタ項目カード化と角丸・余白の配置最適化',
+        features: [
+            '試合種別・各種カテゴリ・評価項目・ポジション・タグ等のマスタ設定を標準c-cardコンポーネントへ統一',
+            'カードヘッダー（kicker・見出し・洗い替え操作）とフォーム・リストのインセット余白を最適化',
+            '角丸にかかって文字やボタンが欠けて見える問題を解消し、設定画面全体の整列感を統一'
+        ]
+    },
     {
         version: 'v1.30.16',
         date: '2026-08-19',

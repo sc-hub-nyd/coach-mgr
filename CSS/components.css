@@ -357,10 +357,17 @@
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
+.card.c-card > .sl-section-body {
+    background: transparent;
+    box-shadow: none;
+    border-radius: var(--radius-md);
+    overflow: visible;
+}
+
 .sl-row {
     display: flex;
     align-items: center;
-    padding: 0.7rem 1.1rem;
+    padding: 0.7rem 0.5rem;
     border-bottom: 1px solid var(--surface-border);
     gap: 0.75rem;
     min-height: 52px;
@@ -374,6 +381,9 @@
 
 .sl-add-row {
     background: var(--color-surface-subtle);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-2);
 }
 
 .sl-row-label {
