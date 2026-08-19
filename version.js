@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.65';
+export const APP_VERSION = 'v1.30.66';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.66',
+        date: '2026-08-19',
+        title: '波G：試合詳細・フォーメーション・補助UIの共通化',
+        features: [
+            '試合ピリオドカードと空状態をc-period-card・c-empty-stateへ統一し、動画分析・編集・削除導線を維持',
+            'フォーメーション編集の案内、ノード行、選択欄をc-formation-editor・c-pitch-nodeへ移行し、静的行スタイルを削除',
+            '動画リンク、追加読み込み、スコア区切りなどの補助UIを共通部品へ移行し、未参照u-ext CSSを削除'
+        ]
+    },
     {
         version: 'v1.30.65',
         date: '2026-08-19',

@@ -461,7 +461,7 @@ export function initPractices(miniPitchObserver) {
                                                     </div>
                                                     ${menu.organize ? `<div><strong><i class="fa-solid fa-users"></i> オーガナイズ</strong><div class="c-content-disclosure__text">${escapeHtml(menu.organize)}</div></div>` : ''}
                                                     ${menu.keyfactor ? `<div><strong><i class="fa-solid fa-key"></i> キーファクター</strong><div class="c-content-disclosure__text">${escapeHtml(menu.keyfactor)}</div></div>` : ''}
-                                                    ${menu.videoUrl ? `<div><strong><i class="u-ext-16 fa-brands fa-youtube"></i> 参考動画</strong><div class="c-content-disclosure__text"><a class="c-content-disclosure__link" href="${escapeHtml(menu.videoUrl)}" target="_blank" rel="noopener noreferrer"><i class="u-ext-33 fa-solid fa-arrow-up-right-from-square"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
+                                                    ${menu.videoUrl ? `<div><strong><i class="c-icon--brand fa-brands fa-youtube"></i> 参考動画</strong><div class="c-content-disclosure__text"><a class="c-content-disclosure__link" href="${escapeHtml(menu.videoUrl)}" target="_blank" rel="noopener noreferrer"><i class="c-icon--meta fa-solid fa-arrow-up-right-from-square"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
                                                     ${menu.options ? `<div><strong><i class="fa-solid fa-sliders"></i> オプション</strong><div class="c-content-disclosure__text">${escapeHtml(menu.options)}</div></div>` : ''}
                                                     ${menu.reflection ? `<div><strong class="c-content-disclosure__label"><i class="fa-solid fa-clipboard-user"></i> 指導者の振り返り・メモ</strong><div class="c-content-disclosure__note">${escapeHtml(menu.reflection)}</div></div>` : ''}
                                                 </div>
@@ -482,8 +482,8 @@ export function initPractices(miniPitchObserver) {
     if (filteredPractices.length > displayedPractices.length) {
         const remaining = filteredPractices.length - displayedPractices.length;
         html += `
-            <div class="u-ext-142" >
-                <button class="u-ext-143 c-button btn c-button--secondary btn-secondary" id="btn-load-more-practices" >
+            <div class="c-load-more" >
+                <button class="c-load-more__button c-button btn c-button--secondary btn-secondary" id="btn-load-more-practices" >
                     <i class="fa-solid fa-angle-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredPractices.length} 件)
                 </button>
             </div>

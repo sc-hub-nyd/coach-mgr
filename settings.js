@@ -1011,7 +1011,7 @@ export function initSettings() {
         if (pitchCanvas) pitchCanvas.querySelectorAll('.pitch-node').forEach(n => n.remove());
 
         const editorList = document.getElementById('custom-formation-nodes-editor-list');
-        if (editorList) editorList.innerHTML = `<p class="u-ext-174 text-secondary" >ピッチをクリックしてポジションを追加してください。</p>`;
+        if (editorList) editorList.innerHTML = `<p class="c-empty-state__text text-secondary" >ピッチをクリックしてポジションを追加してください。</p>`;
 
         const selectCount = document.getElementById('custom-formation-player-count');
         const maxCountLabel = document.getElementById('custom-formation-max-count');
@@ -1027,7 +1027,7 @@ export function initSettings() {
             nodeEl.style.cursor = 'grab';
             nodeEl.innerHTML = `
                 <span class="pitch-node-role" id="custom-pitch-node-label-span-${node.index}">${node.label}</span>
-                <span class="u-ext-175 pitch-node-number" id="custom-pitch-node-role-span-${node.index}" >${node.role}</span>
+                <span class="c-pitch-node__role pitch-node-number" id="custom-pitch-node-role-span-${node.index}" >${node.role}</span>
             `;
             if (pitchCanvas) pitchCanvas.appendChild(nodeEl);
 
@@ -1042,15 +1042,14 @@ export function initSettings() {
             const cat2Options = `<option value="">(選択なし)</option>` + cat2Roles.map(r => `<option value="${r}" ${node.label === r ? 'selected' : ''}>${r}</option>`).join('');
 
             const row = document.createElement('div');
-            row.className = 'custom-formation-node-row';
             row.id = `custom-node-editor-row-${node.index}`;
-            row.style = 'display:flex; gap:0.4rem; align-items:center; margin-bottom:0.4rem;';
+            row.className = 'c-formation-editor__node-row';
             row.innerHTML = `
-                <strong class="u-ext-176" >#${node.index + 1}</strong>
-                <select class="u-ext-177 c-input form-control custom-node-role-select" title="カテゴリ1" >
+                <strong class="c-formation-editor__ordinal" >#${node.index + 1}</strong>
+                <select class="c-formation-editor__field c-input form-control custom-node-role-select" title="カテゴリ1" >
                     ${cat1Options}
                 </select>
-                <select class="u-ext-177 c-input form-control custom-node-cat2-select" title="カテゴリ2" >
+                <select class="c-formation-editor__field c-input form-control custom-node-cat2-select" title="カテゴリ2" >
                     ${cat2Options}
                 </select>
             `;
@@ -1145,7 +1144,7 @@ export function initSettings() {
         const clearBoard = () => {
             placedNodes = [];
             if (pitchCanvas) pitchCanvas.querySelectorAll('.pitch-node').forEach(n => n.remove());
-            if (editorList) editorList.innerHTML = `<p class="u-ext-174 text-secondary" >ピッチをクリックしてポジションを追加してください。</p>`;
+            if (editorList) editorList.innerHTML = `<p class="c-empty-state__text text-secondary" >ピッチをクリックしてポジションを追加してください。</p>`;
         };
 
         if (selectCount) {

@@ -590,6 +590,26 @@ requireNone(waveFPeriodEditorLegacySources, [
     /class=["'][^"']*(?:\s|["'])u-ext-(?:78|79|80|81|82|83|84|85|86|87|88|89|90|91|92|94|95|96|97|98|104|105|107|108|109|112|113|114)(?=\s|["'])/
 ], '波F F3で廃止したピリオド編集クラス');
 
+requireAll(source.system, [
+    '\\.c-period-card',
+    '\\.c-period-card__header',
+    '\\.c-period-card__record-list',
+    '\\.c-period-card__actions'
+], '波G G1のピリオドカード部品');
+
+requireAll(source.matches, [
+    'c-period-card',
+    'c-period-card__record-list',
+    'c-period-card__actions',
+    'c-empty-state__text'
+], '波G G1・G2の試合詳細移行');
+
+const waveGMatchCardLegacySources = [source.matches, source.components].join('\n');
+requireNone(waveGMatchCardLegacySources, [
+    /\.u-ext-(?:63|64|65|66|67|68|69|70|71|72|73|74|75|76)\b/,
+    /class=["'][^"']*(?:\s|["'])u-ext-(?:63|64|65|66|67|68|69|70|71|72|73|74|75|76)(?=\s|["'])/
+], '波G G1・G2で廃止した試合カードクラス');
+
 // Label-shape contract: only common status labels may represent state, counts, and compact metadata.
 const labelSources = [
     source.index,
