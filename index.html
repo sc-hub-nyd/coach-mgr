@@ -669,28 +669,39 @@
             </section>
 
             <!-- Team theme: seed color is transformed into accessible roles at runtime. -->
-            <section class="sl-section c-settings-section card c-card" id="team-theme-section" aria-labelledby="team-theme-title">
+            <section class="sl-section c-settings-section card c-card" id="team-theme-section" aria-labelledby="team-theme-section-title">
                 <div class="c-section-header c-settings-section__header c-card__header">
                     <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-palette" aria-hidden="true"></i> TEAM THEME</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="team-theme-section-title">チームテーマ</h2></div>
                 </div>
                 <div class="sl-section-body c-settings-section__body c-card__body">
-                    <form id="form-team-info">
-                        <div class="sl-row">
-                            <label class="sl-row-label" for="team-info-name">チーム名 <span class="badge-required">必須</span></label>
-                            <input type="text" id="team-info-name" class="sl-input" required>
-                        </div>
-                        <div class="sl-row">
-                            <label class="sl-row-label" for="team-info-passcode">コーチパスコード</label>
-                            <input type="password" id="team-info-passcode" class="sl-input" placeholder="パスコードを入力" style="max-width:140px; text-align:center;">
+                    <form id="form-team-info" class="c-settings-form">
+                        <div class="c-form-grid">
+                            <div class="c-form-field c-form-field--fluid">
+                                <label class="c-form-field__label" for="team-info-name">チーム名 <span class="badge-required">必須</span></label>
+                                <input type="text" id="team-info-name" class="sl-input" required>
+                            </div>
+                            <div class="c-form-field c-form-field--fluid">
+                                <label class="c-form-field__label" for="team-info-passcode">コーチパスコード</label>
+                                <input type="password" id="team-info-passcode" class="sl-input" placeholder="パスコードを入力">
+                            </div>
                         </div>
                         <div class="team-theme-editor">
-                            <div class="team-theme-editor__heading"><div><h2 id="team-theme-title">チームカラー</h2><p>選んだ色を種色として、操作・背景・文字をライト／ダーク両方で自動調整します。</p></div><output id="team-theme-hex" class="team-theme-editor__hex" aria-live="polite">#ef3340</output></div>
+                            <div class="team-theme-editor__heading">
+                                <div>
+                                    <span class="c-kicker"><i class="fa-solid fa-droplet" aria-hidden="true"></i> SEED COLOR</span>
+                                    <h3 class="c-section-header__title" id="team-theme-title">チームカラー</h3>
+                                    <p class="c-settings-section__intro">選んだ色を種色として、操作・背景・文字をライト／ダーク両方で自動調整します。</p>
+                                </div>
+                                <output id="team-theme-hex" class="team-theme-editor__hex" aria-live="polite">#ef3340</output>
+                            </div>
                             <div class="team-theme-editor__controls">
                                 <label class="team-theme-editor__picker" for="team-info-color"><span class="u-visually-hidden">チームカラーを選択</span><input type="color" id="team-info-color" value="#ef3340"><span>色を選ぶ</span></label>
-                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-check"></i> チームテーマを保存</button>
                             </div>
                             <div id="team-theme-preview" class="c-theme-preview" aria-live="polite"></div>
                             <p id="team-theme-contrast-status" class="team-theme-editor__status"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> 必須の文字・UIコントラストを確認します。</p>
+                        </div>
+                        <div class="c-action-group c-action-group--mobile-stretch operations-actions">
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-check" aria-hidden="true"></i> チームテーマを保存</button>
                         </div>
                     </form>
                 </div>

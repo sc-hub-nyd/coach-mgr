@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.18';
+export const APP_VERSION = 'v1.30.19';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.19',
+        date: '2026-08-19',
+        title: 'チームテーマ設定カードのフォームグリッド・Neumorphism 2.0完全標準化',
+        features: [
+            'チーム名・パスコード入力を旧式のsl-rowから標準のc-form-grid/c-form-field構造へ統一',
+            'チームカラーエディタをNeumorphism 2.0の標準サブパネル（余白・角丸・kicker・見出し）へ刷新',
+            '保存操作を最下部の標準c-action-groupへ配置し、モバイルおよび全体レイアウトとの一貫性を確立'
+        ]
+    },
     {
         version: 'v1.30.18',
         date: '2026-08-19',
