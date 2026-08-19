@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.57';
+export const APP_VERSION = 'v1.30.58';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.58',
+        date: '2026-08-19',
+        title: 'ラベル形状を共通ステータスへ統一',
+        features: [
+            '旧badge系、画面固有の件数・絞り込み・進捗ラベル、ダッシュボードの円形マーカー、フィルムストリップの小角丸バッジをc-statusへ統合',
+            '絞り込み条件はキーボード操作できるc-status--interactiveボタンへ変更し、解除操作の可用性を維持',
+            'P35に旧ラベル形状の再導入を検知する契約を追加し、共通ステータス部品・必要バリアントの存在を自動検証'
+        ]
+    },
     {
         version: 'v1.30.57',
         date: '2026-08-19',
