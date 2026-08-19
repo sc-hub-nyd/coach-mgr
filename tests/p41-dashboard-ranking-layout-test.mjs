@@ -36,7 +36,7 @@ requireAll(system, [
 // 4カードは氏名と指標を同一のc-data-list構造で生成し、CSSだけで整列を統一する。
 requireAll(app, [
     "renderRankList\\(scorerCounts, '得点', 'dash-top-scorers'\\)",
-    "renderRankList\\(assistCounts, 'A', 'dash-top-assists'\\)",
+    "renderRankList\\(assistCounts, 'アシスト', 'dash-top-assists'\\)",
     "const attendanceRankEl = document.getElementById\\('dash-attendance-rank'\\)",
     "const playtimeContent = document.getElementById\\('dash-playtime-content'\\)",
     'c-data-list__identity',

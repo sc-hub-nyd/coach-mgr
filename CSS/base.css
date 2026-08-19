@@ -181,6 +181,8 @@ a,
     height: 100vh;
     height: 100dvh;
     z-index: 100;
+    box-sizing: border-box;
+    overflow: hidden;
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
     /* Design */
@@ -229,9 +231,11 @@ a,
 
 .c-sidebar__nav {
     list-style: none;
+    min-block-size: 0;
     padding: 1rem 0;
     flex-grow: 1;
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .c-sidebar__nav li {
@@ -270,6 +274,7 @@ a,
 .c-sidebar__footer {
     padding: 0.85rem 1rem;
     border-top: 1px solid var(--surface-border);
+    flex: 0 0 auto;
     margin-top: auto;
     background: var(--surface-subtle);
     display: flex;

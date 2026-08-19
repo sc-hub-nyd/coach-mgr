@@ -1690,7 +1690,7 @@ function initDashboard() {
             : renderEmptyState({ icon: 'fa-chart-line', title: '記録なし', compact: true });
     };
     renderRankList(scorerCounts, '得点', 'dash-top-scorers');
-    renderRankList(assistCounts, 'A', 'dash-top-assists');
+    renderRankList(assistCounts, 'アシスト', 'dash-top-assists');
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // ROW 5: 直近の予定・実績 (降順・最大7件・直近の試合と完全同一サイズ)

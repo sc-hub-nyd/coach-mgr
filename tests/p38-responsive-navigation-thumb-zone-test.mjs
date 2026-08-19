@@ -17,7 +17,9 @@ test('P38-1: PCサイドバーフッターの配置と機能契約検証', () =>
     assert.match(indexHtml, /id="btn-toggle-color-mode"/, 'btn-toggle-color-mode exists in sidebar');
     assert.match(indexHtml, /id="btn-topbar-sync-status"/, 'sync-status exists in sidebar');
     assert.match(indexHtml, /id="topbar-version-badge"/, 'topbar-version-badge exists in sidebar');
-    assert.match(baseCss, /\.c-sidebar__footer\s*\{/, 'CSS defines c-sidebar footer');
+    assert.match(baseCss, /\.c-sidebar\s*\{[\s\S]*?box-sizing:\s*border-box;[\s\S]*?overflow:\s*hidden;/, 'sidebar owns the viewport and does not create a competing page scroll area');
+    assert.match(baseCss, /\.c-sidebar__nav\s*\{[\s\S]*?min-block-size:\s*0;[\s\S]*?flex-grow:\s*1;[\s\S]*?overflow-y:\s*auto;[\s\S]*?overscroll-behavior:\s*contain;/, 'sidebar navigation is the stable, contained scroll region');
+    assert.match(baseCss, /\.c-sidebar__footer\s*\{[\s\S]*?flex:\s*0\s+0\s+auto;/, 'sidebar footer remains fixed while navigation scrolls');
     assert.match(baseCss, /\.c-sidebar__user-card\s*\{/, 'CSS defines c-sidebar user card');
     assert.match(indexHtml, /class="c-sidebar"/, 'sidebar uses the common app-shell class');
     assert.match(appJs, /badge\.innerHTML = .*?<span>コーチ<\/span>';/, 'sidebar role badge uses the concise coach label');
