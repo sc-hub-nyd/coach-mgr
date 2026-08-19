@@ -58,11 +58,14 @@
                 <!-- PC用サイドバークラウド同期ステータス -->
                 <div class="sidebar-sync-row" style="position:relative;">
                     <button type="button" class="btn btn-secondary btn-sm sidebar-sync-btn" id="btn-topbar-sync-status" title="クラウド同期ステータス" aria-label="クラウド同期ステータス" style="width:100%; justify-content:space-between; font-size:0.75rem;">
-                        <span style="display:flex; align-items:center; gap:0.4rem;">
-                            <i class="fa-solid fa-cloud-arrow-down" id="sync-status-icon" aria-hidden="true"></i>
+                        <span style="display:flex; align-items:center; gap:0.45rem;">
+                            <span class="sync-icon-wrapper" style="position:relative; display:inline-flex; align-items:center;">
+                                <i class="fa-solid fa-cloud-arrow-down" id="sync-status-icon" aria-hidden="true"></i>
+                                <span class="sync-status-dot" id="sync-status-dot"></span>
+                            </span>
                             <span id="sidebar-sync-label">クラウド同期</span>
                         </span>
-                        <span class="sync-status-dot" id="sync-status-dot"></span>
+                        <span id="sidebar-sync-quick-time" style="font-size:0.68rem; color:var(--text-secondary);">未実施</span>
                     </button>
 
                     <!-- タップ時に開くステータスポップオーバー -->
@@ -83,7 +86,7 @@
 
                 <div class="sidebar-version-row">
                     <button type="button" class="btn-link sidebar-version-btn" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span id="topbar-version-text">v1.30.29</span>
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span id="topbar-version-text">v1.30.33</span>
                     </button>
                 </div>
             </div>
@@ -174,11 +177,15 @@
                     </button>
                 </div>
 
-                <!-- クラウド同期カード（モバイル統合） -->
+                <!-- クラウド同期カード（モバイル統合・ステータスランプ付き） -->
                 <div class="mobile-more-sync-card c-card" id="mobile-sync-card" style="margin-bottom:0.8rem; padding:0.75rem 1rem;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                        <div style="font-size:0.75rem; font-weight:700; display:flex; align-items:center; gap:0.35rem;">
-                            <i class="fa-solid fa-cloud" aria-hidden="true" style="color:var(--primary);"></i> クラウド同期
+                        <div style="font-size:0.75rem; font-weight:700; display:flex; align-items:center; gap:0.4rem;">
+                            <span class="sync-icon-wrapper" style="position:relative; display:inline-flex; align-items:center;">
+                                <i class="fa-solid fa-cloud" aria-hidden="true" style="color:var(--primary);"></i>
+                                <span class="sync-status-dot" id="mobile-sync-status-dot"></span>
+                            </span>
+                            <span>クラウド同期</span>
                         </div>
                         <div style="font-size:0.7rem; color:var(--text-secondary);" id="mobile-sync-last-time">最終同期: 未実施</div>
                     </div>
@@ -197,13 +204,9 @@
                         <span class="c-icon c-icon--team c-icon--md" aria-hidden="true"></span>
                         <span>選手管理</span>
                     </button>
-                    <button type="button" class="btn btn-secondary mobile-more-item coach-only" data-mobile-route="settings">
+                    <button type="button" class="btn btn-secondary mobile-more-item" data-mobile-route="settings">
                         <i class="fa-solid fa-gear" style="font-size:1.2rem;" aria-hidden="true"></i>
                         <span>設定</span>
-                    </button>
-                    <button type="button" class="btn btn-secondary mobile-more-item parent-only" id="mobile-btn-my-player">
-                        <i class="fa-solid fa-user-gear" style="font-size:1.2rem;" aria-hidden="true"></i>
-                        <span>マイ選手選択</span>
                     </button>
                 </div>
 
@@ -213,12 +216,13 @@
                         <i class="fa-solid fa-moon" aria-hidden="true"></i> <span id="mobile-color-mode-text">ダーク表示</span>
                     </button>
                     <button type="button" class="btn-link" id="mobile-version-badge" style="font-size:0.75rem; color:var(--text-secondary);" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <span id="mobile-version-text">v1.30.28</span>
+                        <span id="mobile-version-text">v1.30.33</span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
 
     <div id="pwa-update-banner" class="pwa-update-banner hidden" role="status" aria-live="polite">
         <span><i class="fa-solid fa-arrows-rotate"></i> 新しいバージョンを利用できます</span>

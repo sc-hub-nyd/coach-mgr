@@ -241,9 +241,11 @@ function setSyncStateUI(status) {
     const dot = document.getElementById('sync-status-dot');
     const timeEl = document.getElementById('sync-last-time');
     const textEl = document.getElementById('sync-status-text');
+    const sidebarQuickTime = document.getElementById('sidebar-sync-quick-time');
     const mobileIcon = document.getElementById('mobile-sync-icon');
     const mobileBtnText = document.getElementById('mobile-sync-btn-text');
     const mobileTimeEl = document.getElementById('mobile-sync-last-time');
+    const mobileDot = document.getElementById('mobile-sync-status-dot');
     const isCoach = state.currentUserRole === 'coach';
     window.__coachMgrSyncStatus = status;
     if (textEl) textEl.textContent = getSyncStatusLabel(status);
@@ -253,37 +255,44 @@ function setSyncStateUI(status) {
         if (mobileIcon) mobileIcon.className = 'fa-solid fa-rotate fa-spin';
         if (mobileBtnText) mobileBtnText.textContent = '同期中...';
         if (dot) dot.className = 'sync-status-dot syncing';
+        if (mobileDot) mobileDot.className = 'sync-status-dot syncing';
     } else if (status === 'success') {
         const iconClass = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
         if (icon) icon.className = iconClass;
         if (mobileIcon) mobileIcon.className = iconClass;
         if (mobileBtnText) mobileBtnText.textContent = 'データを同期する';
         if (dot) dot.className = 'sync-status-dot';
+        if (mobileDot) mobileDot.className = 'sync-status-dot';
         const now = new Date();
         lastSyncTimeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
         if (timeEl) timeEl.textContent = `本日 ${lastSyncTimeStr}`;
+        if (sidebarQuickTime) sidebarQuickTime.textContent = lastSyncTimeStr;
         if (mobileTimeEl) mobileTimeEl.textContent = `最終同期: 本日 ${lastSyncTimeStr}`;
     } else if (status === 'local') {
         if (icon) icon.className = 'fa-solid fa-hard-drive';
         if (mobileIcon) mobileIcon.className = 'fa-solid fa-hard-drive';
         if (mobileBtnText) mobileBtnText.textContent = 'ローカル保存済み';
         if (dot) dot.className = 'sync-status-dot';
+        if (mobileDot) mobileDot.className = 'sync-status-dot';
     } else if (status === 'offline') {
         if (icon) icon.className = 'fa-solid fa-mobile-screen-button';
         if (mobileIcon) mobileIcon.className = 'fa-solid fa-mobile-screen-button';
         if (mobileBtnText) mobileBtnText.textContent = 'オフライン';
         if (dot) dot.className = 'sync-status-dot error';
+        if (mobileDot) mobileDot.className = 'sync-status-dot error';
     } else if (status === 'conflict') {
         if (icon) icon.className = 'fa-solid fa-triangle-exclamation';
         if (mobileIcon) mobileIcon.className = 'fa-solid fa-triangle-exclamation';
         if (mobileBtnText) mobileBtnText.textContent = '同期の競合が発生';
         if (dot) dot.className = 'sync-status-dot error';
+        if (mobileDot) mobileDot.className = 'sync-status-dot error';
     } else if (status === 'error') {
         const iconClass = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
         if (icon) icon.className = iconClass;
         if (mobileIcon) mobileIcon.className = iconClass;
         if (mobileBtnText) mobileBtnText.textContent = '再試行する';
         if (dot) dot.className = 'sync-status-dot error';
+        if (mobileDot) mobileDot.className = 'sync-status-dot error';
     }
 }
 
