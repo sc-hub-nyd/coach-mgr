@@ -7,6 +7,8 @@ const rootDir = resolve(new URL('.', import.meta.url).pathname, '..');
 const indexHtml = readFileSync(join(rootDir, 'index.html'), 'utf8');
 const appJs = readFileSync(join(rootDir, 'app.js'), 'utf8');
 const baseCss = readFileSync(join(rootDir, 'CSS/base.css'), 'utf8');
+const systemCss = readFileSync(join(rootDir, 'CSS/components-system.css'), 'utf8');
+const practicesJs = readFileSync(join(rootDir, 'practices.js'), 'utf8');
 
 test('P38-1: PCサイドバーフッターの配置と機能契約検証', () => {
     assert.match(indexHtml, /id="sidebar-footer"/, 'sidebar-footer exists in index.html');
@@ -62,10 +64,12 @@ test('P38-5: ナビゲーション階層設計＆戻るボタン（navigateBack�
 });
 
 test('P38-6: 練習管理カードの1行ツールバー配置＆同期ポップオーバー不透明背景検証', () => {
-    assert.match(baseCss, /\.c-sidebar__sync-row \.c-popover[\s\S]*?background-color:\s*var\(--card-bg,\s*#ffffff\)\s*!important;/, 'popover background is solid opaque');
-    assert.match(baseCss, /body \.c-practice-card__actions[\s\S]*?flex-wrap:\s*nowrap|display:\s*flex\s*!important;/, 'practice card actions are styled cleanly');
-    assert.match(baseCss, /body \.c-practice-card__actions \.btn-edit-practice/, 'compact edit button styled');
-    assert.match(baseCss, /body \.c-practice-card__actions \.btn-delete-practice/, 'compact delete button styled');
+    assert.match(systemCss, /\.c-popover--sync[\s\S]*?background:\s*var\(--card-bg,\s*var\(--surface-card\)\);/, 'popover background is solid opaque');
+    assert.match(systemCss, /\.c-popover--sync\.c-popover--sidebar[\s\S]*?inset-block-end:/, 'sidebar popover is positioned upward');
+    assert.match(practicesJs, /c-practice-card--toolbar-actions/, 'practice card opts into the compact toolbar modifier');
+    assert.match(systemCss, /\.c-practice-card--toolbar-actions \.c-practice-card__actions[\s\S]*?display:\s*flex;/, 'practice card actions are styled cleanly');
+    assert.match(systemCss, /\.c-practice-card--toolbar-actions \.btn-edit-practice/, 'compact edit button styled');
+    assert.match(systemCss, /\.c-practice-card--toolbar-actions \.btn-delete-practice/, 'compact delete button styled');
 });
 
 test('P38-7: スマホ向けスリム戻るコンテキストバー（Mobile Context Back Bar）契約検証', () => {

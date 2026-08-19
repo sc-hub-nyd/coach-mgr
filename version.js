@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.68';
+export const APP_VERSION = 'v1.30.69';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.69',
+        date: '2026-08-20',
+        title: 'CSSリファクタリング：アプリシェル・静的レイアウト・共通部品の正本整理',
+        features: [
+            'base.cssの通常装飾46件を!important依存から詳細度・共通修飾子へ移行し、残る状態・権限・モバイルSafe Area例外を台帳化',
+            'モバイルその他メニュー、サイドバー同期ポップオーバー、練習カード一行操作列、アプリローディング、モーダル閉じる操作をcomponents-system.cssの共通部品へ統合',
+            'index.htmlの静的style属性を30件削減し、P35・P38で共通部品の正本利用と旧重複規則の再導入を防止'
+        ]
+    },
     {
         version: 'v1.30.68',
         date: '2026-08-20',

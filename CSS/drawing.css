@@ -743,36 +743,6 @@ body[data-route="animation"] .c-bottom-nav {
     background: #ef4444;
 }
 
-.c-popover--sync {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    width: 230px;
-    background: var(--card-bg, #ffffff);
-    background-color: var(--card-bg, #ffffff);
-    border: 1px solid var(--surface-border);
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    padding: 0.8rem 1rem;
-    z-index: 2000;
-}
-
-.c-popover--sync.hidden {
-    display: none;
-}
-
-.c-popover--sync .c-popover__header {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--surface-border);
-    padding-bottom: 0.4rem;
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
 .sync-time-label {
     font-size: 0.78rem;
     font-weight: 600;

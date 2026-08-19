@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
-    <link rel="stylesheet" href="./CSS/main.css?v=71">
+    <link rel="stylesheet" href="./CSS/main.css?v=72">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -69,7 +69,7 @@
                     </button>
 
                     <!-- タップ時に開くステータスポップオーバー -->
-                    <div id="sync-popover" class="c-popover c-popover--sync hidden" style="bottom:100%; left:0; margin-bottom:0.5rem;">
+                    <div id="sync-popover" class="c-popover c-popover--sync c-popover--sidebar hidden">
                         <div class="c-popover__header">
                             <i class="fa-solid fa-cloud" aria-hidden="true"></i> クラウド同期ステータス
                         </div>
@@ -118,11 +118,10 @@
             </header>
 
             <div id="view-container" class="view-container">
-                <div id="app-loading-spinner"
-                    style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:5rem 2rem; gap:1.2rem; color:var(--text-secondary);">
-                    <i class="fa-solid fa-circle-notch fa-spin" style="font-size:2.5rem; color:var(--primary);"></i>
-                    <div style="font-weight:600; font-size:1rem; color:var(--text-primary);">データを読み込み中...</div>
-                    <div style="font-size:0.8rem;">クラウドから最新情報を取得しています</div>
+                <div id="app-loading-spinner" class="c-loading-state">
+                    <i class="fa-solid fa-circle-notch fa-spin c-loading-state__icon"></i>
+                    <div class="c-loading-state__title">データを読み込み中...</div>
+                    <div class="c-loading-state__description">クラウドから最新情報を取得しています</div>
                 </div>
             </div>
 
@@ -163,66 +162,66 @@
 
     <!-- Mobile More Bottom Sheet (親指で届く片手操作コントロールセンター) -->
     <div id="modal-mobile-more" class="c-modal-overlay modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-more-title">
-        <div class="bottom-sheet-modal mobile-more-sheet c-modal">
-            <div class="modal-header c-modal__header" style="padding:0.75rem 1rem; border-bottom:1px solid var(--surface-border);">
-                <div style="display:flex; align-items:center; gap:0.5rem;">
-                    <i class="fa-solid fa-grip" aria-hidden="true" style="color:var(--primary);"></i>
-                    <h2 id="mobile-more-title" style="font-size:1rem; font-weight:700; margin:0;">その他メニュー</h2>
+        <div class="bottom-sheet-modal mobile-more-sheet c-modal c-mobile-more__sheet">
+            <div class="modal-header c-modal__header c-mobile-more__header">
+                <div class="c-mobile-more__title-group">
+                    <i class="fa-solid fa-grip c-mobile-more__grip" aria-hidden="true"></i>
+                    <h2 id="mobile-more-title" class="c-mobile-more__heading">その他メニュー</h2>
                 </div>
                 <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-close-modal" aria-label="メニューを閉じる"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <div class="mobile-more-body" style="padding:1rem;">
+            <div class="mobile-more-body c-mobile-more__body">
                 <!-- ロール切替カード -->
-                <div class="mobile-more-role-card c-card" style="margin-bottom:0.8rem; padding:0.75rem 1rem; display:flex; justify-content:space-between; align-items:center;">
+                <div class="mobile-more-role-card c-card c-mobile-more__role-card">
                     <div>
-                        <div style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">現在のモード</div>
-                        <div id="mobile-user-role-label" style="font-weight:700; font-size:0.95rem; color:var(--text-primary);">保護者モード</div>
+                        <div class="c-mobile-more__eyebrow">現在のモード</div>
+                        <div id="mobile-user-role-label" class="c-mobile-more__role-label">保護者モード</div>
                     </div>
-                    <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="mobile-btn-toggle-role" style="font-size:0.8rem;">
+                    <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-mobile-more__role-action" id="mobile-btn-toggle-role">
                         <i class="fa-solid fa-right-left" aria-hidden="true"></i> モード切替
                     </button>
                 </div>
 
                 <!-- クラウド同期カード（モバイル統合・ステータスランプ付き） -->
-                <div class="mobile-more-sync-card c-card" id="mobile-sync-card" style="margin-bottom:0.8rem; padding:0.75rem 1rem;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                        <div style="font-size:0.75rem; font-weight:700; display:flex; align-items:center; gap:0.4rem;">
+                <div class="mobile-more-sync-card c-card c-mobile-more__sync-card" id="mobile-sync-card">
+                    <div class="c-mobile-more__sync-header">
+                        <div class="c-mobile-more__sync-label">
                             <span class="sync-icon-wrapper" style="position:relative; display:inline-flex; align-items:center;">
                                 <i class="fa-solid fa-cloud" aria-hidden="true" style="color:var(--primary);"></i>
                                 <span class="sync-status-dot" id="mobile-sync-status-dot"></span>
                             </span>
                             <span>クラウド同期</span>
                         </div>
-                        <div style="font-size:0.7rem; color:var(--text-secondary);" id="mobile-sync-last-time">最終同期: 未実施</div>
+                        <div class="c-mobile-more__sync-time" id="mobile-sync-last-time">最終同期: 未実施</div>
                     </div>
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="mobile-btn-sync-now" style="width:100%; font-size:0.8rem; justify-content:center; gap:0.4rem;">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-mobile-more__sync-button" id="mobile-btn-sync-now">
                         <i class="fa-solid fa-cloud-arrow-down" id="mobile-sync-icon" aria-hidden="true"></i> <span id="mobile-sync-btn-text">データを同期する</span>
                     </button>
                 </div>
 
                 <!-- ナビゲーショングリッド -->
-                <div class="mobile-more-grid">
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item coach-only" data-mobile-route="tactics">
+                <div class="mobile-more-grid c-mobile-more__grid">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="tactics">
                         <span class="c-icon c-icon--pass-ladder c-icon--md" aria-hidden="true"></span>
                         <span>戦術管理</span>
                     </button>
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item coach-only" data-mobile-route="players">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="players">
                         <span class="c-icon c-icon--team c-icon--md" aria-hidden="true"></span>
                         <span>選手管理</span>
                     </button>
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item coach-only" data-mobile-route="settings">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="settings">
                         <i class="fa-solid fa-gear" style="font-size:1.2rem;" aria-hidden="true"></i>
                         <span>設定</span>
                     </button>
                 </div>
 
                 <!-- ユーティリティ行（テーマ切替・バージョン） -->
-                <div class="mobile-more-utility-row" style="margin-top:1rem; padding-top:0.75rem; border-top:1px dashed var(--surface-border); display:flex; justify-content:space-between; align-items:center;">
+                <div class="mobile-more-utility-row c-mobile-more__utility-row">
                     <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="mobile-btn-toggle-color-mode">
                         <i class="fa-solid fa-moon" aria-hidden="true"></i> <span id="mobile-color-mode-text">ダーク表示</span>
                     </button>
-                    <button type="button" class="btn-link" id="mobile-version-badge" style="font-size:0.75rem; color:var(--text-secondary);" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
+                    <button type="button" class="btn-link c-mobile-more__version" id="mobile-version-badge" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
                         <span id="mobile-version-text">v1.30.33</span>
                     </button>
                 </div>
@@ -1708,8 +1707,8 @@
     <!-- Match Form Modal -->
     <div id="modal-match" class="c-modal-overlay modal-overlay hidden">
         <div class="c-modal c-modal--legacy modal" style="position:relative;">
-            <button type="button" class="c-modal__close btn-close-modal"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
+            <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
+                >&times;</button>
             <h2 style="margin-bottom:1.5rem;">試合を追加</h2>
             <form id="form-match">
                 <input type="hidden" id="match-edit-id" value="">
@@ -1860,8 +1859,8 @@
     <!-- コンテキスト維持型: ピリオド情報編集モーダル (軽量化版 ボトムシート) -->
     <div id="modal-formation" class="c-modal-overlay modal-overlay hidden" style="z-index: 1030;">
         <div class="bottom-sheet-modal" style="max-width: 600px; width: 100%; position:relative;">
-            <button type="button" class="c-modal__close btn-close-modal"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
+            <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
+                >&times;</button>
             <h2 style="margin-bottom:0.5rem; font-size:1.1rem;" id="formation-modal-title"><i
                     class="fa-solid fa-pen"></i> ピリオド情報を編集</h2>
 
@@ -2015,7 +2014,7 @@
         <div class="modal c-modal modal-tactic-form" role="dialog" aria-modal="true" aria-labelledby="modal-tactic-title">
             <div class="c-modal__header">
                 <h2 id="modal-tactic-title" class="c-modal__title">新しい戦術を作成</h2>
-                <button type="button" class="c-modal__close btn-close-modal" aria-label="戦術フォームを閉じる">&times;</button>
+                <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal" aria-label="戦術フォームを閉じる">&times;</button>
             </div>
             <form id="form-tactic" class="c-modal__body c-settings-form">
                 <input type="hidden" id="tactic-id" value="">
@@ -2043,7 +2042,7 @@
         <div class="modal c-modal modal-menu-form" role="dialog" aria-modal="true" aria-labelledby="modal-menu-title">
             <div class="c-modal__header">
                 <h2 id="modal-menu-title" class="c-modal__title">練習メニューを追加</h2>
-                <button type="button" class="c-modal__close btn-close-modal" aria-label="練習メニューフォームを閉じる">&times;</button>
+                <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal" aria-label="練習メニューフォームを閉じる">&times;</button>
             </div>
             <form id="form-menu" class="c-modal__body c-settings-form" onsubmit="event.preventDefault(); return false;">
                 <input type="hidden" id="menu-practice-id">
@@ -2129,7 +2128,7 @@
         <div class="modal c-modal modal-player-form" role="dialog" aria-modal="true" aria-labelledby="player-modal-title">
             <div class="c-modal__header">
                 <h2 id="player-modal-title" class="c-modal__title">選手を登録</h2>
-                <button type="button" class="c-modal__close btn-close-modal" aria-label="選手登録を閉じる">&times;</button>
+                <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal" aria-label="選手登録を閉じる">&times;</button>
             </div>
             <form id="form-player" class="c-modal__body c-settings-form">
                 <input type="hidden" id="player-edit-id">
@@ -2192,7 +2191,7 @@
         <div class="modal c-modal" role="dialog" aria-modal="true" aria-labelledby="assessment-modal-title">
             <div class="c-modal__header">
                 <h2 id="assessment-modal-title" class="c-modal__title">観察メモ(ファクト)を記録</h2>
-                <button type="button" class="c-modal__close btn-close-modal" aria-label="観察メモ記録を閉じる">&times;</button>
+                <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal" aria-label="観察メモ記録を閉じる">&times;</button>
             </div>
             <form id="form-player-assessment" class="c-modal__body c-settings-form">
                 <input type="hidden" id="assessment-player-id">
@@ -2222,8 +2221,8 @@
     <!-- Text Input Form Modal -->
     <div id="modal-text-input" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
         <div class="c-modal c-modal--legacy c-modal--narrow modal">
-            <button type="button" class="c-modal__close btn-close-modal"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
+            <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
+                >&times;</button>
             <h2 class="c-modal__heading">文字を入力</h2>
             <form id="form-text-input">
                 <div class="form-group">
@@ -2242,8 +2241,8 @@
     <!-- Scene Title Input Modal -->
     <div id="modal-scene-title" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
         <div class="c-modal c-modal--legacy c-modal--narrow modal">
-            <button type="button" class="c-modal__close btn-close-modal"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
+            <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
+                >&times;</button>
             <h2 class="c-modal__heading" id="scene-title-modal-heading">シーン見出しの編集</h2>
             <form id="form-scene-title">
                 <div class="form-group">
@@ -2281,8 +2280,8 @@
     <!-- Library Assign Modal -->
     <div id="modal-assign-practice" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
         <div class="c-modal c-modal--legacy c-modal--medium modal">
-            <button type="button" class="c-modal__close btn-close-modal"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
+            <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
+                >&times;</button>
             <h2 class="c-modal__heading"><i class="fa-solid fa-calendar-plus"></i> 練習日にアサイン</h2>
             <input type="hidden" id="assign-menu-id">
             <p class="text-secondary" style="font-size:0.85rem; margin-bottom:1rem;">アサイン先の練習日を選択してください：</p>
@@ -2300,8 +2299,8 @@
     <!-- Custom Formation Visual Creator Modal -->
     <div id="modal-custom-formation" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
         <div class="c-modal c-modal--legacy modal" style="max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto; position:relative;">
-            <button type="button" class="c-modal__close btn-close-modal"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
+            <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
+                >&times;</button>
             <h2 style="margin-bottom:1.5rem;"><i class="fa-solid fa-street-view"></i> カスタムフォーメーション作成</h2>
             <form id="form-custom-formation">
                 <div class="form-group" style="display:flex; gap:1rem; margin-bottom:1rem;">
@@ -2360,9 +2359,9 @@
     <!-- Match List Popup Modal -->
     <div id="modal-player-matches-list" class="c-modal-overlay modal-overlay hidden" style="z-index: 1002;">
         <div class="c-modal c-modal--legacy modal" style="max-width: 400px;">
-            <button class="c-modal__close btn-close-modal"
+            <button class="c-modal__close c-modal__close--floating btn-close-modal"
                 onclick="document.getElementById('modal-player-matches-list').classList.add('hidden')"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
+                >&times;</button>
             <h2 id="pml-title" style="margin-bottom:1.2rem; font-size:1.15rem; color:var(--primary);"></h2>
             <div id="pml-content"
                 style="display:flex; flex-direction:column; gap:0.6rem; max-height:250px; overflow-y:auto;">
@@ -2379,9 +2378,9 @@
     <!-- Leader Ranking Modal -->
     <div id="modal-leader-ranking" class="c-modal-overlay modal-overlay hidden" style="z-index: 1002;">
         <div class="c-modal c-modal--legacy modal" style="max-width: 680px; width: 92%;">
-            <button class="c-modal__close btn-close-modal"
+            <button class="c-modal__close c-modal__close--floating btn-close-modal"
                 onclick="document.getElementById('modal-leader-ranking').classList.add('hidden')"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
+                >&times;</button>
             <h2 style="margin-bottom:1.2rem; font-size:1.15rem; color:var(--primary);"><i
                     class="fa-solid fa-trophy"></i> 個人ランキング一覧</h2>
 
@@ -2426,9 +2425,9 @@
     <!-- Season Record Detail Modal -->
     <div id="modal-season-record-detail" class="c-modal-overlay modal-overlay hidden" style="z-index: 1002;">
         <div class="c-modal c-modal--legacy modal" style="max-width: 580px; width: 92%;">
-            <button class="c-modal__close btn-close-modal"
+            <button class="c-modal__close c-modal__close--floating btn-close-modal"
                 onclick="document.getElementById('modal-season-record-detail').classList.add('hidden')"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
+                >&times;</button>
             <h2 style="margin-bottom:1.2rem; font-size:1.15rem; color:var(--primary);"><i
                     class="fa-solid fa-chart-pie"></i> チーム成績詳細</h2>
 
@@ -2470,7 +2469,7 @@
         <div class="modal c-modal modal-export-fallback" role="dialog" aria-modal="true" aria-labelledby="export-fallback-modal-title">
             <div class="c-modal__header">
                 <div><h2 id="export-fallback-modal-title" class="c-modal__title"><i class="fa-solid fa-download" aria-hidden="true"></i> データエクスポート</h2><p class="c-form-field__help">下のテキストをすべてコピーし、メモ帳（またはメモアプリ）に貼り付けて<code>.json</code>拡張子で保存してください。</p></div>
-                <button type="button" class="c-modal__close btn-close-modal" onclick="document.getElementById('modal-export-fallback').classList.add('hidden')" aria-label="データエクスポートを閉じる">&times;</button>
+                <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal" onclick="document.getElementById('modal-export-fallback').classList.add('hidden')" aria-label="データエクスポートを閉じる">&times;</button>
             </div>
             <div class="c-modal__body c-settings-form">
                 <p class="c-form-field__help">スマホの場合：「すべて選択」→「コピー」→メモアプリに貼り付け→<code>.json</code>で保存</p>
@@ -2489,7 +2488,7 @@
         <div class="modal c-modal modal-player-csv-import" role="dialog" aria-modal="true" aria-labelledby="csv-import-modal-title">
             <div class="c-modal__header">
                 <div><h2 id="csv-import-modal-title" class="c-modal__title"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> 選手データ一括登録（CSV）</h2><p class="c-form-field__help">CSVファイルを選択するか、テキスト入力エリアに直接貼り付けて一括登録できます。</p></div>
-                <button type="button" class="c-modal__close btn-close-modal" onclick="document.getElementById('modal-import-players-csv').classList.add('hidden')" aria-label="CSV一括登録を閉じる">&times;</button>
+                <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal" onclick="document.getElementById('modal-import-players-csv').classList.add('hidden')" aria-label="CSV一括登録を閉じる">&times;</button>
             </div>
             <form id="form-import-players-csv" class="c-modal__body c-settings-form">
                 <section class="c-card c-card--flat" aria-label="CSVフォーマット例">
@@ -2518,7 +2517,7 @@
         <div class="modal c-modal modal-team-focus" role="dialog" aria-modal="true" aria-labelledby="team-focus-modal-title">
             <div class="c-modal__header">
                 <div><h2 id="team-focus-modal-title" class="c-modal__title"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> チーム強化テーマの設定</h2><p class="c-form-field__help">チーム全体で共有・意識する目標や強化ポイントを設定します。</p></div>
-                <button type="button" class="c-modal__close btn-close-modal" onclick="document.getElementById('modal-edit-team-focus').classList.add('hidden')" aria-label="チーム強化テーマ設定を閉じる">&times;</button>
+                <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal" onclick="document.getElementById('modal-edit-team-focus').classList.add('hidden')" aria-label="チーム強化テーマ設定を閉じる">&times;</button>
             </div>
             <form id="form-edit-team-focus" class="c-modal__body c-settings-form">
                 <div class="c-form-field c-form-field--fluid">

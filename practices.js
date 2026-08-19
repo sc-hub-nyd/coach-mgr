@@ -392,7 +392,7 @@ export function initPractices(miniPitchObserver) {
             `;
 
             html += `
-                <article class="card c-card c-practice-card" data-practice-id="${p.id}">
+                <article class="card c-card c-practice-card c-practice-card--toolbar-actions" data-practice-id="${p.id}">
                     <!-- カードヘッダー（常時表示） -->
                     <div class="c-practice-card__header">
                         <div class="c-practice-card__identity">

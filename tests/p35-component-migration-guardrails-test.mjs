@@ -490,16 +490,14 @@ requireAll(source.base, [
     '\\.c-sidebar__footer',
     '\\.c-topbar__back-button',
     '\\.c-bottom-nav',
-    '\\.c-context-bar__back-button',
-    '\\.c-sidebar__sync-row \\.c-popover'
+    '\\.c-context-bar__back-button'
 ], '波EのアプリシェルCSS');
 
 requireAll(source.drawingCss, [
     '\\.c-tool-dock',
     '\\.c-popover--canvas',
     '\\.c-drawer',
-    '\\.c-inspector-panel',
-    '\\.c-popover--sync'
+    '\\.c-inspector-panel'
 ], '波Eの作図周辺CSS');
 
 const waveELegacySources = [source.index, source.players, source.app, source.drawing, source.matches, source.components, source.base, source.drawingCss].join('\n');
@@ -755,7 +753,9 @@ requireAll(source.system, [
     '\\.c-data-list--parent-access',
     '\\.c-data-list--conflict',
     '\\.c-modal--sync-conflict',
-    '\\.c-modal-overlay--critical'
+    '\\.c-modal-overlay--critical',
+    '\\.c-popover--sync',
+    '\\.c-popover--sidebar'
 ], 'システム部品');
 
 // Wave H5: modal/form static layout is centralized without changing DOM IDs or events.
@@ -792,5 +792,36 @@ requireAll(source.base, [
 requireNone(source.base, [
     /\\.c-topbar__back-button \\{\\n    padding: 0\\.25rem 0\\.6rem !important;/
 ], '波H6で削減した戻るボタン!important');
+
+// CSS refactor stage 1/2: static application shell and modal layouts use components-system as the single source of truth.
+requireAll(source.system, [
+    '\\.c-mobile-more__sheet',
+    '\\.c-mobile-more__item',
+    '\\.c-popover--sync',
+    '\\.c-popover--sidebar',
+    '\\.c-practice-card--toolbar-actions',
+    '\\.c-loading-state',
+    '\\.c-modal__close--floating'
+], 'CSSリファクタリング共通部品');
+
+requireAll(source.index, [
+    'c-mobile-more__sheet',
+    'c-mobile-more__item',
+    'c-popover--sync c-popover--sidebar hidden',
+    'c-loading-state',
+    'c-modal__close--floating'
+], 'CSSリファクタリング後のアプリシェル・モーダル利用');
+
+requireAll(source.practices, [
+    'c-practice-card--toolbar-actions'
+], 'CSSリファクタリング後の練習カード利用');
+
+requireNone([source.base, source.components].join('\n'), [
+    /\.mobile-more-sheet\s*\{/,
+    /\.mobile-more-grid\s*\{/,
+    /\.mobile-more-item\s*\{/,
+    /\.c-sidebar__sync-row \.c-popover\s*\{/,
+    /body \.c-practice-card__actions\s*\{/
+], 'CSSリファクタリングで廃止した重複正本');
 
 console.log('P35 component migration guardrails passed');
