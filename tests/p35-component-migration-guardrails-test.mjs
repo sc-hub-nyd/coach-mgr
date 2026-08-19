@@ -458,6 +458,11 @@ requireNone(labelSources, [
     /class=["'][^"']*(?:\s|["'])(?:filter-count-badge|active-tag-chip|tag-remove|setup-progress|status-badge|dash-form-badge-lg|dash-circle-match|dash-circle-practice|filmstrip-badge|pause-badge|caption-badge)(?=\s|["'])/
 ], '旧ラベル形状');
 
+requireNone(labelSources, [
+    /\.(?:attendance-roster-row|pk-kicker-row(?:__[a-z-]+)?|practice-card(?:-[a-z-]+)?|filmstrip-card(?:__[a-z-]+)?|btn-card-delete)\b/,
+    /class=["'][^"']*(?:\s|["'])(?:attendance-roster-row|pk-kicker-row(?:__[a-z-]+)?|practice-card(?:-[a-z-]+)?|filmstrip-card(?:__[a-z-]+)?|btn-card-delete)(?=\s|["'])/
+], '波Bで廃止した画面固有クラス');
+
 // Standard component contracts used by Phase 1 must exist before templates are migrated.
 requireAll(source.standard, [
     '\\.c-card',

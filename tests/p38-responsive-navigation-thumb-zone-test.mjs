@@ -45,7 +45,7 @@ test('P38-4: スマホ向けモバイルスライドシート（片手操作コ�
     assert.match(indexHtml, /id="mobile-sync-status-dot"/, 'mobile-sync-status-dot exists in sheet');
     assert.match(indexHtml, /id="mobile-btn-sync-now"/, 'mobile-btn-sync-now exists in sheet');
     assert.doesNotMatch(indexHtml, /id="mobile-btn-my-player"/, 'mobile-btn-my-player is removed from sheet');
-    assert.match(indexHtml, /class="btn btn-secondary mobile-more-item coach-only" data-mobile-route="settings"/, 'settings in mobile sheet is coach-only');
+    assert.match(indexHtml, /class="[^"]*c-button[^"]*mobile-more-item[^"]*coach-only[^"]*" data-mobile-route="settings"/, 'settings in mobile sheet is coach-only');
     assert.match(indexHtml, /id="mobile-btn-toggle-color-mode"/, 'mobile-btn-toggle-color-mode exists in sheet');
     assert.match(indexHtml, /id="mobile-version-badge"/, 'mobile-version-badge exists in sheet');
     assert.match(appJs, /mobileBtnToggleRole\.onclick = handleToggleRoleClick/, 'app.js binds mobile role toggle');
@@ -61,9 +61,9 @@ test('P38-5: ナビゲーション階層設計＆戻るボタン（navigateBack�
 
 test('P38-6: 練習管理カードの1行ツールバー配置＆同期ポップオーバー不透明背景検証', () => {
     assert.match(baseCss, /\.sidebar-sync-row \.sync-popover[\s\S]*?background-color:\s*var\(--card-bg,\s*#ffffff\)\s*!important;/, 'popover background is solid opaque');
-    assert.match(baseCss, /body \.practice-card-actions[\s\S]*?flex-wrap:\s*nowrap|display:\s*flex\s*!important;/, 'practice card actions are styled cleanly');
-    assert.match(baseCss, /body \.practice-card-actions \.btn-edit-practice/, 'compact edit button styled');
-    assert.match(baseCss, /body \.practice-card-actions \.btn-delete-practice/, 'compact delete button styled');
+    assert.match(baseCss, /body \.c-practice-card__actions[\s\S]*?flex-wrap:\s*nowrap|display:\s*flex\s*!important;/, 'practice card actions are styled cleanly');
+    assert.match(baseCss, /body \.c-practice-card__actions \.btn-edit-practice/, 'compact edit button styled');
+    assert.match(baseCss, /body \.c-practice-card__actions \.btn-delete-practice/, 'compact delete button styled');
 });
 
 test('P38-7: スマホ向けスリム戻るコンテキストバー（Mobile Context Back Bar）契約検証', () => {
