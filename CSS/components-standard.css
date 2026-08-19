@@ -292,6 +292,47 @@
     margin-block-end: var(--space-1);
 }
 
+.c-status--count {
+    justify-content: center;
+    min-inline-size: 1.25rem;
+    margin-inline-start: var(--space-1);
+    background: var(--color-action);
+    color: var(--color-text-on-action);
+}
+
+.c-status--interactive {
+    cursor: pointer;
+    border: 0;
+    font: inherit;
+    line-height: inherit;
+    transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+
+.c-status--interactive:hover,
+.c-status--interactive:focus-visible {
+    background: color-mix(in srgb, var(--color-brand) 18%, var(--color-surface));
+    color: var(--color-brand);
+}
+
+.c-status--interactive:hover {
+    transform: translateY(-1px);
+}
+
+.c-status--interactive:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+}
+
+.c-status__dismiss {
+    font-size: var(--text-kicker-size);
+    opacity: 0.75;
+}
+
+.c-status--interactive:hover .c-status__dismiss,
+.c-status--interactive:focus-visible .c-status__dismiss {
+    opacity: 1;
+}
+
 .c-empty-state {
     display: grid;
     place-items: center;

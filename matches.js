@@ -2797,27 +2797,27 @@ export function initMatches() {
 
     if (currentMatchNendo !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="nendo">${currentMatchNendo}年度 <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="nendo">${currentMatchNendo}年度 <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentMatchType !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="type">${escapeHtml(currentMatchType)} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="type">${escapeHtml(currentMatchType)} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentMatchOpponent !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="opponent">vs ${escapeHtml(currentMatchOpponent)} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="opponent">vs ${escapeHtml(currentMatchOpponent)} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentMatchResult !== 'all') {
         activeFilterCount++;
         const resultMap = { win: '勝利', loss: '敗北', draw: '引き分け', upcoming: '試合予定' };
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="result">${resultMap[currentMatchResult] || currentMatchResult} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="result">${resultMap[currentMatchResult] || currentMatchResult} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
 
     if (activeTagsContainer) {
         if (activeFilterCount > 0) {
             activeTagsContainer.innerHTML = activeTagsHtml;
             activeTagsContainer.classList.remove('hidden');
-            activeTagsContainer.querySelectorAll('.active-tag-chip').forEach(chip => {
+            activeTagsContainer.querySelectorAll('[data-clear-key]').forEach(chip => {
                 chip.onclick = () => {
                     const key = chip.dataset.clearKey;
                     if (key === 'nendo') uiState.currentMatchNendo = 'all';

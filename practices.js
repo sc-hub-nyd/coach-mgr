@@ -202,28 +202,28 @@ export function initPractices(miniPitchObserver) {
 
     if (currentPracticeNendo !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="nendo">${currentPracticeNendo}年度 <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="nendo">${currentPracticeNendo}年度 <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentPracticeMonth !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="month">${parseInt(currentPracticeMonth, 10)}月 <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="month">${parseInt(currentPracticeMonth, 10)}月 <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentPracticeCategory !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="category">${escapeHtml(currentPracticeCategory)} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="category">${escapeHtml(currentPracticeCategory)} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentPracticePlayer !== 'all') {
         activeFilterCount++;
         const targetPlayer = state.players.find(p => String(p.id) === currentPracticePlayer);
         const playerName = targetPlayer ? targetPlayer.name : currentPracticePlayer;
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="player">${escapeHtml(playerName)} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="player">${escapeHtml(playerName)} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
 
     if (activeTagsContainer) {
         if (activeFilterCount > 0) {
             activeTagsContainer.innerHTML = activeTagsHtml;
             activeTagsContainer.classList.remove('hidden');
-            activeTagsContainer.querySelectorAll('.active-tag-chip').forEach(chip => {
+            activeTagsContainer.querySelectorAll('[data-clear-key]').forEach(chip => {
                 chip.onclick = () => {
                     const key = chip.dataset.clearKey;
                     if (key === 'nendo') uiState.currentPracticeNendo = 'all';

@@ -292,7 +292,7 @@
                         <h2 id="dash-setup-title" class="c-text-effect--liquid">チームを使い始める</h2>
                         <p>3つの準備が完了すると、試合と練習の記録をスムーズに始められます。</p>
                     </div>
-                    <span id="dash-setup-progress" class="setup-progress">0/3 完了</span>
+                    <span id="dash-setup-progress" class="c-status c-status--info">0/3 完了</span>
                 </div>
                 <div id="dash-setup-items" class="setup-checklist-items"></div>
             </section>
@@ -469,7 +469,7 @@
                     <input type="search" id="input-match-search" placeholder="試合をキーワード検索..." class="form-control filter-search-input">
                 </div>
                 <div class="c-action-group c-filter-bar__actions">
-                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-matches" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="filter-count-badge hidden" id="badge-filter-matches">0</span></button>
+                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-matches" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="c-status c-status--count c-status--compact hidden" id="badge-filter-matches">0</span></button>
                     <button class="btn btn-secondary" id="btn-sort-match" title="日付昇順/降順切り替え"><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><span class="u-visually-hidden">並び順を切り替え</span></button>
                     <button class="btn btn-primary" id="btn-add-match"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                 </div>
@@ -588,7 +588,7 @@
                     <input type="search" id="input-practice-search" placeholder="練習・メモをキーワード検索..." class="form-control filter-search-input">
                 </div>
                 <div class="c-action-group c-filter-bar__actions">
-                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-practices" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="filter-count-badge hidden" id="badge-filter-practices">0</span></button>
+                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-practices" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="c-status c-status--count c-status--compact hidden" id="badge-filter-practices">0</span></button>
                     <button class="btn btn-secondary" id="btn-sort-practice" title="日付昇順/降順切り替え"><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><span class="u-visually-hidden">並び順を切り替え</span></button>
                     <button class="btn btn-primary" id="btn-add-practice"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                 </div>
@@ -763,7 +763,7 @@
         <section class="c-filter-bar" aria-label="メニューの検索と絞り込み">
             <div class="c-filter-bar__main">
                 <div class="c-filter-bar__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="input-library-search" placeholder="メニューをキーワード検索..." class="form-control filter-search-input"></div>
-                <div class="c-action-group c-filter-bar__actions"><button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-library" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="filter-count-badge hidden" id="badge-filter-library">0</span></button><button class="btn btn-primary" id="btn-add-library-menu"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button></div>
+                <div class="c-action-group c-filter-bar__actions"><button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-library" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="c-status c-status--count c-status--compact hidden" id="badge-filter-library">0</span></button><button class="btn btn-primary" id="btn-add-library-menu"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button></div>
             </div>
             <div class="active-tags-bar hidden" id="active-tags-library"></div>
             <div class="c-filter-bar__filters filter-accordion-panel hidden" id="filter-accordion-library">

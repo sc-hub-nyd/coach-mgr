@@ -912,22 +912,6 @@ input[type="checkbox"] {
     border: none;
 }
 
-.btn-filter-detail .filter-count-badge {
-    background: var(--primary);
-    color: #ffffff;
-    font-size: 0.65rem;
-    font-weight: 700;
-    padding: 0.1rem 0.45rem;
-    border-radius: var(--radius-md);
-    margin-left: 0.3rem;
-    line-height: 1;
-    display: inline-block;
-}
-
-.btn-filter-detail .filter-count-badge.hidden {
-    display: none;
-}
-
 /* Accordion Filter Panel System (Premium Design) */
 .filter-accordion-panel {
     background: var(--card-bg, #ffffff);
@@ -1025,36 +1009,6 @@ input[type="checkbox"] {
     font-weight: 700;
     color: var(--text-secondary);
     margin-right: 0.2rem;
-}
-
-.active-tag-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.65rem;
-    border-radius: var(--radius-md);
-    font-size: 0.75rem;
-    font-weight: 600;
-    background: rgba(242, 57, 50, 0.08);
-    color: var(--primary);
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.active-tag-chip:hover {
-    background: rgba(242, 57, 50, 0.18);
-    transform: translateY(-1px);
-}
-
-.active-tag-chip .tag-remove {
-    font-size: 0.7rem;
-    opacity: 0.75;
-    transition: opacity 0.2s ease;
-}
-
-.active-tag-chip:hover .tag-remove {
-    opacity: 1;
 }
 
 /* ==========================================
@@ -2234,16 +2188,6 @@ input[type="checkbox"] {
     letter-spacing: 0.12em;
 }
 
-.setup-progress {
-    flex: 0 0 auto;
-    padding: 0.35rem 0.65rem;
-    border-radius: var(--radius-md);
-    color: var(--primary-strong, var(--primary));
-    background: var(--card-bg);
-    font-size: 0.75rem;
-    font-weight: 800;
-}
-
 .setup-checklist-items {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2324,8 +2268,7 @@ input[type="checkbox"] {
         display: block;
     }
 
-    .setup-progress {
-        display: inline-block;
+    #dash-setup-progress {
         margin-top: 0.75rem;
     }
 }
@@ -2387,31 +2330,6 @@ input[type="checkbox"] {
     min-height: var(--tap-target);
     margin-top: 0.35rem;
 }
-
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    min-height: 28px;
-    padding: 0.25rem 0.55rem;
-    color: var(--text-secondary);
-    background: var(--primary-soft);
-    border-radius: var(--radius-md);
-    font-size: 0.72rem;
-    font-weight: 750;
-}
-
-.status-badge-dot {
-    width: 7px;
-    height: 7px;
-    background: currentColor;
-    border-radius: 50%;
-}
-
-.status-badge-success { color: var(--success); background: color-mix(in srgb, var(--success) 12%, var(--card-bg)); }
-.status-badge-warning { color: var(--warning); background: color-mix(in srgb, var(--warning) 12%, var(--card-bg)); }
-.status-badge-danger { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, var(--card-bg)); }
-.status-badge-info { color: var(--info); background: color-mix(in srgb, var(--info) 12%, var(--card-bg)); }
 
 .sr-only {
     position: absolute !important;

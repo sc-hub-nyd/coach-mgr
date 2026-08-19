@@ -149,29 +149,29 @@ export function initLibrary(miniPitchObserver) {
 
     if (currentLibraryCategory !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="category">${escapeHtml(currentLibraryCategory)} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="category">${escapeHtml(currentLibraryCategory)} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentLibraryMedia !== 'all') {
         activeFilterCount++;
         const mediaMap = { anim: '作図アニメあり', video: '参考動画あり', any: '作図/動画あり' };
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="media">${mediaMap[currentLibraryMedia] || currentLibraryMedia} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="media">${mediaMap[currentLibraryMedia] || currentLibraryMedia} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentLibraryAssigned !== 'all') {
         activeFilterCount++;
         const assignMap = { frequent: 'よく使う (5回以上)', assigned: 'アサイン済み', unassigned: '未アサイン' };
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="assigned">${assignMap[currentLibraryAssigned] || currentLibraryAssigned} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="assigned">${assignMap[currentLibraryAssigned] || currentLibraryAssigned} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentLibraryRating !== 'all') {
         activeFilterCount++;
         const ratingMap = { '5': '★5のみ', '4': '★4以上', '3': '★3以上', rated: '評価あり' };
-        activeTagsHtml += `<span class="active-tag-chip" data-clear-key="rating">${ratingMap[currentLibraryRating] || `★${currentLibraryRating}`} <i class="fa-solid fa-xmark tag-remove"></i></span>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="rating">${ratingMap[currentLibraryRating] || `★${currentLibraryRating}`} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
     }
 
     if (activeTagsContainer) {
         if (activeFilterCount > 0) {
             activeTagsContainer.innerHTML = activeTagsHtml;
             activeTagsContainer.classList.remove('hidden');
-            activeTagsContainer.querySelectorAll('.active-tag-chip').forEach(chip => {
+            activeTagsContainer.querySelectorAll('[data-clear-key]').forEach(chip => {
                 chip.onclick = () => {
                     const key = chip.dataset.clearKey;
                     if (key === 'category') uiState.currentLibraryCategory = 'all';
