@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.47';
+export const APP_VERSION = 'v1.30.48';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.48',
+        date: '2026-08-19',
+        title: 'ボタンラベルの体言止め（名詞形）標準化',
+        features: [
+            'アプリ全体のボタンラベルを体言止め（追加・更新・保存・削除・同期・出力・取込・取消等）に完全統一',
+            'モーダルの新規作成（追加）と編集（更新）の状態別ラベル切り替えを試合・練習・選手・メニュー・戦術の全領域へ徹底適用'
+        ]
+    },
     {
         version: 'v1.30.47',
         date: '2026-08-19',

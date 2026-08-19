@@ -1149,6 +1149,8 @@ export function openMatchModal(matchId = null) {
 
     const title = document.querySelector('#modal-match h2');
     if (title) title.textContent = '試合を追加';
+    const btnSubmit = document.querySelector('#form-match button[type="submit"]');
+    if (btnSubmit) btnSubmit.textContent = '追加';
 
     const select = document.getElementById('match-type');
     if (select) {
@@ -1201,7 +1203,8 @@ export function openMatchModal(matchId = null) {
             const summaryEl = document.getElementById('match-summary');
             if (summaryEl) summaryEl.value = m.comments || '';
 
-            if (title) title.textContent = '試合情報を編集';
+            if (title) title.textContent = '試合を編集';
+            if (btnSubmit) btnSubmit.textContent = '更新';
 
             const activeIds = m.presentPlayerIds || [];
             renderMatchRoster(activeIds);

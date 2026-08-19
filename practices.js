@@ -80,6 +80,8 @@ export function openPracticeModal(practiceId = null) {
 
     const title = document.getElementById('practice-modal-title');
     if (title) title.textContent = '練習日を追加';
+    const btnSubmit = document.querySelector('#modal-practice button[type="submit"]');
+    if (btnSubmit) btnSubmit.textContent = '追加';
 
     // ★ 追加: 練習場所フォーム要素の参照
     const locationEl = document.getElementById('practice-location');
@@ -98,7 +100,8 @@ export function openPracticeModal(practiceId = null) {
             if (dateEl) dateEl.value = p.date;
             if (locationEl) locationEl.value = p.location || ''; // ★ 既存の練習場所をセット
             if (deadlineEl) deadlineEl.value = p.rsvpDeadline || '';
-            if (title) title.textContent = '練習日情報を編集';
+            if (title) title.textContent = '練習日を編集';
+            if (btnSubmit) btnSubmit.textContent = '更新';
 
             renderPracticeRoster(p);
         }
@@ -705,7 +708,7 @@ export function initPractices(miniPitchObserver) {
             const title = document.querySelector('#modal-menu h2');
             if (title) title.textContent = '練習メニューを追加';
             const btnSubmit = document.getElementById('btn-submit-menu');
-            if (btnSubmit) btnSubmit.textContent = '追加する';
+            if (btnSubmit) btnSubmit.textContent = '追加';
 
             openModal('modal-menu');
         });
@@ -781,7 +784,7 @@ export function initPractices(miniPitchObserver) {
                     const title = document.querySelector('#modal-menu h2');
                     if (title) title.textContent = '練習メニューを編集';
                     const btnSubmit = document.getElementById('btn-submit-menu');
-                    if (btnSubmit) btnSubmit.textContent = '更新する';
+                    if (btnSubmit) btnSubmit.textContent = '更新';
 
                     openModal('modal-menu');
                 }

@@ -75,7 +75,9 @@ export function openPlayerEditModal(p) {
     const shortFocusEl = document.getElementById('player-short-focus');
 
     if (editIdEl) editIdEl.value = p.id;
-    if (titleEl) titleEl.textContent = '選手情報を編集';
+    if (titleEl) titleEl.textContent = '選手を編集';
+    const btnSubmit = document.querySelector('#form-player button[type="submit"]');
+    if (btnSubmit) btnSubmit.textContent = '更新';
     if (nameEl) nameEl.value = p.name || '';
     if (numEl) numEl.value = p.number || '';
     if (gradeEl) gradeEl.value = p.grade || '';

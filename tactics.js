@@ -268,14 +268,17 @@ export function openTacticModal(tactic = null) {
     const categories = state.tacticsCategories || ['攻撃：ビルドアップ（自陣）', '攻撃：前進・崩し（中盤〜敵陣）', '守備：ハイプレス（前線）', '守備：ブロック・ゴール前（自陣）', '切り替え：攻→守（奪われたとき）', '切り替え：守→攻（奪ったとき）', 'セットプレー', 'その他'];
     catSelect.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
 
+    const btnSubmit = document.querySelector('#form-tactic button[type="submit"]') || document.querySelector('button[form="form-tactic"]');
     if (tactic) {
-        titleEl.innerHTML = '戦術を編集';
+        titleEl.textContent = '戦術を編集';
+        if (btnSubmit) btnSubmit.innerHTML = '<i class="fa-solid fa-pen" aria-hidden="true"></i> 更新';
         document.getElementById('tactic-id').value = tactic.id;
         document.getElementById('tactic-title').value = tactic.title || '';
         document.getElementById('tactic-category').value = tactic.category || 'その他';
         document.getElementById('tactic-description').value = tactic.description || '';
     } else {
-        titleEl.innerHTML = '新しい戦術を作成';
+        titleEl.textContent = '戦術を追加';
+        if (btnSubmit) btnSubmit.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i> 追加';
         document.getElementById('tactic-id').value = '';
         form.reset();
         document.getElementById('tactic-category').value = uiState.currentTacticsCategory !== 'all' ? uiState.currentTacticsCategory : categories[0];
