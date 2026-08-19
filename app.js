@@ -2382,17 +2382,6 @@ export function navigate(route, params = null, isBack = false) {
         }
     });
 
-    const topbarBreadcrumb = document.getElementById('topbar-breadcrumb');
-    if (topbarBreadcrumb) {
-        if (route === 'match-detail') {
-            topbarBreadcrumb.innerHTML = `<a href="#" onclick="event.preventDefault(); navigate('dashboard');" style="color:var(--text-secondary); text-decoration:none;">ダッシュボード</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <a href="#" onclick="event.preventDefault(); navigate('matches');" style="color:var(--text-secondary); text-decoration:none;">試合記録</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <span>試合詳細</span>`;
-        } else if (route === 'player-detail') {
-            topbarBreadcrumb.innerHTML = `<a href="#" onclick="event.preventDefault(); navigate('dashboard');" style="color:var(--text-secondary); text-decoration:none;">ダッシュボード</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <a href="#" onclick="event.preventDefault(); navigate('players');" style="color:var(--text-secondary); text-decoration:none;">選手管理</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <span>選手カルテ</span>`;
-        } else {
-            topbarBreadcrumb.innerHTML = '';
-        }
-    }
-
     bottomNavLinks.forEach(link => {
         const isActive = link.dataset.route === route || (route === 'match-detail' && link.dataset.route === 'matches') || (route === 'player-detail' && link.dataset.route === 'players');
         link.classList.toggle('active', isActive);

@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.51';
+export const APP_VERSION = 'v1.30.52';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.52',
+        date: '2026-08-19',
+        title: 'パンくずリストの完全撤廃とトップバーのシンプル化',
+        features: [
+            'トップバーのパンくずリストを完全撤廃し、画面タイトルのみの洗練されたクリーンなレイアウトへ統一'
+        ]
+    },
     {
         version: 'v1.30.51',
         date: '2026-08-19',

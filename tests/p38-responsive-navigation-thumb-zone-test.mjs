@@ -19,13 +19,10 @@ test('P38-1: PCサイドバーフッターの配置と機能契約検証', () =>
     assert.match(baseCss, /\.sidebar-user-card\s*\{/, 'CSS defines .sidebar-user-card');
 });
 
-test('P38-2: トップバーのスリム化とパンくずナビゲーション＆スマホモード表示検証', () => {
-    assert.match(indexHtml, /id="topbar-breadcrumb"/, 'topbar-breadcrumb exists in topbar');
+test('P38-2: トップバーのスリム化とタイトル＆スマホモード表示検証', () => {
     assert.match(indexHtml, /id="topbar-title"/, 'topbar-title exists in topbar');
     assert.match(indexHtml, /id="topbar-back"/, 'topbar-back exists in topbar');
     assert.match(indexHtml, /id="mobile-topbar-role-badge"/, 'mobile-topbar-role-badge exists in topbar');
-    assert.match(appJs, /navigate\('dashboard'\)/, 'app.js navigates back to dashboard');
-    assert.match(appJs, />ダッシュボード<\/a>/, 'app.js uses ダッシュボード as breadcrumb home');
     assert.match(appJs, /mobileTopBarRoleBadge\.addEventListener\('click'/, 'app.js binds mobile role badge');
 });
 
