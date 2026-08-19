@@ -902,12 +902,12 @@ export function initMatchDetailView(matchId) {
     if (detailRosterDisplay) {
         const attendeesHtml = m.presentPlayerIds && m.presentPlayerIds.length > 0
             ? state.players.filter(player => m.presentPlayerIds.includes(player.id)).map(player => `
-                <span class="match-attendance-badge">
-                    ${player.number ? `<span class="match-attendance-badge__number">${player.number}</span>` : ''}
-                    <span>${escapeHtml(player.name)}</span>
+                <span class="c-attendee-chip">
+                    ${player.number ? `<span class="c-attendee-chip__number">${player.number}</span>` : ''}
+                    <span class="c-attendee-chip__name">${escapeHtml(player.name)}</span>
                 </span>
             `).join('')
-            : '<span class="c-form-field__help">参加予定はまだありません</span>';
+            : '<span class="c-attendee-list__empty">参加予定はまだありません</span>';
 
         detailRosterDisplay.innerHTML = attendeesHtml;
     }

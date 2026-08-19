@@ -1327,24 +1327,51 @@
     background: var(--color-surface-subtle);
 }
 
-.match-attendance-badge {
+/* Attendee chips are shared by match and practice summaries. */
+.c-attendee-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+}
+
+.c-attendee-chip {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-1);
-    min-block-size: 1.5rem;
-    padding-inline: var(--space-2);
+    gap: 0.25rem;
+    padding: 0.15rem 0.4rem;
     border: none;
     border-radius: var(--radius-md);
-    background: var(--neo-surface);
-    color: var(--color-text);
-    font-size: var(--text-meta-size);
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.c-attendee-chip__number {
+    display: inline-flex;
+    flex: 0 0 0.875rem;
+    align-items: center;
+    justify-content: center;
+    inline-size: 0.875rem;
+    block-size: 0.875rem;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 0.55rem;
     font-weight: 700;
 }
 
-.match-attendance-badge__number {
-    color: var(--color-text-muted);
-    font-family: var(--font-numeric);
-    font-variant-numeric: tabular-nums;
+.c-attendee-chip__name {
+    flex: 0 0 auto;
+}
+
+.c-attendee-list__empty {
+    padding-block: 0.2rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-style: italic;
 }
 
 .match-detail-attendance-roster {

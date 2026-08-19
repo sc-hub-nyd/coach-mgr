@@ -206,7 +206,7 @@ requireAll(source.drawing, [
 requireAll(source.matches, [
     'c-empty-state',
     'c-roster-row c-roster-row--attendance',
-    'match-attendance-badge',
+    'c-attendee-chip',
     'timeline-edit-row c-data-list__item',
     'c-empty-state c-empty-state--compact',
     'c-match-score',
@@ -437,6 +437,7 @@ requireAll(source.index, [
     'c-dashboard-widget__label',
     'c-dashboard-strip',
     'c-dashboard-rank-list',
+    'c-attendee-list',
     'c-status c-status--count c-status--compact',
     'id="dash-setup-progress" class="c-status c-status--info"'
 ], '標準プリミティブ・ダッシュボード・共通ステータスのテンプレート利用');
@@ -450,6 +451,13 @@ requireAll(source.drawing, [
     'c-status c-status--compact c-status--info',
     'c-status c-status--compact c-status--muted'
 ], 'フィルムストリップの共通ステータス利用');
+
+requireAll([source.matches, source.practices].join('\n'), [
+    'c-attendee-chip',
+    'c-attendee-chip__number',
+    'c-attendee-chip__name',
+    'c-attendee-list__empty'
+], '試合・練習で共有する参加者チップ');
 
 requireNone(labelSources, [
     /\.badge(?:-(?:required|sub|fw|mf|df|gk))?\b/,
@@ -505,6 +513,8 @@ requireAll(source.system, [
     '\\.c-dashboard-alert',
     '\\.c-dashboard-strip',
     '\\.c-dashboard-rank-list',
+    '\\.c-attendee-list',
+    '\\.c-attendee-chip',
     '\\.c-modal-overlay',
     '\\.c-modal--legacy',
     '\\.c-modal\\.modal-export-fallback',

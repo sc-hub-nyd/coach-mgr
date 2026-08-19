@@ -355,12 +355,12 @@ export function initPractices(miniPitchObserver) {
 
             const attendeesHtml = p.presentPlayerIds && p.presentPlayerIds.length > 0
                 ? state.players.filter(pl => p.presentPlayerIds.includes(pl.id)).map(pl => `
-                    <span class="u-ext-54">
-                        ${pl.number ? `<span class="u-ext-55">${pl.number}</span>` : ''}
-                        <span class="u-ext-56">${escapeHtml(pl.name)}</span>
+                    <span class="c-attendee-chip">
+                        ${pl.number ? `<span class="c-attendee-chip__number">${pl.number}</span>` : ''}
+                        <span class="c-attendee-chip__name">${escapeHtml(pl.name)}</span>
                     </span>
                 `).join('')
-                : '<span class="u-ext-57">出席登録がありません</span>';
+                : '<span class="c-attendee-list__empty">出席登録がありません</span>';
 
             ensureAttendance(p, state.players.map(player => player.id));
             const attendanceSummary = getAttendanceSummary(p);
@@ -420,7 +420,7 @@ export function initPractices(miniPitchObserver) {
                             <!-- 1. 参加選手領域 -->
                             <div class="practice-detail-section">
                                 <div class="practice-section-label"><i class="fa-solid fa-users"></i> 招集・出欠（参加 ${attendanceSummary.attending} / 欠席 ${attendanceSummary.absent} / 未回答 ${attendanceSummary.pending}）</div>
-                                <div class="c-practice-card__attendance">
+                                <div class="c-practice-card__attendance c-attendee-list">
                                     ${attendeesHtml}
                                 </div>
                                 ${parentResponseHtml}

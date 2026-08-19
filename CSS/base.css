@@ -1217,14 +1217,6 @@ body .practice-section-label {
     color: var(--text-secondary);
 }
 
-/* 参加者バッジリスト */
-body .c-practice-card__attendance {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-    font-size: 0.75rem;
-}
-
 /* ==========================================
    練習メニュー全量表示（内部スクロール・高さ制限の完全解除）
    ========================================== */

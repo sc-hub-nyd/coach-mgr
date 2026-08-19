@@ -1169,43 +1169,44 @@ input[type="checkbox"] {
     font-weight: 500;
 }
 
+/* Legacy attendee/empty-state rules remain while other match-detail regions still reference them. */
 .u-ext-54 {
     display: inline-flex;
     align-items: center;
-    background: #f1f5f9;
+    gap: 0.25rem;
+    padding: 0.15rem 0.4rem;
     border: none;
+    border-radius: var(--radius-md);
+    background: #f1f5f9;
     color: #334155;
     font-size: 0.7rem;
     font-weight: 600;
-    padding: 0.15rem 0.4rem;
-    border-radius: var(--radius-md);
-    gap: 0.25rem;
     white-space: nowrap;
 }
 
 .u-ext-55 {
+    display: inline-flex;
+    flex: 0 0 14px;
+    align-items: center;
+    justify-content: center;
+    inline-size: 14px;
+    block-size: 14px;
+    border-radius: 50%;
     background: var(--primary);
     color: #ffffff;
     font-size: 0.55rem;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     font-weight: 700;
-    flex-shrink: 0;
 }
 
 .u-ext-56 {
-    flex-shrink: 0;
+    flex: 0 0 auto;
 }
 
 .u-ext-57 {
-    font-size: 0.75rem;
+    padding-block: 0.2rem;
     color: var(--text-secondary);
+    font-size: 0.75rem;
     font-style: italic;
-    padding: 0.2rem 0;
 }
 
 .u-ext-61 {
