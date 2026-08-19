@@ -54,3 +54,17 @@ test('P38-4: スマホ向けモバイルスライドシート（片手操作コ�
     assert.match(appJs, /mobileBtnToggleRole\.onclick = handleToggleRoleClick/, 'app.js binds mobile role toggle');
     assert.match(appJs, /mobileBtnSyncNow\.addEventListener\('click'/, 'app.js binds mobile sync button');
 });
+
+test('P38-5: ナビゲーション履歴スタック（navHistory）＆戻るボタン（navigateBack）契約検証', () => {
+    assert.match(appJs, /export function navigateBack\(\)/, 'app.js exports navigateBack function');
+    assert.match(appJs, /state\.navHistory\.push/, 'app.js records navigation history');
+    assert.match(appJs, /state\.navHistory\.pop/, 'app.js pops previous route on back navigation');
+    assert.match(appJs, /topbarBackBtn\.addEventListener\('click',\s*\(e\)\s*=>\s*\{[\s\S]*?navigateBack\(\)/, 'topbarBackBtn triggers navigateBack');
+});
+
+test('P38-6: 練習管理カードの1行ツールバー配置＆同期ポップオーバー不透明背景検証', () => {
+    assert.match(baseCss, /\.sidebar-sync-row \.sync-popover[\s\S]*?background-color:\s*var\(--card-bg,\s*#ffffff\)\s*!important;/, 'popover background is solid opaque');
+    assert.match(baseCss, /body \.practice-card-actions[\s\S]*?flex-wrap:\s*nowrap|display:\s*flex\s*!important;/, 'practice card actions are styled cleanly');
+    assert.match(baseCss, /body \.practice-card-actions \.btn-edit-practice/, 'compact edit button styled');
+    assert.match(baseCss, /body \.practice-card-actions \.btn-delete-practice/, 'compact delete button styled');
+});

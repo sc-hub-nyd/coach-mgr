@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.37';
+export const APP_VERSION = 'v1.30.38';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.38',
+        date: '2026-08-19',
+        title: 'ナビゲーション履歴・練習ツールバー・同期ポップオーバー総合動作検証完了',
+        features: [
+            'ナビゲーション履歴スタック（navHistory）による確実な直前画面復帰動作を自動検証テストスイート（P38-5/P38-6）へ組み込み動作保証を強化',
+            '練習管理カードの1行ツールバー配置およびクラウド同期ポップオーバーの不透明背景表示の品質確認完了'
+        ]
+    },
     {
         version: 'v1.30.37',
         date: '2026-08-19',
