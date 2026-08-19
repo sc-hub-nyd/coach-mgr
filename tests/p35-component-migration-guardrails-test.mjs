@@ -846,4 +846,14 @@ requireNone([source.index, source.matches, source.base, source.components, sourc
     /u-ext-[0-9]+/
 ], 'R4で廃止した抽出ユーティリティ');
 
+// Drawing placement: standard tool-dock buttons must receive the event that changes currentTool before canvas placement.
+requireAll(source.drawing, [
+    '\\.c-tool-dock__button\\[data-tool="\\$\\{tool\\}"\\]',
+    'newEl.addEventListener',
+    'currentTool = tool'
+], '作図ツールドックの配置イベント');
+requireNone(source.drawing, [
+    /document\.querySelector\(`\.tool-btn\[data-tool=/
+], '作図で廃止した旧ツールボタンセレクタ');
+
 console.log('P35 component migration guardrails passed');

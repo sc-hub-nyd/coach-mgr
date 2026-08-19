@@ -2010,7 +2010,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
     // ★ ツールドック（ボタン）のイベント登録
     const tools = ['select', 'player', 'ball', 'marker', 'cone', 'ladder', 'minigoal', 'line-rect', 'line-circle', 'vision', 'text', 'line-move', 'line-pass', 'line-dribble'];
     tools.forEach(tool => {
-        const el = document.querySelector(`.tool-btn[data-tool="${tool}"]`);
+        const el = document.querySelector(`.c-tool-dock__button[data-tool="${tool}"]`);
         if (!el) return;
 
         const isPlayerTool = ['select', 'player'].includes(tool);

@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.76';
+export const APP_VERSION = 'v1.30.77';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.77',
+        date: '2026-08-20',
+        title: '作図：オブジェクト配置操作を復旧',
+        features: [
+            '標準c-tool-dockボタンへのクリックイベント登録を復旧し、選手・ボール・マーカー・コーン・線・図形などのCanvas配置を修正',
+            '作図ツールの旧tool-btnセレクタ依存を廃止し、P35で標準ツールドックへのイベント登録と旧セレクタの再導入禁止を検証',
+            '新規オリジンで選手ツール選択、Canvas配置、選択後の番号・色・回転・削除操作の表示を確認'
+        ]
+    },
     {
         version: 'v1.30.76',
         date: '2026-08-20',
