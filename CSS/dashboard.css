@@ -243,10 +243,7 @@
     min-width: 0 !important;
 }
 
-.match-card-date,
-.match-card-header>div:first-child,
-.match-card-header span {
-    flex: 1 !important;
+.match-card-date {
     min-width: 0 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -255,8 +252,7 @@
     color: var(--text-secondary) !important;
 }
 
-.match-card-result,
-.match-card-header>div:last-child {
+.match-card-result {
     flex-shrink: 0 !important;
     white-space: nowrap !important;
     font-weight: var(--font-weight-emphasis) !important;

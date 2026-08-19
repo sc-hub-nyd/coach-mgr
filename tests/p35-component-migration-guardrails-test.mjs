@@ -487,6 +487,11 @@ requireNone(labelSources, [
     /class=["'][^"']*(?:\s|["'])(?:u-ext-54|u-ext-55|u-ext-56|u-ext-140)(?=\s|["'])/
 ], '試合一覧の旧参加者チップ・コンテナ');
 
+requireNone(source.dashboard, [
+    /\.match-card-header\s+span\b/,
+    /\.match-card-header>div:first-child\b/
+], '参加者チップを圧縮する試合カードの汎用セレクタ');
+
 // Standard component contracts used by Phase 1 must exist before templates are migrated.
 requireAll(source.standard, [
     '\\.c-card',
@@ -497,6 +502,9 @@ requireAll(source.standard, [
 ], '標準部品');
 
 requireAll(source.system, [
+    '\\.c-attendee-list[\\s\\S]*?flex-wrap:\\s*wrap',
+    '\\.c-attendee-chip[\\s\\S]*?flex:\\s*0\\s+0\\s+auto',
+    '\\.c-attendee-chip__number[\\s\\S]*?aspect-ratio:\\s*1',
     '\\.c-settings-section',
     '\\.c-settings-form',
     '\\.c-form-field',

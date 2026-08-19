@@ -1331,13 +1331,18 @@
 .c-attendee-list {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-start;
+    inline-size: 100%;
     gap: 0.25rem;
     font-size: 0.75rem;
 }
 
 .c-attendee-chip {
     display: inline-flex;
+    flex: 0 0 auto;
     align-items: center;
+    min-inline-size: 0;
+    max-inline-size: 100%;
     gap: 0.25rem;
     padding: 0.15rem 0.4rem;
     border: none;
@@ -1346,6 +1351,7 @@
     color: #334155;
     font-size: 0.7rem;
     font-weight: 600;
+    line-height: 1.2;
     white-space: nowrap;
 }
 
@@ -1356,15 +1362,18 @@
     justify-content: center;
     inline-size: 0.875rem;
     block-size: 0.875rem;
+    aspect-ratio: 1;
     border-radius: 50%;
     background: var(--primary);
     color: #ffffff;
     font-size: 0.55rem;
     font-weight: 700;
+    line-height: 1;
 }
 
 .c-attendee-chip__name {
-    flex: 0 0 auto;
+    flex: 0 1 auto;
+    min-inline-size: 0;
 }
 
 .c-attendee-list__empty {
