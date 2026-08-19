@@ -1,7 +1,7 @@
 # 参加者表示の横断監査
 
-**対象ブランチ:** `feat/label-shape-unification`  
-**監査日:** 2026-08-19  
+**対象ブランチ:** `feat/label-shape-unification`
+**監査日:** 2026-08-19
 **基準部品:** `c-attendee-list`、`c-attendee-chip`、`c-attendee-chip__number`、`c-attendee-chip__name`
 
 ## 監査基準
