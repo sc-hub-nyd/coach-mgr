@@ -59,7 +59,7 @@ test('P38-5: ナビゲーション履歴スタック（navHistory）＆戻るボ
     assert.match(appJs, /export function navigateBack\(\)/, 'app.js exports navigateBack function');
     assert.match(appJs, /state\.navHistory\.push/, 'app.js records navigation history');
     assert.match(appJs, /state\.navHistory\.pop/, 'app.js pops previous route on back navigation');
-    assert.match(appJs, /topbarBackBtn\.addEventListener\('click',\s*\(e\)\s*=>\s*\{[\s\S]*?navigateBack\(\)/, 'topbarBackBtn triggers navigateBack');
+    assert.match(appJs, /topbarBack\.onclick\s*=\s*\(e\)\s*=>\s*\{[\s\S]*?navigateBack\(\)/, 'topbarBack.onclick triggers navigateBack');
 });
 
 test('P38-6: 練習管理カードの1行ツールバー配置＆同期ポップオーバー不透明背景検証', () => {

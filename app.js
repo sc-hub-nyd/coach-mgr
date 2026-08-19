@@ -1986,15 +1986,6 @@ function setupEventListeners() {
         });
     }
 
-    const topbarBackBtn = document.getElementById('topbar-back');
-    if (topbarBackBtn) {
-        topbarBackBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            navigateBack();
-        });
-    }
-
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
             if (sidebar) {
@@ -2273,18 +2264,21 @@ export function updateRoleUI() {
 
 export function navigateBack() {
     if (!state.navHistory) state.navHistory = [];
-    if (state.navHistory.length > 0) {
-        let prev = state.navHistory.pop();
-        // 直前と同じルートならさらに1つ遡る
-        while (prev && prev.route === uiState.currentRoute && state.navHistory.length > 0) {
-            prev = state.navHistory.pop();
-        }
+    while (state.navHistory.length > 0) {
+        const prev = state.navHistory.pop();
         if (prev && prev.route && prev.route !== uiState.currentRoute) {
             navigate(prev.route, prev.params, true);
             return;
         }
     }
-    navigate('dashboard', null, true);
+    // 履歴が空または同ルートのみだった場合の安全なフォールバック
+    if (uiState.currentRoute === 'player-detail') {
+        navigate('players', null, true);
+    } else if (uiState.currentRoute === 'match-detail') {
+        navigate('matches', null, true);
+    } else {
+        navigate('dashboard', null, true);
+    }
 }
 
 export function navigate(route, params = null, isBack = false) {
@@ -2315,10 +2309,13 @@ export function navigate(route, params = null, isBack = false) {
     // 履歴スタックの管理（戻る操作でない場合、直前のルートを記録）
     if (!state.navHistory) state.navHistory = [];
     if (!isBack && uiState.currentRoute && uiState.currentRoute !== route) {
-        state.navHistory.push({
-            route: uiState.currentRoute,
-            params: uiState.currentParams || null
-        });
+        const lastEntry = state.navHistory[state.navHistory.length - 1];
+        if (!lastEntry || lastEntry.route !== uiState.currentRoute) {
+            state.navHistory.push({
+                route: uiState.currentRoute,
+                params: uiState.currentParams || null
+            });
+        }
         // 履歴上限
         if (state.navHistory.length > 20) state.navHistory.shift();
     }

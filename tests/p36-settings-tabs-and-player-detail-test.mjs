@@ -47,7 +47,8 @@ test('2. 設定画面の Settings Hub 撤廃 & カテゴリ別タブ切り替え
 test('3. 選手詳細の個別ページ化 & 選手編集モーダル検証', () => {
     // テンプレート tpl-player-detail が存在し、タブではなく縦セクション構成であること
     assert.match(indexHtml, /<template id="tpl-player-detail">/, 'tpl-player-detail template exists');
-    assert.match(indexHtml, /id="btn-back-to-players"/, 'Back to players button exists');
+    assert.doesNotMatch(indexHtml, /id="btn-back-to-players"/, 'Duplicate inline back button is removed for unified topbar back');
+    assert.match(indexHtml, /id="topbar-back"/, 'Unified topbar-back button exists');
     assert.match(indexHtml, /class="player-detail-number-badge"/, 'Player number badge exists');
     assert.match(indexHtml, /id="pd-attendance-rate"/, 'Attendance KPI exists');
     assert.match(indexHtml, /id="pd-profile-title"/, 'Profile section exists');

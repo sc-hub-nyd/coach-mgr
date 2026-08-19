@@ -124,10 +124,6 @@ export function initPlayerDetailView(playerId) {
         return;
     }
 
-    // 戻るボタン
-    const btnBack = document.getElementById('btn-back-to-players');
-    if (btnBack) btnBack.onclick = () => navigate('players');
-
     // 選手ヘッダー
     const numEl = document.getElementById('pd-number');
     const nameEl = document.getElementById('pd-name');
