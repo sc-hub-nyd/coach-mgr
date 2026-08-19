@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.67';
-export const RELEASE_DATE = '2026-08-19';
+export const APP_VERSION = 'v1.30.68';
+export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.68',
+        date: '2026-08-20',
+        title: '波H：モーダル・フォームの静的レイアウト移行と局所的な!important削減',
+        features: [
+            '文字入力、シーン見出し編集、練習日アサインのモーダルをc-modal--narrow／c-modal--medium、c-modal__heading、c-modal__actionsへ統一し、DOM ID・既存イベントを維持',
+            'フォーム内の静的なフィールド間隔をc-form-field--spacedへ集約し、静的インライン装飾を段階的に削減',
+            'トップバー戻るボタンの通常時3宣言を!importantから詳細度ベースの規則へ移行。P35でH5共通部品利用とH6対象!importantの再導入を検証'
+        ]
+    },
     {
         version: 'v1.30.67',
         date: '2026-08-20',

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
-    <link rel="stylesheet" href="./CSS/main.css?v=70">
+    <link rel="stylesheet" href="./CSS/main.css?v=71">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1755,7 +1755,7 @@
                         <!-- Checkboxes populated dynamically -->
                     </div>
                 </div>
-                <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+                <div class="c-modal__actions">
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
                     <button type="submit" class="c-button btn c-button--primary btn-primary">追加</button>
                 </div>
@@ -2221,17 +2221,17 @@
 
     <!-- Text Input Form Modal -->
     <div id="modal-text-input" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
-        <div class="c-modal c-modal--legacy modal" style="max-width:400px; position:relative;">
+        <div class="c-modal c-modal--legacy c-modal--narrow modal">
             <button type="button" class="c-modal__close btn-close-modal"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
-            <h2 style="margin-bottom:1.5rem;">文字を入力</h2>
+            <h2 class="c-modal__heading">文字を入力</h2>
             <form id="form-text-input">
                 <div class="form-group">
                     <label>表示テキスト <span class="c-status c-status--warning">必須</span></label>
                     <input type="text" id="canvas-text-value" class="c-input form-control" placeholder="例: 10m" required
                         autocomplete="off">
                 </div>
-                <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+                <div class="c-modal__actions">
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
                     <button type="submit" class="c-button btn c-button--primary btn-primary">配置する</button>
                 </div>
@@ -2241,22 +2241,22 @@
 
     <!-- Scene Title Input Modal -->
     <div id="modal-scene-title" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
-        <div class="c-modal c-modal--legacy modal" style="max-width:400px; position:relative;">
+        <div class="c-modal c-modal--legacy c-modal--narrow modal">
             <button type="button" class="c-modal__close btn-close-modal"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
-            <h2 style="margin-bottom:1.5rem;" id="scene-title-modal-heading">シーン見出しの編集</h2>
+            <h2 class="c-modal__heading" id="scene-title-modal-heading">シーン見出しの編集</h2>
             <form id="form-scene-title">
                 <div class="form-group">
                     <label>シーンの見出しを入力 <span class="c-status c-status--muted">任意</span></label>
                     <input type="text" id="input-scene-title" class="c-input form-control" placeholder="例: 初期配置、プレス回避、シュート体勢 など"
                         autocomplete="off">
                 </div>
-                <div class="form-group" style="margin-top:1rem;">
+                <div class="form-group c-form-field--spaced">
                     <label>指導ポイント（テロップ） <span class="c-status c-status--muted">任意</span></label>
                     <textarea id="input-scene-caption" class="c-input form-control" rows="2" placeholder="例: ★受ける前に首を振る、パスの受け手はマークを外す動き" style="resize:vertical;"></textarea>
                     <small style="color:var(--text-secondary); font-size:0.72rem;">再生中に画面下部に大きく表示されます</small>
                 </div>
-                <div class="form-group" style="margin-top:1rem;">
+                <div class="form-group c-form-field--spaced">
                     <label>このシーンでの停止時間</label>
                     <select id="input-scene-pause" class="c-input form-control">
                         <option value="0">停止なし（すぐ次へ）</option>
@@ -2267,7 +2267,7 @@
                     </select>
                     <small style="color:var(--text-secondary); font-size:0.72rem;">アニメーション再生中、このシーンに到達したとき指定秒数停止します</small>
                 </div>
-                <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+                <div class="c-modal__actions">
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
                     <button type="submit" class="c-button btn c-button--primary btn-primary">保存する</button>
                 </div>
@@ -2280,16 +2280,16 @@
 
     <!-- Library Assign Modal -->
     <div id="modal-assign-practice" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
-        <div class="c-modal c-modal--legacy modal" style="max-width: 450px; position:relative;">
+        <div class="c-modal c-modal--legacy c-modal--medium modal">
             <button type="button" class="c-modal__close btn-close-modal"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
-            <h2 style="margin-bottom:1.5rem;"><i class="fa-solid fa-calendar-plus"></i> 練習日にアサイン</h2>
+            <h2 class="c-modal__heading"><i class="fa-solid fa-calendar-plus"></i> 練習日にアサイン</h2>
             <input type="hidden" id="assign-menu-id">
             <p class="text-secondary" style="font-size:0.85rem; margin-bottom:1rem;">アサイン先の練習日を選択してください：</p>
             <div id="assign-practices-list" class="c-data-list c-data-list--modal-compact">
                 <!-- Populated dynamically -->
             </div>
-            <div style="display:flex; justify-content:space-between; gap:1rem; margin-top:2rem;">
+            <div class="c-modal__actions c-modal__actions--split">
                 <button type="button" class="c-button btn c-button--secondary btn-secondary" id="btn-assign-add-practice"
                     style="font-size:0.85rem;"><i class="fa-solid fa-plus"></i> 新しい練習日を追加</button>
                 <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
@@ -2349,7 +2349,7 @@
                     </div>
                 </div>
 
-                <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+                <div class="c-modal__actions">
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
                     <button type="submit" class="c-button btn c-button--primary btn-primary">保存</button>
                 </div>

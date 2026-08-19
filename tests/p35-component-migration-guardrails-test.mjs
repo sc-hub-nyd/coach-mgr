@@ -758,4 +758,39 @@ requireAll(source.system, [
     '\\.c-modal-overlay--critical'
 ], 'システム部品');
 
+// Wave H5: modal/form static layout is centralized without changing DOM IDs or events.
+requireAll(source.system, [
+    '\\.c-modal--narrow',
+    '\\.c-modal--medium',
+    '\\.c-modal__heading',
+    '\\.c-modal__actions',
+    '\\.c-modal__actions--split',
+    '\\.c-form-field--spaced'
+], '波H5のモーダル・フォーム共通レイアウト部品');
+
+requireAll(source.index, [
+    'id="modal-text-input"',
+    'c-modal--narrow modal',
+    'id="form-text-input"',
+    'id="modal-scene-title"',
+    'id="form-scene-title"',
+    'c-form-field--spaced',
+    'id="modal-assign-practice"',
+    'c-modal--medium modal',
+    'c-modal__actions c-modal__actions--split'
+], '波H5のモーダル・フォーム移行');
+
+requireNone(source.index, [
+    /class=["']c-modal c-modal--legacy modal["'] style=["']max-width:400px; position:relative;["']/,
+    /id=["']modal-assign-practice["'][\\s\\S]*?style=["']max-width: 450px; position:relative;["']/
+], '波H5で廃止したモーダル静的インラインレイアウト');
+
+// Wave H6: a localized app-shell rule keeps back-button precedence through selector specificity instead of !important.
+requireAll(source.base, [
+    '\\.c-topbar \\.c-topbar__back-button'
+], '波H6の戻るボタン詳細度調整');
+requireNone(source.base, [
+    /\\.c-topbar__back-button \\{\\n    padding: 0\\.25rem 0\\.6rem !important;/
+], '波H6で削減した戻るボタン!important');
+
 console.log('P35 component migration guardrails passed');

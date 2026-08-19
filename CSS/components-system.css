@@ -2962,3 +2962,12 @@
 .c-pk-record-list { display:grid; gap:var(--space-1); }
 .c-pk-record-row { display:flex; justify-content:space-between; gap:var(--space-2); color:var(--text-secondary); font-size:0.8rem; }
 .c-empty-inline { color:var(--text-secondary); font-size:0.82rem; }
+
+/* Wave H5: modal and form static layouts. */
+.c-modal--narrow { max-inline-size: 25rem; position: relative; }
+.c-modal--medium { max-inline-size: 34.375rem; inline-size: 92%; position: relative; }
+.c-modal__heading { margin-block-end: 1.5rem; }
+.c-modal__actions { display:flex; justify-content:flex-end; gap:1rem; margin-block-start:2rem; }
+.c-modal__actions--split { justify-content:space-between; }
+.c-form-stack { display:flex; flex-direction:column; gap:1rem; }
+.c-form-field--spaced { margin-block-start:1rem; }
