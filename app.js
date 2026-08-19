@@ -2306,15 +2306,19 @@ export function navigate(route, params = null) {
     const bottomNavLinks = document.querySelectorAll('.bottom-nav .nav-item');
 
     if (topbarBack) {
-        if (route === 'match-detail') {
+        if (route === 'dashboard') {
+            topbarBack.classList.add('hidden');
+            topbarBack.onclick = null;
+        } else if (route === 'match-detail') {
             topbarBack.classList.remove('hidden');
             topbarBack.onclick = () => navigate('matches');
         } else if (route === 'player-detail') {
             topbarBack.classList.remove('hidden');
             topbarBack.onclick = () => navigate('players');
         } else {
-            topbarBack.classList.add('hidden');
-            topbarBack.onclick = null;
+            // 通常一覧画面（matches, practices, library, tactics, players, settings等）
+            topbarBack.classList.remove('hidden');
+            topbarBack.onclick = () => navigate('dashboard');
         }
     }
 
@@ -2331,9 +2335,9 @@ export function navigate(route, params = null) {
         if (route === 'dashboard') {
             topbarBreadcrumb.innerHTML = '';
         } else if (route === 'match-detail') {
-            topbarBreadcrumb.innerHTML = `<a href="#" onclick="event.preventDefault(); navigate('dashboard');" style="color:var(--text-secondary); text-decoration:none;">ホーム</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <a href="#" onclick="event.preventDefault(); navigate('matches');" style="color:var(--text-secondary); text-decoration:none;">試合記録</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <span>試合詳細</span>`;
+            topbarBreadcrumb.innerHTML = `<a href="#" onclick="event.preventDefault(); navigate('dashboard');" style="color:var(--text-secondary); text-decoration:none;">ダッシュボード</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <a href="#" onclick="event.preventDefault(); navigate('matches');" style="color:var(--text-secondary); text-decoration:none;">試合記録</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <span>試合詳細</span>`;
         } else if (route === 'player-detail') {
-            topbarBreadcrumb.innerHTML = `<a href="#" onclick="event.preventDefault(); navigate('dashboard');" style="color:var(--text-secondary); text-decoration:none;">ホーム</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <a href="#" onclick="event.preventDefault(); navigate('players');" style="color:var(--text-secondary); text-decoration:none;">選手管理</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <span>選手カルテ</span>`;
+            topbarBreadcrumb.innerHTML = `<a href="#" onclick="event.preventDefault(); navigate('dashboard');" style="color:var(--text-secondary); text-decoration:none;">ダッシュボード</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <a href="#" onclick="event.preventDefault(); navigate('players');" style="color:var(--text-secondary); text-decoration:none;">選手管理</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <span>選手カルテ</span>`;
         } else {
             const routeNames = {
                 matches: '試合記録',
@@ -2344,7 +2348,7 @@ export function navigate(route, params = null) {
                 settings: '設定'
             };
             const currentName = routeNames[route] || route;
-            topbarBreadcrumb.innerHTML = `<a href="#" onclick="event.preventDefault(); navigate('dashboard');" style="color:var(--text-secondary); text-decoration:none;">ホーム</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <span>${currentName}</span>`;
+            topbarBreadcrumb.innerHTML = `<a href="#" onclick="event.preventDefault(); navigate('dashboard');" style="color:var(--text-secondary); text-decoration:none;">ダッシュボード</a> <i class="fa-solid fa-angle-right" style="font-size:0.65rem; margin:0 0.3rem;"></i> <span>${currentName}</span>`;
         }
     }
 

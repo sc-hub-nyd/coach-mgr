@@ -24,7 +24,8 @@ test('P38-2: トップバーのスリム化とパンくずナビゲーション�
     assert.match(indexHtml, /id="topbar-title"/, 'topbar-title exists in topbar');
     assert.match(indexHtml, /id="topbar-back"/, 'topbar-back exists in topbar');
     assert.match(indexHtml, /id="mobile-topbar-role-badge"/, 'mobile-topbar-role-badge exists in topbar');
-    assert.match(appJs, /topbarBreadcrumb\.innerHTML =/, 'app.js updates topbar-breadcrumb');
+    assert.match(appJs, /navigate\('dashboard'\)/, 'app.js navigates back to dashboard');
+    assert.match(appJs, />ダッシュボード<\/a>/, 'app.js uses ダッシュボード as breadcrumb home');
     assert.match(appJs, /mobileTopBarRoleBadge\.addEventListener\('click'/, 'app.js binds mobile role badge');
 });
 
