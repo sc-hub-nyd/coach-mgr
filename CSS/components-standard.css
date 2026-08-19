@@ -1,6 +1,71 @@
 /* CSS Architecture: reusable UI components
    Components are intentionally low-specificity so page styles can extend them without !important. */
-.card.c-card {
+.c-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-block-size: var(--tap-target-min);
+    padding: var(--control-inset-block) var(--control-inset-inline);
+    border: 0;
+    border-radius: var(--control-radius);
+    font: inherit;
+    font-weight: 600;
+    line-height: 1.25;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.c-button--primary {
+    background: var(--color-action);
+    color: var(--color-text-on-action);
+}
+
+.c-button--secondary {
+    background: var(--neo-surface-gradient);
+    color: var(--color-text);
+    box-shadow: var(--shadow-neo-raised);
+}
+
+.c-button--danger {
+    background: var(--color-danger-surface);
+    color: var(--color-danger);
+}
+
+.c-button--compact {
+    min-block-size: 2rem;
+    padding: var(--space-1) var(--surface-inset-compact-inline);
+    font-size: 0.82rem;
+}
+
+.c-button--icon {
+    inline-size: var(--icon-control-size);
+    min-inline-size: var(--icon-control-size);
+    min-block-size: var(--icon-control-size);
+    padding: 0;
+}
+
+.c-input {
+    inline-size: 100%;
+    min-block-size: var(--form-control-height);
+    padding: var(--control-inset-block) var(--control-inset-inline);
+    border: 0;
+    border-radius: var(--control-radius);
+    background: var(--color-surface-subtle);
+    color: var(--color-text);
+    font: inherit;
+    box-shadow: var(--shadow-neo-pressed);
+}
+
+.c-input:focus {
+    outline: none;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-neo-pressed), var(--shadow-focus);
+}
+
+.card.c-card,
+.c-card {
     min-width: 0;
     padding: var(--surface-inset-block) var(--surface-inset-inline);
     background: var(--neo-surface-gradient);
@@ -9,39 +74,46 @@
     box-shadow: var(--shadow-neo-raised);
 }
 
-.card.c-card--compact {
+.card.c-card--compact,
+.c-card--compact {
     padding: var(--surface-inset-compact-block) var(--surface-inset-compact-inline);
 }
 
-.card.c-card--flat {
+.card.c-card--flat,
+.c-card--flat {
     background: var(--card-bg);
     border: none;
     box-shadow: none;
 }
 
-.card.c-card--pressed {
+.card.c-card--pressed,
+.c-card--pressed {
     background: var(--neo-surface-pressed);
     border: none;
     box-shadow: var(--shadow-neo-pressed);
 }
 
-.card.c-card--interactive {
+.card.c-card--interactive,
+.c-card--interactive {
     cursor: pointer;
     transition: transform var(--duration-fast) var(--ease-spring), box-shadow var(--duration-base) var(--ease-spring);
 }
 
-.card.c-card--interactive:hover {
+.card.c-card--interactive:hover,
+.c-card--interactive:hover {
     box-shadow: var(--shadow-neo-raised-hover);
     transform: translateY(-1px);
 }
 
-.card.c-card--interactive:active {
+.card.c-card--interactive:active,
+.c-card--interactive:active {
     transform: translateY(1.5px) scale(0.985);
     background: var(--neo-surface-pressed);
     box-shadow: var(--shadow-neo-pressed);
 }
 
-.card.c-card--accent {
+.card.c-card--accent,
+.c-card--accent {
     border-inline-start: 4px solid var(--primary);
 }
 

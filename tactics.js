@@ -101,7 +101,7 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
                     <i class="c-empty-state__icon fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-chess-knight'}" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">${isSearchActive ? '該当する戦術が見つかりません' : '戦術が登録されていません'}</h3>
                     <p class="c-empty-state__text">${isSearchActive ? '検索キーワードまたはカテゴリフィルタを変更してお試しください。' : 'チームの戦術方針（攻撃・守備・ビルドアップ等）の狙いやキーファクターを記録・作図し、いつでも振り返ることができます。'}</p>
-                    ${!isSearchActive && isCoach ? `<button class="btn btn-primary" id="btn-empty-add-tactic"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の戦術作成</button>` : ''}
+                    ${!isSearchActive && isCoach ? `<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-tactic"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の戦術作成</button>` : ''}
                 </div>
             </section>
         `;
@@ -121,16 +121,16 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
 
         const cardsHtml = tactics.map(t => {
             const actionBtns = isCoach ? `
-                <button type="button" class="btn btn-secondary btn-edit-tactic" data-id="${t.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
-                <button type="button" class="btn btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="${t.frames && t.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
-                <button type="button" class="btn btn-secondary btn-add-to-library" data-id="${t.id}" title="練習メニューライブラリに追加"><i class="fa-solid fa-plus"></i></button>
-                <button type="button" class="btn btn-danger btn-delete-tactic" data-id="${t.id}" title="削除"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic" data-id="${t.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="${t.frames && t.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-add-to-library" data-id="${t.id}" title="練習メニューライブラリに追加"><i class="fa-solid fa-plus"></i></button>
+                <button type="button" class="c-button btn c-button--danger btn-danger btn-delete-tactic" data-id="${t.id}" title="削除"><i class="fa-solid fa-trash"></i></button>
             ` : `
-                <button type="button" class="btn btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
             `;
 
             return `
-            <div class="u-ext-183 card">
+            <div class="u-ext-183 c-card card">
                 <div>
                     <div class="library-card-header" style="display:flex; flex-direction:column; gap:0.3rem; margin-bottom:0.4rem;">
                         <div>

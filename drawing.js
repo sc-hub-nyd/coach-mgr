@@ -174,7 +174,7 @@ function updateFrameCount() {
                         </div>
                     </div>
                     <div class="filmstrip-card-title c-data-list__body">${escapeHtml(titleStr)}</div>
-                    <div class="filmstrip-card-actions c-action-group"><button type="button" class="btn btn-danger btn-card-delete" data-idx="${idx}" title="削除" aria-label="${escapeHtml(titleStr)}を削除"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
+                    <div class="filmstrip-card-actions c-action-group"><button type="button" class="c-button btn c-button--danger btn-danger btn-card-delete" data-idx="${idx}" title="削除" aria-label="${escapeHtml(titleStr)}を削除"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
                 </div>
             `;
         }).join('');

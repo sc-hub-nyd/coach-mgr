@@ -35,10 +35,10 @@ export function showSyncConflictDialog({ localSummary, remoteSummary, cloudRevis
             </div>
             <p class="sync-conflict-note"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i> クラウドを復元する場合も、この端末の直前状態は自動復旧ポイントへ保存されます。</p>
             <div class="sync-conflict-dialog-actions">
-                <button type="button" class="btn btn-secondary" data-action="cancel">あとで確認</button>
-                <button type="button" class="btn btn-secondary" data-action="cloud"><i class="fa-solid fa-cloud-arrow-down"></i> クラウドを復元</button>
-                <button type="button" class="btn btn-secondary" data-action="merge"><i class="fa-solid fa-code-branch"></i> 安全に統合</button>
-                <button type="button" class="btn btn-primary" data-action="keep-local"><i class="fa-solid fa-hard-drive"></i> 端末版を残す</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary" data-action="cancel">あとで確認</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary" data-action="cloud"><i class="fa-solid fa-cloud-arrow-down"></i> クラウドを復元</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary" data-action="merge"><i class="fa-solid fa-code-branch"></i> 安全に統合</button>
+                <button type="button" class="c-button btn c-button--primary btn-primary" data-action="keep-local"><i class="fa-solid fa-hard-drive"></i> 端末版を残す</button>
             </div>
         </section>`;
 

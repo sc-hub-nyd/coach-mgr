@@ -39,7 +39,7 @@ export function renderPracticeRoster(event = {}) {
                     <input type="checkbox" value="${player.id}" ${invited ? 'checked' : ''} class="practice-callup-checkbox" aria-labelledby="${playerLabelId}">
                     <span id="${playerLabelId}" class="c-roster-row__name roster-player-name">${player.number ? `${player.number}. ` : ''}${escapeHtml(player.name)}</span>
                 </label>
-                <select class="form-control c-roster-row__status practice-attendance-status" data-player-id="${player.id}" ${invited ? '' : 'disabled'} aria-labelledby="${playerLabelId}">
+                <select class="c-input form-control c-roster-row__status practice-attendance-status" data-player-id="${player.id}" ${invited ? '' : 'disabled'} aria-labelledby="${playerLabelId}">
                     <option value="pending" ${status === 'pending' ? 'selected' : ''}>未回答</option>
                     <option value="attending" ${status === 'attending' ? 'selected' : ''}>参加</option>
                     <option value="absent" ${status === 'absent' ? 'selected' : ''}>欠席</option>
@@ -373,19 +373,19 @@ export function initPractices(miniPitchObserver) {
             const actionBtns = `
                 <div class="c-practice-card__actions practice-card-actions">
                     ${isCoach ? `
-                    <button type="button" class="btn btn-primary btn-xs btn-add-menu" data-id="${p.id}" title="メニュー追加">
+                    <button type="button" class="c-button btn c-button--primary btn-primary btn-xs btn-add-menu" data-id="${p.id}" title="メニュー追加">
                         <i class="fa-solid fa-plus"></i> メニュー
                     </button>
-                    <button type="button" class="btn btn-secondary btn-xs btn-save-practice-template" data-id="${p.id}" title="この構成をテンプレートとして保存">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-save-practice-template" data-id="${p.id}" title="この構成をテンプレートとして保存">
                         <i class="fa-solid fa-bookmark"></i> テンプレ
                     </button>
-                    <button type="button" class="btn btn-secondary btn-xs btn-edit-practice" data-id="${p.id}" title="練習情報を編集">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-edit-practice" data-id="${p.id}" title="練習情報を編集">
                         <i class="fa-solid fa-pen"></i>
                     </button>
-                    <button type="button" class="btn btn-danger btn-xs btn-delete-practice" data-id="${p.id}" title="練習を削除">
+                    <button type="button" class="c-button btn c-button--danger btn-danger btn-xs btn-delete-practice" data-id="${p.id}" title="練習を削除">
                         <i class="fa-solid fa-trash"></i>
                     </button>` : ''}
-                    <button type="button" class="btn btn-secondary btn-xs btn-share-practice" data-id="${p.id}" title="保護者共有用テキストをコピー">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-share-practice" data-id="${p.id}" title="保護者共有用テキストをコピー">
                         <i class="fa-solid fa-share-nodes"></i> 共有
                     </button>
                 </div>
@@ -443,9 +443,9 @@ export function initPractices(miniPitchObserver) {
                                                     </div>
                                                     ${isCoach ? `
                                                     <div class="u-ext-156 practice-menu-actions-block" onclick="event.stopPropagation();">
-                                                        <button class="u-ext-157 btn btn-secondary btn-edit-menu" data-pid="${p.id}" data-mid="${menu.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
-                                                        <button class="u-ext-157 btn btn-secondary btn-anim-practice" data-pid="${p.id}" data-mid="${menu.id}" title="作図"><i class="fa-solid fa-person-running"></i></button>
-                                                        <button class="u-ext-157 btn btn-danger btn-delete-menu" data-pid="${p.id}" data-mid="${menu.id}"><i class="fa-solid fa-times"></i></button>
+                                                        <button class="u-ext-157 c-button btn c-button--secondary btn-secondary btn-edit-menu" data-pid="${p.id}" data-mid="${menu.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
+                                                        <button class="u-ext-157 c-button btn c-button--secondary btn-secondary btn-anim-practice" data-pid="${p.id}" data-mid="${menu.id}" title="作図"><i class="fa-solid fa-person-running"></i></button>
+                                                        <button class="u-ext-157 c-button btn c-button--danger btn-danger btn-delete-menu" data-pid="${p.id}" data-mid="${menu.id}"><i class="fa-solid fa-times"></i></button>
                                                     </div>
                                                     ` : ''}
                                                 </summary>
@@ -483,7 +483,7 @@ export function initPractices(miniPitchObserver) {
         const remaining = filteredPractices.length - displayedPractices.length;
         html += `
             <div class="u-ext-142" >
-                <button class="u-ext-143 btn btn-secondary" id="btn-load-more-practices" >
+                <button class="u-ext-143 c-button btn c-button--secondary btn-secondary" id="btn-load-more-practices" >
                     <i class="fa-solid fa-angle-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredPractices.length} 件)
                 </button>
             </div>
@@ -498,7 +498,7 @@ export function initPractices(miniPitchObserver) {
                     <i class="c-empty-state__icon fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-calendar-check'}" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">${isSearchActive ? '該当する練習記録がありません' : 'まだ練習記録がありません'}</h3>
                     <p class="c-empty-state__text">${isSearchActive ? '検索キーワードまたは絞り込み条件（年度・月・カテゴリ・参加選手）を変更してお試しください。' : '日々の練習日を作成し、テーマに応じたトレーニングメニューのアサインや、戦術ボードでの作図を行いましょう。'}</p>
-                    ${!isSearchActive ? `<button class="btn btn-primary" id="btn-empty-add-practice"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の練習日を追加</button>` : ''}
+                    ${!isSearchActive ? `<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-practice"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の練習日を追加</button>` : ''}
                 </div>
             </section>
         `;

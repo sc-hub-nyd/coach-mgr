@@ -412,16 +412,28 @@ const labelSources = [
 ].join('\n');
 
 requireAll(source.standard, [
+    '\\.c-button',
+    '\\.c-button--primary',
+    '\\.c-button--secondary',
+    '\\.c-button--danger',
+    '\\.c-button--compact',
+    '\\.c-input',
+    '\\.c-card',
     '\\.c-status',
     '\\.c-status--count',
     '\\.c-status--interactive',
     '\\.c-status__dismiss'
-], '共通ステータス部品');
+], '標準プリミティブ・共通ステータス部品');
 
 requireAll(source.index, [
+    'c-button btn',
+    'c-input form-control',
+    'c-card card',
+    'c-modal-overlay modal-overlay',
+    'c-modal c-modal--legacy modal',
     'c-status c-status--count c-status--compact',
     'id="dash-setup-progress" class="c-status c-status--info"'
-], '共通ステータスのテンプレート利用');
+], '標準プリミティブ・共通ステータスのテンプレート利用');
 
 requireAll([source.matches, source.practices, source.library].join('\n'), [
     'c-status c-status--interactive c-status--compact',
@@ -475,6 +487,8 @@ requireAll(source.system, [
     '\\.btn-use-current-timestamp',
     '\\.filmstrip-cards-container\\.c-data-list',
     '\\.filmstrip-cards-container \\.filmstrip-card\\.c-data-list__item',
+    '\\.c-modal-overlay',
+    '\\.c-modal--legacy',
     '\\.c-modal\\.modal-export-fallback',
     '\\.export-json-textarea',
     '\\.c-status--success'

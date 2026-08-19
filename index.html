@@ -46,10 +46,10 @@
                         <i class="fa-solid fa-eye" aria-hidden="true"></i><span>保護者モード</span>
                     </div>
                     <div class="sidebar-footer-actions">
-                        <button type="button" class="btn btn-secondary btn-sm sidebar-footer-btn" id="btn-toggle-role" title="モードを切り替えます">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm sidebar-footer-btn" id="btn-toggle-role" title="モードを切り替えます">
                             <i class="fa-solid fa-right-left" aria-hidden="true"></i><span>切替</span>
                         </button>
-                        <button type="button" class="btn btn-secondary btn-sm sidebar-footer-btn" id="btn-toggle-color-mode" title="ライト／ダーク表示を切り替えます" aria-label="ライト／ダーク表示を切り替えます">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm sidebar-footer-btn" id="btn-toggle-color-mode" title="ライト／ダーク表示を切り替えます" aria-label="ライト／ダーク表示を切り替えます">
                             <i class="fa-solid fa-moon" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -57,7 +57,7 @@
 
                 <!-- PC用サイドバークラウド同期ステータス -->
                 <div class="sidebar-sync-row" style="position:relative;">
-                    <button type="button" class="btn btn-secondary btn-sm sidebar-sync-btn" id="btn-topbar-sync-status" title="クラウド同期ステータス" aria-label="クラウド同期ステータス" style="width:100%; justify-content:space-between; font-size:0.75rem;">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm sidebar-sync-btn" id="btn-topbar-sync-status" title="クラウド同期ステータス" aria-label="クラウド同期ステータス" style="width:100%; justify-content:space-between; font-size:0.75rem;">
                         <span style="display:flex; align-items:center; gap:0.45rem;">
                             <span class="sync-icon-wrapper" style="position:relative; display:inline-flex; align-items:center;">
                                 <i class="fa-solid fa-cloud-arrow-down" id="sync-status-icon" aria-hidden="true"></i>
@@ -76,7 +76,7 @@
                         <div class="sync-popover-body">
                             <div class="sync-time-label">最終同期: <span id="sync-last-time">未実施</span></div>
                             <div class="sync-status-text" id="sync-status-text">最新状態です</div>
-                            <button class="btn btn-primary btn-sm sync-action-btn" id="btn-popover-sync-now"
+                            <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm sync-action-btn" id="btn-popover-sync-now"
                                 style="width:100%; margin-top:0.6rem; justify-content:center;">
                                 <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> 同期
                             </button>
@@ -100,7 +100,7 @@
             <header class="topbar">
                 <div class="topbar-start">
                     <button type="button" id="menu-toggle" class="menu-toggle u-visually-hidden" aria-hidden="true"><i class="fa-solid fa-bars"></i></button>
-                    <button type="button" id="topbar-back" class="btn btn-secondary btn-sm hidden topbar-back-btn" aria-label="前の画面に戻る">
+                    <button type="button" id="topbar-back" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm hidden topbar-back-btn" aria-label="前の画面に戻る">
                         <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <span>戻る</span>
                     </button>
                 </div>
@@ -129,7 +129,7 @@
             <!-- スマホ用スリム戻るコンテキストバー（詳細階層時にボトムナビ直上に出現） -->
             <div id="mobile-context-bar" class="mobile-context-bar hidden" aria-label="サブナビゲーション">
                 <div id="mobile-context-title" class="mobile-context-title" aria-live="polite"></div>
-                <button type="button" id="mobile-context-back-btn" class="btn btn-secondary btn-sm mobile-context-back-btn" aria-label="前の画面に戻る">
+                <button type="button" id="mobile-context-back-btn" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm mobile-context-back-btn" aria-label="前の画面に戻る">
                     <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <span>戻る</span>
                 </button>
             </div>
@@ -162,14 +162,14 @@
     </div><!-- /#app -->
 
     <!-- Mobile More Bottom Sheet (親指で届く片手操作コントロールセンター) -->
-    <div id="modal-mobile-more" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-more-title">
+    <div id="modal-mobile-more" class="c-modal-overlay modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-more-title">
         <div class="bottom-sheet-modal mobile-more-sheet c-modal">
             <div class="modal-header c-modal__header" style="padding:0.75rem 1rem; border-bottom:1px solid var(--surface-border);">
                 <div style="display:flex; align-items:center; gap:0.5rem;">
                     <i class="fa-solid fa-grip" aria-hidden="true" style="color:var(--primary);"></i>
                     <h2 id="mobile-more-title" style="font-size:1rem; font-weight:700; margin:0;">その他メニュー</h2>
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm btn-close-modal" aria-label="メニューを閉じる"><i class="fa-solid fa-xmark"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-close-modal" aria-label="メニューを閉じる"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <div class="mobile-more-body" style="padding:1rem;">
@@ -179,7 +179,7 @@
                         <div style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">現在のモード</div>
                         <div id="mobile-user-role-label" style="font-weight:700; font-size:0.95rem; color:var(--text-primary);">保護者モード</div>
                     </div>
-                    <button type="button" class="btn btn-primary btn-sm" id="mobile-btn-toggle-role" style="font-size:0.8rem;">
+                    <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="mobile-btn-toggle-role" style="font-size:0.8rem;">
                         <i class="fa-solid fa-right-left" aria-hidden="true"></i> モード切替
                     </button>
                 </div>
@@ -196,22 +196,22 @@
                         </div>
                         <div style="font-size:0.7rem; color:var(--text-secondary);" id="mobile-sync-last-time">最終同期: 未実施</div>
                     </div>
-                    <button type="button" class="btn btn-secondary btn-sm" id="mobile-btn-sync-now" style="width:100%; font-size:0.8rem; justify-content:center; gap:0.4rem;">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="mobile-btn-sync-now" style="width:100%; font-size:0.8rem; justify-content:center; gap:0.4rem;">
                         <i class="fa-solid fa-cloud-arrow-down" id="mobile-sync-icon" aria-hidden="true"></i> <span id="mobile-sync-btn-text">データを同期する</span>
                     </button>
                 </div>
 
                 <!-- ナビゲーショングリッド -->
                 <div class="mobile-more-grid">
-                    <button type="button" class="btn btn-secondary mobile-more-item coach-only" data-mobile-route="tactics">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item coach-only" data-mobile-route="tactics">
                         <span class="c-icon c-icon--pass-ladder c-icon--md" aria-hidden="true"></span>
                         <span>戦術管理</span>
                     </button>
-                    <button type="button" class="btn btn-secondary mobile-more-item coach-only" data-mobile-route="players">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item coach-only" data-mobile-route="players">
                         <span class="c-icon c-icon--team c-icon--md" aria-hidden="true"></span>
                         <span>選手管理</span>
                     </button>
-                    <button type="button" class="btn btn-secondary mobile-more-item coach-only" data-mobile-route="settings">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item coach-only" data-mobile-route="settings">
                         <i class="fa-solid fa-gear" style="font-size:1.2rem;" aria-hidden="true"></i>
                         <span>設定</span>
                     </button>
@@ -219,7 +219,7 @@
 
                 <!-- ユーティリティ行（テーマ切替・バージョン） -->
                 <div class="mobile-more-utility-row" style="margin-top:1rem; padding-top:0.75rem; border-top:1px dashed var(--surface-border); display:flex; justify-content:space-between; align-items:center;">
-                    <button type="button" class="btn btn-secondary btn-sm" id="mobile-btn-toggle-color-mode">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="mobile-btn-toggle-color-mode">
                         <i class="fa-solid fa-moon" aria-hidden="true"></i> <span id="mobile-color-mode-text">ダーク表示</span>
                     </button>
                     <button type="button" class="btn-link" id="mobile-version-badge" style="font-size:0.75rem; color:var(--text-secondary);" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
@@ -233,13 +233,13 @@
 
     <div id="pwa-update-banner" class="pwa-update-banner hidden" role="status" aria-live="polite">
         <span><i class="fa-solid fa-arrows-rotate"></i> 新しいバージョンを利用できます</span>
-        <button type="button" class="btn btn-primary btn-sm" id="btn-pwa-reload">更新する</button>
-        <button type="button" class="btn btn-secondary btn-sm" id="btn-pwa-dismiss" aria-label="更新通知を閉じる"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-pwa-reload">更新する</button>
+        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-pwa-dismiss" aria-label="更新通知を閉じる"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <!-- Passcode Modal for Coach Mode -->
-    <div id="modal-coach-passcode" class="modal-overlay hidden" style="z-index: 1002;">
-        <div class="modal" style="max-width:380px; text-align:center;">
+    <div id="modal-coach-passcode" class="c-modal-overlay modal-overlay hidden" style="z-index: 1002;">
+        <div class="c-modal c-modal--legacy modal" style="max-width:380px; text-align:center;">
             <div style="font-size:2.5rem; color:var(--primary); margin-bottom:0.5rem;"><i
                     class="fa-solid fa-user-lock"></i></div>
             <h2 style="margin-bottom:0.5rem; font-size:1.2rem;">コーチモードへの切り替え</h2>
@@ -248,15 +248,15 @@
                 <div class="form-group" style="margin-bottom:1rem;">
                     <label style="display:block; text-align:center; margin-bottom:0.4rem;">パスコード <span
                             class="c-status-label c-status-label--required">必須</span></label>
-                    <input type="password" id="input-coach-passcode" class="form-control" placeholder="パスコードを入力"
+                    <input type="password" id="input-coach-passcode" class="c-input form-control" placeholder="パスコードを入力"
                         style="text-align:center; font-size:1.2rem; letter-spacing:0.2em;" required autofocus>
                 </div>
                 <div id="passcode-error-msg" style="display:none; color:#ef4444; font-size:0.8rem; margin-bottom:1rem;">
                     パスコードが違います。</div>
                 <div style="display:flex; justify-content:center; align-items:center; gap:0.75rem; width:100%;">
-                    <button type="button" class="btn btn-secondary btn-close-modal"
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal"
                         style="flex:1; text-align:center; justify-content:center;">キャンセル</button>
-                    <button type="submit" class="btn btn-primary"
+                    <button type="submit" class="c-button btn c-button--primary btn-primary"
                         style="flex:1; text-align:center; justify-content:center;">解除する</button>
                 </div>
             </form>
@@ -264,18 +264,18 @@
     </div>
 
     <!-- P30: 分析から作る編集可能な練習計画 -->
-    <div id="modal-practice-plan" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="practice-plan-title">
-        <div class="modal modal-practice-plan">
-            <div class="modal-header"><h2 id="practice-plan-title"><i class="fa-solid fa-clipboard-list"></i> 次の練習案</h2><button type="button" class="btn btn-secondary btn-close-modal" aria-label="練習案を閉じる"><i class="fa-solid fa-xmark"></i></button></div>
+    <div id="modal-practice-plan" class="c-modal-overlay modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="practice-plan-title">
+        <div class="c-modal c-modal--legacy modal modal-practice-plan">
+            <div class="modal-header"><h2 id="practice-plan-title"><i class="fa-solid fa-clipboard-list"></i> 次の練習案</h2><button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal" aria-label="練習案を閉じる"><i class="fa-solid fa-xmark"></i></button></div>
             <p class="text-secondary">振り返りの示唆を下書きにしました。チームの状況に合わせて編集してから保存してください。</p>
             <form id="form-practice-plan" class="practice-plan-form">
-                <label>テーマ<input id="practice-plan-name" class="form-control" required></label>
-                <label>実施日（任意）<input id="practice-plan-date" type="date" class="form-control"></label>
-                <label>所要時間（分）<input id="practice-plan-duration" type="number" min="30" max="180" step="5" class="form-control" required></label>
-                <label>ねらい<textarea id="practice-plan-purpose" class="form-control" rows="3"></textarea></label>
+                <label>テーマ<input id="practice-plan-name" class="c-input form-control" required></label>
+                <label>実施日（任意）<input id="practice-plan-date" type="date" class="c-input form-control"></label>
+                <label>所要時間（分）<input id="practice-plan-duration" type="number" min="30" max="180" step="5" class="c-input form-control" required></label>
+                <label>ねらい<textarea id="practice-plan-purpose" class="c-input form-control" rows="3"></textarea></label>
                 <div id="practice-plan-blocks" class="practice-plan-blocks"></div>
-                <label>雨天・人数不足時の代替案<textarea id="practice-plan-contingency" class="form-control" rows="2"></textarea></label>
-                <div class="modal-actions"><button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button><button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> 練習案を保存</button></div>
+                <label>雨天・人数不足時の代替案<textarea id="practice-plan-contingency" class="c-input form-control" rows="2"></textarea></label>
+                <div class="modal-actions"><button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button><button type="submit" class="c-button btn c-button--primary btn-primary"><i class="fa-solid fa-floppy-disk"></i> 練習案を保存</button></div>
             </form>
         </div>
     </div>
@@ -315,7 +315,7 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span id="dash-alert-text">試合結果が未入力の試合があります</span>
                 </div>
-                <button class="btn btn-sm dash-alert-btn" id="dash-alert-action">確認する <i
+                <button class="c-button btn c-button--compact btn-sm dash-alert-btn" id="dash-alert-action">確認する <i
                         class="fa-solid fa-arrow-right"></i></button>
             </div>
 
@@ -364,7 +364,7 @@
                         style="justify-content: space-between; align-items: center; width: 100%; flex-wrap: nowrap; gap: 0.4rem;">
                         <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><i
                                 class="fa-solid fa-bullseye" style="color:#a855f7;"></i> チーム強化テーマ</span>
-                        <button class="btn btn-secondary btn-sm coach-only" id="dash-btn-edit-focus"
+                        <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm coach-only" id="dash-btn-edit-focus"
                             onclick="openTeamFocusModal()"
                             style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px; flex-shrink: 0; white-space: nowrap;"><i
                                 class="fa-solid fa-pen"></i> 編集</button>
@@ -381,10 +381,10 @@
                     <div class="dash-widget-label"><i class="fa-solid fa-calendar-days"></i> 直近の予定・実績</div>
                     <div class="dash-schedule-actions coach-only" id="dash-schedule-btn-group"
                         style="display:flex; gap:0.35rem;">
-                        <button class="btn btn-primary btn-sm" id="dash-btn-add-practice"
+                        <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="dash-btn-add-practice"
                             style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px;"><i
                                 class="fa-solid fa-calendar-plus"></i> 練習追加</button>
-                        <button class="btn btn-primary btn-sm" id="dash-btn-add-match"
+                        <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="dash-btn-add-match"
                             style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px;"><i
                                 class="fa-solid fa-plus"></i> 試合追加</button>
                     </div>
@@ -395,10 +395,10 @@
             </div>
 
             <!-- ROW 4: 直近の試合 (全幅1列) -->
-            <div class="card dash-form-card">
+            <div class="c-card card dash-form-card">
                 <div class="dash-form-header">
                     <div class="dash-widget-label"><i class="fa-solid fa-chart-line"></i> 直近の試合</div>
-                    <button class="btn btn-secondary btn-sm" id="dash-btn-go-matches"
+                    <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="dash-btn-go-matches"
                         style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px;"><i class="fa-solid fa-list"></i>
                         一覧</button>
                 </div>
@@ -466,23 +466,23 @@
             <div class="c-filter-bar__main">
                 <div class="c-filter-bar__search">
                     <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                    <input type="search" id="input-match-search" placeholder="試合をキーワード検索..." class="form-control filter-search-input">
+                    <input type="search" id="input-match-search" placeholder="試合をキーワード検索..." class="c-input form-control filter-search-input">
                 </div>
                 <div class="c-action-group c-filter-bar__actions">
-                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-matches" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="c-status c-status--count c-status--compact hidden" id="badge-filter-matches">0</span></button>
-                    <button class="btn btn-secondary" id="btn-sort-match" title="日付昇順/降順切り替え"><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><span class="u-visually-hidden">並び順を切り替え</span></button>
-                    <button class="btn btn-primary" id="btn-add-match"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                    <button class="c-button btn c-button--secondary btn-secondary btn-filter-detail" id="btn-toggle-filter-matches" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="c-status c-status--count c-status--compact hidden" id="badge-filter-matches">0</span></button>
+                    <button class="c-button btn c-button--secondary btn-secondary" id="btn-sort-match" title="日付昇順/降順切り替え"><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><span class="u-visually-hidden">並び順を切り替え</span></button>
+                    <button class="c-button btn c-button--primary btn-primary" id="btn-add-match"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                 </div>
             </div>
             <div class="active-tags-bar hidden" id="active-tags-matches"></div>
             <div class="c-filter-bar__filters filter-accordion-panel hidden" id="filter-accordion-matches">
                 <div class="c-form-grid filter-accordion-grid">
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-nendo-match"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> 対象年度</label><select id="filter-nendo-match" class="form-control"></select></div>
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-type-match"><i class="fa-solid fa-trophy" aria-hidden="true"></i> 試合種別</label><select id="filter-type-match" class="form-control"></select></div>
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-opponent-match"><i class="fa-solid fa-user-group" aria-hidden="true"></i> 対戦相手</label><select id="filter-opponent-match" class="form-control"></select></div>
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-result-match"><i class="fa-solid fa-futbol" aria-hidden="true"></i> 勝敗結果</label><select id="filter-result-match" class="form-control"><option value="all">すべての勝敗</option><option value="win">勝利（Win）</option><option value="loss">敗北（Loss）</option><option value="draw">引き分け（Draw）</option><option value="upcoming">試合予定</option></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-nendo-match"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> 対象年度</label><select id="filter-nendo-match" class="c-input form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-type-match"><i class="fa-solid fa-trophy" aria-hidden="true"></i> 試合種別</label><select id="filter-type-match" class="c-input form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-opponent-match"><i class="fa-solid fa-user-group" aria-hidden="true"></i> 対戦相手</label><select id="filter-opponent-match" class="c-input form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-result-match"><i class="fa-solid fa-futbol" aria-hidden="true"></i> 勝敗結果</label><select id="filter-result-match" class="c-input form-control"><option value="all">すべての勝敗</option><option value="win">勝利（Win）</option><option value="loss">敗北（Loss）</option><option value="draw">引き分け（Draw）</option><option value="upcoming">試合予定</option></select></div>
                 </div>
-                <div class="c-filter-bar__filter-actions"><button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-matches"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 条件をリセット</button></div>
+                <div class="c-filter-bar__filter-actions"><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-filter-matches"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 条件をリセット</button></div>
             </div>
         </section>
         <div id="match-list" style="display:flex; flex-direction:column; gap:1.5rem;">
@@ -510,22 +510,22 @@
                 <div class="l-form-grid">
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="match-detail-date-input">日付 <span class="c-status c-status--warning">必須</span></label>
-                        <input type="date" id="match-detail-date-input" class="form-control" required
+                        <input type="date" id="match-detail-date-input" class="c-input form-control" required
                             form="form-match-detail-inline">
                     </div>
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="match-detail-opponent-input">対戦相手 <span class="c-status c-status--warning">必須</span></label>
-                        <input type="text" id="match-detail-opponent-input" class="form-control" placeholder="例: FC東京U-12" required
+                        <input type="text" id="match-detail-opponent-input" class="c-input form-control" placeholder="例: FC東京U-12" required
                             form="form-match-detail-inline">
                     </div>
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="match-detail-type-select">試合種別</label>
-                        <select id="match-detail-type-select" class="form-control"
+                        <select id="match-detail-type-select" class="c-input form-control"
                             form="form-match-detail-inline"></select>
                     </div>
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="match-detail-tournament-input">大会名・リーグ名</label>
-                        <input type="text" id="match-detail-tournament-input" class="form-control" placeholder="例: 三多摩大会（任意）"
+                        <input type="text" id="match-detail-tournament-input" class="c-input form-control" placeholder="例: 三多摩大会（任意）"
                             form="form-match-detail-inline">
                     </div>
                 </div>
@@ -538,14 +538,14 @@
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="match-detail-theme-input"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> 試合テーマ</label>
                         <div class="parent-only u-text-muted" id="match-detail-theme-text">未設定</div>
-                        <input type="text" id="match-detail-theme-input" class="form-control coach-only" placeholder="例: ハイプレスからのショートカウンター">
+                        <input type="text" id="match-detail-theme-input" class="c-input form-control coach-only" placeholder="例: ハイプレスからのショートカウンター">
                     </div>
 
                     <!-- 総括 -->
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="match-detail-summary-input"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i> 試合総括</label>
                         <div class="parent-only u-text-muted" id="match-detail-summary-text">記録なし</div>
-                        <textarea id="match-detail-summary-input" class="form-control coach-only" rows="3" placeholder="例: ビルドアップは安定していたが、アタッキングサードでの判断力に課題"></textarea>
+                        <textarea id="match-detail-summary-input" class="c-input form-control coach-only" rows="3" placeholder="例: ビルドアップは安定していたが、アタッキングサードでの判断力に課題"></textarea>
                     </div>
 
                     <!-- 出欠管理（アコーディオン） -->
@@ -559,7 +559,7 @@
 
                     <!-- コーチ用インライン保存ボタン -->
                     <div class="coach-only c-action-group c-action-group--end">
-                        <button type="submit" class="btn btn-primary btn-sm" id="btn-save-match-detail-inline">
+                        <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-save-match-detail-inline">
                             <i class="fa-solid fa-floppy-disk"></i> 保存
                         </button>
                     </div>
@@ -570,7 +570,7 @@
             <div class="card c-card l-stack">
                 <div class="c-section-header">
                     <h3 class="c-section-header__title c-card__title c-text-effect--shimmer"><i class="fa-solid fa-layer-group"></i> ピリオド一覧</h3>
-                    <button class="btn btn-primary btn-sm" id="btn-add-formation"><i class="fa-solid fa-plus"></i>
+                    <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-add-formation"><i class="fa-solid fa-plus"></i>
                         ピリオド追加</button>
                 </div>
                 <div id="match-period-grid" class="l-grid l-grid--wide">
@@ -585,23 +585,23 @@
             <div class="c-filter-bar__main">
                 <div class="c-filter-bar__search">
                     <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                    <input type="search" id="input-practice-search" placeholder="練習・メモをキーワード検索..." class="form-control filter-search-input">
+                    <input type="search" id="input-practice-search" placeholder="練習・メモをキーワード検索..." class="c-input form-control filter-search-input">
                 </div>
                 <div class="c-action-group c-filter-bar__actions">
-                    <button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-practices" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="c-status c-status--count c-status--compact hidden" id="badge-filter-practices">0</span></button>
-                    <button class="btn btn-secondary" id="btn-sort-practice" title="日付昇順/降順切り替え"><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><span class="u-visually-hidden">並び順を切り替え</span></button>
-                    <button class="btn btn-primary" id="btn-add-practice"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                    <button class="c-button btn c-button--secondary btn-secondary btn-filter-detail" id="btn-toggle-filter-practices" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="c-status c-status--count c-status--compact hidden" id="badge-filter-practices">0</span></button>
+                    <button class="c-button btn c-button--secondary btn-secondary" id="btn-sort-practice" title="日付昇順/降順切り替え"><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><span class="u-visually-hidden">並び順を切り替え</span></button>
+                    <button class="c-button btn c-button--primary btn-primary" id="btn-add-practice"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                 </div>
             </div>
             <div class="active-tags-bar hidden" id="active-tags-practices"></div>
             <div class="c-filter-bar__filters filter-accordion-panel hidden" id="filter-accordion-practices">
                 <div class="c-form-grid filter-accordion-grid">
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-nendo-practice"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> 対象年度</label><select id="filter-nendo-practice" class="form-control"></select></div>
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-month-practice"><i class="fa-solid fa-calendar-minus" aria-hidden="true"></i> 実施月</label><select id="filter-month-practice" class="form-control"></select></div>
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-category-practice"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> 練習カテゴリ</label><select id="filter-category-practice" class="form-control"></select></div>
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-player-practice"><i class="fa-solid fa-user-check" aria-hidden="true"></i> 参加選手</label><select id="filter-player-practice" class="form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-nendo-practice"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> 対象年度</label><select id="filter-nendo-practice" class="c-input form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-month-practice"><i class="fa-solid fa-calendar-minus" aria-hidden="true"></i> 実施月</label><select id="filter-month-practice" class="c-input form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-category-practice"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> 練習カテゴリ</label><select id="filter-category-practice" class="c-input form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-player-practice"><i class="fa-solid fa-user-check" aria-hidden="true"></i> 参加選手</label><select id="filter-player-practice" class="c-input form-control"></select></div>
                 </div>
-                <div class="c-filter-bar__filter-actions"><button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-practices"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 条件をリセット</button></div>
+                <div class="c-filter-bar__filter-actions"><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-filter-practices"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 条件をリセット</button></div>
             </div>
         </section>
         <div id="practice-list" class="c-page-list c-page-list--bottom-safe">
@@ -612,10 +612,10 @@
     <template id="tpl-players">
         <div class="l-cluster l-cluster--space-between l-cluster--spacious">
             <div class="c-view-switcher player-view-tabs" id="player-view-tabs" role="tablist" aria-label="選手表示を切り替え">
-                <button type="button" class="btn btn-sm c-view-switcher__option player-view-tab active" data-view="cards" role="tab" aria-selected="true" aria-controls="player-grid"><i class="fa-solid fa-address-card" aria-hidden="true"></i> 育成ノート一覧</button>
-                <button type="button" class="btn btn-sm c-view-switcher__option player-view-tab" data-view="participation" role="tab" aria-selected="false" aria-controls="player-view-participation"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> 出場＆スタッツ比較</button>
+                <button type="button" class="c-button btn c-button--compact btn-sm c-view-switcher__option player-view-tab active" data-view="cards" role="tab" aria-selected="true" aria-controls="player-grid"><i class="fa-solid fa-address-card" aria-hidden="true"></i> 育成ノート一覧</button>
+                <button type="button" class="c-button btn c-button--compact btn-sm c-view-switcher__option player-view-tab" data-view="participation" role="tab" aria-selected="false" aria-controls="player-view-participation"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> 出場＆スタッツ比較</button>
             </div>
-            <div class="c-action-group header-actions"><button class="btn btn-secondary" id="btn-import-players-csv"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> CSV取込</button><button class="btn btn-primary" id="btn-add-player"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 追加</button></div>
+            <div class="c-action-group header-actions"><button class="c-button btn c-button--secondary btn-secondary" id="btn-import-players-csv"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> CSV取込</button><button class="c-button btn c-button--primary btn-primary" id="btn-add-player"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 追加</button></div>
         </div>
 
         <!-- View 1: Card Grid (Default) -->
@@ -650,8 +650,8 @@
                         </div>
                     </div>
                     <div class="c-action-group">
-                        <button type="button" class="btn btn-secondary btn-sm" id="pd-btn-edit"><i class="fa-solid fa-pen" aria-hidden="true"></i> 選手編集</button>
-                        <button type="button" class="btn btn-danger btn-sm" id="pd-btn-delete" aria-label="選手を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="pd-btn-edit"><i class="fa-solid fa-pen" aria-hidden="true"></i> 選手編集</button>
+                        <button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm" id="pd-btn-delete" aria-label="選手を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
                     </div>
                 </div>
             </section>
@@ -707,7 +707,7 @@
                         <span class="c-kicker"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> TIMELINE</span>
                         <h3 class="c-section-header__title c-card__title c-text-effect--shimmer" id="pd-timeline-title">成長の軌跡・指導メモ</h3>
                     </div>
-                    <button type="button" class="btn btn-primary btn-sm" id="btn-add-assessment"><i class="fa-solid fa-plus" aria-hidden="true"></i> 観察メモ追加</button>
+                    <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-add-assessment"><i class="fa-solid fa-plus" aria-hidden="true"></i> 観察メモ追加</button>
                 </div>
                 <div class="c-card__body">
                     <div class="timeline c-data-list c-data-list--scrollable" id="pd-timeline" aria-live="polite"></div>
@@ -745,13 +745,13 @@
                         <input type="hidden" id="development-player-id">
                         <div class="player-notebook-form-heading">
                             <h3><i class="fa-solid fa-plus"></i> 育成ノートを記録</h3>
-                            <label>日付 <input id="development-note-date" type="date" class="form-control" required></label>
+                            <label>日付 <input id="development-note-date" type="date" class="c-input form-control" required></label>
                         </div>
-                        <label>今日のテーマ<input id="development-note-focus" class="form-control" maxlength="80" placeholder="例：守備の寄せる方向を自分で選ぶ"></label>
-                        <label>観察メモ<textarea id="development-note-observation" class="form-control" rows="3" placeholder="成長した行動・事実を短く記録"></textarea></label>
-                        <label>次の一歩<textarea id="development-note-next-step" class="form-control" rows="2" placeholder="次回練習で取り組む具体的な一歩"></textarea></label>
+                        <label>今日のテーマ<input id="development-note-focus" class="c-input form-control" maxlength="80" placeholder="例：守備の寄せる方向を自分で選ぶ"></label>
+                        <label>観察メモ<textarea id="development-note-observation" class="c-input form-control" rows="3" placeholder="成長した行動・事実を短く記録"></textarea></label>
+                        <label>次の一歩<textarea id="development-note-next-step" class="c-input form-control" rows="2" placeholder="次回練習で取り組む具体的な一歩"></textarea></label>
                         <fieldset class="player-notebook-ratings"><legend>スキル自己評価・コーチ評価（任意）</legend><div id="development-note-ratings"></div></fieldset>
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-bookmark"></i> 保存</button>
+                        <button type="submit" class="c-button btn c-button--primary btn-primary"><i class="fa-solid fa-bookmark"></i> 保存</button>
                     </form>
                 </div>
             </section>
@@ -762,18 +762,18 @@
     <template id="tpl-library">
         <section class="c-filter-bar" aria-label="メニューの検索と絞り込み">
             <div class="c-filter-bar__main">
-                <div class="c-filter-bar__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="input-library-search" placeholder="メニューをキーワード検索..." class="form-control filter-search-input"></div>
-                <div class="c-action-group c-filter-bar__actions"><button class="btn btn-secondary btn-filter-detail" id="btn-toggle-filter-library" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="c-status c-status--count c-status--compact hidden" id="badge-filter-library">0</span></button><button class="btn btn-primary" id="btn-add-library-menu"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button></div>
+                <div class="c-filter-bar__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="input-library-search" placeholder="メニューをキーワード検索..." class="c-input form-control filter-search-input"></div>
+                <div class="c-action-group c-filter-bar__actions"><button class="c-button btn c-button--secondary btn-secondary btn-filter-detail" id="btn-toggle-filter-library" title="絞り込み条件"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 絞り込み<span class="c-status c-status--count c-status--compact hidden" id="badge-filter-library">0</span></button><button class="c-button btn c-button--primary btn-primary" id="btn-add-library-menu"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button></div>
             </div>
             <div class="active-tags-bar hidden" id="active-tags-library"></div>
             <div class="c-filter-bar__filters filter-accordion-panel hidden" id="filter-accordion-library">
                 <div class="c-form-grid filter-accordion-grid">
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-category"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> 練習カテゴリ</label><select id="filter-library-category" class="form-control"></select></div>
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-media"><i class="fa-solid fa-photo-film" aria-hidden="true"></i> メディアの有無</label><select id="filter-library-media" class="form-control"><option value="all">すべてのメディア</option><option value="anim">作図アニメあり</option><option value="video">参考動画あり</option><option value="any">作図/動画いずれかあり</option></select></div>
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-assigned"><i class="fa-solid fa-list-check" aria-hidden="true"></i> アサイン状態</label><select id="filter-library-assigned" class="form-control"><option value="all">すべてのアサイン状態</option><option value="frequent">よく使う定番（5回以上）</option><option value="assigned">練習アサイン実績あり</option><option value="unassigned">未アサイン（ストック）</option></select></div>
-                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-rating"><i class="fa-solid fa-star" aria-hidden="true"></i> 評価（関心度）</label><select id="filter-library-rating" class="form-control"><option value="all">すべての評価</option><option value="5">★★★★★（★5のみ）</option><option value="4">★★★★☆ 以上（★4+）</option><option value="3">★★★☆☆ 以上（★3+）</option><option value="rated">評価登録あり</option></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-category"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> 練習カテゴリ</label><select id="filter-library-category" class="c-input form-control"></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-media"><i class="fa-solid fa-photo-film" aria-hidden="true"></i> メディアの有無</label><select id="filter-library-media" class="c-input form-control"><option value="all">すべてのメディア</option><option value="anim">作図アニメあり</option><option value="video">参考動画あり</option><option value="any">作図/動画いずれかあり</option></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-assigned"><i class="fa-solid fa-list-check" aria-hidden="true"></i> アサイン状態</label><select id="filter-library-assigned" class="c-input form-control"><option value="all">すべてのアサイン状態</option><option value="frequent">よく使う定番（5回以上）</option><option value="assigned">練習アサイン実績あり</option><option value="unassigned">未アサイン（ストック）</option></select></div>
+                    <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="filter-library-rating"><i class="fa-solid fa-star" aria-hidden="true"></i> 評価（関心度）</label><select id="filter-library-rating" class="c-input form-control"><option value="all">すべての評価</option><option value="5">★★★★★（★5のみ）</option><option value="4">★★★★☆ 以上（★4+）</option><option value="3">★★★☆☆ 以上（★3+）</option><option value="rated">評価登録あり</option></select></div>
                 </div>
-                <div class="c-filter-bar__filter-actions"><button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filter-library"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 条件をリセット</button></div>
+                <div class="c-filter-bar__filter-actions"><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-filter-library"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 条件をリセット</button></div>
             </div>
         </section>
         <div id="library-list" style="display:flex; flex-direction:column; gap:1.5rem;">
@@ -784,8 +784,8 @@
     <template id="tpl-tactics">
         <section class="c-filter-bar" aria-label="戦術の検索と絞り込み">
             <div class="c-filter-bar__main">
-                <div class="c-filter-bar__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="input-tactics-search" placeholder="戦術をキーワード検索..." class="form-control filter-search-input"></div>
-                <div class="c-action-group c-filter-bar__actions"><div class="c-form-field c-form-field--compact"><label class="u-visually-hidden" for="filter-tactics-category">カテゴリ</label><select id="filter-tactics-category" class="form-control"><option value="all">すべてのカテゴリ</option></select></div><button class="btn btn-primary" id="btn-add-tactic"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button></div>
+                <div class="c-filter-bar__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="input-tactics-search" placeholder="戦術をキーワード検索..." class="c-input form-control filter-search-input"></div>
+                <div class="c-action-group c-filter-bar__actions"><div class="c-form-field c-form-field--compact"><label class="u-visually-hidden" for="filter-tactics-category">カテゴリ</label><select id="filter-tactics-category" class="c-input form-control"><option value="all">すべてのカテゴリ</option></select></div><button class="c-button btn c-button--primary btn-primary" id="btn-add-tactic"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button></div>
             </div>
         </section>
         <div id="tactics-list" style="display:flex; flex-direction:column; gap:1.5rem; margin-top:1rem;">
@@ -799,10 +799,10 @@
             <!-- カテゴリ別設定ナビゲーションタブ -->
             <div class="settings-tabs-nav">
                 <div class="c-view-switcher settings-tabs" role="tablist" aria-label="設定カテゴリを切り替え">
-                    <button type="button" class="btn btn-sm c-view-switcher__option is-active" data-settings-tab="general" role="tab" aria-selected="true"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 基本・表示</button>
-                    <button type="button" class="btn btn-sm c-view-switcher__option" data-settings-tab="sync" role="tab" aria-selected="false"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> データ連携・共有</button>
-                    <button type="button" class="btn btn-sm c-view-switcher__option" data-settings-tab="master" role="tab" aria-selected="false"><i class="fa-solid fa-list-check" aria-hidden="true"></i> マスター管理</button>
-                    <button type="button" class="btn btn-sm c-view-switcher__option" data-settings-tab="summary" role="tab" aria-selected="false"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> 保守・総括</button>
+                    <button type="button" class="c-button btn c-button--compact btn-sm c-view-switcher__option is-active" data-settings-tab="general" role="tab" aria-selected="true"><i class="fa-solid fa-sliders" aria-hidden="true"></i> 基本・表示</button>
+                    <button type="button" class="c-button btn c-button--compact btn-sm c-view-switcher__option" data-settings-tab="sync" role="tab" aria-selected="false"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> データ連携・共有</button>
+                    <button type="button" class="c-button btn c-button--compact btn-sm c-view-switcher__option" data-settings-tab="master" role="tab" aria-selected="false"><i class="fa-solid fa-list-check" aria-hidden="true"></i> マスター管理</button>
+                    <button type="button" class="c-button btn c-button--compact btn-sm c-view-switcher__option" data-settings-tab="summary" role="tab" aria-selected="false"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> 保守・総括</button>
                 </div>
             </div>
 
@@ -816,12 +816,12 @@
                     <div class="sl-section-body c-settings-section__body c-card__body">
                         <p class="c-settings-section__intro operations-intro">端末ごとに、カラーモード、文字の大きさ、動きの量を調整できます。記録データや他の利用者の表示は変わりません。</p>
                             <div class="c-form-grid ui-preferences-grid">
-                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-color-mode">カラーモード</label><select id="ui-color-mode" class="form-control"><option value="light">ライト</option><option value="dark">ダーク</option></select><small class="c-form-field__hint">この端末だけの表示設定です。</small></div>
-                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-font-scale">文字の大きさ</label><select id="ui-font-scale" class="form-control"><option value="normal">標準</option><option value="large">大きめ</option><option value="xlarge">最大</option></select></div>
+                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-color-mode">カラーモード</label><select id="ui-color-mode" class="c-input form-control"><option value="light">ライト</option><option value="dark">ダーク</option></select><small class="c-form-field__hint">この端末だけの表示設定です。</small></div>
+                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-font-scale">文字の大きさ</label><select id="ui-font-scale" class="c-input form-control"><option value="normal">標準</option><option value="large">大きめ</option><option value="xlarge">最大</option></select></div>
                             <label class="c-choice-field ui-preference-check"><input id="ui-reduce-motion" type="checkbox"><span>動きを控えめにする</span></label>
                             <label class="c-choice-field ui-preference-check"><input id="ui-compact-mode" type="checkbox"><span>情報をコンパクトに表示</span></label>
                         </div>
-                        <div class="c-action-group c-action-group--mobile-stretch operations-actions"><button type="button" class="btn btn-primary btn-sm" id="btn-save-ui-preferences"><i class="fa-solid fa-check" aria-hidden="true"></i> 表示設定を保存</button></div>
+                        <div class="c-action-group c-action-group--mobile-stretch operations-actions"><button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-save-ui-preferences"><i class="fa-solid fa-check" aria-hidden="true"></i> 表示設定を保存</button></div>
                     </div>
                 </section>
 
@@ -835,11 +835,11 @@
                             <div class="c-form-grid">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="c-form-field__label" for="team-info-name">チーム名 <span class="c-status c-status--warning">必須</span></label>
-                                    <input type="text" id="team-info-name" class="form-control" required>
+                                    <input type="text" id="team-info-name" class="c-input form-control" required>
                                 </div>
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="c-form-field__label" for="team-info-passcode">コーチパスコード</label>
-                                    <input type="password" id="team-info-passcode" class="form-control" placeholder="パスコードを入力">
+                                    <input type="password" id="team-info-passcode" class="c-input form-control" placeholder="パスコードを入力">
                                 </div>
                             </div>
                             <div class="team-theme-editor">
@@ -858,7 +858,7 @@
                                 <p id="team-theme-contrast-status" class="team-theme-editor__status"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> 必須の文字・UIコントラストを確認します。</p>
                             </div>
                             <div class="c-action-group c-action-group--mobile-stretch operations-actions">
-                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-check" aria-hidden="true"></i> チームテーマを保存</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm"><i class="fa-solid fa-check" aria-hidden="true"></i> チームテーマを保存</button>
                             </div>
                         </form>
                     </div>
@@ -872,15 +872,15 @@
                     <div class="sl-section-body c-settings-section__body c-card__body workspace-management-body">
                         <p class="c-settings-section__intro operations-intro">チームと年度を切り替えます。切替前のデータは自動保存され、年度アーカイブからいつでも再表示できます。</p>
                         <div class="c-form-grid workspace-select-grid">
-                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-team-select">チーム</label><select id="workspace-team-select" class="form-control"></select></div>
-                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-season-select">シーズン</label><select id="workspace-season-select" class="form-control"></select></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-team-select">チーム</label><select id="workspace-team-select" class="c-input form-control"></select></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-season-select">シーズン</label><select id="workspace-season-select" class="c-input form-control"></select></div>
                         </div>
                         <p id="workspace-context-status" class="workspace-context-status" aria-live="polite"></p>
                         <div class="c-action-group c-action-group--mobile-stretch workspace-actions">
-                            <button type="button" class="btn btn-primary btn-sm" id="btn-workspace-switch"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> このシーズンへ切替</button>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-workspace-new-season"><i class="fa-solid fa-calendar-plus" aria-hidden="true"></i> 新年度を作成</button>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-workspace-new-team"><i class="fa-solid fa-folder-plus" aria-hidden="true"></i> チームを追加</button>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-workspace-archive"><i class="fa-solid fa-box-archive" aria-hidden="true"></i> 年度をアーカイブ</button>
+                            <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-workspace-switch"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> このシーズンへ切替</button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-workspace-new-season"><i class="fa-solid fa-calendar-plus" aria-hidden="true"></i> 新年度を作成</button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-workspace-new-team"><i class="fa-solid fa-folder-plus" aria-hidden="true"></i> チームを追加</button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-workspace-archive"><i class="fa-solid fa-box-archive" aria-hidden="true"></i> 年度をアーカイブ</button>
                         </div>
                     </div>
                 </section>
@@ -897,17 +897,17 @@
                         <p class="c-settings-section__intro">試合・練習・選手・練習メニュー・<strong>戦術管理</strong>・チームテーマ・各種設定マスタがクラウド同期の対象となります。</p>
                         <form id="form-gas-sync" class="c-settings-form">
                             <div class="c-form-grid">
-                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-api-url">Web API URL</label><input type="url" id="gas-api-url" class="form-control" placeholder="https://script.google.com/macros/s/.../exec"></div>
-                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-sheet-name">シート名（任意）</label><input type="text" id="gas-sheet-name" class="form-control" placeholder="例: 2026年度 または データ（空欄の場合は最初のシート）"></div>
-                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-auth-token">認証トークン</label><input type="password" id="gas-auth-token" class="form-control" placeholder="任意の合い言葉（例: mysecret123）" autocomplete="off"></div>
-                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-sync-protocol">同期プロトコル</label><select id="gas-sync-protocol" class="form-control"><option value="secure-v2">安全モード（POST認証・推奨）</option><option value="legacy-v1">互換モード（旧GAS用・認証情報がURLに含まれます）</option></select></div>
+                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-api-url">Web API URL</label><input type="url" id="gas-api-url" class="c-input form-control" placeholder="https://script.google.com/macros/s/.../exec"></div>
+                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-sheet-name">シート名（任意）</label><input type="text" id="gas-sheet-name" class="c-input form-control" placeholder="例: 2026年度 または データ（空欄の場合は最初のシート）"></div>
+                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-auth-token">認証トークン</label><input type="password" id="gas-auth-token" class="c-input form-control" placeholder="任意の合い言葉（例: mysecret123）" autocomplete="off"></div>
+                                <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-sync-protocol">同期プロトコル</label><select id="gas-sync-protocol" class="c-input form-control"><option value="secure-v2">安全モード（POST認証・推奨）</option><option value="legacy-v1">互換モード（旧GAS用・認証情報がURLに含まれます）</option></select></div>
                             </div>
                             <p id="gas-security-guidance" class="c-settings-section__intro">安全モードを使うには、P10のGASテンプレートをデプロイしてください。認証トークンは共有リンクに含まれません。</p>
                             <div class="c-action-group c-action-group--mobile-stretch gas-actions-group">
-                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> 保存</button>
-                                <button type="button" class="btn btn-secondary btn-sm" id="btn-sync-pull-now"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> クラウド取得</button>
-                                <button type="button" class="btn btn-secondary btn-sm" id="btn-sync-push-now"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> クラウド送信</button>
-                                <button type="button" class="btn btn-secondary btn-sm" id="btn-retry-sync-outbox"><i class="fa-solid fa-rotate" aria-hidden="true"></i> 再試行</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> 保存</button>
+                                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-sync-pull-now"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> クラウド取得</button>
+                                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-sync-push-now"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> クラウド送信</button>
+                                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-retry-sync-outbox"><i class="fa-solid fa-rotate" aria-hidden="true"></i> 再試行</button>
                             </div>
                         </form>
                     </div>
@@ -921,23 +921,23 @@
                     <div class="sl-section-body c-settings-section__body c-card__body parent-share-body">
                         <p class="c-settings-section__intro">選手別の表示範囲と共有リンクの有効期限を管理し、未回答者への案内文を作成できます。リンクに認証トークンは含めません。</p>
                         <div class="c-form-grid parent-share-controls">
-                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-player">対象選手</label><select id="parent-share-player" class="form-control"></select></div>
-                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-expires">リンク有効期限（任意）</label><input id="parent-share-expires" type="date" class="form-control"></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-player">対象選手</label><select id="parent-share-player" class="c-input form-control"></select></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-expires">リンク有効期限（任意）</label><input id="parent-share-expires" type="date" class="c-input form-control"></div>
                         </div>
                         <p id="parent-share-status" class="parent-share-status" aria-live="polite"></p>
                         <div class="c-action-group c-action-group--mobile-stretch operations-actions">
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-invite-link" data-legacy-id="btn-copy-parent-share-link"><i class="fa-solid fa-link" aria-hidden="true"></i> リンクコピー</button>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-parent-share-rotate"><i class="fa-solid fa-rotate" aria-hidden="true"></i> キー再生成</button>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-parent-share-digest"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i> リマインド生成</button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-copy-invite-link" data-legacy-id="btn-copy-parent-share-link"><i class="fa-solid fa-link" aria-hidden="true"></i> リンクコピー</button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-parent-share-rotate"><i class="fa-solid fa-rotate" aria-hidden="true"></i> キー再生成</button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-parent-share-digest"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i> リマインド生成</button>
                         </div>
                         <div class="parent-access-manager">
                             <div class="parent-access-manager-heading"><strong><i class="fa-solid fa-id-card"></i> 保護者アクセス管理</strong><span>招待ごとに対象選手・閲覧範囲・期限を設定します。</span></div>
                             <div id="parent-access-trust-status" class="parent-access-trust-status" role="status" aria-live="polite"></div>
                             <div class="parent-access-create-grid">
-                                <label>招待の表示名（任意）<input id="parent-access-label" class="form-control" type="text" placeholder="例：山田様"></label>
+                                <label>招待の表示名（任意）<input id="parent-access-label" class="c-input form-control" type="text" placeholder="例：山田様"></label>
                                 <fieldset class="parent-access-scopes"><legend>閲覧範囲</legend><label><input type="checkbox" value="schedule" checked>予定・結果</label><label><input type="checkbox" value="attendance" checked>出欠</label><label><input type="checkbox" value="development" checked>本人の成長ログ</label></fieldset>
                             </div>
-                            <div class="c-action-group c-action-group--mobile-stretch operations-actions"><button type="button" class="btn btn-primary btn-sm" id="btn-create-parent-access"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 招待作成</button></div>
+                            <div class="c-action-group c-action-group--mobile-stretch operations-actions"><button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-create-parent-access"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 招待作成</button></div>
                             <div class="parent-access-invites" id="parent-access-invites"></div>
                         </div>
                     </div>
@@ -951,10 +951,10 @@
                     <div class="sl-section-body c-settings-section__body c-card__body c-data-management__operation">
                         <p class="c-settings-section__intro">全データ（試合記録、練習予定、メニュー、選手情報等）をJSONファイルとしてダウンロード・バックアップ、または取込・一括削除が行えます。大切な試合の前後や端末変更前には、必ずバックアップを作成してください。</p>
                         <div class="c-action-group c-action-group--mobile-stretch">
-                            <button type="button" class="btn btn-primary btn-sm" id="btn-data-view-export"><i class="fa-solid fa-download" aria-hidden="true"></i> バックアップ出力（JSON）</button>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-export-recovery" disabled><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> 復旧データ保存</button>
-                            <label class="btn btn-secondary btn-sm"><i class="fa-solid fa-upload" aria-hidden="true"></i> ファイルから復元（JSON）<input type="file" id="input-data-view-import" accept=".json" class="u-visually-hidden"></label>
-                            <button type="button" class="btn btn-danger btn-sm" id="btn-data-all-clear"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> 全データ初期化</button>
+                            <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-data-view-export"><i class="fa-solid fa-download" aria-hidden="true"></i> バックアップ出力（JSON）</button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-export-recovery" disabled><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> 復旧データ保存</button>
+                            <label class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm"><i class="fa-solid fa-upload" aria-hidden="true"></i> ファイルから復元（JSON）<input type="file" id="input-data-view-import" accept=".json" class="u-visually-hidden"></label>
+                            <button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm" id="btn-data-all-clear"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> 全データ初期化</button>
                         </div>
                     </div>
                 </section>
@@ -969,7 +969,7 @@
                             <span class="c-kicker"><i class="fa-solid fa-trophy" aria-hidden="true"></i> MATCH TYPES</span>
                             <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="match-types-title">試合種別</h2>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-match-types">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-match-types">
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
@@ -978,9 +978,9 @@
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-match-type">新しい試合種別</label>
-                                    <input type="text" id="new-match-type" class="form-control" placeholder="新しい試合種別を入力" required>
+                                    <input type="text" id="new-match-type" class="c-input form-control" placeholder="新しい試合種別を入力" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="match-type-list" class="c-data-list"></ul>
@@ -994,7 +994,7 @@
                             <span class="c-kicker"><i class="fa-solid fa-tags" aria-hidden="true"></i> PRACTICE CATEGORIES</span>
                             <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="menu-categories-title">練習カテゴリ</h2>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-menu-categories">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-menu-categories">
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
@@ -1003,9 +1003,9 @@
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-menu-category">新しいカテゴリ</label>
-                                    <input type="text" id="new-menu-category" class="form-control" placeholder="新しいカテゴリを入力" required>
+                                    <input type="text" id="new-menu-category" class="c-input form-control" placeholder="新しいカテゴリを入力" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="menu-category-list" class="c-data-list"></ul>
@@ -1019,7 +1019,7 @@
                             <span class="c-kicker"><i class="fa-solid fa-chess-knight" aria-hidden="true"></i> TACTICS CATEGORIES</span>
                             <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="tactics-categories-title">戦術カテゴリ</h2>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-tactics-categories">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-tactics-categories">
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
@@ -1028,9 +1028,9 @@
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-tactics-category">新しい戦術カテゴリ</label>
-                                    <input type="text" id="new-tactics-category" class="form-control" placeholder="新しい戦術カテゴリを入力" required>
+                                    <input type="text" id="new-tactics-category" class="c-input form-control" placeholder="新しい戦術カテゴリを入力" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="tactics-category-list" class="c-data-list"></ul>
@@ -1044,7 +1044,7 @@
                             <span class="c-kicker"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> SKILL METRICS</span>
                             <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="skill-metrics-title">スキル評価項目 <small style="font-size:var(--text-meta-size); font-weight:400; font-style:italic;">（3項目以上でレーダーチャート有効）</small></h2>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-skill-metrics">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-skill-metrics">
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
@@ -1053,9 +1053,9 @@
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-skill-metric">新しい評価項目</label>
-                                    <input type="text" id="new-skill-metric" class="form-control" placeholder="新しい評価項目を入力" required>
+                                    <input type="text" id="new-skill-metric" class="c-input form-control" placeholder="新しい評価項目を入力" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="skill-metric-list" class="c-data-list"></ul>
@@ -1069,7 +1069,7 @@
                             <span class="c-kicker"><i class="fa-solid fa-street-view" aria-hidden="true"></i> POSITIONS (CAT 1)</span>
                             <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="positions-title">ポジション (カテゴリ1: 大分類)</h2>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-positions">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-positions">
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
@@ -1078,9 +1078,9 @@
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-position">カテゴリ1のポジション</label>
-                                    <input type="text" id="new-position" class="form-control" placeholder="カテゴリ1のポジションを入力 (例: GK, DF, MF, FW)" required>
+                                    <input type="text" id="new-position" class="c-input form-control" placeholder="カテゴリ1のポジションを入力 (例: GK, DF, MF, FW)" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="position-list" class="c-data-list"></ul>
@@ -1094,7 +1094,7 @@
                             <span class="c-kicker"><i class="fa-solid fa-person-running" aria-hidden="true"></i> POSITIONS (CAT 2)</span>
                             <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="positions-cat2-title">ポジション (カテゴリ2: 詳細役割)</h2>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-positions-cat2">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-positions-cat2">
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
@@ -1103,9 +1103,9 @@
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-position-cat2">カテゴリ2のポジション</label>
-                                    <input type="text" id="new-position-cat2" class="form-control" placeholder="カテゴリ2のポジションを入力 (例: CB, SB, CH, SH, ST)" required>
+                                    <input type="text" id="new-position-cat2" class="c-input form-control" placeholder="カテゴリ2のポジションを入力 (例: CB, SB, CH, SH, ST)" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="position-cat2-list" class="c-data-list"></ul>
@@ -1119,7 +1119,7 @@
                             <span class="c-kicker"><i class="fa-solid fa-tags" aria-hidden="true"></i> VIDEO ANALYSIS TAGS</span>
                             <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="analysis-tags-title">動画分析タグ</h2>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-analysis-tags">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-analysis-tags">
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
@@ -1128,9 +1128,9 @@
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-analysis-tag">新しい動画分析タグ</label>
-                                    <input type="text" id="new-analysis-tag" class="form-control" placeholder="新しい動画分析タグを入力 (例: チャンス, ピンチ)" required>
+                                    <input type="text" id="new-analysis-tag" class="c-input form-control" placeholder="新しい動画分析タグを入力 (例: チャンス, ピンチ)" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="analysis-tag-list" class="c-data-list"></ul>
@@ -1144,7 +1144,7 @@
                             <span class="c-kicker"><i class="fa-solid fa-chess-board" aria-hidden="true"></i> FORMATIONS</span>
                             <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="custom-formations-title">フォーメーション</h2>
                         </div>
-                        <button type="button" class="btn btn-primary btn-sm" id="btn-add-custom-formation">
+                        <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-add-custom-formation">
                             <i class="fa-solid fa-plus"></i> 新規作成
                         </button>
                     </div>
@@ -1165,9 +1165,9 @@
                         <p class="c-settings-section__intro operations-intro">今シーズンの試合・出席・成長メモを自動集計し、一覧・印刷・CSV出力できます。</p>
                         <div class="season-report-metrics" id="season-report-metrics"></div>
                         <div class="c-action-group c-action-group--mobile-stretch operations-actions">
-                            <button type="button" class="btn btn-primary btn-sm" id="btn-season-report-preview"><i class="fa-solid fa-eye" aria-hidden="true"></i> レポート確認</button>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-season-report-print"><i class="fa-solid fa-print" aria-hidden="true"></i> 印刷</button>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-season-report-csv" data-legacy-id="btn-export-season-report-csv"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> CSV出力</button>
+                            <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-season-report-preview"><i class="fa-solid fa-eye" aria-hidden="true"></i> レポート確認</button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-season-report-print"><i class="fa-solid fa-print" aria-hidden="true"></i> 印刷</button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-season-report-csv" data-legacy-id="btn-export-season-report-csv"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> CSV出力</button>
                         </div>
                     </div>
                 </section>
@@ -1182,11 +1182,11 @@
                         <div class="operations-checks-grid" id="operations-checks-grid"></div>
                         <div id="operations-diagnostics" class="operations-diagnostics" aria-live="polite"></div>
                         <div class="c-action-group c-action-group--mobile-stretch operations-actions">
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-operations-refresh"><i class="fa-solid fa-rotate" aria-hidden="true"></i> 再確認</button>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-operations-share"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> 診断共有</button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-operations-refresh"><i class="fa-solid fa-rotate" aria-hidden="true"></i> 再確認</button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-operations-share"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> 診断共有</button>
                         </div>
                         <div class="cloud-recovery-panel">
-                            <div class="cloud-recovery-heading"><strong><i class="fa-solid fa-cloud-arrow-down"></i> クラウド復旧ポイント</strong><button type="button" class="btn btn-secondary btn-sm" id="btn-refresh-cloud-recoveries"><i class="fa-solid fa-rotate"></i> 更新</button></div>
+                            <div class="cloud-recovery-heading"><strong><i class="fa-solid fa-cloud-arrow-down"></i> クラウド復旧ポイント</strong><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-refresh-cloud-recoveries"><i class="fa-solid fa-rotate"></i> 更新</button></div>
                             <p class="c-settings-section__intro">直近の送信世代から特定時点のデータを安全に復旧できます。</p>
                             <div class="cloud-recovery-history" id="cloud-recovery-history"></div>
                         </div>
@@ -1232,7 +1232,7 @@
                         <p class="c-data-management__description">現在登録されているチームの全データ（試合記録、練習日、メニュー、選手情報、各フォーメーション等）をまとめたJSON形式のファイルを生成・保存します。</p>
                         <p class="c-data-management__note"><strong><i class="fa-solid fa-circle-info" aria-hidden="true"></i> 利用シーン</strong><br>保護者やスタッフへ最新データを共有するとき<br>端末変更やバックアップとして保管するとき</p>
                     </div>
-                    <div class="c-action-group c-action-group--mobile-stretch"><button type="button" class="btn btn-primary" id="btn-data-view-export"><i class="fa-solid fa-download" aria-hidden="true"></i> エクスポート（JSONダウンロード）</button></div>
+                    <div class="c-action-group c-action-group--mobile-stretch"><button type="button" class="c-button btn c-button--primary btn-primary" id="btn-data-view-export"><i class="fa-solid fa-download" aria-hidden="true"></i> エクスポート（JSONダウンロード）</button></div>
                 </section>
 
                 <!-- Import Card -->
@@ -1248,7 +1248,7 @@
                         <p class="c-data-management__description">コーチから受け取ったJSONファイルを取り込み、アプリ内の試合情報や練習予定を最新状態に更新します。</p>
                         <p class="c-data-management__note c-data-management__note--warning"><strong><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 注意事項</strong><br>インポートを実行すると、現在このブラウザに表示されているデータは取り込んだ内容に上書き更新されます。</p>
                     </div>
-                    <div class="c-action-group c-action-group--mobile-stretch"><label class="btn btn-secondary c-data-management__file-action"><i class="fa-solid fa-upload" aria-hidden="true"></i> インポート（ファイルを選択）<input type="file" id="input-data-view-import" accept=".json" class="u-visually-hidden"></label></div>
+                    <div class="c-action-group c-action-group--mobile-stretch"><label class="c-button btn c-button--secondary btn-secondary c-data-management__file-action"><i class="fa-solid fa-upload" aria-hidden="true"></i> インポート（ファイルを選択）<input type="file" id="input-data-view-import" accept=".json" class="u-visually-hidden"></label></div>
                 </section>
             </div>
 
@@ -1258,10 +1258,10 @@
                     <h3 class="c-data-management__operation-title c-data-management__danger-title"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> 入力データのオールクリア（初期化）</h3>
                     <p class="c-data-management__description">登録済みの試合記録、練習管理、選手情報、メニューなどをすべて削除し、初期状態にクリアします。</p>
                 </div>
-                <div class="c-action-group c-action-group--mobile-stretch"><button type="button" class="btn btn-danger" id="btn-data-all-clear"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> データをオールクリア</button></div>
+                <div class="c-action-group c-action-group--mobile-stretch"><button type="button" class="c-button btn c-button--danger btn-danger" id="btn-data-all-clear"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> データをオールクリア</button></div>
             </section>
             <!-- App Version & Info Section -->
-            <div class="card" style="padding:1.25rem 1.5rem; background:var(--surface); border:1px solid var(--surface-border);">
+            <div class="c-card card" style="padding:1.25rem 1.5rem; background:var(--surface); border:1px solid var(--surface-border);">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
                     <div>
                         <div style="font-size:0.95rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.5rem;">
@@ -1271,7 +1271,7 @@
                             CoachMgr v1.4.0 (2026-08-08)
                         </div>
                     </div>
-                    <button class="btn btn-secondary btn-sm" id="btn-show-release-notes" style="font-size:0.8rem;">
+                    <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-show-release-notes" style="font-size:0.8rem;">
                         <i class="fa-solid fa-clock-rotate-left"></i> 更新履歴・新機能を表示
                     </button>
                 </div>
@@ -1285,7 +1285,7 @@
             <!-- Region 1: Integrated 50px Single-Row Header (Strict 1-Row Bar) -->
             <header class="anim-header">
                 <div class="anim-header-left">
-                    <button class="btn btn-secondary btn-sm" id="anim-back" title="一覧に戻る"><i
+                    <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="anim-back" title="一覧に戻る"><i
                             class="fa-solid fa-arrow-left"></i> 戻る</button>
                 </div>
 
@@ -1295,19 +1295,19 @@
                 </div>
 
                 <div class="anim-header-right">
-                    <button class="btn btn-secondary btn-sm" id="tool-undo" title="Undo (Ctrl+Z)"><i
+                    <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="tool-undo" title="Undo (Ctrl+Z)"><i
                             class="fa-solid fa-rotate-left"></i> Undo</button>
-                    <button class="btn btn-secondary btn-sm" id="tool-redo" title="Redo (Ctrl+Y)"><i
+                    <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="tool-redo" title="Redo (Ctrl+Y)"><i
                             class="fa-solid fa-rotate-right"></i> Redo</button>
 
                     <!-- Settings Dropdown -->
                     <div class="dropdown-settings-wrapper" style="position:relative;">
-                        <button class="btn btn-secondary btn-sm" id="anim-settings-btn" title="設定 (ピッチ・グリッド)"><i
+                        <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="anim-settings-btn" title="設定 (ピッチ・グリッド)"><i
                                 class="fa-solid fa-gear"></i> 設定</button>
                         <div id="anim-settings-popover" class="anim-settings-popover hidden">
                             <div class="c-form-field c-form-field--fluid setting-item">
                                 <label class="c-form-field__label" for="canvas-pitch-template">ピッチタイプ</label>
-                                <select id="canvas-pitch-template" class="form-control form-control-sm">
+                                <select id="canvas-pitch-template" class="c-input form-control form-control-sm">
                                     <option value="full">フルコート</option>
                                     <option value="half">ハーフコート（上）</option>
                                     <option value="half-bottom">ハーフコート（下）</option>
@@ -1319,14 +1319,14 @@
                             </div>
                             <hr style="margin:8px 0; border:none; border-top:1px solid var(--surface-border);">
                             <div class="setting-item">
-                                <button class="btn btn-danger btn-xs" id="tool-clear"
+                                <button class="c-button btn c-button--danger btn-danger btn-xs" id="tool-clear"
                                     style="width:100%; justify-content:center;"><i class="fa-solid fa-trash"></i>
                                     すべて消去</button>
                             </div>
                         </div>
                     </div>
 
-                    <button class="btn btn-primary btn-sm" id="anim-save" title="作図を保存"><i class="fa-solid fa-save"></i>
+                    <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="anim-save" title="作図を保存"><i class="fa-solid fa-save"></i>
                         保存</button>
                 </div>
             </header>
@@ -1351,7 +1351,7 @@
                             <div style="display:flex; flex-direction:column; gap:8px;">
                                 <div>
                                     <label style="font-size:0.75rem; font-weight:600; display:block; margin-bottom:4px;">配置対象</label>
-                                    <select id="select-bulk-team-mode" class="form-control form-control-sm" style="width:100%; font-size:0.8rem;">
+                                    <select id="select-bulk-team-mode" class="c-input form-control form-control-sm" style="width:100%; font-size:0.8rem;">
                                         <option value="both">両チーム（対峙配置）</option>
                                         <option value="home">自チームのみ</option>
                                         <option value="away">相手チームのみ</option>
@@ -1359,7 +1359,7 @@
                                 </div>
                                 <div id="wrapper-bulk-home-formation">
                                     <label style="font-size:0.75rem; font-weight:600; display:block; margin-bottom:4px; color:var(--text-primary);">自チームのフォーメーション</label>
-                                    <select id="select-bulk-home-formation" class="form-control form-control-sm" style="width:100%; font-size:0.8rem;">
+                                    <select id="select-bulk-home-formation" class="c-input form-control form-control-sm" style="width:100%; font-size:0.8rem;">
                                         <option value="3-3-1">3-3-1 (8人制標準)</option>
                                         <option value="2-4-1">2-4-1 (8人制)</option>
                                         <option value="3-2-2">3-2-2 (8人制)</option>
@@ -1370,7 +1370,7 @@
                                 </div>
                                 <div id="wrapper-bulk-away-formation">
                                     <label style="font-size:0.75rem; font-weight:600; display:block; margin-bottom:4px; color:var(--text-primary);">相手チームのフォーメーション</label>
-                                    <select id="select-bulk-away-formation" class="form-control form-control-sm" style="width:100%; font-size:0.8rem;">
+                                    <select id="select-bulk-away-formation" class="c-input form-control form-control-sm" style="width:100%; font-size:0.8rem;">
                                         <option value="3-3-1">3-3-1 (8人制標準)</option>
                                         <option value="2-4-1">2-4-1 (8人制)</option>
                                         <option value="3-2-2">3-2-2 (8人制)</option>
@@ -1379,7 +1379,7 @@
                                         <option value="4-3-3">4-3-3 (11人制)</option>
                                     </select>
                                 </div>
-                                <button type="button" class="btn btn-primary btn-sm" id="btn-apply-bulk-formation" style="width:100%; margin-top:4px;">
+                                <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-apply-bulk-formation" style="width:100%; margin-top:4px;">
                                     <i class="fa-solid fa-check"></i> キャンバスに一括配置
                                 </button>
                             </div>
@@ -1402,10 +1402,10 @@
                                 </div>
                                 <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:4px;">プリセット:</div>
                                 <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:4px;">
-                                    <button type="button" class="btn btn-secondary btn-xs btn-color-preset" data-home="#f23932" data-away="#2563eb" style="font-size:0.7rem;">赤 vs 青</button>
-                                    <button type="button" class="btn btn-secondary btn-xs btn-color-preset" data-home="#eab308" data-away="#a855f7" style="font-size:0.7rem;">黄 vs 紫</button>
-                                    <button type="button" class="btn btn-secondary btn-xs btn-color-preset" data-home="#ffffff" data-away="#1e293b" style="font-size:0.7rem;">白 vs 黒</button>
-                                    <button type="button" class="btn btn-secondary btn-xs btn-color-preset" data-home="#22c55e" data-away="#f97316" style="font-size:0.7rem;">緑 vs オレンジ</button>
+                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset" data-home="#f23932" data-away="#2563eb" style="font-size:0.7rem;">赤 vs 青</button>
+                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset" data-home="#eab308" data-away="#a855f7" style="font-size:0.7rem;">黄 vs 紫</button>
+                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset" data-home="#ffffff" data-away="#1e293b" style="font-size:0.7rem;">白 vs 黒</button>
+                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset" data-home="#22c55e" data-away="#f97316" style="font-size:0.7rem;">緑 vs オレンジ</button>
                                 </div>
                             </div>
                         </div>
@@ -1490,7 +1490,7 @@
                                         <option value="green">緑</option>
                                         <option value="orange">橙</option>
                                     </select>
-                                    <select id="canvas-player-select" class="form-control hidden"></select>
+                                    <select id="canvas-player-select" class="c-input form-control hidden"></select>
                                 </div>
 
                                 <div id="popover-text-controls" class="popover-group"
@@ -1504,9 +1504,9 @@
                                 </div>
 
                                 <div class="popover-actions">
-                                    <button class="btn btn-secondary btn-xs" id="tool-rotate" title="向きを回転"><i
+                                    <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="tool-rotate" title="向きを回転"><i
                                             class="fa-solid fa-rotate-right"></i> 回転</button>
-                                    <button class="btn btn-danger btn-xs" id="tool-delete" title="選択削除"><i
+                                    <button class="c-button btn c-button--danger btn-danger btn-xs" id="tool-delete" title="選択削除"><i
                                             class="fa-solid fa-trash-can"></i> 削除</button>
                                 </div>
                             </div>
@@ -1521,14 +1521,14 @@
                         <!-- 5b. Floating Compact Player Bar Timeline (Centered Inside Pitch Canvas) -->
                         <footer class="anim-player-bar" id="anim-timeline-bar">
                             <!-- Timeline Toggle Button -->
-                            <button class="btn btn-secondary btn-xs" id="anim-timeline-toggle" title="タイムラインを開く/閉じる"
+                            <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-timeline-toggle" title="タイムラインを開く/閉じる"
                                 style="padding:0 0.5rem; font-size:0.75rem; height:30px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center;"><i
                                     class="fa-solid fa-film"></i></button>
                             <!-- Left Group: Play / Stop -->
                             <div class="player-bar-group player-bar-left c-action-group">
-                                <button class="btn btn-primary btn-xs" id="anim-play" title="アニメーション再生"><i
+                                <button class="c-button btn c-button--primary btn-primary btn-xs" id="anim-play" title="アニメーション再生"><i
                                         class="fa-solid fa-play"></i> 再生</button>
-                                <button class="btn btn-secondary btn-xs" id="anim-stop" title="停止"><i
+                                <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-stop" title="停止"><i
                                         class="fa-solid fa-stop"></i> 停止</button>
                             </div>
 
@@ -1536,12 +1536,12 @@
 
                             <!-- Center Group: Prev / Select Scene Dropdown / Edit Title / Next -->
                             <div class="player-bar-group player-bar-center c-action-group">
-                                <button class="btn btn-secondary btn-xs" id="anim-prev-frame" title="前のシーンへ"><i
+                                <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-prev-frame" title="前のシーンへ"><i
                                         class="fa-solid fa-chevron-left"></i> 前へ</button>
                                 <select id="anim-frame-select" title="シーン切替プルダウン"></select>
-                                <button class="btn btn-secondary btn-xs" id="anim-edit-frame-title"
+                                <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-edit-frame-title"
                                     title="現在のシーンの見出し（例: 初期配置）を編集"><i class="fa-solid fa-pen"></i></button>
-                                <button class="btn btn-secondary btn-xs" id="anim-next-frame" title="次のシーンへ">次へ <i
+                                <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-next-frame" title="次のシーンへ">次へ <i
                                         class="fa-solid fa-chevron-right"></i></button>
                             </div>
 
@@ -1549,11 +1549,11 @@
 
                             <!-- Right Group: Add Scene / Delete Scene / Video Export -->
                             <div class="player-bar-group player-bar-right c-action-group">
-                                <button class="btn btn-primary btn-xs" id="anim-add-frame" title="現在のシーンの次に新しいシーンを挿入"><i
+                                <button class="c-button btn c-button--primary btn-primary btn-xs" id="anim-add-frame" title="現在のシーンの次に新しいシーンを挿入"><i
                                         class="fa-solid fa-plus"></i> 追加</button>
-                                <button class="btn btn-danger btn-xs" id="anim-delete-frame" title="現在のシーンを削除"><i
+                                <button class="c-button btn c-button--danger btn-danger btn-xs" id="anim-delete-frame" title="現在のシーンを削除"><i
                                         class="fa-solid fa-trash-can"></i> 削除</button>
-                                <button class="btn btn-secondary btn-xs" id="anim-export-video" title="ダウンロード (LINE共有用)"
+                                <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-export-video" title="ダウンロード (LINE共有用)"
                                     style="padding:0 0.55rem; font-size:0.85rem;"><i class="fa-solid fa-download"
                                         style="color:var(--primary);"></i></button>
                             </div>
@@ -1573,7 +1573,7 @@
                             <div class="drawer-body">
                                 <div class="drawer-field">
                                     <label for="drawer-caption-text">テロップ (指導ポイント)</label>
-                                    <input type="text" id="drawer-caption-text" class="form-control form-control-sm" placeholder="例: 受ける前に首を振る、マークを外す動き">
+                                    <input type="text" id="drawer-caption-text" class="c-input form-control form-control-sm" placeholder="例: 受ける前に首を振る、マークを外す動き">
                                     <div class="drawer-preset-chips" id="drawer-preset-chips">
                                         <button type="button" class="preset-chip">スペースを狙え</button>
                                         <button type="button" class="preset-chip">首を振る</button>
@@ -1584,7 +1584,7 @@
                                 </div>
                                 <div class="drawer-field drawer-field-short">
                                     <label for="drawer-pause-duration">停止時間</label>
-                                    <select id="drawer-pause-duration" class="form-control form-control-sm">
+                                    <select id="drawer-pause-duration" class="c-input form-control form-control-sm">
                                         <option value="0">停止なし</option>
                                         <option value="1">1秒</option>
                                         <option value="2">2秒</option>
@@ -1607,7 +1607,7 @@
                             style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.4rem;">
                             <i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細
                         </h4>
-                        <button type="button" class="btn btn-secondary btn-xs" id="btn-edit-anim-side-info" title="詳細情報を編集"
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-edit-anim-side-info" title="詳細情報を編集"
                             style="font-size:0.75rem; padding:0.2rem 0.5rem; display:none;">
                             <i class="fa-solid fa-pen"></i> 編集
                         </button>
@@ -1640,15 +1640,15 @@
                 </aside>
 
                 <!-- Menu Detail Info Modal (Organize, Key Factor, Options) -->
-                <div id="modal-anim-menu-info" class="modal-overlay hidden" style="z-index: 500;">
-                    <div class="modal" style="max-width: 540px; width: 92%; border-radius: 14px; padding: 1.5rem;">
+                <div id="modal-anim-menu-info" class="c-modal-overlay modal-overlay hidden" style="z-index: 500;">
+                    <div class="c-modal c-modal--legacy modal" style="max-width: 540px; width: 92%; border-radius: 14px; padding: 1.5rem;">
                         <div
                             style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--surface-border); padding-bottom:0.6rem;">
                             <h3
                                 style="margin:0; font-size:1.05rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.5rem;">
                                 <i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細情報
                             </h3>
-                            <button class="btn btn-secondary btn-xs" id="btn-close-anim-info"
+                            <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-close-anim-info"
                                 style="border:none; background:transparent; font-size:1.2rem; cursor:pointer;"><i
                                     class="fa-solid fa-xmark"></i></button>
                         </div>
@@ -1695,7 +1695,7 @@
                             </div>
                         </div>
                         <div style="margin-top:1.2rem; display:flex; justify-content:flex-end;">
-                            <button class="btn btn-secondary btn-sm" id="btn-close-anim-info-footer">閉じる</button>
+                            <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-close-anim-info-footer">閉じる</button>
                         </div>
                     </div>
                 </div>
@@ -1706,46 +1706,46 @@
     <!-- Modals (Independent Overlays) -->
 
     <!-- Match Form Modal -->
-    <div id="modal-match" class="modal-overlay hidden">
-        <div class="modal" style="position:relative;">
-            <button type="button" class="btn-close-modal"
+    <div id="modal-match" class="c-modal-overlay modal-overlay hidden">
+        <div class="c-modal c-modal--legacy modal" style="position:relative;">
+            <button type="button" class="c-modal__close btn-close-modal"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.5rem;">試合を追加</h2>
             <form id="form-match">
                 <input type="hidden" id="match-edit-id" value="">
                 <div class="form-group">
                     <label>日付 <span class="c-status c-status--warning">必須</span></label>
-                    <input type="date" id="match-date" class="form-control" required>
+                    <input type="date" id="match-date" class="c-input form-control" required>
                 </div>
                 <div class="form-group">
                     <label>RSVP回答期限 <span class="c-status c-status--muted">任意</span></label>
-                    <input type="date" id="match-rsvp-deadline" class="form-control">
+                    <input type="date" id="match-rsvp-deadline" class="c-input form-control">
                     <p class="form-help">期限を過ぎても回答は変更できます。未回答者へのリマインド対象を判別するための期限です。</p>
                 </div>
                 <div class="form-group">
                     <label>対戦相手 <span class="c-status c-status--warning">必須</span></label>
-                    <input type="text" id="match-opponent" class="form-control" placeholder="例: FC東京U-12" required>
+                    <input type="text" id="match-opponent" class="c-input form-control" placeholder="例: FC東京U-12" required>
                 </div>
                 <div class="form-group">
                     <label>試合種別 <span class="c-status c-status--muted">任意</span></label>
-                    <select id="match-type" class="form-control">
+                    <select id="match-type" class="c-input form-control">
                         <!-- Populated dynamically -->
                     </select>
                 </div>
                 <div class="form-group">
                     <label>大会名・リーグ名等 <span class="c-status c-status--muted">任意</span></label>
-                    <input type="text" id="match-tournament" class="form-control" placeholder="例: 大会名、リーグ名など（任意）">
+                    <input type="text" id="match-tournament" class="c-input form-control" placeholder="例: 大会名、リーグ名など（任意）">
                 </div>
                 <input type="hidden" id="match-score-us" value="0">
                 <input type="hidden" id="match-score-them" value="0">
                 <input type="hidden" id="match-scorers" value="">
                 <div class="form-group">
                     <label>試合テーマ <span class="c-status c-status--muted">任意</span></label>
-                    <input type="text" id="match-theme" class="form-control" placeholder="例: パス＆コントロール、サイド突破など">
+                    <input type="text" id="match-theme" class="c-input form-control" placeholder="例: パス＆コントロール、サイド突破など">
                 </div>
                 <div class="form-group">
                     <label>試合総括 <span class="c-status c-status--muted">任意</span></label>
-                    <textarea id="match-summary" class="form-control" rows="3"
+                    <textarea id="match-summary" class="c-input form-control" rows="3"
                         placeholder="例: ビルドアップは良かったがフィニッシュの精度に課題..."></textarea>
                 </div>
                 <div class="form-group">
@@ -1756,8 +1756,8 @@
                     </div>
                 </div>
                 <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
-                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                    <button type="submit" class="btn btn-primary">追加</button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
+                    <button type="submit" class="c-button btn c-button--primary btn-primary">追加</button>
                 </div>
             </form>
         </div>
@@ -1772,7 +1772,7 @@
                 style="display:flex; justify-content:space-between; align-items:center; height:var(--header-height); min-height:var(--header-height); box-sizing:border-box; border-bottom: 1px solid var(--surface-border); padding: 0 1rem; background: var(--card-bg); flex-shrink: 0; z-index: 10;">
                 <!-- 左側: 戻る -->
                 <div class="period-analysis-header-left" style="display:flex; align-items:center; gap: 0.6rem;">
-                    <button class="btn btn-secondary btn-sm" id="btn-back-to-match-detail" title="試合詳細へ戻る">
+                    <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-back-to-match-detail" title="試合詳細へ戻る">
                         <i class="fa-solid fa-arrow-left"></i> 戻る
                     </button>
                 </div>
@@ -1790,13 +1790,13 @@
                     style="display:flex; align-items:center; gap: 0.5rem; position: relative;">
                     <div
                         style="display:flex; align-items:center; gap:0.3rem; background:rgba(0,0,0,0.03); padding:0.2rem 0.4rem; border-radius:6px; border:1px solid var(--surface-border);">
-                        <button class="btn btn-secondary btn-xs" id="btn-period-prev" title="前のピリオドへ"
+                        <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-period-prev" title="前のピリオドへ"
                             style="font-size:0.75rem; padding:0.2rem 0.4rem; height:auto;">
                             <i class="fa-solid fa-chevron-left"></i> 前へ
                         </button>
                         <span id="current-period-name-indicator"
                             style="font-size:0.75rem; font-weight:bold; color:var(--text-secondary); padding:0 0.3rem; white-space:nowrap;">1本目</span>
-                        <button class="btn btn-secondary btn-xs" id="btn-period-next" title="次のピリオドへ"
+                        <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-period-next" title="次のピリオドへ"
                             style="font-size:0.75rem; padding:0.2rem 0.4rem; height:auto;">
                             次へ <i class="fa-solid fa-chevron-right"></i>
                         </button>
@@ -1827,7 +1827,7 @@
                     <div
                         style="padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--surface-border); font-weight: bold; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.02); flex-shrink: 0;">
                         <span style="white-space:nowrap;"><i class="fa-solid fa-list-ul"></i> タイムライン</span>
-                        <button class="btn btn-primary btn-xs" id="btn-add-timeline-event"
+                        <button class="c-button btn c-button--primary btn-primary btn-xs" id="btn-add-timeline-event"
                             style="padding: 0.2rem 0.4rem; font-size: 0.72rem; white-space:nowrap;">
                             <i class="fa-solid fa-plus"></i> 追加
                         </button>
@@ -1858,15 +1858,15 @@
     </div>
 
     <!-- コンテキスト維持型: ピリオド情報編集モーダル (軽量化版 ボトムシート) -->
-    <div id="modal-formation" class="modal-overlay hidden" style="z-index: 1030;">
+    <div id="modal-formation" class="c-modal-overlay modal-overlay hidden" style="z-index: 1030;">
         <div class="bottom-sheet-modal" style="max-width: 600px; width: 100%; position:relative;">
-            <button type="button" class="btn-close-modal"
+            <button type="button" class="c-modal__close btn-close-modal"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:0.5rem; font-size:1.1rem;" id="formation-modal-title"><i
                     class="fa-solid fa-pen"></i> ピリオド情報を編集</h2>
 
             <!-- 前ピリオドの配置をコピーボタン (JavaScriptで動的表示制御) -->
-            <button type="button" id="btn-copy-prev-period" class="btn btn-outline btn-sm"
+            <button type="button" id="btn-copy-prev-period" class="c-button btn btn-outline c-button--compact btn-sm"
                 style="width:100%; margin-bottom:1rem; display:none;">
                 <i class="fa-solid fa-copy"></i> 前ピリオドの陣形・配置をコピー
             </button>
@@ -1878,11 +1878,11 @@
                 <div style="display:flex; gap:0.8rem; margin-bottom: 1rem;">
                     <div class="form-group" style="flex:1; margin:0;">
                         <label style="font-size:0.8rem;">ピリオド名 (本数) <span class="c-status c-status--warning">必須</span></label>
-                        <input type="text" id="formation-name" class="form-control" placeholder="例: 1本目" required>
+                        <input type="text" id="formation-name" class="c-input form-control" placeholder="例: 1本目" required>
                     </div>
                     <div class="form-group" style="flex:1; margin:0;">
                         <label style="font-size:0.8rem;">システム (陣形) <span class="c-status c-status--muted">任意</span></label>
-                        <select id="formation-system-select" class="form-control"></select>
+                        <select id="formation-system-select" class="c-input form-control"></select>
                     </div>
                 </div>
 
@@ -1919,12 +1919,12 @@
                         style="display:none; position:absolute; z-index:100; background:#ffffff; border:1px solid var(--surface-border); border-radius:8px; padding:0.4rem; box-shadow:0 8px 24px rgba(0,0,0,0.25); width:160px;">
                         <label
                             style="font-size:0.7rem; font-weight:bold; color:var(--text-secondary); display:block; margin-bottom:0.2rem;">選手を割り当て:</label>
-                        <select id="formation-picker-select" class="form-control"
+                        <select id="formation-picker-select" class="c-input form-control"
                             style="font-size:0.78rem; padding:0.2rem; height:auto; width:100%; margin-bottom:0.3rem;"></select>
                         <div style="display:flex; justify-content:flex-end; gap:0.25rem;">
-                            <button type="button" class="btn btn-secondary" id="btn-formation-picker-clear"
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary" id="btn-formation-picker-clear"
                                 style="padding:0.12rem 0.3rem; font-size:0.65rem;">解除</button>
-                            <button type="button" class="btn btn-primary" id="btn-formation-picker-ok"
+                            <button type="button" class="c-button btn c-button--primary btn-primary" id="btn-formation-picker-ok"
                                 style="padding:0.12rem 0.3rem; font-size:0.65rem;">決定</button>
                         </div>
                     </div>
@@ -1939,15 +1939,15 @@
                     <div id="pk-kickers-list" class="c-data-list c-data-list--scrollable pk-kickers-list">
                         <!-- JSでキッカー行（1本目、2本目、3本目、4本目…）を生成 -->
                     </div>
-                    <div class="c-action-group c-action-group--mobile-stretch"><button type="button" id="btn-add-pk-kicker" class="btn btn-secondary btn-sm"><i class="fa-solid fa-plus" aria-hidden="true"></i> サドンデス枠を追加</button></div>
+                    <div class="c-action-group c-action-group--mobile-stretch"><button type="button" id="btn-add-pk-kicker" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm"><i class="fa-solid fa-plus" aria-hidden="true"></i> サドンデス枠を追加</button></div>
                 </section>
 
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <button type="button" class="btn btn-danger btn-sm" id="btn-delete-formation-modal"
+                    <button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm" id="btn-delete-formation-modal"
                         style="display:none;"><i class="fa-solid fa-trash"></i> 削除</button>
                     <div style="display:flex; gap:0.8rem; margin-left:auto;">
-                        <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                        <button type="submit" class="btn btn-primary">保存する</button>
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
+                        <button type="submit" class="c-button btn c-button--primary btn-primary">保存する</button>
                     </div>
                 </div>
             </form>
@@ -1955,7 +1955,7 @@
     </div>
 
     <!-- Practice Form Modal -->
-    <div id="modal-practice" class="modal-overlay hidden">
+    <div id="modal-practice" class="c-modal-overlay modal-overlay hidden">
         <div class="modal c-modal modal-practice-form" role="dialog" aria-modal="true" aria-labelledby="practice-modal-title">
             <div class="c-modal__header">
                 <h2 id="practice-modal-title" class="c-modal__title practice-modal-title">練習日を追加</h2>
@@ -1968,14 +1968,14 @@
                         <label class="c-form-field__label" for="practice-date">日付</label>
                         <span class="c-status-label c-status-label--required">必須</span>
                     </div>
-                    <input type="date" id="practice-date" class="form-control" required>
+                    <input type="date" id="practice-date" class="c-input form-control" required>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <div class="c-form-field__heading">
                         <label class="c-form-field__label" for="practice-rsvp-deadline">RSVP回答期限</label>
                         <span class="c-status-label">任意</span>
                     </div>
-                    <input type="date" id="practice-rsvp-deadline" class="form-control" aria-describedby="practice-rsvp-help">
+                    <input type="date" id="practice-rsvp-deadline" class="c-input form-control" aria-describedby="practice-rsvp-help">
                     <p id="practice-rsvp-help" class="c-form-field__help">未回答者へのリマインドを作成するための期限です。</p>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
@@ -1983,14 +1983,14 @@
                         <label class="c-form-field__label" for="practice-location">練習場所</label>
                         <span class="c-status-label">任意</span>
                     </div>
-                    <input type="text" id="practice-location" class="form-control" placeholder="例: 八王子小学校G、市民スポーツセンター">
+                    <input type="text" id="practice-location" class="c-input form-control" placeholder="例: 八王子小学校G、市民スポーツセンター">
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <div class="c-form-field__heading">
                         <label class="c-form-field__label" for="practice-template-select"><i class="fa-solid fa-bookmark" aria-hidden="true"></i> 練習テンプレート</label>
                         <span class="c-status-label">任意</span>
                     </div>
-                    <select id="practice-template-select" class="form-control" aria-describedby="practice-template-help">
+                    <select id="practice-template-select" class="c-input form-control" aria-describedby="practice-template-help">
                         <option value="">テンプレートを選ばない</option>
                     </select>
                     <p id="practice-template-help" class="c-form-field__help">保存済みのメニュー構成と場所を読み込みます。出欠はこの練習日ごとに設定します。</p>
@@ -2004,14 +2004,14 @@
                 </fieldset>
             </form>
             <div class="c-modal__footer practice-modal-actions">
-                <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                <button type="submit" class="btn btn-primary" form="form-practice">追加</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
+                <button type="submit" class="c-button btn c-button--primary btn-primary" form="form-practice">追加</button>
             </div>
         </div>
     </div>
 
     <!-- Tactic Form Modal -->
-    <div id="modal-tactic" class="modal-overlay hidden">
+    <div id="modal-tactic" class="c-modal-overlay modal-overlay hidden">
         <div class="modal c-modal modal-tactic-form" role="dialog" aria-modal="true" aria-labelledby="modal-tactic-title">
             <div class="c-modal__header">
                 <h2 id="modal-tactic-title" class="c-modal__title">新しい戦術を作成</h2>
@@ -2021,25 +2021,25 @@
                 <input type="hidden" id="tactic-id" value="">
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="tactic-title">タイトル <span class="c-status c-status--warning">必須</span></label>
-                    <input type="text" id="tactic-title" class="form-control" placeholder="例: ビルドアップパターンA" required>
+                    <input type="text" id="tactic-title" class="c-input form-control" placeholder="例: ビルドアップパターンA" required>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="tactic-category">カテゴリ</label>
-                    <select id="tactic-category" class="form-control"></select>
+                    <select id="tactic-category" class="c-input form-control"></select>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="tactic-description">説明・キーファクター</label>
-                    <textarea id="tactic-description" class="form-control" rows="3" placeholder="狙いや注意点を記述"></textarea>
+                    <textarea id="tactic-description" class="c-input form-control" rows="3" placeholder="狙いや注意点を記述"></textarea>
                 </div>
             </form>
             <div class="c-modal__footer c-action-group c-action-group--end">
-                <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                <button type="submit" form="form-tactic" class="btn btn-primary"><i class="fa-solid fa-save" aria-hidden="true"></i> 保存</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
+                <button type="submit" form="form-tactic" class="c-button btn c-button--primary btn-primary"><i class="fa-solid fa-save" aria-hidden="true"></i> 保存</button>
             </div>
         </div>
     </div>
 
-    <div id="modal-menu" class="modal-overlay hidden">
+    <div id="modal-menu" class="c-modal-overlay modal-overlay hidden">
         <div class="modal c-modal modal-menu-form" role="dialog" aria-modal="true" aria-labelledby="modal-menu-title">
             <div class="c-modal__header">
                 <h2 id="modal-menu-title" class="c-modal__title">練習メニューを追加</h2>
@@ -2053,59 +2053,59 @@
                     <legend class="c-fieldset__legend"><i class="fa-solid fa-book" aria-hidden="true"></i> ライブラリから選んでコピー <span class="c-status c-status--muted">任意</span></legend>
                     <div class="c-form-field c-form-field--fluid">
                         <label class="u-sr-only" for="menu-library-select">コピー元ライブラリ</label>
-                        <select id="menu-library-select" class="form-control"><option value="">（新規作成）</option><!-- Options injected here --></select>
+                        <select id="menu-library-select" class="c-input form-control"><option value="">（新規作成）</option><!-- Options injected here --></select>
                         <p class="c-form-field__help">選択するとテンプレート（作図含む）が読み込まれます。</p>
                     </div>
                 </fieldset>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="menu-focus">テーマ・フォーカス <span class="c-status c-status--warning">必須</span></label>
-                    <input type="text" id="menu-focus" class="form-control" placeholder="例: ポゼッション 4vs4+フリーマン" required>
+                    <input type="text" id="menu-focus" class="c-input form-control" placeholder="例: ポゼッション 4vs4+フリーマン" required>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="menu-category">カテゴリ <span class="c-status c-status--muted">任意</span></label>
-                    <select id="menu-category" class="form-control"><!-- Populated dynamically --></select>
+                    <select id="menu-category" class="c-input form-control"><!-- Populated dynamically --></select>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="menu-organize">オーガナイズ（人数・コートサイズ・ルールなど） <span class="c-status c-status--muted">任意</span></label>
-                    <textarea id="menu-organize" class="form-control" rows="2" placeholder="例: 20m x 20m, 4vs4+1フリーマン"></textarea>
+                    <textarea id="menu-organize" class="c-input form-control" rows="2" placeholder="例: 20m x 20m, 4vs4+1フリーマン"></textarea>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="menu-keyfactor">キーファクター（指導のポイント） <span class="c-status c-status--muted">任意</span></label>
-                    <textarea id="menu-keyfactor" class="form-control" rows="2" placeholder="例: ボールを受ける前の身体の向き、プレスの強度"></textarea>
+                    <textarea id="menu-keyfactor" class="c-input form-control" rows="2" placeholder="例: ボールを受ける前の身体の向き、プレスの強度"></textarea>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="menu-video-url">参考動画URL（YouTube） <span class="c-status c-status--muted">任意</span></label>
-                    <input type="url" id="menu-video-url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                    <input type="url" id="menu-video-url" class="c-input form-control" placeholder="https://www.youtube.com/watch?v=...">
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="menu-options">練習のオプションの説明 <span class="c-status c-status--muted">任意</span></label>
-                    <textarea id="menu-options" class="form-control" rows="2" placeholder="例: 慣れてきたらタッチ制限（2タッチ以内）を追加"></textarea>
+                    <textarea id="menu-options" class="c-input form-control" rows="2" placeholder="例: 慣れてきたらタッチ制限（2タッチ以内）を追加"></textarea>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="menu-engagement"><i class="fa-solid fa-fire" aria-hidden="true"></i> 選手たちの熱量・楽しさ <span class="c-status c-status--muted">任意</span></label>
-                    <select id="menu-engagement" class="form-control">
+                    <select id="menu-engagement" class="c-input form-control">
                         <option value="0">未評価 / 未実施</option><option value="5">★★★★★（5: 非常に盛り上がった・全員夢中）</option><option value="4">★★★★☆（4: 楽しそうにプレーしていた）</option><option value="3">★★★☆☆（3: 普通・標準的）</option><option value="2">★★☆☆☆（2: 難易度やルールで少し停滞）</option><option value="1">★☆☆☆☆（1: ウケが良くなかった・要改善）</option>
                     </select>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="menu-reflection"><i class="fa-solid fa-clipboard-user" aria-hidden="true"></i> 指導者の振り返り・メモ <span class="c-status c-status--muted">任意</span></label>
-                    <textarea id="menu-reflection" class="form-control" rows="2" placeholder="例: プレスの連動は良かったが、逆サイドへの展開の意識を次回促す"></textarea>
+                    <textarea id="menu-reflection" class="c-input form-control" rows="2" placeholder="例: プレスの連動は良かったが、逆サイドへの展開の意識を次回促す"></textarea>
                 </div>
             </form>
             <div class="c-modal__footer c-action-group c-action-group--end">
-                <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                <button type="button" id="btn-submit-menu" class="btn btn-primary">追加</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
+                <button type="button" id="btn-submit-menu" class="c-button btn c-button--primary btn-primary">追加</button>
             </div>
         </div>
     </div>
 
     <!-- Practice Animation Preview Modal -->
-    <div id="modal-practice-anim-preview" class="modal-overlay hidden" style="z-index: 3000;">
-        <div class="modal" style="max-width: 600px; width: 95%; padding: 1.2rem; border-radius: 16px;">
+    <div id="modal-practice-anim-preview" class="c-modal-overlay modal-overlay hidden" style="z-index: 3000;">
+        <div class="c-modal c-modal--legacy modal" style="max-width: 600px; width: 95%; padding: 1.2rem; border-radius: 16px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
                 <h3 id="anim-preview-title"
                     style="margin:0; font-size:1.05rem; font-weight:700; color:var(--text-primary);">メニュー名</h3>
-                <button type="button" class="btn btn-secondary btn-sm" id="btn-close-anim-preview"
+                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-close-anim-preview"
                     style="padding:0.25rem 0.5rem; min-width:auto; height:32px;"><i
                         class="fa-solid fa-times"></i></button>
             </div>
@@ -2115,7 +2115,7 @@
                     style="width:100%; height:100%; object-fit:contain;"></canvas>
             </div>
             <div style="display:flex; align-items:center; justify-content:center; gap:0.8rem;">
-                <button class="btn btn-primary btn-sm" id="btn-preview-play-toggle"
+                <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-preview-play-toggle"
                     style="padding:0.4rem 1rem; font-size:0.85rem; border-radius:9999px; min-width:110px;"><i
                         class="fa-solid fa-play"></i> 再生</button>
                 <span id="preview-frame-indicator"
@@ -2125,7 +2125,7 @@
     </div>
 
     <!-- Player Form Modal -->
-    <div id="modal-player" class="modal-overlay hidden">
+    <div id="modal-player" class="c-modal-overlay modal-overlay hidden">
         <div class="modal c-modal modal-player-form" role="dialog" aria-modal="true" aria-labelledby="player-modal-title">
             <div class="c-modal__header">
                 <h2 id="player-modal-title" class="c-modal__title">選手を登録</h2>
@@ -2136,15 +2136,15 @@
                 <div class="c-form-grid">
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="player-name">名前 <span class="c-status c-status--warning">必須</span></label>
-                        <input type="text" id="player-name" class="form-control" placeholder="例: 山田 太郎" required>
+                        <input type="text" id="player-name" class="c-input form-control" placeholder="例: 山田 太郎" required>
                     </div>
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="player-number">背番号 <span class="c-status c-status--warning">必須</span></label>
-                        <input type="number" id="player-number" class="form-control" placeholder="例: 10" required>
+                        <input type="number" id="player-number" class="c-input form-control" placeholder="例: 10" required>
                     </div>
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="player-grade">学年 <span class="c-status c-status--muted">任意</span></label>
-                        <input type="text" id="player-grade" class="form-control" placeholder="例: 6年 / U-12">
+                        <input type="text" id="player-grade" class="c-input form-control" placeholder="例: 6年 / U-12">
                     </div>
                 </div>
                 <fieldset class="c-fieldset">
@@ -2163,32 +2163,32 @@
                     <legend class="c-fieldset__legend"><i class="fa-solid fa-id-badge" aria-hidden="true"></i> コーチ陣の観察プロファイル</legend>
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="player-playstyle">プレースタイル（選手像の言語化） <span class="c-status c-status--muted">任意</span></label>
-                        <input type="text" id="player-playstyle" class="form-control" placeholder="例: 良い準備とスキャニングで中盤を落ち着かせるバランサー">
+                        <input type="text" id="player-playstyle" class="c-input form-control" placeholder="例: 良い準備とスキャニングで中盤を落ち着かせるバランサー">
                     </div>
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="player-strong-key-1">ストロングポイント（最大の武器） <span class="c-status c-status--muted">任意</span></label>
                         <div class="c-form-grid">
-                            <select id="player-strong-key-1" class="form-control"></select>
-                            <input type="text" id="player-strong-text-1" class="form-control" placeholder="例: 首振りが多く常に選択肢を持てている">
-                            <select id="player-strong-key-2" class="form-control"></select>
-                            <input type="text" id="player-strong-text-2" class="form-control" placeholder="例: ファーストタッチで次のプレーがしやすい位置に置ける">
+                            <select id="player-strong-key-1" class="c-input form-control"></select>
+                            <input type="text" id="player-strong-text-1" class="c-input form-control" placeholder="例: 首振りが多く常に選択肢を持てている">
+                            <select id="player-strong-key-2" class="c-input form-control"></select>
+                            <input type="text" id="player-strong-text-2" class="c-input form-control" placeholder="例: ファーストタッチで次のプレーがしやすい位置に置ける">
                         </div>
                     </div>
                     <div class="c-form-field c-form-field--fluid">
                         <label class="c-form-field__label" for="player-short-focus">ショートターム・フォーカス <span class="c-status c-status--muted">任意</span></label>
-                        <input type="text" id="player-short-focus" class="form-control" placeholder="例: 奪われたあとの最初の1歩目を早くしてパスコースを消す">
+                        <input type="text" id="player-short-focus" class="c-input form-control" placeholder="例: 奪われたあとの最初の1歩目を早くしてパスコースを消す">
                     </div>
                 </fieldset>
             </form>
             <div class="c-modal__footer c-action-group c-action-group--end">
-                <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                <button type="submit" form="form-player" class="btn btn-primary">追加</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
+                <button type="submit" form="form-player" class="c-button btn c-button--primary btn-primary">追加</button>
             </div>
         </div>
     </div>
 
     <!-- Player Assessment Form Modal -->
-    <div id="modal-player-assessment" class="modal-overlay hidden" style="z-index: 1001;">
+    <div id="modal-player-assessment" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
         <div class="modal c-modal" role="dialog" aria-modal="true" aria-labelledby="assessment-modal-title">
             <div class="c-modal__header">
                 <h2 id="assessment-modal-title" class="c-modal__title">観察メモ(ファクト)を記録</h2>
@@ -2199,66 +2199,66 @@
                 <input type="hidden" id="assessment-edit-id">
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="assessment-date">日付 <span class="c-status c-status--warning">必須</span></label>
-                    <input type="date" id="assessment-date" class="form-control" required>
+                    <input type="date" id="assessment-date" class="c-input form-control" required>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="assessment-good">Good！ <span class="c-status c-status--warning">必須</span></label>
-                    <textarea id="assessment-good" class="form-control" rows="3"
+                    <textarea id="assessment-good" class="c-input form-control" rows="3"
                         placeholder="例: 失点直後に一番に声を出してボールを拾いにいった。チャレンジ姿勢が非常に良くなっている" required></textarea>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="assessment-improve">More <span class="c-status c-status--muted">任意</span></label>
-                    <textarea id="assessment-improve" class="form-control" rows="2"
+                    <textarea id="assessment-improve" class="c-input form-control" rows="2"
                         placeholder="例: 守備への切り替えの速さ"></textarea>
                 </div>
             </form>
             <div class="c-modal__footer c-action-group c-action-group--end">
-                <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                <button type="submit" form="form-player-assessment" class="btn btn-primary">保存</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
+                <button type="submit" form="form-player-assessment" class="c-button btn c-button--primary btn-primary">保存</button>
             </div>
         </div>
     </div>
 
     <!-- Text Input Form Modal -->
-    <div id="modal-text-input" class="modal-overlay hidden" style="z-index: 1001;">
-        <div class="modal" style="max-width:400px; position:relative;">
-            <button type="button" class="btn-close-modal"
+    <div id="modal-text-input" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
+        <div class="c-modal c-modal--legacy modal" style="max-width:400px; position:relative;">
+            <button type="button" class="c-modal__close btn-close-modal"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.5rem;">文字を入力</h2>
             <form id="form-text-input">
                 <div class="form-group">
                     <label>表示テキスト <span class="c-status c-status--warning">必須</span></label>
-                    <input type="text" id="canvas-text-value" class="form-control" placeholder="例: 10m" required
+                    <input type="text" id="canvas-text-value" class="c-input form-control" placeholder="例: 10m" required
                         autocomplete="off">
                 </div>
                 <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
-                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                    <button type="submit" class="btn btn-primary">配置する</button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
+                    <button type="submit" class="c-button btn c-button--primary btn-primary">配置する</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Scene Title Input Modal -->
-    <div id="modal-scene-title" class="modal-overlay hidden" style="z-index: 1001;">
-        <div class="modal" style="max-width:400px; position:relative;">
-            <button type="button" class="btn-close-modal"
+    <div id="modal-scene-title" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
+        <div class="c-modal c-modal--legacy modal" style="max-width:400px; position:relative;">
+            <button type="button" class="c-modal__close btn-close-modal"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.5rem;" id="scene-title-modal-heading">シーン見出しの編集</h2>
             <form id="form-scene-title">
                 <div class="form-group">
                     <label>シーンの見出しを入力 <span class="c-status c-status--muted">任意</span></label>
-                    <input type="text" id="input-scene-title" class="form-control" placeholder="例: 初期配置、プレス回避、シュート体勢 など"
+                    <input type="text" id="input-scene-title" class="c-input form-control" placeholder="例: 初期配置、プレス回避、シュート体勢 など"
                         autocomplete="off">
                 </div>
                 <div class="form-group" style="margin-top:1rem;">
                     <label>指導ポイント（テロップ） <span class="c-status c-status--muted">任意</span></label>
-                    <textarea id="input-scene-caption" class="form-control" rows="2" placeholder="例: ★受ける前に首を振る、パスの受け手はマークを外す動き" style="resize:vertical;"></textarea>
+                    <textarea id="input-scene-caption" class="c-input form-control" rows="2" placeholder="例: ★受ける前に首を振る、パスの受け手はマークを外す動き" style="resize:vertical;"></textarea>
                     <small style="color:var(--text-secondary); font-size:0.72rem;">再生中に画面下部に大きく表示されます</small>
                 </div>
                 <div class="form-group" style="margin-top:1rem;">
                     <label>このシーンでの停止時間</label>
-                    <select id="input-scene-pause" class="form-control">
+                    <select id="input-scene-pause" class="c-input form-control">
                         <option value="0">停止なし（すぐ次へ）</option>
                         <option value="1">1秒</option>
                         <option value="2" selected>2秒</option>
@@ -2268,8 +2268,8 @@
                     <small style="color:var(--text-secondary); font-size:0.72rem;">アニメーション再生中、このシーンに到達したとき指定秒数停止します</small>
                 </div>
                 <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
-                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                    <button type="submit" class="btn btn-primary">保存する</button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
+                    <button type="submit" class="c-button btn c-button--primary btn-primary">保存する</button>
                 </div>
             </form>
         </div>
@@ -2279,9 +2279,9 @@
     <div id="toast-container" class="toast-container"></div>
 
     <!-- Library Assign Modal -->
-    <div id="modal-assign-practice" class="modal-overlay hidden" style="z-index: 1001;">
-        <div class="modal" style="max-width: 450px; position:relative;">
-            <button type="button" class="btn-close-modal"
+    <div id="modal-assign-practice" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
+        <div class="c-modal c-modal--legacy modal" style="max-width: 450px; position:relative;">
+            <button type="button" class="c-modal__close btn-close-modal"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.5rem;"><i class="fa-solid fa-calendar-plus"></i> 練習日にアサイン</h2>
             <input type="hidden" id="assign-menu-id">
@@ -2290,36 +2290,36 @@
                 <!-- Populated dynamically -->
             </div>
             <div style="display:flex; justify-content:space-between; gap:1rem; margin-top:2rem;">
-                <button type="button" class="btn btn-secondary" id="btn-assign-add-practice"
+                <button type="button" class="c-button btn c-button--secondary btn-secondary" id="btn-assign-add-practice"
                     style="font-size:0.85rem;"><i class="fa-solid fa-plus"></i> 新しい練習日を追加</button>
-                <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
             </div>
         </div>
     </div>
 
     <!-- Custom Formation Visual Creator Modal -->
-    <div id="modal-custom-formation" class="modal-overlay hidden" style="z-index: 1001;">
-        <div class="modal" style="max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto; position:relative;">
-            <button type="button" class="btn-close-modal"
+    <div id="modal-custom-formation" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
+        <div class="c-modal c-modal--legacy modal" style="max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto; position:relative;">
+            <button type="button" class="c-modal__close btn-close-modal"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.5rem;"><i class="fa-solid fa-street-view"></i> カスタムフォーメーション作成</h2>
             <form id="form-custom-formation">
                 <div class="form-group" style="display:flex; gap:1rem; margin-bottom:1rem;">
                     <div style="flex:2;">
                         <label>フォーメーション名 <span class="c-status c-status--warning">必須</span></label>
-                        <input type="text" id="custom-formation-name" class="form-control" placeholder="例: 3-3-1"
+                        <input type="text" id="custom-formation-name" class="c-input form-control" placeholder="例: 3-3-1"
                             required>
                     </div>
                     <div style="flex:1;">
                         <label>選手人数 <span class="c-status c-status--muted">任意</span></label>
-                        <select id="custom-formation-player-count" class="form-control">
+                        <select id="custom-formation-player-count" class="c-input form-control">
                             <option value="8">8人制</option>
                             <option value="11">11人制</option>
                             <option value="5">5人制（フットサル）</option>
                         </select>
                     </div>
                     <div style="display:flex; align-items:flex-end;">
-                        <button type="button" class="btn btn-secondary" id="btn-custom-formation-clear-all"
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary" id="btn-custom-formation-clear-all"
                             style="height:42px; font-size:0.85rem;"><i class="fa-solid fa-arrow-rotate-left"></i>
                             配置クリア</button>
                     </div>
@@ -2350,17 +2350,17 @@
                 </div>
 
                 <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
-                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                    <button type="submit" class="btn btn-primary">保存</button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
+                    <button type="submit" class="c-button btn c-button--primary btn-primary">保存</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Match List Popup Modal -->
-    <div id="modal-player-matches-list" class="modal-overlay hidden" style="z-index: 1002;">
-        <div class="modal" style="max-width: 400px;">
-            <button class="btn-close-modal"
+    <div id="modal-player-matches-list" class="c-modal-overlay modal-overlay hidden" style="z-index: 1002;">
+        <div class="c-modal c-modal--legacy modal" style="max-width: 400px;">
+            <button class="c-modal__close btn-close-modal"
                 onclick="document.getElementById('modal-player-matches-list').classList.add('hidden')"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 id="pml-title" style="margin-bottom:1.2rem; font-size:1.15rem; color:var(--primary);"></h2>
@@ -2369,7 +2369,7 @@
                 <!-- list of matches -->
             </div>
             <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
-                <button type="button" class="btn btn-secondary"
+                <button type="button" class="c-button btn c-button--secondary btn-secondary"
                     onclick="document.getElementById('modal-player-matches-list').classList.add('hidden')">閉じる</button>
             </div>
         </div>
@@ -2377,9 +2377,9 @@
 
     <!-- Leader Ranking Modal -->
     <!-- Leader Ranking Modal -->
-    <div id="modal-leader-ranking" class="modal-overlay hidden" style="z-index: 1002;">
-        <div class="modal" style="max-width: 680px; width: 92%;">
-            <button class="btn-close-modal"
+    <div id="modal-leader-ranking" class="c-modal-overlay modal-overlay hidden" style="z-index: 1002;">
+        <div class="c-modal c-modal--legacy modal" style="max-width: 680px; width: 92%;">
+            <button class="c-modal__close btn-close-modal"
                 onclick="document.getElementById('modal-leader-ranking').classList.add('hidden')"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.2rem; font-size:1.15rem; color:var(--primary);"><i
@@ -2417,16 +2417,16 @@
                 </div>
             </div>
             <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
-                <button type="button" class="btn btn-secondary"
+                <button type="button" class="c-button btn c-button--secondary btn-secondary"
                     onclick="document.getElementById('modal-leader-ranking').classList.add('hidden')">閉じる</button>
             </div>
         </div>
     </div>
 
     <!-- Season Record Detail Modal -->
-    <div id="modal-season-record-detail" class="modal-overlay hidden" style="z-index: 1002;">
-        <div class="modal" style="max-width: 580px; width: 92%;">
-            <button class="btn-close-modal"
+    <div id="modal-season-record-detail" class="c-modal-overlay modal-overlay hidden" style="z-index: 1002;">
+        <div class="c-modal c-modal--legacy modal" style="max-width: 580px; width: 92%;">
+            <button class="c-modal__close btn-close-modal"
                 onclick="document.getElementById('modal-season-record-detail').classList.add('hidden')"
                 style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
             <h2 style="margin-bottom:1.2rem; font-size:1.15rem; color:var(--primary);"><i
@@ -2459,14 +2459,14 @@
             </div>
 
             <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
-                <button type="button" class="btn btn-secondary"
+                <button type="button" class="c-button btn c-button--secondary btn-secondary"
                     onclick="document.getElementById('modal-season-record-detail').classList.add('hidden')">閉じる</button>
             </div>
         </div>
     </div>
 
     <!-- JSON Export Fallback Modal (for iOS / file:// environments) -->
-    <div id="modal-export-fallback" class="modal-overlay hidden">
+    <div id="modal-export-fallback" class="c-modal-overlay modal-overlay hidden">
         <div class="modal c-modal modal-export-fallback" role="dialog" aria-modal="true" aria-labelledby="export-fallback-modal-title">
             <div class="c-modal__header">
                 <div><h2 id="export-fallback-modal-title" class="c-modal__title"><i class="fa-solid fa-download" aria-hidden="true"></i> データエクスポート</h2><p class="c-form-field__help">下のテキストをすべてコピーし、メモ帳（またはメモアプリ）に貼り付けて<code>.json</code>拡張子で保存してください。</p></div>
@@ -2474,18 +2474,18 @@
             </div>
             <div class="c-modal__body c-settings-form">
                 <p class="c-form-field__help">スマホの場合：「すべて選択」→「コピー」→メモアプリに貼り付け→<code>.json</code>で保存</p>
-                <div class="c-form-field c-form-field--fluid"><label class="u-visually-hidden" for="export-json-textarea">エクスポートするJSONデータ</label><textarea id="export-json-textarea" class="form-control c-input--mono export-json-textarea" readonly></textarea></div>
+                <div class="c-form-field c-form-field--fluid"><label class="u-visually-hidden" for="export-json-textarea">エクスポートするJSONデータ</label><textarea id="export-json-textarea" class="c-input form-control c-input--mono export-json-textarea" readonly></textarea></div>
                 <p id="export-copy-success" class="c-status c-status--success" style="display:none;"><i class="fa-solid fa-check" aria-hidden="true"></i> コピーしました！</p>
             </div>
             <div class="c-modal__footer c-action-group">
-                <button type="button" class="btn btn-secondary btn-close-modal" onclick="document.getElementById('modal-export-fallback').classList.add('hidden')">閉じる</button>
-                <button type="button" id="btn-copy-export-json" class="btn btn-primary"><i class="fa-solid fa-copy" aria-hidden="true"></i> コピー</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal" onclick="document.getElementById('modal-export-fallback').classList.add('hidden')">閉じる</button>
+                <button type="button" id="btn-copy-export-json" class="c-button btn c-button--primary btn-primary"><i class="fa-solid fa-copy" aria-hidden="true"></i> コピー</button>
             </div>
         </div>
     </div>
 
     <!-- Player CSV Bulk Import Modal -->
-    <div id="modal-import-players-csv" class="modal-overlay hidden">
+    <div id="modal-import-players-csv" class="c-modal-overlay modal-overlay hidden">
         <div class="modal c-modal modal-player-csv-import" role="dialog" aria-modal="true" aria-labelledby="csv-import-modal-title">
             <div class="c-modal__header">
                 <div><h2 id="csv-import-modal-title" class="c-modal__title"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> 選手データ一括登録（CSV）</h2><p class="c-form-field__help">CSVファイルを選択するか、テキスト入力エリアに直接貼り付けて一括登録できます。</p></div>
@@ -2498,8 +2498,8 @@
                 </section>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="input-csv-file">CSVファイルの選択 または 直接入力</label>
-                    <input type="file" id="input-csv-file" accept=".csv, .txt" class="form-control">
-                    <textarea id="textarea-csv-data" class="form-control c-input--mono" rows="5" placeholder="背番号, 氏名, 学年, ポジション&#10;10, 山田 太郎, 6年, FW&#10;7, 佐藤 健太, 5年, MF"></textarea>
+                    <input type="file" id="input-csv-file" accept=".csv, .txt" class="c-input form-control">
+                    <textarea id="textarea-csv-data" class="c-input form-control c-input--mono" rows="5" placeholder="背番号, 氏名, 学年, ポジション&#10;10, 山田 太郎, 6年, FW&#10;7, 佐藤 健太, 5年, MF"></textarea>
                 </div>
                 <div id="csv-preview-container" class="c-data-list c-data-list--scrollable">
                     <!-- CSV parsed preview table injected here -->
@@ -2507,14 +2507,14 @@
                 <p id="csv-error-msg" class="c-form-field__error" role="alert"></p>
             </form>
             <div class="c-modal__footer c-action-group">
-                <button type="button" class="btn btn-secondary btn-close-modal" onclick="document.getElementById('modal-import-players-csv').classList.add('hidden')">キャンセル</button>
-                <button type="submit" form="form-import-players-csv" class="btn btn-primary" id="btn-submit-csv-import"><i class="fa-solid fa-upload" aria-hidden="true"></i> 一括取込</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal" onclick="document.getElementById('modal-import-players-csv').classList.add('hidden')">キャンセル</button>
+                <button type="submit" form="form-import-players-csv" class="c-button btn c-button--primary btn-primary" id="btn-submit-csv-import"><i class="fa-solid fa-upload" aria-hidden="true"></i> 一括取込</button>
             </div>
         </div>
     </div>
 
     <!-- Modal: Edit Team Focus & Challenge -->
-    <div id="modal-edit-team-focus" class="modal-overlay hidden">
+    <div id="modal-edit-team-focus" class="c-modal-overlay modal-overlay hidden">
         <div class="modal c-modal modal-team-focus" role="dialog" aria-modal="true" aria-labelledby="team-focus-modal-title">
             <div class="c-modal__header">
                 <div><h2 id="team-focus-modal-title" class="c-modal__title"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> チーム強化テーマの設定</h2><p class="c-form-field__help">チーム全体で共有・意識する目標や強化ポイントを設定します。</p></div>
@@ -2523,57 +2523,57 @@
             <form id="form-edit-team-focus" class="c-modal__body c-settings-form">
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="input-focus-main-theme">メイン強化テーマ <span class="c-status c-status--warning">必須</span></label>
-                    <input type="text" id="input-focus-main-theme" class="form-control" placeholder="例: ハイプレスからのショートカウンター＆素早い切り替え" required>
+                    <input type="text" id="input-focus-main-theme" class="c-input form-control" placeholder="例: ハイプレスからのショートカウンター＆素早い切り替え" required>
                 </div>
                 <fieldset class="c-fieldset">
                     <legend class="c-fieldset__legend">意識するポイント（1〜3項目）</legend>
                     <div class="c-fieldset__body c-settings-form">
-                        <div class="c-form-field c-form-field--fluid"><label class="u-sr-only" for="input-focus-point-1">意識するポイント1</label><input type="text" id="input-focus-point-1" class="form-control" placeholder="ポイント1: 例) 相手ボランチへのファーストDFの限定"></div>
-                        <div class="c-form-field c-form-field--fluid"><label class="u-sr-only" for="input-focus-point-2">意識するポイント2</label><input type="text" id="input-focus-point-2" class="form-control" placeholder="ポイント2: 例) ボール奪取後のファーストパスの精度向上"></div>
-                        <div class="c-form-field c-form-field--fluid"><label class="u-sr-only" for="input-focus-point-3">意識するポイント3</label><input type="text" id="input-focus-point-3" class="form-control" placeholder="ポイント3: 例) 奪われた瞬間の3秒間の即時奪還"></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="u-sr-only" for="input-focus-point-1">意識するポイント1</label><input type="text" id="input-focus-point-1" class="c-input form-control" placeholder="ポイント1: 例) 相手ボランチへのファーストDFの限定"></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="u-sr-only" for="input-focus-point-2">意識するポイント2</label><input type="text" id="input-focus-point-2" class="c-input form-control" placeholder="ポイント2: 例) ボール奪取後のファーストパスの精度向上"></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="u-sr-only" for="input-focus-point-3">意識するポイント3</label><input type="text" id="input-focus-point-3" class="c-input form-control" placeholder="ポイント3: 例) 奪われた瞬間の3秒間の即時奪還"></div>
                     </div>
                 </fieldset>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="c-form-field__label" for="input-focus-note">対象期間・補足メモ</label>
-                    <input type="text" id="input-focus-note" class="form-control" placeholder="例: 今週〜次節公式戦（8/10）まで">
+                    <input type="text" id="input-focus-note" class="c-input form-control" placeholder="例: 今週〜次節公式戦（8/10）まで">
                 </div>
             </form>
             <div class="c-modal__footer c-action-group">
-                <button type="button" class="btn btn-danger" id="btn-clear-team-focus"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> テーマをクリア</button>
+                <button type="button" class="c-button btn c-button--danger btn-danger" id="btn-clear-team-focus"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> テーマをクリア</button>
                 <div class="c-action-group c-action-group--end">
-                    <button type="button" class="btn btn-secondary btn-close-modal" onclick="document.getElementById('modal-edit-team-focus').classList.add('hidden')">キャンセル</button>
-                    <button type="submit" form="form-edit-team-focus" class="btn btn-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> 保存</button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal" onclick="document.getElementById('modal-edit-team-focus').classList.add('hidden')">キャンセル</button>
+                    <button type="submit" form="form-edit-team-focus" class="c-button btn c-button--primary btn-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> 保存</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- Release Notes Modal -->
-    <div id="modal-release-notes" class="modal-overlay hidden" style="z-index: 10000;">
-        <div class="modal" style="max-width: 550px; width: 92%;">
+    <div id="modal-release-notes" class="c-modal-overlay modal-overlay hidden" style="z-index: 10000;">
+        <div class="c-modal c-modal--legacy modal" style="max-width: 550px; width: 92%;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--border); padding-bottom:0.75rem;">
                 <h3 style="margin:0; font-size:1.1rem; font-weight:700;"><i class="fa-solid fa-rocket" style="color:var(--primary); margin-right:0.4rem;"></i> バージョン情報・更新履歴</h3>
-                <button type="button" class="btn btn-secondary btn-close-modal" style="padding:0.2rem 0.5rem;" onclick="document.getElementById('modal-release-notes').classList.add('hidden')"><i class="fa-solid fa-xmark"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal" style="padding:0.2rem 0.5rem;" onclick="document.getElementById('modal-release-notes').classList.add('hidden')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="release-notes-content" style="max-height: 60vh; overflow-y: auto; padding-right: 0.3rem;">
                 <!-- JavaScriptで動的生成 -->
             </div>
             <div style="margin-top:1.25rem; text-align:right; border-top:1px solid var(--border); padding-top:0.75rem;">
-                <button type="button" class="btn btn-primary" onclick="document.getElementById('modal-release-notes').classList.add('hidden')">閉じる</button>
+                <button type="button" class="c-button btn c-button--primary btn-primary" onclick="document.getElementById('modal-release-notes').classList.add('hidden')">閉じる</button>
             </div>
         </div>
     </div>
 
     <!-- Global Custom Confirm Modal -->
-    <div id="modal-global-confirm" class="modal-overlay hidden" style="z-index: 10000;">
-        <div class="modal confirm-modal-content">
+    <div id="modal-global-confirm" class="c-modal-overlay modal-overlay hidden" style="z-index: 10000;">
+        <div class="c-modal c-modal--legacy modal confirm-modal-content">
             <div class="confirm-modal-icon" id="global-confirm-icon">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <h3 class="confirm-modal-title" id="global-confirm-title">確認</h3>
             <p class="confirm-modal-message" id="global-confirm-message"></p>
             <div class="confirm-modal-actions">
-                <button id="global-confirm-btn-cancel" class="btn btn-secondary confirm-btn-cancel">キャンセル</button>
-                <button id="global-confirm-btn-ok" class="btn btn-primary confirm-btn-ok">実行</button>
+                <button id="global-confirm-btn-cancel" class="c-button btn c-button--secondary btn-secondary confirm-btn-cancel">キャンセル</button>
+                <button id="global-confirm-btn-ok" class="c-button btn c-button--primary btn-primary confirm-btn-ok">実行</button>
             </div>
         </div>
     </div>

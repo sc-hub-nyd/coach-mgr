@@ -105,8 +105,8 @@ export function loadYouTubePlayer(url, containerId = 'period-yt-player') {
                 <div style="font-weight:700; font-size:1.05rem; color:#f8fafc;">YouTube動画 URLが未設定です</div>
                 <p style="font-size:0.8rem; color:#94a3b8; margin:0; max-width:400px; line-height:1.4;">試合動画のURL（YouTube）を入力すると、ここで再生およびタイムライン分析が行えます。（保護者・指導者ともに追加・保存が可能です）</p>
                 <div style="display:flex; gap:0.5rem; max-width:480px; width:92%; margin-top:0.3rem;">
-                    <input type="url" id="quick-yt-url-input" class="form-control" placeholder="https://www.youtube.com/watch?v=..." style="font-size:0.85rem; background:#1e293b; color:#fff; border-color:#334155;">
-                    <button type="button" class="btn btn-primary" id="quick-yt-url-save-btn" style="white-space:nowrap; font-weight:600; padding:0.4rem 0.9rem;"><i class="fa-solid fa-plus"></i> 動画を追加</button>
+                    <input type="url" id="quick-yt-url-input" class="c-input form-control" placeholder="https://www.youtube.com/watch?v=..." style="font-size:0.85rem; background:#1e293b; color:#fff; border-color:#334155;">
+                    <button type="button" class="c-button btn c-button--primary btn-primary" id="quick-yt-url-save-btn" style="white-space:nowrap; font-weight:600; padding:0.4rem 0.9rem;"><i class="fa-solid fa-plus"></i> 動画を追加</button>
                 </div>
             </div>
         `;
@@ -245,14 +245,14 @@ export function addGoalRecordRow(scorerId = null, assistId = null, targetContain
     div.style = 'display:flex; gap:0.4rem; align-items:center; width:100%; font-size:0.8rem;';
     div.innerHTML = `
         <span class="u-ext-39" >得点:</span>
-        <select class="u-ext-40 form-control goal-scorer-select" >
+        <select class="u-ext-40 c-input form-control goal-scorer-select" >
             ${scorerOptions}
         </select>
         <span class="u-ext-41" >アシスト:</span>
-        <select class="u-ext-40 form-control goal-assist-select" >
+        <select class="u-ext-40 c-input form-control goal-assist-select" >
             ${assistOptions}
         </select>
-        <button type="button" class="u-ext-42 btn btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash-can"></i></button>
+        <button type="button" class="u-ext-42 c-button btn c-button--danger btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash-can"></i></button>
     `;
     container.appendChild(div);
 }
@@ -270,15 +270,15 @@ export function addAnalysisMemoRow(timeStr = '00:00', textVal = '', tagVal = '�
     const tagOptions = (state.analysisTags || []).map(t => `<option value="${escapeHtml(t)}" ${tagVal === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('');
 
     div.innerHTML = `
-        <button type="button" class="u-ext-43 btn btn-secondary btn-seek-video"  title="このシーンへジャンプ">
+        <button type="button" class="u-ext-43 c-button btn c-button--secondary btn-secondary btn-seek-video"  title="このシーンへジャンプ">
             <i class="fa-solid fa-play"></i>
         </button>
-        <input type="text" class="u-ext-44 form-control memo-time-input" value="${timeStr}" placeholder="00:00" >
-        <select class="u-ext-45 form-control memo-tag-select" >
+        <input type="text" class="u-ext-44 c-input form-control memo-time-input" value="${timeStr}" placeholder="00:00" >
+        <select class="u-ext-45 c-input form-control memo-tag-select" >
             ${tagOptions}
         </select>
-        <input type="text" class="u-ext-46 form-control memo-text-input" value="${escapeHtml(textVal)}" placeholder="メモ（例: 左展開からクロス）" >
-        <button type="button" class="u-ext-47 btn btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash-can"></i></button>
+        <input type="text" class="u-ext-46 c-input form-control memo-text-input" value="${escapeHtml(textVal)}" placeholder="メモ（例: 左展開からクロス）" >
+        <button type="button" class="u-ext-47 c-button btn c-button--danger btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash-can"></i></button>
     `;
 
     const btnSeek = div.querySelector('.btn-seek-video');
@@ -301,8 +301,8 @@ export function addFormationVideoRow(urlVal = '') {
     div.className = 'formation-video-row';
     div.style = 'display:flex; gap:0.5rem; align-items:center; width:100%;';
     div.innerHTML = `
-        <input type="url" class="u-ext-48 form-control formation-video-input" value="${urlVal}" placeholder="https://www.youtube.com/watch?v=... または https://youtu.be/..." >
-        <button type="button" class="u-ext-49 btn btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash"></i></button>
+        <input type="url" class="u-ext-48 c-input form-control formation-video-input" value="${urlVal}" placeholder="https://www.youtube.com/watch?v=... または https://youtu.be/..." >
+        <button type="button" class="u-ext-49 c-button btn c-button--danger btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash"></i></button>
     `;
     container.appendChild(div);
 }
@@ -397,7 +397,7 @@ export function renderQuickAssignRoster() {
     const sorted = [...state.players].sort((a, b) => (parseInt(a.number, 10) || 0) - (parseInt(b.number, 10) || 0));
 
     container.innerHTML = sorted.map(p => `
-        <button type="button" class="btn btn-sm btn-secondary btn-outline-primary btn-quick-assign-player" data-id="${p.id}" style="border-radius:20px; white-space:nowrap; padding:0.25rem 0.6rem; font-size:0.75rem;">
+        <button type="button" class="c-button btn c-button--compact btn-sm c-button--secondary btn-secondary btn-outline-primary btn-quick-assign-player" data-id="${p.id}" style="border-radius:20px; white-space:nowrap; padding:0.25rem 0.6rem; font-size:0.75rem;">
             ${p.number} ${p.name}
         </button>
     `).join('');
@@ -854,7 +854,7 @@ export function initMatchDetailView(matchId) {
         scoreBox.innerHTML = `
             <div class="c-action-group c-match-score-actions">
                 ${renderMatchScoreHeaderBadge(m)}
-                <button type="button" class="btn btn-secondary btn-sm" onclick="copyMatchShareText(${m.id})" title="LINE共有用テキストをコピー"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> 共有</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" onclick="copyMatchShareText(${m.id})" title="LINE共有用テキストをコピー"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> 共有</button>
             </div>`;
     }
 
@@ -925,7 +925,7 @@ export function initMatchDetailView(matchId) {
                         <span class="c-roster-row__number">${player.number || '—'}</span>
                         <span class="c-roster-row__name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</span>
                     </label>
-                    <select class="form-control c-roster-row__status inline-match-attendance-status" data-player-id="${player.id}" ${invited ? '' : 'disabled'} aria-label="${escapeHtml(player.name)}の出欠">
+                    <select class="c-input form-control c-roster-row__status inline-match-attendance-status" data-player-id="${player.id}" ${invited ? '' : 'disabled'} aria-label="${escapeHtml(player.name)}の出欠">
                         <option value="pending" ${status === 'pending' ? 'selected' : ''}>未回答</option>
                         <option value="attending" ${status === 'attending' ? 'selected' : ''}>参加</option>
                         <option value="absent" ${status === 'absent' ? 'selected' : ''}>欠席</option>
@@ -1174,7 +1174,7 @@ function renderPeriodGrid(m) {
         }
 
         return `
-            <div class="u-ext-65 card" >
+            <div class="u-ext-65 c-card card" >
                 <div>
                     <div class="u-ext-66" >
                         <strong class="u-ext-67" >${escapeHtml(f.name || `${idx + 1}本目`)}</strong>
@@ -1199,10 +1199,10 @@ function renderPeriodGrid(m) {
                 </div>
 
                 <div class="u-ext-74" >
-                    <button class="u-ext-75 btn btn-primary btn-sm btn-open-analysis" data-index="${idx}" ><i class="fa-solid fa-film"></i> 動画分析 ➔</button>
+                    <button class="u-ext-75 c-button btn c-button--primary btn-primary c-button--compact btn-sm btn-open-analysis" data-index="${idx}" ><i class="fa-solid fa-film"></i> 動画分析 ➔</button>
                     ${isCoach ? `
-                        <button class="u-ext-76 btn btn-secondary btn-sm btn-edit-period-card" data-id="${f.id}" title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn btn-danger btn-sm btn-delete-period-card" data-id="${f.id}" title="ピリオド削除"><i class="fa-solid fa-trash"></i></button>
+                        <button class="u-ext-76 c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-edit-period-card" data-id="${f.id}" title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>
+                        <button class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-period-card" data-id="${f.id}" title="ピリオド削除"><i class="fa-solid fa-trash"></i></button>
                     ` : ''}
                 </div>
             </div>
@@ -1337,19 +1337,19 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                                     <span style="font-size:0.75rem; font-weight:bold;">${labelText}</span>
                                     ${isSudden ? `<button type="button" class="btn-side-remove-pk" data-idx="${idx}" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.7rem;"><i class="fa-solid fa-trash"></i></button>` : ''}
                                 </div>
-                                <select class="form-control form-control-sm side-pk-kicker-select" data-idx="${idx}" style="font-size:0.75rem; margin-bottom:0.2rem;">
+                                <select class="c-input form-control form-control-sm side-pk-kicker-select" data-idx="${idx}" style="font-size:0.75rem; margin-bottom:0.2rem;">
                                     ${playerOptionsHtml}
                                 </select>
                                 <div style="display:flex; justify-content:space-between; align-items:center;">
                                     <div style="display:flex; align-items:center; gap:0.2rem;">
                                         <span style="font-size:0.7rem; color:var(--text-secondary);">自:</span>
-                                        <button type="button" class="btn btn-xs side-pk-btn-us ${k.isUsGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true" style="padding:0.1rem 0.3rem; font-size:0.7rem;">○</button>
-                                        <button type="button" class="btn btn-xs side-pk-btn-us ${k.isUsGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false" style="padding:0.1rem 0.3rem; font-size:0.7rem;">✕</button>
+                                        <button type="button" class="c-button btn btn-xs side-pk-btn-us ${k.isUsGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true" style="padding:0.1rem 0.3rem; font-size:0.7rem;">○</button>
+                                        <button type="button" class="c-button btn btn-xs side-pk-btn-us ${k.isUsGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false" style="padding:0.1rem 0.3rem; font-size:0.7rem;">✕</button>
                                     </div>
                                     <div style="display:flex; align-items:center; gap:0.2rem;">
                                         <span style="font-size:0.7rem; color:var(--text-secondary);">相:</span>
-                                        <button type="button" class="btn btn-xs side-pk-btn-them ${k.isThemGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true" style="padding:0.1rem 0.3rem; font-size:0.7rem;">○</button>
-                                        <button type="button" class="btn btn-xs side-pk-btn-them ${k.isThemGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false" style="padding:0.1rem 0.3rem; font-size:0.7rem;">✕</button>
+                                        <button type="button" class="c-button btn btn-xs side-pk-btn-them ${k.isThemGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true" style="padding:0.1rem 0.3rem; font-size:0.7rem;">○</button>
+                                        <button type="button" class="c-button btn btn-xs side-pk-btn-them ${k.isThemGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false" style="padding:0.1rem 0.3rem; font-size:0.7rem;">✕</button>
                                     </div>
                                 </div>
                             </div>
@@ -1396,11 +1396,11 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 sideBody.innerHTML = `
                     <div class="side-info-card">
                         <span class="side-info-label">ピリオド名</span>
-                        <input type="text" id="side-form-name" class="form-control form-control-sm" value="${escapeHtml(period.name || 'PK戦')}">
+                        <input type="text" id="side-form-name" class="c-input form-control form-control-sm" value="${escapeHtml(period.name || 'PK戦')}">
                     </div>
                     <div class="side-info-card">
                         <span class="side-info-label">YouTube動画 URL</span>
-                        <input type="url" id="side-form-video" class="form-control form-control-sm" value="${escapeHtml((period.videoUrls && period.videoUrls[0]) || period.videoUrl || '')}" placeholder="https://youtu.be/...">
+                        <input type="url" id="side-form-video" class="c-input form-control form-control-sm" value="${escapeHtml((period.videoUrls && period.videoUrls[0]) || period.videoUrl || '')}" placeholder="https://youtu.be/...">
                     </div>
                     <div class="side-info-card">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
@@ -1408,16 +1408,16 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                             <span id="side-pk-score-badge" class="c-status c-status--solid c-status--compact">PK 0 - 0</span>
                         </div>
                         <div id="side-pk-rows-container" style="max-height:220px; overflow-y:auto; margin-bottom:0.4rem;"></div>
-                        <button type="button" class="btn btn-secondary btn-xs" id="btn-side-add-pk" style="width:100%;">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-add-pk" style="width:100%;">
                             <i class="fa-solid fa-plus"></i> サドンデス枠を追加
                         </button>
                     </div>
                     <div class="side-info-card">
                         <span class="side-info-label">ピリオド総括</span>
-                        <textarea id="side-form-summary" class="form-control form-control-sm" rows="3">${escapeHtml(period.summary || period.reflection || '')}</textarea>
+                        <textarea id="side-form-summary" class="c-input form-control form-control-sm" rows="3">${escapeHtml(period.summary || period.reflection || '')}</textarea>
                     </div>
                     <div style="margin-top:0.6rem;">
-                        <button type="button" class="btn btn-primary btn-sm" id="btn-side-save-period" style="width:100%; margin:0;">
+                        <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-side-save-period" style="width:100%; margin:0;">
                             <i class="fa-solid fa-save"></i> 変更を保存
                         </button>
                     </div>
@@ -1520,11 +1520,11 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         <div class="u-ext-78 side-goal-row" data-index="${rIdx}" >
                             <div class="u-ext-79" >
                                 <span class="u-ext-80" >#${rIdx + 1}</span>
-                                <select class="u-ext-81 form-control form-control-sm side-scorer-select" >${scorerOpts}</select>
-                                <button type="button" class="u-ext-82 btn btn-danger btn-xs btn-remove-side-goal"  title="この得点記録を削除"><i class="fa-solid fa-trash"></i></button>
+                                <select class="u-ext-81 c-input form-control form-control-sm side-scorer-select" >${scorerOpts}</select>
+                                <button type="button" class="u-ext-82 c-button btn c-button--danger btn-danger btn-xs btn-remove-side-goal"  title="この得点記録を削除"><i class="fa-solid fa-trash"></i></button>
                             </div>
                             <div class="u-ext-83" >
-                                <select class="u-ext-81 form-control form-control-sm side-assist-select" >${assistOpts}</select>
+                                <select class="u-ext-81 c-input form-control form-control-sm side-assist-select" >${assistOpts}</select>
                             </div>
                         </div>
                     `;
@@ -1543,14 +1543,14 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         <div class="side-sub-row c-data-list__item" data-index="${sIdx}">
                             <div class="c-data-list__header">
                                 <span class="side-info-label"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> 交代 #${sIdx + 1}</span>
-                                <button type="button" class="btn btn-danger btn-xs btn-remove-side-sub" title="この交代を削除" aria-label="交代 #${sIdx + 1} を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                                <button type="button" class="c-button btn c-button--danger btn-danger btn-xs btn-remove-side-sub" title="この交代を削除" aria-label="交代 #${sIdx + 1} を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
                             </div>
                             <div class="l-cluster l-cluster--compact">
                                 <label class="u-visually-hidden" for="side-sub-out-${sIdx}">交代 #${sIdx + 1} のOUT選手</label>
-                                <select id="side-sub-out-${sIdx}" class="form-control form-control-sm side-sub-out-select">${outOpts}</select>
+                                <select id="side-sub-out-${sIdx}" class="c-input form-control form-control-sm side-sub-out-select">${outOpts}</select>
                                 <span aria-hidden="true">→</span>
                                 <label class="u-visually-hidden" for="side-sub-in-${sIdx}">交代 #${sIdx + 1} のIN選手</label>
-                                <select id="side-sub-in-${sIdx}" class="form-control form-control-sm side-sub-in-select">${inOpts}</select>
+                                <select id="side-sub-in-${sIdx}" class="c-input form-control form-control-sm side-sub-in-select">${inOpts}</select>
                             </div>
                         </div>
                     `;
@@ -1614,7 +1614,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     return `
                         <div class="u-ext-85 side-position-row" data-pos-key="${posKey}" >
                             <span class="u-ext-86"  title="${c.role || `P${pIdx + 1}`}">${c.role || `${pIdx + 1}`}</span>
-                            <select class="u-ext-87 form-control form-control-sm side-pos-player-select" >${playerOpts}</select>
+                            <select class="u-ext-87 c-input form-control form-control-sm side-pos-player-select" >${playerOpts}</select>
                         </div>
                     `;
                 }).join('');
@@ -1623,26 +1623,26 @@ export function openPeriodAnalysis(matchId, periodIndex) {
             sideBody.innerHTML = `
                 <div class="side-info-card">
                     <span class="side-info-label">ピリオド名</span>
-                    <input type="text" id="side-form-name" class="form-control form-control-sm" value="${escapeHtml(period.name || '')}">
+                    <input type="text" id="side-form-name" class="c-input form-control form-control-sm" value="${escapeHtml(period.name || '')}">
                 </div>
                 <div class="side-info-card">
                     <span class="side-info-label">YouTube動画 URL</span>
-                    <input type="url" id="side-form-video" class="form-control form-control-sm" value="${escapeHtml((period.videoUrls && period.videoUrls[0]) || period.videoUrl || '')}" placeholder="https://youtu.be/...">
+                    <input type="url" id="side-form-video" class="c-input form-control form-control-sm" value="${escapeHtml((period.videoUrls && period.videoUrls[0]) || period.videoUrl || '')}" placeholder="https://youtu.be/...">
                 </div>
                 <div class="side-info-card">
                     <span class="side-info-label">スコア (自 - 相手)</span>
                     <div class="u-ext-88" >
                         <div class="u-ext-89" >
                             <span class="u-ext-90" >自</span>
-                            <button type="button" class="u-ext-91 btn btn-secondary btn-xs" id="btn-side-us-minus" ><i class="fa-solid fa-minus"></i></button>
+                            <button type="button" class="u-ext-91 c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-us-minus" ><i class="fa-solid fa-minus"></i></button>
                             <span class="u-ext-92" id="side-score-us-display" >${period.scoreUs || 0}</span>
-                            <button type="button" class="u-ext-91 btn btn-secondary btn-xs" id="btn-side-us-plus" ><i class="fa-solid fa-plus"></i></button>
+                            <button type="button" class="u-ext-91 c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-us-plus" ><i class="fa-solid fa-plus"></i></button>
                         </div>
                         <span class="u-ext-93" >-</span>
                         <div class="u-ext-89" >
-                            <button type="button" class="u-ext-91 btn btn-secondary btn-xs" id="btn-side-them-minus" ><i class="fa-solid fa-minus"></i></button>
+                            <button type="button" class="u-ext-91 c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-them-minus" ><i class="fa-solid fa-minus"></i></button>
                             <span class="u-ext-92" id="side-score-them-display" >${period.scoreThem || 0}</span>
-                            <button type="button" class="u-ext-91 btn btn-secondary btn-xs" id="btn-side-them-plus" ><i class="fa-solid fa-plus"></i></button>
+                            <button type="button" class="u-ext-91 c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-them-plus" ><i class="fa-solid fa-plus"></i></button>
                             <span class="u-ext-90" >相</span>
                         </div>
                     </div>
@@ -1650,7 +1650,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 <div class="side-info-card">
                     <div class="u-ext-94" >
                         <span class="u-ext-95 side-info-label" >得点者・アシスト記録</span>
-                        <button type="button" class="u-ext-96 btn btn-primary btn-xs" id="btn-add-side-goal" ><i class="fa-solid fa-plus"></i> 追加</button>
+                        <button type="button" class="u-ext-96 c-button btn c-button--primary btn-primary btn-xs" id="btn-add-side-goal" ><i class="fa-solid fa-plus"></i> 追加</button>
                     </div>
                     <div class="u-ext-97" id="side-goal-records-container" >
                         ${goalRowsHtml || '<div class="u-ext-57" >得点記録なし</div>'}
@@ -1658,12 +1658,12 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 </div>
                 <div class="side-info-card">
                     <span class="side-info-label">ピリオド総括</span>
-                    <textarea id="side-form-summary" class="form-control form-control-sm" rows="3">${escapeHtml(period.summary || period.reflection || '')}</textarea>
+                    <textarea id="side-form-summary" class="c-input form-control form-control-sm" rows="3">${escapeHtml(period.summary || period.reflection || '')}</textarea>
                 </div>
                 <section class="side-info-card" aria-labelledby="side-substitutions-title">
                     <div class="c-section-header c-section-header--compact">
                         <span id="side-substitutions-title" class="side-info-label"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> このピリオドの交代選手</span>
-                        <button type="button" class="btn btn-primary btn-xs" id="btn-add-side-sub"><i class="fa-solid fa-plus" aria-hidden="true"></i> 交代を追加</button>
+                        <button type="button" class="c-button btn c-button--primary btn-primary btn-xs" id="btn-add-side-sub"><i class="fa-solid fa-plus" aria-hidden="true"></i> 交代を追加</button>
                     </div>
                     <p class="c-form-field__hint">OUT選手とIN選手の組を、実施したピリオドごとに記録します。</p>
                     <div id="side-substitutions-container">
@@ -1672,7 +1672,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 </section>
                 <div class="side-info-card">
                     <span class="side-info-label">システム (陣形)</span>
-                    <select id="side-form-system" class="form-control form-control-sm">${systemOptions}</select>
+                    <select id="side-form-system" class="c-input form-control form-control-sm">${systemOptions}</select>
                 </div>
                 <div class="side-info-card">
                     <span class="u-ext-98 side-info-label" >ポジション配置（ミニピッチ図）</span>
@@ -1690,7 +1690,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     </div>
                 </div>
                 <div style="margin-top:0.6rem;">
-                    <button type="button" class="u-ext-105 btn btn-primary btn-sm" id="btn-side-save-period" style="width:100%; margin:0;">
+                    <button type="button" class="u-ext-105 c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-side-save-period" style="width:100%; margin:0;">
                         <i class="fa-solid fa-save"></i> 変更を保存
                     </button>
                 </div>
@@ -1989,8 +1989,8 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 <div class="side-info-card">
                     <span class="side-info-label"><i class="fa-brands fa-youtube" style="color:#ef4444;"></i> YouTube動画 URL</span>
                     <div style="display:flex; gap:0.4rem; align-items:center; margin-top:0.3rem;">
-                        <input type="url" id="side-form-video-parent" class="form-control form-control-sm" value="${escapeHtml(videoUrl)}" placeholder="https://youtu.be/..." style="flex:1;">
-                        <button type="button" class="btn btn-primary btn-xs" id="btn-save-video-parent" style="padding:0.25rem 0.55rem; font-size:0.75rem; white-space:nowrap; font-weight:600;"><i class="fa-solid fa-save"></i> 保存</button>
+                        <input type="url" id="side-form-video-parent" class="c-input form-control form-control-sm" value="${escapeHtml(videoUrl)}" placeholder="https://youtu.be/..." style="flex:1;">
+                        <button type="button" class="c-button btn c-button--primary btn-primary btn-xs" id="btn-save-video-parent" style="padding:0.25rem 0.55rem; font-size:0.75rem; white-space:nowrap; font-weight:600;"><i class="fa-solid fa-save"></i> 保存</button>
                     </div>
                 </div>
                 <div class="side-info-card">
@@ -2246,15 +2246,15 @@ function renderPkShootoutEditor() {
             <div class="pk-kicker-row c-data-list__item" data-idx="${idx}">
                 <div class="pk-kicker-row__header">
                     <span class="pk-kicker-row__label">${labelText}</span>
-                    ${isSuddenDeath ? `<button type="button" class="btn btn-danger btn-sm btn-remove-pk-row" data-idx="${idx}" aria-label="${labelText}を削除"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> 削除</button>` : ''}
+                    ${isSuddenDeath ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-remove-pk-row" data-idx="${idx}" aria-label="${labelText}を削除"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> 削除</button>` : ''}
                 </div>
                 <div class="pk-kicker-row__controls">
                     <div class="c-form-field c-form-field--compact pk-kicker-row__select">
                         <label class="u-visually-hidden" for="pk-kicker-select-${idx}">${labelText}のキッカー</label>
-                        <select id="pk-kicker-select-${idx}" class="form-control form-control-sm pk-kicker-select" data-idx="${idx}">${playerOptionsHtml}</select>
+                        <select id="pk-kicker-select-${idx}" class="c-input form-control form-control-sm pk-kicker-select" data-idx="${idx}">${playerOptionsHtml}</select>
                     </div>
-                    <div class="pk-kicker-row__side c-action-group"><span class="pk-kicker-row__side-label">自</span><button type="button" class="btn btn-sm pk-btn-us ${k.isUsGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true">○ 成功</button><button type="button" class="btn btn-sm pk-btn-us ${k.isUsGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false">✕ 失敗</button></div>
-                    <div class="pk-kicker-row__side c-action-group"><span class="pk-kicker-row__side-label">相手</span><button type="button" class="btn btn-sm pk-btn-them ${k.isThemGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true">○ 成功</button><button type="button" class="btn btn-sm pk-btn-them ${k.isThemGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false">✕ 失敗</button></div>
+                    <div class="pk-kicker-row__side c-action-group"><span class="pk-kicker-row__side-label">自</span><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-us ${k.isUsGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true">○ 成功</button><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-us ${k.isUsGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false">✕ 失敗</button></div>
+                    <div class="pk-kicker-row__side c-action-group"><span class="pk-kicker-row__side-label">相手</span><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-them ${k.isThemGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true">○ 成功</button><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-them ${k.isThemGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false">✕ 失敗</button></div>
                 </div>
             </div>
         `;
@@ -2560,34 +2560,34 @@ function renderPeriodTimelineList(period) {
         const timestampSec = getTimelineTimestampSeconds(m);
         const disabledAttr = isCoach ? '' : 'disabled';
         const deleteBtnHtml = isCoach
-            ? `<button type="button" class="btn btn-danger btn-sm btn-delete-memo" title="削除" aria-label="タイムラインイベントを削除"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>`
+            ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-memo" title="削除" aria-label="タイムラインイベントを削除"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>`
             : '';
         const useCurrentTimeBtnHtml = isCoach
-            ? `<button type="button" class="btn btn-secondary btn-sm btn-use-current-timestamp" title="動画の現在位置を秒数へ反映"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span class="u-visually-hidden">現在位置を反映</span></button>`
+            ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-use-current-timestamp" title="動画の現在位置を秒数へ反映"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span class="u-visually-hidden">現在位置を反映</span></button>`
             : '';
         const tagOptionHtml = (state.analysisTags || []).map(t => `<option value="${escapeHtml(t)}" ${currentTag === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('');
 
         return `
             <div class="timeline-edit-row c-data-list__item" data-index="${idx}">
                 <div class="c-data-list__header period-timeline-edit__controls">
-                    <button type="button" class="btn btn-secondary btn-sm period-timeline-edit__seek btn-seek-timestamp" data-seconds="${timestampSec}" aria-label="${formatSeconds(timestampSec)}から動画を再生">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm period-timeline-edit__seek btn-seek-timestamp" data-seconds="${timestampSec}" aria-label="${formatSeconds(timestampSec)}から動画を再生">
                         <i class="fa-solid fa-play" aria-hidden="true"></i> ${formatSeconds(timestampSec)}
                     </button>
                     <div class="c-form-field c-form-field--compact period-timeline-edit__seconds">
                         <label class="u-visually-hidden" for="period-memo-seconds-${idx}">タイムライン秒数</label>
-                        <input type="number" id="period-memo-seconds-${idx}" class="form-control memo-seconds-val" value="${timestampSec}" min="0" step="1" inputmode="numeric" ${disabledAttr}>
+                        <input type="number" id="period-memo-seconds-${idx}" class="c-input form-control memo-seconds-val" value="${timestampSec}" min="0" step="1" inputmode="numeric" ${disabledAttr}>
                         <span aria-hidden="true">秒</span>
                     </div>
                     ${useCurrentTimeBtnHtml}
                     <div class="c-form-field c-form-field--compact">
                         <label class="u-visually-hidden" for="period-memo-tag-${idx}">イベント種別</label>
-                        <select id="period-memo-tag-${idx}" class="form-control memo-tag-val" ${disabledAttr}>${tagOptionHtml}</select>
+                        <select id="period-memo-tag-${idx}" class="c-input form-control memo-tag-val" ${disabledAttr}>${tagOptionHtml}</select>
                     </div>
                     ${deleteBtnHtml}
                 </div>
                 <div class="c-form-field c-form-field--fluid">
                     <label class="u-visually-hidden" for="period-memo-text-${idx}">タイムラインメモ</label>
-                    <input type="text" id="period-memo-text-${idx}" class="form-control memo-text-val" value="${escapeHtml(m.text || '')}" ${disabledAttr} placeholder="${isCoach ? 'メモ（例: 左サイドからの崩し）' : 'メモなし'}">
+                    <input type="text" id="period-memo-text-${idx}" class="c-input form-control memo-text-val" value="${escapeHtml(m.text || '')}" ${disabledAttr} placeholder="${isCoach ? 'メモ（例: 左サイドからの崩し）' : 'メモなし'}">
                 </div>
             </div>
         `;
@@ -2961,7 +2961,7 @@ export function initMatches() {
             const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
 
             h2hHtml = `
-                <div class="u-ext-123 card opponent-h2h-card" >
+                <div class="u-ext-123 c-card card opponent-h2h-card" >
                     <div class="u-ext-124" >
                         <div class="u-ext-125" >
                             <i class="fa-solid fa-shield-halved"></i>
@@ -3027,13 +3027,13 @@ export function initMatches() {
                     : '<span class="u-ext-57" >メンバー登録がありません</span>';
 
                 const actionBtns = `
-                    <button class="btn btn-secondary btn-share-match" data-id="${m.id}" title="LINE共有用テキストをコピー"><i class="fa-solid fa-share-nodes" style="color:var(--primary);"></i> 共有</button>
-                    <button class="btn btn-secondary btn-detail-match" data-id="${m.id}"><i class="fa-solid fa-circle-info"></i> 詳細</button>
-                    ${isCoach ? `<button class="btn btn-danger btn-delete-match" data-id="${m.id}"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    <button class="c-button btn c-button--secondary btn-secondary btn-share-match" data-id="${m.id}" title="LINE共有用テキストをコピー"><i class="fa-solid fa-share-nodes" style="color:var(--primary);"></i> 共有</button>
+                    <button class="c-button btn c-button--secondary btn-secondary btn-detail-match" data-id="${m.id}"><i class="fa-solid fa-circle-info"></i> 詳細</button>
+                    ${isCoach ? `<button class="c-button btn c-button--danger btn-danger btn-delete-match" data-id="${m.id}"><i class="fa-solid fa-trash"></i></button>` : ''}
                 `;
 
                 html += `
-                    <div class="card match-card">
+                    <div class="c-card card match-card">
                         <div class="match-card-header">
                             <div>
                                 <div class="match-card-date"><i class="fa-regular fa-calendar"></i> ${m.date} | ${m.type}${m.tournament ? ` (${m.tournament})` : ''}</div>
@@ -3067,7 +3067,7 @@ export function initMatches() {
             const remaining = filteredMatches.length - displayedMatches.length;
             html += `
                 <div class="u-ext-142" >
-                    <button class="u-ext-143 btn btn-secondary" id="btn-load-more-matches" >
+                    <button class="u-ext-143 c-button btn c-button--secondary btn-secondary" id="btn-load-more-matches" >
                         <i class="fa-solid fa-angle-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredMatches.length} 件)
                     </button>
                 </div>
@@ -3080,7 +3080,7 @@ export function initMatches() {
                     <i class="c-empty-state__icon fa-solid fa-trophy" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">該当する試合記録がありません</h3>
                     <p class="c-empty-state__text">検索条件を変更するか、最初の試合を追加してください。</p>
-                    ${isCoach ? '<button class="btn btn-primary" id="btn-empty-add-match"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の試合を追加</button>' : ''}
+                    ${isCoach ? '<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-match"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の試合を追加</button>' : ''}
                 </div>
             </section>
         `;

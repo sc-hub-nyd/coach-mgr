@@ -20,7 +20,7 @@ export function openAssignPracticeModal(menuId) {
                 <div class="c-data-list__header">
                     <div class="c-data-list__identity"><i class="fa-regular fa-calendar" aria-hidden="true"></i> ${p.date}</div>
                     <div class="c-data-list__actions">
-                        <button type="button" class="btn btn-primary btn-execute-assign" data-pid="${p.id}"><i class="fa-solid fa-check" aria-hidden="true"></i> アサイン</button>
+                        <button type="button" class="c-button btn c-button--primary btn-primary btn-execute-assign" data-pid="${p.id}"><i class="fa-solid fa-check" aria-hidden="true"></i> アサイン</button>
                     </div>
                 </div>
                 <div class="c-data-list__meta"><i class="fa-solid fa-users" aria-hidden="true"></i> ${p.attendance} | メニュー数: ${p.menus.length}</div>
@@ -306,7 +306,7 @@ export function initLibrary(miniPitchObserver) {
                     <i class="c-empty-state__icon fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-book'}" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">${isSearchActive ? '該当する練習メニューが見つかりません' : 'メニューライブラリが空です'}</h3>
                     <p class="c-empty-state__text">${isSearchActive ? '検索キーワードまたは絞り込み条件（カテゴリ・メディア・アサイン・評価）を変更してお試しください。' : '練習のテーマ、オーガナイズ、キーファクターをライブラリ化し、戦術ボードで作図しておくことで、いつでも練習日へコピーして計画を立てられます。'}</p>
-                    ${!isSearchActive && isCoach ? `<button class="btn btn-primary" id="btn-empty-add-library"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初のライブラリ作成</button>` : ''}
+                    ${!isSearchActive && isCoach ? `<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-library"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初のライブラリ作成</button>` : ''}
                 </div>
             </section>
         `;
@@ -315,16 +315,16 @@ export function initLibrary(miniPitchObserver) {
             const menus = grouped[cat];
             const cardsHtml = menus.map(m => {
                 const actionBtns = isCoach ? `
-                    <button type="button" class="btn btn-secondary btn-assign-library" data-id="${m.id}" title="練習日にアサイン"><i class="fa-solid fa-calendar-plus"></i></button>
-                    <button type="button" class="btn btn-secondary btn-edit-library" data-id="${m.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
-                    <button type="button" class="btn btn-secondary btn-anim-library" data-id="${m.id}" title="${m.frames && m.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
-                    <button type="button" class="btn btn-danger btn-delete-library" data-id="${m.id}"><i class="fa-solid fa-trash"></i></button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-assign-library" data-id="${m.id}" title="練習日にアサイン"><i class="fa-solid fa-calendar-plus"></i></button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-library" data-id="${m.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-anim-library" data-id="${m.id}" title="${m.frames && m.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
+                    <button type="button" class="c-button btn c-button--danger btn-danger btn-delete-library" data-id="${m.id}"><i class="fa-solid fa-trash"></i></button>
                 ` : `
-                    <button type="button" class="btn btn-secondary btn-anim-library" data-id="${m.id}" title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-anim-library" data-id="${m.id}" title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
                 `;
 
                 return `
-                <div class="u-ext-183 card" >
+                <div class="u-ext-183 c-card card" >
                     <div>
                         <div class="library-card-header" style="display:flex; flex-direction:column; gap:0.3rem; margin-bottom:0.4rem;">
                             <div>

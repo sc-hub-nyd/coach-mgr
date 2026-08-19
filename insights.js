@@ -117,7 +117,7 @@ function renderDecisionCards(cards) {
     }
     container.innerHTML = cards.map(card => `<article class="decision-card is-${escapeHtml(card.tone || 'neutral')}">
         <div class="decision-card-icon"><i class="fa-solid ${escapeHtml(card.icon || 'fa-circle-info')}" aria-hidden="true"></i></div>
-        <div><span class="decision-card-label">${escapeHtml(card.title)}</span><p>${escapeHtml(card.evidence)}</p><button type="button" class="btn btn-secondary btn-sm" data-decision-action="${escapeHtml(card.action || '')}" data-decision-id="${escapeHtml(card.id)}">${escapeHtml(card.actionLabel || '確認する')} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
+        <div><span class="decision-card-label">${escapeHtml(card.title)}</span><p>${escapeHtml(card.evidence)}</p><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" data-decision-action="${escapeHtml(card.action || '')}" data-decision-id="${escapeHtml(card.id)}">${escapeHtml(card.actionLabel || '確認する')} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
     </article>`).join('');
     container.querySelectorAll('[data-decision-action]').forEach(button => {
         button.onclick = () => {

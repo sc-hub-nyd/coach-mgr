@@ -16,7 +16,7 @@ function renderDevelopmentNotebook(player) {
     if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
     if (ratings) {
         ratings.innerHTML = metrics.map(metric => `
-            <label><span>${escapeHtml(metric)}</span><select class="form-control development-rating" data-metric="${escapeHtml(metric)}"><option value="">未評価</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>`).join('');
+            <label><span>${escapeHtml(metric)}</span><select class="c-input form-control development-rating" data-metric="${escapeHtml(metric)}"><option value="">未評価</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>`).join('');
     }
     if (trends) {
         trends.innerHTML = summary.skillTrend.length ? summary.skillTrend.map(trend => {
@@ -32,7 +32,7 @@ function renderDevelopmentNotebook(player) {
             <article class="player-notebook-entry is-${escapeHtml(item.kind)}">
                 <span class="player-notebook-icon"><i class="fa-solid ${icons[item.kind] || 'fa-circle'}"></i></span>
                 <div><small>${escapeHtml(item.date || '')} ・ ${labels[item.kind] || '記録'}</small><strong>${escapeHtml(item.title || '')}</strong><p>${escapeHtml(item.detail || '')}</p></div>
-                ${item.kind === 'note' ? `<button type="button" class="btn btn-secondary btn-remove-development-note" data-development-note-id="${escapeHtml(item.id)}" aria-label="育成ノートを削除"><i class="fa-solid fa-trash"></i></button>` : ''}
+                ${item.kind === 'note' ? `<button type="button" class="c-button btn c-button--secondary btn-secondary btn-remove-development-note" data-development-note-id="${escapeHtml(item.id)}" aria-label="育成ノートを削除"><i class="fa-solid fa-trash"></i></button>` : ''}
             </article>`).join('') : '<p class="player-notebook-empty">まだ成長ノートはありません。練習・試合後の事実と次の一歩を記録しましょう。</p>';
         timeline.querySelectorAll('.btn-remove-development-note').forEach(button => {
             button.onclick = async () => {
@@ -219,8 +219,8 @@ export function initPlayerDetailView(playerId) {
         timelineEl.innerHTML = timeline.length > 0 ? timeline.map(item => {
             if (item.type === 'assessment') {
                 const hId = item.data ? item.data.id : null;
-                const editBtn = hId ? `<button type="button" class="btn btn-secondary btn-sm btn-edit-assessment" data-history-id="${hId}"><i class="fa-solid fa-pen"></i> 編集</button>` : '';
-                const delBtn = hId ? `<button type="button" class="btn btn-danger btn-sm btn-delete-assessment" data-history-id="${hId}"><i class="fa-solid fa-trash"></i></button>` : '';
+                const editBtn = hId ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-edit-assessment" data-history-id="${hId}"><i class="fa-solid fa-pen"></i> 編集</button>` : '';
+                const delBtn = hId ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-assessment" data-history-id="${hId}"><i class="fa-solid fa-trash"></i></button>` : '';
                 return `
                     <article class="c-data-list__item player-history-item" style="margin-bottom:var(--space-2);">
                         <div class="c-data-list__header">
@@ -233,7 +233,7 @@ export function initPlayerDetailView(playerId) {
             } else {
                 const matchingMatch = state.matches.find(m => m.id === item.matchId);
                 const firstForm = (matchingMatch && matchingMatch.formations && matchingMatch.formations.length > 0) ? matchingMatch.formations[0] : null;
-                const linkBtn = firstForm ? `<button type="button" class="btn btn-secondary btn-sm btn-timeline-anim" data-match-id="${matchingMatch.id}" data-form-id="${firstForm.id}"><i class="fa-solid fa-person-running"></i> 作図を見る</button>` : '';
+                const linkBtn = firstForm ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-timeline-anim" data-match-id="${matchingMatch.id}" data-form-id="${firstForm.id}"><i class="fa-solid fa-person-running"></i> 作図を見る</button>` : '';
                 return `
                     <article class="c-data-list__item player-history-item match-timeline-item" style="margin-bottom:var(--space-2);">
                         <div class="c-data-list__header">
@@ -557,7 +557,7 @@ export function initPlayers() {
                     <i class="c-empty-state__icon fa-solid fa-users" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">登録選手がいません</h3>
                     <p class="c-empty-state__text">選手を登録して、強みや指導フォーカスの設定、試合での出場ポジション設定、成長履歴の管理を始めましょう。</p>
-                    <button class="btn btn-primary" id="btn-empty-add-player"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 最初の選手を追加</button>
+                    <button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-player"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 最初の選手を追加</button>
                 </div>
             </section>
         `;

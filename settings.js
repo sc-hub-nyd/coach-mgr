@@ -303,7 +303,7 @@ export function initSettings() {
         const diagnostics = buildOperationalDiagnostics(state);
         const icons = { backup: 'fa-box-archive', sync: 'fa-cloud', cloudRecovery: 'fa-clock-rotate-left', recovery: 'fa-clock-rotate-left', outbox: 'fa-list-check', team: 'fa-people-group', storage: 'fa-hard-drive' };
         diagnosticsContainer.innerHTML = diagnostics.checks.map(check => {
-            const action = check.action ? `<button type="button" class="btn btn-secondary btn-sm operations-check-action" data-operation-action="${escapeHtml(check.action.action)}">${escapeHtml(check.action.label)}</button>` : '';
+            const action = check.action ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm operations-check-action" data-operation-action="${escapeHtml(check.action.action)}">${escapeHtml(check.action.label)}</button>` : '';
             return `<div class="operations-check is-${check.status}${action ? ' has-action' : ''}">
                 <span class="operations-check-icon"><i class="fa-solid ${icons[check.key] || 'fa-circle-info'}" aria-hidden="true"></i></span>
                 <span><strong>${escapeHtml(check.label)}</strong><small title="${escapeHtml(check.detail)}">${escapeHtml(check.detail)}</small></span>
@@ -371,7 +371,7 @@ export function initSettings() {
         cloudRecoveryHistory.innerHTML = recoveries.map(item => `
             <div class="cloud-recovery-item">
                 <span><strong>世代 ${Number(item.revision)}</strong><small>${escapeHtml(item.updatedAt || '直前の確定版')} ・ ${escapeHtml(item.source === 'immediate' ? '直前の安全スロット' : '世代履歴')}</small></span>
-                <button type="button" class="btn btn-secondary btn-sm btn-restore-cloud-generation" data-revision="${Number(item.revision)}"><i class="fa-solid fa-clock-rotate-left"></i> 復元</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-restore-cloud-generation" data-revision="${Number(item.revision)}"><i class="fa-solid fa-clock-rotate-left"></i> 復元</button>
             </div>`).join('');
         cloudRecoveryHistory.querySelectorAll('.btn-restore-cloud-generation').forEach(button => {
             button.onclick = async () => {
@@ -766,7 +766,7 @@ export function initSettings() {
         parentAccessInvites.innerHTML = entries.map(invite => {
             const scopeLabels = (invite.scopes || []).map(scope => PARENT_ACCESS_SCOPES.find(item => item.id === scope)?.label || scope).join('・');
             const statusLabel = invite.displayStatus === 'active' ? '有効' : invite.displayStatus === 'expired' ? '期限切れ' : '失効済み';
-            return `<article class="parent-access-invite is-${escapeHtml(invite.displayStatus)}"><div><strong>${escapeHtml(invite.label || playerName(invite.playerId))}</strong><span>${escapeHtml(playerName(invite.playerId))} ・ ${escapeHtml(scopeLabels)}</span><small>${invite.expiresAt ? `期限 ${escapeHtml(invite.expiresAt)}` : '期限なし'}${invite.lastUsedAt ? ` ・ 最終利用 ${escapeHtml(new Date(invite.lastUsedAt).toLocaleDateString('ja-JP'))}` : ''}</small></div><div class="parent-access-invite-actions">${invite.displayStatus === 'active' ? `<button type="button" class="btn btn-secondary btn-sm" data-parent-access-copy="${escapeHtml(invite.id)}"><i class="fa-solid fa-copy"></i> コピー</button><button type="button" class="btn btn-danger btn-sm" data-parent-access-revoke="${escapeHtml(invite.id)}"><i class="fa-solid fa-ban"></i> 失効</button>` : ''}<span class="parent-access-status">${statusLabel}</span></div></article>`;
+            return `<article class="parent-access-invite is-${escapeHtml(invite.displayStatus)}"><div><strong>${escapeHtml(invite.label || playerName(invite.playerId))}</strong><span>${escapeHtml(playerName(invite.playerId))} ・ ${escapeHtml(scopeLabels)}</span><small>${invite.expiresAt ? `期限 ${escapeHtml(invite.expiresAt)}` : '期限なし'}${invite.lastUsedAt ? ` ・ 最終利用 ${escapeHtml(new Date(invite.lastUsedAt).toLocaleDateString('ja-JP'))}` : ''}</small></div><div class="parent-access-invite-actions">${invite.displayStatus === 'active' ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" data-parent-access-copy="${escapeHtml(invite.id)}"><i class="fa-solid fa-copy"></i> コピー</button><button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm" data-parent-access-revoke="${escapeHtml(invite.id)}"><i class="fa-solid fa-ban"></i> 失効</button>` : ''}<span class="parent-access-status">${statusLabel}</span></div></article>`;
         }).join('');
         parentAccessInvites.querySelectorAll('[data-parent-access-copy]').forEach(button => {
             button.onclick = () => {
@@ -849,13 +849,13 @@ export function initSettings() {
             const isCustomForm = listId === "custom-formation-list";
             const editBtnClass = isCustomForm ? "btn-edit-custom-formation" : "btn-edit-master-item";
             const itemLabel = itemLabelFunc(item);
-            const editBtn = `<button type="button" class="btn btn-secondary btn-sm ${editBtnClass}" data-list="${listId}" data-index="${index}"><i class="fa-solid fa-pen" aria-hidden="true"></i> 編集</button>`;
+            const editBtn = `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm ${editBtnClass}" data-list="${listId}" data-index="${index}"><i class="fa-solid fa-pen" aria-hidden="true"></i> 編集</button>`;
             return `
                 <li class="c-data-item">
                     <span class="c-data-item__label">${escapeHtml(String(itemLabel))}</span>
                     <div class="c-action-group">
                         ${editBtn}
-                        <button type="button" class="btn btn-danger btn-sm btn-delete-item" data-list="${listId}" data-index="${index}" aria-label="${escapeHtml(String(itemLabel))}を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                        <button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-item" data-list="${listId}" data-index="${index}" aria-label="${escapeHtml(String(itemLabel))}を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
                     </div>
                 </li>
             `;
@@ -1046,10 +1046,10 @@ export function initSettings() {
             row.style = 'display:flex; gap:0.4rem; align-items:center; margin-bottom:0.4rem;';
             row.innerHTML = `
                 <strong class="u-ext-176" >#${node.index + 1}</strong>
-                <select class="u-ext-177 form-control custom-node-role-select" title="カテゴリ1" >
+                <select class="u-ext-177 c-input form-control custom-node-role-select" title="カテゴリ1" >
                     ${cat1Options}
                 </select>
-                <select class="u-ext-177 form-control custom-node-cat2-select" title="カテゴリ2" >
+                <select class="u-ext-177 c-input form-control custom-node-cat2-select" title="カテゴリ2" >
                     ${cat2Options}
                 </select>
             `;

@@ -23,7 +23,7 @@ import { buildCoachActionCenter, buildParentHomeAgenda, buildPracticePlanDraft, 
 
 function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '', compact = false }) {
     const action = actionLabel && actionId
-        ? `<button type="button" class="btn btn-primary" id="${actionId}">${actionLabel}</button>`
+        ? `<button type="button" class="c-button btn c-button--primary btn-primary" id="${actionId}">${actionLabel}</button>`
         : '';
     const modifier = compact ? ' c-empty-state--compact' : '';
     return `<section class="c-empty-state${modifier}" role="status"><div class="c-empty-state__body"><i class="c-empty-state__icon fa-solid ${icon}" aria-hidden="true"></i><h3 class="c-empty-state__title">${title}</h3>${description ? `<p class="c-empty-state__text">${description}</p>` : ''}${action}</div></section>`;
@@ -854,7 +854,7 @@ export function openMyPlayerSelectModal() {
             </p>
             <div style="display:flex; flex-direction:column; gap:0.4rem;">
                 ${state.players.map(p => `
-                    <button type="button" class="btn ${p.id.toString() === currentId ? 'btn-primary' : 'btn-secondary'}"
+                    <button type="button" class="c-button btn ${p.id.toString() === currentId ? 'btn-primary' : 'btn-secondary'}"
                         style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; text-align:left;"
                         onclick="selectMyPlayer(${p.id})">
                         <span><strong>${escapeHtml(p.name)}</strong> (${p.number})</span>
@@ -987,7 +987,7 @@ function initDashboard() {
             <div class="setup-checklist-item${step.done ? ' is-complete' : ''}">
                 <span class="setup-checklist-icon"><i class="fa-solid ${step.done ? 'fa-check' : step.icon}"></i></span>
                 <span class="setup-checklist-copy"><strong>${step.title}</strong><span>${step.done ? '設定済み' : step.description}</span></span>
-                ${step.done ? '' : `<button type="button" class="btn btn-secondary btn-setup-action" data-setup-route="${step.action}">${step.label}</button>`}
+                ${step.done ? '' : `<button type="button" class="c-button btn c-button--secondary btn-secondary btn-setup-action" data-setup-route="${step.action}">${step.label}</button>`}
             </div>
         `).join('');
         setupItems.querySelectorAll('.btn-setup-action').forEach(button => {
@@ -1032,7 +1032,7 @@ function initDashboard() {
                 myPlayerContent.innerHTML = `
                     <div class="dash-no-data" style="padding:1.2rem 0; text-align:center;">
                         <p style="margin-bottom:0.6rem; color:var(--text-primary); font-weight:700; font-size:0.9rem;">表示するマイ選手が未設定です</p>
-                        <button type="button" class="btn btn-primary btn-sm" onclick="openMyPlayerSelectModal()" style="padding:0.4rem 1rem; font-size:0.82rem;">
+                        <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" onclick="openMyPlayerSelectModal()" style="padding:0.4rem 1rem; font-size:0.82rem;">
                             <i class="fa-solid fa-user-check"></i> マイ選手（我が子）を選択する
                         </button>
                     </div>
@@ -1046,7 +1046,7 @@ function initDashboard() {
                 myPlayerContent.innerHTML = `
                     <div class="dash-no-data" style="padding:1rem 0; text-align:center;">
                         <p style="margin-bottom:0.5rem; color:var(--text-secondary);">該当する選手が見つかりません。</p>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="openMyPlayerSelectModal()">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" onclick="openMyPlayerSelectModal()">
                             <i class="fa-solid fa-rotate"></i> 別の選手を選択する
                         </button>
                     </div>
@@ -1160,7 +1160,7 @@ function initDashboard() {
                                 </span>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm" id="btn-change-myplayer" style="font-size:0.72rem; padding:0.2rem 0.55rem;">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-change-myplayer" style="font-size:0.72rem; padding:0.2rem 0.55rem;">
                             <i class="fa-solid fa-rotate"></i> 選手変更
                         </button>
                     </div>
@@ -1170,7 +1170,7 @@ function initDashboard() {
 
                     <!-- スタッツボタンエリア -->
                     <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.4rem;">
-                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-att"
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary" id="dash-btn-myplayer-att"
                             style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
                             <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
                                 <i class="fa-solid fa-user-check" style="color:#3b82f6;"></i> 出席率
@@ -1181,7 +1181,7 @@ function initDashboard() {
                             </div>
                         </button>
 
-                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-goals"
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary" id="dash-btn-myplayer-goals"
                             style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
                             <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
                                 <i class="fa-solid fa-futbol" style="color:var(--primary);"></i> 通算得点
@@ -1189,7 +1189,7 @@ function initDashboard() {
                             <strong style="font-size:0.88rem; color:var(--primary);">${playerGoals}<span style="font-size:0.65rem; font-weight:normal;">点</span></strong>
                         </button>
 
-                        <button type="button" class="btn btn-secondary" id="dash-btn-myplayer-assists"
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary" id="dash-btn-myplayer-assists"
                             style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
                             <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
                                 <i class="fa-solid fa-shoe-prints" style="color:#22c55e; transform:rotate(45deg);"></i> 通算アシスト

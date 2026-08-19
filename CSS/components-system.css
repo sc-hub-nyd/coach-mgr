@@ -663,6 +663,25 @@
     }
 }
 
+.c-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 1;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.c-modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
 .c-modal {
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) auto;
@@ -674,6 +693,30 @@
     border-radius: var(--radius-lg);
     background: var(--color-surface);
     box-shadow: var(--shadow-md);
+}
+
+/* Compatibility variant for legacy modal markup while headers and footers migrate to c-modal elements. */
+.c-modal--legacy {
+    display: block;
+    inline-size: 90%;
+    max-inline-size: 31.25rem;
+    max-block-size: 90vh;
+    padding: var(--surface-inset-block) var(--surface-inset-inline);
+    overflow-y: auto;
+    background-color: var(--glass-surface-strong);
+    background-image: var(--liquid-veil);
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    transform: scale(1);
+    transition: transform var(--duration-base) var(--ease-spring), opacity var(--duration-base) var(--ease-out);
+}
+
+.c-modal-overlay.hidden .c-modal--legacy {
+    opacity: 0;
+    transform: scale(0.95);
 }
 
 .c-modal__header {
