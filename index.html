@@ -297,23 +297,6 @@
                 <div id="dash-setup-items" class="setup-checklist-items"></div>
             </section>
 
-            <!-- P17: 試合前の運用確認（コーチ専用） -->
-            <section id="dash-preflight-card" class="card c-card dash-preflight-card coach-only" aria-labelledby="dash-preflight-title">
-                <div class="dash-preflight-header">
-                    <div>
-                        <span class="eyebrow-label">MATCHDAY READY</span>
-                        <h2 id="dash-preflight-title"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i> 試合前チェック</h2>
-                        <p id="dash-preflight-headline">保存・同期・復旧状態を確認しています。</p>
-                    </div>
-                    <span id="dash-preflight-progress" class="dash-preflight-progress">確認中</span>
-                </div>
-                <div id="dash-preflight-items" class="dash-preflight-items" aria-live="polite"></div>
-                <div class="dash-preflight-actions">
-                    <button type="button" class="btn btn-primary btn-sm" id="btn-dash-preflight-action"><i class="fa-solid fa-play" aria-hidden="true"></i> 確認する</button>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-dash-preflight-settings"><i class="fa-solid fa-gear" aria-hidden="true"></i> 運用設定</button>
-                </div>
-            </section>
-
             <!-- ROW 0: マイ選手 (保護者専用) -->
             <div id="dash-myplayer-banner" class="card c-card dash-myplayer-card parent-only" style="display:none;">
                 <div class="dash-widget-label"
@@ -520,51 +503,6 @@
                 </div>
                 <div id="match-detail-score-box"></div>
             </div>
-
-            <!-- P5 Field Companion: 試合時計・片手操作・記録タイムライン -->
-            <section class="field-companion coach-only" aria-label="試合中のField Companion">
-                <div class="field-companion-status">
-                    <div class="field-timer" aria-live="polite">
-                        <span class="field-timer-label"><i class="fa-regular fa-clock" aria-hidden="true"></i> 試合時計</span>
-                        <strong id="field-match-timer" class="field-timer-value c-match-score__result">00:00</strong>
-                        <button type="button" class="btn btn-secondary btn-sm" id="btn-field-timer-toggle" aria-label="試合時計を開始">開始</button>
-                    </div>
-                    <div class="c-form-field c-form-field--compact field-period-control"><label class="c-form-field__label" for="field-period-select">記録先</label><select id="field-period-select" class="form-control" aria-label="記録するピリオド"></select></div>
-                    <span id="field-network-status" class="field-network-status c-status c-status--muted" role="status" aria-live="polite"><i class="fa-solid fa-wifi" aria-hidden="true"></i> 保存済み</span>
-                    <span id="field-session-status" class="field-network-status" hidden role="status" aria-live="polite"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i> 画面オン</span>
-                </div>
-                <div id="field-action-hint" class="field-action-hint">試合中はここから素早く記録できます</div>
-                <!-- P29: 試合前の最終確認。試合中は折りたたみ、操作面を優先する。 -->
-                <details class="field-matchday-readiness" id="field-matchday-readiness" open>
-                    <summary><span><i class="fa-solid fa-list-check"></i> 試合前チェック</span><strong id="field-matchday-headline">確認中</strong></summary>
-                    <div id="field-matchday-items" class="field-matchday-items" aria-live="polite"></div>
-                </details>
-                <div class="field-live-score" aria-live="polite"><span>LIVE SCORE</span><strong id="field-live-score">0 - 0</strong><small id="field-live-score-detail">合計スコア</small></div>
-                <div class="field-action-bar c-action-group c-action-group--field" aria-label="試合中のクイック操作">
-                    <button type="button" class="btn btn-action-score" id="btn-field-score"><i class="fa-solid fa-futbol"></i><span>得点</span></button>
-                    <button type="button" class="btn btn-action-concede" id="btn-field-concede"><i class="fa-solid fa-arrow-down"></i><span>失点</span></button>
-                    <button type="button" class="btn btn-primary" id="btn-field-substitution"><i class="fa-solid fa-arrows-rotate"></i><span>交代</span></button>
-                    <button type="button" class="btn btn-secondary" id="btn-field-position"><i class="fa-solid fa-people-arrows-left-right"></i><span>配置変更</span></button>
-                    <button type="button" class="btn btn-action-card" id="btn-field-card"><i class="fa-regular fa-square"></i><span>警告</span></button>
-                    <button type="button" class="btn btn-action-note" id="btn-field-note"><i class="fa-solid fa-pen"></i><span>メモ</span></button>
-                    <button type="button" class="btn btn-secondary" id="btn-field-finish"><i class="fa-solid fa-flag-checkered"></i><span>試合終了</span></button>
-                </div>
-                <div class="field-roster" aria-labelledby="field-roster-title">
-                    <div class="field-roster-header"><h3 id="field-roster-title"><i class="fa-solid fa-users-viewfinder"></i> 出場中・ベンチ</h3><span id="field-roster-playtime">出場時間を計算中</span></div>
-                    <div class="field-roster-groups">
-                        <div><span class="field-roster-label is-active">出場中</span><div id="field-active-roster" class="field-roster-list c-roster-list"></div></div>
-                        <div><span class="field-roster-label is-bench">ベンチ</span><div id="field-bench-roster" class="field-roster-list c-roster-list"></div></div>
-                    </div>
-                </div>
-                <div class="field-event-timeline" aria-labelledby="field-event-title">
-                    <div class="field-event-timeline-header">
-                        <h3 id="field-event-title"><i class="fa-solid fa-list-check" aria-hidden="true"></i> 試合ログ</h3>
-                        <div class="c-form-field c-form-field--compact field-event-filter-label"><label class="c-form-field__label" for="field-event-filter">表示</label><select id="field-event-filter" class="form-control"><option value="all">すべて</option><option value="score">得点</option><option value="concede">失点</option><option value="substitution">交代</option><option value="position">配置</option><option value="card">警告</option><option value="memo">メモ</option></select></div>
-                        <span id="field-event-count" class="field-event-count">0件</span>
-                    </div>
-                    <ol id="field-event-list" class="field-event-list c-data-list" aria-live="polite"></ol>
-                </div>
-            </section>
 
             <!-- コーチモード用 試合基本情報 編集エリア -->
             <div class="card c-card coach-only l-stack l-stack--compact">
@@ -876,11 +814,10 @@
                         <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> DISPLAY</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="ui-preferences-title">表示・操作の個別設定</h2></div>
                     </div>
                     <div class="sl-section-body c-settings-section__body c-card__body">
-                        <p class="c-settings-section__intro operations-intro">端末ごとに、文字の大きさ、利き手、動きの量を調整できます。記録データや他の利用者の表示は変わりません。</p>
+                        <p class="c-settings-section__intro operations-intro">端末ごとに、カラーモード、文字の大きさ、動きの量を調整できます。記録データや他の利用者の表示は変わりません。</p>
                             <div class="c-form-grid ui-preferences-grid">
                                 <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-color-mode">カラーモード</label><select id="ui-color-mode" class="form-control"><option value="light">ライト</option><option value="dark">ダーク</option></select><small class="c-form-field__hint">この端末だけの表示設定です。</small></div>
                                 <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-font-scale">文字の大きさ</label><select id="ui-font-scale" class="form-control"><option value="normal">標準</option><option value="large">大きめ</option><option value="xlarge">最大</option></select></div>
-                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-preferred-hand">Field Companionの利き手</label><select id="ui-preferred-hand" class="form-control"><option value="right">右手（標準）</option><option value="left">左手</option></select></div>
                             <label class="c-choice-field ui-preference-check"><input id="ui-reduce-motion" type="checkbox"><span>動きを控えめにする</span></label>
                             <label class="c-choice-field ui-preference-check"><input id="ui-compact-mode" type="checkbox"><span>情報をコンパクトに表示</span></label>
                         </div>
@@ -1918,27 +1855,6 @@
             </div>
 
         </div>
-    </div>
-
-    <!-- P1 Field Companion: 試合中クイック記録Bottom sheet -->
-    <div id="modal-field-quick-action" class="modal-overlay hidden" style="z-index: 1040; align-items:flex-end;">
-        <div class="field-quick-sheet" role="dialog" aria-modal="true" aria-labelledby="field-quick-title">
-            <div class="field-quick-sheet-handle" aria-hidden="true"></div>
-            <div class="field-quick-sheet-header">
-                <div>
-                    <span class="eyebrow-label">FIELD COMPANION</span>
-                    <h2 id="field-quick-title">クイック記録</h2>
-                </div>
-                <button type="button" class="btn-close-modal field-quick-close" aria-label="クイック記録を閉じる">&times;</button>
-            </div>
-            <div id="field-quick-content" class="field-quick-content"></div>
-        </div>
-    </div>
-
-    <!-- P1 Undo bar -->
-    <div id="field-undo-bar" class="field-undo-bar hidden" role="status" aria-live="polite">
-        <span id="field-undo-message">記録しました</span>
-        <button type="button" id="btn-field-undo" class="btn btn-secondary btn-sm">取消</button>
     </div>
 
     <!-- コンテキスト維持型: ピリオド情報編集モーダル (軽量化版 ボトムシート) -->

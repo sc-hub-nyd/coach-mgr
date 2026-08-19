@@ -162,7 +162,7 @@ async function collect(client, page) {
     return evaluate(client, `() => {
         const width = window.innerWidth;
         const rootWidth = document.documentElement.scrollWidth;
-        const allowedHorizontalScroll = new Set(['field-event-list', 'u-scroll-x']);
+        const allowedHorizontalScroll = new Set(['u-scroll-x']);
         const overflow = [...document.querySelectorAll('body *')]
             .map(element => {
                 const rect = element.getBoundingClientRect();
@@ -192,7 +192,7 @@ async function collect(client, page) {
             visible: {
                 dashboard: Boolean(document.querySelector('.dash-widget-grid')),
                 settings: Boolean(document.querySelector('.sl-settings')),
-                fieldCompanion: Boolean(document.querySelector('.field-companion'))
+                matchDetail: Boolean(document.querySelector('#tpl-match-detail:not(.hidden)'))
             }
         };
     }`);
@@ -218,7 +218,7 @@ async function runViewport(client, viewport) {
     checks.push({ ...(await collect(client, 'settings')), screenshot: await screenshot(client, viewport, 'settings') });
 
     await createMatchAndOpenDetail(client);
-    checks.push({ ...(await collect(client, 'field-companion')), screenshot: await screenshot(client, viewport, 'field-companion') });
+    checks.push({ ...(await collect(client, 'match-detail')), screenshot: await screenshot(client, viewport, 'match-detail') });
     return checks;
 }
 

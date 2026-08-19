@@ -2,7 +2,7 @@
 import { state, uiState } from './state.js';
 import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm, setupScoreCounters, getNendo } from './utils.js';
 import { initPractices, openPracticeModal, renderPracticeRoster, handleMenuSubmit } from './practices.js';
-import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText, releaseFieldCompanionSession } from './matches.js';
+import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText } from './matches.js';
 import { initPlayers, openPlayerDetail, initPlayerDetailView } from './players.js';
 import { initLibrary } from './library.js';
 import { initTactics } from './tactics.js';
@@ -14,7 +14,6 @@ import { loadPersistedSnapshot, savePersistedSnapshot, createStateSnapshot, crea
 import { pushCloud, pullCloud, restoreCloudRecovery as restoreCloudRecoveryRequest, withRetry } from './sync-service.js';
 import { ensureSyncMeta, markLocalChange, markSyncAttempt, markSyncAcknowledged, markSyncFailure, hasSyncConflict, applyRemoteSnapshot, getExpectedCloudRevision, buildSyncSummary, getSyncStatusLabel } from './sync-controller.js';
 import { showSyncConflictDialog } from './sync-conflict-dialog.js';
-import { buildOperationalDiagnostics } from './operations-service.js';
 import { getParentAccessInvite, isParentShareValid, markParentAccessUsed } from './parent-operations-service.js';
 import { ensureWorkspaceState, hydrateActiveWorkspace } from './workspace-service.js';
 import { mergeSnapshotsByRecord, touchRecordsForSave } from './record-service.js';
@@ -963,65 +962,10 @@ function setupModals() {
     setupScoreCounters();
 }
 
-async function runDashboardPreflightAction(action) {
-    if (action === 'backup') {
-        const { exportBackupData } = await import('./settings.js');
-        exportBackupData();
-        return;
-    }
-    if (action === 'sync') {
-        await syncPushGasCloud(false);
-        return;
-    }
-    if (action === 'recoveries' || action === 'local-recovery' || action === 'settings') {
-        navigate('settings');
-    }
-}
-
-function renderDashboardPreflight() {
-    const card = document.getElementById('dash-preflight-card');
-    if (!card || state.currentUserRole !== 'coach') return;
-    const diagnostics = buildOperationalDiagnostics(state);
-    const preflight = diagnostics.preflight;
-    const headline = document.getElementById('dash-preflight-headline');
-    const progress = document.getElementById('dash-preflight-progress');
-    const items = document.getElementById('dash-preflight-items');
-    const primaryAction = document.getElementById('btn-dash-preflight-action');
-    const settingsAction = document.getElementById('btn-dash-preflight-settings');
-    const icons = { backup: 'fa-download', sync: 'fa-cloud-arrow-up', cloudRecovery: 'fa-clock-rotate-left', recovery: 'fa-shield-heart' };
-    if (headline) headline.textContent = preflight.headline;
-    if (progress) {
-        progress.textContent = `${preflight.readyCount}/${preflight.items.length} 確認済み`;
-        progress.className = `dash-preflight-progress is-${preflight.status}`;
-    }
-    if (items) {
-        items.innerHTML = preflight.items.map(item => `
-            <div class="dash-preflight-item is-${item.status}">
-                <i class="fa-solid ${icons[item.key] || 'fa-circle-info'}" aria-hidden="true"></i>
-                <span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.detail)}</small></span>
-            </div>`).join('');
-    }
-    if (primaryAction) {
-        primaryAction.innerHTML = `<i class="fa-solid fa-play"></i> ${escapeHtml(preflight.nextAction.label)}`;
-        primaryAction.onclick = async () => {
-            primaryAction.disabled = true;
-            try {
-                await runDashboardPreflightAction(preflight.nextAction.action);
-            } catch (error) {
-                alert(`試合前チェックの操作に失敗しました。\n${error?.message || error}`);
-            } finally {
-                primaryAction.disabled = false;
-            }
-        };
-    }
-    if (settingsAction) settingsAction.onclick = () => navigate('settings');
-}
-
 function initDashboard() {
     const now = new Date();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const isCoach = state.currentUserRole === 'coach';
-    renderDashboardPreflight();
 
     // ── P0: 初回セットアップチェックリスト ──
     const setupChecklist = document.getElementById('dash-setup-checklist');
@@ -2382,7 +2326,6 @@ export function navigateBack() {
 }
 
 export function navigate(route, params = null, isBack = false, restoredRouteContext = null) {
-    if (uiState.currentRoute === 'match-detail' && route !== 'match-detail') releaseFieldCompanionSession();
     cleanupCanvasEvents();
     // Cleanup scoped event listeners from the previous view
     if (uiState.currentRoute) {

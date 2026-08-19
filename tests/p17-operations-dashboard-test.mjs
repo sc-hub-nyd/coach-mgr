@@ -38,15 +38,13 @@ assert.equal(preflight.status, 'attention');
 assert.equal(preflight.nextAction.action, 'sync');
 assert.equal(preflight.items.some(item => item.key === 'sync' && item.status === 'attention'), true);
 
-const app = await readFile(new URL('../app.js', import.meta.url), 'utf8');
-const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
-const settings = await readFile(new URL('../settings.js', import.meta.url), 'utf8');
-const css = await readFile(new URL('../CSS/components.css', import.meta.url), 'utf8');
-assert.match(app, /renderDashboardPreflight/);
-assert.match(app, /runDashboardPreflightAction/);
-assert.match(html, /dash-preflight-card/);
-assert.match(html, /btn-dash-preflight-action/);
-assert.match(css, /dash-preflight-item/);
-assert.match(css, /min-height: 42px/);
+const [app, html, css] = await Promise.all([
+    readFile(new URL('../app.js', import.meta.url), 'utf8'),
+    readFile(new URL('../index.html', import.meta.url), 'utf8'),
+    readFile(new URL('../CSS/components.css', import.meta.url), 'utf8')
+]);
+assert.doesNotMatch(app, /renderDashboardPreflight|runDashboardPreflightAction/);
+assert.doesNotMatch(html, /dash-preflight-card|btn-dash-preflight-action/);
+assert.doesNotMatch(css, /dash-preflight-item/);
 
-console.log('P17 operations dashboard tests passed');
+console.log('P17 operations diagnostics and removed preflight UI tests passed');

@@ -39,11 +39,9 @@ assert.equal(triggerFieldHaptic('record', { navigatorRef: {} }), false);
 
 const matchesSource = await readFile(new URL('../matches.js', import.meta.url), 'utf8');
 const appSource = await readFile(new URL('../app.js', import.meta.url), 'utf8');
-assert.match(matchesSource, /setFieldSessionActive\(running && state\.currentUserRole === 'coach'\)/);
-assert.match(matchesSource, /triggerFieldHaptic\('undo'\)/);
-assert.match(matchesSource, /renderFieldSessionStatus/);
-assert.match(appSource, /releaseFieldCompanionSession\(\)/);
 const indexSource = await readFile(new URL('../index.html', import.meta.url), 'utf8');
-assert.match(indexSource, /field-session-status/);
+assert.doesNotMatch(matchesSource, /field-session-service|setFieldSessionActive|triggerFieldHaptic|renderFieldSessionStatus/);
+assert.doesNotMatch(appSource, /releaseFieldCompanionSession/);
+assert.doesNotMatch(indexSource, /field-session-status/);
 
-console.log('P12 field session tests passed');
+console.log('P12 field session compatibility and detached UI tests passed');

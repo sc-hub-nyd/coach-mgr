@@ -35,13 +35,13 @@ assert.ok(decisions.every(item => item.title && item.evidence && item.action));
 
 const storage = new Map();
 const fakeStorage = { getItem: key => storage.get(key) || null, setItem: (key, value) => storage.set(key, value) };
-const preferences = saveUiPreferences({ fontScale: 'large', preferredHand: 'left', reduceMotion: true, compactMode: true }, fakeStorage);
-assert.equal(JSON.parse(storage.get(UI_PREFERENCES_KEY)).preferredHand, 'left');
+const preferences = saveUiPreferences({ fontScale: 'large', reduceMotion: true, compactMode: true }, fakeStorage);
+assert.equal(Object.hasOwn(JSON.parse(storage.get(UI_PREFERENCES_KEY)), 'preferredHand'), false);
 assert.equal(loadUiPreferences(fakeStorage).fontScale, 'large');
 const root = { dataset: {} };
 applyUiPreferences(preferences, root);
 assert.equal(root.dataset.fontScale, 'large');
-assert.equal(root.dataset.preferredHand, 'left');
+assert.equal(Object.hasOwn(root.dataset, 'preferredHand'), false);
 assert.equal(root.dataset.reduceMotion, 'true');
 
 const readiness = buildMatchdayReadiness({ match: { id: 3, date: '2026-08-20', opponent: 'FC', formations: [{ initialActivePlayerIds: [1, 2] }] }, hasBackup: true, outboxCount: 1 });
@@ -59,12 +59,12 @@ const [index, app, settings, matches, css] = await Promise.all([
 ]);
 // assert.match(index, /dash-action-center/);
 // assert.match(index, /dash-parent-agenda/);
-assert.match(index, /field-matchday-readiness/);
-assert.match(index, /ui-preferred-hand/);
+assert.doesNotMatch(index, /field-matchday-readiness/);
+assert.doesNotMatch(index, /ui-preferred-hand/);
 assert.match(index, /ui-preferences-section/);
 assert.match(app, /experience-service\.js/);
 assert.match(settings, /loadUiPreferences/);
-assert.match(matches, /matchday-ux-service\.js/);
-assert.match(css, /data-preferred-hand/);
+assert.doesNotMatch(matches, /matchday-ux-service\.js/);
+assert.doesNotMatch(css, /data-preferred-hand/);
 assert.match(css, /prefers-reduced-motion/);
 console.log('P28-P32 experience tests passed');

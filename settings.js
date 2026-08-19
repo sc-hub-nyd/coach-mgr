@@ -258,12 +258,10 @@ export function initSettings() {
     const uiPreferences = loadUiPreferences();
     const colorMode = document.getElementById('ui-color-mode');
     const fontScale = document.getElementById('ui-font-scale');
-    const preferredHand = document.getElementById('ui-preferred-hand');
     const reduceMotion = document.getElementById('ui-reduce-motion');
     const compactMode = document.getElementById('ui-compact-mode');
     if (colorMode) colorMode.value = uiPreferences.colorMode;
     if (fontScale) fontScale.value = uiPreferences.fontScale;
-    if (preferredHand) preferredHand.value = uiPreferences.preferredHand;
     if (reduceMotion) reduceMotion.checked = Boolean(uiPreferences.reduceMotion);
     if (compactMode) compactMode.checked = Boolean(uiPreferences.compactMode);
     const saveUiPreferencesButton = document.getElementById('btn-save-ui-preferences');
@@ -271,7 +269,6 @@ export function initSettings() {
         const saved = saveUiPreferences({
             colorMode: colorMode?.value === 'dark' ? 'dark' : 'light',
             fontScale: fontScale?.value || 'normal',
-            preferredHand: preferredHand?.value || 'right',
             reduceMotion: Boolean(reduceMotion?.checked),
             compactMode: Boolean(compactMode?.checked)
         });

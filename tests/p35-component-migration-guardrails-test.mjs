@@ -27,7 +27,6 @@ requireAll(source.index, [
     'id="ui-preferences-section"',
     'id="ui-color-mode"',
     'id="ui-font-scale"',
-    'id="ui-preferred-hand"',
     'id="btn-save-ui-preferences"',
     'id="team-theme-section"',
     'id="form-team-info"',
@@ -95,24 +94,6 @@ requireAll(source.index, [
 
 requireAll(source.index, [
     'template id="tpl-match-detail"',
-    'id="field-match-timer"',
-    'id="btn-field-timer-toggle"',
-    'id="field-period-select"',
-    'id="field-event-filter"',
-    'c-action-group--field',
-    'id="btn-field-score"',
-    'id="btn-field-concede"',
-    'id="btn-field-substitution"',
-    'id="btn-field-position"',
-    'id="btn-field-card"',
-    'id="btn-field-note"',
-    'id="btn-field-finish"',
-    'id="field-event-list"',
-    'c-data-list" aria-live="polite"',
-    'id="field-active-roster"',
-    'id="field-bench-roster"',
-    'field-roster-list c-roster-list',
-    'c-match-score__result',
     'id="match-detail-date-input"',
     'id="match-detail-opponent-input"',
     'id="match-detail-type-select"',
@@ -134,7 +115,7 @@ requireAll(source.index, [
     'id="period-timeline-list"',
     'c-data-list period-timeline-list',
     'c-form-field--compact'
-], 'Field Companion');
+], '試合詳細・ピリオド分析');
 
 requireAll(source.index, [
     'c-section-header',
@@ -225,9 +206,13 @@ requireAll(source.matches, [
     'c-match-score-actions',
     'pk-kicker-row c-data-list__item',
     'pk-kicker-row__controls',
-    'c-roster-row c-roster-row--field',
-    'field-event-item c-data-list__item',
-    'field-network-status c-status',
+    'side-sub-row c-data-list__item',
+    'id="side-substitutions-container"',
+    'id="btn-add-side-sub"',
+    'memo-seconds-val',
+    'btn-use-current-timestamp',
+    'getTimelineTimestampSeconds',
+    'normalizeTimelineMemo',
     'btn-add-match',
     'btn-add-match'
 ], '試合空状態');
@@ -434,9 +419,8 @@ requireAll(source.system, [
     '\\.c-match-score__result',
     '\\.pk-shootout-editor',
     '\\.pk-kicker-row__controls',
-    '\\.c-roster-row--field',
-    '\\.field-event-list\\.c-data-list',
-    '\\.c-action-group--field',
+    '\\.period-timeline-edit__seconds',
+    '\\.btn-use-current-timestamp',
     '\\.filmstrip-cards-container\\.c-data-list',
     '\\.filmstrip-cards-container \\.filmstrip-card\\.c-data-list__item',
     '\\.c-modal\\.modal-export-fallback',
