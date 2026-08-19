@@ -581,17 +581,7 @@ body.role-read-only #pd-tab-goals textarea {
         gap: 0.25rem !important;
     }
 
-    .topbar-btn *,
-    .topbar-badge * {
-        font-size: 0.72rem !important;
-    }
-
-    .topbar-btn i,
-    .topbar-badge i {
-        margin-right: 0.25rem !important;
-    }
-
-        .bottom-nav {
+    .bottom-nav {
         display: flex !important;
         position: fixed !important;
         bottom: 0 !important;
@@ -603,24 +593,19 @@ body.role-read-only #pd-tab-goals textarea {
         /* 親指操作とSafe Areaを優先 */
 
         flex-direction: row !important;
-        justify-content: flex-start !important;
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        -webkit-overflow-scrolling: touch !important;
-        scroll-padding-left: 0.5rem !important;
-        padding-left: 0.2rem !important;
-        padding-right: 0.2rem !important;
+        justify-content: space-around !important;
         align-items: center !important;
+        overflow-x: hidden !important;
+        overflow-y: hidden !important;
         z-index: 900 !important;
         background: var(--glass-surface-strong) !important;
         backdrop-filter: var(--glass-blur) !important;
         -webkit-backdrop-filter: var(--glass-blur) !important;
         border: none;
-                border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
         box-shadow: 0 -0.45rem 1.5rem color-mix(in srgb, var(--color-text) 12%, transparent) !important;
         box-sizing: border-box !important;
-        padding: 4px 4px var(--safe-bottom) !important;
-
+        padding: 4px 2px var(--safe-bottom) !important;
     }
 
     .bottom-nav .nav-item {
@@ -628,15 +613,13 @@ body.role-read-only #pd-tab-goals textarea {
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        flex: 0 0 auto !important;
-        min-width: calc(100vw / 5.5) !important;
-                min-height: var(--tap-target) !important;
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        min-height: var(--tap-target) !important;
         height: 100% !important;
-        gap: 3px !important;
-
-        /* アイコンと文字の間に適度な余白を持たせる */
-        padding: 4px 0 !important;
-        /* 上下の余白もバランスよく調整 */
+        gap: 2px !important;
+        padding: 4px 1px !important;
         color: var(--text-secondary) !important;
         text-decoration: none !important;
         border-radius: 8px !important;
@@ -644,17 +627,18 @@ body.role-read-only #pd-tab-goals textarea {
     }
 
     .bottom-nav .nav-item i, .bottom-nav .nav-item .c-icon {
-        font-size: 1.05rem !important;
-        /* アイコンサイズも少しスリムに調整 */
+        font-size: 1rem !important;
         line-height: 1 !important;
         display: block !important;
     }
 
     .bottom-nav .nav-item span {
-        font-size: 0.6rem !important;
-        line-height: 1 !important;
+        font-size: 0.58rem !important;
+        line-height: 1.1 !important;
+        letter-spacing: -0.02em !important;
         white-space: nowrap !important;
         display: block !important;
+        text-align: center !important;
     }
 
     .bottom-nav .nav-item.active {

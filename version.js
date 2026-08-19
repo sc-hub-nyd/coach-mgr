@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.14';
+export const APP_VERSION = 'v1.30.15';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.15',
+        date: '2026-08-19',
+        title: 'ボトムナビゲーションの均等配置とスマホ画面収容の最適化',
+        features: [
+            '保護者モード時にボトムメニュー4項目が画面幅全体にバランスよく均等配置されるよう改善',
+            'コーチモード時に全7項目が横スクロールせず1画面内に綺麗に収まるようレイアウトを最適化',
+            'タップ領域（44px以上）とフォント・アイコンの視認性バランスを両立'
+        ]
+    },
     {
         version: 'v1.30.14',
         date: '2026-08-19',
