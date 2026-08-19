@@ -838,7 +838,7 @@ export function initSettings() {
         if (!list) return;
         if (!Array.isArray(stateArray) || stateArray.length === 0) {
             list.innerHTML = `
-                <li class="c-empty-state c-empty-state--compact" style="grid-column: 1 / -1;">
+                <li class="c-empty-state c-empty-state--compact c-static-style--179">
                     <div class="c-empty-state__body">
                         <p class="c-empty-state__title">まだ登録されていません</p>
                     </div>

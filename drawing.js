@@ -1562,10 +1562,10 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         const isCoach = state.currentUserRole === 'coach';
 
         if (targetMenu) {
-            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細';
-            if (lblSideFocus) lblSideFocus.innerHTML = '<i class="fa-solid fa-bullseye" style="color:var(--primary);"></i> テーマ・フォーカス';
-            if (lblSideOrg) lblSideOrg.innerHTML = '<i class="fa-solid fa-users" style="color:#3b82f6;"></i> オーガナイズ';
-            if (lblSideKf) lblSideKf.innerHTML = '<i class="fa-solid fa-key" style="color:#eab308;"></i> キーファクター';
+            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-clipboard-list c-static-style--022"></i> メニュー詳細';
+            if (lblSideFocus) lblSideFocus.innerHTML = '<i class="fa-solid fa-bullseye c-static-style--022"></i> テーマ・フォーカス';
+            if (lblSideOrg) lblSideOrg.innerHTML = '<i class="fa-solid fa-users c-static-style--015"></i> オーガナイズ';
+            if (lblSideKf) lblSideKf.innerHTML = '<i class="fa-solid fa-key c-static-style--017"></i> キーファクター';
             if (cardSideOpt) cardSideOpt.style.display = 'block';
 
             if (sideFocus) sideFocus.textContent = targetMenu.focus || targetMenu.name || '未設定';
@@ -1587,10 +1587,10 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 }
             }
         } else if (targetTactic) {
-            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-chess-board" style="color:var(--primary);"></i> 戦術詳細';
-            if (lblSideFocus) lblSideFocus.innerHTML = '<i class="fa-solid fa-heading" style="color:var(--primary);"></i> 戦術名';
-            if (lblSideOrg) lblSideOrg.innerHTML = '<i class="fa-solid fa-tags" style="color:#3b82f6;"></i> カテゴリ';
-            if (lblSideKf) lblSideKf.innerHTML = '<i class="fa-solid fa-align-left" style="color:#eab308;"></i> 説明';
+            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-chess-board c-static-style--022"></i> 戦術詳細';
+            if (lblSideFocus) lblSideFocus.innerHTML = '<i class="fa-solid fa-heading c-static-style--022"></i> 戦術名';
+            if (lblSideOrg) lblSideOrg.innerHTML = '<i class="fa-solid fa-tags c-static-style--015"></i> カテゴリ';
+            if (lblSideKf) lblSideKf.innerHTML = '<i class="fa-solid fa-align-left c-static-style--017"></i> 説明';
             if (cardSideOpt) cardSideOpt.style.display = 'none';
 
             if (sideFocus) sideFocus.textContent = targetTactic.title || '未設定';
@@ -1611,7 +1611,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 }
             }
         } else {
-            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細';
+            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-clipboard-list c-static-style--022"></i> メニュー詳細';
             if (cardSideOpt) cardSideOpt.style.display = 'block';
 
             if (sideFocus) sideFocus.textContent = '未設定';

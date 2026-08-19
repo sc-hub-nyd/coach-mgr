@@ -468,7 +468,7 @@ export function initPractices(miniPitchObserver) {
                                                 ` : '<div class="c-content-disclosure__empty">詳細説明はありません。</div>'}
                                             </details>
                                         </li>
-                                    `).join('') : '<li class="text-secondary no-practice-menu" style="font-size:0.8rem; padding:0.3rem 0;">メニューなし</li>'}
+                                    `).join('') : '<li class="text-secondary no-practice-menu c-static-style--159">メニューなし</li>'}
                                 </ul>
                             </div>
                         </div>

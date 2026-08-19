@@ -824,4 +824,26 @@ requireNone([source.base, source.components].join('\n'), [
     /body \.c-practice-card__actions\s*\{/
 ], 'CSSリファクタリングで廃止した重複正本');
 
+// R1-R4 final CSS refactor: static templates, semantic match-editor parts, and extracted utilities cannot regress.
+requireAll(source.system, [
+    'CSS_STATIC_CATALOG_START',
+    '\\.c-match-record-row__label',
+    '\\.c-match-analysis-row__time',
+    '\\.c-match-video-row__input',
+    '\\.c-attendance-editor__option',
+    '\\.c-inspector-panel__event-summary'
+], 'R1-R4共通CSS正本');
+
+requireAll(source.matches, [
+    'c-match-record-row__label',
+    'c-match-analysis-row__time',
+    'c-match-video-row__input',
+    'c-attendance-editor__option',
+    'c-inspector-panel__event-summary'
+], 'R4試合編集の意味的部品利用');
+
+requireNone([source.index, source.matches, source.base, source.components, source.system].join('\n'), [
+    /u-ext-[0-9]+/
+], 'R4で廃止した抽出ユーティリティ');
+
 console.log('P35 component migration guardrails passed');

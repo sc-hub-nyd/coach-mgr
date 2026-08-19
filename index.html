@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
-    <link rel="stylesheet" href="./CSS/main.css?v=72">
+    <link rel="stylesheet" href="./CSS/main.css?v=79">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
     <div id="app" class="app-container">
         <!-- Sidebar -->
         <nav class="c-sidebar" id="sidebar">
-            <div class="c-sidebar__header" style="cursor:pointer;" id="sidebar-team-brand">
+            <div class="c-sidebar__header c-static-style--031" id="sidebar-team-brand">
                 <h2><span class="c-icon c-icon--team-signal c-icon--md c-icon--brand" aria-hidden="true"></span> CoachMgr</h2>
             </div>
             <ul class="c-sidebar__nav">
@@ -41,8 +41,8 @@
             <!-- PC用サイドバーフッター（システム設定・モード切替・同期・バージョン） -->
             <div class="c-sidebar__footer" id="sidebar-footer">
                 <div class="c-sidebar__user-card">
-                    <div id="user-role-badge" class="c-sidebar__role-badge"
-                        style="background:rgba(34, 197, 94, 0.15); color:#15803d;">
+                    <div id="user-role-badge" class="c-sidebar__role-badge c-static-style--009"
+                       >
                         <i class="fa-solid fa-eye" aria-hidden="true"></i><span>保護者モード</span>
                     </div>
                     <div class="c-sidebar__footer-actions">
@@ -56,16 +56,16 @@
                 </div>
 
                 <!-- PC用サイドバークラウド同期ステータス -->
-                <div class="c-sidebar__sync-row" style="position:relative;">
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-sidebar__sync-button" id="btn-topbar-sync-status" title="クラウド同期ステータス" aria-label="クラウド同期ステータス" style="width:100%; justify-content:space-between; font-size:0.75rem;">
-                        <span style="display:flex; align-items:center; gap:0.45rem;">
-                            <span class="sync-icon-wrapper" style="position:relative; display:inline-flex; align-items:center;">
+                <div class="c-sidebar__sync-row c-static-style--254">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-sidebar__sync-button c-static-style--274" id="btn-topbar-sync-status" title="クラウド同期ステータス" aria-label="クラウド同期ステータス">
+                        <span class="c-static-style--043">
+                            <span class="sync-icon-wrapper c-static-style--255">
                                 <i class="fa-solid fa-cloud-arrow-down" id="sync-status-icon" aria-hidden="true"></i>
                                 <span class="sync-status-dot" id="sync-status-dot"></span>
                             </span>
                             <span id="sidebar-sync-label">クラウド同期</span>
                         </span>
-                        <span id="sidebar-sync-quick-time" style="font-size:0.68rem; color:var(--text-secondary);">未実施</span>
+                        <span class="c-static-style--105" id="sidebar-sync-quick-time">未実施</span>
                     </button>
 
                     <!-- タップ時に開くステータスポップオーバー -->
@@ -76,8 +76,8 @@
                         <div class="c-popover__body">
                             <div class="sync-time-label">最終同期: <span id="sync-last-time">未実施</span></div>
                             <div class="sync-status-text" id="sync-status-text">最新状態です</div>
-                            <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm sync-action-btn" id="btn-popover-sync-now"
-                                style="width:100%; margin-top:0.6rem; justify-content:center;">
+                            <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm sync-action-btn c-static-style--275" id="btn-popover-sync-now"
+                               >
                                 <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> 同期
                             </button>
                         </div>
@@ -152,7 +152,7 @@
                     <span>メニュー</span>
                 </a>
                 <button type="button" class="c-bottom-nav__item c-bottom-nav__item--more" id="btn-bottom-nav-more" aria-label="その他のメニューを開く">
-                    <i class="fa-solid fa-ellipsis" aria-hidden="true" style="font-size:1.1rem; margin-bottom:0.15rem;"></i>
+                    <i class="fa-solid fa-ellipsis c-static-style--165" aria-hidden="true"></i>
                     <span>その他</span>
                 </button>
             </nav>
@@ -187,8 +187,8 @@
                 <div class="mobile-more-sync-card c-card c-mobile-more__sync-card" id="mobile-sync-card">
                     <div class="c-mobile-more__sync-header">
                         <div class="c-mobile-more__sync-label">
-                            <span class="sync-icon-wrapper" style="position:relative; display:inline-flex; align-items:center;">
-                                <i class="fa-solid fa-cloud" aria-hidden="true" style="color:var(--primary);"></i>
+                            <span class="sync-icon-wrapper c-static-style--255">
+                                <i class="fa-solid fa-cloud c-static-style--022" aria-hidden="true"></i>
                                 <span class="sync-status-dot" id="mobile-sync-status-dot"></span>
                             </span>
                             <span>クラウド同期</span>
@@ -211,7 +211,7 @@
                         <span>選手管理</span>
                     </button>
                     <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="settings">
-                        <i class="fa-solid fa-gear" style="font-size:1.2rem;" aria-hidden="true"></i>
+                        <i class="fa-solid fa-gear c-static-style--166" aria-hidden="true"></i>
                         <span>設定</span>
                     </button>
                 </div>
@@ -237,26 +237,26 @@
     </div>
 
     <!-- Passcode Modal for Coach Mode -->
-    <div id="modal-coach-passcode" class="c-modal-overlay modal-overlay hidden" style="z-index: 1002;">
-        <div class="c-modal c-modal--legacy modal" style="max-width:380px; text-align:center;">
-            <div style="font-size:2.5rem; color:var(--primary); margin-bottom:0.5rem;"><i
+    <div id="modal-coach-passcode" class="c-modal-overlay modal-overlay hidden c-static-style--284">
+        <div class="c-modal c-modal--legacy modal c-static-style--230">
+            <div class="c-static-style--167"><i
                     class="fa-solid fa-user-lock"></i></div>
-            <h2 style="margin-bottom:0.5rem; font-size:1.2rem;">コーチモードへの切り替え</h2>
-            <p class="text-secondary" style="font-size:0.8rem; margin-bottom:1.5rem;">編集機能を利用するにはパスコードを入力してください。</p>
+            <h2 class="c-static-style--190">コーチモードへの切り替え</h2>
+            <p class="text-secondary c-static-style--157">編集機能を利用するにはパスコードを入力してください。</p>
             <form id="form-coach-passcode">
-                <div class="form-group" style="margin-bottom:1rem;">
-                    <label style="display:block; text-align:center; margin-bottom:0.4rem;">パスコード <span
+                <div class="form-group c-static-style--196">
+                    <label class="c-static-style--035">パスコード <span
                             class="c-status-label c-status-label--required">必須</span></label>
-                    <input type="password" id="input-coach-passcode" class="c-input form-control" placeholder="パスコードを入力"
-                        style="text-align:center; font-size:1.2rem; letter-spacing:0.2em;" required autofocus>
+                    <input type="password" id="input-coach-passcode" class="c-input form-control c-static-style--257" placeholder="パスコードを入力"
+                        required autofocus>
                 </div>
-                <div id="passcode-error-msg" style="display:none; color:#ef4444; font-size:0.8rem; margin-bottom:1rem;">
+                <div id="passcode-error-msg" class="c-form-error-message" style="display:none;">
                     パスコードが違います。</div>
-                <div style="display:flex; justify-content:center; align-items:center; gap:0.75rem; width:100%;">
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal"
-                        style="flex:1; text-align:center; justify-content:center;">キャンセル</button>
-                    <button type="submit" class="c-button btn c-button--primary btn-primary"
-                        style="flex:1; text-align:center; justify-content:center;">解除する</button>
+                <div class="c-static-style--070">
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal c-static-style--099"
+                       >キャンセル</button>
+                    <button type="submit" class="c-button btn c-button--primary btn-primary c-static-style--099"
+                       >解除する</button>
                 </div>
             </form>
         </div>
@@ -298,9 +298,9 @@
 
             <!-- ROW 0: マイ選手 (保護者専用) -->
             <div id="dash-myplayer-banner" class="card c-card dash-myplayer-card parent-only" style="display:none;">
-                <div class="c-dashboard-widget__label"
-                    style="justify-content: space-between; margin-bottom:0.5rem; width:100%;">
-                    <span><i class="fa-solid fa-child-reaching" style="color:var(--primary);"></i> マイ選手
+                <div class="c-dashboard-widget__label c-static-style--183"
+                   >
+                    <span><i class="fa-solid fa-child-reaching c-static-style--022"></i> マイ選手
                         (我が子の成長ログ)</span>
                 </div>
                 <div id="dash-myplayer-content" class="dash-myplayer-content">
@@ -330,9 +330,9 @@
                 <!-- 今季成績 -->
                 <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--season" id="dash-card-matches"
                     onclick="openSeasonRecordModal()">
-                    <div class="c-dashboard-widget__label" style="justify-content: space-between; width: 100%;">
+                    <div class="c-dashboard-widget__label c-static-style--184">
                         <span><i class="fa-solid fa-trophy"></i> 今季成績</span>
-                        <span class="text-secondary" style="font-size: 0.7rem;"><i
+                        <span class="text-secondary c-static-style--101"><i
                                 class="fa-solid fa-chevron-right"></i> 詳細</span>
                     </div>
                     <div class="c-dashboard-widget__body">
@@ -342,16 +342,16 @@
                             <span class="c-metric c-metric--inline"><strong class="c-metric__value dash-record-draw" id="dash-record-draw">0</strong><span class="c-metric__label dash-record-sep">分</span></span>
                         </div>
                         <!-- 得点・失点の右側に勝率を配置 -->
-                        <div class="dash-record-meta"
-                            style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-                            <div style="display:flex; gap:0.6rem; align-items:center;">
+                        <div class="dash-record-meta c-static-style--076"
+                           >
+                            <div class="c-static-style--065">
                                 <span id="dash-record-goals"><i class="fa-solid fa-futbol"></i> 得点: —</span>
                                 <span id="dash-record-concede"><i class="fa-solid fa-shield-halved"></i> 失点: —</span>
                             </div>
-                            <span id="dash-db-record"
-                                style="font-size:0.72rem; color:var(--text-secondary); font-weight:700;"></span>
+                            <span class="c-static-style--107" id="dash-db-record"
+                               ></span>
                         </div>
-                        <div class="progress-bar-container" style="margin-top:0.35rem; height:5px;">
+                        <div class="progress-bar-container c-static-style--201">
                             <div class="progress-bar-fill" id="dash-db-record-bar"></div>
                         </div>
                     </div>
@@ -359,13 +359,13 @@
 
                 <!-- チーム強化テーマ -->
                 <div class="c-dashboard-widget card c-card c-dashboard-widget--rank" id="dash-team-focus-card">
-                    <div class="c-dashboard-widget__label"
-                        style="justify-content: space-between; align-items: center; width: 100%; flex-wrap: nowrap; gap: 0.4rem;">
-                        <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><i
-                                class="fa-solid fa-bullseye" style="color:#a855f7;"></i> チーム強化テーマ</span>
-                        <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm coach-only" id="dash-btn-edit-focus"
+                    <div class="c-dashboard-widget__label c-static-style--182"
+                       >
+                        <span class="c-static-style--259"><i
+                                class="fa-solid fa-bullseye c-static-style--016"></i> チーム強化テーマ</span>
+                        <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm coach-only c-static-style--110" id="dash-btn-edit-focus"
                             onclick="openTeamFocusModal()"
-                            style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px; flex-shrink: 0; white-space: nowrap;"><i
+                           ><i
                                 class="fa-solid fa-pen"></i> 編集</button>
                     </div>
                     <div id="dash-team-focus-content" class="c-page-list">
@@ -378,13 +378,13 @@
             <div class="c-dashboard-widget card c-card c-dashboard-widget--summary" id="dash-schedule-widget-card">
                 <div class="c-dashboard-widget__header">
                     <div class="c-dashboard-widget__label"><i class="fa-solid fa-calendar-days"></i> 直近の予定・実績</div>
-                    <div class="c-dashboard-widget__actions coach-only" id="dash-schedule-btn-group"
-                        style="display:flex; gap:0.35rem;">
-                        <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="dash-btn-add-practice"
-                            style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px;"><i
+                    <div class="c-dashboard-widget__actions coach-only c-static-style--061" id="dash-schedule-btn-group"
+                       >
+                        <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--109" id="dash-btn-add-practice"
+                           ><i
                                 class="fa-solid fa-calendar-plus"></i> 練習追加</button>
-                        <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="dash-btn-add-match"
-                            style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px;"><i
+                        <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--109" id="dash-btn-add-match"
+                           ><i
                                 class="fa-solid fa-plus"></i> 試合追加</button>
                     </div>
                 </div>
@@ -397,8 +397,8 @@
             <div class="c-dashboard-widget c-card card c-dashboard-widget--summary">
                 <div class="c-dashboard-widget__header">
                     <div class="c-dashboard-widget__label"><i class="fa-solid fa-chart-line"></i> 直近の試合</div>
-                    <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="dash-btn-go-matches"
-                        style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px;"><i class="fa-solid fa-list"></i>
+                    <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-static-style--109" id="dash-btn-go-matches"
+                       ><i class="fa-solid fa-list"></i>
                         一覧</button>
                 </div>
                 <div id="dash-form-bar" class="c-dashboard-strip">
@@ -410,18 +410,18 @@
             <div class="c-dashboard-grid__row">
                 <!-- 得点ランキング -->
                 <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--rank" onclick="openLeaderRankingModal('scorers')">
-                    <div class="c-dashboard-widget__label" style="justify-content: space-between; width: 100%;">
-                        <span><i class="fa-solid fa-fire" style="color:#ef4444;"></i> 得点ランキング</span>
-                        <span class="text-secondary" style="font-size: 0.7rem;" id="dash-btn-detail-scorers"><i
+                    <div class="c-dashboard-widget__label c-static-style--184">
+                        <span><i class="fa-solid fa-fire c-static-style--018"></i> 得点ランキング</span>
+                        <span class="text-secondary c-static-style--101" id="dash-btn-detail-scorers"><i
                                 class="fa-solid fa-chevron-right"></i> 詳細</span>
                     </div>
                     <div id="dash-top-scorers" class="c-data-list c-dashboard-rank-list"></div>
                 </div>
                 <!-- アシストランキング -->
                 <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--rank" onclick="openLeaderRankingModal('assists')">
-                    <div class="c-dashboard-widget__label" style="justify-content: space-between; width: 100%;">
-                        <span><i class="fa-solid fa-shoe-prints" style="color:#22c55e;"></i> アシストランキング</span>
-                        <span class="text-secondary" style="font-size: 0.7rem;" id="dash-btn-detail-assists"><i
+                    <div class="c-dashboard-widget__label c-static-style--184">
+                        <span><i class="fa-solid fa-shoe-prints c-static-style--013"></i> アシストランキング</span>
+                        <span class="text-secondary c-static-style--101" id="dash-btn-detail-assists"><i
                                 class="fa-solid fa-chevron-right"></i> 詳細</span>
                     </div>
                     <div id="dash-top-assists" class="c-data-list c-dashboard-rank-list"></div>
@@ -433,9 +433,9 @@
                 <!-- 出席率ランキング (左) -->
                 <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--rank"
                     onclick="openLeaderRankingModal('attendance')">
-                    <div class="c-dashboard-widget__label" style="justify-content: space-between; width: 100%;">
-                        <span><i class="fa-solid fa-users" style="color:#3b82f6;"></i> 出席率(過去１か月)</span>
-                        <span class="text-secondary" style="font-size: 0.7rem;" id="dash-btn-detail-attendance"><i
+                    <div class="c-dashboard-widget__label c-static-style--184">
+                        <span><i class="fa-solid fa-users c-static-style--015"></i> 出席率(過去１か月)</span>
+                        <span class="text-secondary c-static-style--101" id="dash-btn-detail-attendance"><i
                                 class="fa-solid fa-chevron-right"></i> 詳細</span>
                     </div>
                     <div id="dash-attendance-rank" class="c-data-list c-dashboard-rank-list"></div>
@@ -443,9 +443,9 @@
 
                 <!-- 出場時間平準化アラート (右) -->
                 <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--rank" onclick="openLeaderRankingModal('playtime')">
-                    <div class="c-dashboard-widget__label" style="justify-content: space-between; width: 100%;">
-                        <span><i class="fa-solid fa-triangle-exclamation" style="color:#eab308;"></i> 出場時間平準化アラート</span>
-                        <span class="text-secondary" style="font-size: 0.7rem;" id="dash-btn-detail-playtime"><i
+                    <div class="c-dashboard-widget__label c-static-style--184">
+                        <span><i class="fa-solid fa-triangle-exclamation c-static-style--017"></i> 出場時間平準化アラート</span>
+                        <span class="text-secondary c-static-style--101" id="dash-btn-detail-playtime"><i
                                 class="fa-solid fa-chevron-right"></i> 詳細</span>
                     </div>
                     <div id="dash-playtime-content" class="c-data-list c-dashboard-rank-list">
@@ -484,7 +484,7 @@
                 <div class="c-filter-bar__filter-actions"><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-filter-matches"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 条件をリセット</button></div>
             </div>
         </section>
-        <div id="match-list" style="display:flex; flex-direction:column; gap:1.5rem;">
+        <div class="c-static-style--056" id="match-list">
             <!-- Grouped by month cards injected here -->
         </div>
     </template>
@@ -777,7 +777,7 @@
                 <div class="c-filter-bar__filter-actions"><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-filter-library"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 条件をリセット</button></div>
             </div>
         </section>
-        <div id="library-list" style="display:flex; flex-direction:column; gap:1.5rem;">
+        <div class="c-static-style--056" id="library-list">
             <!-- Library items grouped by category injected here -->
         </div>
     </template>
@@ -789,7 +789,7 @@
                 <div class="c-action-group c-filter-bar__actions"><div class="c-form-field c-form-field--compact"><label class="u-visually-hidden" for="filter-tactics-category">カテゴリ</label><select id="filter-tactics-category" class="c-input form-control"><option value="all">すべてのカテゴリ</option></select></div><button class="c-button btn c-button--primary btn-primary" id="btn-add-tactic"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button></div>
             </div>
         </section>
-        <div id="tactics-list" style="display:flex; flex-direction:column; gap:1.5rem; margin-top:1rem;">
+        <div class="c-static-style--057" id="tactics-list">
             <!-- Tactics items injected here -->
         </div>
     </template>
@@ -975,13 +975,13 @@
                         </button>
                     </div>
                     <div class="c-settings-section__body c-card__body">
-                        <form id="form-add-match-type" class="c-settings-form" style="margin-bottom: var(--space-3);">
-                            <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                        <form id="form-add-match-type" class="c-settings-form c-static-style--186">
+                            <div class="c-form-grid c-static-style--180">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-match-type">新しい試合種別</label>
                                     <input type="text" id="new-match-type" class="c-input form-control" placeholder="新しい試合種別を入力" required>
                                 </div>
-                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--231"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="match-type-list" class="c-data-list"></ul>
@@ -1000,13 +1000,13 @@
                         </button>
                     </div>
                     <div class="c-settings-section__body c-card__body">
-                        <form id="form-add-menu-category" class="c-settings-form" style="margin-bottom: var(--space-3);">
-                            <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                        <form id="form-add-menu-category" class="c-settings-form c-static-style--186">
+                            <div class="c-form-grid c-static-style--180">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-menu-category">新しいカテゴリ</label>
                                     <input type="text" id="new-menu-category" class="c-input form-control" placeholder="新しいカテゴリを入力" required>
                                 </div>
-                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--231"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="menu-category-list" class="c-data-list"></ul>
@@ -1025,13 +1025,13 @@
                         </button>
                     </div>
                     <div class="c-settings-section__body c-card__body">
-                        <form id="form-add-tactics-category" class="c-settings-form" style="margin-bottom: var(--space-3);">
-                            <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                        <form id="form-add-tactics-category" class="c-settings-form c-static-style--186">
+                            <div class="c-form-grid c-static-style--180">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-tactics-category">新しい戦術カテゴリ</label>
                                     <input type="text" id="new-tactics-category" class="c-input form-control" placeholder="新しい戦術カテゴリを入力" required>
                                 </div>
-                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--231"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="tactics-category-list" class="c-data-list"></ul>
@@ -1043,20 +1043,20 @@
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content">
                             <span class="c-kicker"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> SKILL METRICS</span>
-                            <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="skill-metrics-title">スキル評価項目 <small style="font-size:var(--text-meta-size); font-weight:400; font-style:italic;">（3項目以上でレーダーチャート有効）</small></h2>
+                            <h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="skill-metrics-title">スキル評価項目 <small class="c-static-style--172">（3項目以上でレーダーチャート有効）</small></h2>
                         </div>
                         <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-reset-skill-metrics">
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
                     <div class="c-settings-section__body c-card__body">
-                        <form id="form-add-skill-metric" class="c-settings-form" style="margin-bottom: var(--space-3);">
-                            <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                        <form id="form-add-skill-metric" class="c-settings-form c-static-style--186">
+                            <div class="c-form-grid c-static-style--180">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-skill-metric">新しい評価項目</label>
                                     <input type="text" id="new-skill-metric" class="c-input form-control" placeholder="新しい評価項目を入力" required>
                                 </div>
-                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--231"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="skill-metric-list" class="c-data-list"></ul>
@@ -1075,13 +1075,13 @@
                         </button>
                     </div>
                     <div class="c-settings-section__body c-card__body">
-                        <form id="form-add-position" class="c-settings-form" style="margin-bottom: var(--space-3);">
-                            <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                        <form id="form-add-position" class="c-settings-form c-static-style--186">
+                            <div class="c-form-grid c-static-style--180">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-position">カテゴリ1のポジション</label>
                                     <input type="text" id="new-position" class="c-input form-control" placeholder="カテゴリ1のポジションを入力 (例: GK, DF, MF, FW)" required>
                                 </div>
-                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--231"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="position-list" class="c-data-list"></ul>
@@ -1100,13 +1100,13 @@
                         </button>
                     </div>
                     <div class="c-settings-section__body c-card__body">
-                        <form id="form-add-position-cat2" class="c-settings-form" style="margin-bottom: var(--space-3);">
-                            <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                        <form id="form-add-position-cat2" class="c-settings-form c-static-style--186">
+                            <div class="c-form-grid c-static-style--180">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-position-cat2">カテゴリ2のポジション</label>
                                     <input type="text" id="new-position-cat2" class="c-input form-control" placeholder="カテゴリ2のポジションを入力 (例: CB, SB, CH, SH, ST)" required>
                                 </div>
-                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--231"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="position-cat2-list" class="c-data-list"></ul>
@@ -1125,13 +1125,13 @@
                         </button>
                     </div>
                     <div class="c-settings-section__body c-card__body">
-                        <form id="form-add-analysis-tag" class="c-settings-form" style="margin-bottom: var(--space-3);">
-                            <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                        <form id="form-add-analysis-tag" class="c-settings-form c-static-style--186">
+                            <div class="c-form-grid c-static-style--180">
                                 <div class="c-form-field c-form-field--fluid">
                                     <label class="u-visually-hidden" for="new-analysis-tag">新しい動画分析タグ</label>
                                     <input type="text" id="new-analysis-tag" class="c-input form-control" placeholder="新しい動画分析タグを入力 (例: チャンス, ピンチ)" required>
                                 </div>
-                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                                <button type="submit" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--231"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
                             </div>
                         </form>
                         <ul id="analysis-tag-list" class="c-data-list"></ul>
@@ -1260,17 +1260,17 @@
                 <div class="c-action-group c-action-group--mobile-stretch"><button type="button" class="c-button btn c-button--danger btn-danger" id="btn-data-all-clear"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> データをオールクリア</button></div>
             </section>
             <!-- App Version & Info Section -->
-            <div class="c-card card" style="padding:1.25rem 1.5rem; background:var(--surface); border:1px solid var(--surface-border);">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+            <div class="c-card card c-static-style--243">
+                <div class="c-static-style--075">
                     <div>
-                        <div style="font-size:0.95rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.5rem;">
-                            <i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> アプリケーション情報
+                        <div class="c-static-style--160">
+                            <i class="fa-solid fa-circle-info c-static-style--022"></i> アプリケーション情報
                         </div>
-                        <div class="text-secondary" id="settings-version-text" style="font-size:0.8rem; margin-top:0.25rem;">
+                        <div class="text-secondary c-static-style--158" id="settings-version-text">
                             CoachMgr v1.4.0 (2026-08-08)
                         </div>
                     </div>
-                    <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-show-release-notes" style="font-size:0.8rem;">
+                    <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-static-style--150" id="btn-show-release-notes">
                         <i class="fa-solid fa-clock-rotate-left"></i> 更新履歴・新機能を表示
                     </button>
                 </div>
@@ -1289,7 +1289,7 @@
                 </div>
 
                 <div class="anim-header-center">
-                    <span id="anim-menu-focus" class="anim-editable-title" style="cursor:default;"
+                    <span id="anim-menu-focus" class="anim-editable-title c-static-style--030"
                         title="テーマ・フォーカス">テーマ・フォーカス</span>
                 </div>
 
@@ -1300,7 +1300,7 @@
                             class="fa-solid fa-rotate-right"></i> Redo</button>
 
                     <!-- Settings Dropdown -->
-                    <div class="dropdown-settings-wrapper" style="position:relative;">
+                    <div class="dropdown-settings-wrapper c-static-style--254">
                         <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="anim-settings-btn" title="設定 (ピッチ・グリッド)"><i
                                 class="fa-solid fa-gear"></i> 設定</button>
                         <div id="anim-settings-popover" class="c-popover c-popover--canvas hidden">
@@ -1313,13 +1313,13 @@
                                     <option value="blank">ブランク（白地）</option>
                                 </select>
                             </div>
-                            <div class="setting-item" style="margin-top:8px;">
+                            <div class="setting-item c-static-style--206">
                                 <label class="c-choice-field" for="canvas-snap-grid"><input type="checkbox" id="canvas-snap-grid" checked><span>グリッド吸着</span></label>
                             </div>
-                            <hr style="margin:8px 0; border:none; border-top:1px solid var(--surface-border);">
+                            <hr class="c-static-style--216">
                             <div class="setting-item">
-                                <button class="c-button btn c-button--danger btn-danger btn-xs" id="tool-clear"
-                                    style="width:100%; justify-content:center;"><i class="fa-solid fa-trash"></i>
+                                <button class="c-button btn c-button--danger btn-danger btn-xs c-static-style--273" id="tool-clear"
+                                   ><i class="fa-solid fa-trash"></i>
                                     すべて消去</button>
                             </div>
                         </div>
@@ -1343,22 +1343,22 @@
 
                     <!-- Tactics Tools (Placed right below Player tool) -->
                     <!-- Bulk Formation Placement Dropdown -->
-                    <div class="dropdown-settings-wrapper tactics-only" style="position:relative;">
+                    <div class="dropdown-settings-wrapper tactics-only c-static-style--254">
                         <button class="c-tool-dock__button" id="anim-bulk-formation-btn" title="フォーメーション一括配置"><i class="fa-solid fa-users-gear"></i><span class="c-tool-dock__label">一括配置</span></button>
-                        <div id="anim-bulk-formation-popover" class="c-popover c-popover--canvas hidden" style="width:260px; left:100%; top:0; margin-left:8px; z-index:3000;">
-                            <div style="font-size:0.8rem; font-weight:700; color:var(--text-primary); margin-bottom:8px;"><i class="fa-solid fa-users-gear"></i> フォーメーション一括配置</div>
-                            <div style="display:flex; flex-direction:column; gap:8px;">
+                        <div id="anim-bulk-formation-popover" class="c-popover c-popover--canvas hidden c-static-style--279">
+                            <div class="c-static-style--155"><i class="fa-solid fa-users-gear"></i> フォーメーション一括配置</div>
+                            <div class="c-static-style--059">
                                 <div>
-                                    <label style="font-size:0.75rem; font-weight:600; display:block; margin-bottom:4px;">配置対象</label>
-                                    <select id="select-bulk-team-mode" class="c-input form-control form-control-sm" style="width:100%; font-size:0.8rem;">
+                                    <label class="c-static-style--119">配置対象</label>
+                                    <select id="select-bulk-team-mode" class="c-input form-control form-control-sm c-static-style--271">
                                         <option value="both">両チーム（対峙配置）</option>
                                         <option value="home">自チームのみ</option>
                                         <option value="away">相手チームのみ</option>
                                     </select>
                                 </div>
                                 <div id="wrapper-bulk-home-formation">
-                                    <label style="font-size:0.75rem; font-weight:600; display:block; margin-bottom:4px; color:var(--text-primary);">自チームのフォーメーション</label>
-                                    <select id="select-bulk-home-formation" class="c-input form-control form-control-sm" style="width:100%; font-size:0.8rem;">
+                                    <label class="c-static-style--120">自チームのフォーメーション</label>
+                                    <select id="select-bulk-home-formation" class="c-input form-control form-control-sm c-static-style--271">
                                         <option value="3-3-1">3-3-1 (8人制標準)</option>
                                         <option value="2-4-1">2-4-1 (8人制)</option>
                                         <option value="3-2-2">3-2-2 (8人制)</option>
@@ -1368,8 +1368,8 @@
                                     </select>
                                 </div>
                                 <div id="wrapper-bulk-away-formation">
-                                    <label style="font-size:0.75rem; font-weight:600; display:block; margin-bottom:4px; color:var(--text-primary);">相手チームのフォーメーション</label>
-                                    <select id="select-bulk-away-formation" class="c-input form-control form-control-sm" style="width:100%; font-size:0.8rem;">
+                                    <label class="c-static-style--120">相手チームのフォーメーション</label>
+                                    <select id="select-bulk-away-formation" class="c-input form-control form-control-sm c-static-style--271">
                                         <option value="3-3-1">3-3-1 (8人制標準)</option>
                                         <option value="2-4-1">2-4-1 (8人制)</option>
                                         <option value="3-2-2">3-2-2 (8人制)</option>
@@ -1378,7 +1378,7 @@
                                         <option value="4-3-3">4-3-3 (11人制)</option>
                                     </select>
                                 </div>
-                                <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-apply-bulk-formation" style="width:100%; margin-top:4px;">
+                                <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--276" id="btn-apply-bulk-formation">
                                     <i class="fa-solid fa-check"></i> キャンバスに一括配置
                                 </button>
                             </div>
@@ -1386,32 +1386,32 @@
                     </div>
 
                     <!-- Team Colors Dropdown -->
-                    <div class="dropdown-settings-wrapper tactics-only" style="position:relative;">
+                    <div class="dropdown-settings-wrapper tactics-only c-static-style--254">
                         <button class="c-tool-dock__button" id="anim-team-colors-btn" title="チームカラー一括変更"><i class="fa-solid fa-palette"></i><span class="c-tool-dock__label">カラー</span></button>
-                        <div id="anim-team-colors-popover" class="c-popover c-popover--canvas hidden" style="width:240px; left:100%; top:0; margin-left:8px; z-index:3000;">
-                            <div style="font-size:0.8rem; font-weight:700; color:var(--text-primary); margin-bottom:8px;"><i class="fa-solid fa-palette"></i> チームカラーの一括変更</div>
-                            <div style="display:flex; flex-direction:column; gap:8px;">
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span style="font-size:0.75rem; font-weight:600;">自チーム:</span>
-                                    <input type="color" id="input-home-team-color" value="#f23932" style="width:40px; height:28px; border:none; background:none; cursor:pointer;">
+                        <div id="anim-team-colors-popover" class="c-popover c-popover--canvas hidden c-static-style--278">
+                            <div class="c-static-style--155"><i class="fa-solid fa-palette"></i> チームカラーの一括変更</div>
+                            <div class="c-static-style--059">
+                                <div class="c-static-style--073">
+                                    <span class="c-static-style--117">自チーム:</span>
+                                    <input class="c-static-style--281" type="color" id="input-home-team-color" value="#f23932">
                                 </div>
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span style="font-size:0.75rem; font-weight:600;">敵チーム:</span>
-                                    <input type="color" id="input-away-team-color" value="#2563eb" style="width:40px; height:28px; border:none; background:none; cursor:pointer;">
+                                <div class="c-static-style--073">
+                                    <span class="c-static-style--117">敵チーム:</span>
+                                    <input class="c-static-style--281" type="color" id="input-away-team-color" value="#2563eb">
                                 </div>
-                                <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:4px;">プリセット:</div>
-                                <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:4px;">
-                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset" data-home="#f23932" data-away="#2563eb" style="font-size:0.7rem;">赤 vs 青</button>
-                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset" data-home="#eab308" data-away="#a855f7" style="font-size:0.7rem;">黄 vs 紫</button>
-                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset" data-home="#ffffff" data-away="#1e293b" style="font-size:0.7rem;">白 vs 黒</button>
-                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset" data-home="#22c55e" data-away="#f97316" style="font-size:0.7rem;">緑 vs オレンジ</button>
+                                <div class="c-static-style--134">プリセット:</div>
+                                <div class="c-static-style--091">
+                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset c-static-style--130" data-home="#f23932" data-away="#2563eb">赤 vs 青</button>
+                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset c-static-style--130" data-home="#eab308" data-away="#a855f7">黄 vs 紫</button>
+                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset c-static-style--130" data-home="#ffffff" data-away="#1e293b">白 vs 黒</button>
+                                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-color-preset c-static-style--130" data-home="#22c55e" data-away="#f97316">緑 vs オレンジ</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Divider Line -->
-                    <div class="c-tool-dock__divider tactics-only" style="width: 28px; height: 1px; background: var(--border-color, #e2e8f0); margin: 4px auto; flex-shrink: 0;"></div>
+                    <div class="c-tool-dock__divider tactics-only c-static-style--266"></div>
 
                     <button class="c-tool-dock__button" data-tool="ball" data-tooltip="ボール (⚽)" title="ボール (⚽)"><i
                             class="fa-solid fa-futbol"></i><span class="c-tool-dock__label">ボール</span></button>
@@ -1427,17 +1427,17 @@
                             class="c-tool-dock__label">ドリブル</span></button>
 
                     <button class="c-tool-dock__button" data-tool="marker" data-tooltip="マーカー (🟠)" title="マーカー (🟠)"><i
-                            class="fa-solid fa-circle" style="color:#f97316;"></i><span
+                            class="fa-solid fa-circle c-static-style--019"></i><span
                             class="c-tool-dock__label">マーカー</span></button>
                     <button class="c-tool-dock__button" data-tool="cone" data-tooltip="コーン (🔺)" title="コーン (🔺)"><i
-                            class="fa-solid fa-caret-up" style="color:#facc15;"></i><span
+                            class="fa-solid fa-caret-up c-static-style--020"></i><span
                             class="c-tool-dock__label">コーン</span></button>
                     <button class="c-tool-dock__button" data-tool="ladder" data-tooltip="ラダー (🪜)" title="ラダー (🪜)"><i
-                            class="fa-solid fa-bars" style="transform: rotate(90deg);"></i><span
+                            class="fa-solid fa-bars c-static-style--258"></i><span
                             class="c-tool-dock__label">ラダー</span></button>
                     <button class="c-tool-dock__button" data-tool="minigoal" data-tooltip="ミニゴール (🥅)"
-                        title="ミニゴール (🥅)"><span
-                            style="display:inline-block; width:10px; height:6px; border:2px solid currentColor; border-bottom:none;"></span><span
+                        title="ミニゴール (🥅)"><span class="c-static-style--093"
+                           ></span><span
                             class="c-tool-dock__label">ゴール</span></button>
 
                     <button class="c-tool-dock__button" data-tool="line-rect" data-tooltip="四角エリア (🔲)"
@@ -1453,16 +1453,16 @@
 
                 <!-- 3. Pitch Canvas (100% True Full Bleed) -->
                 <div class="anim-canvas-area">
-                    <div class="canvas-wrapper" id="canvas-wrapper" style="position: relative;">
+                    <div class="canvas-wrapper c-static-style--251" id="canvas-wrapper">
                         <!-- 下層：静的背景レイヤー (ピッチ線・白線用) -->
-                        <canvas id="pitch-bg-canvas" width="800" height="500"
-                            style="position: absolute; top:0; left:0; z-index: 1; pointer-events: none;"></canvas>
+                        <canvas class="c-static-style--248" id="pitch-bg-canvas" width="800" height="500"
+                           ></canvas>
                         <!-- 上層：動的オブジェクトレイヤー (選手・ボール・操作用) -->
-                        <canvas id="pitch-canvas" width="800" height="500"
-                            style="position: absolute; top:0; left:0; z-index: 2;"></canvas>
+                        <canvas class="c-static-style--249" id="pitch-canvas" width="800" height="500"
+                           ></canvas>
                         <!-- 最上層：UI操作レイヤー (選択枠・回転ハンドル・ガイド線用) -->
-                        <canvas id="pitch-ui-canvas" width="800" height="500"
-                            style="position: absolute; top:0; left:0; z-index: 3; pointer-events: none;"></canvas>
+                        <canvas class="c-static-style--250" id="pitch-ui-canvas" width="800" height="500"
+                           ></canvas>
 
                         <!-- 4. Contextual Floating Popover Menu (Directly above/below selected object) -->
                         <div id="anim-context-popover" class="anim-context-popover hidden">
@@ -1472,16 +1472,16 @@
                                     <input type="text" id="canvas-player-number" class="popover-input-num" value=""
                                         maxlength="3" placeholder="No">
 
-                                    <span class="popover-label" style="margin-left:0.3rem;">色:</span>
+                                    <span class="popover-label c-static-style--198">色:</span>
                                     <div class="popover-color-dots">
-                                        <button type="button" class="color-dot active" data-color="red"
-                                            style="background:#f23932;" title="赤"></button>
-                                        <button type="button" class="color-dot" data-color="blue"
-                                            style="background:#3d79d5;" title="青"></button>
-                                        <button type="button" class="color-dot" data-color="green"
-                                            style="background:#63a84d;" title="緑"></button>
-                                        <button type="button" class="color-dot" data-color="orange"
-                                            style="background:#f09f4d;" title="橙"></button>
+                                        <button type="button" class="color-dot active c-static-style--004" data-color="red"
+                                            title="赤"></button>
+                                        <button type="button" class="color-dot c-static-style--001" data-color="blue"
+                                            title="青"></button>
+                                        <button type="button" class="color-dot c-static-style--002" data-color="green"
+                                            title="緑"></button>
+                                        <button type="button" class="color-dot c-static-style--003" data-color="orange"
+                                            title="橙"></button>
                                     </div>
                                     <select id="canvas-player-color" class="hidden">
                                         <option value="red">赤</option>
@@ -1492,12 +1492,12 @@
                                     <select id="canvas-player-select" class="c-input form-control hidden"></select>
                                 </div>
 
-                                <div id="popover-text-controls" class="popover-group"
-                                    style="display:none; align-items:center; gap:0.4rem;">
-                                    <label
-                                        style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); display:flex; align-items:center; gap:0.3rem; margin:0; cursor:pointer; user-select:none;">
-                                        <input type="checkbox" id="canvas-text-bg-opaque"
-                                            style="width:14px; height:14px; margin:0; accent-color:var(--primary);">
+                                <div id="popover-text-controls" class="popover-group c-canvas-text-controls"
+                                    style="display:none;">
+                                    <label class="c-static-style--118"
+                                       >
+                                        <input class="c-static-style--277" type="checkbox" id="canvas-text-bg-opaque"
+                                           >
                                         <span>背景を白にする</span>
                                     </label>
                                 </div>
@@ -1520,8 +1520,8 @@
                         <!-- 5b. Floating Compact Player Bar Timeline (Centered Inside Pitch Canvas) -->
                         <footer class="anim-player-bar" id="anim-timeline-bar">
                             <!-- Timeline Toggle Button -->
-                            <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-timeline-toggle" title="タイムラインを開く/閉じる"
-                                style="padding:0 0.5rem; font-size:0.75rem; height:30px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center;"><i
+                            <button class="c-button btn c-button--secondary btn-secondary btn-xs c-static-style--235" id="anim-timeline-toggle" title="タイムラインを開く/閉じる"
+                               ><i
                                     class="fa-solid fa-film"></i></button>
                             <!-- Left Group: Play / Stop -->
                             <div class="player-bar-group player-bar-left c-action-group">
@@ -1552,9 +1552,9 @@
                                         class="fa-solid fa-plus"></i> 追加</button>
                                 <button class="c-button btn c-button--danger btn-danger btn-xs" id="anim-delete-frame" title="現在のシーンを削除"><i
                                         class="fa-solid fa-trash-can"></i> 削除</button>
-                                <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-export-video" title="ダウンロード (LINE共有用)"
-                                    style="padding:0 0.55rem; font-size:0.85rem;"><i class="fa-solid fa-download"
-                                        style="color:var(--primary);"></i></button>
+                                <button class="c-button btn c-button--secondary btn-secondary btn-xs c-static-style--234" id="anim-export-video" title="ダウンロード (LINE共有用)"
+                                   ><i class="fa-solid fa-download c-static-style--022"
+                                       ></i></button>
                             </div>
                         </footer>
 
@@ -1601,37 +1601,37 @@
                     <button class="c-inspector-panel__toggle" id="anim-side-panel-toggle-btn" title="詳細パネルを開閉">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
-                    <div class="c-inspector-panel__header" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                        <h4 id="anim-side-panel-title"
-                            style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.4rem;">
-                            <i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細
+                    <div class="c-inspector-panel__header c-static-style--086">
+                        <h4 class="c-static-style--209" id="anim-side-panel-title"
+                           >
+                            <i class="fa-solid fa-clipboard-list c-static-style--022"></i> メニュー詳細
                         </h4>
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-edit-anim-side-info" title="詳細情報を編集"
-                            style="font-size:0.75rem; padding:0.2rem 0.5rem; display:none;">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs c-inspector-panel__edit-action" id="btn-edit-anim-side-info" title="詳細情報を編集"
+                            style="display:none;">
                             <i class="fa-solid fa-pen"></i> 編集
                         </button>
                     </div>
                     <div class="c-inspector-panel__body">
                         <div class="c-inspector-panel__item">
-                            <span class="c-inspector-panel__label" id="lbl-side-focus"><i class="fa-solid fa-bullseye"
-                                    style="color:var(--primary);"></i> テーマ・フォーカス</span>
-                            <div id="side-info-focus" class="c-inspector-panel__value" style="font-weight:700;">未設定</div>
+                            <span class="c-inspector-panel__label" id="lbl-side-focus"><i class="fa-solid fa-bullseye c-static-style--022"
+                                   ></i> テーマ・フォーカス</span>
+                            <div id="side-info-focus" class="c-inspector-panel__value c-static-style--174">未設定</div>
                         </div>
 
                         <div class="c-inspector-panel__item">
-                            <span class="c-inspector-panel__label" id="lbl-side-org"><i class="fa-solid fa-users" style="color:#3b82f6;"></i>
+                            <span class="c-inspector-panel__label" id="lbl-side-org"><i class="fa-solid fa-users c-static-style--015"></i>
                                 オーガナイズ</span>
                             <div id="side-info-organize" class="c-inspector-panel__value">なし</div>
                         </div>
 
                         <div class="c-inspector-panel__item">
-                            <span class="c-inspector-panel__label" id="lbl-side-kf"><i class="fa-solid fa-key" style="color:#eab308;"></i>
+                            <span class="c-inspector-panel__label" id="lbl-side-kf"><i class="fa-solid fa-key c-static-style--017"></i>
                                 キーファクター</span>
                             <div id="side-info-keyfactor" class="c-inspector-panel__value">なし</div>
                         </div>
 
                         <div class="c-inspector-panel__item" id="side-card-opt">
-                            <span class="c-inspector-panel__label" id="lbl-side-opt"><i class="fa-solid fa-plus-circle" style="color:#10b981;"></i>
+                            <span class="c-inspector-panel__label" id="lbl-side-opt"><i class="fa-solid fa-plus-circle c-static-style--012"></i>
                                 オプション</span>
                             <div id="side-info-options" class="c-inspector-panel__value">なし</div>
                         </div>
@@ -1639,61 +1639,61 @@
                 </aside>
 
                 <!-- Menu Detail Info Modal (Organize, Key Factor, Options) -->
-                <div id="modal-anim-menu-info" class="c-modal-overlay modal-overlay hidden" style="z-index: 500;">
-                    <div class="c-modal c-modal--legacy modal" style="max-width: 540px; width: 92%; border-radius: 14px; padding: 1.5rem;">
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--surface-border); padding-bottom:0.6rem;">
-                            <h3
-                                style="margin:0; font-size:1.05rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.5rem;">
-                                <i class="fa-solid fa-clipboard-list" style="color:var(--primary);"></i> メニュー詳細情報
+                <div id="modal-anim-menu-info" class="c-modal-overlay modal-overlay hidden c-static-style--287">
+                    <div class="c-modal c-modal--legacy modal c-static-style--223">
+                        <div class="c-static-style--083"
+                           >
+                            <h3 class="c-static-style--212"
+                               >
+                                <i class="fa-solid fa-clipboard-list c-static-style--022"></i> メニュー詳細情報
                             </h3>
-                            <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-close-anim-info"
-                                style="border:none; background:transparent; font-size:1.2rem; cursor:pointer;"><i
+                            <button class="c-button btn c-button--secondary btn-secondary btn-xs c-static-style--011" id="btn-close-anim-info"
+                               ><i
                                     class="fa-solid fa-xmark"></i></button>
                         </div>
-                        <div style="display:flex; flex-direction:column; gap:1rem;">
-                            <div
-                                style="background:#f8fafc; padding:0.65rem 0.85rem; border-radius:8px; border:1px solid var(--surface-border);">
-                                <strong
-                                    style="color:var(--primary); font-size:0.78rem; display:block; margin-bottom:2px;"><i
+                        <div class="c-static-style--058">
+                            <div class="c-static-style--005"
+                               >
+                                <strong class="c-static-style--023"
+                                   ><i
                                         class="fa-solid fa-bullseye"></i> テーマ・フォーカス</strong>
-                                <div id="modal-info-focus"
-                                    style="font-weight:700; font-size:0.95rem; color:var(--text-primary);">未設定</div>
+                                <div class="c-static-style--175" id="modal-info-focus"
+                                   >未設定</div>
                             </div>
 
-                            <div style="display:flex; flex-direction:column; gap:0.8rem;">
+                            <div class="c-static-style--054">
                                 <div>
-                                    <strong
-                                        style="color:var(--text-primary); font-size:0.8rem; display:flex; align-items:center; gap:0.4rem; margin-bottom:4px;">
-                                        <i class="fa-solid fa-users" style="color:#3b82f6;"></i> オーガナイズ
+                                    <strong class="c-static-style--026"
+                                       >
+                                        <i class="fa-solid fa-users c-static-style--015"></i> オーガナイズ
                                     </strong>
-                                    <div id="modal-info-organize"
-                                        style="white-space:pre-wrap; line-height:1.5; font-size:0.85rem; background:#f8fafc; padding:0.6rem 0.8rem; border-radius:6px; border:1px solid var(--surface-border); min-height:36px; color:var(--text-primary);">
+                                    <div class="c-static-style--263" id="modal-info-organize"
+                                       >
                                         なし</div>
                                 </div>
 
                                 <div>
-                                    <strong
-                                        style="color:var(--text-primary); font-size:0.8rem; display:flex; align-items:center; gap:0.4rem; margin-bottom:4px;">
-                                        <i class="fa-solid fa-key" style="color:#eab308;"></i> キーファクター
+                                    <strong class="c-static-style--026"
+                                       >
+                                        <i class="fa-solid fa-key c-static-style--017"></i> キーファクター
                                     </strong>
-                                    <div id="modal-info-keyfactor"
-                                        style="white-space:pre-wrap; line-height:1.5; font-size:0.85rem; background:#f8fafc; padding:0.6rem 0.8rem; border-radius:6px; border:1px solid var(--surface-border); min-height:36px; color:var(--text-primary);">
+                                    <div class="c-static-style--263" id="modal-info-keyfactor"
+                                       >
                                         なし</div>
                                 </div>
 
                                 <div>
-                                    <strong
-                                        style="color:var(--text-primary); font-size:0.8rem; display:flex; align-items:center; gap:0.4rem; margin-bottom:4px;">
-                                        <i class="fa-solid fa-plus-circle" style="color:#10b981;"></i> オプション
+                                    <strong class="c-static-style--026"
+                                       >
+                                        <i class="fa-solid fa-plus-circle c-static-style--012"></i> オプション
                                     </strong>
-                                    <div id="modal-info-options"
-                                        style="white-space:pre-wrap; line-height:1.5; font-size:0.85rem; background:#f8fafc; padding:0.6rem 0.8rem; border-radius:6px; border:1px solid var(--surface-border); min-height:36px; color:var(--text-primary);">
+                                    <div class="c-static-style--263" id="modal-info-options"
+                                       >
                                         なし</div>
                                 </div>
                             </div>
                         </div>
-                        <div style="margin-top:1.2rem; display:flex; justify-content:flex-end;">
+                        <div class="c-static-style--205">
                             <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-close-anim-info-footer">閉じる</button>
                         </div>
                     </div>
@@ -1706,10 +1706,10 @@
 
     <!-- Match Form Modal -->
     <div id="modal-match" class="c-modal-overlay modal-overlay hidden">
-        <div class="c-modal c-modal--legacy modal" style="position:relative;">
+        <div class="c-modal c-modal--legacy modal c-static-style--254">
             <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
                 >&times;</button>
-            <h2 style="margin-bottom:1.5rem;">試合を追加</h2>
+            <h2 class="c-static-style--195">試合を追加</h2>
             <form id="form-match">
                 <input type="hidden" id="match-edit-id" value="">
                 <div class="form-group">
@@ -1749,8 +1749,8 @@
                 </div>
                 <div class="form-group">
                     <label>参加メンバー（名簿） <span class="c-status c-status--muted">任意</span></label>
-                    <div id="match-attendance-roster"
-                        style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 0.8rem 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div class="c-static-style--218" id="match-attendance-roster"
+                       >
                         <!-- Checkboxes populated dynamically -->
                     </div>
                 </div>
@@ -1764,13 +1764,13 @@
 
     <!-- 階層2: ピリオド専用分析ワークスペース -->
     <div id="modal-period-analysis" class="period-analysis-fullscreen hidden">
-        <div class="period-analysis-container" style="position: relative; overflow: hidden;">
+        <div class="period-analysis-container c-static-style--252">
 
             <!-- Header: 作図画面と同一のUI配置 -->
-            <div class="period-analysis-header"
-                style="display:flex; justify-content:space-between; align-items:center; height:var(--header-height); min-height:var(--header-height); box-sizing:border-box; border-bottom: 1px solid var(--surface-border); padding: 0 1rem; background: var(--card-bg); flex-shrink: 0; z-index: 10;">
+            <div class="period-analysis-header c-static-style--077"
+               >
                 <!-- 左側: 戻る -->
-                <div class="period-analysis-header-left" style="display:flex; align-items:center; gap: 0.6rem;">
+                <div class="period-analysis-header-left c-static-style--039">
                     <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-back-to-match-detail" title="試合詳細へ戻る">
                         <i class="fa-solid fa-arrow-left"></i> 戻る
                     </button>
@@ -1778,25 +1778,25 @@
 
                 <!-- 中央: ピリオドタイトル -->
                 <div class="period-analysis-header-center">
-                    <h2 style="margin:0; font-size:1.05rem; font-weight:700; color:var(--text-primary); text-align:center;"
+                    <h2 class="c-static-style--213"
                         id="period-analysis-title">
                         vs 対戦相手 - 1本目 (0 - 0)
                     </h2>
                 </div>
 
                 <!-- 右側: ピリオド遷移ナビ -->
-                <div class="period-analysis-header-right"
-                    style="display:flex; align-items:center; gap: 0.5rem; position: relative;">
-                    <div
-                        style="display:flex; align-items:center; gap:0.3rem; background:rgba(0,0,0,0.03); padding:0.2rem 0.4rem; border-radius:6px; border:1px solid var(--surface-border);">
-                        <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-period-prev" title="前のピリオドへ"
-                            style="font-size:0.75rem; padding:0.2rem 0.4rem; height:auto;">
+                <div class="period-analysis-header-right c-static-style--038"
+                   >
+                    <div class="c-static-style--041"
+                       >
+                        <button class="c-button btn c-button--secondary btn-secondary btn-xs c-static-style--126" id="btn-period-prev" title="前のピリオドへ"
+                           >
                             <i class="fa-solid fa-chevron-left"></i> 前へ
                         </button>
-                        <span id="current-period-name-indicator"
-                            style="font-size:0.75rem; font-weight:bold; color:var(--text-secondary); padding:0 0.3rem; white-space:nowrap;">1本目</span>
-                        <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-period-next" title="次のピリオドへ"
-                            style="font-size:0.75rem; padding:0.2rem 0.4rem; height:auto;">
+                        <span class="c-static-style--123" id="current-period-name-indicator"
+                           >1本目</span>
+                        <button class="c-button btn c-button--secondary btn-secondary btn-xs c-static-style--126" id="btn-period-next" title="次のピリオドへ"
+                           >
                             次へ <i class="fa-solid fa-chevron-right"></i>
                         </button>
                     </div>
@@ -1804,30 +1804,30 @@
             </div>
 
             <!-- Main Workspace: 80%:20% 初期比率 -->
-            <div id="period-workspace-container" style="display: flex; flex: 1; min-height: 0; position: relative;">
+            <div class="c-static-style--034" id="period-workspace-container">
                 <!-- Left: YouTube Player -->
-                <div id="period-workspace-video"
-                    style="flex: 0 0 80%; display: flex; flex-direction: column; background: #000; overflow: hidden; min-width: 250px;">
-                    <div
-                        style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #000;">
-                        <div id="period-yt-player" style="width: 100%; height: 100%;"></div>
+                <div class="c-static-style--094" id="period-workspace-video"
+                   >
+                    <div class="c-static-style--253"
+                       >
+                        <div class="c-static-style--265" id="period-yt-player"></div>
                     </div>
                 </div>
 
                 <!-- Center: Resizer -->
-                <div id="period-workspace-resizer"
-                    style="width: 8px; background: var(--surface-border); cursor: col-resize; display: flex; align-items: center; justify-content: center; z-index: 10; touch-action: none;">
-                    <div style="width: 2px; height: 24px; background: #94a3b8; border-radius: 1px;"></div>
+                <div class="c-static-style--268" id="period-workspace-resizer"
+                   >
+                    <div class="c-static-style--267"></div>
                 </div>
 
                 <!-- Right: Timeline Area -->
-                <div id="period-workspace-timeline"
-                    style="flex: 1; display: flex; flex-direction: column; background: var(--card-bg); border-left: none; min-width: 100px; overflow: hidden;">
-                    <div
-                        style="padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--surface-border); font-weight: bold; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.02); flex-shrink: 0;">
-                        <span style="white-space:nowrap;"><i class="fa-solid fa-list-ul"></i> タイムライン</span>
-                        <button class="c-button btn c-button--primary btn-primary btn-xs" id="btn-add-timeline-event"
-                            style="padding: 0.2rem 0.4rem; font-size: 0.72rem; white-space:nowrap;">
+                <div class="c-static-style--095" id="period-workspace-timeline"
+                   >
+                    <div class="c-static-style--233"
+                       >
+                        <span class="c-static-style--260"><i class="fa-solid fa-list-ul"></i> タイムライン</span>
+                        <button class="c-button btn c-button--primary btn-primary btn-xs c-static-style--232" id="btn-add-timeline-event"
+                           >
                             <i class="fa-solid fa-plus"></i> 追加
                         </button>
                     </div>
@@ -1842,9 +1842,9 @@
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
                     <div class="c-inspector-panel__header">
-                        <h4 id="period-side-panel-heading"
-                            style="margin:0; font-size:0.9rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:0.4rem;">
-                            <i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> ピリオド情報
+                        <h4 class="c-static-style--209" id="period-side-panel-heading"
+                           >
+                            <i class="fa-solid fa-circle-info c-static-style--022"></i> ピリオド情報
                         </h4>
                     </div>
                     <div class="c-inspector-panel__body" id="period-side-panel-body">
@@ -1857,16 +1857,16 @@
     </div>
 
     <!-- コンテキスト維持型: ピリオド情報編集モーダル (軽量化版 ボトムシート) -->
-    <div id="modal-formation" class="c-modal-overlay modal-overlay hidden" style="z-index: 1030;">
-        <div class="bottom-sheet-modal" style="max-width: 600px; width: 100%; position:relative;">
+    <div id="modal-formation" class="c-modal-overlay modal-overlay hidden c-static-style--285">
+        <div class="bottom-sheet-modal c-static-style--226">
             <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
                 >&times;</button>
-            <h2 style="margin-bottom:0.5rem; font-size:1.1rem;" id="formation-modal-title"><i
+            <h2 class="c-static-style--189" id="formation-modal-title"><i
                     class="fa-solid fa-pen"></i> ピリオド情報を編集</h2>
 
             <!-- 前ピリオドの配置をコピーボタン (JavaScriptで動的表示制御) -->
-            <button type="button" id="btn-copy-prev-period" class="c-button btn btn-outline c-button--compact btn-sm"
-                style="width:100%; margin-bottom:1rem; display:none;">
+            <button type="button" id="btn-copy-prev-period" class="c-button btn btn-outline c-button--compact btn-sm c-button--runtime-full"
+                style="display:none;">
                 <i class="fa-solid fa-copy"></i> 前ピリオドの陣形・配置をコピー
             </button>
 
@@ -1874,23 +1874,23 @@
                 <input type="hidden" id="formation-match-id">
                 <input type="hidden" id="formation-id">
 
-                <div style="display:flex; gap:0.8rem; margin-bottom: 1rem;">
-                    <div class="form-group" style="flex:1; margin:0;">
-                        <label style="font-size:0.8rem;">ピリオド名 (本数) <span class="c-status c-status--warning">必須</span></label>
+                <div class="c-static-style--066">
+                    <div class="form-group c-static-style--098">
+                        <label class="c-static-style--150">ピリオド名 (本数) <span class="c-status c-status--warning">必須</span></label>
                         <input type="text" id="formation-name" class="c-input form-control" placeholder="例: 1本目" required>
                     </div>
-                    <div class="form-group" style="flex:1; margin:0;">
-                        <label style="font-size:0.8rem;">システム (陣形) <span class="c-status c-status--muted">任意</span></label>
+                    <div class="form-group c-static-style--098">
+                        <label class="c-static-style--150">システム (陣形) <span class="c-status c-status--muted">任意</span></label>
                         <select id="formation-system-select" class="c-input form-control"></select>
                     </div>
                 </div>
 
                 <!-- 配置図の編集エリア (通常ピリオド) -->
-                <div id="modal-formation-pitch-container" class="form-group" style="margin-bottom: 1.5rem;">
-                    <label style="font-size:0.8rem; margin-bottom:0.4rem; display:block;"><i
+                <div id="modal-formation-pitch-container" class="form-group c-static-style--185">
+                    <label class="c-static-style--156"><i
                             class="fa-solid fa-street-view"></i> ポジション配置 (ハーフコート)</label>
-                    <div class="tactical-pitch pitch-half-bottom" id="tactical-formation-pitch"
-                        style="max-width: 320px; margin: 0 auto;">
+                    <div class="tactical-pitch pitch-half-bottom c-static-style--221" id="tactical-formation-pitch"
+                       >
                         <div class="penalty-area-bottom"></div>
                         <div class="goal-area-bottom"></div>
                         <div class="penalty-arc-bottom"></div>
@@ -1901,30 +1901,30 @@
                     </div>
 
                     <!-- U-1: クイック配置UI -->
-                    <div id="formation-quick-assign-container"
-                        style="margin-top:0.5rem; padding:0.5rem; background:rgba(0,0,0,0.02); border-radius:8px; border:1px solid var(--surface-border);">
-                        <div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.4rem;">
-                            <i class="fa-solid fa-hand-pointer" style="color:var(--primary);"></i> <b>クイック配置:</b>
+                    <div class="c-static-style--203" id="formation-quick-assign-container"
+                       >
+                        <div class="c-static-style--116">
+                            <i class="fa-solid fa-hand-pointer c-static-style--022"></i> <b>クイック配置:</b>
                             ①選手をタップ ➔ ②ポジション枠をタップ
                         </div>
-                        <div id="formation-quick-assign-roster"
-                            style="display:flex; gap:0.4rem; overflow-x:auto; padding-bottom:0.2rem; align-items:center;">
+                        <div class="c-static-style--063" id="formation-quick-assign-roster"
+                           >
                             <!-- JSで動的生成 -->
                         </div>
                     </div>
 
                     <!-- Floating player picker overlay -->
-                    <div id="formation-player-picker"
-                        style="display:none; position:absolute; z-index:100; background:#ffffff; border:1px solid var(--surface-border); border-radius:8px; padding:0.4rem; box-shadow:0 8px 24px rgba(0,0,0,0.25); width:160px;">
-                        <label
-                            style="font-size:0.7rem; font-weight:bold; color:var(--text-secondary); display:block; margin-bottom:0.2rem;">選手を割り当て:</label>
-                        <select id="formation-picker-select" class="c-input form-control"
-                            style="font-size:0.78rem; padding:0.2rem; height:auto; width:100%; margin-bottom:0.3rem;"></select>
-                        <div style="display:flex; justify-content:flex-end; gap:0.25rem;">
-                            <button type="button" class="c-button btn c-button--secondary btn-secondary" id="btn-formation-picker-clear"
-                                style="padding:0.12rem 0.3rem; font-size:0.65rem;">解除</button>
-                            <button type="button" class="c-button btn c-button--primary btn-primary" id="btn-formation-picker-ok"
-                                style="padding:0.12rem 0.3rem; font-size:0.65rem;">決定</button>
+                    <div id="formation-player-picker" class="c-formation-player-picker"
+                        style="display:none;">
+                        <label class="c-static-style--135"
+                           >選手を割り当て:</label>
+                        <select id="formation-picker-select" class="c-input form-control c-static-style--129"
+                           ></select>
+                        <div class="c-static-style--071">
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary c-static-style--236" id="btn-formation-picker-clear"
+                               >解除</button>
+                            <button type="button" class="c-button btn c-button--primary btn-primary c-static-style--236" id="btn-formation-picker-ok"
+                               >決定</button>
                         </div>
                     </div>
                 </div>
@@ -1941,10 +1941,10 @@
                     <div class="c-action-group c-action-group--mobile-stretch"><button type="button" id="btn-add-pk-kicker" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm"><i class="fa-solid fa-plus" aria-hidden="true"></i> サドンデス枠を追加</button></div>
                 </section>
 
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="c-static-style--073">
                     <button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm" id="btn-delete-formation-modal"
                         style="display:none;"><i class="fa-solid fa-trash"></i> 削除</button>
-                    <div style="display:flex; gap:0.8rem; margin-left:auto;">
+                    <div class="c-static-style--067">
                         <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
                         <button type="submit" class="c-button btn c-button--primary btn-primary">保存する</button>
                     </div>
@@ -2099,26 +2099,26 @@
     </div>
 
     <!-- Practice Animation Preview Modal -->
-    <div id="modal-practice-anim-preview" class="c-modal-overlay modal-overlay hidden" style="z-index: 3000;">
-        <div class="c-modal c-modal--legacy modal" style="max-width: 600px; width: 95%; padding: 1.2rem; border-radius: 16px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                <h3 id="anim-preview-title"
-                    style="margin:0; font-size:1.05rem; font-weight:700; color:var(--text-primary);">メニュー名</h3>
-                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-close-anim-preview"
-                    style="padding:0.25rem 0.5rem; min-width:auto; height:32px;"><i
+    <div id="modal-practice-anim-preview" class="c-modal-overlay modal-overlay hidden c-static-style--286">
+        <div class="c-modal c-modal--legacy modal c-static-style--227">
+            <div class="c-static-style--081">
+                <h3 class="c-static-style--211" id="anim-preview-title"
+                   >メニュー名</h3>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-static-style--239" id="btn-close-anim-preview"
+                   ><i
                         class="fa-solid fa-times"></i></button>
             </div>
-            <div
-                style="width:100%; aspect-ratio: 800/500; background:#1e293b; border-radius:12px; overflow:hidden; position:relative; margin-bottom:0.8rem; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);">
-                <canvas id="practice-preview-canvas" width="800" height="500"
-                    style="width:100%; height:100%; object-fit:contain;"></canvas>
+            <div class="c-static-style--270"
+               >
+                <canvas class="c-static-style--272" id="practice-preview-canvas" width="800" height="500"
+                   ></canvas>
             </div>
-            <div style="display:flex; align-items:center; justify-content:center; gap:0.8rem;">
-                <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-preview-play-toggle"
-                    style="padding:0.4rem 1rem; font-size:0.85rem; border-radius:9999px; min-width:110px;"><i
+            <div class="c-static-style--046">
+                <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--242" id="btn-preview-play-toggle"
+                   ><i
                         class="fa-solid fa-play"></i> 再生</button>
-                <span id="preview-frame-indicator"
-                    style="font-size:0.85rem; font-weight:bold; color:var(--text-secondary);">1 / 1</span>
+                <span class="c-static-style--144" id="preview-frame-indicator"
+                   >1 / 1</span>
             </div>
         </div>
     </div>
@@ -2187,7 +2187,7 @@
     </div>
 
     <!-- Player Assessment Form Modal -->
-    <div id="modal-player-assessment" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
+    <div id="modal-player-assessment" class="c-modal-overlay modal-overlay hidden c-static-style--283">
         <div class="modal c-modal" role="dialog" aria-modal="true" aria-labelledby="assessment-modal-title">
             <div class="c-modal__header">
                 <h2 id="assessment-modal-title" class="c-modal__title">観察メモ(ファクト)を記録</h2>
@@ -2219,7 +2219,7 @@
     </div>
 
     <!-- Text Input Form Modal -->
-    <div id="modal-text-input" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
+    <div id="modal-text-input" class="c-modal-overlay modal-overlay hidden c-static-style--283">
         <div class="c-modal c-modal--legacy c-modal--narrow modal">
             <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
                 >&times;</button>
@@ -2239,7 +2239,7 @@
     </div>
 
     <!-- Scene Title Input Modal -->
-    <div id="modal-scene-title" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
+    <div id="modal-scene-title" class="c-modal-overlay modal-overlay hidden c-static-style--283">
         <div class="c-modal c-modal--legacy c-modal--narrow modal">
             <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
                 >&times;</button>
@@ -2252,8 +2252,8 @@
                 </div>
                 <div class="form-group c-form-field--spaced">
                     <label>指導ポイント（テロップ） <span class="c-status c-status--muted">任意</span></label>
-                    <textarea id="input-scene-caption" class="c-input form-control" rows="2" placeholder="例: ★受ける前に首を振る、パスの受け手はマークを外す動き" style="resize:vertical;"></textarea>
-                    <small style="color:var(--text-secondary); font-size:0.72rem;">再生中に画面下部に大きく表示されます</small>
+                    <textarea id="input-scene-caption" class="c-input form-control c-static-style--256" rows="2" placeholder="例: ★受ける前に首を振る、パスの受け手はマークを外す動き"></textarea>
+                    <small class="c-static-style--027">再生中に画面下部に大きく表示されます</small>
                 </div>
                 <div class="form-group c-form-field--spaced">
                     <label>このシーンでの停止時間</label>
@@ -2264,7 +2264,7 @@
                         <option value="3">3秒</option>
                         <option value="5">5秒</option>
                     </select>
-                    <small style="color:var(--text-secondary); font-size:0.72rem;">アニメーション再生中、このシーンに到達したとき指定秒数停止します</small>
+                    <small class="c-static-style--027">アニメーション再生中、このシーンに到達したとき指定秒数停止します</small>
                 </div>
                 <div class="c-modal__actions">
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
@@ -2278,38 +2278,38 @@
     <div id="toast-container" class="toast-container"></div>
 
     <!-- Library Assign Modal -->
-    <div id="modal-assign-practice" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
+    <div id="modal-assign-practice" class="c-modal-overlay modal-overlay hidden c-static-style--283">
         <div class="c-modal c-modal--legacy c-modal--medium modal">
             <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
                 >&times;</button>
             <h2 class="c-modal__heading"><i class="fa-solid fa-calendar-plus"></i> 練習日にアサイン</h2>
             <input type="hidden" id="assign-menu-id">
-            <p class="text-secondary" style="font-size:0.85rem; margin-bottom:1rem;">アサイン先の練習日を選択してください：</p>
+            <p class="text-secondary c-static-style--145">アサイン先の練習日を選択してください：</p>
             <div id="assign-practices-list" class="c-data-list c-data-list--modal-compact">
                 <!-- Populated dynamically -->
             </div>
             <div class="c-modal__actions c-modal__actions--split">
-                <button type="button" class="c-button btn c-button--secondary btn-secondary" id="btn-assign-add-practice"
-                    style="font-size:0.85rem;"><i class="fa-solid fa-plus"></i> 新しい練習日を追加</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary c-static-style--136" id="btn-assign-add-practice"
+                   ><i class="fa-solid fa-plus"></i> 新しい練習日を追加</button>
                 <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal">キャンセル</button>
             </div>
         </div>
     </div>
 
     <!-- Custom Formation Visual Creator Modal -->
-    <div id="modal-custom-formation" class="c-modal-overlay modal-overlay hidden" style="z-index: 1001;">
-        <div class="c-modal c-modal--legacy modal" style="max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto; position:relative;">
+    <div id="modal-custom-formation" class="c-modal-overlay modal-overlay hidden c-static-style--283">
+        <div class="c-modal c-modal--legacy modal c-static-style--229">
             <button type="button" class="c-modal__close c-modal__close--floating btn-close-modal"
                 >&times;</button>
-            <h2 style="margin-bottom:1.5rem;"><i class="fa-solid fa-street-view"></i> カスタムフォーメーション作成</h2>
+            <h2 class="c-static-style--195"><i class="fa-solid fa-street-view"></i> カスタムフォーメーション作成</h2>
             <form id="form-custom-formation">
-                <div class="form-group" style="display:flex; gap:1rem; margin-bottom:1rem;">
-                    <div style="flex:2;">
+                <div class="form-group c-static-style--068">
+                    <div class="c-static-style--100">
                         <label>フォーメーション名 <span class="c-status c-status--warning">必須</span></label>
                         <input type="text" id="custom-formation-name" class="c-input form-control" placeholder="例: 3-3-1"
                             required>
                     </div>
-                    <div style="flex:1;">
+                    <div class="c-static-style--096">
                         <label>選手人数 <span class="c-status c-status--muted">任意</span></label>
                         <select id="custom-formation-player-count" class="c-input form-control">
                             <option value="8">8人制</option>
@@ -2317,19 +2317,19 @@
                             <option value="5">5人制（フットサル）</option>
                         </select>
                     </div>
-                    <div style="display:flex; align-items:flex-end;">
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary" id="btn-custom-formation-clear-all"
-                            style="height:42px; font-size:0.85rem;"><i class="fa-solid fa-arrow-rotate-left"></i>
+                    <div class="c-static-style--048">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-static-style--181" id="btn-custom-formation-clear-all"
+                           ><i class="fa-solid fa-arrow-rotate-left"></i>
                             配置クリア</button>
                     </div>
                 </div>
 
                 <div class="custom-formation-editor-layout">
                     <div>
-                        <label style="font-weight:bold; margin-bottom:0.5rem; display:block;">ピッチをクリックして配置を設定（最大 <span
+                        <label class="c-static-style--178">ピッチをクリックして配置を設定（最大 <span
                                 id="custom-formation-max-count">8</span> 箇所）</label>
-                        <div class="tactical-pitch pitch-half-bottom" id="custom-formation-pitch-canvas"
-                            style="cursor:crosshair; max-width: 320px;">
+                        <div class="tactical-pitch pitch-half-bottom c-static-style--029" id="custom-formation-pitch-canvas"
+                           >
                             <div class="penalty-area-bottom"></div>
                             <div class="goal-area-bottom"></div>
                             <div class="penalty-arc-bottom"></div>
@@ -2340,9 +2340,9 @@
                         </div>
                     </div>
                     <div>
-                        <label style="font-weight:bold; margin-bottom:0.5rem; display:block;">各配置の役割設定</label>
+                        <label class="c-static-style--178">各配置の役割設定</label>
                         <div id="custom-formation-nodes-editor-list" class="custom-formation-nodes-list">
-                            <p class="text-secondary" style="font-size:0.85rem; font-style:italic;">
+                            <p class="text-secondary c-static-style--141">
                                 ピッチをクリックしてポジションを追加してください。</p>
                         </div>
                     </div>
@@ -2357,17 +2357,17 @@
     </div>
 
     <!-- Match List Popup Modal -->
-    <div id="modal-player-matches-list" class="c-modal-overlay modal-overlay hidden" style="z-index: 1002;">
-        <div class="c-modal c-modal--legacy modal" style="max-width: 400px;">
+    <div id="modal-player-matches-list" class="c-modal-overlay modal-overlay hidden c-static-style--284">
+        <div class="c-modal c-modal--legacy modal c-static-style--222">
             <button class="c-modal__close c-modal__close--floating btn-close-modal"
                 onclick="document.getElementById('modal-player-matches-list').classList.add('hidden')"
                 >&times;</button>
-            <h2 id="pml-title" style="margin-bottom:1.2rem; font-size:1.15rem; color:var(--primary);"></h2>
-            <div id="pml-content"
-                style="display:flex; flex-direction:column; gap:0.6rem; max-height:250px; overflow-y:auto;">
+            <h2 class="c-static-style--194" id="pml-title"></h2>
+            <div class="c-static-style--052" id="pml-content"
+               >
                 <!-- list of matches -->
             </div>
-            <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+            <div class="c-static-style--072">
                 <button type="button" class="c-button btn c-button--secondary btn-secondary"
                     onclick="document.getElementById('modal-player-matches-list').classList.add('hidden')">閉じる</button>
             </div>
@@ -2376,46 +2376,46 @@
 
     <!-- Leader Ranking Modal -->
     <!-- Leader Ranking Modal -->
-    <div id="modal-leader-ranking" class="c-modal-overlay modal-overlay hidden" style="z-index: 1002;">
-        <div class="c-modal c-modal--legacy modal" style="max-width: 680px; width: 92%;">
+    <div id="modal-leader-ranking" class="c-modal-overlay modal-overlay hidden c-static-style--284">
+        <div class="c-modal c-modal--legacy modal c-static-style--228">
             <button class="c-modal__close c-modal__close--floating btn-close-modal"
                 onclick="document.getElementById('modal-leader-ranking').classList.add('hidden')"
                 >&times;</button>
-            <h2 style="margin-bottom:1.2rem; font-size:1.15rem; color:var(--primary);"><i
+            <h2 class="c-static-style--194"><i
                     class="fa-solid fa-trophy"></i> 個人ランキング一覧</h2>
 
             <!-- 2列（repeat(2, 1fr)）に固定し、各リストの max-height / overflow-y を除去 -->
-            <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1rem;" id="leader-ranking-grid-cols">
+            <div class="c-static-style--088" id="leader-ranking-grid-cols">
                 <div>
-                    <h4 style="font-size:0.85rem; color:var(--text-secondary); margin:0 0 0.5rem 0; font-weight:600;"><i
-                            class="fa-solid fa-fire" style="color:#ef4444;"></i> 得点ランキング</h4>
+                    <h4 class="c-static-style--139"><i
+                            class="fa-solid fa-fire c-static-style--018"></i> 得点ランキング</h4>
                     <div id="ranking-scorers-list" class="c-data-list c-data-list--ranking"
                         aria-live="polite">
                     </div>
                 </div>
                 <div>
-                    <h4 style="font-size:0.85rem; color:var(--text-secondary); margin:0 0 0.5rem 0; font-weight:600;"><i
-                            class="fa-solid fa-shoe-prints" style="color:#22c55e;"></i> アシストランキング</h4>
+                    <h4 class="c-static-style--139"><i
+                            class="fa-solid fa-shoe-prints c-static-style--013"></i> アシストランキング</h4>
                     <div id="ranking-assists-list" class="c-data-list c-data-list--ranking"
                         aria-live="polite">
                     </div>
                 </div>
                 <div>
-                    <h4 style="font-size:0.85rem; color:var(--text-secondary); margin:0 0 0.5rem 0; font-weight:600;"><i
-                            class="fa-solid fa-users" style="color:#3b82f6;"></i> 出席率 (過去1ヶ月)</h4>
+                    <h4 class="c-static-style--139"><i
+                            class="fa-solid fa-users c-static-style--015"></i> 出席率 (過去1ヶ月)</h4>
                     <div id="ranking-attendance-list" class="c-data-list c-data-list--ranking"
                         aria-live="polite">
                     </div>
                 </div>
                 <div>
-                    <h4 style="font-size:0.85rem; color:var(--text-secondary); margin:0 0 0.5rem 0; font-weight:600;"><i
-                            class="fa-solid fa-stopwatch" style="color:#eab308;"></i> 出場時間 (直近5試合)</h4>
+                    <h4 class="c-static-style--139"><i
+                            class="fa-solid fa-stopwatch c-static-style--017"></i> 出場時間 (直近5試合)</h4>
                     <div id="ranking-playtime-list" class="c-data-list c-data-list--ranking"
                         aria-live="polite">
                     </div>
                 </div>
             </div>
-            <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+            <div class="c-static-style--072">
                 <button type="button" class="c-button btn c-button--secondary btn-secondary"
                     onclick="document.getElementById('modal-leader-ranking').classList.add('hidden')">閉じる</button>
             </div>
@@ -2423,19 +2423,19 @@
     </div>
 
     <!-- Season Record Detail Modal -->
-    <div id="modal-season-record-detail" class="c-modal-overlay modal-overlay hidden" style="z-index: 1002;">
-        <div class="c-modal c-modal--legacy modal" style="max-width: 580px; width: 92%;">
+    <div id="modal-season-record-detail" class="c-modal-overlay modal-overlay hidden c-static-style--284">
+        <div class="c-modal c-modal--legacy modal c-static-style--225">
             <button class="c-modal__close c-modal__close--floating btn-close-modal"
                 onclick="document.getElementById('modal-season-record-detail').classList.add('hidden')"
                 >&times;</button>
-            <h2 style="margin-bottom:1.2rem; font-size:1.15rem; color:var(--primary);"><i
+            <h2 class="c-static-style--194"><i
                     class="fa-solid fa-chart-pie"></i> チーム成績詳細</h2>
 
-            <div style="display:flex; flex-direction:column; gap:1.2rem;">
+            <div class="c-static-style--055">
                 <!-- 試合種別ごとの成績 (今年度) -->
                 <div>
-                    <h4
-                        style="font-size:0.85rem; color:var(--text-secondary); margin:0 0 0.6rem 0; font-weight:600; border-bottom:1px solid var(--surface-border); padding-bottom:0.3rem;">
+                    <h4 class="c-static-style--140"
+                       >
                         <i class="fa-solid fa-filter"></i> 試合種別ごとの成績 (今年度)
                     </h4>
                     <div id="season-detail-types-list" class="c-data-list c-data-list--scrollable"
@@ -2446,8 +2446,8 @@
 
                 <!-- 過去年度の成績 -->
                 <div>
-                    <h4
-                        style="font-size:0.85rem; color:var(--text-secondary); margin:0 0 0.6rem 0; font-weight:600; border-bottom:1px solid var(--surface-border); padding-bottom:0.3rem;">
+                    <h4 class="c-static-style--140"
+                       >
                         <i class="fa-solid fa-history"></i> 年度別の成績推移
                     </h4>
                     <div id="season-detail-years-list" class="c-data-list c-data-list--scrollable"
@@ -2457,7 +2457,7 @@
                 </div>
             </div>
 
-            <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+            <div class="c-static-style--072">
                 <button type="button" class="c-button btn c-button--secondary btn-secondary"
                     onclick="document.getElementById('modal-season-record-detail').classList.add('hidden')">閉じる</button>
             </div>
@@ -2547,23 +2547,23 @@
         </div>
     </div>
     <!-- Release Notes Modal -->
-    <div id="modal-release-notes" class="c-modal-overlay modal-overlay hidden" style="z-index: 10000;">
-        <div class="c-modal c-modal--legacy modal" style="max-width: 550px; width: 92%;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--border); padding-bottom:0.75rem;">
-                <h3 style="margin:0; font-size:1.1rem; font-weight:700;"><i class="fa-solid fa-rocket" style="color:var(--primary); margin-right:0.4rem;"></i> バージョン情報・更新履歴</h3>
-                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal" style="padding:0.2rem 0.5rem;" onclick="document.getElementById('modal-release-notes').classList.add('hidden')"><i class="fa-solid fa-xmark"></i></button>
+    <div id="modal-release-notes" class="c-modal-overlay modal-overlay hidden c-static-style--282">
+        <div class="c-modal c-modal--legacy modal c-static-style--224">
+            <div class="c-static-style--082">
+                <h3 class="c-static-style--214"><i class="fa-solid fa-rocket c-static-style--024"></i> バージョン情報・更新履歴</h3>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-close-modal c-static-style--240" onclick="document.getElementById('modal-release-notes').classList.add('hidden')"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div id="release-notes-content" style="max-height: 60vh; overflow-y: auto; padding-right: 0.3rem;">
+            <div class="c-static-style--219" id="release-notes-content">
                 <!-- JavaScriptで動的生成 -->
             </div>
-            <div style="margin-top:1.25rem; text-align:right; border-top:1px solid var(--border); padding-top:0.75rem;">
+            <div class="c-static-style--204">
                 <button type="button" class="c-button btn c-button--primary btn-primary" onclick="document.getElementById('modal-release-notes').classList.add('hidden')">閉じる</button>
             </div>
         </div>
     </div>
 
     <!-- Global Custom Confirm Modal -->
-    <div id="modal-global-confirm" class="c-modal-overlay modal-overlay hidden" style="z-index: 10000;">
+    <div id="modal-global-confirm" class="c-modal-overlay modal-overlay hidden c-static-style--282">
         <div class="c-modal c-modal--legacy modal confirm-modal-content">
             <div class="confirm-modal-icon" id="global-confirm-icon">
                 <i class="fa-solid fa-triangle-exclamation"></i>

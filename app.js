@@ -699,29 +699,29 @@ export function openLeaderRankingModal(type = 'all') {
             colScorers.style.display = 'block';
             if (h4Scorers) h4Scorers.style.display = 'none';
             applyColumnStyle(listScorers);
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-fire" style="color:#ef4444;"></i> 得点ランキング詳細';
+            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-fire c-static-style--018"></i> 得点ランキング詳細';
         } else if (type === 'assists') {
             colAssists.style.display = 'block';
             if (h4Assists) h4Assists.style.display = 'none';
             applyColumnStyle(listAssists);
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-shoe-prints" style="color:#22c55e;"></i> アシストランキング詳細';
+            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-shoe-prints c-static-style--013"></i> アシストランキング詳細';
         } else if (type === 'attendance') {
             colAttendance.style.display = 'block';
             if (h4Attendance) h4Attendance.style.display = 'none';
             applyColumnStyle(listAttendance);
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-users" style="color:#3b82f6;"></i> 出席率ランキング詳細 (過去1ヶ月)';
+            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-users c-static-style--015"></i> 出席率ランキング詳細 (過去1ヶ月)';
         } else if (type === 'playtime') {
             colPlaytime.style.display = 'block';
             if (h4Playtime) h4Playtime.style.display = 'none';
             applyColumnStyle(listPlaytime);
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-stopwatch" style="color:#eab308;"></i> 出場時間・出場率詳細 (直近5試合)';
+            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-stopwatch c-static-style--017"></i> 出場時間・出場率詳細 (直近5試合)';
         } else {
             // 全項目一覧モード
             [colScorers, colAssists, colAttendance, colPlaytime].forEach(col => col.style.display = 'block');
             gridCols.style.display = 'grid';
             gridCols.style.gridTemplateColumns = 'repeat(2, 1fr)';
             gridCols.style.gap = '1rem';
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-trophy" style="color:var(--primary);"></i> 個人ランキング一覧';
+            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-trophy c-static-style--022"></i> 個人ランキング一覧';
         }
     }
 
@@ -853,16 +853,15 @@ export function openMyPlayerSelectModal() {
     const currentId = localStorage.getItem('coachMgrMyPlayerId') || '';
 
     if (!state.players || state.players.length === 0) {
-        pmlContent.innerHTML = '<p class="text-secondary" style="font-size:0.85rem; padding:1rem; text-align:center;">選択可能な選手が登録されていません。</p>';
+        pmlContent.innerHTML = '<p class="text-secondary c-static-style--146">選択可能な選手が登録されていません。</p>';
     } else {
         pmlContent.innerHTML = `
-            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.8rem;">
+            <p class="c-static-style--153">
                 表示対象の選手（お子様）を選択してください。この設定は端末に保存されます。
             </p>
-            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+            <div class="c-static-style--051">
                 ${state.players.map(p => `
-                    <button type="button" class="c-button btn ${p.id.toString() === currentId ? 'btn-primary' : 'btn-secondary'}"
-                        style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; text-align:left;"
+                    <button type="button" class="c-button btn ${p.id.toString() === currentId ? 'btn-primary' : 'btn-secondary'} c-static-style--085"
                         onclick="selectMyPlayer(${p.id})">
                         <span><strong>${escapeHtml(p.name)}</strong> (${p.number})</span>
                         ${p.id.toString() === currentId ? '<i class="fa-solid fa-check"></i>' : ''}
@@ -1030,9 +1029,9 @@ function initDashboard() {
             // 1. 選手データが1件も未登録の場合
             if (state.players.length === 0) {
                 myPlayerContent.innerHTML = `
-                    <div class="c-dashboard-widget__empty" style="padding:1.2rem 0; text-align:center;">
-                        <p style="margin-bottom:0.6rem; color:var(--text-secondary); font-size:0.85rem;">チームに選手が登録されていません。</p>
-                        <p style="font-size:0.75rem; color:var(--text-secondary);">※コーチモードに切り替えて「選手管理」から選手を登録してください。</p>
+                    <div class="c-dashboard-widget__empty c-static-style--244">
+                        <p class="c-static-style--192">チームに選手が登録されていません。</p>
+                        <p class="c-static-style--114">※コーチモードに切り替えて「選手管理」から選手を登録してください。</p>
                     </div>
                 `;
                 return;
@@ -1041,9 +1040,9 @@ function initDashboard() {
             // 2. 選手は登録されているが、マイ選手が「未選択」の場合
             if (!playerId) {
                 myPlayerContent.innerHTML = `
-                    <div class="c-dashboard-widget__empty" style="padding:1.2rem 0; text-align:center;">
-                        <p style="margin-bottom:0.6rem; color:var(--text-primary); font-weight:700; font-size:0.9rem;">表示するマイ選手が未設定です</p>
-                        <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" onclick="openMyPlayerSelectModal()" style="padding:0.4rem 1rem; font-size:0.82rem;">
+                    <div class="c-dashboard-widget__empty c-static-style--244">
+                        <p class="c-static-style--191">表示するマイ選手が未設定です</p>
+                        <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--241" onclick="openMyPlayerSelectModal()">
                             <i class="fa-solid fa-user-check"></i> マイ選手（我が子）を選択する
                         </button>
                     </div>
@@ -1055,8 +1054,8 @@ function initDashboard() {
             const player = state.players.find(p => p.id === parseInt(playerId, 10));
             if (!player) {
                 myPlayerContent.innerHTML = `
-                    <div class="c-dashboard-widget__empty" style="padding:1rem 0; text-align:center;">
-                        <p style="margin-bottom:0.5rem; color:var(--text-secondary);">該当する選手が見つかりません。</p>
+                    <div class="c-dashboard-widget__empty c-static-style--245">
+                        <p class="c-static-style--188">該当する選手が見つかりません。</p>
                         <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" onclick="openMyPlayerSelectModal()">
                             <i class="fa-solid fa-rotate"></i> 別の選手を選択する
                         </button>
@@ -1124,12 +1123,12 @@ function initDashboard() {
             if (latestFeedbackItem) {
                 const labelStr = latestFeedbackItem.type === 'match' ? '試合評価' : '観察メモ';
                 latestFeedbackHTML = `
-                    <div style="margin-top:0.2rem; margin-bottom:0.2rem; background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(59,130,246,0.08)); border-left:4px solid var(--primary); border-radius:8px; padding:0.6rem 0.8rem;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
-                            <span style="font-size:0.75rem; font-weight:700; color:var(--primary);"><i class="fa-solid fa-comment-dots"></i> コーチからの最新フィードバック</span>
-                            <span style="font-size:0.68rem; color:var(--text-secondary);">${latestFeedbackItem.date} (${labelStr})</span>
+                    <div class="c-static-style--199">
+                        <div class="c-static-style--078">
+                            <span class="c-static-style--121"><i class="fa-solid fa-comment-dots"></i> コーチからの最新フィードバック</span>
+                            <span class="c-static-style--105">${latestFeedbackItem.date} (${labelStr})</span>
                         </div>
-                        <p style="font-size:0.8rem; font-weight:600; color:var(--text-primary); margin:0; line-height:1.35;">
+                        <p class="c-static-style--154">
                             ${escapeHtml(latestFeedbackItem.comment)
                         .trim()
                         .replace(/\n\s*\n/g, '\n')
@@ -1143,35 +1142,35 @@ function initDashboard() {
             // ストロングポイントのHTML生成
             const strongPointsHtml = player.strongPoints && player.strongPoints.length > 0
                 ? player.strongPoints.map(sp => `
-                    <div style="margin-bottom:0.2rem;">
+                    <div class="c-static-style--187">
                         <span class="c-status c-status--info c-status--compact">
                             <i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}
                         </span>
-                        <div style="font-size:0.75rem; color:var(--text-primary); line-height:1.2; margin-top:0.1rem;">${escapeHtml(sp.text)}</div>
+                        <div class="c-static-style--113">${escapeHtml(sp.text)}</div>
                     </div>
                 `).join('')
-                : '<span style="font-size:0.75rem; color:var(--text-secondary);">未設定</span>';
+                : '<span class="c-static-style--114">未設定</span>';
 
             // UI生成
             myPlayerContent.innerHTML = `
-                <div style="display:flex; flex-direction:column; gap:0.6rem; padding:0.2rem 0;">
+                <div class="c-static-style--053">
 
                     <!-- ヘッダー（名前・背番号・ポジション・変更ボタン） -->
-                    <div class="dash-myplayer-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.1rem 0;">
-                        <div style="display:flex; align-items:center; gap:0.6rem;">
-                            <div class="player-number" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--primary);color:var(--color-text-on-action);border-radius:50%;font-weight:900;font-size:0.9rem;">
+                    <div class="dash-myplayer-header c-static-style--074">
+                        <div class="c-static-style--045">
+                            <div class="player-number c-static-style--280">
                                 ${player.number}
                             </div>
-                            <div style="display:flex; align-items:baseline; gap:0.4rem;">
-                                <h2 style="margin:0; font-size:1.05rem; color:var(--text-primary); font-weight:800; letter-spacing:-0.02em;">
+                            <div class="c-static-style--037">
+                                <h2 class="c-static-style--210">
                                     ${escapeHtml(player.name)}
                                 </h2>
-                                <span style="font-size:0.75rem; color:var(--text-secondary); font-weight:600;">
+                                <span class="c-static-style--115">
                                     (${(Array.isArray(player.position) ? player.position : [player.position]).join(', ')})
                                 </span>
                             </div>
                         </div>
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-change-myplayer" style="font-size:0.72rem; padding:0.2rem 0.55rem;">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-static-style--108" id="btn-change-myplayer">
                             <i class="fa-solid fa-rotate"></i> 選手変更
                         </button>
                     </div>
@@ -1180,69 +1179,69 @@ function initDashboard() {
                     ${latestFeedbackHTML}
 
                     <!-- スタッツボタンエリア -->
-                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.4rem;">
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary" id="dash-btn-myplayer-att"
-                            style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
-                            <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
-                                <i class="fa-solid fa-user-check" style="color:#3b82f6;"></i> 出席率
+                    <div class="c-static-style--089">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-static-style--047" id="dash-btn-myplayer-att"
+                           >
+                            <span class="c-static-style--132">
+                                <i class="fa-solid fa-user-check c-static-style--015"></i> 出席率
                             </span>
-                            <div style="display:flex; align-items:baseline; gap:0.2rem;">
-                                <strong style="font-size:0.88rem; color:var(--text-primary);">${attendancePct}%</strong>
-                                <span style="font-size:0.62rem; color:var(--text-secondary); font-weight:normal;">(${attendedThisYearCount}/${totalThisYearEvents})</span>
+                            <div class="c-static-style--036">
+                                <strong class="c-static-style--149">${attendancePct}%</strong>
+                                <span class="c-static-style--103">(${attendedThisYearCount}/${totalThisYearEvents})</span>
                             </div>
                         </button>
 
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary" id="dash-btn-myplayer-goals"
-                            style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
-                            <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
-                                <i class="fa-solid fa-futbol" style="color:var(--primary);"></i> 通算得点
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-static-style--047" id="dash-btn-myplayer-goals"
+                           >
+                            <span class="c-static-style--132">
+                                <i class="fa-solid fa-futbol c-static-style--022"></i> 通算得点
                             </span>
-                            <strong style="font-size:0.88rem; color:var(--primary);">${playerGoals}<span style="font-size:0.65rem; font-weight:normal;">点</span></strong>
+                            <strong class="c-static-style--148">${playerGoals}<span class="c-static-style--104">点</span></strong>
                         </button>
 
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary" id="dash-btn-myplayer-assists"
-                            style="display:flex; align-items:center; justify-content:space-between; padding:0.45rem 0.6rem; border-radius:6px; cursor:pointer;">
-                            <span style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.25rem;">
-                                <i class="fa-solid fa-shoe-prints" style="color:#22c55e; transform:rotate(45deg);"></i> 通算アシスト
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-static-style--047" id="dash-btn-myplayer-assists"
+                           >
+                            <span class="c-static-style--132">
+                                <i class="fa-solid fa-shoe-prints c-static-style--014"></i> 通算アシスト
                             </span>
-                            <strong style="font-size:0.88rem; color:#22c55e;">${playerAssists}<span style="font-size:0.65rem; font-weight:normal;">回</span></strong>
+                            <strong class="c-static-style--147">${playerAssists}<span class="c-static-style--104">回</span></strong>
                         </button>
                     </div>
 
                     <!-- プロファイルアコーディオン -->
-                    <details style="background:rgba(0,0,0,0.015); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem;">
-                        <summary style="cursor:pointer; font-size:0.78rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; outline:none; user-select:none;">
-                            <span><i class="fa-solid fa-sliders" style="color:var(--primary);"></i> 選手詳細プロファイル (スタイル / 強み / IDP)</span>
+                    <details class="c-static-style--007">
+                        <summary class="c-static-style--033">
+                            <span><i class="fa-solid fa-sliders c-static-style--022"></i> 選手詳細プロファイル (スタイル / 強み / IDP)</span>
                         </summary>
-                        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.4rem; margin-top:0.4rem; padding-top:0.2rem;">
-                            <div style="background:rgba(0,0,0,0.02); border:1px solid var(--surface-border); border-radius:6px; padding:0.4rem 0.5rem;">
-                                <strong style="font-size:0.68rem; color:var(--text-secondary); display:block; margin-bottom:0.15rem;">
+                        <div class="c-static-style--090">
+                            <div class="c-static-style--008">
+                                <strong class="c-static-style--106">
                                     <i class="fa-solid fa-tag"></i> プレースタイル
                                 </strong>
-                                <div style="font-size:0.78rem; font-weight:700; color:var(--text-primary); line-height:1.3;">
+                                <div class="c-static-style--128">
                                     ${escapeHtml(player.playStyle || '未設定')}
                                 </div>
                             </div>
 
-                            <div style="background:rgba(0,0,0,0.02); border:1px solid var(--surface-border); border-radius:6px; padding:0.4rem 0.5rem;">
-                                <strong style="font-size:0.68rem; color:var(--text-secondary); display:block; margin-bottom:0.15rem;">
+                            <div class="c-static-style--008">
+                                <strong class="c-static-style--106">
                                     <i class="fa-solid fa-shield-halved"></i> ストロングポイント
                                 </strong>
                                 ${strongPointsHtml}
                             </div>
 
-                            <div style="background:rgba(0,0,0,0.02); border:1px solid var(--surface-border); border-radius:6px; padding:0.4rem 0.5rem;">
-                                <strong style="font-size:0.68rem; color:var(--text-secondary); display:block; margin-bottom:0.15rem;">
+                            <div class="c-static-style--008">
+                                <strong class="c-static-style--106">
                                     <i class="fa-solid fa-bullseye"></i> 個人目標 (IDP)
                                 </strong>
-                                <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                                <div class="c-static-style--050">
                                     <div>
-                                        <span style="font-size:0.62rem; color:var(--text-secondary); font-weight:bold;">[短期]</span>
-                                        <span style="font-size:0.75rem; color:var(--text-primary); line-height:1.2;">${player.goals && player.goals.short ? escapeHtml(player.goals.short) : '未設定'}</span>
+                                        <span class="c-static-style--102">[短期]</span>
+                                        <span class="c-static-style--112">${player.goals && player.goals.short ? escapeHtml(player.goals.short) : '未設定'}</span>
                                     </div>
                                     <div>
-                                        <span style="font-size:0.62rem; color:var(--text-secondary); font-weight:bold;">[長期]</span>
-                                        <span style="font-size:0.75rem; color:var(--text-primary); line-height:1.2;">${player.goals && player.goals.long ? escapeHtml(player.goals.long) : '未設定'}</span>
+                                        <span class="c-static-style--102">[長期]</span>
+                                        <span class="c-static-style--112">${player.goals && player.goals.long ? escapeHtml(player.goals.long) : '未設定'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -1262,33 +1261,33 @@ function initDashboard() {
                     const pmlContent = document.getElementById('pml-content');
                     if (!pmlTitle || !pmlContent) return;
 
-                    pmlTitle.innerHTML = `<i class="fa-solid fa-user-check" style="color:#3b82f6;"></i> ${escapeHtml(player.name)} の参加記録 (${currentNendo}年度)`;
+                    pmlTitle.innerHTML = `<i class="fa-solid fa-user-check c-static-style--015"></i> ${escapeHtml(player.name)} の参加記録 (${currentNendo}年度)`;
 
                     let html = '';
                     if (attendedMatches.length === 0 && attendedPractices.length === 0) {
-                        html = '<p class="text-secondary" style="font-size:0.85rem; padding:1rem; text-align:center;">今年度の参加記録はありません。</p>';
+                        html = '<p class="text-secondary c-static-style--146">今年度の参加記録はありません。</p>';
                     } else {
                         attendedMatches.forEach(m => {
                             html += `
-                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
+                                <div class="feedback-box c-static-style--084"
                                     onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                                     <div>
                                         <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
-                                        <div style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date} | 試合 ${m.type ? `(${escapeHtml(m.type)})` : ''}</div>
+                                        <div class="c-static-style--114"><i class="fa-regular fa-calendar"></i> ${m.date} | 試合 ${m.type ? `(${escapeHtml(m.type)})` : ''}</div>
                                     </div>
-                                    <div style="font-size:0.85rem; font-weight:bold; color:var(--primary);">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i></div>
+                                    <div class="c-static-style--143">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right c-static-style--111"></i></div>
                                 </div>
                             `;
                         });
                         attendedPractices.forEach(p => {
                             html += `
-                                <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
+                                <div class="feedback-box c-static-style--084"
                                     onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('practices', { date: '${p.date}' });">
                                     <div>
                                         <strong>練習 ${p.location ? `(${escapeHtml(p.location)})` : ''}</strong>
-                                        <div style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${p.date}</div>
+                                        <div class="c-static-style--114"><i class="fa-regular fa-calendar"></i> ${p.date}</div>
                                     </div>
-                                    <div style="font-size:0.85rem; font-weight:bold; color:var(--text-secondary);">練習記録 <i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i></div>
+                                    <div class="c-static-style--144">練習記録 <i class="fa-solid fa-chevron-right c-static-style--111"></i></div>
                                 </div>
                             `;
                         });
@@ -1310,17 +1309,17 @@ function initDashboard() {
                     const pmlContent = document.getElementById('pml-content');
                     if (!pmlTitle || !pmlContent) return;
 
-                    pmlTitle.innerHTML = `<i class="fa-solid fa-futbol" style="color:var(--primary);"></i> ${escapeHtml(player.name)} の得点した試合 (通算)`;
+                    pmlTitle.innerHTML = `<i class="fa-solid fa-futbol c-static-style--022"></i> ${escapeHtml(player.name)} の得点した試合 (通算)`;
                     pmlContent.innerHTML = matchesWithGoals.length > 0 ? matchesWithGoals.map(m => `
-                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
+                        <div class="feedback-box c-static-style--084"
                             onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                             <div>
                                 <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
-                                <div style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '')}</div>
+                                <div class="c-static-style--114"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '')}</div>
                             </div>
-                            <div style="font-size:1.15rem; font-weight:bold; color:var(--primary);">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i></div>
+                            <div class="c-static-style--163">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right c-static-style--111"></i></div>
                         </div>
-                    `).join('') : '<p class="text-secondary" style="font-size:0.85rem; padding:1rem; text-align:center;">得点した試合はありません。</p>';
+                    `).join('') : '<p class="text-secondary c-static-style--146">得点した試合はありません。</p>';
 
                     openModal('modal-player-matches-list');
                 };
@@ -1337,17 +1336,17 @@ function initDashboard() {
                     const pmlContent = document.getElementById('pml-content');
                     if (!pmlTitle || !pmlContent) return;
 
-                    pmlTitle.innerHTML = `<span style="display:inline-block; transform:rotate(45deg); color:#22c55e;"><i class="fa-solid fa-shoe-prints"></i></span> ${escapeHtml(player.name)} のアシストした試合 (通算)`;
+                    pmlTitle.innerHTML = `<span class="c-static-style--092"><i class="fa-solid fa-shoe-prints"></i></span> ${escapeHtml(player.name)} のアシストした試合 (通算)`;
                     pmlContent.innerHTML = matchesWithAssists.length > 0 ? matchesWithAssists.map(m => `
-                        <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; margin-bottom:0.4rem; cursor:pointer;"
+                        <div class="feedback-box c-static-style--084"
                             onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                             <div>
                                 <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
-                                <div style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '')}</div>
+                                <div class="c-static-style--114"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '')}</div>
                             </div>
-                            <div style="font-size:1.15rem; font-weight:bold; color:var(--primary);">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i></div>
+                            <div class="c-static-style--163">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right c-static-style--111"></i></div>
                         </div>
-                    `).join('') : '<p class="text-secondary" style="font-size:0.85rem; padding:1rem; text-align:center;">アシストした試合はありません。</p>';
+                    `).join('') : '<p class="text-secondary c-static-style--146">アシストした試合はありません。</p>';
 
                     openModal('modal-player-matches-list');
                 };
@@ -1555,7 +1554,7 @@ function initDashboard() {
             nextEventContent.innerHTML = `
                 <span class="c-dashboard-event__type ${typeClass}">${typeLabel}</span>
                 <div class="c-dashboard-event__title">${escapeHtml(nextEvent.title)}</div>
-                <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; margin-top:0.1rem;">
+                <div class="c-static-style--044">
                     <span class="c-dashboard-event__date">${dateLabel}${subLine ? ' · ' + escapeHtml(subLine) : ''}</span>
                     <span class="c-dashboard-event__countdown">${countdownLabel}</span>
                 </div>
@@ -1742,7 +1741,7 @@ function initDashboard() {
                     : `navigate('practices', { date: '${e.date}' })`;
 
                 return `
-                    <div class="c-dashboard-strip__item" onclick="${clickAction}" style="cursor: pointer;">
+                    <div class="c-dashboard-strip__item c-static-style--028" onclick="${clickAction}">
                         <span class="c-status ${statusClass}">${badgeText}</span>
                         <div class="c-dashboard-strip__metric">${formatDateLabel(e.date)}</div>
                         <div class="c-dashboard-strip__meta" title="${escapeHtml(e.subText)}">${escapeHtml(e.subText)}</div>
@@ -2665,13 +2664,13 @@ export function openReleaseNotesModal() {
     if (!modal || !container) return;
 
     container.innerHTML = RELEASE_NOTES.map(item => `
-        <div style="margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+        <div class="c-static-style--193">
+            <div class="c-static-style--080">
                 <span class="c-status c-status--success">${item.version}</span>
-                <span style="font-size:0.75rem; color:var(--text-secondary);">${item.date}</span>
+                <span class="c-static-style--114">${item.date}</span>
             </div>
-            <div style="font-weight:700; font-size:0.95rem; margin-bottom:0.4rem; color:var(--text-primary);">${escapeHtml(item.title)}</div>
-            <ul style="margin:0; padding-left:1.2rem; font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">
+            <div class="c-static-style--176">${escapeHtml(item.title)}</div>
+            <ul class="c-static-style--215">
                 ${item.features.map(f => `<li>${escapeHtml(f)}</li>`).join('')}
             </ul>
         </div>

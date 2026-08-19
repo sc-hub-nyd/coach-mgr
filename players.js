@@ -96,7 +96,7 @@ export function openPlayerEditModal(p) {
         posContainer.innerHTML = (state.positions || []).map(pos => {
             const checked = (Array.isArray(p.position) ? p.position : [p.position]).includes(pos) ? 'checked' : '';
             return `
-                <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
+                <label class="c-static-style--042">
                     <input type="checkbox" class="player-pos-checkbox" value="${pos}" ${checked}> ${pos}
                 </label>
             `;
@@ -108,7 +108,7 @@ export function openPlayerEditModal(p) {
         posCat2Container.innerHTML = (state.positionsCat2 || []).map(pos => {
             const checked = (Array.isArray(p.position) ? p.position : [p.position]).includes(pos) ? 'checked' : '';
             return `
-                <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
+                <label class="c-static-style--042">
                     <input type="checkbox" class="player-pos-checkbox" value="${pos}" ${checked}> ${pos}
                 </label>
             `;
@@ -222,12 +222,12 @@ export function initPlayerDetailView(playerId) {
                 const editBtn = hId ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-edit-assessment" data-history-id="${hId}"><i class="fa-solid fa-pen"></i> 編集</button>` : '';
                 const delBtn = hId ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-assessment" data-history-id="${hId}"><i class="fa-solid fa-trash"></i></button>` : '';
                 return `
-                    <article class="c-data-list__item player-history-item" style="margin-bottom:var(--space-2);">
+                    <article class="c-data-list__item player-history-item c-static-style--197">
                         <div class="c-data-list__header">
                             <div class="c-data-list__identity"><i class="fa-solid fa-clipboard-user"></i> ${item.date} <span class="c-status c-status--info">指導・評価</span></div>
                             ${hId ? `<div class="c-data-list__actions c-action-group">${editBtn}${delBtn}</div>` : ''}
                         </div>
-                        <div class="c-data-list__body" style="white-space:pre-wrap; line-height:1.5; margin-top:var(--space-1);">${escapeHtml(item.comment || '')}</div>
+                        <div class="c-data-list__body c-static-style--264">${escapeHtml(item.comment || '')}</div>
                     </article>
                 `;
             } else {
@@ -235,17 +235,17 @@ export function initPlayerDetailView(playerId) {
                 const firstForm = (matchingMatch && matchingMatch.formations && matchingMatch.formations.length > 0) ? matchingMatch.formations[0] : null;
                 const linkBtn = firstForm ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-timeline-anim" data-match-id="${matchingMatch.id}" data-form-id="${firstForm.id}"><i class="fa-solid fa-person-running"></i> 作図を見る</button>` : '';
                 return `
-                    <article class="c-data-list__item player-history-item match-timeline-item" style="margin-bottom:var(--space-2);">
+                    <article class="c-data-list__item player-history-item match-timeline-item c-static-style--197">
                         <div class="c-data-list__header">
                             <div class="c-data-list__identity"><i class="fa-solid fa-futbol"></i> ${item.date} <span class="c-status c-status--muted">試合コメント</span></div>
                             ${linkBtn ? `<div class="c-data-list__actions c-action-group">${linkBtn}</div>` : ''}
                         </div>
-                        <p class="c-data-list__meta" style="margin:var(--space-1) 0; font-size:var(--text-meta-size); color:var(--text-secondary);">${escapeHtml(item.matchDetails)}</p>
-                        <p class="c-data-list__body" style="white-space:pre-wrap; line-height:1.5;">${escapeHtml(item.comment || '')}</p>
+                        <p class="c-data-list__meta c-static-style--217">${escapeHtml(item.matchDetails)}</p>
+                        <p class="c-data-list__body c-static-style--262">${escapeHtml(item.comment || '')}</p>
                     </article>
                 `;
             }
-        }).join('') : '<p class="text-secondary" style="padding:var(--space-3); text-align:center;">成長メモ・評価の記録がまだありません。</p>';
+        }).join('') : '<p class="text-secondary c-static-style--247">成長メモ・評価の記録がまだありません。</p>';
     }
 
     document.querySelectorAll('.btn-timeline-anim').forEach(btn => {
@@ -326,13 +326,13 @@ export function initPlayerDetailView(playerId) {
     if (spContainer) {
         if (p.strongPoints && p.strongPoints.length > 0) {
             spContainer.innerHTML = p.strongPoints.map(sp => `
-                <div class="c-card" style="padding:var(--space-2) var(--space-3); background:var(--color-surface-subtle); border-radius:var(--radius-sm); margin-bottom:var(--space-2);">
+                <div class="c-card c-static-style--246">
                     <span class="c-status c-status--info c-status--stacked"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>
-                    <div style="font-size:var(--text-dense-size); color:var(--text-primary); line-height:1.4;">${escapeHtml(sp.text)}</div>
+                    <div class="c-static-style--169">${escapeHtml(sp.text)}</div>
                 </div>
             `).join('');
         } else {
-            spContainer.innerHTML = '<p class="text-secondary" style="font-size:var(--text-meta-size);">ストロングポイントは未設定です。</p>';
+            spContainer.innerHTML = '<p class="text-secondary c-static-style--170">ストロングポイントは未設定です。</p>';
         }
     }
 
@@ -349,15 +349,15 @@ export function initPlayerDetailView(playerId) {
             if (goalsInMatch > 0) statsBadge += ` <span class="c-status c-status--warning">${goalsInMatch}得点</span>`;
             if (assistsInMatch > 0) statsBadge += ` <span class="c-status c-status--success">${assistsInMatch}アシスト</span>`;
             return `
-                <div class="c-data-item" style="cursor:pointer;" onclick="navigate('match-detail', { matchId: ${m.id} })">
+                <div class="c-data-item c-static-style--031" onclick="navigate('match-detail', { matchId: ${m.id} })">
                     <div class="c-data-item__label">
                         <strong>vs ${escapeHtml(m.opponent)}</strong>
-                        <div style="font-size:var(--text-meta-size); color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '試合')}${statsBadge}</div>
+                        <div class="c-static-style--171"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '試合')}${statsBadge}</div>
                     </div>
                     <span class="c-status c-status--info">${escapeHtml(m.result || '詳細')}</span>
                 </div>
             `;
-        }).join('') : '<p class="text-secondary" style="padding:var(--space-3); text-align:center;">出場した試合の記録はありません。</p>';
+        }).join('') : '<p class="text-secondary c-static-style--247">出場した試合の記録はありません。</p>';
     }
 }
 
@@ -457,7 +457,7 @@ export function openPlayerCSVImportModal() {
         if (parsed.length > 0) {
             previewContainer.style.display = 'block';
             previewContainer.innerHTML = `
-                <div style="font-size:0.75rem; font-weight:bold; margin-bottom:0.4rem; color:var(--primary);">
+                <div class="c-static-style--124">
                     <i class="fa-solid fa-eye"></i> プレビュー (${parsed.length}件の選手を検出)
                 </div>
                 <table class="csv-preview-table">
@@ -593,23 +593,23 @@ export function initPlayers() {
             ).join('');
 
             return `
-                <div class="player-card c-card" style="cursor:pointer; display:flex; flex-direction:column;" onclick="openPlayerDetail(${p.id});">
+                <div class="player-card c-card c-static-style--032" onclick="openPlayerDetail(${p.id});">
                     <div class="player-card-header">
                         <div>
-                            <div style="display:flex; gap:var(--space-1); flex-wrap:wrap; margin-bottom:var(--space-1);">${badges}</div>
-                            <div style="font-size:1.15rem; font-weight:bold;">${escapeHtml(p.name)}</div>
+                            <div class="c-static-style--069">${badges}</div>
+                            <div class="c-static-style--162">${escapeHtml(p.name)}</div>
                         </div>
                         <div class="player-number">${p.number}</div>
                     </div>
-                    <div style="flex:1; display:flex; flex-direction:column;">
-                        <div style="font-size:var(--text-meta-size); font-weight:600; color:var(--text-primary); margin-bottom:var(--space-2); line-height:1.4;">
+                    <div class="c-static-style--097">
+                        <div class="c-static-style--173">
                             ${escapeHtml(p.playStyle || 'プレースタイル未設定')}
                         </div>
-                        <div style="display:flex; flex-wrap:wrap; gap:var(--space-1); margin-bottom:auto;">
+                        <div class="c-static-style--060">
                             ${spTags}
                         </div>
-                        <div style="margin-top:var(--space-2); padding-top:var(--space-2); border-top:1px dashed var(--surface-border); font-size:var(--text-meta-size); color:var(--text-secondary); font-weight:600;">
-                            <i class="fa-solid fa-crosshairs" style="color:var(--primary);"></i> ${escapeHtml(p.shortFocus || 'フォーカス未設定')}
+                        <div class="c-static-style--207">
+                            <i class="fa-solid fa-crosshairs c-static-style--022"></i> ${escapeHtml(p.shortFocus || 'フォーカス未設定')}
                         </div>
                     </div>
                 </div>
@@ -726,7 +726,7 @@ export function initPlayers() {
         const posContainer = document.getElementById('player-position-container');
         if (posContainer) {
             posContainer.innerHTML = (state.positions || []).map(p => `
-                <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
+                <label class="c-static-style--042">
                     <input type="checkbox" class="player-pos-checkbox" value="${p}"> ${p}
                 </label>
             `).join('');
@@ -735,7 +735,7 @@ export function initPlayers() {
         const posCat2Container = document.getElementById('player-position-cat2-container');
         if (posCat2Container) {
             posCat2Container.innerHTML = (state.positionsCat2 || []).map(p => `
-                <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
+                <label class="c-static-style--042">
                     <input type="checkbox" class="player-pos-checkbox" value="${p}"> ${p}
                 </label>
             `).join('');

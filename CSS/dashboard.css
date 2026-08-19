@@ -305,25 +305,17 @@
 }
 
 /* Practice Cards */
-.c-practice-card {
+.c-dashboard-grid .c-practice-card {
     margin-bottom: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    min-block-size: 100%;
 }
 
-.c-practice-card__header {
-    display: flex;
+.c-dashboard-grid .c-practice-card__header {
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--surface-border);
-    padding-bottom: 0.5rem;
-    margin-bottom: 0.5rem;
 }
 
-.c-practice-card__menu-list {
-    padding: 0;
-    margin: 0;
+.c-dashboard-grid .c-practice-card__menu-list {
     flex: 1;
     overflow-y: auto;
     max-height: 300px;

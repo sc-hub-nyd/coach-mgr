@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.69';
+export const APP_VERSION = 'v1.30.76';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.76',
+        date: '2026-08-20',
+        title: 'CSSリファクタリング完了：R1〜R5',
+        features: [
+            '全テンプレートの静的インライン装飾を共通CSSへ移行し、動的値157件と表示状態11件だけをインラインとして保持',
+            'base.cssの通常装飾目的!importantを0件にし、残る状態・権限・レスポンシブアプリシェル例外を最終台帳とP35・P38で保護',
+            '練習カード、PKキッカー、出欠行、試合編集の旧u-extをcomponents-system.cssの意味的部品へ統合し、実装上のu-ext参照を0件化'
+        ]
+    },
     {
         version: 'v1.30.69',
         date: '2026-08-20',
