@@ -19,6 +19,10 @@
     --tracking-meta: 0.02em;
     --tracking-heading: 0.01em;
 
+    --text-title-xl: 1.5rem;
+    --text-title-lg: 1.25rem;
+    --text-title-md: 1.125rem;
+    --text-title-sm: 1rem;
     --text-body-size: 1rem;
     --text-body-leading: 1.65;
     --text-dense-size: 0.875rem;
@@ -27,6 +31,7 @@
     --text-meta-leading: 1.45;
     --text-one-line-size: 0.875rem;
     --text-one-line-leading: 1.2;
+    --text-kicker-size: 0.6875rem;
 
     /* Semantic color API. Components consume these roles, never a team HEX directly. */
     --color-canvas: var(--theme-canvas);

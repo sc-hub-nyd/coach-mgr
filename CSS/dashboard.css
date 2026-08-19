@@ -251,7 +251,7 @@
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    font-size: 0.8rem !important;
+    font-size: var(--text-meta-size) !important;
     color: var(--text-secondary) !important;
 }
 
@@ -259,8 +259,9 @@
 .match-card-header>div:last-child {
     flex-shrink: 0 !important;
     white-space: nowrap !important;
-    font-weight: bold !important;
-    font-size: 1.2rem !important;
+    font-weight: var(--font-weight-emphasis) !important;
+    font-family: var(--font-numeric) !important;
+    font-size: var(--text-title-lg) !important;
 }
 
 .match-card-opponent,
@@ -269,8 +270,8 @@
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    font-size: 1.05rem !important;
-    font-weight: 700 !important;
+    font-size: var(--text-title-md) !important;
+    font-weight: var(--font-weight-heading) !important;
     margin: 0.2rem 0 !important;
 }
 
@@ -278,8 +279,8 @@
 .match-card>div:not(.match-card-header):not(.match-card-actions) {
     white-space: normal !important;
     word-break: break-word !important;
-    line-height: 1.45 !important;
-    font-size: 0.85rem !important;
+    line-height: var(--text-dense-leading) !important;
+    font-size: var(--text-dense-size) !important;
     color: var(--text-primary) !important;
 }
 
@@ -325,8 +326,8 @@
 }
 
 .practice-card-header-title {
-    font-size: 1.1rem;
-    font-weight: bold;
+    font-size: var(--text-title-md);
+    font-weight: var(--font-weight-heading);
 }
 
 .practice-card-menu-list {
@@ -348,7 +349,7 @@
 }
 
 .no-practice-menu {
-    font-size: 0.85rem;
+    font-size: var(--text-dense-size);
     color: var(--text-secondary);
     padding: 0.4rem 0.5rem;
     list-style: none;

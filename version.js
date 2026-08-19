@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.15';
+export const APP_VERSION = 'v1.30.16';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.16',
+        date: '2026-08-19',
+        title: 'タイポグラフィ体系（フォントサイズ階層）の全体統一',
+        features: [
+            'tokens.cssに見出しスケール（--text-title-xl〜sm）を追加し、h1〜h6の基本サイズと行間を一元管理',
+            'c-section-header、c-kicker、バッジ、各種カードヘッダーのフォントサイズをセマンティックトークンへ統一',
+            '個別画面CSSに散らばっていた端数のフォントサイズ指定を解消し、アプリ全体の視認性と美しさを向上'
+        ]
+    },
     {
         version: 'v1.30.15',
         date: '2026-08-19',
