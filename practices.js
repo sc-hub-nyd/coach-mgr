@@ -577,6 +577,7 @@ export function initPractices(miniPitchObserver) {
 
             const engagementInp = document.getElementById('menu-engagement');
             const engagementVal = engagementInp ? parseInt(engagementInp.value, 10) : 0;
+            const reflectionInp = document.getElementById('menu-reflection');
             const reflectionVal = reflectionInp ? reflectionInp.value.trim() : '';
 
             const newMenuObj = {

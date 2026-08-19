@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.41';
+export const APP_VERSION = 'v1.30.42';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.42',
+        date: '2026-08-19',
+        title: '練習メニュー追加・モーダル入力の修正とボタン動作の総点検',
+        features: [
+            '練習管理カード内の「+ メニュー」追加ボタンで発生していた未定義変数参照エラーを解消',
+            '練習メニューモーダルへの「指導者の振り返り・メモ」入力フィールド（#menu-reflection）の完全追加',
+            '空状態の練習追加ボタン（#btn-empty-add-practice）のイベントバインドおよび試合詳細戻るナビゲーションの最適化'
+        ]
+    },
     {
         version: 'v1.30.41',
         date: '2026-08-19',

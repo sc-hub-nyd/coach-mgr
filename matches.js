@@ -1136,7 +1136,7 @@ export function openMatchModal(matchId = null) {
                 initMatchDetailView(parseInt(editId, 10));
             } else {
                 // 新規作成の場合は、一覧へ遷移
-                navigate('matches');
+                navigateBack();
             }
         };
     }
