@@ -2993,7 +2993,7 @@ input[type="checkbox"] {
 .dash-preflight-item.is-neutral > i { color: var(--text-secondary); background: color-mix(in srgb, var(--surface-border) 72%, transparent); }
 .dash-preflight-item strong, .dash-preflight-item small { display: block; }
 .dash-preflight-item strong { overflow: hidden; color: var(--text-primary); font-size: 0.72rem; text-overflow: ellipsis; white-space: nowrap; }
-.dash-preflight-item small { display: -webkit-box; overflow: hidden; margin-top: 0.12rem; color: var(--text-secondary); font-size: 0.63rem; line-height: 1.35; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.dash-preflight-item small { display: -webkit-box; overflow: hidden; margin-top: 0.12rem; color: var(--text-secondary); font-size: 0.63rem; line-height: 1.35; line-clamp: 2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .dash-preflight-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .dash-preflight-actions .btn { min-height: 42px; }
 @media (max-width: 780px) { .dash-preflight-items { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

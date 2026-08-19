@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.42';
+export const APP_VERSION = 'v1.30.43';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.43',
+        date: '2026-08-19',
+        title: 'CSS標準プロパティ（line-clamp）定義の補完',
+        features: [
+            'components.css 内の -webkit-line-clamp に対する標準プロパティ line-clamp の定義を追加し、ブラウザ互換性・リンター警告を解消'
+        ]
+    },
     {
         version: 'v1.30.42',
         date: '2026-08-19',
