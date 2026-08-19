@@ -75,3 +75,29 @@ test('P38-7: スマホ向けスリム戻るコンテキストバー（Mobile Con
     assert.match(appJs, /const mobileContextBar = document\.getElementById\('mobile-context-bar'\);/, 'app.js accesses mobile-context-bar');
     assert.match(appJs, /mobileContextBackBtn\.onclick[\s\S]*?navigateBack\(\)/, 'mobile-context-back-btn triggers navigateBack');
 });
+
+
+test('P38-8: 戻るドックの44px操作領域とセーフエリア配置を検証', () => {
+    assert.match(
+        baseCss,
+        /\.mobile-context-bar\s*\{[\s\S]*?bottom:\s*calc\(64px\s*\+\s*var\(--safe-bottom\)\)\s*!important;[\s\S]*?height:\s*48px\s*!important;[\s\S]*?min-height:\s*48px\s*!important;/,
+        'mobile context bar reserves the bottom safe area and a 48px bar height'
+    );
+    assert.match(
+        baseCss,
+        /\.mobile-context-back-btn\s*\{[\s\S]*?min-width:\s*var\(--tap-target\)\s*!important;[\s\S]*?min-height:\s*var\(--tap-target\)\s*!important;[\s\S]*?height:\s*var\(--tap-target\)\s*!important;/,
+        'mobile context back button uses the shared 44px tap target token'
+    );
+});
+
+test('P38-9: 詳細画面から一覧文脈を保存・復元する契約検証', () => {
+    assert.match(appJs, /function captureRouteContext\(route\)/, 'app.js captures list context before entering detail');
+    assert.match(appJs, /currentMatchSearch/, 'match search state is included in the saved context');
+    assert.match(appJs, /currentMatchPage/, 'match pagination state is included in the saved context');
+    assert.match(appJs, /filterAccordionOpen/, 'filter accordion visibility is included in the saved context');
+    assert.match(appJs, /activePlayerView/, 'player view tab is included in the saved context');
+    assert.match(appJs, /context:\s*captureRouteContext\(uiState\.currentRoute\)/, 'navigation history stores the route context');
+    assert.match(appJs, /navigate\(prev\.route, prev\.params, true, prev\.context \|\| null\)/, 'back navigation passes the saved context');
+    assert.match(appJs, /function restoreRouteContextDom\(context\)/, 'app.js restores DOM-level route context after rendering');
+    assert.match(appJs, /restoreRouteContextDom\(appliedRouteContext\)/, 'route context restoration runs after route initialization');
+});
