@@ -555,11 +555,19 @@ export function initPractices(miniPitchObserver) {
         };
     }
 
-    const formMenu = document.getElementById('form-menu');
-    if (formMenu) {
-        formMenu.onsubmit = (e) => {
+    const handleMenuSubmit = (e) => {
+        if (e) {
             e.preventDefault();
-            const practiceId = document.getElementById('menu-practice-id').value;
+            e.stopPropagation();
+        }
+        const focusInput = document.getElementById('menu-focus');
+        if (!focusInput || !focusInput.value.trim()) {
+            showToast('テーマ・フォーカスを入力してください');
+            if (focusInput) focusInput.focus();
+            return false;
+        }
+
+        const practiceId = document.getElementById('menu-practice-id').value;
             const sourceId = document.getElementById('menu-library-source-id').value;
 
             let frames = null;
@@ -692,8 +700,17 @@ export function initPractices(miniPitchObserver) {
                     navigate('practices');
                 }
             }
+            return false;
         };
-    }
+
+        const formMenu = document.getElementById('form-menu');
+        if (formMenu) {
+            formMenu.onsubmit = handleMenuSubmit;
+        }
+        const btnSubmitMenu = document.getElementById('btn-submit-menu');
+        if (btnSubmitMenu) {
+            btnSubmitMenu.onclick = handleMenuSubmit;
+        }
 
     const btnLoadMorePractices = document.getElementById('btn-load-more-practices');
     if (btnLoadMorePractices) {

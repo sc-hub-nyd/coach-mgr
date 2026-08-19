@@ -183,8 +183,10 @@ export async function loadData() {
                 loadSyncAudit({ decryptData })
             ]);
             hydrateSyncOutbox(state, { outbox, audit });
-        // セッション中にロールが未設定の場合のみ初期値（保護者モード）をセット
-        if (!state.currentUserRole) {
+        const savedRole = sessionStorage.getItem('currentUserRole');
+        if (savedRole === 'coach') {
+            state.currentUserRole = 'coach';
+        } else if (!state.currentUserRole) {
             state.currentUserRole = 'parent';
         }
     } catch (e) {
@@ -465,9 +467,12 @@ export function openModal(id) {
         const catSel = document.getElementById('menu-category');
         if (catSel) {
             const currentVal = catSel.value;
-            catSel.innerHTML = state.menuCategories.map(c => `<option value="${c}">${c}</option>`).join('');
-            if (state.menuCategories.includes(currentVal)) catSel.value = currentVal;
-            else if (state.menuCategories.length > 0) catSel.value = state.menuCategories[0];
+            const cats = Array.isArray(state.menuCategories) && state.menuCategories.length > 0
+                ? state.menuCategories
+                : ['ウォーミングアップ', 'パス＆コントロール', 'ポゼッション', 'シュート', '守備', 'ゲーム', 'その他'];
+            catSel.innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
+            if (cats.includes(currentVal)) catSel.value = currentVal;
+            else if (cats.length > 0) catSel.value = cats[0];
         }
     }
     const modalEl = document.getElementById(id);
@@ -2010,6 +2015,7 @@ function setupEventListeners() {
         // 現在がコーチモードの場合：パスコード不要で保護者モードへ
         if (state.currentUserRole === 'coach') {
             state.currentUserRole = 'parent';
+            sessionStorage.removeItem('currentUserRole');
             localStorage.removeItem('currentUserRole');
 
             updateRoleUI();
@@ -2062,6 +2068,7 @@ function setupEventListeners() {
 
             if (val === targetPass) {
                 state.currentUserRole = 'coach';
+                sessionStorage.setItem('currentUserRole', 'coach');
                 localStorage.removeItem('currentUserRole');
                 if (modalPasscode) modalPasscode.classList.add('hidden');
                 document.body.classList.remove('modal-open');

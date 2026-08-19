@@ -2074,7 +2074,7 @@
                 <h2 id="modal-menu-title" class="c-modal__title">練習メニューを追加</h2>
                 <button type="button" class="c-modal__close btn-close-modal" aria-label="練習メニューフォームを閉じる">&times;</button>
             </div>
-            <form id="form-menu" class="c-modal__body c-settings-form">
+            <form id="form-menu" class="c-modal__body c-settings-form" onsubmit="event.preventDefault(); return false;">
                 <input type="hidden" id="menu-practice-id">
                 <input type="hidden" id="menu-library-source-id">
                 <input type="hidden" id="menu-edit-id">
@@ -2123,7 +2123,7 @@
             </form>
             <div class="c-modal__footer c-action-group c-action-group--end">
                 <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                <button type="submit" form="form-menu" class="btn btn-primary">追加する</button>
+                <button type="button" id="btn-submit-menu" class="btn btn-primary">追加する</button>
             </div>
         </div>
     </div>

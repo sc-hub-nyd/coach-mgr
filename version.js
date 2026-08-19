@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.43';
+export const APP_VERSION = 'v1.30.44';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.44',
+        date: '2026-08-19',
+        title: 'コーチモードのセッション永続化とフォーム送信リロード防止',
+        features: [
+            '練習メニューモーダルの送信ボタンをtype="button"化し、ネイティブフォーム送信によるページ再読み込み・保護者モード初期化を防止',
+            'sessionStorage によるコーチモード状態の永続化により、リロードや画面切替時も編集権限を確実に維持'
+        ]
+    },
     {
         version: 'v1.30.43',
         date: '2026-08-19',
