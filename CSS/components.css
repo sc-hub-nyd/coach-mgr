@@ -987,14 +987,7 @@ input[type="checkbox"] {
 /* ==========================================
    Auto-extracted Utility Classes (S-1 Refactor)
    ========================================== */
-.u-ext-16 {
-    color: #ef4444;
-}
 
-.u-ext-30 {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-}
 
 
 .u-ext-38 {
@@ -1106,31 +1099,6 @@ input[type="checkbox"] {
 }
 
 /* Legacy empty-state rule remains while other match-detail regions still reference it. */
-.u-ext-57 {
-    padding-block: 0.2rem;
-    color: var(--text-secondary);
-    font-size: 0.75rem;
-    font-style: italic;
-}
-
-.u-ext-61 {
-    grid-column: 1/-1;
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-secondary);
-    background: rgba(0, 0, 0, 0.02);
-    border-radius: 8px;
-    border: 1px dashed var(--surface-border);
-}
-
-.u-ext-62 {
-    font-size: 0.78rem;
-    color: var(--text-primary);
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 
 
 
@@ -1146,9 +1114,8 @@ input[type="checkbox"] {
 
 
 
-.u-ext-77 {
-    color: var(--primary);
-}
+
+
 
 
 
@@ -1185,131 +1152,24 @@ input[type="checkbox"] {
 
 
 
-.u-ext-123 {
-    padding: 1rem 1.2rem;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.03) 100%);
-    border: none;
-    border-radius: 12px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.8rem;
-}
 
-.u-ext-124 {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
 
-.u-ext-125 {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    flex-shrink: 0;
-}
 
-.u-ext-126 {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    font-weight: 600;
-}
 
-.u-ext-127 {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--text-primary);
-}
 
-.u-ext-128 {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    flex-wrap: wrap;
-}
 
-.u-ext-129 {
-    text-align: center;
-}
 
-.u-ext-130 {
-    font-weight: 700;
-    font-size: 1.05rem;
-}
 
-.u-ext-131 {
-    color: #22c55e;
-}
 
-.u-ext-132 {
-    color: #eab308;
-}
 
-.u-ext-133 {
-    color: var(--text-secondary);
-}
 
-.u-ext-134 {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    font-weight: normal;
-}
 
-.u-ext-135 {
-    font-weight: normal;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
 
-.u-ext-136 {
-    font-size: 0.8rem;
-    margin-top: 0.4rem;
-}
 
-.u-ext-137 {
-    width: 100%;
-    cursor: pointer;
-}
 
-.u-ext-138 {
-    font-weight: 600;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    outline: none;
-    list-style: none;
-    user-select: none;
-}
 
-.u-ext-139 {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    transition: transform 0.2s;
-}
 
-.u-ext-142 {
-    text-align: center;
-    margin: 1.5rem 0 1rem 0;
-}
 
-.u-ext-143 {
-    padding: 0.6rem 2rem;
-    font-size: 0.9rem;
-    border-radius: var(--radius-md);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-weight: 600;
-}
 
 
 

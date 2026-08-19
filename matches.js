@@ -1102,14 +1102,14 @@ function renderPeriodGrid(m) {
     if (!grid) return;
 
     if (!m.formations || m.formations.length === 0) {
-        grid.innerHTML = '<div class="u-ext-61" >ピリオドが登録されていません。「＋ ピリオド追加」から作成してください。</div>';
+        grid.innerHTML = '<div class="c-empty-inline" >ピリオドが登録されていません。「＋ ピリオド追加」から作成してください。</div>';
         return;
     }
 
     grid.innerHTML = m.formations.map((f, idx) => {
         const scoreUs = f.scoreUs !== undefined ? f.scoreUs : 0;
         const scoreThem = f.scoreThem !== undefined ? f.scoreThem : 0;
-        const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="u-ext-16 fa-brands fa-youtube" title="動画あり"></i>' : '';
+        const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="c-icon--brand fa-brands fa-youtube" title="動画あり"></i>' : '';
         const isPkPeriod = f.name && (f.name.trim() === 'PK戦' || f.name.toLowerCase().includes('pk'));
 
         let goalDetailsHtml = '';
@@ -1119,7 +1119,7 @@ function renderPeriodGrid(m) {
                 const nameStr = p ? `${p.number ? `${p.number}. ` : ''}${escapeHtml(p.name)}` : 'キッカー未登録';
                 const usMark = k.isUsGoal === true ? '<b style="color:var(--success);">○</b>' : (k.isUsGoal === false ? '<b style="color:var(--danger);">✕</b>' : '-');
                 const themMark = k.isThemGoal === true ? '<b style="color:var(--success);">○</b>' : (k.isThemGoal === false ? '<b style="color:var(--danger);">✕</b>' : '-');
-                return `<div class="u-ext-62" style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                return `<div class="c-pk-record-row">
                     <span>${kIdx + 1}本目: ${nameStr} (${usMark})</span>
                     <span>相手: (${themMark})</span>
                 </div>`;
@@ -1504,7 +1504,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
         if (isCoach) {
             // コーチモード：編集フォーム（ミニピッチ付き）
-            if (sideHeading) sideHeading.innerHTML = '<i class="u-ext-77 fa-solid fa-pen" ></i> ピリオド情報編集';
+            if (sideHeading) sideHeading.innerHTML = '<i class="c-icon--meta fa-solid fa-pen" ></i> ピリオド情報編集';
 
             const systemOptions = state.customFormations.map(cf => `<option value="${cf.name}" ${period.system === cf.name ? 'selected' : ''}>${cf.name} (${cf.coords.length}人制)</option>`).join('');
 
@@ -1653,7 +1653,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         <button type="button" class="c-button btn c-button--primary btn-primary btn-xs" id="btn-add-side-goal" ><i class="fa-solid fa-plus"></i> 追加</button>
                     </div>
                     <div class="c-period-editor__scroll-list" id="side-goal-records-container" >
-                        ${goalRowsHtml || '<div class="u-ext-57" >得点記録なし</div>'}
+                        ${goalRowsHtml || '<div class="c-empty-inline" >得点記録なし</div>'}
                     </div>
                 </div>
                 <div class="c-inspector-panel__item">
@@ -1686,7 +1686,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         ${pitchPinsHtml}
                     </div>
                     <div class="c-period-editor__scroll-list" id="side-positions-container" >
-                        ${posListHtml || '<div class="u-ext-57" >ポジション設定がありません</div>'}
+                        ${posListHtml || '<div class="c-empty-inline" >ポジション設定がありません</div>'}
                     </div>
                 </div>
                 <div class="c-period-editor__save-wrap">
@@ -1898,7 +1898,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
             }
         } else {
             // 保護者モード：閲覧専用プレビュー（コーチモードと同じすべての情報を網羅）
-            if (sideHeading) sideHeading.innerHTML = '<i class="u-ext-77 fa-solid fa-circle-info" ></i> ピリオド情報';
+            if (sideHeading) sideHeading.innerHTML = '<i class="c-icon--meta fa-solid fa-circle-info" ></i> ピリオド情報';
 
             const videoUrl = (period.videoUrls && period.videoUrls[0]) || period.videoUrl || '';
 
@@ -2021,7 +2021,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         ${pitchPinsHtml}
                     </div>
                     <div class="c-period-editor__scroll-list" >
-                        ${posListHtml || '<div class="u-ext-57" >ポジション設定がありません</div>'}
+                        ${posListHtml || '<div class="c-empty-inline" >ポジション設定がありません</div>'}
                     </div>
                 </div>
             `;
@@ -2961,34 +2961,34 @@ export function initMatches() {
             const diffStr = diff > 0 ? `+${diff}` : `${diff}`;
 
             h2hHtml = `
-                <div class="u-ext-123 c-card card opponent-h2h-card" >
-                    <div class="u-ext-124" >
-                        <div class="u-ext-125" >
+                <div class="c-opponent-summary c-card card" >
+                    <div class="c-opponent-summary__header" >
+                        <div class="c-opponent-summary__icon" >
                             <i class="fa-solid fa-shield-halved"></i>
                         </div>
                         <div>
-                            <div class="u-ext-126" >対戦相手 通算成績</div>
-                            <div class="u-ext-127" >vs ${escapeHtml(currentMatchOpponent)}</div>
+                            <div class="c-opponent-summary__title" >対戦相手 通算成績</div>
+                            <div class="c-opponent-summary__opponent" >vs ${escapeHtml(currentMatchOpponent)}</div>
                         </div>
                     </div>
-                    <div class="u-ext-128" >
-                        <div class="u-ext-129" >
-                            <div class="u-ext-30" >通算対戦</div>
-                            <div class="u-ext-130" >${allMatchesAgainstOpp.length}試合</div>
+                    <div class="c-stat-cluster" >
+                        <div class="c-stat-cluster__item" >
+                            <div class="c-stat-cluster__label" >通算対戦</div>
+                            <div class="c-stat-cluster__value" >${allMatchesAgainstOpp.length}試合</div>
                         </div>
-                        <div class="u-ext-129" >
-                            <div class="u-ext-30" >勝敗内訳</div>
-                            <div class="u-ext-130" >
-                                <span class="u-ext-131" >${wins}勝</span>
-                                <span class="u-ext-16" >${losses}敗</span>
-                                <span class="u-ext-132" >${draws}分</span>
+                        <div class="c-stat-cluster__item" >
+                            <div class="c-stat-cluster__label" >勝敗内訳</div>
+                            <div class="c-stat-cluster__value" >
+                                <span class="c-stat-value--win" >${wins}勝</span>
+                                <span class="c-stat-value--loss" >${losses}敗</span>
+                                <span class="c-stat-value--draw" >${draws}分</span>
                             </div>
                         </div>
-                        <div class="u-ext-129" >
-                            <div class="u-ext-30" >総得失点</div>
-                            <div class="u-ext-130" >
-                                <span class="u-ext-77" >${gf}</span> / <span class="u-ext-133" >${ga}</span>
-                                <span class="u-ext-134" >(${diffStr})</span>
+                        <div class="c-stat-cluster__item" >
+                            <div class="c-stat-cluster__label" >総得失点</div>
+                            <div class="c-stat-cluster__value" >
+                                <span class="c-stat-value--win" >${gf}</span> / <span class="c-stat-value--loss" >${ga}</span>
+                                <span class="c-stat-value--draw" >(${diffStr})</span>
                             </div>
                         </div>
                     </div>
@@ -3015,7 +3015,7 @@ export function initMatches() {
             `;
             grouped[month].forEach(m => {
                 const isCompleted = !!(m.result && m.result.trim());
-                const resultText = isCompleted ? escapeHtml(m.result) : '<span class="u-ext-135" >試合予定</span>';
+                const resultText = isCompleted ? escapeHtml(m.result) : '<span class="c-status c-status--muted" >試合予定</span>';
 
                 const attendeesHtml = m.presentPlayerIds && m.presentPlayerIds.length > 0
                     ? state.players.filter(pl => m.presentPlayerIds.includes(pl.id)).map(pl => `
@@ -3038,10 +3038,10 @@ export function initMatches() {
                             <div>
                                 <div class="match-card-date"><i class="fa-regular fa-calendar"></i> ${m.date} | ${m.type}${m.tournament ? ` (${m.tournament})` : ''}</div>
                                 <div class="match-card-opponent">vs ${escapeHtml(m.opponent)}</div>
-                                <div class="u-ext-136 text-secondary" >
-                                    <details class="u-ext-137 practice-attendance-details" >
-                                        <summary class="u-ext-138" >
-                                            <i class="u-ext-139 fa-solid fa-chevron-down" ></i>
+                                <div class="c-attendee-disclosure" >
+                                    <details class="c-attendee-disclosure practice-attendance-details" >
+                                        <summary class="c-attendee-disclosure__summary" >
+                                            <i class="c-attendee-disclosure__icon fa-solid fa-chevron-down" ></i>
                                             <span>参加者 (${m.presentPlayerIds ? `${m.presentPlayerIds.length}/${state.players.length}` : `0/${state.players.length}`})</span>
                                         </summary>
                                         <div class="c-attendee-list">
@@ -3066,8 +3066,8 @@ export function initMatches() {
         if (filteredMatches.length > displayedMatches.length) {
             const remaining = filteredMatches.length - displayedMatches.length;
             html += `
-                <div class="u-ext-142" >
-                    <button class="u-ext-143 c-button btn c-button--secondary btn-secondary" id="btn-load-more-matches" >
+                <div class="c-load-more" >
+                    <button class="c-load-more__button c-button btn c-button--secondary btn-secondary" id="btn-load-more-matches" >
                         <i class="fa-solid fa-angle-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredMatches.length} 件)
                     </button>
                 </div>

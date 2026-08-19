@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.66';
+export const APP_VERSION = 'v1.30.67';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.67',
+        date: '2026-08-20',
+        title: '波H：試合成績・参加者開示・PK補助行の共通化',
+        features: [
+            '対戦相手通算成績をc-opponent-summaryとc-stat-clusterへ統一し、勝敗・得失点の集計表示を維持',
+            '試合一覧の参加者開示と追加読み込みをc-attendee-disclosure・c-load-moreへ統一',
+            'PK記録・ピリオド空状態をc-pk-record-row・c-empty-inlineへ移行し、静的インライン装飾の分類台帳を追加'
+        ]
+    },
     {
         version: 'v1.30.66',
         date: '2026-08-19',

@@ -2942,3 +2942,23 @@
 .c-icon--meta { font-size: 0.75rem; }
 .c-load-more { display: grid; place-items: center; margin: 1.5rem 0 1rem; }
 .c-load-more__button { padding: 0.6rem 2rem; }
+
+/* Wave H1-H2: opponent summary and match attendance disclosure. */
+.c-opponent-summary { display:grid; gap:var(--space-3); padding:var(--space-4); }
+.c-opponent-summary__header { display:flex; align-items:center; gap:var(--space-3); }
+.c-opponent-summary__icon { display:grid; place-items:center; inline-size:2.4rem; block-size:2.4rem; border-radius:50%; background:color-mix(in srgb, var(--primary) 14%, transparent); color:var(--primary); }
+.c-opponent-summary__title { margin:0; font-weight:800; color:var(--text-primary); }
+.c-opponent-summary__opponent { color:var(--text-secondary); font-size:0.8rem; }
+.c-stat-cluster { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--space-2); }
+.c-stat-cluster__item { min-inline-size:0; padding:var(--space-2); text-align:center; background:var(--surface-subtle); border-radius:var(--radius-sm); }
+.c-stat-cluster__label { color:var(--text-secondary); font-size:0.72rem; }
+.c-stat-cluster__value { margin-block-start:0.2rem; font-weight:800; overflow-wrap:anywhere; }
+.c-stat-value--win { color:var(--success); } .c-stat-value--loss { color:var(--danger); } .c-stat-value--draw { color:var(--warning); }
+.c-attendee-disclosure { color:var(--text-secondary); }
+.c-attendee-disclosure__summary { cursor:pointer; font-size:0.8rem; }
+.c-attendee-disclosure__icon { margin-inline-end:var(--space-1); }
+
+/* Wave H3: PK records and result rows. */
+.c-pk-record-list { display:grid; gap:var(--space-1); }
+.c-pk-record-row { display:flex; justify-content:space-between; gap:var(--space-2); color:var(--text-secondary); font-size:0.8rem; }
+.c-empty-inline { color:var(--text-secondary); font-size:0.82rem; }
