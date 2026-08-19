@@ -14,11 +14,19 @@ const source = Object.fromEntries(await Promise.all([
     ['drawing', '../drawing.js'],
     ['app', '../app.js'],
     ['standard', '../CSS/components-standard.css'],
+    ['components', '../CSS/components.css'],
+    ['base', '../CSS/base.css'],
+    ['dashboard', '../CSS/dashboard.css'],
+    ['drawingCss', '../CSS/drawing.css'],
     ['system', '../CSS/components-system.css']
 ].map(async ([key, file]) => [key, await read(file)])));
 
 const requireAll = (text, values, label) => values.forEach(value => {
     assert.match(text, new RegExp(value), `${label}に必要な契約がありません: ${value}`);
+});
+
+const requireNone = (text, patterns, label) => patterns.forEach(pattern => {
+    assert.doesNotMatch(text, pattern, `${label}に禁止された旧ラベル規則があります: ${pattern}`);
 });
 
 // Settings: preserve data entry, theme, workspace, sync, and parent-access contracts while markup migrates.
@@ -387,6 +395,50 @@ requireAll(source.index, [
     'c-filter-bar__search',
     'c-filter-bar__filters'
 ], '試合フィルター');
+
+// Label-shape contract: only common status labels may represent state, counts, and compact metadata.
+const labelSources = [
+    source.index,
+    source.app,
+    source.matches,
+    source.practices,
+    source.library,
+    source.drawing,
+    source.standard,
+    source.components,
+    source.base,
+    source.dashboard,
+    source.drawingCss
+].join('\n');
+
+requireAll(source.standard, [
+    '\\.c-status',
+    '\\.c-status--count',
+    '\\.c-status--interactive',
+    '\\.c-status__dismiss'
+], '共通ステータス部品');
+
+requireAll(source.index, [
+    'c-status c-status--count c-status--compact',
+    'id="dash-setup-progress" class="c-status c-status--info"'
+], '共通ステータスのテンプレート利用');
+
+requireAll([source.matches, source.practices, source.library].join('\n'), [
+    'c-status c-status--interactive c-status--compact',
+    'c-status__dismiss'
+], '解除可能な絞り込みタグ');
+
+requireAll(source.drawing, [
+    'c-status c-status--compact c-status--info',
+    'c-status c-status--compact c-status--muted'
+], 'フィルムストリップの共通ステータス利用');
+
+requireNone(labelSources, [
+    /\.badge(?:-(?:required|sub|fw|mf|df|gk))?\b/,
+    /class=["'][^"']*(?:\s|["'])badge(?:-(?:required|sub|fw|mf|df|gk))?(?=\s|["'])/,
+    /\.(?:filter-count-badge|active-tag-chip|tag-remove|setup-progress|status-badge|dash-form-badge-lg|dash-circle-match|dash-circle-practice|filmstrip-badge|pause-badge|caption-badge)\b/,
+    /class=["'][^"']*(?:\s|["'])(?:filter-count-badge|active-tag-chip|tag-remove|setup-progress|status-badge|dash-form-badge-lg|dash-circle-match|dash-circle-practice|filmstrip-badge|pause-badge|caption-badge)(?=\s|["'])/
+], '旧ラベル形状');
 
 // Standard component contracts used by Phase 1 must exist before templates are migrated.
 requireAll(source.standard, [
