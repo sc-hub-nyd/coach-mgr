@@ -2266,7 +2266,8 @@ export function navigateBack() {
     if (!state.navHistory) state.navHistory = [];
     while (state.navHistory.length > 0) {
         const prev = state.navHistory.pop();
-        if (prev && prev.route && prev.route !== uiState.currentRoute) {
+        // animation（作図画面）や現在のルートと同じものはスキップして直前の通常画面へ復帰
+        if (prev && prev.route && prev.route !== uiState.currentRoute && prev.route !== 'animation') {
             navigate(prev.route, prev.params, true);
             return;
         }
@@ -2307,8 +2308,9 @@ export function navigate(route, params = null, isBack = false) {
     }
 
     // 履歴スタックの管理（戻る操作でない場合、直前のルートを記録）
+    // ※ animation（作図画面）は子画面のため、履歴の戻り先スタックには積まない
     if (!state.navHistory) state.navHistory = [];
-    if (!isBack && uiState.currentRoute && uiState.currentRoute !== route) {
+    if (!isBack && uiState.currentRoute && uiState.currentRoute !== route && uiState.currentRoute !== 'animation') {
         const lastEntry = state.navHistory[state.navHistory.length - 1];
         if (!lastEntry || lastEntry.route !== uiState.currentRoute) {
             state.navHistory.push({

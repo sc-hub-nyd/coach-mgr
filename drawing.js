@@ -2210,7 +2210,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                         isDirty = false;
                         if (window.saveData) window.saveData();
                         showToast('フォーメーションを保存しました');
-                        if (typeof navigateFunc === 'function') navigateFunc('matches');
+                        if (typeof navigateFunc === 'function') navigateFunc('matches', null, true);
                     }
                 }
             } else if (currentPracticeId && currentMenuId) {
@@ -2242,7 +2242,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                         isDirty = false;
                         if (window.saveData) window.saveData();
                         showToast('作図を保存しました');
-                        if (typeof navigateFunc === 'function') navigateFunc('practices');
+                        if (typeof navigateFunc === 'function') navigateFunc('practices', null, true);
                     }
                 }
             } else if (isLibraryMode) {
@@ -2275,7 +2275,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                     isDirty = false;
                     if (window.saveData) window.saveData();
                     showToast('作図を保存しました');
-                    if (typeof navigateFunc === 'function') navigateFunc('library');
+                    if (typeof navigateFunc === 'function') navigateFunc('library', null, true);
                 }
             } else if (isTacticsMode) {
                 const tactic = state.tactics ? state.tactics.find(t => String(t.id) === String(currentTacticId)) : null;
@@ -2294,7 +2294,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                     isDirty = false;
                     if (window.saveData) window.saveData();
                     showToast('戦術の作図を保存しました');
-                    if (typeof navigateFunc === 'function') navigateFunc('tactics');
+                    if (typeof navigateFunc === 'function') navigateFunc('tactics', null, true);
                 }
             }
         };
@@ -2310,13 +2310,13 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 }
             }
             if (isFormationMode) {
-                if (typeof navigateFunc === 'function') navigateFunc('matches');
+                if (typeof navigateFunc === 'function') navigateFunc('matches', null, true);
             } else if (isLibraryMode) {
-                if (typeof navigateFunc === 'function') navigateFunc('library');
+                if (typeof navigateFunc === 'function') navigateFunc('library', null, true);
             } else if (isTacticsMode) {
-                if (typeof navigateFunc === 'function') navigateFunc('tactics');
+                if (typeof navigateFunc === 'function') navigateFunc('tactics', null, true);
             } else {
-                if (typeof navigateFunc === 'function') navigateFunc('practices');
+                if (typeof navigateFunc === 'function') navigateFunc('practices', null, true);
             }
         };
     }

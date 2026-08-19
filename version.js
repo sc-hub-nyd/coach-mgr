@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.39';
+export const APP_VERSION = 'v1.30.40';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.40',
+        date: '2026-08-19',
+        title: '作図画面（メニュー・戦術）復帰後の戻るボタン動作修正',
+        features: [
+            '作図画面からメニュー管理・戦術管理・練習管理・試合詳細へ戻った後、トップバーの「戻る」ボタンを押した際に作図画面へ逆戻りせず、正しく親画面（ダッシュボード等）へ復帰するよう修正'
+        ]
+    },
     {
         version: 'v1.30.39',
         date: '2026-08-19',

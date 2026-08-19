@@ -59,6 +59,7 @@ test('P38-5: ナビゲーション履歴スタック（navHistory）＆戻るボ
     assert.match(appJs, /export function navigateBack\(\)/, 'app.js exports navigateBack function');
     assert.match(appJs, /state\.navHistory\.push/, 'app.js records navigation history');
     assert.match(appJs, /state\.navHistory\.pop/, 'app.js pops previous route on back navigation');
+    assert.match(appJs, /prev\.route !== 'animation'/, 'app.js skips animation route when going back');
     assert.match(appJs, /topbarBack\.onclick\s*=\s*\(e\)\s*=>\s*\{[\s\S]*?navigateBack\(\)/, 'topbarBack.onclick triggers navigateBack');
 });
 
