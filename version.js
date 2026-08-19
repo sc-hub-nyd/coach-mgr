@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.50';
+export const APP_VERSION = 'v1.30.51';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.51',
+        date: '2026-08-19',
+        title: 'パンくずリストの2階層詳細専用化',
+        features: [
+            'パンくずリストの表示を2階層以上の詳細画面（試合詳細・選手カルテ）のみに限定し、1階層目（選手管理・試合管理等）では不要なパンくずを非表示にしてトップバーをクリーン化'
+        ]
+    },
     {
         version: 'v1.30.50',
         date: '2026-08-19',
