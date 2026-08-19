@@ -130,7 +130,7 @@
                     <span class="c-icon c-icon--cone c-icon--sm" aria-hidden="true"></span>
                     <span>練習</span>
                 </a>
-                <a href="#" class="nav-item" data-route="library" aria-label="メニュー管理">
+                <a href="#" class="nav-item coach-only" data-route="library" aria-label="メニュー管理">
                     <span class="c-icon c-icon--document c-icon--sm" aria-hidden="true"></span>
                     <span>メニュー</span>
                 </a>
@@ -156,13 +156,26 @@
 
             <div class="mobile-more-body" style="padding:1rem;">
                 <!-- ロール切替カード -->
-                <div class="mobile-more-role-card c-card" style="margin-bottom:1rem; padding:0.75rem 1rem; display:flex; justify-content:space-between; align-items:center;">
+                <div class="mobile-more-role-card c-card" style="margin-bottom:0.8rem; padding:0.75rem 1rem; display:flex; justify-content:space-between; align-items:center;">
                     <div>
                         <div style="font-size:0.7rem; color:var(--text-secondary); font-weight:600;">現在のモード</div>
                         <div id="mobile-user-role-label" style="font-weight:700; font-size:0.95rem; color:var(--text-primary);">保護者モード</div>
                     </div>
                     <button type="button" class="btn btn-primary btn-sm" id="mobile-btn-toggle-role" style="font-size:0.8rem;">
                         <i class="fa-solid fa-right-left" aria-hidden="true"></i> モード切替
+                    </button>
+                </div>
+
+                <!-- クラウド同期カード（モバイル統合） -->
+                <div class="mobile-more-sync-card c-card" id="mobile-sync-card" style="margin-bottom:0.8rem; padding:0.75rem 1rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                        <div style="font-size:0.75rem; font-weight:700; display:flex; align-items:center; gap:0.35rem;">
+                            <i class="fa-solid fa-cloud" aria-hidden="true" style="color:var(--primary);"></i> クラウド同期
+                        </div>
+                        <div style="font-size:0.7rem; color:var(--text-secondary);" id="mobile-sync-last-time">最終同期: 未実施</div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="mobile-btn-sync-now" style="width:100%; font-size:0.8rem; justify-content:center; gap:0.4rem;">
+                        <i class="fa-solid fa-cloud-arrow-down" id="mobile-sync-icon" aria-hidden="true"></i> <span id="mobile-sync-btn-text">データを同期する</span>
                     </button>
                 </div>
 
@@ -186,13 +199,13 @@
                     </button>
                 </div>
 
-                <!-- ユーティリティ行（テーマ切替・手動同期・バージョン） -->
-                <div class="mobile-more-utility-row" style="margin-top:1.2rem; padding-top:0.8rem; border-top:1px dashed var(--surface-border); display:flex; justify-content:space-between; align-items:center;">
+                <!-- ユーティリティ行（テーマ切替・バージョン） -->
+                <div class="mobile-more-utility-row" style="margin-top:1rem; padding-top:0.75rem; border-top:1px dashed var(--surface-border); display:flex; justify-content:space-between; align-items:center;">
                     <button type="button" class="btn btn-secondary btn-sm" id="mobile-btn-toggle-color-mode">
                         <i class="fa-solid fa-moon" aria-hidden="true"></i> <span id="mobile-color-mode-text">ダーク表示</span>
                     </button>
                     <button type="button" class="btn-link" id="mobile-version-badge" style="font-size:0.75rem; color:var(--text-secondary);" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <span id="mobile-version-text">v1.30.25</span>
+                        <span id="mobile-version-text">v1.30.28</span>
                     </button>
                 </div>
             </div>

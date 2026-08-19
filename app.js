@@ -241,30 +241,48 @@ function setSyncStateUI(status) {
     const dot = document.getElementById('sync-status-dot');
     const timeEl = document.getElementById('sync-last-time');
     const textEl = document.getElementById('sync-status-text');
+    const mobileIcon = document.getElementById('mobile-sync-icon');
+    const mobileBtnText = document.getElementById('mobile-sync-btn-text');
+    const mobileTimeEl = document.getElementById('mobile-sync-last-time');
     const isCoach = state.currentUserRole === 'coach';
     window.__coachMgrSyncStatus = status;
     if (textEl) textEl.textContent = getSyncStatusLabel(status);
 
     if (status === 'syncing') {
         if (icon) icon.className = 'fa-solid fa-rotate fa-spin';
+        if (mobileIcon) mobileIcon.className = 'fa-solid fa-rotate fa-spin';
+        if (mobileBtnText) mobileBtnText.textContent = '同期中...';
         if (dot) dot.className = 'sync-status-dot syncing';
     } else if (status === 'success') {
-        if (icon) icon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        const iconClass = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        if (icon) icon.className = iconClass;
+        if (mobileIcon) mobileIcon.className = iconClass;
+        if (mobileBtnText) mobileBtnText.textContent = 'データを同期する';
         if (dot) dot.className = 'sync-status-dot';
         const now = new Date();
         lastSyncTimeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
         if (timeEl) timeEl.textContent = `本日 ${lastSyncTimeStr}`;
+        if (mobileTimeEl) mobileTimeEl.textContent = `最終同期: 本日 ${lastSyncTimeStr}`;
     } else if (status === 'local') {
         if (icon) icon.className = 'fa-solid fa-hard-drive';
+        if (mobileIcon) mobileIcon.className = 'fa-solid fa-hard-drive';
+        if (mobileBtnText) mobileBtnText.textContent = 'ローカル保存済み';
         if (dot) dot.className = 'sync-status-dot';
     } else if (status === 'offline') {
         if (icon) icon.className = 'fa-solid fa-mobile-screen-button';
+        if (mobileIcon) mobileIcon.className = 'fa-solid fa-mobile-screen-button';
+        if (mobileBtnText) mobileBtnText.textContent = 'オフライン';
         if (dot) dot.className = 'sync-status-dot error';
     } else if (status === 'conflict') {
         if (icon) icon.className = 'fa-solid fa-triangle-exclamation';
+        if (mobileIcon) mobileIcon.className = 'fa-solid fa-triangle-exclamation';
+        if (mobileBtnText) mobileBtnText.textContent = '同期の競合が発生';
         if (dot) dot.className = 'sync-status-dot error';
     } else if (status === 'error') {
-        if (icon) icon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        const iconClass = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        if (icon) icon.className = iconClass;
+        if (mobileIcon) mobileIcon.className = iconClass;
+        if (mobileBtnText) mobileBtnText.textContent = '再試行する';
         if (dot) dot.className = 'sync-status-dot error';
     }
 }
@@ -1939,6 +1957,19 @@ function setupEventListeners() {
         });
     }
 
+    const mobileBtnSyncNow = document.getElementById('mobile-btn-sync-now');
+    if (mobileBtnSyncNow) {
+        mobileBtnSyncNow.addEventListener('click', () => {
+            setSyncStateUI('syncing');
+            const isCoach = state.currentUserRole === 'coach';
+            if (isCoach) {
+                syncPushGasCloud(false).then(() => setSyncStateUI('success')).catch(() => setSyncStateUI('error'));
+            } else {
+                syncPullGasCloud(false).then(() => setSyncStateUI('success')).catch(() => setSyncStateUI('error'));
+            }
+        });
+    }
+
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
             if (sidebar) {
@@ -2075,8 +2106,17 @@ export function updateRoleUI() {
     const btnSyncStatus = document.getElementById('btn-topbar-sync-status');
     const syncPopover = document.getElementById('sync-popover');
     const btnSyncNow = document.getElementById('btn-popover-sync-now');
+    const mobileSyncCard = document.getElementById('mobile-sync-card');
     const icon = document.getElementById('sync-status-icon');
+    const mobileIcon = document.getElementById('mobile-sync-icon');
     const hasUrl = state.teamInfo && state.teamInfo.gasApiUrl;
+
+    if (mobileSyncCard) {
+        mobileSyncCard.style.display = hasUrl ? 'block' : 'none';
+        if (mobileIcon && !mobileIcon.classList.contains('fa-spin')) {
+            mobileIcon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        }
+    }
 
     if (btnSyncStatus) {
         btnSyncStatus.style.display = hasUrl ? 'inline-flex' : 'none';
@@ -2113,10 +2153,12 @@ export function updateRoleUI() {
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // PCサイドバーおよびモバイルシートのリンク制御
+    // PCサイドバー、スマホボトムバー、モバイルシートのリンク制御
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     const parentScopes = getParentAccessScopes();
     document.body.dataset.parentScopes = isCoach ? 'coach' : parentScopes.join(',');
+
+    // PCサイドバー
     const playersLink = document.querySelector('.nav-links li[data-route="players"]');
     if (playersLink) playersLink.style.display = isCoach ? 'flex' : 'none';
 
@@ -2127,6 +2169,20 @@ export function updateRoleUI() {
     if (!isCoach) {
         if (matchesLink) matchesLink.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
         if (practicesLink) practicesLink.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
+    }
+
+    // スマホボトムバー
+    document.querySelectorAll('#bottom-nav .coach-only').forEach(el => {
+        el.style.display = isCoach ? 'flex' : 'none';
+    });
+    const bottomMatches = document.querySelector('#bottom-nav [data-route="matches"]');
+    const bottomPractices = document.querySelector('#bottom-nav [data-route="practices"]');
+    if (!isCoach) {
+        if (bottomMatches) bottomMatches.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
+        if (bottomPractices) bottomPractices.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
+    } else {
+        if (bottomMatches) bottomMatches.style.display = 'flex';
+        if (bottomPractices) bottomPractices.style.display = 'flex';
     }
 
     // モバイルその他メニュー内の coach-only / parent-only 表示制御
@@ -2145,6 +2201,7 @@ export function updateRoleUI() {
 
     const dataLink = document.querySelector('.nav-links li[data-route="data"]');
     if (dataLink) dataLink.style.display = isCoach ? 'flex' : 'none';
+
 
     const goalShort = document.getElementById('player-goal-short');
     const goalLong = document.getElementById('player-goal-long');
