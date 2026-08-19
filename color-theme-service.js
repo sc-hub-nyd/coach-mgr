@@ -164,16 +164,20 @@ function staticStatus(mode) {
 
 function buildNeutralPalette(hue, mode) {
     if (mode === 'dark') {
-        const surface = colorAt({ hue, saturation: 11, lightness: 15 });
+        // 有機EL（OLED）向けピュアブラック（発光ゼロ）＆ニュートラルチャコール（茶色みを完全排除）
+        const canvas = '#000000';
+        const surface = '#0d0f12';
+        const raised = '#16191f';
+        const subtle = '#060708';
         return {
-            canvas: colorAt({ hue, saturation: 12, lightness: 10 }),
+            canvas,
             surface,
-            raised: colorAt({ hue, saturation: 10, lightness: 20 }),
-            subtle: colorAt({ hue, saturation: 10, lightness: 13 }),
-            border: findNeutralForContrast({ hue, saturation: 10, start: 42, direction: 'lighter', background: surface, minimum: 3.5 }),
-            borderStrong: findNeutralForContrast({ hue, saturation: 10, start: 56, direction: 'lighter', background: surface, minimum: 4.5 }),
-            text: TEXT_DARK,
-            textMuted: '#c4d0c9'
+            raised,
+            subtle,
+            border: findNeutralForContrast({ hue: 215, saturation: 6, start: 40, direction: 'lighter', background: surface, minimum: 3.5 }),
+            borderStrong: findNeutralForContrast({ hue: 215, saturation: 6, start: 55, direction: 'lighter', background: surface, minimum: 4.5 }),
+            text: '#f8fafc',
+            textMuted: '#94a3b8'
         };
     }
     const surface = '#ffffff';

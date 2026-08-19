@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.52';
+export const APP_VERSION = 'v1.30.53';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.53',
+        date: '2026-08-19',
+        title: '有機EL（OLED）向けピュアブラック・ダークモードへの刷新',
+        features: [
+            'ダークモードの背景・キャンバスを有機ELピュアブラック（#000000）へ刷新し、茶色み・チョコレート感を完全排除',
+            'カードやサーフェスを深みのあるニュートラルチャコール（#0d0f12 / #16191f）へ統一し、文字・境界線の視認性と省電力性を大幅向上'
+        ]
+    },
     {
         version: 'v1.30.52',
         date: '2026-08-19',

@@ -156,23 +156,23 @@
 }
 
 :root[data-color-mode="dark"] {
-    --neo-highlight: color-mix(in srgb, #ffffff 12%, var(--color-surface-raised));
-    --neo-highlight-crisp: color-mix(in srgb, #ffffff 22%, transparent);
-    --neo-shadow: color-mix(in srgb, #000000 80%, transparent);
-    --neo-shadow-soft: color-mix(in srgb, #000000 55%, transparent);
-    --neo-shadow-ambient: color-mix(in srgb, #000000 35%, transparent);
-    --neo-surface: color-mix(in srgb, var(--color-surface) 86%, var(--color-surface-raised));
-    --neo-surface-gradient: linear-gradient(175deg, color-mix(in srgb, #ffffff 5%, var(--neo-surface)) 0%, var(--neo-surface) 60%, color-mix(in srgb, #000000 12%, var(--neo-surface)) 100%);
-    --neo-surface-pressed: color-mix(in srgb, var(--color-surface) 92%, #000000);
+    --neo-highlight: color-mix(in srgb, #ffffff 8%, var(--color-surface-raised));
+    --neo-highlight-crisp: color-mix(in srgb, #ffffff 15%, transparent);
+    --neo-shadow: #000000;
+    --neo-shadow-soft: color-mix(in srgb, #000000 80%, transparent);
+    --neo-shadow-ambient: color-mix(in srgb, #000000 60%, transparent);
+    --neo-surface: var(--color-surface);
+    --neo-surface-gradient: linear-gradient(175deg, color-mix(in srgb, #ffffff 4%, var(--color-surface)) 0%, var(--color-surface) 60%, color-mix(in srgb, #000000 20%, var(--color-surface)) 100%);
+    --neo-surface-pressed: color-mix(in srgb, var(--color-surface) 80%, #000000);
 
     --shadow-neo-raised:
-        -0.22rem -0.22rem 0.55rem var(--neo-highlight),
+        -0.15rem -0.15rem 0.45rem var(--neo-highlight),
         0.35rem 0.4rem 0.85rem var(--neo-shadow),
         0.1rem 0.15rem 0.3rem var(--neo-shadow-soft),
         inset 0 1px 1px var(--neo-highlight-crisp);
 
     --shadow-neo-raised-hover:
-        -0.3rem -0.3rem 0.75rem var(--neo-highlight),
+        -0.2rem -0.2rem 0.6rem var(--neo-highlight),
         0.45rem 0.55rem 1.15rem var(--neo-shadow),
         0.15rem 0.22rem 0.45rem var(--neo-shadow-soft),
         inset 0 1px 1.2px var(--neo-highlight-crisp);
@@ -182,12 +182,12 @@
         inset 0.1rem 0.12rem 0.25rem var(--neo-shadow-soft),
         inset -0.15rem -0.15rem 0.35rem var(--neo-highlight);
 
-    --glass-surface: color-mix(in srgb, var(--color-surface) 86%, transparent);
-    --glass-surface-strong: color-mix(in srgb, var(--color-surface) 93%, transparent);
-    --glass-border: color-mix(in srgb, #ffffff 22%, var(--color-border));
-    --glass-shadow: 0 1rem 2.6rem color-mix(in srgb, #000000 54%, transparent);
-    --liquid-veil: linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 17%, transparent) 0%, transparent 44%, color-mix(in srgb, var(--theme-companion) 14%, transparent) 100%);
-    --liquid-sheen: linear-gradient(115deg, transparent 10%, color-mix(in srgb, #ffffff 12%, transparent) 48%, transparent 78%);
+    --glass-surface: color-mix(in srgb, var(--color-surface) 90%, transparent);
+    --glass-surface-strong: color-mix(in srgb, var(--color-surface) 96%, transparent);
+    --glass-border: color-mix(in srgb, #ffffff 14%, var(--color-border));
+    --glass-shadow: 0 1rem 2.6rem color-mix(in srgb, #000000 80%, transparent);
+    --liquid-veil: none;
+    --liquid-sheen: none;
 }
 
 @media (min-width: 48rem) {
