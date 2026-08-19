@@ -1169,39 +1169,7 @@ input[type="checkbox"] {
     font-weight: 500;
 }
 
-/* Legacy attendee/empty-state rules remain while other match-detail regions still reference them. */
-.u-ext-54 {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.15rem 0.4rem;
-    border: none;
-    border-radius: var(--radius-md);
-    background: #f1f5f9;
-    color: #334155;
-    font-size: 0.7rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.u-ext-55 {
-    display: inline-flex;
-    flex: 0 0 14px;
-    align-items: center;
-    justify-content: center;
-    inline-size: 14px;
-    block-size: 14px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: #ffffff;
-    font-size: 0.55rem;
-    font-weight: 700;
-}
-
-.u-ext-56 {
-    flex: 0 0 auto;
-}
-
+/* Legacy empty-state rule remains while other match-detail regions still reference it. */
 .u-ext-57 {
     padding-block: 0.2rem;
     color: var(--text-secondary);
@@ -1647,19 +1615,6 @@ input[type="checkbox"] {
     font-size: 0.7rem;
     color: var(--text-secondary);
     transition: transform 0.2s;
-}
-
-.u-ext-140 {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-    padding: 0.4rem;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.02);
-    margin-top: 0.25rem;
-    max-height: 100px;
-    overflow-y: auto;
-    box-sizing: border-box;
 }
 
 .u-ext-142 {

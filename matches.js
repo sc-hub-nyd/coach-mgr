@@ -3019,12 +3019,12 @@ export function initMatches() {
 
                 const attendeesHtml = m.presentPlayerIds && m.presentPlayerIds.length > 0
                     ? state.players.filter(pl => m.presentPlayerIds.includes(pl.id)).map(pl => `
-                        <span class="u-ext-54" >
-                            ${pl.number ? `<span class="u-ext-55" >${pl.number}</span>` : ''}
-                            <span class="u-ext-56" >${escapeHtml(pl.name)}</span>
+                        <span class="c-attendee-chip">
+                            ${pl.number ? `<span class="c-attendee-chip__number">${pl.number}</span>` : ''}
+                            <span class="c-attendee-chip__name">${escapeHtml(pl.name)}</span>
                         </span>
                     `).join('')
-                    : '<span class="u-ext-57" >メンバー登録がありません</span>';
+                    : '<span class="c-attendee-list__empty">メンバー登録がありません</span>';
 
                 const actionBtns = `
                     <button class="c-button btn c-button--secondary btn-secondary btn-share-match" data-id="${m.id}" title="LINE共有用テキストをコピー"><i class="fa-solid fa-share-nodes" style="color:var(--primary);"></i> 共有</button>
@@ -3044,7 +3044,7 @@ export function initMatches() {
                                             <i class="u-ext-139 fa-solid fa-chevron-down" ></i>
                                             <span>参加者 (${m.presentPlayerIds ? `${m.presentPlayerIds.length}/${state.players.length}` : `0/${state.players.length}`})</span>
                                         </summary>
-                                        <div class="u-ext-140" >
+                                        <div class="c-attendee-list">
                                             ${attendeesHtml}
                                         </div>
                                     </details>

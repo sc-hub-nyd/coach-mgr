@@ -1441,6 +1441,15 @@ summary {
     transform: translateX(2px);
 }
 
+.c-dashboard-rank-item.is-readonly {
+    cursor: default;
+}
+
+.c-dashboard-rank-item.is-readonly:hover {
+    background: rgba(0, 0, 0, 0.02);
+    transform: none;
+}
+
 .c-dashboard-rank-item__medal {
     font-size: 1rem;
     width: 22px;

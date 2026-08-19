@@ -172,6 +172,16 @@ requireAll(source.app, [
     'openPlayerDetail'
 ], 'ダッシュボードランキング生成');
 
+requireAll(source.app, [
+    'const rankItemTag = isCoach',
+    'const dashboardRankInteraction = playerId => isCoach',
+    'aria-disabled="true"'
+], '保護者モードのランキング閲覧専用制御');
+
+requireAll(source.dashboard, [
+    '\\.c-dashboard-rank-item\\.is-readonly'
+], '保護者モードのランキング閲覧専用スタイル');
+
 requireAll(source.index, [
     'id="dash-setup-checklist"',
     'c-glass-surface--spotlight',
@@ -453,6 +463,7 @@ requireAll(source.drawing, [
 ], 'フィルムストリップの共通ステータス利用');
 
 requireAll([source.matches, source.practices].join('\n'), [
+    'c-attendee-list',
     'c-attendee-chip',
     'c-attendee-chip__number',
     'c-attendee-chip__name',
@@ -470,6 +481,11 @@ requireNone(labelSources, [
     /\.(?:attendance-roster-row|pk-kicker-row(?:__[a-z-]+)?|practice-card(?:-[a-z-]+)?|filmstrip-card(?:__[a-z-]+)?|btn-card-delete)\b/,
     /class=["'][^"']*(?:\s|["'])(?:attendance-roster-row|pk-kicker-row(?:__[a-z-]+)?|practice-card(?:-[a-z-]+)?|filmstrip-card(?:__[a-z-]+)?|btn-card-delete)(?=\s|["'])/
 ], '波Bで廃止した画面固有クラス');
+
+requireNone(labelSources, [
+    /\.u-ext-(?:54|55|56|140)\b/,
+    /class=["'][^"']*(?:\s|["'])(?:u-ext-54|u-ext-55|u-ext-56|u-ext-140)(?=\s|["'])/
+], '試合一覧の旧参加者チップ・コンテナ');
 
 // Standard component contracts used by Phase 1 must exist before templates are migrated.
 requireAll(source.standard, [

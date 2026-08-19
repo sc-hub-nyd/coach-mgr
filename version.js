@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.60';
+export const APP_VERSION = 'v1.30.61';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.61',
+        date: '2026-08-19',
+        title: '試合一覧の参加者表示と保護者ランキングの操作を改善',
+        features: [
+            '試合一覧カードの参加者チップを練習一覧と同じc-attendee-list／c-attendee-chipへ統一し、背番号丸・氏名・折返し・空状態の見た目を一致',
+            '旧参加者チップと専用コンテナの未使用CSSを削除し、P35で再導入を防止',
+            '保護者モードではダッシュボードとランキングモーダルの選手ランキングを閲覧専用とし、育成ノートへの遷移を禁止'
+        ]
+    },
     {
         version: 'v1.30.60',
         date: '2026-08-19',

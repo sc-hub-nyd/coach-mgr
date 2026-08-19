@@ -491,6 +491,13 @@ export function openModal(id) {
 
 export function openLeaderRankingModal(type = 'all') {
     window.openLeaderRankingModal = openLeaderRankingModal;
+    const isCoach = state.currentUserRole === 'coach';
+    const rankItemTag = isCoach ? 'button' : 'div';
+    const rankItemTypeAttr = isCoach ? ' type="button"' : '';
+    const rankItemClass = `c-data-list__item dash-ranking-item${isCoach ? ' c-data-list__item--button' : ' is-readonly'}`;
+    const rankItemAction = (playerId, closeModal = false) => isCoach
+        ? ` onclick="${closeModal ? "document.getElementById('modal-leader-ranking').classList.add('hidden'); " : ''}openPlayerDetail(${playerId})"`
+        : ' aria-disabled="true"';
     const scorerCounts = {};
     const assistCounts = {};
     state.matches.forEach(m => {
@@ -524,12 +531,12 @@ export function openLeaderRankingModal(type = 'all') {
     const renderRankingItem = (item, idx, value = item.count, unit = '', accent = false) => {
         const numStr = item.p.number ? `#${item.p.number}` : '';
         return `
-            <button type="button" class="c-data-list__item c-data-list__item--button dash-ranking-item" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
+            <${rankItemTag}${rankItemTypeAttr} class="${rankItemClass}"${rankItemAction(item.p.id, true)}>
                 <span class="c-data-list__header">
                     <span class="c-data-list__identity"><span class="c-data-list__rank">${idx + 1}.</span><span class="rank-player-num">${numStr}</span> <span class="rank-player-name">${escapeHtml(item.p.name)}</span></span>
                     <span class="c-data-list__value-group"><strong class="c-data-list__value${accent ? ' c-data-list__value--accent' : ''}">${value}${unit}</strong></span>
                 </span>
-            </button>
+            </${rankItemTag}>
         `;
     };
 
@@ -635,13 +642,13 @@ export function openLeaderRankingModal(type = 'all') {
     if (elRankingPlaytime) {
         elRankingPlaytime.innerHTML = totalPeriods > 0
             ? allPlaytimes.map((item, idx) => `
-                <button type="button" class="c-data-list__item c-data-list__item--button dash-ranking-item" onclick="document.getElementById('modal-leader-ranking').classList.add('hidden'); openPlayerDetail(${item.p.id})">
+                <${rankItemTag}${rankItemTypeAttr} class="${rankItemClass}"${rankItemAction(item.p.id, true)}>
                     <span class="c-data-list__header">
                         <span class="c-data-list__identity"><span class="c-data-list__rank">${idx + 1}.</span>${item.p.number ? '#' + item.p.number : ''} ${escapeHtml(item.p.name)}</span>
                         <span class="c-data-list__value-group"><strong class="c-data-list__value${item.pct < 30 ? ' c-data-list__value--accent' : ''}">${item.pct}%</strong><span>(${item.count}P / ${totalPeriods}P)</span></span>
                     </span>
                     <span class="c-progress-bar" aria-hidden="true"><span class="c-progress-bar__indicator${item.pct < 30 ? ' c-progress-bar__indicator--attention' : ''}" style="width:${item.pct}%"></span></span>
-                </button>
+                </${rankItemTag}>
             `).join('')
             : renderEmptyState({ icon: 'fa-stopwatch', title: '直近5試合のピリオド記録がありません。', compact: true });
     }
@@ -966,6 +973,10 @@ function initDashboard() {
     const now = new Date();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const isCoach = state.currentUserRole === 'coach';
+    const dashboardRankStateClass = isCoach ? '' : ' is-readonly';
+    const dashboardRankInteraction = playerId => isCoach
+        ? `onclick="event.stopPropagation(); openPlayerDetail(${playerId})"`
+        : 'aria-disabled="true"';
 
     // ── P0: 初回セットアップチェックリスト ──
     const setupChecklist = document.getElementById('dash-setup-checklist');
@@ -1461,7 +1472,7 @@ function initDashboard() {
             if (alertPlayers.length > 0 && totalPeriods > 0) {
                 playtimeContent.className = 'c-data-list c-dashboard-rank-list';
                 playtimeContent.innerHTML = alertPlayers.map((item, idx) => `
-                    <article class="c-data-list__item c-dashboard-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                    <article class="c-data-list__item c-dashboard-rank-item${dashboardRankStateClass}" ${dashboardRankInteraction(item.p.id)}>
                         <div class="c-data-list__header">
                             <div class="c-data-list__identity"><span class="c-dashboard-rank-item__medal">⚠️</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
                             <div class="c-data-list__metric ${item.pct < 30 ? 'is-danger' : ''}">
@@ -1667,7 +1678,7 @@ function initDashboard() {
             .slice(0, 3);
         el.innerHTML = top.length > 0
             ? top.map((item, idx) => `
-                <article class="c-data-list__item c-dashboard-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                <article class="c-data-list__item c-dashboard-rank-item${dashboardRankStateClass}" ${dashboardRankInteraction(item.p.id)}>
                     <div class="c-data-list__header">
                         <div class="c-data-list__identity"><span class="c-dashboard-rank-item__medal">${medals[idx] || (idx + 1) + '.'}</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
                         <div class="c-data-list__metric">
@@ -1772,7 +1783,7 @@ function initDashboard() {
 
             attendanceRankEl.innerHTML = totalRecentEvents > 0 && top.some(item => item.count > 0)
                 ? top.map((item, idx) => `
-                    <article class="c-data-list__item c-dashboard-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                    <article class="c-data-list__item c-dashboard-rank-item${dashboardRankStateClass}" ${dashboardRankInteraction(item.p.id)}>
                         <div class="c-data-list__header">
                             <div class="c-data-list__identity"><span class="c-dashboard-rank-item__medal">${medals[idx] || (idx + 1) + '.'}</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
                             <div class="c-data-list__metric">
