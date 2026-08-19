@@ -919,7 +919,7 @@ export function initMatchDetailView(matchId) {
             const invited = m.callUpPlayerIds.includes(player.id);
             const status = m.attendanceByPlayer[String(player.id)]?.status || 'pending';
             return `
-                <div class="attendance-roster-row c-roster-row c-roster-row--attendance ${invited ? '' : 'is-not-called'}">
+                <div class="c-roster-row c-roster-row--attendance ${invited ? '' : 'is-not-called'}">
                     <label class="c-roster-row__identity">
                         <input type="checkbox" class="inline-match-callup-checkbox" value="${player.id}" ${invited ? 'checked' : ''} aria-label="${escapeHtml(player.name)}を招集対象にする">
                         <span class="c-roster-row__number">${player.number || '—'}</span>
@@ -935,7 +935,7 @@ export function initMatchDetailView(matchId) {
         }).join('');
         detailRosterEdit.querySelectorAll('.inline-match-callup-checkbox').forEach(checkbox => {
             checkbox.onchange = () => {
-                const row = checkbox.closest('.attendance-roster-row');
+                const row = checkbox.closest('.c-roster-row--attendance');
                 const select = row?.querySelector('.inline-match-attendance-status');
                 if (select) select.disabled = !checkbox.checked;
                 row?.classList.toggle('is-not-called', !checkbox.checked);
@@ -2243,18 +2243,18 @@ function renderPkShootoutEditor() {
         const labelText = isSuddenDeath ? `${idx + 1}本目 (サドンデス)` : `${idx + 1}本目`;
 
         return `
-            <div class="pk-kicker-row c-data-list__item" data-idx="${idx}">
-                <div class="pk-kicker-row__header">
-                    <span class="pk-kicker-row__label">${labelText}</span>
+            <div class="c-pk-kicker-row c-data-list__item" data-idx="${idx}">
+                <div class="c-pk-kicker-row__header">
+                    <span class="c-pk-kicker-row__label">${labelText}</span>
                     ${isSuddenDeath ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-remove-pk-row" data-idx="${idx}" aria-label="${labelText}を削除"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> 削除</button>` : ''}
                 </div>
-                <div class="pk-kicker-row__controls">
-                    <div class="c-form-field c-form-field--compact pk-kicker-row__select">
+                <div class="c-pk-kicker-row__controls">
+                    <div class="c-form-field c-form-field--compact c-pk-kicker-row__select">
                         <label class="u-visually-hidden" for="pk-kicker-select-${idx}">${labelText}のキッカー</label>
                         <select id="pk-kicker-select-${idx}" class="c-input form-control form-control-sm pk-kicker-select" data-idx="${idx}">${playerOptionsHtml}</select>
                     </div>
-                    <div class="pk-kicker-row__side c-action-group"><span class="pk-kicker-row__side-label">自</span><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-us ${k.isUsGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true">○ 成功</button><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-us ${k.isUsGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false">✕ 失敗</button></div>
-                    <div class="pk-kicker-row__side c-action-group"><span class="pk-kicker-row__side-label">相手</span><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-them ${k.isThemGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true">○ 成功</button><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-them ${k.isThemGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false">✕ 失敗</button></div>
+                    <div class="c-pk-kicker-row__side c-action-group"><span class="c-pk-kicker-row__side-label">自</span><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-us ${k.isUsGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true">○ 成功</button><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-us ${k.isUsGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false">✕ 失敗</button></div>
+                    <div class="c-pk-kicker-row__side c-action-group"><span class="c-pk-kicker-row__side-label">相手</span><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-them ${k.isThemGoal === true ? 'btn-success' : 'btn-outline'}" data-idx="${idx}" data-val="true">○ 成功</button><button type="button" class="c-button btn c-button--compact btn-sm pk-btn-them ${k.isThemGoal === false ? 'btn-danger' : 'btn-outline'}" data-idx="${idx}" data-val="false">✕ 失敗</button></div>
                 </div>
             </div>
         `;

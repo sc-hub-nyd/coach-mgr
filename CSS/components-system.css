@@ -840,7 +840,7 @@
     overflow-wrap: anywhere;
 }
 
-.c-practice-card.practice-card {
+.c-practice-card {
     display: grid;
     gap: var(--space-3);
     inline-size: 100%;
@@ -1383,10 +1383,152 @@
     min-block-size: 2.25rem;
 }
 
+.c-roster-row--attendance.is-not-called {
+    opacity: 0.52;
+}
+
 @media (max-width: 32.5rem) {
     .c-roster-row--attendance {
         grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-2);
     }
+
+    .c-roster-row--attendance .c-roster-row__status {
+        min-block-size: var(--tap-target-min);
+    }
+}
+
+/* Frame sequence: reusable compact timeline strip for ordered visual states. */
+.c-frame-strip {
+    position: absolute;
+    inset-block-end: 4.125rem;
+    inset-inline-start: 50%;
+    z-index: 180;
+    max-inline-size: 85%;
+    padding: 0.25rem 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(0.75rem) saturate(180%);
+    -webkit-backdrop-filter: blur(0.75rem) saturate(180%);
+    transform: translateX(-50%);
+}
+
+.c-frame-strip.collapsed {
+    display: none;
+}
+
+.c-frame-strip::-webkit-scrollbar {
+    display: none;
+}
+
+.c-frame-strip__list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-inline-size: max-content;
+}
+
+.c-frame-strip__item {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--space-1);
+    min-block-size: 1.75rem;
+    padding: 0 var(--space-2);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+    cursor: grab;
+    user-select: none;
+}
+
+.c-frame-strip__item:hover {
+    background: var(--color-surface-subtle);
+    transform: translateY(-1px);
+}
+
+.c-frame-strip__item.active {
+    background: var(--color-action);
+    color: var(--color-text-on-action);
+    box-shadow: 0 0.125rem 0.5rem color-mix(in srgb, var(--color-action) 35%, transparent);
+}
+
+.c-frame-strip__item.drag-over {
+    outline: 2px dashed var(--color-action);
+    outline-offset: 2px;
+    background: var(--color-brand-surface);
+}
+
+.c-frame-strip__header,
+.c-frame-strip__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.c-frame-strip__actions {
+    margin-inline-start: var(--space-1);
+}
+
+.c-frame-strip__index {
+    color: var(--color-text);
+    font-size: var(--text-kicker-size);
+    font-weight: 800;
+}
+
+.c-frame-strip__title {
+    max-inline-size: 4.0625rem;
+    overflow: hidden;
+    color: var(--color-text-muted);
+    font-size: var(--text-kicker-size);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.c-frame-strip__item.active .c-frame-strip__index,
+.c-frame-strip__item.active .c-frame-strip__title {
+    color: var(--color-text-on-action);
+}
+
+.c-frame-strip__item.active .c-frame-strip__meta .c-status {
+    color: var(--color-text-on-action);
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.c-frame-strip__delete {
+    display: grid;
+    inline-size: 1rem;
+    block-size: 1rem;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-text) 8%, transparent);
+    color: var(--color-text-muted);
+    font-size: 0.65rem;
+    cursor: pointer;
+}
+
+.c-frame-strip__delete:hover {
+    background: var(--color-danger);
+    color: var(--color-text-on-action);
+    transform: scale(1.15);
+}
+
+.c-frame-strip__item.active .c-frame-strip__delete {
+    background: rgba(255, 255, 255, 0.25);
+    color: var(--color-text-on-action);
+}
+
+.c-frame-strip__item.active .c-frame-strip__delete:hover {
+    background: var(--color-text-on-action);
+    color: var(--color-danger);
 }
 
 /* Period analysis timeline: the video workspace remains domain-specific; editable log rows use shared data-list structure. */
@@ -1494,19 +1636,19 @@
     gap: var(--space-2);
 }
 
-.pk-kickers-list {
+.c-pk-kickers-list {
     max-block-size: 15rem;
     padding-inline-end: var(--space-1);
     overflow-y: auto;
 }
 
-.pk-kicker-row {
+.c-pk-kicker-row {
     display: grid;
     gap: var(--space-2);
 }
 
-.pk-kicker-row__header,
-.pk-kicker-row__controls {
+.c-pk-kicker-row__header,
+.c-pk-kicker-row__controls {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -1514,45 +1656,45 @@
     min-inline-size: 0;
 }
 
-.pk-kicker-row__label {
+.c-pk-kicker-row__label {
     color: var(--color-text);
     font-size: var(--text-dense-size);
     font-weight: 800;
     line-height: var(--text-dense-leading);
 }
 
-.pk-kicker-row__select {
+.c-pk-kicker-row__select {
     flex: 1 1 10rem;
     min-inline-size: 0;
 }
 
-.pk-kicker-row__select .form-control {
+.c-pk-kicker-row__select .c-input {
     inline-size: 100%;
     min-block-size: 2.25rem;
 }
 
-.pk-kicker-row__side {
+.c-pk-kicker-row__side {
     display: flex;
     align-items: center;
     gap: var(--space-1);
 }
 
-.pk-kicker-row__side-label {
+.c-pk-kicker-row__side-label {
     color: var(--color-text-muted);
     font-size: var(--text-meta-size);
     font-weight: 700;
 }
 
-.pk-kicker-row__side .btn {
+.c-pk-kicker-row__side .c-button {
     min-block-size: 2.25rem;
 }
 
 @media (max-width: 32.5rem) {
-    .pk-kicker-row__side {
+    .c-pk-kicker-row__side {
         flex: 1 1 100%;
     }
 
-    .pk-kicker-row__side .btn {
+    .c-pk-kicker-row__side .c-button {
         flex: 1 1 auto;
     }
 }
@@ -1565,7 +1707,7 @@
 
 
 /* Animation filmstrip: frame sequence and drag behavior remain domain-specific; card presentation uses shared list/action contracts. */
-.filmstrip-cards-container.c-data-list {
+.c-frame-strip__list.c-data-list {
     display: flex;
     gap: var(--space-2);
     min-inline-size: 0;
@@ -1574,7 +1716,7 @@
     scroll-snap-type: x proximity;
 }
 
-.filmstrip-cards-container .filmstrip-card.c-data-list__item {
+.c-frame-strip__list .c-frame-strip__item.c-data-list__item {
     flex: 0 0 min(12rem, 72vw);
     gap: var(--space-2);
     min-block-size: 6.5rem;
@@ -1583,20 +1725,20 @@
     cursor: grab;
 }
 
-.filmstrip-cards-container .filmstrip-card.c-data-list__item:active {
+.c-frame-strip__list .c-frame-strip__item.c-data-list__item:active {
     cursor: grabbing;
 }
 
-.filmstrip-card__meta {
+.c-frame-strip__meta {
     justify-content: flex-end;
     gap: var(--space-1);
 }
 
-.filmstrip-card-actions {
+.c-frame-strip__actions {
     justify-content: flex-end;
 }
 
-.filmstrip-card-actions .btn {
+.c-frame-strip__actions .c-button {
     min-block-size: 2rem;
 }
 

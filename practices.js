@@ -34,7 +34,7 @@ export function renderPracticeRoster(event = {}) {
         const status = rosterEvent.attendanceByPlayer[String(player.id)]?.status || 'pending';
         const playerLabelId = `practice-roster-player-${player.id}`;
         return `
-            <article class="c-roster-row attendance-roster-row ${invited ? '' : 'is-not-called'}">
+            <article class="c-roster-row c-roster-row--attendance ${invited ? '' : 'is-not-called'}">
                 <label class="c-roster-row__identity roster-checkbox-label">
                     <input type="checkbox" value="${player.id}" ${invited ? 'checked' : ''} class="practice-callup-checkbox" aria-labelledby="${playerLabelId}">
                     <span id="${playerLabelId}" class="c-roster-row__name roster-player-name">${player.number ? `${player.number}. ` : ''}${escapeHtml(player.name)}</span>
@@ -50,7 +50,7 @@ export function renderPracticeRoster(event = {}) {
 
     container.querySelectorAll('.practice-callup-checkbox').forEach(checkbox => {
         checkbox.onchange = () => {
-            const row = checkbox.closest('.attendance-roster-row');
+            const row = checkbox.closest('.c-roster-row--attendance');
             const select = row?.querySelector('.practice-attendance-status');
             if (select) select.disabled = !checkbox.checked;
             row?.classList.toggle('is-not-called', !checkbox.checked);
@@ -371,7 +371,7 @@ export function initPractices(miniPitchObserver) {
             const myStatus = myPlayer ? (p.attendanceByPlayer?.[String(myPlayer.id)]?.status || 'pending') : null;
             const parentResponseHtml = '';
             const actionBtns = `
-                <div class="c-practice-card__actions practice-card-actions">
+                <div class="c-practice-card__actions">
                     ${isCoach ? `
                     <button type="button" class="c-button btn c-button--primary btn-primary btn-xs btn-add-menu" data-id="${p.id}" title="メニュー追加">
                         <i class="fa-solid fa-plus"></i> メニュー
@@ -392,14 +392,14 @@ export function initPractices(miniPitchObserver) {
             `;
 
             html += `
-                <article class="card c-card c-practice-card practice-card" data-practice-id="${p.id}">
+                <article class="card c-card c-practice-card" data-practice-id="${p.id}">
                     <!-- カードヘッダー（常時表示） -->
-                    <div class="c-practice-card__header practice-card-header">
-                        <div class="c-practice-card__identity practice-card-header-main">
-                            <div class="c-practice-card__title practice-card-date">
+                    <div class="c-practice-card__header">
+                        <div class="c-practice-card__identity">
+                            <div class="c-practice-card__title">
                                 <i class="fa-regular fa-calendar"></i> ${p.date}${locationHtml}
                             </div>
-                            <div class="c-practice-card__meta practice-card-summary-badges">
+                            <div class="c-practice-card__meta">
                                 <span class="c-status c-status--success c-status--compact"><i class="fa-solid fa-user-check" aria-hidden="true"></i> 参加 ${attendanceSummary.attending}名</span>
                                 <span class="c-status c-status--warning c-status--compact"><i class="fa-solid fa-user-clock" aria-hidden="true"></i> 未回答 ${attendanceSummary.pending}名</span>
                                 <span class="c-status c-status--danger c-status--compact"><i class="fa-solid fa-user-xmark" aria-hidden="true"></i> 欠席 ${attendanceSummary.absent}名</span>
@@ -410,17 +410,17 @@ export function initPractices(miniPitchObserver) {
                     </div>
 
                     <!-- ★ 参加者と練習メニューをまとめて開閉するアコーディオン -->
-                    <details class="c-practice-card__details practice-card-details">
-                        <summary class="practice-card-summary">
+                    <details class="c-practice-card__details">
+                        <summary class="c-practice-card__summary">
                             <i class="fa-solid fa-chevron-down summary-icon"></i>
                             <span>詳細を表示 (参加者・メニュー)</span>
                         </summary>
 
-                        <div class="practice-card-expanded-body">
+                        <div class="c-practice-card__expanded">
                             <!-- 1. 参加選手領域 -->
                             <div class="practice-detail-section">
                                 <div class="practice-section-label"><i class="fa-solid fa-users"></i> 招集・出欠（参加 ${attendanceSummary.attending} / 欠席 ${attendanceSummary.absent} / 未回答 ${attendanceSummary.pending}）</div>
-                                <div class="practice-card-attendance-list">
+                                <div class="c-practice-card__attendance">
                                     ${attendeesHtml}
                                 </div>
                                 ${parentResponseHtml}
@@ -429,7 +429,7 @@ export function initPractices(miniPitchObserver) {
                             <!-- 2. 練習メニュー領域 -->
                             <div class="practice-detail-section">
                                 <div class="practice-section-label"><i class="fa-solid fa-layer-group"></i> 練習メニュー (${menuCount}件)</div>
-                                <ul class="practice-card-menu-list">
+                                <ul class="c-practice-card__menu-list">
                                         ${safeMenus.length > 0 ? safeMenus.map(menu => `
                                         <li class="u-ext-150 practice-menu-item">
                                             <details class="u-ext-151 practice-menu-details">

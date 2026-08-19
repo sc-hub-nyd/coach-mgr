@@ -165,23 +165,23 @@ function updateFrameCount() {
             const captionStr = isObj && f.caption ? f.caption : '';
 
             return `
-                <div class="filmstrip-card c-data-list__item ${idx === currentFrameIndex ? 'active' : ''}" data-frame-index="${idx}" draggable="true">
-                    <div class="filmstrip-card-header c-data-list__header">
-                        <span class="filmstrip-frame-num">S${idx + 1}</span>
-                        <div class="filmstrip-card__meta c-action-group">
+                <div class="c-frame-strip__item c-data-list__item ${idx === currentFrameIndex ? 'active' : ''}" data-frame-index="${idx}" draggable="true">
+                    <div class="c-frame-strip__header c-data-list__header">
+                        <span class="c-frame-strip__index">S${idx + 1}</span>
+                        <div class="c-frame-strip__meta c-action-group">
                             ${pauseVal > 0 ? `<span class="c-status c-status--compact c-status--info" title="停止時間 ${pauseVal}秒"><i class="fa-solid fa-clock" aria-hidden="true"></i> ${pauseVal}s</span>` : ''}
                             ${captionStr ? `<span class="c-status c-status--compact c-status--muted" title="${escapeHtml(captionStr)}"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i><span class="u-visually-hidden">キャプションあり</span></span>` : ''}
                         </div>
                     </div>
-                    <div class="filmstrip-card-title c-data-list__body">${escapeHtml(titleStr)}</div>
-                    <div class="filmstrip-card-actions c-action-group"><button type="button" class="c-button btn c-button--danger btn-danger btn-card-delete" data-idx="${idx}" title="削除" aria-label="${escapeHtml(titleStr)}を削除"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
+                    <div class="c-frame-strip__title c-data-list__body">${escapeHtml(titleStr)}</div>
+                    <div class="c-frame-strip__actions c-action-group"><button type="button" class="c-button btn c-button--danger btn-danger c-frame-strip__delete" data-idx="${idx}" title="削除" aria-label="${escapeHtml(titleStr)}を削除"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
                 </div>
             `;
         }).join('');
 
-        const cards = filmstripContainer.querySelectorAll('.filmstrip-card');
+        const cards = filmstripContainer.querySelectorAll('.c-frame-strip__item');
         cards.forEach(card => {
-            const delBtn = card.querySelector('.btn-card-delete');
+            const delBtn = card.querySelector('.c-frame-strip__delete');
             if (delBtn) {
                 const handleDelete = (e) => {
                     e.stopPropagation();
@@ -384,7 +384,7 @@ function initQuickDrawerEvents() {
             if (!drawer || drawer.classList.contains('hidden')) return;
 
             const isInsideDrawer = drawer.contains(e.target);
-            const isFilmstripCard = e.target.closest('.filmstrip-card');
+            const isFilmstripCard = e.target.closest('.c-frame-strip__item');
             const isAnimAddBtn = e.target.closest('#anim-add-frame');
 
             if (!isInsideDrawer && !isFilmstripCard && !isAnimAddBtn) {

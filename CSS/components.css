@@ -2083,7 +2083,7 @@ input[type="checkbox"] {
     overflow-y: visible;
 }
 
-.pk-kicker-row {
+.c-pk-kicker-row {
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
@@ -2354,18 +2354,6 @@ input[type="checkbox"] {
 }
 
 /* P6: Team operations — call-up, RSVP and practice templates */
-.attendance-roster-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 6.5rem;
-    align-items: center;
-    gap: 0.65rem;
-    min-height: 46px;
-    padding: 0.35rem 0;
-    border-bottom: 1px solid color-mix(in srgb, var(--surface-border) 70%, transparent);
-}
-.attendance-roster-row:last-child { border-bottom: 0; }
-.attendance-roster-row.is-not-called { opacity: 0.52; }
-.attendance-roster-row .form-control { min-height: 36px; padding: 0.3rem 0.45rem; font-size: 0.78rem; }
 .practice-parent-rsvp {
     display: flex;
     flex-wrap: wrap;
@@ -2386,10 +2374,8 @@ input[type="checkbox"] {
 .btn-rsvp-attending.is-selected { color: #fff; background: #15803d; border-color: #15803d; }
 .btn-rsvp-absent.is-selected { color: #fff; background: #b91c1c; border-color: #b91c1c; }
 @media (max-width: 480px) {
-    .attendance-roster-row { grid-template-columns: 1fr; gap: 0.35rem; padding: 0.55rem 0; }
-    .attendance-roster-row .form-control { width: 100%; min-height: 42px; }
-    .practice-card-actions { flex-wrap: wrap; }
-    .practice-card-actions .btn { min-height: 38px; }
+    .c-practice-card__actions { flex-wrap: wrap; }
+    .c-practice-card__actions .btn { min-height: 38px; }
     .practice-parent-rsvp { align-items: stretch; }
     .practice-rsvp-actions { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
     .practice-rsvp-actions .btn { min-height: 44px; }
@@ -2692,8 +2678,7 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
 }
 
 /* P33.2: 招集名簿のチェックボックス・選手名・出欠欄を安定した行にする */
-.attendance-roster-row > label,
-.roster-checkbox-label {
+.c-roster-row--attendance .roster-checkbox-label {
     display: flex;
     min-width: 0;
     align-items: center;
@@ -2701,8 +2686,7 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
     line-height: 1.35;
 }
 
-.attendance-roster-row > label > input,
-.roster-checkbox-label > input {
+.c-roster-row--attendance .roster-checkbox-label > input {
     flex: 0 0 24px;
     width: 24px;
     height: 24px;
@@ -2710,23 +2694,11 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
     accent-color: var(--danger);
 }
 
-.attendance-roster-row > label > span,
-.roster-player-name {
+.c-roster-row--attendance .roster-player-name {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-@media (max-width: 520px) {
-    .attendance-roster-row {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 0.45rem;
-    }
-
-    .attendance-roster-row .form-control {
-        width: 100%;
-    }
 }
 
 /* P33.2: 選手比較カードは固定幅を持たず、情報を段階的に折り返す */
@@ -2860,14 +2832,14 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
 }
 
 /* P33.2: 練習カード操作のスタイリング */
-.practice-card-actions {
+.c-practice-card__actions {
     display: flex;
     align-items: center;
     gap: 0.35rem;
     flex-wrap: wrap;
 }
 
-.practice-card-actions .btn {
+.c-practice-card__actions .btn {
     min-height: 32px;
 }
 

@@ -1060,7 +1060,7 @@ body .library-grid {
 }
 
 /* 練習カード本体 */
-body .practice-card {
+body .c-practice-card {
     display: flex;
     flex-direction: column;
     background: #ffffff;
@@ -1073,7 +1073,7 @@ body .practice-card {
 }
 
 /* 常時表示ヘッダー */
-body .practice-card-header {
+body .c-practice-card__header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -1082,7 +1082,7 @@ body .practice-card-header {
     border-bottom: 1px solid var(--surface-border);
 }
 
-body .practice-card-header-main {
+body .c-practice-card__identity {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
@@ -1090,14 +1090,14 @@ body .practice-card-header-main {
 }
 
 /* 日付 */
-body .practice-card-date {
+body .c-practice-card__title {
     font-weight: 700;
     font-size: 0.95rem;
     color: var(--text-primary);
     white-space: nowrap;
 }
 
-body .practice-card-header {
+body .c-practice-card__header {
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
@@ -1105,14 +1105,14 @@ body .practice-card-header {
     margin-bottom: 0.5rem;
 }
 
-body .practice-card-header-main {
+body .c-practice-card__identity {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
 }
 
 /* サマリーバッジ（参加人数・メニュー数） */
-body .practice-card-summary-badges {
+body .c-practice-card__meta {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -1122,7 +1122,7 @@ body .practice-card-summary-badges {
 }
 
 /* 操作ボタン群（美しい1行ツールバー設計） */
-body .practice-card-actions {
+body .c-practice-card__actions {
     display: flex !important;
     align-items: center !important;
     gap: 0.35rem !important;
@@ -1131,7 +1131,7 @@ body .practice-card-actions {
     margin-bottom: 0 !important;
 }
 
-body .practice-card-actions .btn {
+body .c-practice-card__actions .btn {
     min-height: 30px !important;
     padding: 0.25rem 0.5rem !important;
     font-size: 0.75rem !important;
@@ -1143,14 +1143,14 @@ body .practice-card-actions .btn {
     gap: 0.3rem !important;
 }
 
-body .practice-card-actions .btn-add-menu,
-body .practice-card-actions .btn-save-practice-template,
-body .practice-card-actions .btn-share-practice {
+body .c-practice-card__actions .btn-add-menu,
+body .c-practice-card__actions .btn-save-practice-template,
+body .c-practice-card__actions .btn-share-practice {
     flex: 1 1 0 !important;
 }
 
-body .practice-card-actions .btn-edit-practice,
-body .practice-card-actions .btn-delete-practice {
+body .c-practice-card__actions .btn-edit-practice,
+body .c-practice-card__actions .btn-delete-practice {
     flex: 0 0 32px !important;
     padding: 0 !important;
     width: 32px !important;
@@ -1158,11 +1158,11 @@ body .practice-card-actions .btn-delete-practice {
 }
 
 /* 一括アコーディオン（details/summary） */
-body .practice-card-details {
+body .c-practice-card__details {
     width: 100%;
 }
 
-body .practice-card-summary {
+body .c-practice-card__summary {
     cursor: pointer;
     font-size: 0.78rem;
     font-weight: 600;
@@ -1177,26 +1177,26 @@ body .practice-card-summary {
     transition: background 0.2s ease;
 }
 
-body .practice-card-summary:hover {
+body .c-practice-card__summary:hover {
     background: rgba(242, 57, 50, 0.05);
     color: var(--primary);
 }
 
-body .practice-card-summary .summary-icon {
+body .c-practice-card__summary .summary-icon {
     font-size: 0.7rem;
     transition: transform 0.2s ease;
 }
 
-body .practice-card-details[open] .practice-card-summary .summary-icon {
+body .c-practice-card__details[open] .c-practice-card__summary .summary-icon {
     transform: rotate(180deg);
 }
 
-body .practice-card-details[open] .practice-card-summary span {
+body .c-practice-card__details[open] .c-practice-card__summary span {
     content: '詳細を閉じる';
 }
 
 /* 展開される中身のコンテナ */
-body .practice-card-expanded-body {
+body .c-practice-card__expanded {
     margin-top: 0.6rem;
     display: flex;
     flex-direction: column;
@@ -1218,7 +1218,7 @@ body .practice-section-label {
 }
 
 /* 参加者バッジリスト */
-body .practice-card-attendance-list {
+body .c-practice-card__attendance {
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem;
@@ -1230,10 +1230,10 @@ body .practice-card-attendance-list {
    ========================================== */
 
 /* カード本体・アコーディオン展開部・メニューリストの高さ・スクロール制限を解除 */
-body .practice-card,
-body .practice-card-details,
-body .practice-card-expanded-body,
-body .practice-card-menu-list,
+body .c-practice-card,
+body .c-practice-card__details,
+body .c-practice-card__expanded,
+body .c-practice-card__menu-list,
 body .practice-menu-item,
 body .practice-menu-details,
 body .practice-menu-item-details {
@@ -1243,7 +1243,7 @@ body .practice-menu-item-details {
 }
 
 /* メニューリスト */
-body .practice-card-menu-list {
+body .c-practice-card__menu-list {
     list-style: none;
     padding: 0;
     margin: 0;
