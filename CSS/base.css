@@ -327,31 +327,37 @@ a,
     color: var(--primary);
 }
 
-.topbar-left {
+.topbar-start {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.15rem;
+    align-items: center;
+    justify-content: flex-start;
     min-width: 0;
 }
 
+.topbar-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: 0;
+    padding: 0 0.5rem;
+}
+
 .topbar-breadcrumb {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-secondary);
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.2;
+    margin-bottom: 0.15rem;
+    text-align: center;
 }
 
 .topbar-breadcrumb:empty {
     display: none;
-}
-
-.topbar-title-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
 }
 
 .topbar-back-btn {
@@ -360,12 +366,14 @@ a,
     flex-shrink: 0;
 }
 
-
+.topbar-end,
 .topbar-actions {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 0.5rem;
 }
+
 
 .mobile-more-sheet {
     max-height: 80vh;
@@ -427,10 +435,10 @@ a,
 .topbar {
     /* Layout */
     height: var(--header-height);
-    display: flex;
+    display: grid;
+    grid-template-columns: 80px 1fr 80px;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
+    padding: 0 1.5rem;
     position: sticky;
     top: 0;
     z-index: 90;
@@ -453,12 +461,17 @@ a,
 
 .topbar-title {
     /* Layout */
-    max-width: none !important;
+    max-width: 100%;
     white-space: nowrap !important;
-    flex-shrink: 0 !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
     /* Design */
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    color: var(--text-primary);
 }
 
 .avatar {
@@ -641,23 +654,29 @@ body.role-read-only #pd-tab-goals textarea {
 
 @media (max-width: 768px) {
     .topbar {
-        padding-left: 1rem;
-        padding-right: 1rem;
-        height: 48px !important;
-        display: flex !important;
+        padding-left: 0.6rem !important;
+        padding-right: 0.6rem !important;
+        height: 52px !important;
+        display: grid !important;
+        grid-template-columns: 56px 1fr 56px !important;
         align-items: center !important;
-        justify-content: space-between !important;
-        gap: 0.5rem !important;
         width: 100% !important;
     }
 
     .topbar-title {
-        font-size: 1.0rem !important;
+        font-size: 0.95rem !important;
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
-        margin-right: auto !important;
+        text-align: center !important;
+        margin: 0 !important;
     }
+
+    .topbar-breadcrumb {
+        font-size: 0.68rem !important;
+        text-align: center !important;
+    }
+
 
     .view-container {
         padding: 1rem;

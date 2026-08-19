@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.27';
+export const APP_VERSION = 'v1.30.28';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.28',
+        date: '2026-08-19',
+        title: 'トップバー：3カラム中央完全固定レイアウトによるガタつき解消',
+        features: [
+            'トップバーを3カラム構成（左：戻るボタン、中央：パンくず＋タイトル、右：同期状態）へ刷新し、画面遷移や戻るボタンの有無にかかわらずタイトル・パンくずリストが常に画面完全中央に固定されるよう安定化'
+        ]
+    },
     {
         version: 'v1.30.27',
         date: '2026-08-19',
