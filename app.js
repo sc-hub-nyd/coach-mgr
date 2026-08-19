@@ -2409,6 +2409,44 @@ export function navigate(route, params = null, isBack = false) {
         link.classList.toggle('active', isActive);
     });
 
+    // スマホ用スリム戻るコンテキストバーの表示・非表示・タイトル制御
+    const mobileContextBar = document.getElementById('mobile-context-bar');
+    const mobileContextTitle = document.getElementById('mobile-context-title');
+    const mobileContextBackBtn = document.getElementById('mobile-context-back-btn');
+
+    if (mobileContextBar) {
+        const isDetailRoute = (route === 'match-detail' || route === 'player-detail' || route === 'animation');
+        if (isDetailRoute) {
+            mobileContextBar.classList.remove('hidden');
+            if (mobileContextBackBtn) {
+                mobileContextBackBtn.onclick = (e) => {
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    navigateBack();
+                };
+            }
+            if (mobileContextTitle) {
+                if (route === 'match-detail') {
+                    const matchId = params && (typeof params === 'object') ? params.matchId : params;
+                    const match = (state.matches || []).find(m => m.id === parseInt(matchId, 10));
+                    mobileContextTitle.textContent = match ? `試合: vs ${match.opponent}` : '試合詳細';
+                } else if (route === 'player-detail') {
+                    const playerId = params && (typeof params === 'object') ? params.playerId : params;
+                    const player = (state.players || []).find(p => p.id === parseInt(playerId, 10));
+                    mobileContextTitle.textContent = player ? `選手: #${player.number} ${player.name}` : '選手カルテ';
+                } else if (route === 'animation') {
+                    mobileContextTitle.textContent = '作図・アニメーション';
+                } else {
+                    mobileContextTitle.textContent = topbarTitle ? topbarTitle.textContent : '';
+                }
+            }
+        } else {
+            mobileContextBar.classList.add('hidden');
+            if (mobileContextBackBtn) mobileContextBackBtn.onclick = null;
+        }
+    }
 
     const viewContainer = document.getElementById('view-container');
 

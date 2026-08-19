@@ -68,3 +68,13 @@ test('P38-6: 練習管理カードの1行ツールバー配置＆同期ポップ
     assert.match(baseCss, /body \.practice-card-actions \.btn-edit-practice/, 'compact edit button styled');
     assert.match(baseCss, /body \.practice-card-actions \.btn-delete-practice/, 'compact delete button styled');
 });
+
+test('P38-7: スマホ向けスリム戻るコンテキストバー（Mobile Context Back Bar）契約検証', () => {
+    assert.match(indexHtml, /id="mobile-context-bar"/, 'mobile-context-bar exists in index.html');
+    assert.match(indexHtml, /id="mobile-context-back-btn"/, 'mobile-context-back-btn exists in index.html');
+    assert.match(indexHtml, /id="mobile-context-title"/, 'mobile-context-title exists in index.html');
+    assert.match(baseCss, /\.mobile-context-bar\s*\{[\s\S]*?display:\s*none\s*!important;/, 'mobile-context-bar is hidden on desktop');
+    assert.match(baseCss, /\.mobile-context-bar\s*\{[\s\S]*?position:\s*fixed/i, 'mobile-context-bar is fixed on mobile');
+    assert.match(appJs, /const mobileContextBar = document\.getElementById\('mobile-context-bar'\);/, 'app.js accesses mobile-context-bar');
+    assert.match(appJs, /mobileContextBackBtn\.onclick[\s\S]*?navigateBack\(\)/, 'mobile-context-back-btn triggers navigateBack');
+});

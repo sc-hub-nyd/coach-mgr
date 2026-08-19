@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.48';
+export const APP_VERSION = 'v1.30.49';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.49',
+        date: '2026-08-19',
+        title: 'スマホ向けスリム戻るコンテキストバー（Mobile Context Back Bar）の実装',
+        features: [
+            'スマートフォン表示時、詳細画面（選手カルテ・試合詳細・作図等）へ入った際にボトムナビの直上にスリムな「戻る」コンテキストバー（高さ38px）を自動表示',
+            'ボトムナビの5項目（ホーム・試合・練習・メニュー・その他）を常時維持しながら、片手操作の親指エリアで迷わず素早く前画面に戻れるよう操作性を大幅改善'
+        ]
+    },
     {
         version: 'v1.30.48',
         date: '2026-08-19',
