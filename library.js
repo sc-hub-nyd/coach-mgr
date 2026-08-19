@@ -405,7 +405,10 @@ export function initLibrary(miniPitchObserver) {
             if (document.getElementById('menu-edit-id')) document.getElementById('menu-edit-id').value = '';
 
             const selWrap = document.getElementById('menu-library-select');
-            if (selWrap) selWrap.parentElement.style.display = 'none';
+            if (selWrap) {
+                const fsEl = selWrap.closest('.c-fieldset') || selWrap.parentElement;
+                if (fsEl) fsEl.style.display = 'none';
+            }
 
             const form = document.getElementById('form-menu');
             if (form) form.reset();
@@ -476,7 +479,10 @@ export function openLibraryMenuModal(menu) {
     if (refInp) refInp.value = menu.reflection || '';
 
     const selWrap = document.getElementById('menu-library-select');
-    if (selWrap) selWrap.parentElement.style.display = 'none';
+            if (selWrap) {
+                const fsEl = selWrap.closest('.c-fieldset') || selWrap.parentElement;
+                if (fsEl) fsEl.style.display = 'none';
+            }
 
     const title = document.querySelector('#modal-menu h2');
     if (title) title.textContent = '練習メニューを編集';

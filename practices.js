@@ -555,162 +555,14 @@ export function initPractices(miniPitchObserver) {
         };
     }
 
-    const handleMenuSubmit = (e) => {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        const focusInput = document.getElementById('menu-focus');
-        if (!focusInput || !focusInput.value.trim()) {
-            showToast('テーマ・フォーカスを入力してください');
-            if (focusInput) focusInput.focus();
-            return false;
-        }
-
-        const practiceId = document.getElementById('menu-practice-id').value;
-            const sourceId = document.getElementById('menu-library-source-id').value;
-
-            let frames = null;
-            let pitchTemplate = 'full';
-            if (sourceId) {
-                const src = state.menuLibrary.find(m => m.id === parseInt(sourceId, 10));
-                if (src) {
-                    if (src.frames) frames = JSON.parse(JSON.stringify(src.frames));
-                    if (src.pitchTemplate) pitchTemplate = src.pitchTemplate;
-                }
-            }
-
-            const videoUrlInp = document.getElementById('menu-video-url');
-            const videoUrlVal = videoUrlInp ? videoUrlInp.value.trim() : '';
-
-            const engagementInp = document.getElementById('menu-engagement');
-            const engagementVal = engagementInp ? parseInt(engagementInp.value, 10) : 0;
-            const reflectionInp = document.getElementById('menu-reflection');
-            const reflectionVal = reflectionInp ? reflectionInp.value.trim() : '';
-
-            const newMenuObj = {
-                id: Date.now(),
-                librarySourceId: sourceId ? parseInt(sourceId, 10) : null,
-                focus: document.getElementById('menu-focus').value,
-                organize: document.getElementById('menu-organize').value,
-                keyfactor: document.getElementById('menu-keyfactor').value,
-                options: document.getElementById('menu-options').value,
-                category: document.getElementById('menu-category').value,
-                videoUrl: videoUrlVal,
-                engagement: engagementVal,  // ★ 追加
-                reflection: reflectionVal,  // ★ 追加
-                frames: frames,
-                pitchTemplate: pitchTemplate
-            };
-
-            const editId = document.getElementById('menu-edit-id') ? document.getElementById('menu-edit-id').value : '';
-            if (editId) {
-                let targetMenu = null;
-                if (practiceId === 'library') {
-                    targetMenu = state.menuLibrary.find(m => m.id === parseInt(editId, 10));
-                } else {
-                    const practice = state.practices.find(p => p.id === parseInt(practiceId, 10));
-                    if (practice) {
-                        targetMenu = practice.menus.find(m => m.id === parseInt(editId, 10));
-                    }
-                }
-                if (targetMenu) {
-                    targetMenu.focus = newMenuObj.focus;
-                    targetMenu.organize = newMenuObj.organize;
-                    targetMenu.keyfactor = newMenuObj.keyfactor;
-                    targetMenu.options = newMenuObj.options;
-                    targetMenu.category = newMenuObj.category;
-                    targetMenu.videoUrl = newMenuObj.videoUrl;
-                    targetMenu.engagement = newMenuObj.engagement;  // ★ 追加
-                    targetMenu.reflection = newMenuObj.reflection;  // ★ 追加
-                    if (sourceId) {
-                        targetMenu.frames = frames;
-                        targetMenu.pitchTemplate = pitchTemplate;
-                        targetMenu.librarySourceId = parseInt(sourceId, 10);
-                    }
-
-                    // Sync back to library menu if linked
-                    const libId = targetMenu.librarySourceId;
-                    if (libId) {
-                        const libMenu = state.menuLibrary.find(m => m.id === libId);
-                        if (libMenu) {
-                            libMenu.focus = newMenuObj.focus;
-                            libMenu.organize = newMenuObj.organize;
-                            libMenu.keyfactor = newMenuObj.keyfactor;
-                            libMenu.options = newMenuObj.options;
-                            libMenu.category = newMenuObj.category;
-                            libMenu.videoUrl = newMenuObj.videoUrl;
-                            if (sourceId) {
-                                libMenu.frames = frames;
-                                libMenu.pitchTemplate = pitchTemplate;
-                            }
-                        }
-                    }
-
-                    // Sync library menu edits forward to all assigned practice menus
-                    if (practiceId === 'library') {
-                        state.practices.forEach(p => {
-                            if (p.menus) {
-                                p.menus.forEach(pm => {
-                                    if (pm.librarySourceId === targetMenu.id) {
-                                        pm.focus = newMenuObj.focus;
-                                        pm.organize = newMenuObj.organize;
-                                        pm.keyfactor = newMenuObj.keyfactor;
-                                        pm.options = newMenuObj.options;
-                                        pm.category = newMenuObj.category;
-                                        pm.videoUrl = newMenuObj.videoUrl;
-                                        if (sourceId) {
-                                            pm.frames = frames;
-                                            pm.pitchTemplate = pitchTemplate;
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    }
-                    saveData();
-                    showToast('メニューを更新しました');
-                    document.getElementById('modal-menu').classList.add('hidden');
-                    if (practiceId === 'library') navigate('library');
-                    else navigate('practices');
-                    return;
-                }
-            }
-
-            if (practiceId === 'library') {
-                state.menuLibrary.push(newMenuObj);
-                saveData();
-                showToast('ライブラリに保存しました');
-                document.getElementById('modal-menu').classList.add('hidden');
-                navigate('library');
-            } else {
-                const practice = state.practices.find(p => p.id === parseInt(practiceId, 10));
-                if (practice) {
-                    // ★【追加】ライブラリ未選択の新規メニューの場合、メニュー管理(ライブラリ)にも同時追加する
-                    if (!sourceId) {
-                        const libMenuObj = JSON.parse(JSON.stringify(newMenuObj));
-                        state.menuLibrary.push(libMenuObj);
-                        newMenuObj.librarySourceId = libMenuObj.id; // ライブラリと相互リンク
-                    }
-
-                    practice.menus.push(newMenuObj);
-                    saveData();
-                    showToast('メニューを追加（ライブラリにも保存）しました');
-                    document.getElementById('modal-menu').classList.add('hidden');
-                    navigate('practices');
-                }
-            }
-            return false;
-        };
-
-        const formMenu = document.getElementById('form-menu');
-        if (formMenu) {
-            formMenu.onsubmit = handleMenuSubmit;
-        }
-        const btnSubmitMenu = document.getElementById('btn-submit-menu');
-        if (btnSubmitMenu) {
-            btnSubmitMenu.onclick = handleMenuSubmit;
-        }
+    const formMenu = document.getElementById('form-menu');
+    if (formMenu) {
+        formMenu.onsubmit = handleMenuSubmit;
+    }
+    const btnSubmitMenu = document.getElementById('btn-submit-menu');
+    if (btnSubmitMenu) {
+        btnSubmitMenu.onclick = handleMenuSubmit;
+    }
 
     const btnLoadMorePractices = document.getElementById('btn-load-more-practices');
     if (btnLoadMorePractices) {
@@ -1086,3 +938,163 @@ function stopPreviewAnimation() {
     const playBtn = document.getElementById('btn-preview-play-toggle');
     if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-play"></i> 再生';
 }
+
+export function handleMenuSubmit(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    const focusInput = document.getElementById('menu-focus');
+    if (!focusInput || !focusInput.value.trim()) {
+        showToast('テーマ・フォーカスを入力してください');
+        if (focusInput) focusInput.focus();
+        return false;
+    }
+
+    const practiceId = document.getElementById('menu-practice-id')?.value || '';
+    const sourceId = document.getElementById('menu-library-source-id')?.value || '';
+
+    let frames = null;
+    let pitchTemplate = 'full';
+    if (sourceId) {
+        const src = (state.menuLibrary || []).find(m => m.id === parseInt(sourceId, 10));
+        if (src) {
+            if (src.frames) frames = JSON.parse(JSON.stringify(src.frames));
+            if (src.pitchTemplate) pitchTemplate = src.pitchTemplate;
+        }
+    }
+
+    const videoUrlInp = document.getElementById('menu-video-url');
+    const videoUrlVal = videoUrlInp ? videoUrlInp.value.trim() : '';
+
+    const engagementInp = document.getElementById('menu-engagement');
+    const engagementVal = engagementInp ? parseInt(engagementInp.value, 10) : 0;
+    const reflectionInp = document.getElementById('menu-reflection');
+    const reflectionVal = reflectionInp ? reflectionInp.value.trim() : '';
+
+    const newMenuObj = {
+        id: Date.now(),
+        librarySourceId: sourceId ? parseInt(sourceId, 10) : null,
+        focus: focusInput.value.trim(),
+        organize: document.getElementById('menu-organize')?.value || '',
+        keyfactor: document.getElementById('menu-keyfactor')?.value || '',
+        options: document.getElementById('menu-options')?.value || '',
+        category: document.getElementById('menu-category')?.value || 'その他',
+        videoUrl: videoUrlVal,
+        engagement: engagementVal,
+        reflection: reflectionVal,
+        frames: frames,
+        pitchTemplate: pitchTemplate
+    };
+
+    const editId = document.getElementById('menu-edit-id') ? document.getElementById('menu-edit-id').value : '';
+    if (editId) {
+        let targetMenu = null;
+        if (practiceId === 'library') {
+            targetMenu = (state.menuLibrary || []).find(m => m.id === parseInt(editId, 10));
+        } else {
+            const practice = (state.practices || []).find(p => p.id === parseInt(practiceId, 10));
+            if (practice && Array.isArray(practice.menus)) {
+                targetMenu = practice.menus.find(m => m.id === parseInt(editId, 10));
+            }
+        }
+        if (targetMenu) {
+            targetMenu.focus = newMenuObj.focus;
+            targetMenu.organize = newMenuObj.organize;
+            targetMenu.keyfactor = newMenuObj.keyfactor;
+            targetMenu.options = newMenuObj.options;
+            targetMenu.category = newMenuObj.category;
+            targetMenu.videoUrl = newMenuObj.videoUrl;
+            targetMenu.engagement = newMenuObj.engagement;
+            targetMenu.reflection = newMenuObj.reflection;
+            if (sourceId) {
+                targetMenu.frames = frames;
+                targetMenu.pitchTemplate = pitchTemplate;
+                targetMenu.librarySourceId = parseInt(sourceId, 10);
+            }
+
+            // Sync back to library menu if linked
+            const libId = targetMenu.librarySourceId;
+            if (libId) {
+                const libMenu = (state.menuLibrary || []).find(m => m.id === libId);
+                if (libMenu) {
+                    libMenu.focus = newMenuObj.focus;
+                    libMenu.organize = newMenuObj.organize;
+                    libMenu.keyfactor = newMenuObj.keyfactor;
+                    libMenu.options = newMenuObj.options;
+                    libMenu.category = newMenuObj.category;
+                    libMenu.videoUrl = newMenuObj.videoUrl;
+                    if (sourceId) {
+                        libMenu.frames = frames;
+                        libMenu.pitchTemplate = pitchTemplate;
+                    }
+                }
+            }
+
+            // Sync library menu edits forward to all assigned practice menus
+            if (practiceId === 'library') {
+                (state.practices || []).forEach(p => {
+                    if (p.menus) {
+                        p.menus.forEach(pm => {
+                            if (pm.librarySourceId === targetMenu.id) {
+                                pm.focus = newMenuObj.focus;
+                                pm.organize = newMenuObj.organize;
+                                pm.keyfactor = newMenuObj.keyfactor;
+                                pm.options = newMenuObj.options;
+                                pm.category = newMenuObj.category;
+                                pm.videoUrl = newMenuObj.videoUrl;
+                                if (sourceId) {
+                                    pm.frames = frames;
+                                    pm.pitchTemplate = pitchTemplate;
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            saveData();
+            showToast('メニューを更新しました');
+            document.getElementById('modal-menu')?.classList.add('hidden');
+            if (practiceId === 'library') navigate('library');
+            else navigate('practices');
+            return false;
+        }
+    }
+
+    if (practiceId === 'library') {
+        if (!state.menuLibrary) state.menuLibrary = [];
+        state.menuLibrary.push(newMenuObj);
+        saveData();
+        showToast('ライブラリに保存しました');
+        document.getElementById('modal-menu')?.classList.add('hidden');
+        navigate('library');
+    } else {
+        const practice = (state.practices || []).find(p => p.id === parseInt(practiceId, 10));
+        if (practice) {
+            if (!Array.isArray(practice.menus)) practice.menus = [];
+            // ライブラリ未選択の新規メニューの場合、メニュー管理(ライブラリ)にも同時追加する
+            if (!sourceId) {
+                if (!state.menuLibrary) state.menuLibrary = [];
+                const libMenuObj = JSON.parse(JSON.stringify(newMenuObj));
+                state.menuLibrary.push(libMenuObj);
+                newMenuObj.librarySourceId = libMenuObj.id;
+            }
+
+            practice.menus.push(newMenuObj);
+            saveData();
+            showToast('メニューを追加（ライブラリにも保存）しました');
+            document.getElementById('modal-menu')?.classList.add('hidden');
+            navigate('practices');
+        } else {
+            // practiceId が見つからない場合（ライブラリへフォールバック）
+            if (!state.menuLibrary) state.menuLibrary = [];
+            state.menuLibrary.push(newMenuObj);
+            saveData();
+            showToast('ライブラリに保存しました');
+            document.getElementById('modal-menu')?.classList.add('hidden');
+            navigate('library');
+        }
+    }
+    return false;
+}
+window.handleMenuSubmit = handleMenuSubmit;

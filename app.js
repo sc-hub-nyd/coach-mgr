@@ -1,7 +1,7 @@
 // app.js - エントリーポイント
 import { state, uiState } from './state.js';
 import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm, setupScoreCounters, getNendo } from './utils.js';
-import { initPractices, openPracticeModal, renderPracticeRoster } from './practices.js';
+import { initPractices, openPracticeModal, renderPracticeRoster, handleMenuSubmit } from './practices.js';
 import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText, releaseFieldCompanionSession } from './matches.js';
 import { initPlayers, openPlayerDetail, initPlayerDetailView } from './players.js';
 import { initLibrary } from './library.js';
@@ -2083,6 +2083,15 @@ function setupEventListeners() {
             }
             return false;
         };
+    }
+
+    const formMenu = document.getElementById('form-menu');
+    if (formMenu) {
+        formMenu.onsubmit = handleMenuSubmit;
+    }
+    const btnSubmitMenu = document.getElementById('btn-submit-menu');
+    if (btnSubmitMenu) {
+        btnSubmitMenu.onclick = handleMenuSubmit;
     }
 }
 

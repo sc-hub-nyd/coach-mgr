@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.45';
+export const APP_VERSION = 'v1.30.46';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.46',
+        date: '2026-08-19',
+        title: '練習メニュー追加・保存ハンドラのグローバル化と安全性強化',
+        features: [
+            'メニュー追加モーダルの送信処理（handleMenuSubmit）をグローバルイベントリスナーとして統一バインドし、どの画面からのメニュー追加・編集も確実に動作するよう改善',
+            'ライブラリ選択要素（menu-library-select）の表示・非表示制御の堅牢化'
+        ]
+    },
     {
         version: 'v1.30.45',
         date: '2026-08-19',
