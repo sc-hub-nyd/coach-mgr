@@ -297,6 +297,23 @@
                 <div id="dash-setup-items" class="setup-checklist-items"></div>
             </section>
 
+            <!-- P17: 試合前の運用確認（コーチ専用） -->
+            <section id="dash-preflight-card" class="card c-card dash-preflight-card coach-only" aria-labelledby="dash-preflight-title">
+                <div class="dash-preflight-header">
+                    <div>
+                        <span class="eyebrow-label">MATCHDAY READY</span>
+                        <h2 id="dash-preflight-title"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i> 試合前チェック</h2>
+                        <p id="dash-preflight-headline">保存・同期・復旧状態を確認しています。</p>
+                    </div>
+                    <span id="dash-preflight-progress" class="dash-preflight-progress">確認中</span>
+                </div>
+                <div id="dash-preflight-items" class="dash-preflight-items" aria-live="polite"></div>
+                <div class="dash-preflight-actions">
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-dash-preflight-action"><i class="fa-solid fa-play" aria-hidden="true"></i> 確認する</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-dash-preflight-settings"><i class="fa-solid fa-gear" aria-hidden="true"></i> 運用設定</button>
+                </div>
+            </section>
+
             <!-- ROW 0: マイ選手 (保護者専用) -->
             <div id="dash-myplayer-banner" class="card c-card dash-myplayer-card parent-only" style="display:none;">
                 <div class="dash-widget-label"
