@@ -16,12 +16,12 @@ const files = {
     settings: '../settings.js',
     app: '../app.js',
     serviceWorker: '../sw.js',
-    architecture: '../CSS_ARCHITECTURE.md',
-    brandStandard: '../NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md',
-    typographyStandard: '../TYPOGRAPHY_SYSTEM.md',
-    surfaceDesign: '../NEUMORPHISM_DESIGN_SYSTEM.md',
-    migrationLedger: '../CSS_MIGRATION_LEDGER.md',
-    inlineStyleRegister: '../INLINE_STYLE_MIGRATION_REGISTER.md'
+    architecture: '../doc/CSS_ARCHITECTURE.md',
+    brandStandard: '../doc/NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md',
+    typographyStandard: '../doc/TYPOGRAPHY_SYSTEM.md',
+    surfaceDesign: '../doc/NEUMORPHISM_DESIGN_SYSTEM.md',
+    migrationLedger: '../doc/CSS_MIGRATION_LEDGER.md',
+    inlineStyleRegister: '../doc/INLINE_STYLE_MIGRATION_REGISTER.md'
 };
 
 const source = Object.fromEntries(await Promise.all(
