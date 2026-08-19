@@ -329,73 +329,11 @@
     max-height: 300px;
 }
 
-.practice-menu-item {
-    border-radius: 10px;
-    margin-bottom: 0.4rem;
-    background: rgba(0, 0, 0, 0.03);
-    display: block;
-    padding: 0.55rem 0.65rem;
-    border-bottom: none;
-    border: none;
-}
-
 .no-practice-menu {
     font-size: var(--text-dense-size);
     color: var(--text-secondary);
     padding: 0.4rem 0.5rem;
     list-style: none;
-}
-
-.practice-menu-item-header {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    align-items: stretch;
-    width: 100%;
-}
-
-.practice-menu-title-block {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    gap: 0.3rem;
-}
-
-.practice-menu-item-title {
-    font-size: 0.92rem;
-    font-weight: bold;
-    color: var(--primary);
-    line-height: 1.35;
-    flex: 1;
-    word-break: break-word;
-}
-
-.practice-menu-actions-block {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.3rem;
-    width: 100%;
-    margin-top: 0.15rem;
-}
-
-.practice-menu-actions-block .btn {
-    padding: 0.15rem 0.4rem;
-    font-size: 0.72rem;
-}
-
-.practice-menu-item-details {
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    color: var(--text-secondary);
-}
-
-.practice-menu-item-details strong {
-    color: var(--text-secondary);
 }
 
 /* Player & Library Grids */
@@ -549,20 +487,18 @@ body[data-route="tactics"] .library-grid {
         gap: 0.25rem;
     }
 
-    .practice-menu-item {
-        padding: 0.35rem 0.45rem;
+    .c-content-disclosure--menu {
         border-radius: 8px;
-        margin-bottom: 0.3rem;
     }
 
-    .practice-menu-item-title,
+    .c-content-disclosure__summary--menu {
+        padding: 0.35rem 0.45rem;
+    }
+
+    .c-content-disclosure__heading,
     .no-practice-menu {
         font-size: 0.8rem;
     }
-}
-
-.library-canvas-wrapper:hover .canvas-hover-overlay {
-    opacity: 1 !important;
 }
 
 /* Timeline */

@@ -429,43 +429,43 @@ export function initPractices(miniPitchObserver) {
                             <!-- 2. 練習メニュー領域 -->
                             <div class="practice-detail-section">
                                 <div class="practice-section-label"><i class="fa-solid fa-layer-group"></i> 練習メニュー (${menuCount}件)</div>
-                                <ul class="c-practice-card__menu-list">
+                                <ul class="c-practice-card__menu-list c-content-disclosure-list">
                                         ${safeMenus.length > 0 ? safeMenus.map(menu => `
-                                        <li class="u-ext-150 practice-menu-item">
-                                            <details class="u-ext-151 practice-menu-details">
-                                                <summary class="u-ext-152 practice-menu-item-header">
-                                                    <div class="practice-menu-title-block">
-                                                        <span class="u-ext-153 practice-menu-item-title">
-                                                            <i class="u-ext-154 fa-solid fa-chevron-down"></i>
+                                        <li class="c-content-disclosure-list__item">
+                                            <details class="c-content-disclosure c-content-disclosure--menu">
+                                                <summary class="c-content-disclosure__summary c-content-disclosure__summary--menu">
+                                                    <div class="c-content-disclosure__title">
+                                                        <span class="c-content-disclosure__heading">
+                                                            <i class="c-content-disclosure__chevron fa-solid fa-chevron-down"></i>
                                                             ${escapeHtml(menu.focus)}
                                                         </span>
-                                                        ${menu.engagement ? `<span class="u-ext-155 practice-stars-badge">${'★'.repeat(menu.engagement)}${'☆'.repeat(5 - menu.engagement)}</span>` : ''}
+                                                        ${menu.engagement ? `<span class="c-content-disclosure__rating">${'★'.repeat(menu.engagement)}${'☆'.repeat(5 - menu.engagement)}</span>` : ''}
                                                     </div>
                                                     ${isCoach ? `
-                                                    <div class="u-ext-156 practice-menu-actions-block" onclick="event.stopPropagation();">
-                                                        <button class="u-ext-157 c-button btn c-button--secondary btn-secondary btn-edit-menu" data-pid="${p.id}" data-mid="${menu.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
-                                                        <button class="u-ext-157 c-button btn c-button--secondary btn-secondary btn-anim-practice" data-pid="${p.id}" data-mid="${menu.id}" title="作図"><i class="fa-solid fa-person-running"></i></button>
-                                                        <button class="u-ext-157 c-button btn c-button--danger btn-danger btn-delete-menu" data-pid="${p.id}" data-mid="${menu.id}"><i class="fa-solid fa-times"></i></button>
+                                                    <div class="c-content-disclosure__actions" onclick="event.stopPropagation();">
+                                                        <button class="c-button btn c-button--secondary btn-secondary btn-edit-menu" data-pid="${p.id}" data-mid="${menu.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
+                                                        <button class="c-button btn c-button--secondary btn-secondary btn-anim-practice" data-pid="${p.id}" data-mid="${menu.id}" title="作図"><i class="fa-solid fa-person-running"></i></button>
+                                                        <button class="c-button btn c-button--danger btn-danger btn-delete-menu" data-pid="${p.id}" data-mid="${menu.id}"><i class="fa-solid fa-times"></i></button>
                                                     </div>
                                                     ` : ''}
                                                 </summary>
                                                 ${(menu.organize || menu.keyfactor || menu.options || menu.videoUrl || menu.frames || menu.reflection) ? `
-                                                <div class="u-ext-158 practice-menu-item-details">
-                                                    <div class="u-ext-159 practice-canvas-wrapper btn-open-anim-preview" data-pid="${p.id}" data-mid="${menu.id}" onclick="event.stopPropagation();" title="クリックして作図アニメーションを拡大表示">
-                                                        <canvas class="u-ext-160" id="practice-mini-pitch-${p.id}-${menu.id}" width="800" height="500"></canvas>
+                                                <div class="c-content-disclosure__body c-content-disclosure__body--menu">
+                                                    <div class="c-media-preview c-media-preview--interactive btn-open-anim-preview" data-pid="${p.id}" data-mid="${menu.id}" onclick="event.stopPropagation();" title="クリックして作図アニメーションを拡大表示">
+                                                        <canvas class="c-media-preview__canvas" id="practice-mini-pitch-${p.id}-${menu.id}" width="800" height="500"></canvas>
                                                         ${menu.frames && menu.frames.length > 0 ? `
-                                                            <div class="u-ext-161">
-                                                                <span class="u-ext-162"></span>${menu.frames.length > 1 ? 'ANIM' : 'ZOOM'}
+                                                            <div class="c-media-preview__status">
+                                                                <span class="c-media-preview__status-dot"></span>${menu.frames.length > 1 ? 'ANIM' : 'ZOOM'}
                                                             </div>
                                                         ` : ''}
                                                     </div>
-                                                    ${menu.organize ? `<div><strong><i class="fa-solid fa-users"></i> オーガナイズ</strong><div class="u-ext-163">${escapeHtml(menu.organize)}</div></div>` : ''}
-                                                    ${menu.keyfactor ? `<div><strong><i class="fa-solid fa-key"></i> キーファクター</strong><div class="u-ext-163">${escapeHtml(menu.keyfactor)}</div></div>` : ''}
-                                                    ${menu.videoUrl ? `<div><strong><i class="u-ext-16 fa-brands fa-youtube"></i> 参考動画</strong><div class="u-ext-164"><a class="u-ext-165" href="${escapeHtml(menu.videoUrl)}" target="_blank" rel="noopener noreferrer"><i class="u-ext-33 fa-solid fa-arrow-up-right-from-square"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
-                                                    ${menu.options ? `<div><strong><i class="fa-solid fa-sliders"></i> オプション</strong><div class="u-ext-163">${escapeHtml(menu.options)}</div></div>` : ''}
-                                                    ${menu.reflection ? `<div><strong class="u-ext-77"><i class="fa-solid fa-clipboard-user"></i> 指導者の振り返り・メモ</strong><div class="u-ext-166">${escapeHtml(menu.reflection)}</div></div>` : ''}
+                                                    ${menu.organize ? `<div><strong><i class="fa-solid fa-users"></i> オーガナイズ</strong><div class="c-content-disclosure__text">${escapeHtml(menu.organize)}</div></div>` : ''}
+                                                    ${menu.keyfactor ? `<div><strong><i class="fa-solid fa-key"></i> キーファクター</strong><div class="c-content-disclosure__text">${escapeHtml(menu.keyfactor)}</div></div>` : ''}
+                                                    ${menu.videoUrl ? `<div><strong><i class="u-ext-16 fa-brands fa-youtube"></i> 参考動画</strong><div class="c-content-disclosure__text"><a class="c-content-disclosure__link" href="${escapeHtml(menu.videoUrl)}" target="_blank" rel="noopener noreferrer"><i class="u-ext-33 fa-solid fa-arrow-up-right-from-square"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
+                                                    ${menu.options ? `<div><strong><i class="fa-solid fa-sliders"></i> オプション</strong><div class="c-content-disclosure__text">${escapeHtml(menu.options)}</div></div>` : ''}
+                                                    ${menu.reflection ? `<div><strong class="c-content-disclosure__label"><i class="fa-solid fa-clipboard-user"></i> 指導者の振り返り・メモ</strong><div class="c-content-disclosure__note">${escapeHtml(menu.reflection)}</div></div>` : ''}
                                                 </div>
-                                                ` : '<div class="u-ext-167">詳細説明はありません。</div>'}
+                                                ` : '<div class="c-content-disclosure__empty">詳細説明はありません。</div>'}
                                             </details>
                                         </li>
                                     `).join('') : '<li class="text-secondary no-practice-menu" style="font-size:0.8rem; padding:0.3rem 0;">メニューなし</li>'}

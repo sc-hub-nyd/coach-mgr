@@ -130,39 +130,39 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
             `;
 
             return `
-            <div class="u-ext-183 c-card card">
+            <div class="c-tactic-card c-card card">
                 <div>
-                    <div class="library-card-header" style="display:flex; flex-direction:column; gap:0.3rem; margin-bottom:0.4rem;">
+                    <div class="c-tactic-card__header">
                         <div>
-                            <span class="u-ext-185 c-status c-status--muted">${cat}</span>
+                            <span class="c-status c-status--muted">${cat}</span>
                         </div>
-                        <div class="u-ext-156 library-card-actions c-action-group c-action-group--end c-action-group--compact" style="width:100%;">
+                        <div class="c-tactic-card__actions c-action-group c-action-group--end c-action-group--compact">
                             ${actionBtns}
                         </div>
                     </div>
-                    <div class="u-ext-186">
+                    <div class="c-tactic-card__title">
                         ${escapeHtml(t.title || '無題')}
                     </div>
 
-                    <div class="u-ext-188 library-canvas-wrapper" onclick="navigate('animation', { tacticId: ${t.id} })">
-                        <canvas class="u-ext-160" id="tactic-mini-pitch-${t.id}" width="800" height="500"></canvas>
-                        <div class="u-ext-189 canvas-hover-overlay">
-                            <i class="u-ext-190 fa-solid fa-person-running"></i> 作図画面を開く
+                    <div class="c-media-preview c-media-preview--interactive" onclick="navigate('animation', { tacticId: ${t.id} })">
+                        <canvas class="c-media-preview__canvas" id="tactic-mini-pitch-${t.id}" width="800" height="500"></canvas>
+                        <div class="c-media-preview__overlay">
+                            <i class="fa-solid fa-person-running"></i> 作図画面を開く
                         </div>
                         ${t.frames && t.frames.length > 1 ? `
-                            <div class="u-ext-161">
-                                <span class="u-ext-162"></span>ANIM
+                            <div class="c-media-preview__status">
+                                <span class="c-media-preview__status-dot"></span>ANIM
                             </div>
                         ` : ''}
                     </div>
 
                     ${t.description ? `
-                    <details class="u-ext-191 library-card-details">
-                        <summary class="u-ext-192">
-                            <i class="u-ext-154 fa-solid fa-chevron-down"></i> 詳細を表示
+                    <details class="c-content-disclosure c-content-disclosure--soft">
+                        <summary class="c-content-disclosure__summary">
+                            <i class="c-content-disclosure__chevron fa-solid fa-chevron-down"></i> 詳細を表示
                         </summary>
-                        <div class="u-ext-193" onclick="event.stopPropagation();">
-                            <div><strong class="u-ext-194"><i class="fa-solid fa-key"></i> 説明・キーファクター</strong><div class="u-ext-195" style="white-space:pre-wrap;">${escapeHtml(t.description)}</div></div>
+                        <div class="c-content-disclosure__body" onclick="event.stopPropagation();">
+                            <div><strong class="c-content-disclosure__label"><i class="fa-solid fa-key"></i> 説明・キーファクター</strong><div class="c-content-disclosure__text">${escapeHtml(t.description)}</div></div>
                         </div>
                     </details>
                     ` : ''}
@@ -171,9 +171,9 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
         }).join('');
 
         return `
-        <div class="u-ext-199 category-section">
-            <h3 class="u-ext-200">
-                ${cat} <span class="u-ext-201 text-secondary">(${tactics.length}件)</span>
+        <div class="c-section-group category-section">
+            <h3 class="c-section-group__title">
+                ${cat} <span class="c-section-group__count">(${tactics.length}件)</span>
             </h3>
             <div class="library-grid">
                 ${cardsHtml}

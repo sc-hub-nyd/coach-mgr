@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.64';
+export const APP_VERSION = 'v1.30.65';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.65',
+        date: '2026-08-19',
+        title: '波F：カード・ピリオド編集・レガシーCSSの共通部品化',
+        features: [
+            '未参照のu-ext-171〜173を削除し、P35で再導入を禁止',
+            '練習・ライブラリ・戦術の詳細開示、ミニピッチプレビュー、カテゴリカードをc-content-disclosure、c-media-preview、c-library-card、c-tactic-card、c-section-groupへ統一',
+            '試合ピリオドの得点・配置・スコア・保存導線をc-period-editor／c-score-stepperへ移行し、静的なミニピッチ・保存レイアウトのインライン指定と関連!importantを局所的に削減'
+        ]
+    },
     {
         version: 'v1.30.64',
         date: '2026-08-19',

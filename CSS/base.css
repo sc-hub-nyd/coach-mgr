@@ -1226,9 +1226,9 @@ body .c-practice-card,
 body .c-practice-card__details,
 body .c-practice-card__expanded,
 body .c-practice-card__menu-list,
-body .practice-menu-item,
-body .practice-menu-details,
-body .practice-menu-item-details {
+body .c-content-disclosure-list__item,
+body .c-content-disclosure,
+body .c-content-disclosure__body {
     height: auto;
     max-height: none;
     overflow: visible;

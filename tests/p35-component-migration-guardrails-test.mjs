@@ -512,6 +512,84 @@ requireNone(waveELegacySources, [
     /class=["'][^"']*(?:\s|["'])(?:anim-tool-dock|dock-btn|dock-text|anim-settings-popover|anim-quick-drawer|drawer-(?:header|title|close-btn|body|field|preset)[a-z-]*|preset-chip|anim-detail-side-panel|side-panel-[a-z-]+|side-info-[a-z-]+)(?=\s|["'])/
 ], '波Eで廃止した選手詳細・アプリシェル・作図周辺クラス');
 
+// Wave F F0: unused legacy classes must not be reintroduced after removal.
+const waveFUnusedLegacySources = Object.values(source).join('\n');
+requireNone(waveFUnusedLegacySources, [
+    /\.u-ext-(?:171|172|173)\b/,
+    /class=["'][^"']*(?:\s|["'])u-ext-(?:171|172|173)(?=\s|["'])/
+], '波F F0で削除した未参照u-extクラス');
+
+requireAll(source.system, [
+    '\\.c-content-disclosure',
+    '\\.c-content-disclosure__summary',
+    '\\.c-content-disclosure__body',
+    '\\.c-content-disclosure__note',
+    '\\.c-content-disclosure-list'
+], '波F F1の共通開示部品');
+
+requireAll([source.practices, source.library, source.tactics].join('\n'), [
+    'c-content-disclosure',
+    'c-content-disclosure__summary',
+    'c-content-disclosure__body'
+], '波F F1の開示コンテンツ移行');
+
+const waveFDisclosureLegacySources = [source.practices, source.library, source.tactics, source.components, source.base, source.dashboard].join('\n');
+requireNone(waveFDisclosureLegacySources, [
+    /\.u-ext-(?:150|151|152|153|154|155|156|157|158|163|164|165|166|167|191|192|193|194|195|196|197|198)\b/,
+    /class=["'][^"']*(?:\s|["'])u-ext-(?:150|151|152|153|154|155|156|157|158|163|164|165|166|167|191|192|193|194|195|196|197|198)(?=\s|["'])/,
+    /\.(?:practice-menu-item|practice-menu-details|practice-menu-item-header|practice-menu-title-block|practice-menu-item-title|practice-menu-actions-block|practice-menu-item-details)\b/
+], '波F F1で廃止した開示コンテンツクラス');
+
+requireAll(source.system, [
+    '\\.c-media-preview',
+    '\\.c-media-preview__canvas',
+    '\\.c-media-preview__overlay',
+    '\\.c-media-preview__status',
+    '\\.c-library-card',
+    '\\.c-tactic-card',
+    '\\.c-section-group'
+], '波F F2・F4の共通プレビュー・戦術カード部品');
+
+requireAll([source.practices, source.library, source.tactics].join('\n'), [
+    'c-media-preview',
+    'c-media-preview__canvas',
+    'c-media-preview__status'
+], '波F F2のミニピッチプレビュー移行');
+
+requireAll([source.library, source.tactics].join('\n'), [
+    'c-section-group',
+    'c-section-group__title'
+], '波F F4の戦術カテゴリ移行');
+
+const waveFPreviewLegacySources = [source.practices, source.library, source.tactics, source.components, source.dashboard].join('\n');
+requireNone(waveFPreviewLegacySources, [
+    /\.u-ext-(?:159|160|161|162|183|185|186|187|188|189|190|199|200|201)\b/,
+    /class=["'][^"']*(?:\s|["'])u-ext-(?:159|160|161|162|183|185|186|187|188|189|190|199|200|201)(?=\s|["'])/,
+    /\.(?:library-canvas-wrapper|practice-canvas-wrapper|canvas-hover-overlay|library-card-header)\b/
+], '波F F2・F4で廃止したプレビュー・戦術カードクラス');
+
+requireAll(source.system, [
+    '\\.c-period-editor__goal-row',
+    '\\.c-period-editor__position-row',
+    '\\.c-period-editor__pitch-token',
+    '\\.c-score-stepper',
+    '\\.c-period-editor__save'
+], '波F F3のピリオド編集部品');
+
+requireAll(source.matches, [
+    'c-period-editor__goal-row',
+    'c-period-editor__position-row',
+    'c-score-stepper',
+    'c-period-editor__pitch-token',
+    'btn-side-save-period'
+], '波F F3のピリオド編集移行');
+
+const waveFPeriodEditorLegacySources = [source.matches, source.components].join('\n');
+requireNone(waveFPeriodEditorLegacySources, [
+    /\.u-ext-(?:78|79|80|81|82|83|84|85|86|87|88|89|90|91|92|94|95|96|97|98|104|105|107|108|109|112|113|114)\b/,
+    /class=["'][^"']*(?:\s|["'])u-ext-(?:78|79|80|81|82|83|84|85|86|87|88|89|90|91|92|94|95|96|97|98|104|105|107|108|109|112|113|114)(?=\s|["'])/
+], '波F F3で廃止したピリオド編集クラス');
+
 // Label-shape contract: only common status labels may represent state, counts, and compact metadata.
 const labelSources = [
     source.index,

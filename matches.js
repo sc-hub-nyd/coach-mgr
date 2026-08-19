@@ -1416,8 +1416,8 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         <span class="c-inspector-panel__label">ピリオド総括</span>
                         <textarea id="side-form-summary" class="c-input form-control form-control-sm" rows="3">${escapeHtml(period.summary || period.reflection || '')}</textarea>
                     </div>
-                    <div style="margin-top:0.6rem;">
-                        <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-side-save-period" style="width:100%; margin:0;">
+                    <div class="c-period-editor__save-wrap">
+                        <button type="button" class="c-period-editor__save c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-side-save-period">
                             <i class="fa-solid fa-save"></i> 変更を保存
                         </button>
                     </div>
@@ -1517,14 +1517,14 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     const assistOpts = `<option value="">アシストなし</option>` + sortedPlayers.map(p => `<option value="${p.id}" ${p.id === r.assistId ? 'selected' : ''}>${p.number} ${p.name}</option>`).join('');
 
                     return `
-                        <div class="u-ext-78 side-goal-row" data-index="${rIdx}" >
-                            <div class="u-ext-79" >
-                                <span class="u-ext-80" >#${rIdx + 1}</span>
-                                <select class="u-ext-81 c-input form-control form-control-sm side-scorer-select" >${scorerOpts}</select>
-                                <button type="button" class="u-ext-82 c-button btn c-button--danger btn-danger btn-xs btn-remove-side-goal"  title="この得点記録を削除"><i class="fa-solid fa-trash"></i></button>
+                        <div class="c-period-editor__goal-row side-goal-row" data-index="${rIdx}" >
+                            <div class="c-period-editor__goal-row-header" >
+                                <span class="c-period-editor__ordinal" >#${rIdx + 1}</span>
+                                <select class="c-period-editor__field c-input form-control form-control-sm side-scorer-select" >${scorerOpts}</select>
+                                <button type="button" class="c-button btn c-button--danger btn-danger btn-xs btn-remove-side-goal"  title="この得点記録を削除"><i class="fa-solid fa-trash"></i></button>
                             </div>
-                            <div class="u-ext-83" >
-                                <select class="u-ext-81 c-input form-control form-control-sm side-assist-select" >${assistOpts}</select>
+                            <div class="c-period-editor__goal-controls" >
+                                <select class="c-period-editor__field c-input form-control form-control-sm side-assist-select" >${assistOpts}</select>
                             </div>
                         </div>
                     `;
@@ -1589,7 +1589,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
                     return `
                         <div class="side-pitch-pin" data-pos-key="${posKey}" style="position:absolute; left:${leftStr}; top:${topStr}; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; cursor:pointer; z-index:5;" title="${c.role || `ポジション${pIdx + 1}`}">
-                            <div class="u-ext-84" >
+                            <div class="c-period-editor__pitch-token" >
                                 ${labelText}
                             </div>
                         </div>
@@ -1612,9 +1612,9 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     const playerOpts = `<option value="">未割当</option>` + sortedPlayers.map(p => `<option value="${p.id}" ${p.id == assignedPlayerId ? 'selected' : ''}>${p.number ? `#${p.number}` : ''} ${p.name}</option>`).join('');
 
                     return `
-                        <div class="u-ext-85 side-position-row" data-pos-key="${posKey}" >
-                            <span class="u-ext-86"  title="${c.role || `P${pIdx + 1}`}">${c.role || `${pIdx + 1}`}</span>
-                            <select class="u-ext-87 c-input form-control form-control-sm side-pos-player-select" >${playerOpts}</select>
+                        <div class="c-period-editor__position-row side-position-row" data-pos-key="${posKey}" >
+                            <span class="c-period-editor__position-label"  title="${c.role || `P${pIdx + 1}`}">${c.role || `${pIdx + 1}`}</span>
+                            <select class="c-period-editor__field c-input form-control form-control-sm side-pos-player-select" >${playerOpts}</select>
                         </div>
                     `;
                 }).join('');
@@ -1631,28 +1631,28 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 </div>
                 <div class="c-inspector-panel__item">
                     <span class="c-inspector-panel__label">スコア (自 - 相手)</span>
-                    <div class="u-ext-88" >
-                        <div class="u-ext-89" >
-                            <span class="u-ext-90" >自</span>
-                            <button type="button" class="u-ext-91 c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-us-minus" ><i class="fa-solid fa-minus"></i></button>
-                            <span class="u-ext-92" id="side-score-us-display" >${period.scoreUs || 0}</span>
-                            <button type="button" class="u-ext-91 c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-us-plus" ><i class="fa-solid fa-plus"></i></button>
+                    <div class="c-score-stepper" >
+                        <div class="c-score-stepper__group" >
+                            <span class="c-score-stepper__label" >自</span>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-us-minus" ><i class="fa-solid fa-minus"></i></button>
+                            <span class="c-score-stepper__value" id="side-score-us-display" >${period.scoreUs || 0}</span>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-us-plus" ><i class="fa-solid fa-plus"></i></button>
                         </div>
                         <span class="u-ext-93" >-</span>
-                        <div class="u-ext-89" >
-                            <button type="button" class="u-ext-91 c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-them-minus" ><i class="fa-solid fa-minus"></i></button>
-                            <span class="u-ext-92" id="side-score-them-display" >${period.scoreThem || 0}</span>
-                            <button type="button" class="u-ext-91 c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-them-plus" ><i class="fa-solid fa-plus"></i></button>
-                            <span class="u-ext-90" >相</span>
+                        <div class="c-score-stepper__group" >
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-them-minus" ><i class="fa-solid fa-minus"></i></button>
+                            <span class="c-score-stepper__value" id="side-score-them-display" >${period.scoreThem || 0}</span>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-them-plus" ><i class="fa-solid fa-plus"></i></button>
+                            <span class="c-score-stepper__label" >相</span>
                         </div>
                     </div>
                 </div>
                 <div class="c-inspector-panel__item">
-                    <div class="u-ext-94" >
-                        <span class="u-ext-95 c-inspector-panel__label" >得点者・アシスト記録</span>
-                        <button type="button" class="u-ext-96 c-button btn c-button--primary btn-primary btn-xs" id="btn-add-side-goal" ><i class="fa-solid fa-plus"></i> 追加</button>
+                    <div class="c-period-editor__section-header" >
+                        <span class="c-inspector-panel__label" >得点者・アシスト記録</span>
+                        <button type="button" class="c-button btn c-button--primary btn-primary btn-xs" id="btn-add-side-goal" ><i class="fa-solid fa-plus"></i> 追加</button>
                     </div>
-                    <div class="u-ext-97" id="side-goal-records-container" >
+                    <div class="c-period-editor__scroll-list" id="side-goal-records-container" >
                         ${goalRowsHtml || '<div class="u-ext-57" >得点記録なし</div>'}
                     </div>
                 </div>
@@ -1675,8 +1675,8 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     <select id="side-form-system" class="c-input form-control form-control-sm">${systemOptions}</select>
                 </div>
                 <div class="c-inspector-panel__item">
-                    <span class="u-ext-98 c-inspector-panel__label" >ポジション配置（ミニピッチ図）</span>
-                    <div class="tactical-pitch pitch-half-bottom" id="side-mini-pitch" style="max-width: 320px; width: 100%; margin: 0 auto 0.5rem;">
+                    <span class="c-inspector-panel__label" >ポジション配置（ミニピッチ図）</span>
+                    <div class="c-period-editor__mini-pitch tactical-pitch pitch-half-bottom" id="side-mini-pitch">
                         <div class="penalty-area-bottom"></div>
                         <div class="goal-area-bottom"></div>
                         <div class="penalty-arc-bottom"></div>
@@ -1685,12 +1685,12 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         <div class="corner-arc-br"></div>
                         ${pitchPinsHtml}
                     </div>
-                    <div class="u-ext-104" id="side-positions-container" >
+                    <div class="c-period-editor__scroll-list" id="side-positions-container" >
                         ${posListHtml || '<div class="u-ext-57" >ポジション設定がありません</div>'}
                     </div>
                 </div>
-                <div style="margin-top:0.6rem;">
-                    <button type="button" class="u-ext-105 c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-side-save-period" style="width:100%; margin:0;">
+                <div class="c-period-editor__save-wrap">
+                    <button type="button" class="c-period-editor__save c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-side-save-period">
                         <i class="fa-solid fa-save"></i> 変更を保存
                     </button>
                 </div>
@@ -1949,7 +1949,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
                     return `
                         <div class="side-pitch-pin" data-pos-key="${posKey}" style="position:absolute; left:${leftPercent}%; top:${topPercent}%; transform:translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; cursor:pointer; z-index:5;" title="${c.role || `ポジション${pIdx + 1}`}">
-                            <div class="u-ext-84" >
+                            <div class="c-period-editor__pitch-token" >
                                 ${labelText}
                             </div>
                         </div>
@@ -1973,9 +1973,9 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     const playerName = assignedPlayer ? `${assignedPlayer.number ? `#${assignedPlayer.number} ` : ''}${assignedPlayer.name}` : '未割当';
 
                     return `
-                        <div class="u-ext-107 side-position-row" data-pos-key="${posKey}" >
+                        <div class="c-period-editor__position-row side-position-row" data-pos-key="${posKey}" >
                             <span class="u-ext-93" >${escapeHtml(c.role || `${pIdx + 1}`)}</span>
-                            <span class="u-ext-108" >${escapeHtml(playerName)}</span>
+                            <span class="c-period-editor__value--strong" >${escapeHtml(playerName)}</span>
                         </div>
                     `;
                 }).join('');
@@ -1984,7 +1984,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
             sideBody.innerHTML = `
                 <div class="c-inspector-panel__item">
                     <span class="c-inspector-panel__label">ピリオド名</span>
-                    <div class="u-ext-109 c-inspector-panel__value" >${escapeHtml(period.name || '未設定')}</div>
+                    <div class="c-period-editor__value--strong c-inspector-panel__value" >${escapeHtml(period.name || '未設定')}</div>
                 </div>
                 <div class="c-inspector-panel__item">
                     <span class="c-inspector-panel__label"><i class="fa-brands fa-youtube" style="color:#ef4444;"></i> YouTube動画 URL</span>
@@ -1995,23 +1995,23 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 </div>
                 <div class="c-inspector-panel__item">
                     <span class="c-inspector-panel__label">スコア (自 - 相手)</span>
-                    <div class="u-ext-112 c-inspector-panel__value" >${period.scoreUs || 0} - ${period.scoreThem || 0}</div>
+                    <div class="c-period-editor__value--score c-inspector-panel__value" >${period.scoreUs || 0} - ${period.scoreThem || 0}</div>
                 </div>
                 <div class="c-inspector-panel__item">
-                    <span class="u-ext-98 c-inspector-panel__label" >得点者・アシスト記録</span>
-                    ${goalDetailsHtml ? `<div class="u-ext-113" >${goalDetailsHtml}</div>` : '<div class="u-ext-64" >得点記録なし</div>'}
+                    <span class="c-inspector-panel__label" >得点者・アシスト記録</span>
+                    ${goalDetailsHtml ? `<div class="c-period-editor__scroll-list" >${goalDetailsHtml}</div>` : '<div class="u-ext-64" >得点記録なし</div>'}
                 </div>
                 <div class="c-inspector-panel__item">
                     <span class="c-inspector-panel__label">ピリオド総括</span>
-                    <div class="u-ext-114 c-inspector-panel__value" >${escapeHtml(period.summary || period.reflection || '総括コメントはありません。')}</div>
+                    <div class="c-period-editor__value--prewrap c-inspector-panel__value" >${escapeHtml(period.summary || period.reflection || '総括コメントはありません。')}</div>
                 </div>
                 <div class="c-inspector-panel__item">
                     <span class="c-inspector-panel__label">システム (陣形)</span>
-                    <div class="u-ext-109 c-inspector-panel__value" >${escapeHtml(period.system || '未設定')}</div>
+                    <div class="c-period-editor__value--strong c-inspector-panel__value" >${escapeHtml(period.system || '未設定')}</div>
                 </div>
                 <div class="c-inspector-panel__item">
-                    <span class="u-ext-98 c-inspector-panel__label" >ポジション配置（ミニピッチ図）</span>
-                    <div class="tactical-pitch pitch-half-bottom" id="side-mini-pitch-parent" style="max-width: 320px; width: 100%; margin: 0 auto 0.5rem;">
+                    <span class="c-inspector-panel__label" >ポジション配置（ミニピッチ図）</span>
+                    <div class="c-period-editor__mini-pitch tactical-pitch pitch-half-bottom" id="side-mini-pitch-parent">
                         <div class="penalty-area-bottom"></div>
                         <div class="goal-area-bottom"></div>
                         <div class="penalty-arc-bottom"></div>
@@ -2020,7 +2020,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         <div class="corner-arc-br"></div>
                         ${pitchPinsHtml}
                     </div>
-                    <div class="u-ext-104" >
+                    <div class="c-period-editor__scroll-list" >
                         ${posListHtml || '<div class="u-ext-57" >ポジション設定がありません</div>'}
                     </div>
                 </div>
