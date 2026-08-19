@@ -817,20 +817,31 @@ export function initSettings() {
     function renderList(listId, stateArray, itemLabelFunc = (x) => x) {
         const list = document.getElementById(listId);
         if (!list) return;
-        list.innerHTML = stateArray.map((item, index) => {
-            const isCustomForm = listId === 'custom-formation-list';
-            const editBtnClass = isCustomForm ? 'btn-edit-custom-formation' : 'btn-edit-master-item';
-            const editBtn = `<button type="button" class="u-ext-171 btn btn-secondary ${editBtnClass}" data-list="${listId}" data-index="${index}" ><i class="fa-solid fa-pen"></i> 編集</button>`;
-            return `
-                <li class="u-ext-172" >
-                    <span>${itemLabelFunc(item)}</span>
-                    <div>
-                        ${editBtn}
-                        <button type="button" class="u-ext-173 btn btn-danger btn-delete-item" data-list="${listId}" data-index="${index}" ><i class="fa-solid fa-trash"></i></button>
+        if (!Array.isArray(stateArray) || stateArray.length === 0) {
+            list.innerHTML = `
+                <li class="c-empty-state c-empty-state--compact" style="grid-column: 1 / -1;">
+                    <div class="c-empty-state__body">
+                        <p class="c-empty-state__title">まだ登録されていません</p>
                     </div>
                 </li>
             `;
-        }).join('');
+            return;
+        }
+        list.innerHTML = stateArray.map((item, index) => {
+            const isCustomForm = listId === "custom-formation-list";
+            const editBtnClass = isCustomForm ? "btn-edit-custom-formation" : "btn-edit-master-item";
+            const itemLabel = itemLabelFunc(item);
+            const editBtn = `<button type="button" class="btn btn-secondary btn-sm ${editBtnClass}" data-list="${listId}" data-index="${index}"><i class="fa-solid fa-pen" aria-hidden="true"></i> 編集</button>`;
+            return `
+                <li class="c-data-item">
+                    <span class="c-data-item__label">${escapeHtml(String(itemLabel))}</span>
+                    <div class="c-action-group">
+                        ${editBtn}
+                        <button type="button" class="btn btn-danger btn-sm btn-delete-item" data-list="${listId}" data-index="${index}" aria-label="${escapeHtml(String(itemLabel))}を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                    </div>
+                </li>
+            `;
+        }).join("");
     }
 
     renderList('match-type-list', state.matchTypes);

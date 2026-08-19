@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.21';
+export const APP_VERSION = 'v1.30.22';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.22',
+        date: '2026-08-19',
+        title: '設定画面：マスター項目リスト（c-data-list）のNeumorphism 2.0完全標準化',
+        features: [
+            'マスター項目一覧（sl-list）を標準コンポーネント `c-data-list` / `c-data-item` に刷新し、Neumorphism 2.0のサブカード・ホバー演出・アクションボタングループ（c-action-group）を適用',
+            'データ0件時の表示をCSS擬似要素から標準の `c-empty-state` コンポーネントへ移行し、セマンティックな空状態を実現',
+            'settings.js の renderList ロジックを刷新し、アクセシビリティ対応（aria-label・適切なボタン階層）を強化'
+        ]
+    },
     {
         version: 'v1.30.21',
         date: '2026-08-19',
