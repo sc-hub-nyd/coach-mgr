@@ -243,7 +243,7 @@
     transform: translate(-50%, -50%);
     /* Design */
     border-radius: 50%;
-    background: #ffffff;
+    background: var(--surface);
     border: 2px solid var(--primary);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     cursor: pointer;

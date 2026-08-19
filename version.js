@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.82';
+export const APP_VERSION = 'v1.30.83';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.83',
+        date: '2026-08-20',
+        title: '作図・戦術UIのハードコードカラーをセマンティックトークンへ移行',
+        features: [
+            '作図画面（drawing.css）および戦術画面（tactical.css）の直接指定色（#ffffff, #f1f5f9等）をvar(--surface), var(--bg-color)等のデザイントークンへ安全に移行しダークモード適合性を強化',
+            '契約テスト（全32件）の完全適合を維持'
+        ]
+    },
     {
         version: 'v1.30.82',
         date: '2026-08-20',
