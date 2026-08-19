@@ -646,33 +646,12 @@
                 </div>
             </div>
 
-            <!-- カルテ・詳細タブ切り替え -->
-            <div class="c-view-switcher pd-tabs" role="tablist" aria-label="カルテ表示を切り替え">
-                <button type="button" class="btn btn-sm c-view-switcher__option is-active" data-pd-tab="timeline" role="tab" aria-selected="true"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> 成長メモ・カルテ</button>
-                <button type="button" class="btn btn-sm c-view-switcher__option" data-pd-tab="profile" role="tab" aria-selected="false"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> 特徴・プレースタイル</button>
-                <button type="button" class="btn btn-sm c-view-switcher__option" data-pd-tab="matches" role="tab" aria-selected="false"><i class="fa-solid fa-list-ol" aria-hidden="true"></i> 出場試合履歴</button>
-            </div>
-
-            <!-- タブパネル 1: 成長メモ・カルテ -->
-            <section class="card c-card pd-tab-panel" data-pd-panel="timeline" aria-labelledby="pd-timeline-title">
-                <div class="c-section-header c-card__header">
-                    <div class="c-section-header__content">
-                        <span class="c-kicker"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> TIMELINE</span>
-                        <h3 class="c-section-header__title c-card__title" id="pd-timeline-title">成長の軌跡・指導メモ</h3>
-                    </div>
-                    <button type="button" class="btn btn-primary btn-sm" id="btn-add-assessment"><i class="fa-solid fa-plus" aria-hidden="true"></i> 観察メモを追加</button>
-                </div>
-                <div class="c-card__body">
-                    <div class="timeline" id="pd-timeline"></div>
-                </div>
-            </section>
-
-            <!-- タブパネル 2: 特徴・プレースタイル -->
-            <section class="card c-card pd-tab-panel hidden" data-pd-panel="profile" aria-labelledby="pd-profile-title">
+            <!-- セクション 1: 選手の特徴・ストロングポイント -->
+            <section class="card c-card" aria-labelledby="pd-profile-title">
                 <div class="c-section-header c-card__header">
                     <div class="c-section-header__content">
                         <span class="c-kicker"><i class="fa-solid fa-id-badge" aria-hidden="true"></i> PROFILE</span>
-                        <h3 class="c-section-header__title c-card__title" id="pd-profile-title">選手の特徴・ストロングポイント</h3>
+                        <h3 class="c-section-header__title c-card__title c-text-effect--shimmer" id="pd-profile-title">選手の特徴・ストロングポイント</h3>
                     </div>
                 </div>
                 <div class="c-card__body l-stack l-stack--spacious">
@@ -691,12 +670,27 @@
                 </div>
             </section>
 
-            <!-- タブパネル 3: 出場試合履歴 -->
-            <section class="card c-card pd-tab-panel hidden" data-pd-panel="matches" aria-labelledby="pd-matches-title">
+            <!-- セクション 2: 成長の軌跡・指導メモ -->
+            <section class="card c-card" aria-labelledby="pd-timeline-title">
+                <div class="c-section-header c-card__header">
+                    <div class="c-section-header__content">
+                        <span class="c-kicker"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> TIMELINE</span>
+                        <h3 class="c-section-header__title c-card__title c-text-effect--shimmer" id="pd-timeline-title">成長の軌跡・指導メモ</h3>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-add-assessment"><i class="fa-solid fa-plus" aria-hidden="true"></i> 観察メモを追加</button>
+                </div>
+                <div class="c-card__body">
+                    <div class="timeline c-data-list c-data-list--scrollable" id="pd-timeline" aria-live="polite"></div>
+                    <div id="pd-history-list" class="u-visually-hidden"></div>
+                </div>
+            </section>
+
+            <!-- セクション 3: 出場試合履歴 -->
+            <section class="card c-card" aria-labelledby="pd-matches-title">
                 <div class="c-section-header c-card__header">
                     <div class="c-section-header__content">
                         <span class="c-kicker"><i class="fa-solid fa-trophy" aria-hidden="true"></i> MATCH HISTORY</span>
-                        <h3 class="c-section-header__title c-card__title" id="pd-matches-title">出場試合一覧</h3>
+                        <h3 class="c-section-header__title c-card__title c-text-effect--shimmer" id="pd-matches-title">出場試合一覧</h3>
                     </div>
                 </div>
                 <div class="c-card__body">
@@ -2098,12 +2092,16 @@
                 <input type="hidden" id="player-edit-id">
                 <div class="c-form-grid">
                     <div class="c-form-field c-form-field--fluid">
-                        <div class="c-form-field__heading"><label class="c-form-field__label" for="player-name">名前</label><span class="c-status-label c-status-label--required">必須</span></div>
-                        <input type="text" id="player-name" class="form-control" required>
+                        <label class="c-form-field__label" for="player-name">名前 <span class="c-status c-status--warning">必須</span></label>
+                        <input type="text" id="player-name" class="form-control" placeholder="例: 山田 太郎" required>
                     </div>
                     <div class="c-form-field c-form-field--fluid">
-                        <div class="c-form-field__heading"><label class="c-form-field__label" for="player-number">背番号</label><span class="c-status-label c-status-label--required">必須</span></div>
-                        <input type="number" id="player-number" class="form-control" required>
+                        <label class="c-form-field__label" for="player-number">背番号 <span class="c-status c-status--warning">必須</span></label>
+                        <input type="number" id="player-number" class="form-control" placeholder="例: 10" required>
+                    </div>
+                    <div class="c-form-field c-form-field--fluid">
+                        <label class="c-form-field__label" for="player-grade">学年 <span class="c-status c-status--muted">任意</span></label>
+                        <input type="text" id="player-grade" class="form-control" placeholder="例: 6年 / U-12">
                     </div>
                 </div>
                 <fieldset class="c-fieldset">
@@ -2121,11 +2119,11 @@
                 <fieldset id="player-profile-section" class="c-fieldset">
                     <legend class="c-fieldset__legend"><i class="fa-solid fa-id-badge" aria-hidden="true"></i> コーチ陣の観察プロファイル</legend>
                     <div class="c-form-field c-form-field--fluid">
-                        <div class="c-form-field__heading"><label class="c-form-field__label" for="player-playstyle">プレースタイル（選手像の言語化）</label><span class="c-status-label">任意</span></div>
+                        <label class="c-form-field__label" for="player-playstyle">プレースタイル（選手像の言語化） <span class="c-status c-status--muted">任意</span></label>
                         <input type="text" id="player-playstyle" class="form-control" placeholder="例: 良い準備とスキャニングで中盤を落ち着かせるバランサー">
                     </div>
                     <div class="c-form-field c-form-field--fluid">
-                        <div class="c-form-field__heading"><label class="c-form-field__label" for="player-strong-key-1">ストロングポイント（最大の武器）</label><span class="c-status-label">任意</span></div>
+                        <label class="c-form-field__label" for="player-strong-key-1">ストロングポイント（最大の武器） <span class="c-status c-status--muted">任意</span></label>
                         <div class="c-form-grid">
                             <select id="player-strong-key-1" class="form-control"></select>
                             <input type="text" id="player-strong-text-1" class="form-control" placeholder="例: 首振りが多く常に選択肢を持てている">
@@ -2134,182 +2132,47 @@
                         </div>
                     </div>
                     <div class="c-form-field c-form-field--fluid">
-                        <div class="c-form-field__heading"><label class="c-form-field__label" for="player-short-focus">ショートターム・フォーカス</label><span class="c-status-label">任意</span></div>
+                        <label class="c-form-field__label" for="player-short-focus">ショートターム・フォーカス <span class="c-status c-status--muted">任意</span></label>
                         <input type="text" id="player-short-focus" class="form-control" placeholder="例: 奪われたあとの最初の1歩目を早くしてパスコースを消す">
                     </div>
                 </fieldset>
             </form>
-            <div class="c-modal__footer c-action-group">
+            <div class="c-modal__footer c-action-group c-action-group--end">
                 <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
                 <button type="submit" form="form-player" class="btn btn-primary">保存する</button>
             </div>
         </div>
     </div>
 
-    <!-- Player Detail View Modal -->
-    <div id="modal-player-detail" class="modal-overlay hidden">
-        <div class="modal" style="max-width: 800px; width: 90%; position:relative;">
-            <button type="button" class="btn-close-modal"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
-            <div class="modal-header-detail">
-                <div class="modal-header-detail-left">
-                    <div id="pd-number" class="player-number">10</div>
-                    <div>
-                        <div id="pd-position" class="player-position"
-                            style="display:inline-block; margin-bottom:0.2rem;">FW</div>
-                        <h2 id="pd-name" style="margin:0;">山田 太郎</h2>
-                        <div class="modal-header-detail-meta">
-                            <span id="btn-pd-goals"
-                                style="cursor:pointer; text-decoration:underline; display:inline-flex; align-items:center; gap:0.25rem;"><i
-                                    class="fa-solid fa-futbol" style="color:var(--primary);"></i> 得点: <strong
-                                    id="pd-goals" style="color:var(--primary);">0</strong></span>
-                            <span id="btn-pd-assists"
-                                style="cursor:pointer; text-decoration:underline; display:inline-flex; align-items:center; gap:0.25rem; margin-left:0.5rem;"><span
-                                    style="display:inline-block; transform:rotate(45deg); color:#22c55e;"><i
-                                        class="fa-solid fa-shoe-prints"></i></span> アシスト: <strong id="pd-assists"
-                                    style="color:var(--primary);">0</strong></span>
-                        </div>
-                    </div>
-                </div>
-                <div style="display:flex; gap:0.5rem;">
-                    <button class="btn btn-secondary" id="btn-edit-player-detail"><i class="fa-solid fa-pen"></i>
-                        編集</button>
-                    <button class="btn btn-danger" id="btn-delete-player-detail"><i class="fa-solid fa-trash"></i>
-                        削除</button>
-                </div>
-            </div>
-
-            <div class="modal-layout-grid-2">
-                <div>
-                    <div class="player-profile-card"
-                        style="background:#f8fafc; border:1px solid var(--surface-border); border-radius:12px; padding:1.2rem; margin-bottom:1rem;">
-                        <div style="margin-bottom:1.2rem;">
-                            <h4
-                                style="font-size:0.75rem; color:var(--text-secondary); margin:0 0 0.3rem 0; font-weight:700;">
-                                <i class="fa-solid fa-tag"></i> プレースタイル
-                            </h4>
-                            <div id="pd-playstyle"
-                                style="font-size:1rem; font-weight:700; color:var(--text-primary); line-height:1.4;">未設定
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom:1.2rem;">
-                            <h4
-                                style="font-size:0.75rem; color:var(--text-secondary); margin:0 0 0.5rem 0; font-weight:700;">
-                                <i class="fa-solid fa-shield-halved"></i> ストロングポイント
-                            </h4>
-                            <div id="pd-strongpoints" style="display:flex; flex-direction:column; gap:0.6rem;">
-                                <!-- JSで動的生成 -->
-                            </div>
-                        </div>
-
-                        <div>
-                            <h4
-                                style="font-size:0.75rem; color:var(--text-secondary); margin:0 0 0.3rem 0; font-weight:700;">
-                                <i class="fa-solid fa-crosshairs"></i> フォーカス（重点指導）
-                            </h4>
-                            <div id="pd-shortfocus"
-                                style="background:rgba(242, 57, 50, 0.08); border-left:3px solid var(--primary); padding:0.6rem 0.8rem; border-radius:4px; font-size:0.85rem; font-weight:600; color:var(--text-primary); line-height:1.4;">
-                                未設定
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" id="btn-add-assessment" style="width:100%;"><i
-                            class="fa-solid fa-plus"></i> 観察メモ(ファクト)を記録</button>
-                </div>
-                <div>
-                    <!-- Tabs Navigation -->
-                    <div class="player-detail-tabs">
-                        <button class="player-detail-tab active" data-tab="pd-tab-history"><i
-                                class="fa-solid fa-clock-rotate-left"></i> 成長履歴</button>
-                        <button class="player-detail-tab" data-tab="pd-tab-goals"><i class="fa-solid fa-bullseye"></i>
-                            個人目標 (IDP)</button>
-                        <button class="player-detail-tab" data-tab="pd-tab-notebook"><i class="fa-solid fa-book-open"></i>
-                            成長ノート</button>
-                    </div>
-
-                    <!-- Tab Pane 1: History -->
-                    <div id="pd-tab-history" class="player-detail-tab-pane active">
-                        <div id="pd-history-list" class="c-data-list c-data-list--scrollable">
-                            <!-- Timeline injected here -->
-                        </div>
-                    </div>
-
-                    <!-- Tab Pane 2: Individual Development Goals (IDP) -->
-                    <div id="pd-tab-goals" class="player-detail-tab-pane">
-                        <form id="form-player-goals" style="display:flex; flex-direction:column; gap:1rem;">
-                            <input type="hidden" id="goals-player-id">
-                            <div class="form-group">
-                                <label
-                                    style="font-weight:bold; color:var(--text-primary);">短期目標（数ヶ月で達成したい課題・スキル）</label>
-                                <textarea id="player-goal-short" class="form-control" rows="3"
-                                    placeholder="例: 左足でのパス精度を高める、守備のファーストディフェンダーの決定を早くする"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label
-                                    style="font-weight:bold; color:var(--text-primary);">長期目標（シーズン終了時や将来達成したいレベル）</label>
-                                <textarea id="player-goal-long" class="form-control" rows="3"
-                                    placeholder="例: チームの得点王になる、都大会ベスト4進出に貢献する"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary" style="align-self:flex-end;"><i
-                                    class="fa-solid fa-save"></i> 目標を保存</button>
-                        </form>
-                    </div>
-
-                    <!-- Tab Pane 3: Coaching Notebook -->
-                    <div id="pd-tab-notebook" class="player-detail-tab-pane">
-                        <section class="player-notebook-summary" aria-labelledby="pd-notebook-title">
-                            <div><span class="eyebrow-label">COACHING NOTEBOOK</span><h3 id="pd-notebook-title">成長の現在地</h3></div>
-                            <div id="pd-notebook-trends" class="player-notebook-trends" aria-live="polite"></div>
-                        </section>
-                        <div id="pd-notebook-timeline" class="player-notebook-timeline" aria-live="polite"></div>
-                        <form id="form-player-development-note" class="player-notebook-form">
-                            <input type="hidden" id="development-player-id">
-                            <div class="player-notebook-form-heading"><h3><i class="fa-solid fa-plus"></i> 育成ノートを記録</h3><label>日付 <input id="development-note-date" type="date" class="form-control" required></label></div>
-                            <label>今日のテーマ<input id="development-note-focus" class="form-control" maxlength="80" placeholder="例：守備の寄せる方向を自分で選ぶ"></label>
-                            <label>観察メモ<textarea id="development-note-observation" class="form-control" rows="3" placeholder="成長した行動・事実を短く記録"></textarea></label>
-                            <label>次の一歩<textarea id="development-note-next-step" class="form-control" rows="2" placeholder="次回練習で取り組む具体的な一歩"></textarea></label>
-                            <fieldset class="player-notebook-ratings"><legend>スキル自己評価・コーチ評価（任意）</legend><div id="development-note-ratings"></div></fieldset>
-                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-bookmark"></i> 成長ノートを保存</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div style="display:flex; justify-content:flex-end; margin-top:2rem;">
-                <button type="button" class="btn btn-secondary btn-close-modal">閉じる</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Player Assessment Form Modal -->
     <div id="modal-player-assessment" class="modal-overlay hidden" style="z-index: 1001;">
-        <div class="modal" style="position:relative;">
-            <button type="button" class="btn-close-modal"
-                style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-secondary);">&times;</button>
-            <h2 id="assessment-modal-title" style="margin-bottom:1.5rem;">観察メモ(ファクト)を記録</h2>
-            <form id="form-player-assessment">
+        <div class="modal c-modal" role="dialog" aria-modal="true" aria-labelledby="assessment-modal-title">
+            <div class="c-modal__header">
+                <h2 id="assessment-modal-title" class="c-modal__title">観察メモ(ファクト)を記録</h2>
+                <button type="button" class="c-modal__close btn-close-modal" aria-label="観察メモ記録を閉じる">&times;</button>
+            </div>
+            <form id="form-player-assessment" class="c-modal__body c-settings-form">
                 <input type="hidden" id="assessment-player-id">
                 <input type="hidden" id="assessment-edit-id">
-                <div class="form-group">
-                    <label>日付 <span class="c-status c-status--warning">必須</span></label>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="assessment-date">日付 <span class="c-status c-status--warning">必須</span></label>
                     <input type="date" id="assessment-date" class="form-control" required>
                 </div>
-                <div class="form-group">
-                    <label>Good！ <span class="c-status c-status--warning">必須</span></label>
-                    <textarea id="assessment-good" class="form-control" rows="2"
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="assessment-good">Good！ <span class="c-status c-status--warning">必須</span></label>
+                    <textarea id="assessment-good" class="form-control" rows="3"
                         placeholder="例: 失点直後に一番に声を出してボールを拾いにいった。チャレンジ姿勢が非常に良くなっている" required></textarea>
                 </div>
-                <div class="form-group">
-                    <label>More <span class="c-status c-status--muted">任意</span></label>
+                <div class="c-form-field c-form-field--fluid">
+                    <label class="c-form-field__label" for="assessment-improve">More <span class="c-status c-status--muted">任意</span></label>
                     <textarea id="assessment-improve" class="form-control" rows="2"
                         placeholder="例: 守備への切り替えの速さ"></textarea>
                 </div>
-                <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
-                    <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
-                    <button type="submit" class="btn btn-primary">記録する</button>
-                </div>
             </form>
+            <div class="c-modal__footer c-action-group c-action-group--end">
+                <button type="button" class="btn btn-secondary btn-close-modal">キャンセル</button>
+                <button type="submit" form="form-player-assessment" class="btn btn-primary">記録する</button>
+            </div>
         </div>
     </div>
 

@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.23';
+export const APP_VERSION = 'v1.30.24';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.24',
+        date: '2026-08-19',
+        title: '選手カルテ：タブ廃止・縦一覧セクション化＆選手編集修正・デザインシステム完全標準化',
+        features: [
+            '選手カルテ画面（選手詳細）のタブ切替を撤廃し、1画面スクロールで「特徴・ストロングポイント」「成長の軌跡・指導メモ」「出場試合一覧」をすべて直感的に一覧・確認できるセクション構成へ刷新',
+            '選手情報編集ボタンでモーダルが開かなかった不具合を解消（学年入力欄の追加・強み軸セレクト生成の安全化）',
+            '選手一覧カード・選手編集モーダル・観察メモモーダル（modal-player / modal-player-assessment）を Neumorphism 2.0 およびデザインシステム標準コンポーネント（c-card, c-status, c-modal, c-form-field）へ完全統一'
+        ]
+    },
     {
         version: 'v1.30.23',
         date: '2026-08-19',

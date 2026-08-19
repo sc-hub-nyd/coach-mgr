@@ -47,25 +47,47 @@ function renderDevelopmentNotebook(player) {
     }
 }
 
+export function populateStrongKeySelects() {
+    const optionsHtml = '<option value="">-- 強みの軸を選択 --</option>' +
+        (state.skillMetrics || []).map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('');
+    const sel1 = document.getElementById('player-strong-key-1');
+    const sel2 = document.getElementById('player-strong-key-2');
+    if (sel1) sel1.innerHTML = optionsHtml;
+    if (sel2) sel2.innerHTML = optionsHtml;
+}
+
 export function openPlayerDetail(id) {
     navigate('player-detail', { playerId: id });
 }
 
 export function openPlayerEditModal(p) {
     if (!p) return;
-    document.getElementById('player-edit-id').value = p.id;
-    document.getElementById('player-modal-title').textContent = '選手情報を編集';
+    const editIdEl = document.getElementById('player-edit-id');
+    const titleEl = document.getElementById('player-modal-title');
+    const nameEl = document.getElementById('player-name');
+    const numEl = document.getElementById('player-number');
+    const gradeEl = document.getElementById('player-grade');
+    const playStyleEl = document.getElementById('player-playstyle');
+    const key1El = document.getElementById('player-strong-key-1');
+    const text1El = document.getElementById('player-strong-text-1');
+    const key2El = document.getElementById('player-strong-key-2');
+    const text2El = document.getElementById('player-strong-text-2');
+    const shortFocusEl = document.getElementById('player-short-focus');
 
-    document.getElementById('player-name').value = p.name || '';
-    document.getElementById('player-number').value = p.number || '';
-    document.getElementById('player-grade').value = p.grade || '';
+    if (editIdEl) editIdEl.value = p.id;
+    if (titleEl) titleEl.textContent = '選手情報を編集';
+    if (nameEl) nameEl.value = p.name || '';
+    if (numEl) numEl.value = p.number || '';
+    if (gradeEl) gradeEl.value = p.grade || '';
+    if (playStyleEl) playStyleEl.value = p.playStyle || '';
 
-    document.getElementById('player-playstyle').value = p.playStyle || '';
-    document.getElementById('player-strong-key-1').value = p.strongPoints?.[0]?.key || '';
-    document.getElementById('player-strong-text-1').value = p.strongPoints?.[0]?.text || '';
-    document.getElementById('player-strong-key-2').value = p.strongPoints?.[1]?.key || '';
-    document.getElementById('player-strong-text-2').value = p.strongPoints?.[1]?.text || '';
-    document.getElementById('player-short-focus').value = p.shortFocus || '';
+    populateStrongKeySelects();
+
+    if (key1El) key1El.value = p.strongPoints?.[0]?.key || '';
+    if (text1El) text1El.value = p.strongPoints?.[0]?.text || '';
+    if (key2El) key2El.value = p.strongPoints?.[1]?.key || '';
+    if (text2El) text2El.value = p.strongPoints?.[1]?.text || '';
+    if (shortFocusEl) shortFocusEl.value = p.shortFocus || '';
 
     const posContainer = document.getElementById('player-position-container');
     if (posContainer) {
@@ -175,26 +197,6 @@ export function initPlayerDetailView(playerId) {
     if (elGoals) elGoals.textContent = `${playerGoals} 点`;
     if (elAssists) elAssists.textContent = `${playerAssists} 点`;
 
-    // タブ切り替え（タイムライン、特徴、出場試合）
-    const tabButtons = document.querySelectorAll('[data-pd-tab]');
-    const tabPanels = document.querySelectorAll('[data-pd-panel]');
-    if (tabButtons.length && tabPanels.length) {
-        const activatePdTab = (tabKey) => {
-            tabButtons.forEach(btn => {
-                const isActive = btn.dataset.pdTab === tabKey;
-                btn.classList.toggle('is-active', isActive);
-                btn.classList.toggle('active', isActive);
-                btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-            });
-            tabPanels.forEach(panel => {
-                const isMatch = panel.dataset.pdPanel === tabKey;
-                panel.classList.toggle('hidden', !isMatch);
-            });
-        };
-        tabButtons.forEach(btn => {
-            btn.onclick = () => activatePdTab(btn.dataset.pdTab);
-        });
-    }
 
     // タイムライン描画
     let timeline = [];
@@ -541,6 +543,186 @@ export function openPlayerCSVImportModal() {
             initPlayers();
         };
     }
+export function parsePlayerCSV(csvText) {
+    if (!csvText || !csvText.trim()) return [];
+
+    const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+    if (lines.length === 0) return [];
+
+    const results = [];
+    const headerKeywords = ['背番号', '番号', '氏名', '名前', '選手名', '学年', 'ポジション', 'num', 'number', 'name', 'pos', 'position'];
+    let startIndex = 0;
+
+    const firstLineLower = lines[0].toLowerCase();
+    if (headerKeywords.some(k => firstLineLower.includes(k))) {
+        startIndex = 1;
+    }
+
+    for (let i = startIndex; i < lines.length; i++) {
+        const line = lines[i];
+        let parts = line.split(/,|\t/).map(p => p.trim());
+        if (parts.length === 1 && line.includes(' ')) {
+            parts = line.split(/\s+/).map(p => p.trim());
+        }
+
+        if (parts.length === 0 || !parts[0]) continue;
+
+        let number = '';
+        let name = '';
+        let grade = '';
+        let position = 'MF';
+
+        if (parts.length >= 4) {
+            number = parts[0];
+            name = parts[1];
+            grade = parts[2];
+            position = parts[3];
+        } else if (parts.length === 3) {
+            if (!isNaN(parseInt(parts[0], 10))) {
+                number = parts[0];
+                name = parts[1];
+                if (['FW', 'MF', 'DF', 'GK', 'CB', 'SB', 'CH', 'SH', 'ST', 'WG', 'OH', 'DH'].some(p => parts[2].toUpperCase().includes(p))) {
+                    position = parts[2];
+                } else {
+                    grade = parts[2];
+                }
+            } else {
+                name = parts[0];
+                grade = parts[1];
+                position = parts[2];
+            }
+        } else if (parts.length === 2) {
+            if (!isNaN(parseInt(parts[0], 10))) {
+                number = parts[0];
+                name = parts[1];
+            } else {
+                name = parts[0];
+                position = parts[1];
+            }
+        } else if (parts.length === 1) {
+            name = parts[0];
+        }
+
+        if (name) {
+            results.push({
+                number: number ? (parseInt(number, 10) || number) : '',
+                name,
+                grade: grade || '',
+                position: position.toUpperCase() || 'MF'
+            });
+        }
+    }
+
+    return results;
+}
+
+export function openPlayerCSVImportModal() {
+    const modal = document.getElementById('modal-import-players-csv');
+    const inputFileInput = document.getElementById('input-csv-file');
+    const textareaData = document.getElementById('textarea-csv-data');
+    const previewContainer = document.getElementById('csv-preview-container');
+    const errorMsg = document.getElementById('csv-error-msg');
+    const form = document.getElementById('form-import-players-csv');
+
+    if (!modal) return;
+
+    if (inputFileInput) inputFileInput.value = '';
+    if (textareaData) textareaData.value = '';
+    if (previewContainer) { previewContainer.style.display = 'none'; previewContainer.innerHTML = ''; }
+    if (errorMsg) errorMsg.style.display = 'none';
+
+    const updatePreview = () => {
+        const text = textareaData ? textareaData.value : '';
+        const parsed = parsePlayerCSV(text);
+
+        if (parsed.length > 0) {
+            previewContainer.style.display = 'block';
+            previewContainer.innerHTML = `
+                <div style="font-size:0.75rem; font-weight:bold; margin-bottom:0.4rem; color:var(--primary);">
+                    <i class="fa-solid fa-eye"></i> プレビュー (${parsed.length}件の選手を検出)
+                </div>
+                <table class="csv-preview-table">
+                    <thead>
+                        <tr>
+                            <th>背番号</th>
+                            <th>氏名</th>
+                            <th>学年</th>
+                            <th>ポジション</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${parsed.map(p => `
+                            <tr>
+                                <td>${p.number || '-'}</td>
+                                <td><strong>${escapeHtml(p.name)}</strong></td>
+                                <td>${p.grade || '-'}</td>
+                                <td><span class="badge badge-sub">${p.position}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            if (errorMsg) errorMsg.style.display = 'none';
+        } else {
+            previewContainer.style.display = 'none';
+            previewContainer.innerHTML = '';
+        }
+    };
+
+    if (inputFileInput) {
+        inputFileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    if (textareaData) {
+                        textareaData.value = event.target.result;
+                        updatePreview();
+                    }
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
+        };
+    }
+
+    if (textareaData) {
+        textareaData.oninput = updatePreview;
+    }
+
+    if (form) {
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const text = textareaData ? textareaData.value : '';
+            const parsed = parsePlayerCSV(text);
+
+            if (parsed.length === 0) {
+                if (errorMsg) {
+                    errorMsg.textContent = '登録可能な選手データが検出されませんでした。フォーマットを確認してください。';
+                    errorMsg.style.display = 'block';
+                }
+                return;
+            }
+
+            let addedCount = 0;
+            parsed.forEach((p, idx) => {
+                const newPlayer = {
+                    id: Date.now() + Math.floor(Math.random() * 1000) + idx,
+                    number: p.number ? p.number : (state.players.length + 1 + idx),
+                    name: p.name,
+                    grade: p.grade || '',
+                    position: p.position || 'MF',
+                    history: [{ id: Date.now(), date: new Date().toISOString().split('T')[0], comment: 'CSV一括登録', skills: {} }]
+                };
+                state.players.push(newPlayer);
+                addedCount++;
+            });
+
+            saveData();
+            modal.classList.add('hidden');
+            showToast(`${addedCount}名の選手を一括登録しました！`);
+            initPlayers();
+        };
+    }
 
     modal.classList.remove('hidden');
 }
@@ -580,30 +762,30 @@ export function initPlayers() {
                 else if (lower === 'mf') badgeClass = 'badge-mf';
                 else if (lower === 'df') badgeClass = 'badge-df';
                 else if (lower === 'gk') badgeClass = 'badge-gk';
-                return `<span class="player-position ${badgeClass}" style="font-size:0.7rem; padding:0.1rem 0.35rem; border-radius:12px; font-weight:600; display:inline-block;">${pos}</span>`;
+                return `<span class="player-position ${badgeClass}">${pos}</span>`;
             }).join('');
 
             const spTags = (p.strongPoints || []).filter(sp => sp.key).map(sp =>
-                `<span class="badge" style="background:rgba(37,99,235,0.1); color:#2563eb; font-size:0.7rem; padding:0.15rem 0.4rem;"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>`
+                `<span class="c-status c-status--info"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>`
             ).join('');
 
             return `
-                <div class="player-card" style="cursor:pointer; display:flex; flex-direction:column;" onclick="openPlayerDetail(${p.id});">
-                    <div class="player-card-header" style="border-bottom: 1px solid var(--surface-border); padding-bottom: 0.6rem; margin-bottom: 0.6rem;">
+                <div class="player-card c-card" style="cursor:pointer; display:flex; flex-direction:column;" onclick="openPlayerDetail(${p.id});">
+                    <div class="player-card-header">
                         <div>
-                            <div style="display:flex; gap:0.25rem; flex-wrap:wrap; margin-bottom:0.3rem;">${badges}</div>
+                            <div style="display:flex; gap:var(--space-1); flex-wrap:wrap; margin-bottom:var(--space-1);">${badges}</div>
                             <div style="font-size:1.15rem; font-weight:bold;">${escapeHtml(p.name)}</div>
                         </div>
                         <div class="player-number">${p.number}</div>
                     </div>
                     <div style="flex:1; display:flex; flex-direction:column;">
-                        <div style="font-size:0.8rem; font-weight:600; color:var(--text-primary); margin-bottom:0.6rem; line-height:1.4;">
+                        <div style="font-size:var(--text-meta-size); font-weight:600; color:var(--text-primary); margin-bottom:var(--space-2); line-height:1.4;">
                             ${escapeHtml(p.playStyle || 'プレースタイル未設定')}
                         </div>
-                        <div style="display:flex; flex-wrap:wrap; gap:0.3rem; margin-bottom:auto;">
+                        <div style="display:flex; flex-wrap:wrap; gap:var(--space-1); margin-bottom:auto;">
                             ${spTags}
                         </div>
-                        <div style="margin-top:0.8rem; padding-top:0.6rem; border-top:1px dashed var(--surface-border); font-size:0.75rem; color:var(--text-secondary); font-weight:600;">
+                        <div style="margin-top:var(--space-2); padding-top:var(--space-2); border-top:1px dashed var(--surface-border); font-size:var(--text-meta-size); color:var(--text-secondary); font-weight:600;">
                             <i class="fa-solid fa-crosshairs" style="color:var(--primary);"></i> ${escapeHtml(p.shortFocus || 'フォーカス未設定')}
                         </div>
                     </div>
@@ -623,6 +805,7 @@ export function initPlayers() {
             });
 
             const playStyle = document.getElementById('player-playstyle') ? document.getElementById('player-playstyle').value.trim() : '';
+            const grade = document.getElementById('player-grade') ? document.getElementById('player-grade').value.trim() : '';
             const key1 = document.getElementById('player-strong-key-1') ? document.getElementById('player-strong-key-1').value : '';
             const text1 = document.getElementById('player-strong-text-1') ? document.getElementById('player-strong-text-1').value.trim() : '';
             const key2 = document.getElementById('player-strong-key-2') ? document.getElementById('player-strong-key-2').value : '';
@@ -639,6 +822,7 @@ export function initPlayers() {
                 if (player) {
                     player.name = document.getElementById('player-name').value;
                     player.number = parseInt(document.getElementById('player-number').value, 10);
+                    player.grade = grade;
                     player.position = selectedPositions;
                     player.playStyle = playStyle;
                     player.strongPoints = strongPoints;
@@ -655,6 +839,7 @@ export function initPlayers() {
                     id: Date.now(),
                     name: document.getElementById('player-name').value,
                     number: parseInt(document.getElementById('player-number').value, 10),
+                    grade: grade,
                     position: selectedPositions,
                     playStyle: playStyle,
                     strongPoints: strongPoints,
@@ -717,7 +902,7 @@ export function initPlayers() {
     if (btnAdd) {
         const posContainer = document.getElementById('player-position-container');
         if (posContainer) {
-            posContainer.innerHTML = state.positions.map(p => `
+            posContainer.innerHTML = (state.positions || []).map(p => `
                 <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
                     <input type="checkbox" class="player-pos-checkbox" value="${p}"> ${p}
                 </label>
@@ -733,19 +918,16 @@ export function initPlayers() {
             `).join('');
         }
 
-        const updateStrongKeySelects = () => {
-            const optionsHtml = '<option value="">-- 強みの軸を選択 --</option>' +
-                state.skillMetrics.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('');
-            const sel1 = document.getElementById('player-strong-key-1');
-            const sel2 = document.getElementById('player-strong-key-2');
-            if (sel1) sel1.innerHTML = optionsHtml;
-            if (sel2) sel2.innerHTML = optionsHtml;
-        };
-
         btnAdd.addEventListener('click', () => {
             document.getElementById('player-edit-id').value = '';
             document.getElementById('player-modal-title').textContent = '選手を登録';
 
+            const nameEl = document.getElementById('player-name');
+            if (nameEl) nameEl.value = '';
+            const numEl = document.getElementById('player-number');
+            if (numEl) numEl.value = '';
+            const gradeEl = document.getElementById('player-grade');
+            if (gradeEl) gradeEl.value = '';
             const psEl = document.getElementById('player-playstyle');
             if (psEl) psEl.value = '';
             const st1El = document.getElementById('player-strong-text-1');
@@ -755,13 +937,13 @@ export function initPlayers() {
             const sfEl = document.getElementById('player-short-focus');
             if (sfEl) sfEl.value = '';
 
-            updateStrongKeySelects();
+            populateStrongKeySelects();
             document.querySelectorAll('.player-pos-checkbox').forEach(cb => cb.checked = false);
 
             openModal('modal-player');
         });
 
-        updateStrongKeySelects();
+        populateStrongKeySelects();
     }
 
     const btnImportCSV = document.getElementById('btn-import-players-csv');
@@ -771,7 +953,6 @@ export function initPlayers() {
         });
     }
 
-    // Setup View Switcher Tabs
     const tabsContainer = document.getElementById('player-view-tabs');
     if (tabsContainer) {
         tabsContainer.querySelectorAll('.player-view-tab').forEach(tab => {

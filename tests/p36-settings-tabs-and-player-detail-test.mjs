@@ -44,15 +44,21 @@ test('2. 設定画面の Settings Hub 撤廃 & カテゴリ別タブ切り替え
     assert.match(systemCss, /\.settings-tab-panel/, 'CSS defines .settings-tab-panel');
 });
 
-test('3. 選手詳細のモーダルから個別ページ（選手カルテ画面）化検証', () => {
-    // テンプレート tpl-player-detail が存在すること
+test('3. 選手詳細の個別ページ化 & 選手編集モーダル検証', () => {
+    // テンプレート tpl-player-detail が存在し、タブではなく縦セクション構成であること
     assert.match(indexHtml, /<template id="tpl-player-detail">/, 'tpl-player-detail template exists');
     assert.match(indexHtml, /id="btn-back-to-players"/, 'Back to players button exists');
     assert.match(indexHtml, /class="player-detail-number-badge"/, 'Player number badge exists');
     assert.match(indexHtml, /id="pd-attendance-rate"/, 'Attendance KPI exists');
-    assert.match(indexHtml, /data-pd-tab="timeline"/, 'Timeline tab exists');
-    assert.match(indexHtml, /data-pd-tab="profile"/, 'Profile tab exists');
-    assert.match(indexHtml, /data-pd-tab="matches"/, 'Matches tab exists');
+    assert.match(indexHtml, /id="pd-profile-title"/, 'Profile section exists');
+    assert.match(indexHtml, /id="pd-timeline-title"/, 'Timeline section exists');
+    assert.match(indexHtml, /id="pd-matches-title"/, 'Matches section exists');
+    assert.doesNotMatch(indexHtml, /data-pd-tab=/, 'Tab switcher is removed for flat vertical view');
+
+    // 選手登録・編集モーダル (modal-player) の検証
+    assert.match(indexHtml, /id="player-grade"/, 'player-grade input exists in modal-player');
+    assert.match(indexHtml, /id="modal-player"/, 'modal-player exists');
+    assert.doesNotMatch(indexHtml, /id="modal-player-detail"/, 'old modal-player-detail is removed');
 
     // app.js のルーティング検証
     assert.match(appJs, /import.*initPlayerDetailView.*from '\.\/players\.js'/, 'app.js imports initPlayerDetailView');
@@ -64,4 +70,5 @@ test('3. 選手詳細のモーダルから個別ページ（選手カルテ画�
     assert.match(playersJs, /navigate\('player-detail', \{ playerId: id \}\)/, 'openPlayerDetail navigates to player-detail');
     assert.match(playersJs, /export function initPlayerDetailView\(playerId\)/, 'initPlayerDetailView is exported');
     assert.match(playersJs, /export function openPlayerEditModal\(p\)/, 'openPlayerEditModal is exported');
+    assert.match(playersJs, /export function populateStrongKeySelects\(\)/, 'populateStrongKeySelects is exported');
 });
