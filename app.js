@@ -2278,6 +2278,79 @@ export function updateRoleUI() {
 }
 
 
+const routeContextKeys = Object.freeze({
+    matches: [
+        'currentMatchNendo',
+        'currentMatchOpponent',
+        'currentMatchType',
+        'currentMatchResult',
+        'currentMatchSearch',
+        'matchSortOrder',
+        'currentMatchPage'
+    ],
+    players: []
+});
+
+function captureRouteContext(route) {
+    if (!Object.prototype.hasOwnProperty.call(routeContextKeys, route)) return null;
+
+    const values = {};
+    routeContextKeys[route].forEach(key => {
+        values[key] = uiState[key];
+    });
+
+    const viewContainer = document.getElementById('view-container');
+    const filterAccordion = route === 'matches' ? document.getElementById('filter-accordion-matches') : null;
+    const activePlayerView = route === 'players'
+        ? document.querySelector('#player-view-tabs .player-view-tab.active')?.dataset.view || 'cards'
+        : null;
+
+    return {
+        route,
+        values,
+        scrollTop: viewContainer?.scrollTop || 0,
+        windowScrollY: window.scrollY || 0,
+        filterAccordionOpen: Boolean(filterAccordion && !filterAccordion.classList.contains('hidden')),
+        activePlayerView
+    };
+}
+
+function applyRouteContext(route, context) {
+    if (!context || context.route !== route || !Object.prototype.hasOwnProperty.call(routeContextKeys, route)) {
+        return null;
+    }
+
+    routeContextKeys[route].forEach(key => {
+        if (Object.prototype.hasOwnProperty.call(context.values || {}, key)) {
+            uiState[key] = context.values[key];
+        }
+    });
+    return context;
+}
+
+function restoreRouteContextDom(context) {
+    if (!context) return;
+
+    const restore = () => {
+        if (context.route === 'matches' && context.filterAccordionOpen) {
+            document.getElementById('filter-accordion-matches')?.classList.remove('hidden');
+        }
+        if (context.route === 'players' && context.activePlayerView && context.activePlayerView !== 'cards') {
+            document.querySelector(`#player-view-tabs .player-view-tab[data-view="${context.activePlayerView}"]`)?.click();
+        }
+
+        const viewContainer = document.getElementById('view-container');
+        if (viewContainer) viewContainer.scrollTop = context.scrollTop || 0;
+        window.scrollTo(0, context.windowScrollY || 0);
+    };
+
+    if (typeof window.requestAnimationFrame === 'function') {
+        window.requestAnimationFrame(restore);
+    } else {
+        restore();
+    }
+}
+
 export function navigateBack() {
     const current = uiState.currentRoute;
     const detailRoutes = ['player-detail', 'match-detail'];
@@ -2288,7 +2361,7 @@ export function navigateBack() {
         while (state.navHistory.length > 0) {
             const prev = state.navHistory.pop();
             if (prev && prev.route && prev.route !== current && prev.route !== 'animation') {
-                navigate(prev.route, prev.params, true);
+                navigate(prev.route, prev.params, true, prev.context || null);
                 return;
             }
         }
@@ -2308,7 +2381,7 @@ export function navigateBack() {
     }
 }
 
-export function navigate(route, params = null, isBack = false) {
+export function navigate(route, params = null, isBack = false, restoredRouteContext = null) {
     if (uiState.currentRoute === 'match-detail' && route !== 'match-detail') releaseFieldCompanionSession();
     cleanupCanvasEvents();
     // Cleanup scoped event listeners from the previous view
@@ -2339,7 +2412,8 @@ export function navigate(route, params = null, isBack = false) {
     if (detailRoutes.includes(route) && !isBack) {
         state.navHistory.push({
             route: uiState.currentRoute || 'dashboard',
-            params: uiState.currentParams || null
+            params: uiState.currentParams || null,
+            context: captureRouteContext(uiState.currentRoute)
         });
     } else if (!detailRoutes.includes(route) && !isBack && route !== 'animation') {
         state.navHistory = [];
@@ -2425,6 +2499,7 @@ export function navigate(route, params = null, isBack = false) {
     }
 
     const viewContainer = document.getElementById('view-container');
+    const appliedRouteContext = isBack ? applyRouteContext(route, restoredRouteContext) : null;
 
     // ★ match-detail や player-detail の場合は専用テンプレートを参照
     const templateId = (route === 'match-detail') ? 'tpl-match-detail' : (route === 'player-detail') ? 'tpl-player-detail' : `tpl-${route}`;
@@ -2438,16 +2513,18 @@ export function navigate(route, params = null, isBack = false) {
         viewContainer.scrollTop = 0;
         window.scrollTo(0, 0);
 
-        // 画面遷移のたびに各フィルタリング情報を初期状態にリセット
-        uiState.currentMatchNendo = 'all';
-        uiState.currentMatchPage = 1;
-        uiState.currentPracticeNendo = 'all';
-        uiState.currentPracticeMonth = 'all';
-        uiState.currentPracticePage = 1;
-        uiState.currentLibraryCategory = 'all';
-        uiState.currentTacticsCategory = 'all';
-        uiState.currentTacticsPage = 1;
-        uiState.currentTacticsSearch = '';
+        // 通常遷移では一覧の表示条件を初期化し、詳細画面からの復帰時だけ履歴の文脈を優先する。
+        if (!appliedRouteContext) {
+            uiState.currentMatchNendo = 'all';
+            uiState.currentMatchPage = 1;
+            uiState.currentPracticeNendo = 'all';
+            uiState.currentPracticeMonth = 'all';
+            uiState.currentPracticePage = 1;
+            uiState.currentLibraryCategory = 'all';
+            uiState.currentTacticsCategory = 'all';
+            uiState.currentTacticsPage = 1;
+            uiState.currentTacticsSearch = '';
+        }
 
         if (route === 'dashboard') {
             try {
@@ -2487,6 +2564,7 @@ export function navigate(route, params = null, isBack = false) {
         if (route === 'settings') initSettings();
         if (route === 'data') initData();
         if (route === 'animation') initAnimation(params, navigate, openModal);
+        restoreRouteContextDom(appliedRouteContext);
     }
 
     updateRoleUI();
