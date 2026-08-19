@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.20';
+export const APP_VERSION = 'v1.30.21';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.21',
+        date: '2026-08-19',
+        title: '設定画面：個別実装の完全標準化（必須/任意バッジ・追加フォーム）',
+        features: [
+            'レガシーな `badge-required`, `badge-optional` を廃止し、デザインシステムの標準ステータスコンポーネント（`.c-status`）へ完全移行',
+            '各種マスターデータ（試合種別・カテゴリ・ポジション等）の追加フォームを標準の `c-form-grid` / `c-form-field` 構造に刷新し、画面全体の余白・配置の一貫性を確立',
+            '設定画面内に残存していた個別CSS（`sl-add-row`等）をすべてクリーンアップ'
+        ]
+    },
     {
         version: 'v1.30.20',
         date: '2026-08-19',

@@ -104,41 +104,7 @@
     margin-bottom: 1.5rem;
 }
 
-/* Badges */
-.badge {
-    /* Layout */
-    padding: 0.1rem 0.4rem;
-    margin-left: 0.25rem;
-    /* Design */
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 10px;
-    font-size: 0.8rem;
-}
-
-.badge-required,
-.badge-optional {
-    /* Layout */
-    padding: 0.1rem 0.45rem;
-    margin-left: 0.4rem;
-    display: inline-block;
-    vertical-align: middle;
-    /* Design */
-    border-radius: 4px;
-    font-size: var(--text-kicker-size);
-}
-
-.badge-required {
-    background: rgba(239, 68, 68, 0.12);
-    color: #ef4444;
-    font-weight: 700;
-}
-
-.badge-optional {
-    background: rgba(148, 163, 184, 0.15);
-    color: #64748b;
-    font-weight: 600;
-}
-
+/* Badges (Migrated to .c-status in components-standard.css) */
 .badge-fw {
     background: rgba(242, 57, 50, 0.1);
     color: #f23932;
@@ -378,21 +344,6 @@
 .sl-section-body .sl-row:last-of-type {
     border-bottom: none;
 }
-
-.sl-add-row {
-    background: var(--color-surface-subtle);
-    padding: 0.5rem 0.75rem;
-    border-radius: var(--radius-md);
-    margin-bottom: var(--space-2);
-}
-
-.sl-row-label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    white-space: nowrap;
-}
-
 .sl-input {
     flex: 1;
     min-width: 0;

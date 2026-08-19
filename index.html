@@ -472,12 +472,12 @@
                 <div class="c-section-header__title c-card__title c-text-effect--shimmer"><i class="fa-solid fa-pen"></i> 試合基本情報</div>
                 <div class="l-form-grid">
                     <div class="c-form-field c-form-field--fluid">
-                        <label class="c-form-field__label" for="match-detail-date-input">日付 <span class="badge-required">必須</span></label>
+                        <label class="c-form-field__label" for="match-detail-date-input">日付 <span class="c-status c-status--warning">必須</span></label>
                         <input type="date" id="match-detail-date-input" class="form-control" required
                             form="form-match-detail-inline">
                     </div>
                     <div class="c-form-field c-form-field--fluid">
-                        <label class="c-form-field__label" for="match-detail-opponent-input">対戦相手 <span class="badge-required">必須</span></label>
+                        <label class="c-form-field__label" for="match-detail-opponent-input">対戦相手 <span class="c-status c-status--warning">必須</span></label>
                         <input type="text" id="match-detail-opponent-input" class="form-control" placeholder="例: FC東京U-12" required
                             form="form-match-detail-inline">
                     </div>
@@ -658,9 +658,9 @@
                 <div class="sl-section-body c-settings-section__body c-card__body">
                     <p class="c-settings-section__intro operations-intro">端末ごとに、文字の大きさ、利き手、動きの量を調整できます。記録データや他の利用者の表示は変わりません。</p>
                         <div class="c-form-grid ui-preferences-grid">
-                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-color-mode">カラーモード</label><select id="ui-color-mode" class="sl-input"><option value="light">ライト</option><option value="dark">ダーク</option></select><small class="c-form-field__hint">この端末だけの表示設定です。</small></div>
-                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-font-scale">文字の大きさ</label><select id="ui-font-scale" class="sl-input"><option value="normal">標準</option><option value="large">大きめ</option><option value="xlarge">最大</option></select></div>
-                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-preferred-hand">Field Companionの利き手</label><select id="ui-preferred-hand" class="sl-input"><option value="right">右手（標準）</option><option value="left">左手</option></select></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-color-mode">カラーモード</label><select id="ui-color-mode" class="form-control"><option value="light">ライト</option><option value="dark">ダーク</option></select><small class="c-form-field__hint">この端末だけの表示設定です。</small></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-font-scale">文字の大きさ</label><select id="ui-font-scale" class="form-control"><option value="normal">標準</option><option value="large">大きめ</option><option value="xlarge">最大</option></select></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-preferred-hand">Field Companionの利き手</label><select id="ui-preferred-hand" class="form-control"><option value="right">右手（標準）</option><option value="left">左手</option></select></div>
                         <label class="c-choice-field ui-preference-check"><input id="ui-reduce-motion" type="checkbox"><span>動きを控えめにする</span></label>
                         <label class="c-choice-field ui-preference-check"><input id="ui-compact-mode" type="checkbox"><span>情報をコンパクトに表示</span></label>
                     </div>
@@ -677,12 +677,12 @@
                     <form id="form-team-info" class="c-settings-form">
                         <div class="c-form-grid">
                             <div class="c-form-field c-form-field--fluid">
-                                <label class="c-form-field__label" for="team-info-name">チーム名 <span class="badge-required">必須</span></label>
-                                <input type="text" id="team-info-name" class="sl-input" required>
+                                <label class="c-form-field__label" for="team-info-name">チーム名 <span class="c-status c-status--warning">必須</span></label>
+                                <input type="text" id="team-info-name" class="form-control" required>
                             </div>
                             <div class="c-form-field c-form-field--fluid">
                                 <label class="c-form-field__label" for="team-info-passcode">コーチパスコード</label>
-                                <input type="password" id="team-info-passcode" class="sl-input" placeholder="パスコードを入力">
+                                <input type="password" id="team-info-passcode" class="form-control" placeholder="パスコードを入力">
                             </div>
                         </div>
                         <div class="team-theme-editor">
@@ -715,8 +715,8 @@
                 <div class="sl-section-body c-settings-section__body c-card__body workspace-management-body">
                     <p class="c-settings-section__intro operations-intro">チームと年度を切り替えます。切替前のデータは自動保存され、年度アーカイブからいつでも再表示できます。</p>
                     <div class="c-form-grid workspace-select-grid">
-                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-team-select">チーム</label><select id="workspace-team-select" class="sl-input"></select></div>
-                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-season-select">シーズン</label><select id="workspace-season-select" class="sl-input"></select></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-team-select">チーム</label><select id="workspace-team-select" class="form-control"></select></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-season-select">シーズン</label><select id="workspace-season-select" class="form-control"></select></div>
                     </div>
                     <p id="workspace-context-status" class="workspace-context-status" aria-live="polite"></p>
                     <div class="c-action-group c-action-group--mobile-stretch workspace-actions">
@@ -755,10 +755,10 @@
                     <p class="c-settings-section__intro">試合・練習・選手・練習メニュー・<strong>戦術管理</strong>・チームテーマ・各種設定マスタがクラウド同期の対象となります。</p>
                     <form id="form-gas-sync" class="c-settings-form">
                         <div class="c-form-grid">
-                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-api-url">Web API URL</label><input type="url" id="gas-api-url" class="sl-input" placeholder="https://script.google.com/macros/s/.../exec"></div>
-                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-sheet-name">シート名（任意）</label><input type="text" id="gas-sheet-name" class="sl-input" placeholder="例: 2026年度 または データ（空欄の場合は最初のシート）"></div>
-                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-auth-token">認証トークン</label><input type="password" id="gas-auth-token" class="sl-input" placeholder="任意の合い言葉（例: mysecret123）" autocomplete="off"></div>
-                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-sync-protocol">同期プロトコル</label><select id="gas-sync-protocol" class="sl-input"><option value="secure-v2">安全モード（POST認証・推奨）</option><option value="legacy-v1">互換モード（旧GAS用・認証情報がURLに含まれます）</option></select></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-api-url">Web API URL</label><input type="url" id="gas-api-url" class="form-control" placeholder="https://script.google.com/macros/s/.../exec"></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-sheet-name">シート名（任意）</label><input type="text" id="gas-sheet-name" class="form-control" placeholder="例: 2026年度 または データ（空欄の場合は最初のシート）"></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-auth-token">認証トークン</label><input type="password" id="gas-auth-token" class="form-control" placeholder="任意の合い言葉（例: mysecret123）" autocomplete="off"></div>
+                            <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="gas-sync-protocol">同期プロトコル</label><select id="gas-sync-protocol" class="form-control"><option value="secure-v2">安全モード（POST認証・推奨）</option><option value="legacy-v1">互換モード（旧GAS用・認証情報がURLに含まれます）</option></select></div>
                         </div>
                         <p id="gas-security-guidance" class="c-settings-section__intro">安全モードを使うには、P10のGASテンプレートをデプロイしてください。認証トークンは共有リンクに含まれません。</p>
                         <div class="c-action-group c-action-group--mobile-stretch gas-actions-group">
@@ -779,8 +779,8 @@
                 <div class="sl-section-body c-settings-section__body c-card__body parent-share-body">
                     <p class="c-settings-section__intro">選手別の表示範囲と共有リンクの有効期限を管理し、未回答者への案内文を作成できます。リンクに認証トークンは含めません。</p>
                     <div class="c-form-grid parent-share-controls">
-                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-player">対象選手</label><select id="parent-share-player" class="sl-input"></select></div>
-                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-expires">リンク有効期限（任意）</label><input id="parent-share-expires" type="date" class="sl-input"></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-player">対象選手</label><select id="parent-share-player" class="form-control"></select></div>
+                        <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-expires">リンク有効期限（任意）</label><input id="parent-share-expires" type="date" class="form-control"></div>
                     </div>
                     <p id="parent-share-status" class="parent-share-status" aria-live="polite"></p>
                     <div class="c-action-group c-action-group--mobile-stretch operations-actions">
@@ -792,7 +792,7 @@
                             <div class="parent-access-manager-heading"><strong><i class="fa-solid fa-id-card"></i> 保護者アクセス管理</strong><span>招待ごとに対象選手・閲覧範囲・期限を設定します。</span></div>
                             <div id="parent-access-trust-status" class="parent-access-trust-status" role="status" aria-live="polite"></div>
                         <div class="parent-access-create-grid">
-                            <label>招待の表示名（任意）<input id="parent-access-label" class="sl-input" type="text" placeholder="例：山田様"></label>
+                            <label>招待の表示名（任意）<input id="parent-access-label" class="form-control" type="text" placeholder="例：山田様"></label>
                             <fieldset class="parent-access-scopes"><legend>閲覧範囲</legend><label><input type="checkbox" value="schedule" checked>予定・結果</label><label><input type="checkbox" value="attendance" checked>出欠</label><label><input type="checkbox" value="development" checked>本人の成長ログ</label></fieldset>
                         </div>
                         <div class="c-action-group c-action-group--mobile-stretch operations-actions"><button type="button" class="btn btn-primary btn-sm" id="btn-create-parent-access"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 個別招待リンクを作成</button></div>
@@ -834,12 +834,15 @@
                     </button>
                 </div>
                 <div class="sl-section-body c-settings-section__body c-card__body">
-                    <div class="sl-row sl-add-row">
-                        <form id="form-add-match-type" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-match-type" class="sl-input" placeholder="新しい試合種別を入力" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
-                        </form>
-                    </div>
+                    <form id="form-add-match-type" class="c-settings-form" style="margin-bottom: var(--space-3);">
+                        <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                            <div class="c-form-field c-form-field--fluid">
+                                <label class="u-visually-hidden" for="new-match-type">新しい試合種別</label>
+                                <input type="text" id="new-match-type" class="form-control" placeholder="新しい試合種別を入力" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                        </div>
+                    </form>
                     <ul id="match-type-list" class="sl-list"></ul>
                 </div>
             </section>
@@ -856,12 +859,15 @@
                     </button>
                 </div>
                 <div class="sl-section-body c-settings-section__body c-card__body">
-                    <div class="sl-row sl-add-row">
-                        <form id="form-add-menu-category" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-menu-category" class="sl-input" placeholder="新しいカテゴリを入力" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
-                        </form>
-                    </div>
+                    <form id="form-add-menu-category" class="c-settings-form" style="margin-bottom: var(--space-3);">
+                        <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                            <div class="c-form-field c-form-field--fluid">
+                                <label class="u-visually-hidden" for="new-menu-category">新しいカテゴリ</label>
+                                <input type="text" id="new-menu-category" class="form-control" placeholder="新しいカテゴリを入力" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                        </div>
+                    </form>
                     <ul id="menu-category-list" class="sl-list"></ul>
                 </div>
             </section>
@@ -878,12 +884,15 @@
                     </button>
                 </div>
                 <div class="sl-section-body c-settings-section__body c-card__body">
-                    <div class="sl-row sl-add-row">
-                        <form id="form-add-tactics-category" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-tactics-category" class="sl-input" placeholder="新しい戦術カテゴリを入力" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
-                        </form>
-                    </div>
+                    <form id="form-add-tactics-category" class="c-settings-form" style="margin-bottom: var(--space-3);">
+                        <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                            <div class="c-form-field c-form-field--fluid">
+                                <label class="u-visually-hidden" for="new-tactics-category">新しい戦術カテゴリ</label>
+                                <input type="text" id="new-tactics-category" class="form-control" placeholder="新しい戦術カテゴリを入力" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                        </div>
+                    </form>
                     <ul id="tactics-category-list" class="sl-list"></ul>
                 </div>
             </section>
@@ -900,12 +909,15 @@
                     </button>
                 </div>
                 <div class="sl-section-body c-settings-section__body c-card__body">
-                    <div class="sl-row sl-add-row">
-                        <form id="form-add-skill-metric" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-skill-metric" class="sl-input" placeholder="新しい評価項目を入力" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
-                        </form>
-                    </div>
+                    <form id="form-add-skill-metric" class="c-settings-form" style="margin-bottom: var(--space-3);">
+                        <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                            <div class="c-form-field c-form-field--fluid">
+                                <label class="u-visually-hidden" for="new-skill-metric">新しい評価項目</label>
+                                <input type="text" id="new-skill-metric" class="form-control" placeholder="新しい評価項目を入力" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                        </div>
+                    </form>
                     <ul id="skill-metric-list" class="sl-list"></ul>
                 </div>
             </section>
@@ -922,12 +934,15 @@
                     </button>
                 </div>
                 <div class="sl-section-body c-settings-section__body c-card__body">
-                    <div class="sl-row sl-add-row">
-                        <form id="form-add-position" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-position" class="sl-input" placeholder="カテゴリ1のポジションを入力 (例: GK, DF, MF, FW)" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
-                        </form>
-                    </div>
+                    <form id="form-add-position" class="c-settings-form" style="margin-bottom: var(--space-3);">
+                        <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                            <div class="c-form-field c-form-field--fluid">
+                                <label class="u-visually-hidden" for="new-position">カテゴリ1のポジション</label>
+                                <input type="text" id="new-position" class="form-control" placeholder="カテゴリ1のポジションを入力 (例: GK, DF, MF, FW)" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                        </div>
+                    </form>
                     <ul id="position-list" class="sl-list"></ul>
                 </div>
             </section>
@@ -944,12 +959,15 @@
                     </button>
                 </div>
                 <div class="sl-section-body c-settings-section__body c-card__body">
-                    <div class="sl-row sl-add-row">
-                        <form id="form-add-position-cat2" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-position-cat2" class="sl-input" placeholder="カテゴリ2のポジションを入力 (例: CB, SB, CH, SH, ST)" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
-                        </form>
-                    </div>
+                    <form id="form-add-position-cat2" class="c-settings-form" style="margin-bottom: var(--space-3);">
+                        <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                            <div class="c-form-field c-form-field--fluid">
+                                <label class="u-visually-hidden" for="new-position-cat2">カテゴリ2のポジション</label>
+                                <input type="text" id="new-position-cat2" class="form-control" placeholder="カテゴリ2のポジションを入力 (例: CB, SB, CH, SH, ST)" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                        </div>
+                    </form>
                     <ul id="position-cat2-list" class="sl-list"></ul>
                 </div>
             </section>
@@ -966,12 +984,15 @@
                     </button>
                 </div>
                 <div class="sl-section-body c-settings-section__body c-card__body">
-                    <div class="sl-row sl-add-row">
-                        <form id="form-add-analysis-tag" style="display:flex; gap:0.5rem; flex:1; align-items:center;">
-                            <input type="text" id="new-analysis-tag" class="sl-input" placeholder="新しい動画分析タグを入力 (例: チャンス, ピンチ)" required>
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> 追加</button>
-                        </form>
-                    </div>
+                    <form id="form-add-analysis-tag" class="c-settings-form" style="margin-bottom: var(--space-3);">
+                        <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
+                            <div class="c-form-field c-form-field--fluid">
+                                <label class="u-visually-hidden" for="new-analysis-tag">新しい動画分析タグ</label>
+                                <input type="text" id="new-analysis-tag" class="form-control" placeholder="新しい動画分析タグを入力 (例: チャンス, ピンチ)" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm" style="min-block-size: var(--form-control-height);"><i class="fa-solid fa-plus" aria-hidden="true"></i> 追加</button>
+                        </div>
+                    </form>
                     <ul id="analysis-tag-list" class="sl-list"></ul>
                 </div>
             </section>
@@ -1520,42 +1541,42 @@
             <form id="form-match">
                 <input type="hidden" id="match-edit-id" value="">
                 <div class="form-group">
-                    <label>日付 <span class="badge-required">必須</span></label>
+                    <label>日付 <span class="c-status c-status--warning">必須</span></label>
                     <input type="date" id="match-date" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label>RSVP回答期限 <span class="badge-optional">任意</span></label>
+                    <label>RSVP回答期限 <span class="c-status c-status--muted">任意</span></label>
                     <input type="date" id="match-rsvp-deadline" class="form-control">
                     <p class="form-help">期限を過ぎても回答は変更できます。未回答者へのリマインド対象を判別するための期限です。</p>
                 </div>
                 <div class="form-group">
-                    <label>対戦相手 <span class="badge-required">必須</span></label>
+                    <label>対戦相手 <span class="c-status c-status--warning">必須</span></label>
                     <input type="text" id="match-opponent" class="form-control" placeholder="例: FC東京U-12" required>
                 </div>
                 <div class="form-group">
-                    <label>試合種別 <span class="badge-optional">任意</span></label>
+                    <label>試合種別 <span class="c-status c-status--muted">任意</span></label>
                     <select id="match-type" class="form-control">
                         <!-- Populated dynamically -->
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>大会名・リーグ名等 <span class="badge-optional">任意</span></label>
+                    <label>大会名・リーグ名等 <span class="c-status c-status--muted">任意</span></label>
                     <input type="text" id="match-tournament" class="form-control" placeholder="例: 大会名、リーグ名など（任意）">
                 </div>
                 <input type="hidden" id="match-score-us" value="0">
                 <input type="hidden" id="match-score-them" value="0">
                 <input type="hidden" id="match-scorers" value="">
                 <div class="form-group">
-                    <label>試合テーマ <span class="badge-optional">任意</span></label>
+                    <label>試合テーマ <span class="c-status c-status--muted">任意</span></label>
                     <input type="text" id="match-theme" class="form-control" placeholder="例: パス＆コントロール、サイド突破など">
                 </div>
                 <div class="form-group">
-                    <label>試合総括 <span class="badge-optional">任意</span></label>
+                    <label>試合総括 <span class="c-status c-status--muted">任意</span></label>
                     <textarea id="match-summary" class="form-control" rows="3"
                         placeholder="例: ビルドアップは良かったがフィニッシュの精度に課題..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>参加メンバー（名簿） <span class="badge-optional">任意</span></label>
+                    <label>参加メンバー（名簿） <span class="c-status c-status--muted">任意</span></label>
                     <div id="match-attendance-roster"
                         style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.03); border: 1px solid var(--surface-border); border-radius: 12px; padding: 0.8rem 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
                         <!-- Checkboxes populated dynamically -->
@@ -1704,11 +1725,11 @@
 
                 <div style="display:flex; gap:0.8rem; margin-bottom: 1rem;">
                     <div class="form-group" style="flex:1; margin:0;">
-                        <label style="font-size:0.8rem;">ピリオド名 (本数) <span class="badge-required">必須</span></label>
+                        <label style="font-size:0.8rem;">ピリオド名 (本数) <span class="c-status c-status--warning">必須</span></label>
                         <input type="text" id="formation-name" class="form-control" placeholder="例: 1本目" required>
                     </div>
                     <div class="form-group" style="flex:1; margin:0;">
-                        <label style="font-size:0.8rem;">システム (陣形) <span class="badge-optional">任意</span></label>
+                        <label style="font-size:0.8rem;">システム (陣形) <span class="c-status c-status--muted">任意</span></label>
                         <select id="formation-system-select" class="form-control"></select>
                     </div>
                 </div>
@@ -1847,7 +1868,7 @@
             <form id="form-tactic" class="c-modal__body c-settings-form">
                 <input type="hidden" id="tactic-id" value="">
                 <div class="c-form-field c-form-field--fluid">
-                    <label class="c-form-field__label" for="tactic-title">タイトル <span class="badge-required">必須</span></label>
+                    <label class="c-form-field__label" for="tactic-title">タイトル <span class="c-status c-status--warning">必須</span></label>
                     <input type="text" id="tactic-title" class="form-control" placeholder="例: ビルドアップパターンA" required>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
@@ -1877,7 +1898,7 @@
                 <input type="hidden" id="menu-library-source-id">
                 <input type="hidden" id="menu-edit-id">
                 <fieldset class="c-fieldset">
-                    <legend class="c-fieldset__legend"><i class="fa-solid fa-book" aria-hidden="true"></i> ライブラリから選んでコピー <span class="badge-optional">任意</span></legend>
+                    <legend class="c-fieldset__legend"><i class="fa-solid fa-book" aria-hidden="true"></i> ライブラリから選んでコピー <span class="c-status c-status--muted">任意</span></legend>
                     <div class="c-form-field c-form-field--fluid">
                         <label class="u-sr-only" for="menu-library-select">コピー元ライブラリ</label>
                         <select id="menu-library-select" class="form-control"><option value="">（新規作成）</option><!-- Options injected here --></select>
@@ -1885,31 +1906,31 @@
                     </div>
                 </fieldset>
                 <div class="c-form-field c-form-field--fluid">
-                    <label class="c-form-field__label" for="menu-focus">テーマ・フォーカス <span class="badge-required">必須</span></label>
+                    <label class="c-form-field__label" for="menu-focus">テーマ・フォーカス <span class="c-status c-status--warning">必須</span></label>
                     <input type="text" id="menu-focus" class="form-control" placeholder="例: ポゼッション 4vs4+フリーマン" required>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
-                    <label class="c-form-field__label" for="menu-category">カテゴリ <span class="badge-optional">任意</span></label>
+                    <label class="c-form-field__label" for="menu-category">カテゴリ <span class="c-status c-status--muted">任意</span></label>
                     <select id="menu-category" class="form-control"><!-- Populated dynamically --></select>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
-                    <label class="c-form-field__label" for="menu-organize">オーガナイズ（人数・コートサイズ・ルールなど） <span class="badge-optional">任意</span></label>
+                    <label class="c-form-field__label" for="menu-organize">オーガナイズ（人数・コートサイズ・ルールなど） <span class="c-status c-status--muted">任意</span></label>
                     <textarea id="menu-organize" class="form-control" rows="2" placeholder="例: 20m x 20m, 4vs4+1フリーマン"></textarea>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
-                    <label class="c-form-field__label" for="menu-keyfactor">キーファクター（指導のポイント） <span class="badge-optional">任意</span></label>
+                    <label class="c-form-field__label" for="menu-keyfactor">キーファクター（指導のポイント） <span class="c-status c-status--muted">任意</span></label>
                     <textarea id="menu-keyfactor" class="form-control" rows="2" placeholder="例: ボールを受ける前の身体の向き、プレスの強度"></textarea>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
-                    <label class="c-form-field__label" for="menu-video-url">参考動画URL（YouTube） <span class="badge-optional">任意</span></label>
+                    <label class="c-form-field__label" for="menu-video-url">参考動画URL（YouTube） <span class="c-status c-status--muted">任意</span></label>
                     <input type="url" id="menu-video-url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
                 </div>
                 <div class="c-form-field c-form-field--fluid">
-                    <label class="c-form-field__label" for="menu-options">練習のオプションの説明 <span class="badge-optional">任意</span></label>
+                    <label class="c-form-field__label" for="menu-options">練習のオプションの説明 <span class="c-status c-status--muted">任意</span></label>
                     <textarea id="menu-options" class="form-control" rows="2" placeholder="例: 慣れてきたらタッチ制限（2タッチ以内）を追加"></textarea>
                 </div>
                 <div class="c-form-field c-form-field--fluid">
-                    <label class="c-form-field__label" for="menu-engagement"><i class="fa-solid fa-fire" aria-hidden="true"></i> 選手たちの熱量・楽しさ <span class="badge-optional">任意</span></label>
+                    <label class="c-form-field__label" for="menu-engagement"><i class="fa-solid fa-fire" aria-hidden="true"></i> 選手たちの熱量・楽しさ <span class="c-status c-status--muted">任意</span></label>
                     <select id="menu-engagement" class="form-control">
                         <option value="0">未評価 / 未実施</option><option value="5">★★★★★（5: 非常に盛り上がった・全員夢中）</option><option value="4">★★★★☆（4: 楽しそうにプレーしていた）</option><option value="3">★★★☆☆（3: 普通・標準的）</option><option value="2">★★☆☆☆（2: 難易度やルールで少し停滞）</option><option value="1">★☆☆☆☆（1: ウケが良くなかった・要改善）</option>
                     </select>
@@ -2152,16 +2173,16 @@
                 <input type="hidden" id="assessment-player-id">
                 <input type="hidden" id="assessment-edit-id">
                 <div class="form-group">
-                    <label>日付 <span class="badge-required">必須</span></label>
+                    <label>日付 <span class="c-status c-status--warning">必須</span></label>
                     <input type="date" id="assessment-date" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label>Good！ <span class="badge-required">必須</span></label>
+                    <label>Good！ <span class="c-status c-status--warning">必須</span></label>
                     <textarea id="assessment-good" class="form-control" rows="2"
                         placeholder="例: 失点直後に一番に声を出してボールを拾いにいった。チャレンジ姿勢が非常に良くなっている" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label>More <span class="badge-optional">任意</span></label>
+                    <label>More <span class="c-status c-status--muted">任意</span></label>
                     <textarea id="assessment-improve" class="form-control" rows="2"
                         placeholder="例: 守備への切り替えの速さ"></textarea>
                 </div>
@@ -2181,7 +2202,7 @@
             <h2 style="margin-bottom:1.5rem;">文字を入力</h2>
             <form id="form-text-input">
                 <div class="form-group">
-                    <label>表示テキスト <span class="badge-required">必須</span></label>
+                    <label>表示テキスト <span class="c-status c-status--warning">必須</span></label>
                     <input type="text" id="canvas-text-value" class="form-control" placeholder="例: 10m" required
                         autocomplete="off">
                 </div>
@@ -2201,12 +2222,12 @@
             <h2 style="margin-bottom:1.5rem;" id="scene-title-modal-heading">シーン見出しの編集</h2>
             <form id="form-scene-title">
                 <div class="form-group">
-                    <label>シーンの見出しを入力 <span class="badge-optional">任意</span></label>
+                    <label>シーンの見出しを入力 <span class="c-status c-status--muted">任意</span></label>
                     <input type="text" id="input-scene-title" class="form-control" placeholder="例: 初期配置、プレス回避、シュート体勢 など"
                         autocomplete="off">
                 </div>
                 <div class="form-group" style="margin-top:1rem;">
-                    <label>指導ポイント（テロップ） <span class="badge-optional">任意</span></label>
+                    <label>指導ポイント（テロップ） <span class="c-status c-status--muted">任意</span></label>
                     <textarea id="input-scene-caption" class="form-control" rows="2" placeholder="例: ★受ける前に首を振る、パスの受け手はマークを外す動き" style="resize:vertical;"></textarea>
                     <small style="color:var(--text-secondary); font-size:0.72rem;">再生中に画面下部に大きく表示されます</small>
                 </div>
@@ -2260,12 +2281,12 @@
             <form id="form-custom-formation">
                 <div class="form-group" style="display:flex; gap:1rem; margin-bottom:1rem;">
                     <div style="flex:2;">
-                        <label>フォーメーション名 <span class="badge-required">必須</span></label>
+                        <label>フォーメーション名 <span class="c-status c-status--warning">必須</span></label>
                         <input type="text" id="custom-formation-name" class="form-control" placeholder="例: 3-3-1"
                             required>
                     </div>
                     <div style="flex:1;">
-                        <label>選手人数 <span class="badge-optional">任意</span></label>
+                        <label>選手人数 <span class="c-status c-status--muted">任意</span></label>
                         <select id="custom-formation-player-count" class="form-control">
                             <option value="8">8人制</option>
                             <option value="11">11人制</option>
@@ -2476,7 +2497,7 @@
             </div>
             <form id="form-edit-team-focus" class="c-modal__body c-settings-form">
                 <div class="c-form-field c-form-field--fluid">
-                    <label class="c-form-field__label" for="input-focus-main-theme">メイン強化テーマ <span class="badge-required">必須</span></label>
+                    <label class="c-form-field__label" for="input-focus-main-theme">メイン強化テーマ <span class="c-status c-status--warning">必須</span></label>
                     <input type="text" id="input-focus-main-theme" class="form-control" placeholder="例: ハイプレスからのショートカウンター＆素早い切り替え" required>
                 </div>
                 <fieldset class="c-fieldset">
