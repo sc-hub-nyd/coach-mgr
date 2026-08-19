@@ -140,7 +140,7 @@ requireAll(source.index, [
     'id="ranking-attendance-list"',
     'id="ranking-playtime-list"',
     'c-data-list c-data-list--ranking',
-    'c-data-list dash-rank-list',
+    'c-data-list c-dashboard-rank-list',
     'c-card--interactive',
     'c-metric-grid--inline',
     'c-metric__value',
@@ -431,9 +431,15 @@ requireAll(source.index, [
     'c-card card',
     'c-modal-overlay modal-overlay',
     'c-modal c-modal--legacy modal',
+    'c-dashboard-grid',
+    'c-dashboard-grid__row',
+    'c-dashboard-widget',
+    'c-dashboard-widget__label',
+    'c-dashboard-strip',
+    'c-dashboard-rank-list',
     'c-status c-status--count c-status--compact',
     'id="dash-setup-progress" class="c-status c-status--info"'
-], '標準プリミティブ・共通ステータスのテンプレート利用');
+], '標準プリミティブ・ダッシュボード・共通ステータスのテンプレート利用');
 
 requireAll([source.matches, source.practices, source.library].join('\n'), [
     'c-status c-status--interactive c-status--compact',
@@ -489,6 +495,11 @@ requireAll(source.system, [
     '\\.c-frame-strip__list',
     '\\.c-frame-strip__item',
     '\\.c-frame-strip__delete',
+    '\\.c-dashboard-grid',
+    '\\.c-dashboard-widget',
+    '\\.c-dashboard-alert',
+    '\\.c-dashboard-strip',
+    '\\.c-dashboard-rank-list',
     '\\.c-modal-overlay',
     '\\.c-modal--legacy',
     '\\.c-modal\\.modal-export-fallback',

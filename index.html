@@ -282,7 +282,7 @@
 
     <!-- ===== Templates (hidden, cloned on navigation) ===== -->
     <template id="tpl-dashboard">
-        <div class="dash-widget-grid">
+        <div class="c-dashboard-grid">
 
             <!-- P0: 初回セットアップ導線 -->
             <section id="dash-setup-checklist" class="card c-card c-glass-surface c-glass-surface--strong c-glass-surface--spotlight setup-checklist coach-only" aria-labelledby="dash-setup-title">
@@ -299,44 +299,44 @@
 
             <!-- ROW 0: マイ選手 (保護者専用) -->
             <div id="dash-myplayer-banner" class="card c-card dash-myplayer-card parent-only" style="display:none;">
-                <div class="dash-widget-label"
+                <div class="c-dashboard-widget__label"
                     style="justify-content: space-between; margin-bottom:0.5rem; width:100%;">
                     <span><i class="fa-solid fa-child-reaching" style="color:var(--primary);"></i> マイ選手
                         (我が子の成長ログ)</span>
                 </div>
                 <div id="dash-myplayer-content" class="dash-myplayer-content">
-                    <div class="dash-no-data">選手を選択してください</div>
+                    <div class="c-dashboard-widget__empty">選手を選択してください</div>
                 </div>
             </div>
 
             <!-- ROW 1: アラートバナー (コーチ専用) -->
-            <div id="dash-alert-banner" class="dash-alert-banner coach-only" style="display:none;">
-                <div class="dash-alert-inner">
+            <div id="dash-alert-banner" class="c-dashboard-alert coach-only" style="display:none;">
+                <div class="c-dashboard-alert__content">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span id="dash-alert-text">試合結果が未入力の試合があります</span>
                 </div>
-                <button class="c-button btn c-button--compact btn-sm dash-alert-btn" id="dash-alert-action">確認する <i
+                <button class="c-button btn c-button--compact btn-sm c-dashboard-alert__action" id="dash-alert-action">確認する <i
                         class="fa-solid fa-arrow-right"></i></button>
             </div>
 
             <!-- ROW 2: 今季成績 ＆ チーム強化テーマ (2カラム横並び) -->
-            <div class="dash-row-2">
+            <div class="c-dashboard-grid__row">
                 <!-- 次の予定 -->
-                <div class="card c-card dash-next-event-card" id="dash-next-event-card">
-                    <div class="dash-widget-label"><i class="fa-solid fa-calendar-day"></i> 次の予定</div>
+                <div class="c-dashboard-widget card c-card c-dashboard-widget--next-event" id="dash-next-event-card">
+                    <div class="c-dashboard-widget__label"><i class="fa-solid fa-calendar-day"></i> 次の予定</div>
                     <div id="dash-next-event-content">
-                        <div class="dash-no-data">予定はありません</div>
+                        <div class="c-dashboard-widget__empty">予定はありません</div>
                     </div>
                 </div>
                 <!-- 今季成績 -->
-                <div class="card c-card c-card--interactive dash-season-record-card" id="dash-card-matches"
+                <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--season" id="dash-card-matches"
                     onclick="openSeasonRecordModal()">
-                    <div class="dash-widget-label" style="justify-content: space-between; width: 100%;">
+                    <div class="c-dashboard-widget__label" style="justify-content: space-between; width: 100%;">
                         <span><i class="fa-solid fa-trophy"></i> 今季成績</span>
                         <span class="text-secondary" style="font-size: 0.7rem;"><i
                                 class="fa-solid fa-chevron-right"></i> 詳細</span>
                     </div>
-                    <div class="dash-season-record-body">
+                    <div class="c-dashboard-widget__body">
                         <div class="dash-record-numbers c-metric-grid c-metric-grid--inline">
                             <span class="c-metric c-metric--inline c-metric--positive"><strong class="c-metric__value dash-record-win" id="dash-record-win">0</strong><span class="c-metric__label dash-record-sep">勝</span></span>
                             <span class="c-metric c-metric--inline"><strong class="c-metric__value dash-record-loss" id="dash-record-loss">0</strong><span class="c-metric__label dash-record-sep">敗</span></span>
@@ -359,8 +359,8 @@
                 </div>
 
                 <!-- チーム強化テーマ -->
-                <div class="card c-card dash-rank-card" id="dash-team-focus-card">
-                    <div class="dash-widget-label"
+                <div class="c-dashboard-widget card c-card c-dashboard-widget--rank" id="dash-team-focus-card">
+                    <div class="c-dashboard-widget__label"
                         style="justify-content: space-between; align-items: center; width: 100%; flex-wrap: nowrap; gap: 0.4rem;">
                         <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><i
                                 class="fa-solid fa-bullseye" style="color:#a855f7;"></i> チーム強化テーマ</span>
@@ -370,16 +370,16 @@
                                 class="fa-solid fa-pen"></i> 編集</button>
                     </div>
                     <div id="dash-team-focus-content" class="c-page-list">
-                        <div class="dash-no-data">チーム強化テーマが未設定です</div>
+                        <div class="c-dashboard-widget__empty">チーム強化テーマが未設定です</div>
                     </div>
                 </div>
             </div>
 
             <!-- ROW 3: 直近の予定・実績 (全幅1列・「直近の試合」と同等UI) -->
-            <div class="card c-card dash-form-card" id="dash-schedule-widget-card">
-                <div class="dash-form-header">
-                    <div class="dash-widget-label"><i class="fa-solid fa-calendar-days"></i> 直近の予定・実績</div>
-                    <div class="dash-schedule-actions coach-only" id="dash-schedule-btn-group"
+            <div class="c-dashboard-widget card c-card c-dashboard-widget--summary" id="dash-schedule-widget-card">
+                <div class="c-dashboard-widget__header">
+                    <div class="c-dashboard-widget__label"><i class="fa-solid fa-calendar-days"></i> 直近の予定・実績</div>
+                    <div class="c-dashboard-widget__actions coach-only" id="dash-schedule-btn-group"
                         style="display:flex; gap:0.35rem;">
                         <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="dash-btn-add-practice"
                             style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px;"><i
@@ -389,68 +389,68 @@
                                 class="fa-solid fa-plus"></i> 試合追加</button>
                     </div>
                 </div>
-                <div id="dash-schedule-list" class="dash-schedule-horizontal-bar">
-                    <div class="dash-no-data">予定・実績はありません</div>
+                <div id="dash-schedule-list" class="c-dashboard-strip">
+                    <div class="c-dashboard-widget__empty">予定・実績はありません</div>
                 </div>
             </div>
 
             <!-- ROW 4: 直近の試合 (全幅1列) -->
-            <div class="c-card card dash-form-card">
-                <div class="dash-form-header">
-                    <div class="dash-widget-label"><i class="fa-solid fa-chart-line"></i> 直近の試合</div>
+            <div class="c-dashboard-widget c-card card c-dashboard-widget--summary">
+                <div class="c-dashboard-widget__header">
+                    <div class="c-dashboard-widget__label"><i class="fa-solid fa-chart-line"></i> 直近の試合</div>
                     <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="dash-btn-go-matches"
                         style="font-size:0.72rem; padding:0.2rem 0.5rem; height:24px;"><i class="fa-solid fa-list"></i>
                         一覧</button>
                 </div>
-                <div id="dash-form-bar" class="dash-form-bar">
-                    <div class="dash-no-data">試合記録がありません</div>
+                <div id="dash-form-bar" class="c-dashboard-strip">
+                    <div class="c-dashboard-widget__empty">試合記録がありません</div>
                 </div>
             </div>
 
             <!-- ROW 5: 得点 + アシスト ランキング (2カラム) -->
-            <div class="dash-row-2">
+            <div class="c-dashboard-grid__row">
                 <!-- 得点ランキング -->
-                <div class="card c-card c-card--interactive dash-rank-card" onclick="openLeaderRankingModal('scorers')">
-                    <div class="dash-widget-label" style="justify-content: space-between; width: 100%;">
+                <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--rank" onclick="openLeaderRankingModal('scorers')">
+                    <div class="c-dashboard-widget__label" style="justify-content: space-between; width: 100%;">
                         <span><i class="fa-solid fa-fire" style="color:#ef4444;"></i> 得点ランキング</span>
                         <span class="text-secondary" style="font-size: 0.7rem;" id="dash-btn-detail-scorers"><i
                                 class="fa-solid fa-chevron-right"></i> 詳細</span>
                     </div>
-                    <div id="dash-top-scorers" class="c-data-list dash-rank-list"></div>
+                    <div id="dash-top-scorers" class="c-data-list c-dashboard-rank-list"></div>
                 </div>
                 <!-- アシストランキング -->
-                <div class="card c-card c-card--interactive dash-rank-card" onclick="openLeaderRankingModal('assists')">
-                    <div class="dash-widget-label" style="justify-content: space-between; width: 100%;">
+                <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--rank" onclick="openLeaderRankingModal('assists')">
+                    <div class="c-dashboard-widget__label" style="justify-content: space-between; width: 100%;">
                         <span><i class="fa-solid fa-shoe-prints" style="color:#22c55e;"></i> アシストランキング</span>
                         <span class="text-secondary" style="font-size: 0.7rem;" id="dash-btn-detail-assists"><i
                                 class="fa-solid fa-chevron-right"></i> 詳細</span>
                     </div>
-                    <div id="dash-top-assists" class="c-data-list dash-rank-list"></div>
+                    <div id="dash-top-assists" class="c-data-list c-dashboard-rank-list"></div>
                 </div>
             </div>
 
             <!-- ROW 6: 出席率 + 出場時間アラート (コーチ専用・横並び) -->
-            <div class="dash-row-2 coach-only" id="dash-coach-row">
+            <div class="c-dashboard-grid__row coach-only" id="dash-coach-row">
                 <!-- 出席率ランキング (左) -->
-                <div class="card c-card c-card--interactive dash-rank-card"
+                <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--rank"
                     onclick="openLeaderRankingModal('attendance')">
-                    <div class="dash-widget-label" style="justify-content: space-between; width: 100%;">
+                    <div class="c-dashboard-widget__label" style="justify-content: space-between; width: 100%;">
                         <span><i class="fa-solid fa-users" style="color:#3b82f6;"></i> 出席率(過去１か月)</span>
                         <span class="text-secondary" style="font-size: 0.7rem;" id="dash-btn-detail-attendance"><i
                                 class="fa-solid fa-chevron-right"></i> 詳細</span>
                     </div>
-                    <div id="dash-attendance-rank" class="c-data-list dash-rank-list"></div>
+                    <div id="dash-attendance-rank" class="c-data-list c-dashboard-rank-list"></div>
                 </div>
 
                 <!-- 出場時間平準化アラート (右) -->
-                <div class="card c-card c-card--interactive dash-rank-card" onclick="openLeaderRankingModal('playtime')">
-                    <div class="dash-widget-label" style="justify-content: space-between; width: 100%;">
+                <div class="c-dashboard-widget card c-card c-card--interactive c-dashboard-widget--rank" onclick="openLeaderRankingModal('playtime')">
+                    <div class="c-dashboard-widget__label" style="justify-content: space-between; width: 100%;">
                         <span><i class="fa-solid fa-triangle-exclamation" style="color:#eab308;"></i> 出場時間平準化アラート</span>
                         <span class="text-secondary" style="font-size: 0.7rem;" id="dash-btn-detail-playtime"><i
                                 class="fa-solid fa-chevron-right"></i> 詳細</span>
                     </div>
-                    <div id="dash-playtime-content" class="c-data-list dash-rank-list">
-                        <div class="dash-no-data">出場時間の記録がありません</div>
+                    <div id="dash-playtime-content" class="c-data-list c-dashboard-rank-list">
+                        <div class="c-dashboard-widget__empty">出場時間の記録がありません</div>
                     </div>
                 </div>
             </div>

@@ -1131,7 +1131,7 @@ summary {
 /* ===== ウィジェット型ダッシュボード (案C) ===== */
 
 /* メイングリッドコンテナ */
-.dash-widget-grid {
+.c-dashboard-grid {
     display: flex;
     flex-direction: column;
     width: min(100%, var(--content-wide));
@@ -1140,14 +1140,14 @@ summary {
 }
 
 /* 2カラム行 */
-.dash-row-2 {
+.c-dashboard-grid__row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-4);
 }
 
 /* ウィジェット共通ラベル */
-.dash-widget-label {
+.c-dashboard-widget__label {
     font-size: 0.78rem;
     font-weight: 700;
     color: var(--text-muted);
@@ -1160,7 +1160,7 @@ summary {
 }
 
 /* データなし表示 */
-.dash-no-data {
+.c-dashboard-widget__empty {
     font-size: 0.8rem;
     color: var(--text-muted);
     font-style: italic;
@@ -1168,7 +1168,7 @@ summary {
 }
 
 /* --- ROW 1: アラートバナー --- */
-.dash-alert-banner {
+.c-dashboard-alert {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1192,7 +1192,7 @@ summary {
     }
 }
 
-.dash-alert-inner {
+.c-dashboard-alert__content {
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -1201,13 +1201,13 @@ summary {
     color: #92400e;
 }
 
-.dash-alert-inner i {
+.c-dashboard-alert__content i {
     color: #f59e0b;
     font-size: 1rem;
     flex-shrink: 0;
 }
 
-.dash-alert-btn {
+.c-dashboard-alert__action {
     background: #f59e0b;
     color: #fff;
     border: none;
@@ -1221,14 +1221,14 @@ summary {
     transition: background 0.2s, transform 0.1s;
 }
 
-.dash-alert-btn:hover {
+.c-dashboard-alert__action:hover {
     background: #d97706;
     transform: translateY(-1px);
 }
 
 /* --- ROW 2: 次の予定カード --- */
 #dash-next-event-card,
-.card.dash-next-event-card {
+.card.c-dashboard-widget--next-event {
     padding: 0.65rem 1rem;
     margin: 0;
     background: linear-gradient(135deg, var(--card-bg) 0%, rgba(242, 57, 50, 0.04) 100%);
@@ -1237,7 +1237,7 @@ summary {
     overflow: hidden;
 }
 
-.dash-next-event-card::before {
+.c-dashboard-widget--next-event::before {
     content: '';
     position: absolute;
     top: -20px;
@@ -1249,11 +1249,11 @@ summary {
     pointer-events: none;
 }
 
-.dash-next-event-card .dash-widget-label {
+.c-dashboard-widget--next-event .c-dashboard-widget__label {
     margin-bottom: 0.35rem;
 }
 
-.dash-next-event-type {
+.c-dashboard-event__type {
     font-size: 0.65rem;
     font-weight: 700;
     padding: 0.1rem 0.45rem;
@@ -1262,17 +1262,17 @@ summary {
     margin-bottom: 0.2rem;
 }
 
-.dash-next-event-type.match {
+.c-dashboard-event__type.match {
     background: rgba(34, 197, 94, 0.15);
     color: #15803d;
 }
 
-.dash-next-event-type.practice {
+.c-dashboard-event__type.practice {
     background: rgba(242, 57, 50, 0.12);
     color: var(--primary);
 }
 
-.dash-next-event-title {
+.c-dashboard-event__title {
     font-size: 0.95rem;
     font-weight: 800;
     color: var(--text-primary);
@@ -1282,14 +1282,14 @@ summary {
     text-overflow: ellipsis;
 }
 
-.dash-next-event-date {
+.c-dashboard-event__date {
     font-size: 0.75rem;
     color: var(--text-secondary);
     margin-bottom: 0;
     /* 下余白を解除して横並びに最適化 */
 }
 
-.dash-next-event-countdown {
+.c-dashboard-event__countdown {
     display: inline-block;
     font-size: 0.72rem;
     font-weight: 700;
@@ -1303,18 +1303,18 @@ summary {
 
 /* --- ROW 2: 今季成績カード --- */
 #dash-card-matches,
-.card.dash-season-record-card {
+.card.c-dashboard-widget--season {
     padding: 0.65rem 1rem;
     /* 上下パディングをコンパクトに */
     margin: 0;
 }
 
-.dash-season-record-card .dash-widget-label {
+.c-dashboard-widget--season .c-dashboard-widget__label {
     margin-bottom: 0.35rem;
     /* 見出し下の隙間を短縮 */
 }
 
-.dash-season-record-body {
+.c-dashboard-widget__body {
     display: flex;
     flex-direction: column;
 }
@@ -1366,26 +1366,26 @@ summary {
 }
 
 /* --- ROW 3: フォームバー --- */
-.dash-form-card {
-    padding: 0.9rem 1.2rem !important;
-    margin: 0 !important;
+.c-dashboard-widget--summary {
+    padding: 0.9rem 1.2rem;
+    margin: 0;
 }
 
-.dash-form-header {
+.c-dashboard-widget__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.75rem;
 }
 
-.dash-form-bar {
+.c-dashboard-strip {
     display: flex;
     align-items: flex-start;
     gap: 0.6rem;
     flex-wrap: wrap;
 }
 
-.dash-form-item {
+.c-dashboard-strip__item {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1397,11 +1397,11 @@ summary {
     max-width: 80px;
 }
 
-.dash-form-item:hover {
+.c-dashboard-strip__item:hover {
     transform: translateY(-2px);
 }
 
-.dash-form-score {
+.c-dashboard-strip__metric {
     font-size: 0.68rem;
     font-weight: 600;
     color: var(--text-secondary);
@@ -1409,7 +1409,7 @@ summary {
     text-align: center;
 }
 
-.dash-form-opponent {
+.c-dashboard-strip__meta {
     font-size: 0.6rem;
     color: var(--text-secondary);
     white-space: nowrap;
@@ -1420,18 +1420,18 @@ summary {
 }
 
 /* --- ROW 4 / ROW 6: ランキングカード --- */
-.dash-rank-card {
-    padding: 0.9rem 1.1rem !important;
-    margin: 0 !important;
+.c-dashboard-widget--rank {
+    padding: 0.9rem 1.1rem;
+    margin: 0;
 }
 
-.dash-rank-list {
+.c-dashboard-rank-list {
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
 }
 
-.dash-rank-item {
+.c-dashboard-rank-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -1445,19 +1445,19 @@ summary {
     color: inherit;
 }
 
-.dash-rank-item:hover {
+.c-dashboard-rank-item:hover {
     background: rgba(242, 57, 50, 0.05);
     transform: translateX(2px);
 }
 
-.dash-rank-medal {
+.c-dashboard-rank-item__medal {
     font-size: 1rem;
     width: 22px;
     flex-shrink: 0;
     text-align: center;
 }
 
-.dash-rank-name {
+.c-dashboard-rank-item__name {
     flex: 1;
     font-size: 0.8rem;
     font-weight: 600;
@@ -1468,14 +1468,14 @@ summary {
     min-width: 0;
 }
 
-.dash-rank-count {
+.c-dashboard-rank-item__count {
     font-size: 0.9rem;
     font-weight: 800;
     color: var(--primary);
     flex-shrink: 0;
 }
 
-.dash-rank-count-unit {
+.c-dashboard-rank-item__count-unit {
     font-size: 0.62rem;
     color: var(--text-secondary);
     margin-left: 0.05rem;
@@ -1496,7 +1496,7 @@ summary {
     padding-bottom: 0.5rem;
 }
 
-.dash-schedule-actions {
+.c-dashboard-widget__actions {
     display: flex;
     gap: 0.4rem;
 }
@@ -1713,15 +1713,15 @@ summary {
 
 /* --- レスポンシブ --- */
 @media (max-width: 640px) {
-    .dash-widget-grid {
+    .c-dashboard-grid {
         gap: 0.75rem;
     }
 
-    .dash-row-2 {
+    .c-dashboard-grid__row {
         gap: 0.6rem;
     }
 
-    .dash-next-event-title {
+    .c-dashboard-event__title {
         font-size: 0.95rem;
     }
 
@@ -1734,21 +1734,21 @@ summary {
         font-size: 1.1rem;
     }
 
-    .dash-rank-card,
-    .dash-form-card,
+    .c-dashboard-widget--rank,
+    .c-dashboard-widget--summary,
     .dash-schedule-widget,
-    .dash-next-event-card,
-    .dash-season-record-card {
-        padding: 0.75rem 0.9rem !important;
+    .c-dashboard-widget--next-event,
+    .c-dashboard-widget--season {
+        padding: 0.75rem 0.9rem;
     }
 
-    .dash-form-item {
+    .c-dashboard-strip__item {
         max-width: 58px;
     }
 }
 
 @media (max-width: 380px) {
-    .dash-row-2 {
+    .c-dashboard-grid__row {
         grid-template-columns: 1fr;
     }
 }
@@ -1903,7 +1903,7 @@ summary {
 
 /* P33.1: 小型端末では二列カードを一列へ畳み、カード内の長いラベルによる横溢れを防ぐ。 */
 @media (max-width: 520px) {
-    .dash-row-2 {
+    .c-dashboard-grid__row {
         grid-template-columns: 1fr;
     }
 }

@@ -1019,7 +1019,7 @@ function initDashboard() {
             // 1. 選手データが1件も未登録の場合
             if (state.players.length === 0) {
                 myPlayerContent.innerHTML = `
-                    <div class="dash-no-data" style="padding:1.2rem 0; text-align:center;">
+                    <div class="c-dashboard-widget__empty" style="padding:1.2rem 0; text-align:center;">
                         <p style="margin-bottom:0.6rem; color:var(--text-secondary); font-size:0.85rem;">チームに選手が登録されていません。</p>
                         <p style="font-size:0.75rem; color:var(--text-secondary);">※コーチモードに切り替えて「選手管理」から選手を登録してください。</p>
                     </div>
@@ -1030,7 +1030,7 @@ function initDashboard() {
             // 2. 選手は登録されているが、マイ選手が「未選択」の場合
             if (!playerId) {
                 myPlayerContent.innerHTML = `
-                    <div class="dash-no-data" style="padding:1.2rem 0; text-align:center;">
+                    <div class="c-dashboard-widget__empty" style="padding:1.2rem 0; text-align:center;">
                         <p style="margin-bottom:0.6rem; color:var(--text-primary); font-weight:700; font-size:0.9rem;">表示するマイ選手が未設定です</p>
                         <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" onclick="openMyPlayerSelectModal()" style="padding:0.4rem 1rem; font-size:0.82rem;">
                             <i class="fa-solid fa-user-check"></i> マイ選手（我が子）を選択する
@@ -1044,7 +1044,7 @@ function initDashboard() {
             const player = state.players.find(p => p.id === parseInt(playerId, 10));
             if (!player) {
                 myPlayerContent.innerHTML = `
-                    <div class="dash-no-data" style="padding:1rem 0; text-align:center;">
+                    <div class="c-dashboard-widget__empty" style="padding:1rem 0; text-align:center;">
                         <p style="margin-bottom:0.5rem; color:var(--text-secondary);">該当する選手が見つかりません。</p>
                         <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" onclick="openMyPlayerSelectModal()">
                             <i class="fa-solid fa-rotate"></i> 別の選手を選択する
@@ -1459,11 +1459,11 @@ function initDashboard() {
             // 出場時間が特に少ない下位3名を表示（他ランキングと100%構造・高さを統一）
             const alertPlayers = playRateList.slice(0, 3);
             if (alertPlayers.length > 0 && totalPeriods > 0) {
-                playtimeContent.className = 'c-data-list dash-rank-list';
+                playtimeContent.className = 'c-data-list c-dashboard-rank-list';
                 playtimeContent.innerHTML = alertPlayers.map((item, idx) => `
-                    <article class="c-data-list__item dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                    <article class="c-data-list__item c-dashboard-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
                         <div class="c-data-list__header">
-                            <div class="c-data-list__identity"><span class="dash-rank-medal">⚠️</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
+                            <div class="c-data-list__identity"><span class="c-dashboard-rank-item__medal">⚠️</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
                             <div class="c-data-list__metric ${item.pct < 30 ? 'is-danger' : ''}">
                                 <span class="c-data-list__metric-label">出場率</span>
                                 <span class="c-data-list__metric-value">${item.pct}%</span>
@@ -1542,11 +1542,11 @@ function initDashboard() {
                 : '';
 
             nextEventContent.innerHTML = `
-                <span class="dash-next-event-type ${typeClass}">${typeLabel}</span>
-                <div class="dash-next-event-title">${escapeHtml(nextEvent.title)}</div>
+                <span class="c-dashboard-event__type ${typeClass}">${typeLabel}</span>
+                <div class="c-dashboard-event__title">${escapeHtml(nextEvent.title)}</div>
                 <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; margin-top:0.1rem;">
-                    <span class="dash-next-event-date">${dateLabel}${subLine ? ' · ' + escapeHtml(subLine) : ''}</span>
-                    <span class="dash-next-event-countdown">${countdownLabel}</span>
+                    <span class="c-dashboard-event__date">${dateLabel}${subLine ? ' · ' + escapeHtml(subLine) : ''}</span>
+                    <span class="c-dashboard-event__countdown">${countdownLabel}</span>
                 </div>
 `;
             if (nextEventCard) {
@@ -1622,10 +1622,10 @@ function initDashboard() {
                 else if (status === 'loss') { statusClass = 'c-status--muted'; label = '負'; }
                 const oppShort = (m.opponent || '').replace(/AFC|SFC|FC|SC/gi, '').trim().slice(0, 4) || 'vs';
                 return `
-                    <div class="dash-form-item" title="${escapeHtml(m.opponent)} ${m.result}" onclick="openMatchDetail(${m.id})">
+                    <div class="c-dashboard-strip__item" title="${escapeHtml(m.opponent)} ${m.result}" onclick="openMatchDetail(${m.id})">
                         <span class="c-status ${statusClass}">${label}</span>
-                        <div class="dash-form-score">${us}-${them}</div>
-                        <div class="dash-form-opponent">${escapeHtml(oppShort)}</div>
+                        <div class="c-dashboard-strip__metric">${us}-${them}</div>
+                        <div class="c-dashboard-strip__meta">${escapeHtml(oppShort)}</div>
                     </div>
                 `;
             }).join('');
@@ -1667,9 +1667,9 @@ function initDashboard() {
             .slice(0, 3);
         el.innerHTML = top.length > 0
             ? top.map((item, idx) => `
-                <article class="c-data-list__item dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                <article class="c-data-list__item c-dashboard-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
                     <div class="c-data-list__header">
-                        <div class="c-data-list__identity"><span class="dash-rank-medal">${medals[idx] || (idx + 1) + '.'}</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
+                        <div class="c-data-list__identity"><span class="c-dashboard-rank-item__medal">${medals[idx] || (idx + 1) + '.'}</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
                         <div class="c-data-list__metric">
                             <span class="c-data-list__metric-label">${unit}</span>
                             <span class="c-data-list__metric-value">${item.count}</span>
@@ -1721,7 +1721,7 @@ function initDashboard() {
                 return `${m}/${day}(${dayNames[d.getDay()]})`;
             };
 
-            // 「直近の試合」と全く同じ dash-form-item 構造・クラスでHTMLを出力
+            // 「直近の試合」と同じ c-dashboard-strip__item 構造・クラスでHTMLを出力
             scheduleList.innerHTML = sortedEvents.map(e => {
                 const isMatch = e.type === 'match';
                 const statusClass = isMatch ? 'c-status--solid' : 'c-status--info';
@@ -1731,10 +1731,10 @@ function initDashboard() {
                     : `navigate('practices', { date: '${e.date}' })`;
 
                 return `
-                    <div class="dash-form-item" onclick="${clickAction}" style="cursor: pointer;">
+                    <div class="c-dashboard-strip__item" onclick="${clickAction}" style="cursor: pointer;">
                         <span class="c-status ${statusClass}">${badgeText}</span>
-                        <div class="dash-form-score">${formatDateLabel(e.date)}</div>
-                        <div class="dash-form-opponent" title="${escapeHtml(e.subText)}">${escapeHtml(e.subText)}</div>
+                        <div class="c-dashboard-strip__metric">${formatDateLabel(e.date)}</div>
+                        <div class="c-dashboard-strip__meta" title="${escapeHtml(e.subText)}">${escapeHtml(e.subText)}</div>
                     </div>
                 `;
             }).join('');
@@ -1772,9 +1772,9 @@ function initDashboard() {
 
             attendanceRankEl.innerHTML = totalRecentEvents > 0 && top.some(item => item.count > 0)
                 ? top.map((item, idx) => `
-                    <article class="c-data-list__item dash-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
+                    <article class="c-data-list__item c-dashboard-rank-item" onclick="event.stopPropagation(); openPlayerDetail(${item.p.id})">
                         <div class="c-data-list__header">
-                            <div class="c-data-list__identity"><span class="dash-rank-medal">${medals[idx] || (idx + 1) + '.'}</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
+                            <div class="c-data-list__identity"><span class="c-dashboard-rank-item__medal">${medals[idx] || (idx + 1) + '.'}</span>${item.p.number} ${escapeHtml(item.p.name)}</div>
                             <div class="c-data-list__metric">
                                 <span class="c-data-list__metric-label">出席率</span>
                                 <span class="c-data-list__metric-value">${item.pct}%</span>
@@ -1797,7 +1797,7 @@ function initDashboard() {
                         ? p.menus.map(mn => escapeHtml(mn.focus)).join(' / ')
                         : 'メニュー未記録';
                     return `
-                        <article class="c-data-list__item dash-rank-item" onclick="event.stopPropagation(); navigate('practices', { date: '${p.date}' })">
+                        <article class="c-data-list__item c-dashboard-rank-item" onclick="event.stopPropagation(); navigate('practices', { date: '${p.date}' })">
                             <div class="c-data-list__meta">${p.date}</div>
                             <div class="c-data-list__body">${focuses}</div>
                         </article>
@@ -1835,7 +1835,7 @@ function renderExperienceDashboard() {
                 <span class="dash-action-icon"><i class="fa-solid ${escapeHtml(item.icon || 'fa-arrow-right')}"></i></span>
                 <span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description)}</small></span>
                 <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-            </button>`).join('') : '<div class="dash-no-data">今すぐ対応が必要な項目はありません。</div>';
+            </button>`).join('') : '<div class="c-dashboard-widget__empty">今すぐ対応が必要な項目はありません。</div>';
         actionList.querySelectorAll('[data-experience-action]').forEach(button => {
             button.onclick = () => runExperienceAction(button.dataset.experienceAction, button.dataset.experienceId || null, center.actions.find(item => item.action === button.dataset.experienceAction)?.recommendation || null);
         });
@@ -1849,7 +1849,7 @@ function renderExperienceDashboard() {
             <button type="button" class="dash-action-item is-neutral" data-parent-agenda-action="${escapeHtml(item.action)}" data-parent-agenda-id="${escapeHtml(String(item.targetId || ''))}">
                 <span class="dash-action-icon"><i class="fa-solid ${escapeHtml(item.icon)}"></i></span>
                 <span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description)}</small></span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-            </button>`).join('') : '<div class="dash-no-data">次の予定や回答待ちはありません。</div>';
+            </button>`).join('') : '<div class="c-dashboard-widget__empty">次の予定や回答待ちはありません。</div>';
         parentAgenda.querySelectorAll('[data-parent-agenda-action]').forEach(button => {
             button.onclick = () => runExperienceAction(button.dataset.parentAgendaAction, button.dataset.parentAgendaId || null);
         });
