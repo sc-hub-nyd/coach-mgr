@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.59';
+export const APP_VERSION = 'v1.30.60';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.60',
+        date: '2026-08-19',
+        title: '試合・練習の参加者表示を共通チップへ統一',
+        features: [
+            '試合詳細の保護者向け参加者表示を、練習カードと同一の番号付き参加者チップへ統一',
+            '共通c-attendee-list／c-attendee-chipを導入し、氏名・背番号・空状態の余白と文字組みを一致',
+            '既存の招集、出欠、保存、DOM ID、コーチ向け名簿操作は変更せず、P35で共有部品利用を検証'
+        ]
+    },
     {
         version: 'v1.30.59',
         date: '2026-08-19',
