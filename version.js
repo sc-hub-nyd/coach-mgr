@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.62';
+export const APP_VERSION = 'v1.30.63';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.63',
+        date: '2026-08-19',
+        title: '設定・同期・保護者運用画面を共通部品へ統一',
+        features: [
+            '設定セクションの旧sl-*構造をc-settings-section／c-inputへ統合し、未参照の互換CSSを削除',
+            '同期監査、運用診断、クラウド復旧、保護者招待をc-data-list・c-empty-state・c-statusの共通契約へ移行',
+            '同期競合解決をc-modal構造へ統一し、P27・P35の契約で旧クラス再導入と主要操作の回帰を防止'
+        ]
+    },
     {
         version: 'v1.30.62',
         date: '2026-08-19',

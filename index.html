@@ -809,11 +809,11 @@
             <!-- Tab Panel 1: 基本・表示 -->
             <div class="settings-tab-panel" data-settings-panel="general">
                 <!-- P32: 個別表示設定とアクセシビリティ -->
-                <section class="sl-section c-settings-section card c-card" id="ui-preferences-section" aria-labelledby="ui-preferences-title">
+                <section class="c-settings-section card c-card" id="ui-preferences-section" aria-labelledby="ui-preferences-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> DISPLAY</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="ui-preferences-title">表示・操作の個別設定</h2></div>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body">
+                    <div class="c-settings-section__body c-card__body">
                         <p class="c-settings-section__intro operations-intro">端末ごとに、カラーモード、文字の大きさ、動きの量を調整できます。記録データや他の利用者の表示は変わりません。</p>
                             <div class="c-form-grid ui-preferences-grid">
                                 <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="ui-color-mode">カラーモード</label><select id="ui-color-mode" class="c-input form-control"><option value="light">ライト</option><option value="dark">ダーク</option></select><small class="c-form-field__hint">この端末だけの表示設定です。</small></div>
@@ -826,11 +826,11 @@
                 </section>
 
                 <!-- Team theme: seed color is transformed into accessible roles at runtime. -->
-                <section class="sl-section c-settings-section card c-card" id="team-theme-section" aria-labelledby="team-theme-section-title">
+                <section class="c-settings-section card c-card" id="team-theme-section" aria-labelledby="team-theme-section-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-palette" aria-hidden="true"></i> TEAM THEME</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="team-theme-section-title">チームテーマ</h2></div>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body">
+                    <div class="c-settings-section__body c-card__body">
                         <form id="form-team-info" class="c-settings-form">
                             <div class="c-form-grid">
                                 <div class="c-form-field c-form-field--fluid">
@@ -865,11 +865,11 @@
                 </section>
 
                 <!-- P22: チーム・シーズン管理 -->
-                <section class="sl-section c-settings-section card c-card coach-only" id="workspace-management-section" aria-labelledby="workspace-management-title">
+                <section class="c-settings-section card c-card coach-only" id="workspace-management-section" aria-labelledby="workspace-management-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> WORKSPACE</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="workspace-management-title">チーム・シーズン管理</h2></div>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body workspace-management-body">
+                    <div class="c-settings-section__body c-card__body workspace-management-body">
                         <p class="c-settings-section__intro operations-intro">チームと年度を切り替えます。切替前のデータは自動保存され、年度アーカイブからいつでも再表示できます。</p>
                         <div class="c-form-grid workspace-select-grid">
                             <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="workspace-team-select">チーム</label><select id="workspace-team-select" class="c-input form-control"></select></div>
@@ -889,11 +889,11 @@
             <!-- Tab Panel 2: データ連携・共有 -->
             <div class="settings-tab-panel hidden" data-settings-panel="sync">
                 <!-- P10/P21: GASクラウド同期 -->
-                <section class="sl-section c-settings-section card c-card" id="gas-sync-section" aria-labelledby="gas-sync-title">
+                <section class="c-settings-section card c-card" id="gas-sync-section" aria-labelledby="gas-sync-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> CLOUD SYNC</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="gas-sync-title">Google スプレッドシート連携</h2></div>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body">
+                    <div class="c-settings-section__body c-card__body">
                         <p class="c-settings-section__intro">試合・練習・選手・練習メニュー・<strong>戦術管理</strong>・チームテーマ・各種設定マスタがクラウド同期の対象となります。</p>
                         <form id="form-gas-sync" class="c-settings-form">
                             <div class="c-form-grid">
@@ -914,11 +914,11 @@
                 </section>
 
                 <!-- P23: 保護者共有・招待管理 -->
-                <section class="sl-section c-settings-section card c-card coach-only" id="parent-share-section" aria-labelledby="parent-share-title">
+                <section class="c-settings-section card c-card coach-only" id="parent-share-section" aria-labelledby="parent-share-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-people-roof" aria-hidden="true"></i> PARENT SHARE</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="parent-share-title">保護者共有・出欠回答</h2></div>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body parent-share-body">
+                    <div class="c-settings-section__body c-card__body parent-share-body">
                         <p class="c-settings-section__intro">選手別の表示範囲と共有リンクの有効期限を管理し、未回答者への案内文を作成できます。リンクに認証トークンは含めません。</p>
                         <div class="c-form-grid parent-share-controls">
                             <div class="c-form-field c-form-field--fluid"><label class="c-form-field__label" for="parent-share-player">対象選手</label><select id="parent-share-player" class="c-input form-control"></select></div>
@@ -938,17 +938,17 @@
                                 <fieldset class="parent-access-scopes"><legend>閲覧範囲</legend><label><input type="checkbox" value="schedule" checked>予定・結果</label><label><input type="checkbox" value="attendance" checked>出欠</label><label><input type="checkbox" value="development" checked>本人の成長ログ</label></fieldset>
                             </div>
                             <div class="c-action-group c-action-group--mobile-stretch operations-actions"><button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-create-parent-access"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 招待作成</button></div>
-                            <div class="parent-access-invites" id="parent-access-invites"></div>
+                            <div class="c-data-list c-data-list--parent-access" id="parent-access-invites"></div>
                         </div>
                     </div>
                 </section>
 
                 <!-- Section: データ連携・バックアップ管理 -->
-                <section class="sl-section c-settings-section card c-card" id="data-management-settings-section" aria-labelledby="data-management-settings-title">
+                <section class="c-settings-section card c-card" id="data-management-settings-section" aria-labelledby="data-management-settings-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-database" aria-hidden="true"></i> DATA SAFETY</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="data-management-settings-title">データ連携・バックアップ管理</h2></div>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body c-data-management__operation">
+                    <div class="c-settings-section__body c-card__body c-data-management__operation">
                         <p class="c-settings-section__intro">全データ（試合記録、練習予定、メニュー、選手情報等）をJSONファイルとしてダウンロード・バックアップ、または取込・一括削除が行えます。大切な試合の前後や端末変更前には、必ずバックアップを作成してください。</p>
                         <div class="c-action-group c-action-group--mobile-stretch">
                             <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-data-view-export"><i class="fa-solid fa-download" aria-hidden="true"></i> バックアップ出力（JSON）</button>
@@ -963,7 +963,7 @@
             <!-- Tab Panel 3: マスター管理 -->
             <div class="settings-tab-panel hidden" data-settings-panel="master">
                 <!-- Section: 試合種別 -->
-                <section class="sl-section c-settings-section card c-card" id="match-types-section" aria-labelledby="match-types-title">
+                <section class="c-settings-section card c-card" id="match-types-section" aria-labelledby="match-types-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content">
                             <span class="c-kicker"><i class="fa-solid fa-trophy" aria-hidden="true"></i> MATCH TYPES</span>
@@ -973,7 +973,7 @@
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body">
+                    <div class="c-settings-section__body c-card__body">
                         <form id="form-add-match-type" class="c-settings-form" style="margin-bottom: var(--space-3);">
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
@@ -988,7 +988,7 @@
                 </section>
 
                 <!-- Section: 練習カテゴリ -->
-                <section class="sl-section c-settings-section card c-card" id="menu-categories-section" aria-labelledby="menu-categories-title">
+                <section class="c-settings-section card c-card" id="menu-categories-section" aria-labelledby="menu-categories-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content">
                             <span class="c-kicker"><i class="fa-solid fa-tags" aria-hidden="true"></i> PRACTICE CATEGORIES</span>
@@ -998,7 +998,7 @@
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body">
+                    <div class="c-settings-section__body c-card__body">
                         <form id="form-add-menu-category" class="c-settings-form" style="margin-bottom: var(--space-3);">
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
@@ -1013,7 +1013,7 @@
                 </section>
 
                 <!-- Section: 戦術カテゴリ -->
-                <section class="sl-section c-settings-section card c-card" id="tactics-categories-section" aria-labelledby="tactics-categories-title">
+                <section class="c-settings-section card c-card" id="tactics-categories-section" aria-labelledby="tactics-categories-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content">
                             <span class="c-kicker"><i class="fa-solid fa-chess-knight" aria-hidden="true"></i> TACTICS CATEGORIES</span>
@@ -1023,7 +1023,7 @@
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body">
+                    <div class="c-settings-section__body c-card__body">
                         <form id="form-add-tactics-category" class="c-settings-form" style="margin-bottom: var(--space-3);">
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
@@ -1038,7 +1038,7 @@
                 </section>
 
                 <!-- Section: スキル評価項目 -->
-                <section class="sl-section c-settings-section card c-card" id="skill-metrics-section" aria-labelledby="skill-metrics-title">
+                <section class="c-settings-section card c-card" id="skill-metrics-section" aria-labelledby="skill-metrics-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content">
                             <span class="c-kicker"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> SKILL METRICS</span>
@@ -1048,7 +1048,7 @@
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body">
+                    <div class="c-settings-section__body c-card__body">
                         <form id="form-add-skill-metric" class="c-settings-form" style="margin-bottom: var(--space-3);">
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
@@ -1063,7 +1063,7 @@
                 </section>
 
                 <!-- Section: ポジション (カテゴリ1) -->
-                <section class="sl-section c-settings-section card c-card" id="positions-section" aria-labelledby="positions-title">
+                <section class="c-settings-section card c-card" id="positions-section" aria-labelledby="positions-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content">
                             <span class="c-kicker"><i class="fa-solid fa-street-view" aria-hidden="true"></i> POSITIONS (CAT 1)</span>
@@ -1073,7 +1073,7 @@
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body">
+                    <div class="c-settings-section__body c-card__body">
                         <form id="form-add-position" class="c-settings-form" style="margin-bottom: var(--space-3);">
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
@@ -1088,7 +1088,7 @@
                 </section>
 
                 <!-- Section: ポジション (カテゴリ2) -->
-                <section class="sl-section c-settings-section card c-card" id="positions-cat2-section" aria-labelledby="positions-cat2-title">
+                <section class="c-settings-section card c-card" id="positions-cat2-section" aria-labelledby="positions-cat2-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content">
                             <span class="c-kicker"><i class="fa-solid fa-person-running" aria-hidden="true"></i> POSITIONS (CAT 2)</span>
@@ -1098,7 +1098,7 @@
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body">
+                    <div class="c-settings-section__body c-card__body">
                         <form id="form-add-position-cat2" class="c-settings-form" style="margin-bottom: var(--space-3);">
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
@@ -1113,7 +1113,7 @@
                 </section>
 
                 <!-- Section: 動画分析タグ -->
-                <section class="sl-section c-settings-section card c-card" id="analysis-tags-section" aria-labelledby="analysis-tags-title">
+                <section class="c-settings-section card c-card" id="analysis-tags-section" aria-labelledby="analysis-tags-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content">
                             <span class="c-kicker"><i class="fa-solid fa-tags" aria-hidden="true"></i> VIDEO ANALYSIS TAGS</span>
@@ -1123,7 +1123,7 @@
                             <i class="fa-solid fa-rotate-left"></i> デフォルトに洗い替え
                         </button>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body">
+                    <div class="c-settings-section__body c-card__body">
                         <form id="form-add-analysis-tag" class="c-settings-form" style="margin-bottom: var(--space-3);">
                             <div class="c-form-grid" style="grid-template-columns: minmax(0, 1fr) auto; align-items: start;">
                                 <div class="c-form-field c-form-field--fluid">
@@ -1138,7 +1138,7 @@
                 </section>
 
                 <!-- Section: フォーメーション -->
-                <section class="sl-section c-settings-section card c-card" id="custom-formations-section" aria-labelledby="custom-formations-title">
+                <section class="c-settings-section card c-card" id="custom-formations-section" aria-labelledby="custom-formations-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content">
                             <span class="c-kicker"><i class="fa-solid fa-chess-board" aria-hidden="true"></i> FORMATIONS</span>
@@ -1148,7 +1148,7 @@
                             <i class="fa-solid fa-plus"></i> 新規作成
                         </button>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body">
+                    <div class="c-settings-section__body c-card__body">
                         <ul id="custom-formation-list" class="c-data-list"></ul>
                     </div>
                 </section>
@@ -1157,11 +1157,11 @@
             <!-- Tab Panel 4: 保守・総括 -->
             <div class="settings-tab-panel hidden" data-settings-panel="summary">
                 <!-- P27: シーズンレポート -->
-                <section class="sl-section c-settings-section card c-card coach-only" id="season-report-section" aria-labelledby="season-report-title">
+                <section class="c-settings-section card c-card coach-only" id="season-report-section" aria-labelledby="season-report-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> REPORT</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="season-report-title">シーズンレポート</h2></div>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body season-report-body">
+                    <div class="c-settings-section__body c-card__body season-report-body">
                         <p class="c-settings-section__intro operations-intro">今シーズンの試合・出席・成長メモを自動集計し、一覧・印刷・CSV出力できます。</p>
                         <div class="season-report-metrics" id="season-report-metrics"></div>
                         <div class="c-action-group c-action-group--mobile-stretch operations-actions">
@@ -1173,14 +1173,14 @@
                 </section>
 
                 <!-- P26: 運用診断とデータ保守 -->
-                <section class="sl-section c-settings-section card c-card operations-section" id="operations-section" aria-labelledby="operations-title">
+                <section class="c-settings-section card c-card operations-section" id="operations-section" aria-labelledby="operations-title">
                     <div class="c-section-header c-settings-section__header c-card__header">
                         <div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> MAINTENANCE</span><h2 class="c-section-header__title c-card__title c-text-effect--shimmer" id="operations-title">運用診断とデータ保守</h2></div>
                     </div>
-                    <div class="sl-section-body c-settings-section__body c-card__body operations-body">
+                    <div class="c-settings-section__body c-card__body operations-body">
                         <p class="c-settings-section__intro operations-intro">同期状況・未同期データ・バックアップ世代・ストレージ残量を確認し、必要に応じて復旧や保守を実行できます。</p>
                         <div class="operations-checks-grid" id="operations-checks-grid"></div>
-                        <div id="operations-diagnostics" class="operations-diagnostics" aria-live="polite"></div>
+                        <div id="operations-diagnostics" class="c-data-list c-data-list--diagnostics" aria-live="polite"></div>
                         <div class="c-action-group c-action-group--mobile-stretch operations-actions">
                             <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-operations-refresh"><i class="fa-solid fa-rotate" aria-hidden="true"></i> 再確認</button>
                             <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-operations-share"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> 診断共有</button>
@@ -1188,11 +1188,9 @@
                         <div class="cloud-recovery-panel">
                             <div class="cloud-recovery-heading"><strong><i class="fa-solid fa-cloud-arrow-down"></i> クラウド復旧ポイント</strong><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-refresh-cloud-recoveries"><i class="fa-solid fa-rotate"></i> 更新</button></div>
                             <p class="c-settings-section__intro">直近の送信世代から特定時点のデータを安全に復旧できます。</p>
-                            <div class="cloud-recovery-history" id="cloud-recovery-history"></div>
+                            <div class="c-data-list c-data-list--recovery" id="cloud-recovery-history"></div>
                         </div>
-                        <div class="sync-audit-panel">
-                            <div class="sync-audit-history" id="sync-audit-history"></div>
-                        </div>
+                        <div class="c-data-list c-data-list--audit" id="sync-audit-history"></div>
                         <div class="local-recovery-panel">
                             <div class="local-recovery-heading"><strong><i class="fa-solid fa-clock-rotate-left"></i> 端末内・安全スロット</strong><span>保存失敗時や直前の確定状態へ素早く戻せます。</span></div>
                             <div class="local-recovery-history" id="local-recovery-history"></div>

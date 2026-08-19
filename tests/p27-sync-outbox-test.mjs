@@ -33,7 +33,7 @@ const [app, repository, settings, index, css] = await Promise.all([
     readFile(new URL('../repository.js', import.meta.url), 'utf8'),
     readFile(new URL('../settings.js', import.meta.url), 'utf8'),
     readFile(new URL('../index.html', import.meta.url), 'utf8'),
-    readFile(new URL('../CSS/components.css', import.meta.url), 'utf8')
+    readFile(new URL('../CSS/components-system.css', import.meta.url), 'utf8')
 ]);
 assert.match(app, /enqueueSyncSnapshot/);
 assert.match(app, /acknowledgeSyncOutboxItem/);
@@ -41,6 +41,8 @@ assert.match(app, /retryPendingSyncOutbox/);
 assert.match(repository, /loadSyncOutbox/);
 assert.match(repository, /saveSyncAudit/);
 assert.match(settings, /sync-audit-history/);
+assert.match(settings, /c-data-list__header/);
 assert.match(index, /btn-retry-sync-outbox/);
-assert.match(css, /sync-audit-history/);
+assert.match(index, /c-data-list--audit/);
+assert.match(css, /c-data-list--audit/);
 console.log('P27 sync outbox tests passed');

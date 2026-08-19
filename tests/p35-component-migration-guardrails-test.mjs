@@ -12,6 +12,7 @@ const source = Object.fromEntries(await Promise.all([
     ['players', '../players.js'],
     ['matches', '../matches.js'],
     ['drawing', '../drawing.js'],
+    ['conflict', '../sync-conflict-dialog.js'],
     ['app', '../app.js'],
     ['standard', '../CSS/components-standard.css'],
     ['components', '../CSS/components.css'],
@@ -80,6 +81,50 @@ requireAll(source.settings, [
     'btn-workspace-switch',
     'form-gas-sync'
 ], '設定イベント');
+
+// Wave D: settings, synchronization, recovery, and guardian operations share common components.
+requireAll(source.index, [
+    'c-settings-section',
+    'c-settings-section__body',
+    'id="operations-diagnostics" class="c-data-list c-data-list--diagnostics"',
+    'class="c-data-list c-data-list--recovery" id="cloud-recovery-history"',
+    'class="c-data-list c-data-list--audit" id="sync-audit-history"',
+    'id="parent-access-invites"'
+], '波Dの設定・同期・保護者運用テンプレート');
+
+requireAll(source.settings, [
+    'c-data-list__header',
+    'c-data-list__identity',
+    'c-data-list__content',
+    'c-data-list__actions',
+    'c-empty-state__text',
+    'c-empty-state c-empty-state--compact',
+    'c-status--success',
+    'c-status--warning',
+    'c-status--muted',
+    'data-operation-action',
+    'data-parent-access-copy',
+    'data-parent-access-revoke',
+    'btn-restore-cloud-generation'
+], '波Dの設定・同期・保護者運用生成');
+
+requireAll(source.conflict, [
+    'c-modal-overlay c-modal-overlay--critical',
+    'c-modal c-modal--sync-conflict',
+    'c-modal__header',
+    'c-modal__body',
+    'c-modal__footer',
+    'c-data-list c-data-list--conflict',
+    'data-action="keep-local"'
+], '波Dの同期競合モーダル');
+
+const waveDLegacySources = [source.index, source.settings, source.conflict, source.components, source.system].join('\n');
+requireNone(waveDLegacySources, [
+    /\.(?:sl-section|sl-section-body|sl-section-label|sl-row|sl-input|sl-add-row)\b/,
+    /class=["'][^"']*(?:\s|["'])(?:sl-section|sl-section-body|sl-section-label|sl-row|sl-input|sl-add-row)(?=\s|["'])/,
+    /\.(?:sync-audit(?:-(?:item|heading|empty|history))?|operations-check(?:-(?:icon|action))?|cloud-recovery-(?:item|empty)|parent-access-(?:invite|invites|empty|status)|sync-conflict-[a-z-]+)\b/,
+    /class=["'][^"']*(?:\s|["'])(?:sync-audit(?:-(?:item|heading|empty|history))?|operations-check(?:-(?:icon|action))?|cloud-recovery-(?:item|empty)|parent-access-(?:invite|invites|empty|status)|sync-conflict-[a-z-]+)(?=\s|["'])/
+], '波Dで廃止した設定・同期・保護者運用クラス');
 
 requireAll(source.index, [
     'template id="tpl-animation"',
@@ -543,7 +588,15 @@ requireAll(source.system, [
     '\\.c-modal--legacy',
     '\\.c-modal\\.modal-export-fallback',
     '\\.export-json-textarea',
-    '\\.c-status--success'
+    '\\.c-status--success',
+    '\\.c-data-list__content',
+    '\\.c-data-list--diagnostics',
+    '\\.c-data-list--recovery',
+    '\\.c-data-list--audit',
+    '\\.c-data-list--parent-access',
+    '\\.c-data-list--conflict',
+    '\\.c-modal--sync-conflict',
+    '\\.c-modal-overlay--critical'
 ], 'システム部品');
 
 console.log('P35 component migration guardrails passed');

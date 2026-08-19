@@ -292,25 +292,25 @@ export function initSettings() {
         const entries = Array.isArray(state.syncAudit) ? state.syncAudit.slice(0, 6) : [];
         const pending = Array.isArray(state.syncOutbox?.items) ? state.syncOutbox.items.filter(item => item.status !== 'sending').length : 0;
         if (!entries.length && !pending) {
-            syncAuditHistory.innerHTML = '<p class="sync-audit-empty">同期待機はありません。クラウド同期を行うと、送信・受領・失敗の履歴をここで確認できます。</p>';
+            syncAuditHistory.innerHTML = '<p class="c-empty-state__text">同期待機はありません。クラウド同期を行うと、送信・受領・失敗の履歴をここで確認できます。</p>';
             return;
         }
         const label = { queued: '待機へ追加', sending: '送信中', acknowledged: '受領済み', failed: '送信失敗', conflict: '競合' };
-        syncAuditHistory.innerHTML = `<div class="sync-audit-heading"><strong>同期監査ログ</strong><span>${pending ? `送信待ち ${pending}件` : '送信待ちなし'}</span></div>${entries.map(entry => `<div class="sync-audit-item is-${escapeHtml(entry.type || 'unknown')}"><span><strong>${escapeHtml(label[entry.type] || entry.type || '記録')}</strong><small>${escapeHtml(entry.message || '')}</small></span><time>${escapeHtml(entry.at ? new Date(entry.at).toLocaleString('ja-JP') : '')}</time></div>`).join('')}`;
+        syncAuditHistory.innerHTML = `<div class="c-data-list__header"><strong>同期監査ログ</strong><span>${pending ? `送信待ち ${pending}件` : '送信待ちなし'}</span></div>${entries.map(entry => `<article class="c-data-list__item is-${escapeHtml(entry.type || 'unknown')}"><span class="c-data-list__content"><strong>${escapeHtml(label[entry.type] || entry.type || '記録')}</strong><small>${escapeHtml(entry.message || '')}</small></span><time>${escapeHtml(entry.at ? new Date(entry.at).toLocaleString('ja-JP') : '')}</time></article>`).join('')}`;
     };
     const refreshOperationalDiagnostics = () => {
         if (!diagnosticsContainer) return;
         const diagnostics = buildOperationalDiagnostics(state);
         const icons = { backup: 'fa-box-archive', sync: 'fa-cloud', cloudRecovery: 'fa-clock-rotate-left', recovery: 'fa-clock-rotate-left', outbox: 'fa-list-check', team: 'fa-people-group', storage: 'fa-hard-drive' };
         diagnosticsContainer.innerHTML = diagnostics.checks.map(check => {
-            const action = check.action ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm operations-check-action" data-operation-action="${escapeHtml(check.action.action)}">${escapeHtml(check.action.label)}</button>` : '';
-            return `<div class="operations-check is-${check.status}${action ? ' has-action' : ''}">
-                <span class="operations-check-icon"><i class="fa-solid ${icons[check.key] || 'fa-circle-info'}" aria-hidden="true"></i></span>
-                <span><strong>${escapeHtml(check.label)}</strong><small title="${escapeHtml(check.detail)}">${escapeHtml(check.detail)}</small></span>
-                ${action}
-            </div>`;
+            const action = check.action ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" data-operation-action="${escapeHtml(check.action.action)}">${escapeHtml(check.action.label)}</button>` : '';
+            return `<article class="c-data-list__item is-${check.status}${action ? ' has-action' : ''}">
+                <span class="c-data-list__identity"><i class="fa-solid ${icons[check.key] || 'fa-circle-info'}" aria-hidden="true"></i></span>
+                <span class="c-data-list__content"><strong>${escapeHtml(check.label)}</strong><small title="${escapeHtml(check.detail)}">${escapeHtml(check.detail)}</small></span>
+                ${action ? `<span class="c-data-list__actions">${action}</span>` : ''}
+            </article>`;
         }).join('');
-        diagnosticsContainer.querySelectorAll('.operations-check-action').forEach(button => {
+        diagnosticsContainer.querySelectorAll('[data-operation-action]').forEach(button => {
             button.onclick = async () => {
                 const action = button.dataset.operationAction;
                 if (action === 'backup') return exportBackupData();
@@ -365,14 +365,14 @@ export function initSettings() {
     const renderCloudRecoveries = recoveries => {
         if (!cloudRecoveryHistory) return;
         if (!recoveries.length) {
-            cloudRecoveryHistory.innerHTML = '<p class="cloud-recovery-empty">利用可能なクラウド復旧世代はありません。次回以降のクラウド送信後に表示されます。</p>';
+            cloudRecoveryHistory.innerHTML = '<p class="c-empty-state__text">利用可能なクラウド復旧世代はありません。次回以降のクラウド送信後に表示されます。</p>';
             return;
         }
         cloudRecoveryHistory.innerHTML = recoveries.map(item => `
-            <div class="cloud-recovery-item">
-                <span><strong>世代 ${Number(item.revision)}</strong><small>${escapeHtml(item.updatedAt || '直前の確定版')} ・ ${escapeHtml(item.source === 'immediate' ? '直前の安全スロット' : '世代履歴')}</small></span>
-                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-restore-cloud-generation" data-revision="${Number(item.revision)}"><i class="fa-solid fa-clock-rotate-left"></i> 復元</button>
-            </div>`).join('');
+            <article class="c-data-list__item">
+                <span class="c-data-list__content"><strong>世代 ${Number(item.revision)}</strong><small>${escapeHtml(item.updatedAt || '直前の確定版')} ・ ${escapeHtml(item.source === 'immediate' ? '直前の安全スロット' : '世代履歴')}</small></span>
+                <span class="c-data-list__actions"><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-restore-cloud-generation" data-revision="${Number(item.revision)}"><i class="fa-solid fa-clock-rotate-left"></i> 復元</button></span>
+            </article>`).join('');
         cloudRecoveryHistory.querySelectorAll('.btn-restore-cloud-generation').forEach(button => {
             button.onclick = async () => {
                 const revision = Number(button.dataset.revision);
@@ -394,20 +394,20 @@ export function initSettings() {
     const refreshCloudRecoveries = async () => {
         if (!cloudRecoveryHistory) return [];
         if (!state.teamInfo?.gasApiUrl) {
-            cloudRecoveryHistory.innerHTML = '<p class="cloud-recovery-empty">クラウド同期を設定すると、クラウド上の復旧世代を確認できます。</p>';
+            cloudRecoveryHistory.innerHTML = '<p class="c-empty-state__text">クラウド同期を設定すると、クラウド上の復旧世代を確認できます。</p>';
             return [];
         }
         if (state.teamInfo.gasSyncProtocol !== 'secure-v2') {
-            cloudRecoveryHistory.innerHTML = '<p class="cloud-recovery-empty">クラウド世代の復元は安全モード（POST認証）で利用できます。</p>';
+            cloudRecoveryHistory.innerHTML = '<p class="c-empty-state__text">クラウド世代の復元は安全モード（POST認証）で利用できます。</p>';
             return [];
         }
-        cloudRecoveryHistory.innerHTML = '<p class="cloud-recovery-empty"><i class="fa-solid fa-rotate fa-spin"></i> クラウド復旧世代を確認中...</p>';
+        cloudRecoveryHistory.innerHTML = '<p class="c-empty-state__text"><i class="fa-solid fa-rotate fa-spin"></i> クラウド復旧世代を確認中...</p>';
         try {
             const recoveries = await listCloudRecoveries({ teamInfo: state.teamInfo });
             renderCloudRecoveries(recoveries);
             return recoveries;
         } catch (error) {
-            cloudRecoveryHistory.innerHTML = `<p class="cloud-recovery-empty is-error">クラウド復旧世代を確認できませんでした。${escapeHtml(error?.message || '')}</p>`;
+            cloudRecoveryHistory.innerHTML = `<p class="c-empty-state__text is-error">クラウド復旧世代を確認できませんでした。${escapeHtml(error?.message || '')}</p>`;
             return [];
         }
     };
@@ -760,13 +760,14 @@ export function initSettings() {
         };
         const entries = [...summary.active.map(item => ({ ...item, displayStatus: 'active' })), ...summary.expired.map(item => ({ ...item, displayStatus: 'expired' })), ...summary.revoked.map(item => ({ ...item, displayStatus: 'revoked' }))];
         if (!entries.length) {
-            parentAccessInvites.innerHTML = '<div class="parent-access-empty"><i class="fa-solid fa-user-shield"></i><span>個別招待はまだありません。</span></div>';
+            parentAccessInvites.innerHTML = '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="fa-solid fa-user-shield c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">個別招待はまだありません。</p></div></div>';
             return;
         }
         parentAccessInvites.innerHTML = entries.map(invite => {
             const scopeLabels = (invite.scopes || []).map(scope => PARENT_ACCESS_SCOPES.find(item => item.id === scope)?.label || scope).join('・');
             const statusLabel = invite.displayStatus === 'active' ? '有効' : invite.displayStatus === 'expired' ? '期限切れ' : '失効済み';
-            return `<article class="parent-access-invite is-${escapeHtml(invite.displayStatus)}"><div><strong>${escapeHtml(invite.label || playerName(invite.playerId))}</strong><span>${escapeHtml(playerName(invite.playerId))} ・ ${escapeHtml(scopeLabels)}</span><small>${invite.expiresAt ? `期限 ${escapeHtml(invite.expiresAt)}` : '期限なし'}${invite.lastUsedAt ? ` ・ 最終利用 ${escapeHtml(new Date(invite.lastUsedAt).toLocaleDateString('ja-JP'))}` : ''}</small></div><div class="parent-access-invite-actions">${invite.displayStatus === 'active' ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" data-parent-access-copy="${escapeHtml(invite.id)}"><i class="fa-solid fa-copy"></i> コピー</button><button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm" data-parent-access-revoke="${escapeHtml(invite.id)}"><i class="fa-solid fa-ban"></i> 失効</button>` : ''}<span class="parent-access-status">${statusLabel}</span></div></article>`;
+            const statusTone = invite.displayStatus === 'active' ? 'c-status--success' : invite.displayStatus === 'expired' ? 'c-status--warning' : 'c-status--muted';
+            return `<article class="c-data-list__item is-${escapeHtml(invite.displayStatus)}"><div class="c-data-list__content"><strong>${escapeHtml(invite.label || playerName(invite.playerId))}</strong><span>${escapeHtml(playerName(invite.playerId))} ・ ${escapeHtml(scopeLabels)}</span><small>${invite.expiresAt ? `期限 ${escapeHtml(invite.expiresAt)}` : '期限なし'}${invite.lastUsedAt ? ` ・ 最終利用 ${escapeHtml(new Date(invite.lastUsedAt).toLocaleDateString('ja-JP'))}` : ''}</small></div><div class="c-data-list__actions">${invite.displayStatus === 'active' ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" data-parent-access-copy="${escapeHtml(invite.id)}"><i class="fa-solid fa-copy"></i> コピー</button><button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm" data-parent-access-revoke="${escapeHtml(invite.id)}"><i class="fa-solid fa-ban"></i> 失効</button>` : ''}<span class="c-status c-status--compact ${statusTone}">${statusLabel}</span></div></article>`;
         }).join('');
         parentAccessInvites.querySelectorAll('[data-parent-access-copy]').forEach(button => {
             button.onclick = () => {
