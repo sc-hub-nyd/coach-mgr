@@ -940,8 +940,8 @@ body.role-read-only #pd-tab-goals textarea {
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
-        height: 38px !important;
-        min-height: 38px !important;
+        height: 48px !important;
+        min-height: 48px !important;
         align-items: center !important;
         justify-content: space-between !important;
         padding: 0 0.75rem !important;
@@ -984,9 +984,10 @@ body.role-read-only #pd-tab-goals textarea {
         align-items: center !important;
         justify-content: center !important;
         gap: 0.35rem !important;
+        min-width: var(--tap-target) !important;
+        min-height: var(--tap-target) !important;
         padding: 0.25rem 0.75rem !important;
-        height: 28px !important;
-        min-height: 28px !important;
+        height: var(--tap-target) !important;
         font-size: 0.78rem !important;
         font-weight: 700 !important;
         color: var(--text-primary) !important;
