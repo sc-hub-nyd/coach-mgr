@@ -1121,13 +1121,6 @@ body .practice-card-summary-badges {
     color: var(--text-secondary);
 }
 
-body .practice-card-summary-badges .badge-sub {
-    background: rgba(0, 0, 0, 0.04);
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    font-weight: 600;
-}
-
 /* 操作ボタン群（美しい1行ツールバー設計） */
 body .practice-card-actions {
     display: flex !important;

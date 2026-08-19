@@ -1133,7 +1133,7 @@ function initDashboard() {
             const strongPointsHtml = player.strongPoints && player.strongPoints.length > 0
                 ? player.strongPoints.map(sp => `
                     <div style="margin-bottom:0.2rem;">
-                        <span class="badge" style="background:rgba(37,99,235,0.1); color:#2563eb; font-size:0.65rem; padding:0.08rem 0.28rem; display:inline-block;">
+                        <span class="c-status c-status--info c-status--compact">
                             <i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}
                         </span>
                         <div style="font-size:0.75rem; color:var(--text-primary); line-height:1.2; margin-top:0.1rem;">${escapeHtml(sp.text)}</div>
@@ -2656,7 +2656,7 @@ export function openReleaseNotesModal() {
     container.innerHTML = RELEASE_NOTES.map(item => `
         <div style="margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                <span class="badge" style="background:rgba(16,185,129,0.15); color:var(--primary); font-size:0.85rem; font-weight:700;">${item.version}</span>
+                <span class="c-status c-status--success">${item.version}</span>
                 <span style="font-size:0.75rem; color:var(--text-secondary);">${item.date}</span>
             </div>
             <div style="font-weight:700; font-size:0.95rem; margin-bottom:0.4rem; color:var(--text-primary);">${escapeHtml(item.title)}</div>

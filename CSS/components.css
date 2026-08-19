@@ -104,37 +104,6 @@
     margin-bottom: 1.5rem;
 }
 
-/* Badges (Migrated to .c-status in components-standard.css) */
-.badge-fw {
-    background: rgba(242, 57, 50, 0.1);
-    color: #f23932;
-    border: none;
-}
-
-.badge-mf {
-    background: rgba(245, 158, 11, 0.1);
-    color: #d97706;
-    border: none;
-}
-
-.badge-df {
-    background: rgba(59, 130, 246, 0.1);
-    color: #2563eb;
-    border: none;
-}
-
-.badge-gk {
-    background: rgba(16, 185, 129, 0.1);
-    color: #059669;
-    border: none;
-}
-
-.badge-sub {
-    background: rgba(100, 116, 139, 0.1);
-    color: #475569;
-    border: none;
-}
-
 /* Modals */
 .modal-overlay {
     /* Layout */

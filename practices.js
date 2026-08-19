@@ -350,7 +350,7 @@ export function initPractices(miniPitchObserver) {
 
             // ★1. 練習場所バッジの表示用HTMLを定義（ここを追加）
             const locationHtml = p.location
-                ? `<span class="badge-sub" style="margin-left: 0.4rem; color: var(--text-secondary); font-weight: 500;"><i class="fa-solid fa-location-dot" style="font-size:0.7rem;"></i> ${escapeHtml(p.location)}</span>`
+                ? `<span class="c-status c-status--muted c-status--compact"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> ${escapeHtml(p.location)}</span>`
                 : '';
 
             const attendeesHtml = p.presentPlayerIds && p.presentPlayerIds.length > 0
@@ -400,10 +400,10 @@ export function initPractices(miniPitchObserver) {
                                 <i class="fa-regular fa-calendar"></i> ${p.date}${locationHtml}
                             </div>
                             <div class="c-practice-card__meta practice-card-summary-badges">
-                                <span class="badge-sub"><i class="fa-solid fa-user-check"></i> 参加 ${attendanceSummary.attending}名</span>
-                                <span class="badge-sub"><i class="fa-solid fa-user-clock"></i> 未回答 ${attendanceSummary.pending}名</span>
-                                <span class="badge-sub"><i class="fa-solid fa-user-xmark"></i> 欠席 ${attendanceSummary.absent}名</span>
-                                <span class="badge-sub"><i class="fa-solid fa-list-check"></i> ${menuCount}メニュー</span>
+                                <span class="c-status c-status--success c-status--compact"><i class="fa-solid fa-user-check" aria-hidden="true"></i> 参加 ${attendanceSummary.attending}名</span>
+                                <span class="c-status c-status--warning c-status--compact"><i class="fa-solid fa-user-clock" aria-hidden="true"></i> 未回答 ${attendanceSummary.pending}名</span>
+                                <span class="c-status c-status--danger c-status--compact"><i class="fa-solid fa-user-xmark" aria-hidden="true"></i> 欠席 ${attendanceSummary.absent}名</span>
+                                <span class="c-status c-status--muted c-status--compact"><i class="fa-solid fa-list-check" aria-hidden="true"></i> ${menuCount}メニュー</span>
                             </div>
                         </div>
                         ${actionBtns}

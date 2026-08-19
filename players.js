@@ -475,7 +475,7 @@ export function openPlayerCSVImportModal() {
                                 <td>${p.number || '-'}</td>
                                 <td><strong>${escapeHtml(p.name)}</strong></td>
                                 <td>${p.grade || '-'}</td>
-                                <td><span class="badge badge-sub">${p.position}</span></td>
+                                <td><span class="c-status c-status--muted c-status--compact">${p.position}</span></td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -576,12 +576,16 @@ export function initPlayers() {
             const badges = (Array.isArray(p.position) ? p.position : [p.position]).map(pos => {
                 if (!pos) return '';
                 const lower = pos.toLowerCase();
-                let badgeClass = 'badge-sub';
-                if (lower === 'fw') badgeClass = 'badge-fw';
-                else if (lower === 'mf') badgeClass = 'badge-mf';
-                else if (lower === 'df') badgeClass = 'badge-df';
-                else if (lower === 'gk') badgeClass = 'badge-gk';
-                return `<span class="player-position ${badgeClass}">${pos}</span>`;
+                const statusVariant = lower === 'fw'
+                    ? ''
+                    : lower === 'mf'
+                        ? 'c-status--warning'
+                        : lower === 'df'
+                            ? 'c-status--info'
+                            : lower === 'gk'
+                                ? 'c-status--success'
+                                : 'c-status--muted';
+                return `<span class="player-position c-status c-status--compact ${statusVariant}">${pos}</span>`;
             }).join('');
 
             const spTags = (p.strongPoints || []).filter(sp => sp.key).map(sp =>

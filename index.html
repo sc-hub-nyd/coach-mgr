@@ -247,7 +247,7 @@
             <form id="form-coach-passcode">
                 <div class="form-group" style="margin-bottom:1rem;">
                     <label style="display:block; text-align:center; margin-bottom:0.4rem;">パスコード <span
-                            class="badge-required">必須</span></label>
+                            class="c-status-label c-status-label--required">必須</span></label>
                     <input type="password" id="input-coach-passcode" class="form-control" placeholder="パスコードを入力"
                         style="text-align:center; font-size:1.2rem; letter-spacing:0.2em;" required autofocus>
                 </div>
@@ -1227,7 +1227,7 @@
                                 <div class="c-data-management__operation-icon"><i class="fa-solid fa-file-export" aria-hidden="true"></i></div>
                                 <div class="c-data-management__operation-content"><h3 class="c-data-management__operation-title">データをエクスポート</h3><p class="c-data-management__operation-meta">バックアップファイルの作成</p></div>
                             </div>
-                            <span class="badge">出力</span>
+                            <span class="c-status c-status--muted">出力</span>
                         </div>
                         <p class="c-data-management__description">現在登録されているチームの全データ（試合記録、練習日、メニュー、選手情報、各フォーメーション等）をまとめたJSON形式のファイルを生成・保存します。</p>
                         <p class="c-data-management__note"><strong><i class="fa-solid fa-circle-info" aria-hidden="true"></i> 利用シーン</strong><br>保護者やスタッフへ最新データを共有するとき<br>端末変更やバックアップとして保管するとき</p>
@@ -1243,7 +1243,7 @@
                                 <div class="c-data-management__operation-icon c-data-management__operation-icon--restore"><i class="fa-solid fa-file-import" aria-hidden="true"></i></div>
                                 <div class="c-data-management__operation-content"><h3 class="c-data-management__operation-title">データをインポート</h3><p class="c-data-management__operation-meta">データの読込・復元</p></div>
                             </div>
-                            <span class="badge">取込</span>
+                            <span class="c-status c-status--muted">取込</span>
                         </div>
                         <p class="c-data-management__description">コーチから受け取ったJSONファイルを取り込み、アプリ内の試合情報や練習予定を最新状態に更新します。</p>
                         <p class="c-data-management__note c-data-management__note--warning"><strong><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 注意事項</strong><br>インポートを実行すると、現在このブラウザに表示されているデータは取り込んだ内容に上書き更新されます。</p>

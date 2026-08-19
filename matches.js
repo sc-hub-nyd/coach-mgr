@@ -1157,8 +1157,8 @@ function renderPeriodGrid(m) {
             : '<div class="u-ext-64" >記録なし</div>';
 
         const systemBadge = isPkPeriod
-            ? `<span class="badge" style="background:var(--primary); color:var(--color-text-on-action);">PK戦 (キッカー順)</span>`
-            : `<span class="u-ext-71 badge">陣形: ${escapeHtml(f.system || '未設定')}</span>`;
+            ? `<span class="c-status c-status--solid">PK戦 (キッカー順)</span>`
+            : `<span class="u-ext-71 c-status c-status--muted">陣形: ${escapeHtml(f.system || '未設定')}</span>`;
 
         // ★【追加】途中交代（OUT ➔ IN）の表示用HTML生成
         // ★ 途中交代（OUT ➔ IN）の表示用HTML生成
@@ -1180,7 +1180,7 @@ function renderPeriodGrid(m) {
                         <strong class="u-ext-67" >${escapeHtml(f.name || `${idx + 1}本目`)}</strong>
                         <div class="u-ext-68" >
                             ${videoBadge}
-                            <span class="u-ext-69 badge" >${isPkPeriod ? 'PK ' : ''}${scoreUs} - ${scoreThem}</span>
+                            <span class="u-ext-69 c-status c-status--solid">${isPkPeriod ? 'PK ' : ''}${scoreUs} - ${scoreThem}</span>
                         </div>
                     </div>
 
@@ -1405,7 +1405,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     <div class="side-info-card">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
                             <span class="side-info-label" style="margin:0;"><i class="fa-solid fa-bullseye"></i> PKキッカー記録</span>
-                            <span id="side-pk-score-badge" class="badge" style="background:var(--primary); color:var(--color-text-on-action); font-size:0.75rem;">PK 0 - 0</span>
+                            <span id="side-pk-score-badge" class="c-status c-status--solid c-status--compact">PK 0 - 0</span>
                         </div>
                         <div id="side-pk-rows-container" style="max-height:220px; overflow-y:auto; margin-bottom:0.4rem;"></div>
                         <button type="button" class="btn btn-secondary btn-xs" id="btn-side-add-pk" style="width:100%;">
