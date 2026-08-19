@@ -1977,6 +1977,21 @@ function setupEventListeners() {
         });
     }
 
+    const topbarBackBtn = document.getElementById('topbar-back');
+    if (topbarBackBtn) {
+        topbarBackBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (uiState.currentRoute === 'match-detail') {
+                navigate('matches');
+            } else if (uiState.currentRoute === 'player-detail') {
+                navigate('players');
+            } else {
+                navigate('dashboard');
+            }
+        });
+    }
+
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
             if (sidebar) {

@@ -96,13 +96,9 @@
         <main class="main-content">
             <header class="topbar">
                 <div class="topbar-start">
-                    <button id="menu-toggle" class="menu-toggle u-visually-hidden" aria-hidden="true"><i class="fa-solid fa-bars"></i></button>
-                    <button id="topbar-back" class="btn btn-secondary btn-sm hidden topbar-back-btn" aria-label="前の画面に戻る">
+                    <button type="button" id="menu-toggle" class="menu-toggle u-visually-hidden" aria-hidden="true"><i class="fa-solid fa-bars"></i></button>
+                    <button type="button" id="topbar-back" class="btn btn-secondary btn-sm hidden topbar-back-btn" aria-label="前の画面に戻る">
                         <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <span>戻る</span>
-                    </button>
-                    <!-- スマホ向け常時モードバッジ（ひと目でモードを判別可能） -->
-                    <button type="button" class="topbar-mobile-role-pill" id="mobile-topbar-role-badge" title="タップしてモードを変更" aria-label="現在の利用モード">
-                        <i class="fa-solid fa-eye" aria-hidden="true"></i> <span>保護者</span>
                     </button>
                 </div>
 
@@ -112,7 +108,10 @@
                 </div>
 
                 <div class="topbar-end">
-                    <!-- 右端のスペーサー（中央完全固定を維持） -->
+                    <!-- スマホ向け常時モードバッジ（画面右上に配置） -->
+                    <button type="button" class="topbar-mobile-role-pill" id="mobile-topbar-role-badge" title="タップしてモードを変更" aria-label="現在の利用モード">
+                        <i class="fa-solid fa-eye" aria-hidden="true"></i> <span>保護者</span>
+                    </button>
                 </div>
             </header>
 
