@@ -3,7 +3,7 @@ import { state, uiState } from './state.js';
 import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm, setupScoreCounters, getNendo } from './utils.js';
 import { initPractices, openPracticeModal, renderPracticeRoster } from './practices.js';
 import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText, releaseFieldCompanionSession } from './matches.js';
-import { initPlayers, openPlayerDetail } from './players.js';
+import { initPlayers, openPlayerDetail, initPlayerDetailView } from './players.js';
 import { initLibrary } from './library.js';
 import { initTactics } from './tactics.js';
 import { initSettings, initData, applyCurrentTeamTheme } from './settings.js';
@@ -2192,6 +2192,9 @@ export function navigate(route, params = null) {
         if (route === 'match-detail') {
             topbarBack.classList.remove('hidden');
             topbarBack.onclick = () => navigate('matches');
+        } else if (route === 'player-detail') {
+            topbarBack.classList.remove('hidden');
+            topbarBack.onclick = () => navigate('players');
         } else {
             topbarBack.classList.add('hidden');
             topbarBack.onclick = null;
@@ -2199,22 +2202,22 @@ export function navigate(route, params = null) {
     }
 
     navLinks.forEach(link => {
-        const isActive = link.dataset.route === route || (route === 'match-detail' && link.dataset.route === 'matches');
+        const isActive = link.dataset.route === route || (route === 'match-detail' && link.dataset.route === 'matches') || (route === 'player-detail' && link.dataset.route === 'players');
         link.classList.toggle('active', isActive);
         if (isActive && topbarTitle) {
-            topbarTitle.textContent = (route === 'match-detail') ? '試合詳細' : link.textContent.trim();
+            topbarTitle.textContent = (route === 'match-detail') ? '試合詳細' : (route === 'player-detail') ? '選手カルテ' : link.textContent.trim();
         }
     });
 
     bottomNavLinks.forEach(link => {
-        const isActive = link.dataset.route === route || (route === 'match-detail' && link.dataset.route === 'matches');
+        const isActive = link.dataset.route === route || (route === 'match-detail' && link.dataset.route === 'matches') || (route === 'player-detail' && link.dataset.route === 'players');
         link.classList.toggle('active', isActive);
     });
 
     const viewContainer = document.getElementById('view-container');
 
-    // ★ match-detail の場合は専用テンプレートを参照
-    const templateId = (route === 'match-detail') ? 'tpl-match-detail' : `tpl-${route}`;
+    // ★ match-detail や player-detail の場合は専用テンプレートを参照
+    const templateId = (route === 'match-detail') ? 'tpl-match-detail' : (route === 'player-detail') ? 'tpl-player-detail' : `tpl-${route}`;
     const template = document.getElementById(templateId);
 
     if (template && viewContainer) {
@@ -2265,11 +2268,17 @@ export function navigate(route, params = null) {
             initMatchDetailView(matchId);
         }
         if (route === 'players') initPlayers();
+        if (route === 'player-detail') {
+            const rawId = params ? (params.playerId || params.id) : null;
+            const playerId = rawId ? parseInt(rawId, 10) : null;
+            initPlayerDetailView(playerId);
+        }
         if (route === 'library') initLibrary(miniPitchObserver);
         if (route === 'settings') initSettings();
         if (route === 'data') initData();
         if (route === 'animation') initAnimation(params, navigate, openModal);
     }
+
     updateRoleUI();
 }
 

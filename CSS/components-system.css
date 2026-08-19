@@ -1780,3 +1780,71 @@
 .c-progress-bar__indicator--attention {
     background: var(--color-warning);
 }
+
+/* Settings categorization tabs */
+.settings-tabs-nav {
+    margin-bottom: var(--space-3);
+}
+
+.settings-tab-panel {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.settings-tab-panel.hidden {
+    display: none;
+}
+
+/* Player Detail dedicated page view */
+.player-detail-page {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.player-detail-header-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.player-detail-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.player-detail-identity {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.player-detail-number-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3rem;
+    min-height: 3rem;
+    padding: var(--space-1);
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-radius: var(--radius-md);
+    font-size: var(--text-title-md);
+    font-weight: 800;
+    box-shadow: var(--shadow-neo-pressed);
+}
+
+.player-detail-main-name {
+    margin: 0;
+    font-size: var(--text-title-lg);
+    color: var(--color-text);
+}
+
+.player-detail-badges {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+}

@@ -228,10 +228,31 @@ export function initSettings() {
         };
     }
 
-    // P28: 設定ハブから目的別のカードへ移動し、長い画面でも迷子にならないようにする。
-    document.querySelectorAll('[data-settings-target]').forEach(button => {
-        button.onclick = () => document.getElementById(button.dataset.settingsTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    // カテゴリ別設定タブの切り替え
+    const tabButtons = document.querySelectorAll('[data-settings-tab]');
+    const tabPanels = document.querySelectorAll('[data-settings-panel]');
+    if (tabButtons.length && tabPanels.length) {
+        const activeTabKey = window._currentSettingsTab || 'general';
+        const activateTab = (tabKey) => {
+            window._currentSettingsTab = tabKey;
+            tabButtons.forEach(btn => {
+                const isActive = btn.dataset.settingsTab === tabKey;
+                btn.classList.toggle('is-active', isActive);
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+            tabPanels.forEach(panel => {
+                const isMatch = panel.dataset.settingsPanel === tabKey;
+                panel.classList.toggle('hidden', !isMatch);
+            });
+        };
+
+        tabButtons.forEach(btn => {
+            btn.onclick = () => activateTab(btn.dataset.settingsTab);
+        });
+
+        activateTab(activeTabKey);
+    }
 
     // P32: 表示設定は端末にだけ保存し、チームの共有データや他の利用者の画面へ影響させない。
     const uiPreferences = loadUiPreferences();

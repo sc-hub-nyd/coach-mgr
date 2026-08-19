@@ -472,6 +472,7 @@ export function openLibraryMenuModal(menu) {
 
     const engInp = document.getElementById('menu-engagement');
     if (engInp) engInp.value = menu.engagement || 0;
+    const refInp = document.getElementById('menu-reflection');
     if (refInp) refInp.value = menu.reflection || '';
 
     const selWrap = document.getElementById('menu-library-select');

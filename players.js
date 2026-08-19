@@ -48,32 +48,108 @@ function renderDevelopmentNotebook(player) {
 }
 
 export function openPlayerDetail(id) {
-    const p = state.players.find(pl => pl.id === id);
-    if (!p) return;
+    navigate('player-detail', { playerId: id });
+}
 
-    const pdPosition = document.getElementById('pd-position');
-    if (pdPosition) {
-        pdPosition.innerHTML = (Array.isArray(p.position) ? p.position : [p.position]).map(pos => {
-            if (!pos) return '';
-            const lower = pos.toLowerCase();
-            let badgeClass = 'badge-sub';
-            if (lower === 'fw') badgeClass = 'badge-fw';
-            else if (lower === 'mf') badgeClass = 'badge-mf';
-            else if (lower === 'df') badgeClass = 'badge-df';
-            else if (lower === 'gk') badgeClass = 'badge-gk';
-            return `<span class="player-position ${badgeClass}" style="font-size:0.8rem; padding:0.2rem 0.5rem; border-radius:12px; font-weight:600; display:inline-block; margin-right:0.25rem;">${pos}</span>`;
+export function openPlayerEditModal(p) {
+    if (!p) return;
+    document.getElementById('player-edit-id').value = p.id;
+    document.getElementById('player-modal-title').textContent = '選手情報を編集';
+
+    document.getElementById('player-name').value = p.name || '';
+    document.getElementById('player-number').value = p.number || '';
+    document.getElementById('player-grade').value = p.grade || '';
+
+    document.getElementById('player-playstyle').value = p.playStyle || '';
+    document.getElementById('player-strong-key-1').value = p.strongPoints?.[0]?.key || '';
+    document.getElementById('player-strong-text-1').value = p.strongPoints?.[0]?.text || '';
+    document.getElementById('player-strong-key-2').value = p.strongPoints?.[1]?.key || '';
+    document.getElementById('player-strong-text-2').value = p.strongPoints?.[1]?.text || '';
+    document.getElementById('player-short-focus').value = p.shortFocus || '';
+
+    const posContainer = document.getElementById('player-position-container');
+    if (posContainer) {
+        posContainer.innerHTML = (state.positions || []).map(pos => {
+            const checked = (Array.isArray(p.position) ? p.position : [p.position]).includes(pos) ? 'checked' : '';
+            return `
+                <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
+                    <input type="checkbox" class="player-pos-checkbox" value="${pos}" ${checked}> ${pos}
+                </label>
+            `;
         }).join('');
-        pdPosition.style.background = 'transparent';
-        pdPosition.style.border = 'none';
-        pdPosition.style.padding = '0';
     }
 
-    const nameEl = document.getElementById('pd-name');
-    if (nameEl) nameEl.textContent = p.name;
+    const posCat2Container = document.getElementById('player-position-cat2-container');
+    if (posCat2Container) {
+        posCat2Container.innerHTML = (state.positionsCat2 || []).map(pos => {
+            const checked = (Array.isArray(p.position) ? p.position : [p.position]).includes(pos) ? 'checked' : '';
+            return `
+                <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
+                    <input type="checkbox" class="player-pos-checkbox" value="${pos}" ${checked}> ${pos}
+                </label>
+            `;
+        }).join('');
+    }
 
+    openModal('modal-player');
+}
+
+export function initPlayerDetailView(playerId) {
+    const p = state.players.find(pl => pl.id === playerId);
+    if (!p) {
+        showToast('選手が見つかりませんでした');
+        navigate('players');
+        return;
+    }
+
+    // 戻るボタン
+    const btnBack = document.getElementById('btn-back-to-players');
+    if (btnBack) btnBack.onclick = () => navigate('players');
+
+    // 選手ヘッダー
+    const numEl = document.getElementById('pd-number');
+    const nameEl = document.getElementById('pd-name');
+    const posEl = document.getElementById('pd-position');
+    const metaEl = document.getElementById('pd-meta');
+    if (numEl) numEl.textContent = p.number ? `#${p.number}` : '-';
+    if (nameEl) nameEl.textContent = p.name || '名前なし';
+    if (posEl) posEl.textContent = Array.isArray(p.position) ? p.position.join(' / ') : (p.position || 'ポジション未設定');
+    if (metaEl) metaEl.textContent = p.grade ? `${p.grade}` : '学年未設定';
+
+    // 編集ボタン
+    const btnEdit = document.getElementById('pd-btn-edit');
+    if (btnEdit) {
+        btnEdit.onclick = () => {
+            openPlayerEditModal(p);
+        };
+    }
+
+    // 削除ボタン
+    const btnDelete = document.getElementById('pd-btn-delete');
+    if (btnDelete) {
+        btnDelete.onclick = async () => {
+            const proceed = await showCustomConfirm(`「${p.name}」選手を削除しますか？`, '選手の削除', { okText: '削除する', type: 'danger' });
+            if (proceed) {
+                state.players = state.players.filter(pl => pl.id !== p.id);
+                saveData();
+                showToast('選手を削除しました');
+                navigate('players');
+            }
+        };
+    }
+
+    // スタッツ集計
     let playerGoals = 0;
     let playerAssists = 0;
+    let playerMatches = 0;
     state.matches.forEach(m => {
+        let participated = false;
+        if (m.formations) {
+            m.formations.forEach(f => {
+                if (f.slots && f.slots.some(s => s.playerId === p.id)) participated = true;
+            });
+        }
+        if (participated) playerMatches++;
         if (m.goalRecords) {
             m.goalRecords.forEach(r => {
                 if (r.scorerId === p.id) playerGoals++;
@@ -82,70 +158,51 @@ export function openPlayerDetail(id) {
         }
     });
 
-    const elPdGoals = document.getElementById('pd-goals');
-    const elPdAssists = document.getElementById('pd-assists');
-    if (elPdGoals) elPdGoals.textContent = playerGoals;
-    if (elPdAssists) elPdAssists.textContent = playerAssists;
-
-    const btnPdGoals = document.getElementById('btn-pd-goals');
-    if (btnPdGoals) {
-        btnPdGoals.onclick = () => {
-            const matchesWithGoals = state.matches.filter(m =>
-                m.goalRecords && m.goalRecords.some(r => r.scorerId === p.id)
-            );
-
-            const pmlTitle = document.getElementById('pml-title');
-            const pmlContent = document.getElementById('pml-content');
-            if (pmlTitle && pmlContent) {
-                pmlTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${p.name} の得点した試合`;
-                pmlContent.innerHTML = matchesWithGoals.length > 0 ? matchesWithGoals.map(m => `
-                    <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; cursor:pointer;" onclick="document.getElementById('modal-player-detail').classList.add('hidden'); document.getElementById('modal-player-matches-list').classList.add('hidden'); openMatchDetail(${m.id});">
-                        <div>
-                            <strong>vs ${m.opponent}</strong>
-                            <div style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date} | ${m.type}</div>
-                        </div>
-                        <div style="font-size:1.15rem; font-weight:bold; color:var(--primary);">${m.result}</div>
-                    </div>
-                `).join('') : '<p class="text-secondary" style="font-size:0.85rem; padding:1rem; text-align:center;">得点した試合はありません。</p>';
-
-                openModal('modal-player-matches-list');
-            }
-        };
+    // 出席率
+    let attendanceRate = '—';
+    if (state.practices && state.practices.length > 0) {
+        const total = state.practices.length;
+        const attended = state.practices.filter(pr => pr.attendedPlayerIds && pr.attendedPlayerIds.includes(p.id)).length;
+        attendanceRate = total > 0 ? `${Math.round((attended / total) * 100)}%` : '—';
     }
 
-    const btnPdAssists = document.getElementById('btn-pd-assists');
-    if (btnPdAssists) {
-        btnPdAssists.onclick = () => {
-            const matchesWithAssists = state.matches.filter(m =>
-                m.goalRecords && m.goalRecords.some(r => r.assistId === p.id)
-            );
+    const elAtt = document.getElementById('pd-attendance-rate');
+    const elMatches = document.getElementById('pd-matches-count');
+    const elGoals = document.getElementById('pd-goals');
+    const elAssists = document.getElementById('pd-assists');
+    if (elAtt) elAtt.textContent = attendanceRate;
+    if (elMatches) elMatches.textContent = `${playerMatches} 試合`;
+    if (elGoals) elGoals.textContent = `${playerGoals} 点`;
+    if (elAssists) elAssists.textContent = `${playerAssists} 点`;
 
-            const pmlTitle = document.getElementById('pml-title');
-            const pmlContent = document.getElementById('pml-content');
-            if (pmlTitle && pmlContent) {
-                pmlTitle.innerHTML = `<span style="display:inline-block; transform:rotate(45deg); color:#22c55e;"><i class="fa-solid fa-shoe-prints"></i></span> ${p.name} のアシストした試合`;
-                pmlContent.innerHTML = matchesWithAssists.length > 0 ? matchesWithAssists.map(m => `
-                    <div class="feedback-box" style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; cursor:pointer;" onclick="document.getElementById('modal-player-detail').classList.add('hidden'); document.getElementById('modal-player-matches-list').classList.add('hidden'); openMatchDetail(${m.id});">
-                        <div>
-                            <strong>vs ${m.opponent}</strong>
-                            <div style="font-size:0.75rem; color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date} | ${m.type}</div>
-                        </div>
-                        <div style="font-size:1.15rem; font-weight:bold; color:var(--primary);">${m.result}</div>
-                    </div>
-                `).join('') : '<p class="text-secondary" style="font-size:0.85rem; padding:1rem; text-align:center;">アシストした試合はありません。</p>';
-
-                openModal('modal-player-matches-list');
-            }
+    // タブ切り替え（タイムライン、特徴、出場試合）
+    const tabButtons = document.querySelectorAll('[data-pd-tab]');
+    const tabPanels = document.querySelectorAll('[data-pd-panel]');
+    if (tabButtons.length && tabPanels.length) {
+        const activatePdTab = (tabKey) => {
+            tabButtons.forEach(btn => {
+                const isActive = btn.dataset.pdTab === tabKey;
+                btn.classList.toggle('is-active', isActive);
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+            tabPanels.forEach(panel => {
+                const isMatch = panel.dataset.pdPanel === tabKey;
+                panel.classList.toggle('hidden', !isMatch);
+            });
         };
+        tabButtons.forEach(btn => {
+            btn.onclick = () => activatePdTab(btn.dataset.pdTab);
+        });
     }
 
+    // タイムライン描画
     let timeline = [];
     if (p.history) {
         p.history.forEach(h => {
             timeline.push({ type: 'assessment', date: h.date, comment: h.comment, data: h });
         });
     }
-
     state.matches.forEach(m => {
         if (m.playerFeedback) {
             m.playerFeedback.forEach(fb => {
@@ -155,43 +212,52 @@ export function openPlayerDetail(id) {
             });
         }
     });
-
     timeline.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    const historyList = document.getElementById('pd-history-list');
-    if (historyList) {
-        historyList.innerHTML = timeline.length > 0 ? timeline.map(item => {
+    const timelineEl = document.getElementById('pd-timeline');
+    if (timelineEl) {
+        timelineEl.innerHTML = timeline.length > 0 ? timeline.map(item => {
             if (item.type === 'assessment') {
                 const hId = item.data ? item.data.id : null;
-                const editBtn = hId ? `<button type="button" class="btn btn-secondary btn-edit-assessment" data-history-id="${hId}"><i class="fa-solid fa-pen"></i> 編集</button>` : '';
-                const delBtn = hId ? `<button type="button" class="btn btn-danger btn-delete-assessment" data-history-id="${hId}"><i class="fa-solid fa-trash"></i> 削除</button>` : '';
+                const editBtn = hId ? `<button type="button" class="btn btn-secondary btn-sm btn-edit-assessment" data-history-id="${hId}"><i class="fa-solid fa-pen"></i> 編集</button>` : '';
+                const delBtn = hId ? `<button type="button" class="btn btn-danger btn-sm btn-delete-assessment" data-history-id="${hId}"><i class="fa-solid fa-trash"></i></button>` : '';
                 return `
-                    <article class="c-data-list__item player-history-item">
+                    <article class="c-data-list__item player-history-item" style="margin-bottom:var(--space-2);">
                         <div class="c-data-list__header">
-                            <div class="c-data-list__identity">${item.date}<span class="c-data-list__kind">スキル評価</span></div>
+                            <div class="c-data-list__identity"><i class="fa-solid fa-clipboard-user"></i> ${item.date} <span class="c-status c-status--info">指導・評価</span></div>
                             ${hId ? `<div class="c-data-list__actions c-action-group">${editBtn}${delBtn}</div>` : ''}
                         </div>
-                        <div class="c-data-list__body">${item.comment}</div>
+                        <div class="c-data-list__body" style="white-space:pre-wrap; line-height:1.5; margin-top:var(--space-1);">${escapeHtml(item.comment || '')}</div>
                     </article>
                 `;
             } else {
                 const matchingMatch = state.matches.find(m => m.id === item.matchId);
                 const firstForm = (matchingMatch && matchingMatch.formations && matchingMatch.formations.length > 0) ? matchingMatch.formations[0] : null;
-                const linkBtn = firstForm ? `<button type="button" class="btn btn-secondary btn-timeline-anim" data-match-id="${matchingMatch.id}" data-form-id="${firstForm.id}"><i class="fa-solid fa-person-running"></i> 作図を見る</button>` : '';
+                const linkBtn = firstForm ? `<button type="button" class="btn btn-secondary btn-sm btn-timeline-anim" data-match-id="${matchingMatch.id}" data-form-id="${firstForm.id}"><i class="fa-solid fa-person-running"></i> 作図を見る</button>` : '';
                 return `
-                    <article class="c-data-list__item player-history-item match-timeline-item">
+                    <article class="c-data-list__item player-history-item match-timeline-item" style="margin-bottom:var(--space-2);">
                         <div class="c-data-list__header">
-                            <div class="c-data-list__identity">${item.date}<span class="c-data-list__kind">試合評価</span></div>
+                            <div class="c-data-list__identity"><i class="fa-solid fa-futbol"></i> ${item.date} <span class="c-status c-status--muted">試合コメント</span></div>
                             ${linkBtn ? `<div class="c-data-list__actions c-action-group">${linkBtn}</div>` : ''}
                         </div>
-                        <p class="c-data-list__meta">${item.matchDetails}</p>
-                        <p class="c-data-list__body">${item.comment}</p>
+                        <p class="c-data-list__meta" style="margin:var(--space-1) 0; font-size:var(--text-meta-size); color:var(--text-secondary);">${escapeHtml(item.matchDetails)}</p>
+                        <p class="c-data-list__body" style="white-space:pre-wrap; line-height:1.5;">${escapeHtml(item.comment || '')}</p>
                     </article>
                 `;
             }
-        }).join('') : '<p class="text-secondary">記録がありません。</p>';
+        }).join('') : '<p class="text-secondary" style="padding:var(--space-3); text-align:center;">成長メモ・評価の記録がまだありません。</p>';
     }
 
+    document.querySelectorAll('.btn-timeline-anim').forEach(btn => {
+        btn.onclick = (e) => {
+            const matchId = parseInt(e.currentTarget.dataset.matchId, 10);
+            const formId = parseInt(e.currentTarget.dataset.formId, 10);
+            navigate('animation', { matchId, formId });
+        };
+    });
+
+
+    // タイムラインの編集・削除ボタンバインド
     document.querySelectorAll('.btn-edit-assessment').forEach(btn => {
         btn.onclick = (e) => {
             const hId = parseInt(e.currentTarget.dataset.historyId, 10);
@@ -202,7 +268,6 @@ export function openPlayerDetail(id) {
             document.getElementById('assessment-edit-id').value = hId;
             const titleEl = document.getElementById('assessment-modal-title');
             if (titleEl) titleEl.textContent = 'スキル評価を編集';
-
             document.getElementById('assessment-date').value = hItem.date || new Date().toISOString().split('T')[0];
 
             let goodText = '';
@@ -219,8 +284,6 @@ export function openPlayerDetail(id) {
             document.getElementById('assessment-good').value = goodText;
             document.getElementById('assessment-improve').value = improveText;
 
-            // スキルコンテナの処理は削除
-
             openModal('modal-player-assessment');
         };
     });
@@ -228,45 +291,17 @@ export function openPlayerDetail(id) {
     document.querySelectorAll('.btn-delete-assessment').forEach(btn => {
         btn.onclick = async (e) => {
             const hId = parseInt(e.currentTarget.dataset.historyId, 10);
-            const proceed = await showCustomConfirm('この過去の評価記録を削除しますか？', '評価記録の削除', { okText: '削除する', type: 'danger' });
+            const proceed = await showCustomConfirm('この評価記録を削除しますか？', '評価記録の削除', { okText: '削除する', type: 'danger' });
             if (proceed) {
                 p.history = p.history.filter(h => h.id !== hId);
                 saveData();
                 showToast('評価を削除しました');
-                openPlayerDetail(p.id);
-                initPlayers();
+                initPlayerDetailView(p.id);
             }
         };
     });
 
-    document.querySelectorAll('.btn-timeline-anim').forEach(btn => {
-        btn.onclick = (e) => {
-            const matchId = parseInt(e.currentTarget.dataset.matchId, 10);
-            const formId = parseInt(e.currentTarget.dataset.formId, 10);
-            document.getElementById('modal-player-detail').classList.add('hidden');
-            navigate('animation', { matchId, formId });
-        };
-    });
-    // ★ ここから新しいプロフィール項目のセット
-    document.getElementById('pd-playstyle').textContent = p.playStyle || '未設定';
-    document.getElementById('pd-shortfocus').textContent = p.shortFocus || '未設定';
-
-    const spContainer = document.getElementById('pd-strongpoints');
-    if (p.strongPoints && p.strongPoints.length > 0) {
-        spContainer.innerHTML = p.strongPoints.map(sp => `
-            <div>
-                <span class="badge" style="background:rgba(37,99,235,0.1); color:#2563eb; font-size:0.75rem; padding:0.15rem 0.4rem; margin-bottom:0.2rem; display:inline-block;"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>
-                <div style="font-size:0.85rem; color:var(--text-primary); line-height:1.4;">${escapeHtml(sp.text)}</div>
-            </div>
-        `).join('');
-    } else {
-        spContainer.innerHTML = '<div style="font-size:0.85rem; color:var(--text-secondary);">未設定</div>';
-    }
-
-    openModal('modal-player-detail');
-
-    // ★ drawRadarChart の呼び出しを完全に削除
-
+    // 観察メモ追加ボタン
     const btnAddAssessment = document.getElementById('btn-add-assessment');
     if (btnAddAssessment) {
         btnAddAssessment.onclick = () => {
@@ -277,144 +312,52 @@ export function openPlayerDetail(id) {
             document.getElementById('assessment-date').value = new Date().toISOString().split('T')[0];
             document.getElementById('assessment-good').value = '';
             document.getElementById('assessment-improve').value = '';
-
-            // スキルコンテナの生成処理は削除
-
             openModal('modal-player-assessment');
         };
     }
 
-    const btnEdit = document.getElementById('btn-edit-player-detail');
-    if (btnEdit) {
-        btnEdit.onclick = () => {
-            document.getElementById('player-edit-id').value = p.id;
-            document.getElementById('player-modal-title').textContent = '選手情報を編集';
+    // 特徴・プレースタイル
+    const playStyleEl = document.getElementById('pd-playstyle');
+    const shortFocusEl = document.getElementById('pd-shortfocus');
+    if (playStyleEl) playStyleEl.textContent = p.playStyle || '未設定';
+    if (shortFocusEl) shortFocusEl.textContent = p.shortFocus || '未設定';
 
-            document.getElementById('player-name').value = p.name;
-            document.getElementById('player-number').value = p.number;
-
-            // ★ 編集時にカルテ情報をフォームにセット
-            document.getElementById('player-playstyle').value = p.playStyle || '';
-            document.getElementById('player-strong-key-1').value = p.strongPoints?.[0]?.key || '';
-            document.getElementById('player-strong-text-1').value = p.strongPoints?.[0]?.text || '';
-            document.getElementById('player-strong-key-2').value = p.strongPoints?.[1]?.key || '';
-            document.getElementById('player-strong-text-2').value = p.strongPoints?.[1]?.text || '';
-            document.getElementById('player-short-focus').value = p.shortFocus || '';
-
-            const posContainer = document.getElementById('player-position-container');
-            if (posContainer) {
-                posContainer.innerHTML = state.positions.map(pos => {
-                    const checked = (Array.isArray(p.position) ? p.position : [p.position]).includes(pos) ? 'checked' : '';
-                    return `
-                        <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
-                            <input type="checkbox" class="player-pos-checkbox" value="${pos}" ${checked}> ${pos}
-                        </label>
-                    `;
-                }).join('');
-            }
-
-            const posCat2Container = document.getElementById('player-position-cat2-container');
-            if (posCat2Container) {
-                posCat2Container.innerHTML = (state.positionsCat2 || []).map(pos => {
-                    const checked = (Array.isArray(p.position) ? p.position : [p.position]).includes(pos) ? 'checked' : '';
-                    return `
-                        <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer;">
-                            <input type="checkbox" class="player-pos-checkbox" value="${pos}" ${checked}> ${pos}
-                        </label>
-                    `;
-                }).join('');
-            }
-
-            document.getElementById('modal-player-detail').classList.add('hidden');
-            openModal('modal-player');
-        };
+    const spContainer = document.getElementById('pd-strongpoints');
+    if (spContainer) {
+        if (p.strongPoints && p.strongPoints.length > 0) {
+            spContainer.innerHTML = p.strongPoints.map(sp => `
+                <div class="c-card" style="padding:var(--space-2) var(--space-3); background:var(--color-surface-subtle); border-radius:var(--radius-sm); margin-bottom:var(--space-2);">
+                    <span class="c-status c-status--info" style="margin-bottom:var(--space-1); display:inline-block;"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>
+                    <div style="font-size:var(--text-dense-size); color:var(--text-primary); line-height:1.4;">${escapeHtml(sp.text)}</div>
+                </div>
+            `).join('');
+        } else {
+            spContainer.innerHTML = '<p class="text-secondary" style="font-size:var(--text-meta-size);">ストロングポイントは未設定です。</p>';
+        }
     }
 
-    const btnDel = document.getElementById('btn-delete-player-detail');
-    if (btnDel) {
-        btnDel.onclick = async () => {
-            const proceed = await showCustomConfirm('この選手を削除しますか？', '選手の削除', { okText: '削除する', type: 'danger' });
-            if (proceed) {
-                state.players = state.players.filter(pl => pl.id !== p.id);
-                saveData();
-                showToast('削除しました');
-                document.getElementById('modal-player-detail').classList.add('hidden');
-                initPlayers();
-            }
-        };
-    }
-
-    renderDevelopmentNotebook(p);
-    const developmentForm = document.getElementById('form-player-development-note');
-    if (developmentForm) {
-        developmentForm.onsubmit = event => {
-            event.preventDefault();
-            const skillRatings = Object.fromEntries([...developmentForm.querySelectorAll('.development-rating')].map(input => [input.dataset.metric, input.value]));
-            try {
-                addDevelopmentNote(p, {
-                    date: document.getElementById('development-note-date').value,
-                    focus: document.getElementById('development-note-focus').value,
-                    observation: document.getElementById('development-note-observation').value,
-                    nextStep: document.getElementById('development-note-next-step').value,
-                    skillRatings
-                });
-                saveData();
-                developmentForm.reset();
-                renderDevelopmentNotebook(p);
-                showToast('成長ノートを保存しました');
-            } catch (error) {
-                showToast(error.message || '成長ノートを保存できませんでした');
-            }
-        };
-    }
-
-    const goalsPlIdEl = document.getElementById('goals-player-id');
-    if (goalsPlIdEl) goalsPlIdEl.value = p.id;
-
-    const shortEl = document.getElementById('player-goal-short');
-    if (shortEl) shortEl.value = (p.goals && p.goals.shortTerm) ? p.goals.shortTerm : '';
-
-    const longEl = document.getElementById('player-goal-long');
-    if (longEl) longEl.value = (p.goals && p.goals.longTerm) ? p.goals.longTerm : '';
-
-    const tabs = document.querySelectorAll('#modal-player-detail .player-detail-tab');
-    const panes = document.querySelectorAll('#modal-player-detail .player-detail-tab-pane');
-
-    tabs.forEach(tab => {
-        if (tab.dataset.tab === 'pd-tab-history') tab.classList.add('active');
-        else tab.classList.remove('active');
-    });
-    panes.forEach(pane => {
-        if (pane.id === 'pd-tab-history') pane.classList.add('active');
-        else pane.classList.remove('active');
-    });
-
-    tabs.forEach(tab => {
-        tab.onclick = () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            panes.forEach(pane => pane.classList.remove('active'));
-
-            tab.classList.add('active');
-            const targetPane = document.getElementById(tab.dataset.tab);
-            if (targetPane) targetPane.classList.add('active');
-        };
-    });
-
-    const formGoals = document.getElementById('form-player-goals');
-    if (formGoals) {
-        formGoals.onsubmit = (e) => {
-            e.preventDefault();
-            const plId = parseInt(document.getElementById('goals-player-id').value, 10);
-            const player = state.players.find(pl => pl.id === plId);
-            if (player) {
-                player.goals = {
-                    shortTerm: document.getElementById('player-goal-short').value.trim(),
-                    longTerm: document.getElementById('player-goal-long').value.trim()
-                };
-                saveData();
-                showToast('個人目標を保存しました');
-            }
-        };
+    // 出場試合履歴一覧
+    const matchesListEl = document.getElementById('pd-matches-list');
+    if (matchesListEl) {
+        const playerMatchesList = state.matches.filter(m => {
+            return m.formations && m.formations.some(f => f.slots && f.slots.some(s => s.playerId === p.id));
+        });
+        matchesListEl.innerHTML = playerMatchesList.length > 0 ? playerMatchesList.map(m => {
+            const goalsInMatch = (m.goalRecords || []).filter(r => r.scorerId === p.id).length;
+            const assistsInMatch = (m.goalRecords || []).filter(r => r.assistId === p.id).length;
+            let statsBadge = '';
+            if (goalsInMatch > 0) statsBadge += ` <span class="c-status c-status--warning">${goalsInMatch}得点</span>`;
+            if (assistsInMatch > 0) statsBadge += ` <span class="c-status c-status--success">${assistsInMatch}アシスト</span>`;
+            return `
+                <div class="c-data-item" style="cursor:pointer;" onclick="navigate('match-detail', { matchId: ${m.id} })">
+                    <div class="c-data-item__label">
+                        <strong>vs ${escapeHtml(m.opponent)}</strong>
+                        <div style="font-size:var(--text-meta-size); color:var(--text-secondary);"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '試合')}${statsBadge}</div>
+                    </div>
+                    <span class="c-status c-status--info">${escapeHtml(m.result || '詳細')}</span>
+                </div>
+            `;
+        }).join('') : '<p class="text-secondary" style="padding:var(--space-3); text-align:center;">出場した試合の記録はありません。</p>';
     }
 }
 
