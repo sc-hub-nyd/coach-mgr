@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.31';
+export const APP_VERSION = 'v1.30.32';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.32',
+        date: '2026-08-19',
+        title: 'トップバー：ダッシュボード等での戻るボタン非表示修正',
+        features: [
+            'ダッシュボードや通常一覧画面において「戻るボタン」が不要な場合に確実に非表示（display: none）となるようCSSのスタイル優先度を修正'
+        ]
+    },
     {
         version: 'v1.30.31',
         date: '2026-08-19',

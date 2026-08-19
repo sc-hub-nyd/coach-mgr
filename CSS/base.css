@@ -418,13 +418,17 @@ a,
     padding: 0.25rem 0.6rem !important;
     font-size: 0.82rem !important;
     font-weight: 600 !important;
-    flex-shrink: 0 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 0.35rem !important;
-    cursor: pointer !important;
-    pointer-events: auto !important;
-    z-index: 10 !important;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 10;
+}
+
+.topbar-back-btn.hidden {
+    display: none !important;
 }
 
 .topbar-end {
