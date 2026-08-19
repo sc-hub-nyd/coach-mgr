@@ -288,6 +288,10 @@
     font-size: var(--text-kicker-size);
 }
 
+.c-status--stacked {
+    margin-block-end: var(--space-1);
+}
+
 .c-empty-state {
     display: grid;
     place-items: center;

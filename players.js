@@ -327,7 +327,7 @@ export function initPlayerDetailView(playerId) {
         if (p.strongPoints && p.strongPoints.length > 0) {
             spContainer.innerHTML = p.strongPoints.map(sp => `
                 <div class="c-card" style="padding:var(--space-2) var(--space-3); background:var(--color-surface-subtle); border-radius:var(--radius-sm); margin-bottom:var(--space-2);">
-                    <span class="c-status c-status--info" style="margin-bottom:var(--space-1); display:inline-block;"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>
+                    <span class="c-status c-status--info c-status--stacked"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>
                     <div style="font-size:var(--text-dense-size); color:var(--text-primary); line-height:1.4;">${escapeHtml(sp.text)}</div>
                 </div>
             `).join('');
