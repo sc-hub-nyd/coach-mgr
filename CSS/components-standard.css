@@ -380,19 +380,50 @@
     box-shadow: var(--glass-shadow), 0 0.8rem 2rem color-mix(in srgb, var(--color-brand) 8%, transparent);
 }
 
-.c-text-effect--liquid {
+.c-text-effect--liquid,
+.c-text-effect--shimmer {
     display: inline-block;
     color: var(--color-text);
     font-weight: var(--font-weight-heading);
+    will-change: background-position;
+    transform: translateZ(0);
 }
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
     .c-text-effect--liquid {
-        background-image: linear-gradient(105deg, var(--color-text) 4%, color-mix(in srgb, var(--color-text) 78%, var(--color-brand)) 38%, var(--color-brand) 52%, color-mix(in srgb, var(--color-text) 78%, var(--color-brand)) 66%, var(--color-text) 96%);
+        background-image: linear-gradient(
+            110deg,
+            var(--color-text) 0%,
+            var(--color-text) 25%,
+            color-mix(in srgb, var(--color-brand) 85%, var(--color-text)) 45%,
+            color-mix(in srgb, #ffffff 60%, var(--color-brand)) 50%,
+            color-mix(in srgb, var(--color-brand) 85%, var(--color-text)) 55%,
+            var(--color-text) 75%,
+            var(--color-text) 100%
+        );
+        background-size: 240% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: c-text-liquid-flow 5s linear infinite;
+    }
+
+    .c-text-effect--shimmer {
+        background-image: linear-gradient(
+            115deg,
+            var(--color-text) 0%,
+            var(--color-text) 30%,
+            color-mix(in srgb, #ffffff 50%, var(--color-text)) 48%,
+            var(--color-brand) 52%,
+            color-mix(in srgb, #ffffff 50%, var(--color-text)) 56%,
+            var(--color-text) 70%,
+            var(--color-text) 100%
+        );
         background-size: 220% 100%;
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
+        animation: c-text-shimmer-flow 4.2s ease-in-out infinite;
     }
 }
 
@@ -426,10 +457,6 @@
         animation: c-liquid-drift 7.2s var(--ease-in-out) infinite alternate;
     }
 
-    .c-text-effect--liquid {
-        animation: c-text-liquid-flow 5.4s linear infinite;
-    }
-
     .c-kinetic-kicker--reveal {
         animation: c-kicker-reveal 380ms var(--ease-out) both;
     }
@@ -449,8 +476,13 @@
 }
 
 @keyframes c-text-liquid-flow {
-    from { background-position: 0% 50%; }
-    to { background-position: 100% 50%; }
+    0% { background-position: 100% 50%; }
+    100% { background-position: -100% 50%; }
+}
+
+@keyframes c-text-shimmer-flow {
+    0% { background-position: 100% 50%; }
+    100% { background-position: -100% 50%; }
 }
 
 @keyframes c-kicker-reveal {
@@ -478,18 +510,9 @@
     100% { background-position: -200% center; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .c-liquid-panel--immersive::before,
-    .c-text-effect--liquid,
-    .c-text-reveal,
-    .c-text-glow,
-    .c-kinetic-kicker--reveal {
-        animation: none;
-    }
-}
-
 :root[data-reduce-motion="true"] .c-liquid-panel--immersive::before,
 :root[data-reduce-motion="true"] .c-text-effect--liquid,
+:root[data-reduce-motion="true"] .c-text-effect--shimmer,
 :root[data-reduce-motion="true"] .c-text-reveal,
 :root[data-reduce-motion="true"] .c-text-glow,
 :root[data-reduce-motion="true"] .c-kinetic-kicker--reveal {
