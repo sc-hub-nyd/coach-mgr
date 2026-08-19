@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.24';
+export const APP_VERSION = 'v1.30.25';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.25',
+        date: '2026-08-19',
+        title: 'モジュール構文エラー解消による起動停止修正＆全JS構文検証テスト（P37）導入',
+        features: [
+            '選手管理モジュール（players.js）内のコード重複による構文エラー（SyntaxError: Unexpected token export）を解消し、「データを読み込み中...」で停止する不具合を修正',
+            'すべてのJavaScriptファイルのES Module構文・起動完全性をNode.js VMで厳密に事前検証する自動テスト（P37）を配備'
+        ]
+    },
     {
         version: 'v1.30.24',
         date: '2026-08-19',
