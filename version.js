@@ -1,8 +1,16 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.35';
+export const APP_VERSION = 'v1.30.36';
 export const RELEASE_DATE = '2026-08-19';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.36',
+        date: '2026-08-19',
+        title: '同期ポップオーバー：背景不透明化による視認性修正',
+        features: [
+            'クラウド同期ポップオーバーの背景色指定（var(--card-bg, #ffffff)）を修正し、背面のコンテンツが透けずくっきりと表示されるよう改善'
+        ]
+    },
     {
         version: 'v1.30.35',
         date: '2026-08-19',

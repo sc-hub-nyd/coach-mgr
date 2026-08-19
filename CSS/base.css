@@ -356,7 +356,7 @@ a,
     50% { transform: scale(1.3); opacity: 0.6; }
 }
 
-/* PCサイドバー下部の同期ポップオーバー（上向きに展開） */
+/* PCサイドバー下部の同期ポップオーバー（上向きに展開・完全不透明背景） */
 .sidebar-sync-row .sync-popover {
     position: absolute !important;
     bottom: calc(100% + 8px) !important;
@@ -364,10 +364,11 @@ a,
     left: 0 !important;
     right: auto !important;
     width: 230px !important;
-    background: var(--surface-card) !important;
+    background: var(--card-bg, #ffffff) !important;
+    background-color: var(--card-bg, #ffffff) !important;
     border: 1px solid var(--surface-border) !important;
     border-radius: 12px !important;
-    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.18) !important;
     padding: 0.8rem 1rem !important;
     z-index: 2000 !important;
 }

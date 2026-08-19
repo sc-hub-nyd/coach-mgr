@@ -748,8 +748,9 @@ body[data-route="animation"] .bottom-nav {
     top: calc(100% + 8px);
     right: 0;
     width: 230px;
-    background: #ffffff;
-    border: none;
+    background: var(--card-bg, #ffffff);
+    background-color: var(--card-bg, #ffffff);
+    border: 1px solid var(--surface-border);
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     padding: 0.8rem 1rem;
