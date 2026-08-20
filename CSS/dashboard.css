@@ -362,7 +362,7 @@
 }
 
 .player-position {
-    background: rgba(0, 0, 0, 0.05);
+    background: color-mix(in srgb, var(--color-text) 5%, transparent);
     padding: 0.2rem 0.5rem;
     border-radius: var(--radius-md);
     font-size: 0.8rem;
@@ -570,9 +570,9 @@ body[data-route="tactics"] .library-grid {
 }
 
 .schedule-item:hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: color-mix(in srgb, var(--color-text) 4%, transparent);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-text) 3%, transparent);
 }
 
 .schedule-item-info {
@@ -867,7 +867,7 @@ body[data-route="tactics"] .library-grid {
 }
 
 .csv-preview-table th {
-    background: rgba(0, 0, 0, 0.04);
+    background: color-mix(in srgb, var(--color-text) 4%, transparent);
     color: var(--color-text-muted);
     font-weight: 600;
     text-align: left;
@@ -1088,7 +1088,7 @@ summary {
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(251, 191, 36, 0.1) 100%);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-warning) 15%, transparent) 0%, color-mix(in srgb, var(--color-warning) 10%, transparent) 100%);
     border: none;
     border-radius: var(--border-radius);
     padding: 0.75rem 1rem;
@@ -1099,11 +1099,11 @@ summary {
 
     0%,
     100% {
-        border-color: rgba(245, 158, 11, 0.4);
+        border-color: color-mix(in srgb, var(--color-warning) 40%, transparent);
     }
 
     50% {
-        border-color: rgba(245, 158, 11, 0.8);
+        border-color: color-mix(in srgb, var(--color-warning) 80%, transparent);
     }
 }
 
@@ -1113,17 +1113,17 @@ summary {
     gap: 0.6rem;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #92400e;
+    color: var(--color-text-warning-strong);
 }
 
 .c-dashboard-alert__content i {
-    color: #f59e0b;
+    color: var(--color-warning);
     font-size: 1rem;
     flex-shrink: 0;
 }
 
 .c-dashboard-alert__action {
-    background: #f59e0b;
+    background: var(--color-warning);
     color: var(--color-text-on-action);
     border: none;
     border-radius: 8px;
@@ -1137,7 +1137,7 @@ summary {
 }
 
 .c-dashboard-alert__action:hover {
-    background: #d97706;
+    background: var(--color-warning-hover);
     transform: translateY(-1px);
 }
 
@@ -1146,7 +1146,7 @@ summary {
 .card.c-dashboard-widget--next-event {
     padding: 0.65rem 1rem;
     margin: 0;
-    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(242, 57, 50, 0.04) 100%);
+    background: linear-gradient(135deg, var(--card-bg) 0%, color-mix(in srgb, var(--color-action) 4%, transparent) 100%);
     border-left: 3px solid var(--color-brand);
     position: relative;
     overflow: hidden;
@@ -1160,7 +1160,7 @@ summary {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    background: rgba(242, 57, 50, 0.06);
+    background: color-mix(in srgb, var(--color-action) 6%, transparent);
     pointer-events: none;
 }
 
@@ -1178,12 +1178,12 @@ summary {
 }
 
 .c-dashboard-event__type.match {
-    background: rgba(34, 197, 94, 0.15);
-    color: #15803d;
+    background: color-mix(in srgb, var(--color-success) 15%, transparent);
+    color: var(--color-text-success-strong);
 }
 
 .c-dashboard-event__type.practice {
-    background: rgba(242, 57, 50, 0.12);
+    background: color-mix(in srgb, var(--color-action) 12%, transparent);
     color: var(--color-brand);
 }
 
@@ -1209,7 +1209,7 @@ summary {
     font-size: 0.72rem;
     font-weight: 700;
     color: var(--color-brand);
-    background: rgba(242, 57, 50, 0.1);
+    background: color-mix(in srgb, var(--color-action) 10%, transparent);
     padding: 0.1rem 0.45rem;
     border-radius: var(--radius-md);
     margin-top: 0;
@@ -1253,14 +1253,14 @@ summary {
 .dash-record-loss {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #64748b;
+    color: var(--color-text-muted);
     line-height: 1;
 }
 
 .dash-record-draw {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #94a3b8;
+    color: var(--color-text-muted);
     line-height: 1;
 }
 
@@ -1361,7 +1361,7 @@ summary {
 }
 
 .c-dashboard-rank-item:hover {
-    background: rgba(242, 57, 50, 0.05);
+    background: color-mix(in srgb, var(--color-action) 5%, transparent);
     transform: translateX(2px);
 }
 
@@ -1443,7 +1443,7 @@ summary {
 }
 
 .dash-schedule-row:hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: color-mix(in srgb, var(--color-text) 4%, transparent);
     transform: translateY(-1px);
     box-shadow: var(--shadow-sm);
 }
@@ -1464,8 +1464,8 @@ summary {
 }
 
 .dash-schedule-icon.match {
-    background: rgba(34, 197, 94, 0.12);
-    color: #16a34a;
+    background: color-mix(in srgb, var(--color-success) 12%, transparent);
+    color: var(--color-text-success-strong);
 }
 
 .dash-schedule-icon.practice {
@@ -1518,18 +1518,18 @@ summary {
 }
 
 .dash-schedule-result-badge.loss {
-    background: rgba(100, 116, 139, 0.15);
-    color: #475569;
+    background: color-mix(in srgb, var(--color-text-muted) 15%, transparent);
+    color: var(--color-text-muted);
 }
 
 .dash-schedule-result-badge.draw {
-    background: rgba(245, 158, 11, 0.15);
-    color: #92400e;
+    background: color-mix(in srgb, var(--color-warning) 15%, transparent);
+    color: var(--color-text-warning-strong);
 }
 
 .dash-schedule-result-badge.tbd {
-    background: rgba(59, 130, 246, 0.15);
-    color: #1e40af;
+    background: color-mix(in srgb, var(--color-info) 15%, transparent);
+    color: color-mix(in srgb, var(--color-info) 82%, var(--color-text));
 }
 
 .dash-schedule-row-actions {
@@ -1541,7 +1541,7 @@ summary {
 /* --- 新規ウィジェット装飾 --- */
 .dash-myplayer-card {
     border-left: 4px solid var(--color-brand);
-    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(242, 57, 50, 0.02) 100%);
+    background: linear-gradient(135deg, var(--card-bg) 0%, color-mix(in srgb, var(--color-action) 2%, transparent) 100%);
     position: relative;
     overflow: hidden;
     padding: 0.6rem 0.8rem;
@@ -1573,8 +1573,8 @@ summary {
 
 .dash-myplayer-comment-box {
     grid-column: 1 / -1;
-    background: rgba(242, 57, 50, 0.04);
-    border: 1px dashed rgba(242, 57, 50, 0.2);
+    background: color-mix(in srgb, var(--color-action) 4%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--color-action) 20%, transparent);
     border-radius: 8px;
     padding: 0.6rem 0.8rem;
     font-size: 0.78rem;
@@ -1628,7 +1628,7 @@ summary {
 }
 
 .dash-correlation-trend.down {
-    color: #22c55e;
+    color: var(--color-success);
 }
 
 .dash-correlation-trend.neutral {
@@ -1780,38 +1780,38 @@ summary {
 }
 
 .heatmap-lvl-0 {
-    background: rgba(148, 163, 184, 0.1);
-    color: #94a3b8;
+    background: var(--color-heatmap-level-0-surface);
+    color: var(--color-heatmap-level-0-text);
 }
 
 .heatmap-lvl-1 {
-    background: rgba(239, 68, 68, 0.12);
-    color: #dc2626;
+    background: var(--color-heatmap-level-1-surface);
+    color: var(--color-heatmap-level-1-text);
 }
 
 .heatmap-lvl-2 {
-    background: rgba(249, 115, 22, 0.15);
-    color: #ea580c;
+    background: var(--color-heatmap-level-2-surface);
+    color: var(--color-heatmap-level-2-text);
 }
 
 .heatmap-lvl-3 {
-    background: rgba(234, 179, 8, 0.18);
-    color: #ca8a04;
+    background: var(--color-heatmap-level-3-surface);
+    color: var(--color-heatmap-level-3-text);
 }
 
 .heatmap-lvl-4 {
-    background: rgba(34, 197, 94, 0.22);
-    color: #16a34a;
+    background: var(--color-heatmap-level-4-surface);
+    color: var(--color-heatmap-level-4-text);
 }
 
 .heatmap-lvl-5 {
-    background: rgba(37, 99, 235, 0.25);
-    color: #1d4ed8;
+    background: var(--color-heatmap-level-5-surface);
+    color: var(--color-heatmap-level-5-text);
     font-size: 0.95rem;
 }
 
 .stat-bar-outer {
-    background: rgba(0, 0, 0, 0.05);
+    background: color-mix(in srgb, var(--color-text) 5%, transparent);
     height: 8px;
     border-radius: 4px;
     overflow: hidden;

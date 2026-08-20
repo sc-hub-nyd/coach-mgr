@@ -95,12 +95,37 @@
     --color-shadow-medium: color-mix(in srgb, var(--color-text) 22%, transparent);
     --color-shadow-subtle: color-mix(in srgb, var(--color-text) 8%, transparent);
     --color-media-surface: #000000;
+    --color-media-preview-surface: color-mix(in srgb, var(--color-text) 88%, var(--color-surface));
+    --color-media-overlay: color-mix(in srgb, var(--color-text) 40%, transparent);
+    --color-media-overlay-strong: color-mix(in srgb, var(--color-text) 60%, transparent);
     --color-action-surface-soft: color-mix(in srgb, var(--color-action) 10%, var(--color-surface));
     --color-update-surface: color-mix(in srgb, var(--color-success) 88%, var(--color-text));
     --color-update-border: color-mix(in srgb, var(--color-success-surface) 48%, transparent);
     --color-update-action-surface: var(--color-surface-success-strong);
     --color-update-action-text: var(--color-text-success-strong);
     --color-success-hover: color-mix(in srgb, var(--color-success) 82%, var(--color-text));
+    --color-warning-hover: color-mix(in srgb, var(--color-warning) 82%, var(--color-text));
+
+    /* Dashboard heatmap semantic scale: each level owns both surface and text contrast. */
+    --color-heatmap-level-0-surface: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
+    --color-heatmap-level-0-text: var(--color-text-muted);
+    --color-heatmap-level-1-surface: color-mix(in srgb, var(--color-danger) 12%, transparent);
+    --color-heatmap-level-1-text: var(--color-text-danger-strong);
+    --color-heatmap-level-2-surface: color-mix(in srgb, color-mix(in srgb, var(--color-danger) 52%, var(--color-warning)) 15%, transparent);
+    --color-heatmap-level-2-text: color-mix(in srgb, color-mix(in srgb, var(--color-danger) 52%, var(--color-warning)) 82%, var(--color-text));
+    --color-heatmap-level-3-surface: color-mix(in srgb, var(--color-warning) 18%, transparent);
+    --color-heatmap-level-3-text: var(--color-text-warning-strong);
+    --color-heatmap-level-4-surface: color-mix(in srgb, var(--color-success) 22%, transparent);
+    --color-heatmap-level-4-text: var(--color-text-success-strong);
+    --color-heatmap-level-5-surface: color-mix(in srgb, var(--color-info) 25%, transparent);
+    --color-heatmap-level-5-text: color-mix(in srgb, var(--color-info) 82%, var(--color-text));
+
+    /* Static catalog palette. These values remain owned by the design-system token layer. */
+    --color-swatch-blue: #3d79d5;
+    --color-swatch-green: #63a84d;
+    --color-swatch-orange: #f09f4d;
+    --color-swatch-red: #f23932;
+    --color-accent-violet: #a855f7;
 
     /* Canvas semantic API. Literal values belong only to this palette and canvas-palette.js fallbacks. */
     --canvas-workspace-surface: var(--color-canvas);

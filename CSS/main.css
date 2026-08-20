@@ -1,4 +1,4 @@
-/* css/main.css */
+/* CSS architecture entrypoint */
 /* CSS Architecture order: foundation → layout → components → pages → utilities */
 @import url('base.css');
 @import url('tokens.css');
@@ -14,22 +14,22 @@
 
 @keyframes timelinePulse {
     0% {
-        border-color: var(--primary);
-        background: rgba(242, 57, 50, 0.15);
+        border-color: var(--color-action);
+        background: color-mix(in srgb, var(--color-action) 15%, transparent);
     }
 
     50% {
         border-color: transparent;
-        background: rgba(242, 57, 50, 0.02);
+        background: color-mix(in srgb, var(--color-action) 2%, transparent);
     }
 
     100% {
-        border-color: var(--primary);
-        background: rgba(242, 57, 50, 0.15);
+        border-color: var(--color-action);
+        background: color-mix(in srgb, var(--color-action) 15%, transparent);
     }
 }
 
 .timeline-highlight-active {
     animation: timelinePulse 1.2s infinite ease-in-out;
-    border: 1.5px solid var(--primary);
+    border: 1.5px solid var(--color-action);
 }

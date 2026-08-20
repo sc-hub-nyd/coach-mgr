@@ -737,7 +737,7 @@
             var(--color-text) 0%,
             var(--color-text) 25%,
             color-mix(in srgb, var(--color-brand) 85%, var(--color-text)) 45%,
-            color-mix(in srgb, #ffffff 60%, var(--color-brand)) 50%,
+            color-mix(in srgb, var(--color-text-inverse) 60%, var(--color-brand)) 50%,
             color-mix(in srgb, var(--color-brand) 85%, var(--color-text)) 55%,
             var(--color-text) 75%,
             var(--color-text) 100%
@@ -754,9 +754,9 @@
             115deg,
             var(--color-text) 0%,
             var(--color-text) 30%,
-            color-mix(in srgb, #ffffff 50%, var(--color-text)) 48%,
+            color-mix(in srgb, var(--color-text-inverse) 50%, var(--color-text)) 48%,
             var(--color-brand) 52%,
-            color-mix(in srgb, #ffffff 50%, var(--color-text)) 56%,
+            color-mix(in srgb, var(--color-text-inverse) 50%, var(--color-text)) 56%,
             var(--color-text) 70%,
             var(--color-text) 100%
         );
@@ -786,7 +786,7 @@
 }
 
 .c-text-glow {
-    background: linear-gradient(110deg, var(--color-text) 30%, color-mix(in srgb, #ffffff 60%, var(--color-text)) 50%, var(--color-text) 70%);
+    background: linear-gradient(110deg, var(--color-text) 30%, color-mix(in srgb, var(--color-text-inverse) 60%, var(--color-text)) 50%, var(--color-text) 70%);
     background-size: 200% auto;
     color: transparent;
     -webkit-background-clip: text;
