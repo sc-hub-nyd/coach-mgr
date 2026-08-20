@@ -53,3 +53,9 @@ node scripts/audit-design-system-v13085.mjs
 node scripts/analyze-direct-color-debt-v13086.mjs
 git diff --check
 ```
+
+
+## 公開PWA確認
+
+2026-08-20にGitHub Pages公開版で更新通知から新しいService Workerを適用した。画面上のバージョン表示は`v1.30.88`へ更新され、最新データの読み込み開始を確認した。
+公開PWAのダッシュボードは更新適用後に正常表示され、更新履歴モーダルには「画面・部品層の直接指定色をゼロ化」と4項目のリリースノートが共通`c-modal`で表示された。
