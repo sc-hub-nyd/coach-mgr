@@ -50,7 +50,7 @@ export function buildCoachActionCenter(state, { now = new Date() } = {}) {
         actions.push({
             id: 'sync-outbox',
             tone: 'attention',
-            icon: 'fa-cloud-arrow-up',
+            icon: 'ti ti-cloud-upload',
             title: `同期を確認する（${outboxCount}件待機）`,
             description: '端末には保存済みです。クラウド受領を確認すると待機キューが完了します。',
             action: 'settings-sync'
@@ -64,7 +64,7 @@ export function buildCoachActionCenter(state, { now = new Date() } = {}) {
             actions.push({
                 id: `attendance-${nextEvent.kind}-${nextEvent.id}`,
                 tone: 'attention',
-                icon: 'fa-user-clock',
+                icon: 'ti ti-user',
                 title: `${nextEvent.title}の出欠を確認`,
                 description: `${nextEvent.date}${daysUntil === 0 ? '（本日）' : `（あと${daysUntil}日）`}・未回答 ${counts.pending}/${counts.invited}名`,
                 action: nextEvent.kind === 'match' ? 'open-match' : 'open-practice',
@@ -74,7 +74,7 @@ export function buildCoachActionCenter(state, { now = new Date() } = {}) {
             actions.push({
                 id: `event-${nextEvent.kind}-${nextEvent.id}`,
                 tone: daysUntil === 0 ? 'primary' : 'neutral',
-                icon: nextEvent.kind === 'match' ? 'fa-futbol' : 'fa-calendar-check',
+                icon: nextEvent.kind === 'match' ? 'ti ti-ball-football' : 'ti ti-calendar-check',
                 title: daysUntil === 0 ? `${nextEvent.title}は本日です` : `次の予定：${nextEvent.title}`,
                 description: `${nextEvent.date}・参加予定 ${counts.attending}/${counts.invited || 0}名`,
                 action: nextEvent.kind === 'match' ? 'open-match' : 'open-practice',
@@ -85,7 +85,7 @@ export function buildCoachActionCenter(state, { now = new Date() } = {}) {
         actions.push({
             id: 'create-event',
             tone: 'primary',
-            icon: 'fa-calendar-plus',
+            icon: 'ti ti-calendar-plus',
             title: '次の予定を作成する',
             description: '練習または試合を登録すると、招集と振り返りをつなげられます。',
             action: 'create-event'
@@ -98,7 +98,7 @@ export function buildCoachActionCenter(state, { now = new Date() } = {}) {
         actions.push({
             id: 'coaching-plan',
             tone: recommendation.tone === 'attention' ? 'attention' : 'neutral',
-            icon: 'fa-clipboard-list',
+            icon: 'ti ti-clipboard-list',
             title: '次の練習案を作成する',
             description: recommendation.title,
             action: 'create-practice-plan',
@@ -125,7 +125,7 @@ export function buildParentHomeAgenda(state, { playerId = null, scopes = [] } = 
             if (record.status === 'pending') {
                 agenda.push({
                     id: `rsvp-${event.kind}-${event.id}`,
-                    icon: 'fa-reply',
+                    icon: 'ti ti-corner-up-left',
                     title: `${event.kind === 'match' ? '試合' : '練習'}の出欠を回答`,
                     description: `${event.date} ${event.title}`,
                     action: event.kind === 'match' ? 'open-match' : 'open-practice',
@@ -138,7 +138,7 @@ export function buildParentHomeAgenda(state, { playerId = null, scopes = [] } = 
     if (allowed.has('schedule') && events[0]) {
         agenda.push({
             id: `schedule-${events[0].kind}-${events[0].id}`,
-            icon: 'fa-calendar-day',
+            icon: 'ti ti-calendar-event',
             title: '次の予定を確認',
             description: `${events[0].date} ${events[0].title}`,
             action: events[0].kind === 'match' ? 'open-match' : 'open-practice',
@@ -149,7 +149,7 @@ export function buildParentHomeAgenda(state, { playerId = null, scopes = [] } = 
     if (allowed.has('development') && playerId) {
         agenda.push({
             id: 'development',
-            icon: 'fa-seedling',
+            icon: 'ti ti-plant',
             title: '成長ログを見る',
             description: '本人の出欠・活動・振り返りを確認できます。',
             action: 'open-insights'
@@ -221,7 +221,7 @@ export function buildDecisionCards(state, { rangeDays = 30, now = new Date() } =
         cards.push({
             id: 'period-comparison',
             tone: delta < 0 ? 'attention' : 'positive',
-            icon: delta < 0 ? 'fa-arrow-trend-down' : 'fa-chart-line',
+            icon: delta < 0 ? 'ti ti-trending-down' : 'ti ti-chart-line',
             title: `得失点差 ${comparison.current.goalDifference >= 0 ? '+' : ''}${comparison.current.goalDifference}`,
             evidence: `直近${rangeDays}日・活動 ${activityCount}件。前期間比 ${delta >= 0 ? '+' : ''}${delta}。`,
             actionLabel: '振り返りを開く',
@@ -234,7 +234,7 @@ export function buildDecisionCards(state, { rangeDays = 30, now = new Date() } =
         cards.push({
             id: 'position-load',
             tone: 'neutral',
-            icon: 'fa-people-arrows-left-right',
+            icon: 'ti ti-arrows-exchange',
             title: `${lowestPosition.position}の出場経験を確認`,
             evidence: `${lowestPosition.minutes}分・${lowestPosition.playerCount}名の記録があります。出場記録が少ない選手のローテーションを確認します。`,
             actionLabel: '試合記録を開く',
@@ -246,7 +246,7 @@ export function buildDecisionCards(state, { rangeDays = 30, now = new Date() } =
         cards.push({
             id: `recommendation-${index}`,
             tone: item.tone || 'neutral',
-            icon: 'fa-clipboard-check',
+            icon: 'ti ti-clipboard-check',
             title: item.title,
             evidence: item.description || item.reason || '直近の記録をもとにした練習提案です。',
             actionLabel: '練習案を作る',

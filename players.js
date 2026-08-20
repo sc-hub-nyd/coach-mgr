@@ -26,14 +26,14 @@ function renderDevelopmentNotebook(player) {
         }).join('') : '<p class="c-focus-summary__note">スキル評価を記録すると、前回との変化を確認できます。</p>';
     }
     const labels = { note: '育成ノート', observation: '観察メモ', match: '試合', practice: '練習' };
-    const icons = { note: 'fa-book-open', observation: 'fa-eye', match: 'fa-futbol', practice: 'fa-person-running' };
+    const icons = { note: 'ti ti-book-2', observation: 'ti ti-eye', match: 'ti ti-ball-football', practice: 'ti ti-run' };
     if (timeline) {
         timeline.innerHTML = summary.timeline.length ? summary.timeline.map(item => `
             <article class="c-data-list__item is-${escapeHtml(item.kind)}">
-                <span class="c-data-list__identity"><i class="fa-solid ${icons[item.kind] || 'fa-circle'}" aria-hidden="true"></i></span>
+                <span class="c-data-list__identity"><i class="${icons[item.kind] || 'ti ti-circle'}" aria-hidden="true"></i></span>
                 <div class="c-data-list__content"><span class="c-data-list__meta">${escapeHtml(item.date || '')} ・ ${labels[item.kind] || '記録'}</span><strong>${escapeHtml(item.title || '')}</strong><p class="c-data-list__body">${escapeHtml(item.detail || '')}</p></div>
-                ${item.kind === 'note' ? `<div class="c-data-list__actions"><button type="button" class="c-button btn c-button--secondary btn-secondary btn-remove-development-note" data-development-note-id="${escapeHtml(item.id)}" aria-label="育成ノートを削除"><i class="fa-solid fa-trash"></i></button></div>` : ''}
-            </article>`).join('') : '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="fa-solid fa-book-open c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">まだ成長ノートはありません。練習・試合後の事実と次の一歩を記録しましょう。</p></div></div>';
+                ${item.kind === 'note' ? `<div class="c-data-list__actions"><button type="button" class="c-button btn c-button--secondary btn-secondary btn-remove-development-note" data-development-note-id="${escapeHtml(item.id)}" aria-label="育成ノートを削除"><i class="ti ti-trash"></i></button></div>` : ''}
+            </article>`).join('') : '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="ti ti-book-2 c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">まだ成長ノートはありません。練習・試合後の事実と次の一歩を記録しましょう。</p></div></div>';
         timeline.querySelectorAll('.btn-remove-development-note').forEach(button => {
             button.onclick = async () => {
                 const proceed = await showCustomConfirm('この育成ノートを削除しますか？', '育成ノートの削除', { okText: '削除する', type: 'danger' });
@@ -219,12 +219,12 @@ export function initPlayerDetailView(playerId) {
         timelineEl.innerHTML = timeline.length > 0 ? timeline.map(item => {
             if (item.type === 'assessment') {
                 const hId = item.data ? item.data.id : null;
-                const editBtn = hId ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-edit-assessment" data-history-id="${hId}"><i class="fa-solid fa-pen"></i> 編集</button>` : '';
-                const delBtn = hId ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-assessment" data-history-id="${hId}"><i class="fa-solid fa-trash"></i></button>` : '';
+                const editBtn = hId ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-edit-assessment" data-history-id="${hId}"><i class="ti ti-pencil"></i> 編集</button>` : '';
+                const delBtn = hId ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-assessment" data-history-id="${hId}"><i class="ti ti-trash"></i></button>` : '';
                 return `
                     <article class="c-data-list__item player-history-item c-static-style--197">
                         <div class="c-data-list__header">
-                            <div class="c-data-list__identity"><i class="fa-solid fa-clipboard-user"></i> ${item.date} <span class="c-status c-status--info">指導・評価</span></div>
+                            <div class="c-data-list__identity"><i class="ti ti-clipboard"></i> ${item.date} <span class="c-status c-status--info">指導・評価</span></div>
                             ${hId ? `<div class="c-data-list__actions c-action-group">${editBtn}${delBtn}</div>` : ''}
                         </div>
                         <div class="c-data-list__body c-static-style--264">${escapeHtml(item.comment || '')}</div>
@@ -233,11 +233,11 @@ export function initPlayerDetailView(playerId) {
             } else {
                 const matchingMatch = state.matches.find(m => m.id === item.matchId);
                 const firstForm = (matchingMatch && matchingMatch.formations && matchingMatch.formations.length > 0) ? matchingMatch.formations[0] : null;
-                const linkBtn = firstForm ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-timeline-anim" data-match-id="${matchingMatch.id}" data-form-id="${firstForm.id}"><i class="fa-solid fa-person-running"></i> 作図を見る</button>` : '';
+                const linkBtn = firstForm ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-timeline-anim" data-match-id="${matchingMatch.id}" data-form-id="${firstForm.id}"><i class="ti ti-run"></i> 作図を見る</button>` : '';
                 return `
                     <article class="c-data-list__item player-history-item match-timeline-item c-static-style--197">
                         <div class="c-data-list__header">
-                            <div class="c-data-list__identity"><i class="fa-solid fa-futbol"></i> ${item.date} <span class="c-status c-status--muted">試合コメント</span></div>
+                            <div class="c-data-list__identity"><i class="ti ti-ball-football"></i> ${item.date} <span class="c-status c-status--muted">試合コメント</span></div>
                             ${linkBtn ? `<div class="c-data-list__actions c-action-group">${linkBtn}</div>` : ''}
                         </div>
                         <p class="c-data-list__meta c-static-style--217">${escapeHtml(item.matchDetails)}</p>
@@ -327,7 +327,7 @@ export function initPlayerDetailView(playerId) {
         if (p.strongPoints && p.strongPoints.length > 0) {
             spContainer.innerHTML = p.strongPoints.map(sp => `
                 <div class="c-card c-static-style--246">
-                    <span class="c-status c-status--info c-status--stacked"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>
+                    <span class="c-status c-status--info c-status--stacked"><i class="ti ti-check"></i> ${escapeHtml(sp.key)}</span>
                     <div class="c-static-style--169">${escapeHtml(sp.text)}</div>
                 </div>
             `).join('');
@@ -352,7 +352,7 @@ export function initPlayerDetailView(playerId) {
                 <div class="c-data-item c-static-style--031" onclick="navigate('match-detail', { matchId: ${m.id} })">
                     <div class="c-data-item__label">
                         <strong>vs ${escapeHtml(m.opponent)}</strong>
-                        <div class="c-static-style--171"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '試合')}${statsBadge}</div>
+                        <div class="c-static-style--171"><i class="ti ti-calendar"></i> ${m.date} | ${escapeHtml(m.type || '試合')}${statsBadge}</div>
                     </div>
                     <span class="c-status c-status--info">${escapeHtml(m.result || '詳細')}</span>
                 </div>
@@ -458,7 +458,7 @@ export function openPlayerCSVImportModal() {
             previewContainer.style.display = 'block';
             previewContainer.innerHTML = `
                 <div class="c-static-style--124">
-                    <i class="fa-solid fa-eye"></i> プレビュー (${parsed.length}件の選手を検出)
+                    <i class="ti ti-eye"></i> プレビュー (${parsed.length}件の選手を検出)
                 </div>
                 <table class="csv-preview-table">
                     <thead>
@@ -554,10 +554,10 @@ export function initPlayers() {
         playerGrid.innerHTML = `
             <section class="c-empty-state" aria-live="polite">
                 <div class="c-empty-state__body">
-                    <i class="c-empty-state__icon fa-solid fa-users" aria-hidden="true"></i>
+                    <i class="c-empty-state__icon ti ti-users" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">登録選手がいません</h3>
                     <p class="c-empty-state__text">選手を登録して、強みや指導フォーカスの設定、試合での出場ポジション設定、成長履歴の管理を始めましょう。</p>
-                    <button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-player"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> 最初の選手を追加</button>
+                    <button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-player"><i class="ti ti-user-plus" aria-hidden="true"></i> 最初の選手を追加</button>
                 </div>
             </section>
         `;
@@ -589,7 +589,7 @@ export function initPlayers() {
             }).join('');
 
             const spTags = (p.strongPoints || []).filter(sp => sp.key).map(sp =>
-                `<span class="c-status c-status--info"><i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}</span>`
+                `<span class="c-status c-status--info"><i class="ti ti-check"></i> ${escapeHtml(sp.key)}</span>`
             ).join('');
 
             return `
@@ -609,7 +609,7 @@ export function initPlayers() {
                             ${spTags}
                         </div>
                         <div class="c-static-style--207">
-                            <i class="fa-solid fa-crosshairs c-static-style--022"></i> ${escapeHtml(p.shortFocus || 'フォーカス未設定')}
+                            <i class="ti ti-crosshair c-static-style--022"></i> ${escapeHtml(p.shortFocus || 'フォーカス未設定')}
                         </div>
                     </div>
                 </div>
@@ -869,14 +869,14 @@ export function renderParticipationGraph() {
             <button type="button" class="c-data-list__item c-data-list__item--button" data-player-detail-id="${Number(p.id)}">
                 <span class="c-data-list__identity">${escapeHtml(String(p.number || '-'))}</span>
                 <span class="c-data-list__content"><strong>${escapeHtml(p.name)}</strong><span class="c-data-list__meta">${escapeHtml(positionsStr || '-')}</span><span class="c-data-list__meta">試合参加 ${p.matchCount}試合 (${p.matchPct}%) ・ 30日出席率 ${p.attPct}%</span><span class="c-progress-bar" aria-label="試合参加率 ${p.matchPct}%"><span class="c-progress-bar__indicator" style="width:${p.matchPct}%"></span></span></span>
-                <span class="c-data-list__value-group" aria-label="得点とアシスト"><span title="得点"><i class="fa-solid fa-futbol" aria-hidden="true"></i> <strong class="c-data-list__value">${p.goals}</strong></span><span title="アシスト"><i class="fa-solid fa-shoe-prints" aria-hidden="true"></i> <strong class="c-data-list__value">${p.assists}</strong></span></span>
+                <span class="c-data-list__value-group" aria-label="得点とアシスト"><span title="得点"><i class="ti ti-ball-football" aria-hidden="true"></i> <strong class="c-data-list__value">${p.goals}</strong></span><span title="アシスト"><i class="ti ti-shoe" aria-hidden="true"></i> <strong class="c-data-list__value">${p.assists}</strong></span></span>
             </button>
         `;
     }).join('');
 
     container.innerHTML = `
         <section class="c-card" aria-labelledby="player-participation-title">
-            <div class="c-section-header c-card__header"><div class="c-section-header__content"><span class="c-kicker"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> PARTICIPATION</span><h3 class="c-section-header__title c-card__title" id="player-participation-title">試合出場機会＆スタッツ比較</h3></div></div>
+            <div class="c-section-header c-card__header"><div class="c-section-header__content"><span class="c-kicker"><i class="ti ti-chart-column" aria-hidden="true"></i> PARTICIPATION</span><h3 class="c-section-header__title c-card__title" id="player-participation-title">試合出場機会＆スタッツ比較</h3></div></div>
             <div class="c-card__body"><div class="c-data-list c-data-list--participation">${rowsHTML}</div></div>
         </section>
     `;

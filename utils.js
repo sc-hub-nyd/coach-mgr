@@ -47,7 +47,7 @@ export function showToast(message) {
     if (!container) return;
     const toast = document.createElement('div');
     toast.className = 'toast';
-    toast.innerHTML = `<i class="fa-solid fa-check-circle"></i> ${message}`;
+    toast.innerHTML = `<i class="ti ti-circle-check"></i> ${message}`;
     container.appendChild(toast);
 
     setTimeout(() => { toast.classList.add('show'); }, 10);
@@ -73,13 +73,13 @@ export function setupScoreCounters() {
         const btnMinus = document.createElement('button');
         btnMinus.type = 'button';
         btnMinus.className = 'btn btn-secondary btn-score-minus';
-        btnMinus.innerHTML = '<i class="fa-solid fa-minus"></i>';
+        btnMinus.innerHTML = '<i class="ti ti-minus"></i>';
         btnMinus.style = 'padding: 0.4rem 0.6rem; font-size: 0.8rem;';
 
         const btnPlus = document.createElement('button');
         btnPlus.type = 'button';
         btnPlus.className = 'btn btn-secondary btn-score-plus';
-        btnPlus.innerHTML = '<i class="fa-solid fa-plus"></i>';
+        btnPlus.innerHTML = '<i class="ti ti-plus"></i>';
         btnPlus.style = 'padding: 0.4rem 0.6rem; font-size: 0.8rem;';
 
         btnMinus.onclick = () => {
@@ -123,9 +123,9 @@ export function showCustomConfirm(message, title = '確認', options = {}) {
         if (msgEl) msgEl.textContent = message;
 
         if (iconEl) {
-            let iconHtml = '<i class="fa-solid fa-triangle-exclamation"></i>';
+            let iconHtml = '<i class="ti ti-alert-triangle"></i>';
             if (options.type === 'danger') {
-                iconHtml = '<i class="fa-solid fa-trash-can"></i>';
+                iconHtml = '<i class="ti ti-trash"></i>';
                 iconEl.style.background = 'rgba(239, 68, 68, 0.08)';
                 iconEl.style.color = '#ef4444';
             } else {

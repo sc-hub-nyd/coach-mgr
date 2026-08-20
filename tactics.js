@@ -98,10 +98,10 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
         tacticsList.innerHTML = `
             <section class="c-empty-state" aria-live="polite">
                 <div class="c-empty-state__body">
-                    <i class="c-empty-state__icon fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-chess-knight'}" aria-hidden="true"></i>
+                    <i class="c-empty-state__icon ${isSearchActive ? 'ti ti-search' : 'ti ti-chess-knight'}" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">${isSearchActive ? '該当する戦術が見つかりません' : '戦術が登録されていません'}</h3>
                     <p class="c-empty-state__text">${isSearchActive ? '検索キーワードまたはカテゴリフィルタを変更してお試しください。' : 'チームの戦術方針（攻撃・守備・ビルドアップ等）の狙いやキーファクターを記録・作図し、いつでも振り返ることができます。'}</p>
-                    ${!isSearchActive && isCoach ? `<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-tactic"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の戦術作成</button>` : ''}
+                    ${!isSearchActive && isCoach ? `<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-tactic"><i class="ti ti-plus" aria-hidden="true"></i> 最初の戦術作成</button>` : ''}
                 </div>
             </section>
         `;
@@ -121,12 +121,12 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
 
         const cardsHtml = tactics.map(t => {
             const actionBtns = isCoach ? `
-                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic" data-id="${t.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
-                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="${t.frames && t.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
-                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-add-to-library" data-id="${t.id}" title="練習メニューライブラリに追加"><i class="fa-solid fa-plus"></i></button>
-                <button type="button" class="c-button btn c-button--danger btn-danger btn-delete-tactic" data-id="${t.id}" title="削除"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic" data-id="${t.id}" title="編集"><i class="ti ti-pencil"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="${t.frames && t.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="ti ti-run"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-add-to-library" data-id="${t.id}" title="練習メニューライブラリに追加"><i class="ti ti-plus"></i></button>
+                <button type="button" class="c-button btn c-button--danger btn-danger btn-delete-tactic" data-id="${t.id}" title="削除"><i class="ti ti-trash"></i></button>
             ` : `
-                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="作図を見る"><i class="ti ti-run"></i></button>
             `;
 
             return `
@@ -147,7 +147,7 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
                     <div class="c-media-preview c-media-preview--interactive" onclick="navigate('animation', { tacticId: ${t.id} })">
                         <canvas class="c-media-preview__canvas" id="tactic-mini-pitch-${t.id}" width="800" height="500"></canvas>
                         <div class="c-media-preview__overlay">
-                            <i class="fa-solid fa-person-running"></i> 作図画面を開く
+                            <i class="ti ti-run"></i> 作図画面を開く
                         </div>
                         ${t.frames && t.frames.length > 1 ? `
                             <div class="c-media-preview__status">
@@ -159,10 +159,10 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
                     ${t.description ? `
                     <details class="c-content-disclosure c-content-disclosure--soft">
                         <summary class="c-content-disclosure__summary">
-                            <i class="c-content-disclosure__chevron fa-solid fa-chevron-down"></i> 詳細を表示
+                            <i class="c-content-disclosure__chevron ti ti-chevron-down"></i> 詳細を表示
                         </summary>
                         <div class="c-content-disclosure__body" onclick="event.stopPropagation();">
-                            <div><strong class="c-content-disclosure__label"><i class="fa-solid fa-key"></i> 説明・キーファクター</strong><div class="c-content-disclosure__text">${escapeHtml(t.description)}</div></div>
+                            <div><strong class="c-content-disclosure__label"><i class="ti ti-key"></i> 説明・キーファクター</strong><div class="c-content-disclosure__text">${escapeHtml(t.description)}</div></div>
                         </div>
                     </details>
                     ` : ''}
@@ -271,14 +271,14 @@ export function openTacticModal(tactic = null) {
     const btnSubmit = document.querySelector('#form-tactic button[type="submit"]') || document.querySelector('button[form="form-tactic"]');
     if (tactic) {
         titleEl.textContent = '戦術を編集';
-        if (btnSubmit) btnSubmit.innerHTML = '<i class="fa-solid fa-pen" aria-hidden="true"></i> 更新';
+        if (btnSubmit) btnSubmit.innerHTML = '<i class="ti ti-pencil" aria-hidden="true"></i> 更新';
         document.getElementById('tactic-id').value = tactic.id;
         document.getElementById('tactic-title').value = tactic.title || '';
         document.getElementById('tactic-category').value = tactic.category || 'その他';
         document.getElementById('tactic-description').value = tactic.description || '';
     } else {
         titleEl.textContent = '戦術を追加';
-        if (btnSubmit) btnSubmit.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i> 追加';
+        if (btnSubmit) btnSubmit.innerHTML = '<i class="ti ti-plus" aria-hidden="true"></i> 追加';
         document.getElementById('tactic-id').value = '';
         form.reset();
         document.getElementById('tactic-category').value = uiState.currentTacticsCategory !== 'all' ? uiState.currentTacticsCategory : categories[0];

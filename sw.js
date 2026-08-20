@@ -51,6 +51,8 @@ const PRECACHE_URLS = [
   './CSS/components-standard.css',
   './CSS/components-system.css',
   './CSS/icon-system.css',
+  './assets/vendor/tabler-icons/tabler-icons.css',
+  './assets/vendor/tabler-icons/fonts/tabler-icons.woff2',
   './CSS/utilities.css',
   './CSS/dashboard.css',
   './CSS/drawing.css',
@@ -72,8 +74,7 @@ const PRECACHE_URLS = [
 const EXTERNAL_CACHEABLE = [
   'cdnjs.cloudflare.com/ajax/libs/localforage',
   'fonts.googleapis.com',
-  'fonts.gstatic.com',
-  'cdnjs.cloudflare.com/ajax/libs/font-awesome'
+  'fonts.gstatic.com'
 ];
 
 // Install: Pre-cache core app shell. Cache-busted fetches prevent the active worker

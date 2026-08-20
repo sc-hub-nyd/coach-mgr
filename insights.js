@@ -13,7 +13,7 @@ function getSelectedPlayerId() {
 function renderMetric(label, value, icon, tone = 'neutral', note = '') {
     return `
         <article class="c-metric c-metric--${tone}">
-            <div class="c-metric__icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></div>
+            <div class="c-metric__icon"><i class="${icon}" aria-hidden="true"></i></div>
             <div class="c-metric__content">
                 <span class="c-metric__label">${label}</span>
                 <strong class="c-metric__value">${value}</strong>
@@ -22,15 +22,15 @@ function renderMetric(label, value, icon, tone = 'neutral', note = '') {
         </article>`;
 }
 
-function renderCompactEmptyState({ icon = 'fa-inbox', title, description = '' }) {
-    return `<section class="c-empty-state c-empty-state--compact" role="status"><div class="c-empty-state__body"><i class="c-empty-state__icon fa-solid ${icon}" aria-hidden="true"></i><h3 class="c-empty-state__title">${title}</h3>${description ? `<p class="c-empty-state__text">${description}</p>` : ''}</div></section>`;
+function renderCompactEmptyState({ icon = 'ti ti-inbox', title, description = '' }) {
+    return `<section class="c-empty-state c-empty-state--compact" role="status"><div class="c-empty-state__body"><i class="c-empty-state__icon ${icon}" aria-hidden="true"></i><h3 class="c-empty-state__title">${title}</h3>${description ? `<p class="c-empty-state__text">${description}</p>` : ''}</div></section>`;
 }
 
 function renderTimeline(insights) {
     const container = document.getElementById('insights-timeline');
     if (!container) return;
     if (!insights.timeline.length) {
-        container.innerHTML = renderCompactEmptyState({ icon: 'fa-clock-rotate-left', title: '対象期間の試合・練習記録はまだありません。' });
+        container.innerHTML = renderCompactEmptyState({ icon: 'ti ti-history', title: '対象期間の試合・練習記録はまだありません。' });
         return;
     }
     container.innerHTML = insights.timeline.map(event => {
@@ -41,7 +41,7 @@ function renderTimeline(insights) {
         return `
             <button type="button" class="c-data-list__item c-data-list__item--button insight-timeline-item ${presentation.className}" ${destination}>
                 <span class="c-data-list__header">
-                    <span class="c-data-list__identity"><i class="insight-timeline-icon fa-solid ${presentation.icon}" aria-hidden="true"></i>${escapeHtml(presentation.label)}</span>
+                    <span class="c-data-list__identity"><i class="insight-timeline-icon ${presentation.icon}" aria-hidden="true"></i>${escapeHtml(presentation.label)}</span>
                     <span class="c-data-list__kind">${event.typeLabel}</span>
                 </span>
                 <span class="c-data-list__meta">${escapeHtml(event.date || '')}${period ? ` ・ ${period}` : ''}${event.opponent ? ` ・ vs ${escapeHtml(event.opponent)}` : ''}</span>
@@ -58,7 +58,7 @@ function renderPlayerHistory(playerInsights) {
     if (!container || !title) return;
     if (!playerInsights?.player) {
         title.textContent = '選手を選択してください';
-        container.innerHTML = renderCompactEmptyState({ icon: 'fa-user', title: '選手を選択してください', description: '選手を選択すると、出欠・出場・試合イベントをまとめて確認できます。' });
+        container.innerHTML = renderCompactEmptyState({ icon: 'ti ti-user', title: '選手を選択してください', description: '選手を選択すると、出欠・出場・試合イベントをまとめて確認できます。' });
         return;
     }
     title.textContent = `${playerInsights.player.number ? `${playerInsights.player.number}. ` : ''}${playerInsights.player.name} 選手の活動履歴`;
@@ -76,10 +76,10 @@ function renderPlayerHistory(playerInsights) {
         </div>
         <div class="c-data-list insight-activity-list">
             ${playerInsights.activities.length ? playerInsights.activities.map(activity => {
-                const icons = { goal: 'fa-futbol', 'match-attendance': 'fa-trophy', 'practice-attendance': 'fa-clipboard-check' };
+                const icons = { goal: 'ti ti-ball-football', 'match-attendance': 'ti ti-trophy', 'practice-attendance': 'ti ti-clipboard-check' };
                 const label = activity.status === 'attending' ? '参加' : activity.status === 'absent' ? '欠席' : activity.status === 'pending' ? '未回答' : '';
-                return `<article class="c-data-list__item insight-activity"><div class="c-data-list__header"><div class="c-data-list__identity"><i class="fa-solid ${icons[activity.kind] || 'fa-circle'}" aria-hidden="true"></i>${escapeHtml(activity.title)}</div>${label ? `<span class="c-data-list__kind">${label}</span>` : ''}</div><div class="c-data-list__meta">${escapeHtml(activity.date || '')}</div></article>`;
-            }).join('') : renderCompactEmptyState({ icon: 'fa-clipboard', title: '対象期間の活動記録はありません。' })}
+                return `<article class="c-data-list__item insight-activity"><div class="c-data-list__header"><div class="c-data-list__identity"><i class="${icons[activity.kind] || 'ti ti-circle'}" aria-hidden="true"></i>${escapeHtml(activity.title)}</div>${label ? `<span class="c-data-list__kind">${label}</span>` : ''}</div><div class="c-data-list__meta">${escapeHtml(activity.date || '')}</div></article>`;
+            }).join('') : renderCompactEmptyState({ icon: 'ti ti-clipboard', title: '対象期間の活動記録はありません。' })}
         </div>`;
 }
 
@@ -87,7 +87,7 @@ function renderCoachingSignals(comparison, positionParticipation, recommendation
     const comparisonContainer = document.getElementById('insights-comparison');
     if (comparisonContainer) {
         if (!comparison.previous) {
-            comparisonContainer.innerHTML = renderCompactEmptyState({ icon: 'fa-chart-simple', title: '前期間との比較は表示されません', description: '「すべて」の期間では比較できません。' });
+            comparisonContainer.innerHTML = renderCompactEmptyState({ icon: 'ti ti-chart-bar', title: '前期間との比較は表示されません', description: '「すべて」の期間では比較できません。' });
         } else {
             const sign = value => `${value > 0 ? '+' : ''}${value}`;
             comparisonContainer.innerHTML = [
@@ -100,11 +100,11 @@ function renderCoachingSignals(comparison, positionParticipation, recommendation
     }
     const positionContainer = document.getElementById('insights-position-participation');
     if (positionContainer) {
-        positionContainer.innerHTML = positionParticipation.length ? positionParticipation.map(item => `<div class="insight-position-row"><span>${escapeHtml(item.position)}</span><strong>${item.minutes}分</strong><small>${item.playerCount}名が出場</small></div>`).join('') : renderCompactEmptyState({ icon: 'fa-stopwatch', title: 'ポジション別の出場時間はまだありません', description: 'Field Companionで時計・交代を記録すると表示できます。' });
+        positionContainer.innerHTML = positionParticipation.length ? positionParticipation.map(item => `<div class="insight-position-row"><span>${escapeHtml(item.position)}</span><strong>${item.minutes}分</strong><small>${item.playerCount}名が出場</small></div>`).join('') : renderCompactEmptyState({ icon: 'ti ti-stopwatch', title: 'ポジション別の出場時間はまだありません', description: 'Field Companionで時計・交代を記録すると表示できます。' });
     }
     const recommendationsContainer = document.getElementById('insights-recommendations');
     if (recommendationsContainer) {
-        recommendationsContainer.innerHTML = recommendations.map(item => `<article class="insight-recommendation is-${escapeHtml(item.tone)}"><div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.reason)}</p></div><small><i class="fa-solid fa-arrow-right"></i> ${escapeHtml(item.action)}</small></article>`).join('');
+        recommendationsContainer.innerHTML = recommendations.map(item => `<article class="insight-recommendation is-${escapeHtml(item.tone)}"><div><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.reason)}</p></div><small><i class="ti ti-arrow-right"></i> ${escapeHtml(item.action)}</small></article>`).join('');
     }
 }
 
@@ -112,12 +112,12 @@ function renderDecisionCards(cards) {
     const container = document.getElementById('insights-decision-cards');
     if (!container) return;
     if (!cards.length) {
-        container.innerHTML = renderCompactEmptyState({ icon: 'fa-lightbulb', title: '次の判断はまだありません', description: '活動記録が増えると、ここに根拠とともに表示されます。' });
+        container.innerHTML = renderCompactEmptyState({ icon: 'ti ti-bulb', title: '次の判断はまだありません', description: '活動記録が増えると、ここに根拠とともに表示されます。' });
         return;
     }
     container.innerHTML = cards.map(card => `<article class="decision-card is-${escapeHtml(card.tone || 'neutral')}">
-        <div class="decision-card-icon"><i class="fa-solid ${escapeHtml(card.icon || 'fa-circle-info')}" aria-hidden="true"></i></div>
-        <div><span class="decision-card-label">${escapeHtml(card.title)}</span><p>${escapeHtml(card.evidence)}</p><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" data-decision-action="${escapeHtml(card.action || '')}" data-decision-id="${escapeHtml(card.id)}">${escapeHtml(card.actionLabel || '確認する')} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>
+        <div class="decision-card-icon"><i class="${escapeHtml(card.icon || 'ti ti-info-circle')}" aria-hidden="true"></i></div>
+        <div><span class="decision-card-label">${escapeHtml(card.title)}</span><p>${escapeHtml(card.evidence)}</p><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" data-decision-action="${escapeHtml(card.action || '')}" data-decision-id="${escapeHtml(card.id)}">${escapeHtml(card.actionLabel || '確認する')} <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
     </article>`).join('');
     container.querySelectorAll('[data-decision-action]').forEach(button => {
         button.onclick = () => {
@@ -137,10 +137,10 @@ function renderInsights() {
     const teamMetrics = document.getElementById('insights-team-metrics');
     if (teamMetrics) {
         teamMetrics.innerHTML = [
-            renderMetric('活動回数', `${teamInsights.matches + teamInsights.practices}`, 'fa-calendar-days', 'primary', `試合 ${teamInsights.matches} / 練習 ${teamInsights.practices}`),
-            renderMetric('試合結果', `${teamInsights.results.wins}勝 ${teamInsights.results.draws}分 ${teamInsights.results.losses}敗`, 'fa-trophy', 'positive', `得点 ${teamInsights.goals} ・ 失点 ${teamInsights.conceded}`),
-            renderMetric('得失点差', `${teamInsights.goalDifference >= 0 ? '+' : ''}${teamInsights.goalDifference}`, 'fa-scale-balanced', teamInsights.goalDifference >= 0 ? 'positive' : 'negative', `得点 ${teamInsights.goals} / 失点 ${teamInsights.conceded}`),
-            renderMetric('出欠回答', `${teamInsights.attendance.attending}名`, 'fa-user-check', 'primary', `未回答 ${teamInsights.attendance.pending} / 欠席 ${teamInsights.attendance.absent}`)
+            renderMetric('活動回数', `${teamInsights.matches + teamInsights.practices}`, 'ti ti-calendar-event', 'primary', `試合 ${teamInsights.matches} / 練習 ${teamInsights.practices}`),
+            renderMetric('試合結果', `${teamInsights.results.wins}勝 ${teamInsights.results.draws}分 ${teamInsights.results.losses}敗`, 'ti ti-trophy', 'positive', `得点 ${teamInsights.goals} ・ 失点 ${teamInsights.conceded}`),
+            renderMetric('得失点差', `${teamInsights.goalDifference >= 0 ? '+' : ''}${teamInsights.goalDifference}`, 'ti ti-scale', teamInsights.goalDifference >= 0 ? 'positive' : 'negative', `得点 ${teamInsights.goals} / 失点 ${teamInsights.conceded}`),
+            renderMetric('出欠回答', `${teamInsights.attendance.attending}名`, 'ti ti-user-check', 'primary', `未回答 ${teamInsights.attendance.pending} / 欠席 ${teamInsights.attendance.absent}`)
         ].join('');
     }
     const comparison = buildPeriodComparison(state, { days: range === 'all' ? 'all' : Number(range) });

@@ -167,14 +167,14 @@ export function buildPlayerInsights(state, playerId, { days = 90 } = {}) {
 export function getTimelinePresentation(event, players = []) {
     const findPlayer = id => players.find(player => Number(player.id) === Number(id))?.name || '選手未指定';
     const typeMap = {
-        score: { icon: 'fa-futbol', label: `${findPlayer(event.scorerId)}が得点`, className: 'is-positive' },
-        concede: { icon: 'fa-arrow-down', label: '失点', className: 'is-negative' },
-        substitution: { icon: 'fa-arrows-rotate', label: `${findPlayer(event.playerOutId)} → ${findPlayer(event.playerInId)}`, className: 'is-neutral' },
-        card: { icon: 'fa-square', label: `${findPlayer(event.playerId)}に${event.cardType === 'red' ? '退場' : '警告'}`, className: 'is-warning' },
-        memo: { icon: 'fa-note-sticky', label: event.text || event.tag || 'メモ', className: 'is-neutral' },
-        'practice-menu': { icon: 'fa-clipboard-list', label: event.focus, className: 'is-practice' }
+        score: { icon: 'ti ti-ball-football', label: `${findPlayer(event.scorerId)}が得点`, className: 'is-positive' },
+        concede: { icon: 'ti ti-arrow-down', label: '失点', className: 'is-negative' },
+        substitution: { icon: 'ti ti-refresh', label: `${findPlayer(event.playerOutId)} → ${findPlayer(event.playerInId)}`, className: 'is-neutral' },
+        card: { icon: 'ti ti-square', label: `${findPlayer(event.playerId)}に${event.cardType === 'red' ? '退場' : '警告'}`, className: 'is-warning' },
+        memo: { icon: 'ti ti-note', label: event.text || event.tag || 'メモ', className: 'is-neutral' },
+        'practice-menu': { icon: 'ti ti-clipboard-list', label: event.focus, className: 'is-practice' }
     };
-    return typeMap[event.type] || { icon: 'fa-circle', label: '記録', className: 'is-neutral' };
+    return typeMap[event.type] || { icon: 'ti ti-circle', label: '記録', className: 'is-neutral' };
 }
 
 function dateInWindow(date, from, to) {

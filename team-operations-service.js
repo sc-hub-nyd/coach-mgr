@@ -1,7 +1,7 @@
 const ATTENDANCE_STATUS = {
-    pending: { label: '未回答', icon: 'fa-circle-question', className: 'is-pending' },
-    attending: { label: '参加', icon: 'fa-circle-check', className: 'is-attending' },
-    absent: { label: '欠席', icon: 'fa-circle-xmark', className: 'is-absent' }
+    pending: { label: '未回答', icon: 'ti ti-help-circle', className: 'is-pending' },
+    attending: { label: '参加', icon: 'ti ti-circle-check', className: 'is-attending' },
+    absent: { label: '欠席', icon: 'ti ti-circle-x', className: 'is-absent' }
 };
 
 function clone(value) {

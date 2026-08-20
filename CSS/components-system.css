@@ -628,11 +628,11 @@
     gap: calc(var(--space-1) / 2);
 }
 
-.c-data-list--participation .c-data-list__value-group .fa-futbol {
+.c-data-list--participation .c-data-list__value-group .ti-ball-football {
     color: var(--color-brand);
 }
 
-.c-data-list--participation .c-data-list__value-group .fa-shoe-prints {
+.c-data-list--participation .c-data-list__value-group .ti-shoe {
     color: var(--color-success);
 }
 

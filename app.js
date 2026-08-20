@@ -21,12 +21,12 @@ import { acknowledgeSyncOutboxItem, appendSyncAudit, enqueueSyncSnapshot, ensure
 import { configureAppContext } from './app-context.js';
 import { buildCoachActionCenter, buildParentHomeAgenda, buildPracticePlanDraft, ensurePracticePlan, savePracticePlan, loadUiPreferences, saveUiPreferences, applyUiPreferences } from './experience-service.js';
 
-function renderEmptyState({ icon = 'fa-inbox', title, description = '', actionLabel = '', actionId = '', compact = false }) {
+function renderEmptyState({ icon = 'ti ti-inbox', title, description = '', actionLabel = '', actionId = '', compact = false }) {
     const action = actionLabel && actionId
         ? `<button type="button" class="c-button btn c-button--primary btn-primary" id="${actionId}">${actionLabel}</button>`
         : '';
     const modifier = compact ? ' c-empty-state--compact' : '';
-    return `<section class="c-empty-state${modifier}" role="status"><div class="c-empty-state__body"><i class="c-empty-state__icon fa-solid ${icon}" aria-hidden="true"></i><h3 class="c-empty-state__title">${title}</h3>${description ? `<p class="c-empty-state__text">${description}</p>` : ''}${action}</div></section>`;
+    return `<section class="c-empty-state${modifier}" role="status"><div class="c-empty-state__body"><i class="c-empty-state__icon ${icon}" aria-hidden="true"></i><h3 class="c-empty-state__title">${title}</h3>${description ? `<p class="c-empty-state__text">${description}</p>` : ''}${action}</div></section>`;
 }
 
 function resetPracticeListFilters() {
@@ -252,13 +252,13 @@ function setSyncStateUI(status) {
     if (textEl) textEl.textContent = getSyncStatusLabel(status);
 
     if (status === 'syncing') {
-        if (icon) icon.className = 'fa-solid fa-rotate fa-spin';
-        if (mobileIcon) mobileIcon.className = 'fa-solid fa-rotate fa-spin';
+        if (icon) icon.className = 'ti ti-refresh ';
+        if (mobileIcon) mobileIcon.className = 'ti ti-refresh ';
         if (mobileBtnText) mobileBtnText.textContent = '同期中...';
         if (dot) dot.className = 'sync-status-dot syncing';
         if (mobileDot) mobileDot.className = 'sync-status-dot syncing';
     } else if (status === 'success') {
-        const iconClass = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        const iconClass = isCoach ? 'ti ti-cloud-upload' : 'ti ti-cloud-download';
         if (icon) icon.className = iconClass;
         if (mobileIcon) mobileIcon.className = iconClass;
         if (mobileBtnText) mobileBtnText.textContent = 'データを同期する';
@@ -270,25 +270,25 @@ function setSyncStateUI(status) {
         if (sidebarQuickTime) sidebarQuickTime.textContent = lastSyncTimeStr;
         if (mobileTimeEl) mobileTimeEl.textContent = `最終同期: 本日 ${lastSyncTimeStr}`;
     } else if (status === 'local') {
-        if (icon) icon.className = 'fa-solid fa-hard-drive';
-        if (mobileIcon) mobileIcon.className = 'fa-solid fa-hard-drive';
+        if (icon) icon.className = 'ti ti-server';
+        if (mobileIcon) mobileIcon.className = 'ti ti-server';
         if (mobileBtnText) mobileBtnText.textContent = 'ローカル保存済み';
         if (dot) dot.className = 'sync-status-dot';
         if (mobileDot) mobileDot.className = 'sync-status-dot';
     } else if (status === 'offline') {
-        if (icon) icon.className = 'fa-solid fa-mobile-screen-button';
-        if (mobileIcon) mobileIcon.className = 'fa-solid fa-mobile-screen-button';
+        if (icon) icon.className = 'ti ti-device-mobile';
+        if (mobileIcon) mobileIcon.className = 'ti ti-device-mobile';
         if (mobileBtnText) mobileBtnText.textContent = 'オフライン';
         if (dot) dot.className = 'sync-status-dot error';
         if (mobileDot) mobileDot.className = 'sync-status-dot error';
     } else if (status === 'conflict') {
-        if (icon) icon.className = 'fa-solid fa-triangle-exclamation';
-        if (mobileIcon) mobileIcon.className = 'fa-solid fa-triangle-exclamation';
+        if (icon) icon.className = 'ti ti-alert-triangle';
+        if (mobileIcon) mobileIcon.className = 'ti ti-alert-triangle';
         if (mobileBtnText) mobileBtnText.textContent = '同期の競合が発生';
         if (dot) dot.className = 'sync-status-dot error';
         if (mobileDot) mobileDot.className = 'sync-status-dot error';
     } else if (status === 'error') {
-        const iconClass = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        const iconClass = isCoach ? 'ti ti-cloud-upload' : 'ti ti-cloud-download';
         if (icon) icon.className = iconClass;
         if (mobileIcon) mobileIcon.className = iconClass;
         if (mobileBtnText) mobileBtnText.textContent = '再試行する';
@@ -621,21 +621,21 @@ export function openLeaderRankingModal(type = 'all') {
     if (elRankingScorers) {
         elRankingScorers.innerHTML = allScorers.length > 0
             ? allScorers.map((item, idx) => renderRankingItem(item, idx, item.count)).join('')
-            : renderEmptyState({ icon: 'fa-futbol', title: '得点記録がありません。', compact: true });
+            : renderEmptyState({ icon: 'ti ti-ball-football', title: '得点記録がありません。', compact: true });
     }
 
     const elRankingAssists = document.getElementById('ranking-assists-list');
     if (elRankingAssists) {
         elRankingAssists.innerHTML = allAssists.length > 0
             ? allAssists.map((item, idx) => renderRankingItem(item, idx, item.count)).join('')
-            : renderEmptyState({ icon: 'fa-shoe-prints', title: 'アシスト記録がありません。', compact: true });
+            : renderEmptyState({ icon: 'ti ti-shoe', title: 'アシスト記録がありません。', compact: true });
     }
 
     const elRankingAttendance = document.getElementById('ranking-attendance-list');
     if (elRankingAttendance) {
         elRankingAttendance.innerHTML = totalRecentEvents > 0 && allAttendance.some(item => item.count > 0)
             ? allAttendance.map((item, idx) => renderRankingItem(item, idx, item.pct, '%', true)).join('')
-            : renderEmptyState({ icon: 'fa-users', title: '過去1か月の出席データがありません。', compact: true });
+            : renderEmptyState({ icon: 'ti ti-users', title: '過去1か月の出席データがありません。', compact: true });
     }
 
     const elRankingPlaytime = document.getElementById('ranking-playtime-list');
@@ -650,7 +650,7 @@ export function openLeaderRankingModal(type = 'all') {
                     <span class="c-progress-bar" aria-hidden="true"><span class="c-progress-bar__indicator${item.pct < 30 ? ' c-progress-bar__indicator--attention' : ''}" style="width:${item.pct}%"></span></span>
                 </${rankItemTag}>
             `).join('')
-            : renderEmptyState({ icon: 'fa-stopwatch', title: '直近5試合のピリオド記録がありません。', compact: true });
+            : renderEmptyState({ icon: 'ti ti-stopwatch', title: '直近5試合のピリオド記録がありません。', compact: true });
     }
 
     // 表示ターゲットに応じた表示切り替え ＆ 縦並び2列（マルチカラム）化
@@ -699,29 +699,29 @@ export function openLeaderRankingModal(type = 'all') {
             colScorers.style.display = 'block';
             if (h4Scorers) h4Scorers.style.display = 'none';
             applyColumnStyle(listScorers);
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-fire c-static-style--018"></i> 得点ランキング詳細';
+            if (modalTitle) modalTitle.innerHTML = '<i class="ti ti-flame c-static-style--018"></i> 得点ランキング詳細';
         } else if (type === 'assists') {
             colAssists.style.display = 'block';
             if (h4Assists) h4Assists.style.display = 'none';
             applyColumnStyle(listAssists);
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-shoe-prints c-static-style--013"></i> アシストランキング詳細';
+            if (modalTitle) modalTitle.innerHTML = '<i class="ti ti-shoe c-static-style--013"></i> アシストランキング詳細';
         } else if (type === 'attendance') {
             colAttendance.style.display = 'block';
             if (h4Attendance) h4Attendance.style.display = 'none';
             applyColumnStyle(listAttendance);
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-users c-static-style--015"></i> 出席率ランキング詳細 (過去1ヶ月)';
+            if (modalTitle) modalTitle.innerHTML = '<i class="ti ti-users c-static-style--015"></i> 出席率ランキング詳細 (過去1ヶ月)';
         } else if (type === 'playtime') {
             colPlaytime.style.display = 'block';
             if (h4Playtime) h4Playtime.style.display = 'none';
             applyColumnStyle(listPlaytime);
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-stopwatch c-static-style--017"></i> 出場時間・出場率詳細 (直近5試合)';
+            if (modalTitle) modalTitle.innerHTML = '<i class="ti ti-stopwatch c-static-style--017"></i> 出場時間・出場率詳細 (直近5試合)';
         } else {
             // 全項目一覧モード
             [colScorers, colAssists, colAttendance, colPlaytime].forEach(col => col.style.display = 'block');
             gridCols.style.display = 'grid';
             gridCols.style.gridTemplateColumns = 'repeat(2, 1fr)';
             gridCols.style.gap = '1rem';
-            if (modalTitle) modalTitle.innerHTML = '<i class="fa-solid fa-trophy c-static-style--022"></i> 個人ランキング一覧';
+            if (modalTitle) modalTitle.innerHTML = '<i class="ti ti-trophy c-static-style--022"></i> 個人ランキング一覧';
         }
     }
 
@@ -778,7 +778,7 @@ export function openSeasonRecordModal() {
                     </div>
                 `;
             }).join('')
-            : renderEmptyState({ icon: 'fa-chart-pie', title: '今年度の試合データがありません。', compact: true });
+            : renderEmptyState({ icon: 'ti ti-chart-pie', title: '今年度の試合データがありません。', compact: true });
     }
 
     // ── 2. 過去年度の成績推移 ──
@@ -819,7 +819,7 @@ export function openSeasonRecordModal() {
                     </div>
                 `;
             }).join('')
-            : renderEmptyState({ icon: 'fa-history', title: '試合履歴データがありません。', compact: true });
+            : renderEmptyState({ icon: 'ti ti-history', title: '試合履歴データがありません。', compact: true });
     }
 
     openModal('modal-season-record-detail');
@@ -848,7 +848,7 @@ export function openMyPlayerSelectModal() {
     const pmlContent = document.getElementById('pml-content');
     if (!pmlTitle || !pmlContent) return;
 
-    pmlTitle.innerHTML = '<i class="fa-solid fa-user-gear"></i> マイ選手の選択';
+    pmlTitle.innerHTML = '<i class="ti ti-user-cog"></i> マイ選手の選択';
 
     const currentId = localStorage.getItem('coachMgrMyPlayerId') || '';
 
@@ -864,7 +864,7 @@ export function openMyPlayerSelectModal() {
                     <button type="button" class="c-button btn ${p.id.toString() === currentId ? 'btn-primary' : 'btn-secondary'} c-static-style--085"
                         onclick="selectMyPlayer(${p.id})">
                         <span><strong>${escapeHtml(p.name)}</strong> (${p.number})</span>
-                        ${p.id.toString() === currentId ? '<i class="fa-solid fa-check"></i>' : ''}
+                        ${p.id.toString() === currentId ? '<i class="ti ti-check"></i>' : ''}
                     </button>
                 `).join('')}
             </div>
@@ -987,15 +987,15 @@ function initDashboard() {
         const hasFirstRecord = (Array.isArray(state.matches) && state.matches.length > 0)
             || (Array.isArray(state.practices) && state.practices.length > 0);
         const setupSteps = [
-            { done: hasTeam, icon: 'fa-flag', title: 'チーム情報を設定', description: 'チーム名やシーズンを登録', action: 'settings', label: '設定する' },
-            { done: hasPlayers, icon: 'fa-users', title: '選手を登録', description: '選手一覧をチームに追加', action: 'players', label: '登録する' },
-            { done: hasFirstRecord, icon: 'fa-futbol', title: '最初の記録を作成', description: '試合または練習を登録', action: 'matches', label: '始める' }
+            { done: hasTeam, icon: 'ti ti-flag', title: 'チーム情報を設定', description: 'チーム名やシーズンを登録', action: 'settings', label: '設定する' },
+            { done: hasPlayers, icon: 'ti ti-users', title: '選手を登録', description: '選手一覧をチームに追加', action: 'players', label: '登録する' },
+            { done: hasFirstRecord, icon: 'ti ti-ball-football', title: '最初の記録を作成', description: '試合または練習を登録', action: 'matches', label: '始める' }
         ];
         const completed = setupSteps.filter(step => step.done).length;
         setupProgress.textContent = `${completed}/${setupSteps.length} 完了`;
         setupItems.innerHTML = setupSteps.map(step => `
             <div class="setup-checklist-item${step.done ? ' is-complete' : ''}">
-                <span class="setup-checklist-icon"><i class="fa-solid ${step.done ? 'fa-check' : step.icon}"></i></span>
+                <span class="setup-checklist-icon"><i class="${step.done ? 'ti ti-check' : step.icon}"></i></span>
                 <span class="setup-checklist-copy"><strong>${step.title}</strong><span>${step.done ? '設定済み' : step.description}</span></span>
                 ${step.done ? '' : `<button type="button" class="c-button btn c-button--secondary btn-secondary btn-setup-action" data-setup-route="${step.action}">${step.label}</button>`}
             </div>
@@ -1043,7 +1043,7 @@ function initDashboard() {
                     <div class="c-dashboard-widget__empty c-static-style--244">
                         <p class="c-static-style--191">表示するマイ選手が未設定です</p>
                         <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-static-style--241" onclick="openMyPlayerSelectModal()">
-                            <i class="fa-solid fa-user-check"></i> マイ選手（我が子）を選択する
+                            <i class="ti ti-user-check"></i> マイ選手（我が子）を選択する
                         </button>
                     </div>
                 `;
@@ -1057,7 +1057,7 @@ function initDashboard() {
                     <div class="c-dashboard-widget__empty c-static-style--245">
                         <p class="c-static-style--188">該当する選手が見つかりません。</p>
                         <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" onclick="openMyPlayerSelectModal()">
-                            <i class="fa-solid fa-rotate"></i> 別の選手を選択する
+                            <i class="ti ti-refresh"></i> 別の選手を選択する
                         </button>
                     </div>
                 `;
@@ -1125,7 +1125,7 @@ function initDashboard() {
                 latestFeedbackHTML = `
                     <div class="c-static-style--199">
                         <div class="c-static-style--078">
-                            <span class="c-static-style--121"><i class="fa-solid fa-comment-dots"></i> コーチからの最新フィードバック</span>
+                            <span class="c-static-style--121"><i class="ti ti-message-circle"></i> コーチからの最新フィードバック</span>
                             <span class="c-static-style--105">${latestFeedbackItem.date} (${labelStr})</span>
                         </div>
                         <p class="c-static-style--154">
@@ -1144,7 +1144,7 @@ function initDashboard() {
                 ? player.strongPoints.map(sp => `
                     <div class="c-static-style--187">
                         <span class="c-status c-status--info c-status--compact">
-                            <i class="fa-solid fa-check"></i> ${escapeHtml(sp.key)}
+                            <i class="ti ti-check"></i> ${escapeHtml(sp.key)}
                         </span>
                         <div class="c-static-style--113">${escapeHtml(sp.text)}</div>
                     </div>
@@ -1171,7 +1171,7 @@ function initDashboard() {
                             </div>
                         </div>
                         <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-static-style--108" id="btn-change-myplayer">
-                            <i class="fa-solid fa-rotate"></i> 選手変更
+                            <i class="ti ti-refresh"></i> 選手変更
                         </button>
                     </div>
 
@@ -1183,7 +1183,7 @@ function initDashboard() {
                         <button type="button" class="c-button btn c-button--secondary btn-secondary c-static-style--047" id="dash-btn-myplayer-att"
                            >
                             <span class="c-static-style--132">
-                                <i class="fa-solid fa-user-check c-static-style--015"></i> 出席率
+                                <i class="ti ti-user-check c-static-style--015"></i> 出席率
                             </span>
                             <div class="c-static-style--036">
                                 <strong class="c-static-style--149">${attendancePct}%</strong>
@@ -1194,7 +1194,7 @@ function initDashboard() {
                         <button type="button" class="c-button btn c-button--secondary btn-secondary c-static-style--047" id="dash-btn-myplayer-goals"
                            >
                             <span class="c-static-style--132">
-                                <i class="fa-solid fa-futbol c-static-style--022"></i> 通算得点
+                                <i class="ti ti-ball-football c-static-style--022"></i> 通算得点
                             </span>
                             <strong class="c-static-style--148">${playerGoals}<span class="c-static-style--104">点</span></strong>
                         </button>
@@ -1202,7 +1202,7 @@ function initDashboard() {
                         <button type="button" class="c-button btn c-button--secondary btn-secondary c-static-style--047" id="dash-btn-myplayer-assists"
                            >
                             <span class="c-static-style--132">
-                                <i class="fa-solid fa-shoe-prints c-static-style--014"></i> 通算アシスト
+                                <i class="ti ti-shoe c-static-style--014"></i> 通算アシスト
                             </span>
                             <strong class="c-static-style--147">${playerAssists}<span class="c-static-style--104">回</span></strong>
                         </button>
@@ -1211,12 +1211,12 @@ function initDashboard() {
                     <!-- プロファイルアコーディオン -->
                     <details class="c-static-style--007">
                         <summary class="c-static-style--033">
-                            <span><i class="fa-solid fa-sliders c-static-style--022"></i> 選手詳細プロファイル (スタイル / 強み / IDP)</span>
+                            <span><i class="ti ti-adjustments c-static-style--022"></i> 選手詳細プロファイル (スタイル / 強み / IDP)</span>
                         </summary>
                         <div class="c-static-style--090">
                             <div class="c-static-style--008">
                                 <strong class="c-static-style--106">
-                                    <i class="fa-solid fa-tag"></i> プレースタイル
+                                    <i class="ti ti-tag"></i> プレースタイル
                                 </strong>
                                 <div class="c-static-style--128">
                                     ${escapeHtml(player.playStyle || '未設定')}
@@ -1225,14 +1225,14 @@ function initDashboard() {
 
                             <div class="c-static-style--008">
                                 <strong class="c-static-style--106">
-                                    <i class="fa-solid fa-shield-halved"></i> ストロングポイント
+                                    <i class="ti ti-shield"></i> ストロングポイント
                                 </strong>
                                 ${strongPointsHtml}
                             </div>
 
                             <div class="c-static-style--008">
                                 <strong class="c-static-style--106">
-                                    <i class="fa-solid fa-bullseye"></i> 個人目標 (IDP)
+                                    <i class="ti ti-target"></i> 個人目標 (IDP)
                                 </strong>
                                 <div class="c-static-style--050">
                                     <div>
@@ -1261,7 +1261,7 @@ function initDashboard() {
                     const pmlContent = document.getElementById('pml-content');
                     if (!pmlTitle || !pmlContent) return;
 
-                    pmlTitle.innerHTML = `<i class="fa-solid fa-user-check c-static-style--015"></i> ${escapeHtml(player.name)} の参加記録 (${currentNendo}年度)`;
+                    pmlTitle.innerHTML = `<i class="ti ti-user-check c-static-style--015"></i> ${escapeHtml(player.name)} の参加記録 (${currentNendo}年度)`;
 
                     let html = '';
                     if (attendedMatches.length === 0 && attendedPractices.length === 0) {
@@ -1273,9 +1273,9 @@ function initDashboard() {
                                     onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                                     <div>
                                         <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
-                                        <div class="c-static-style--114"><i class="fa-regular fa-calendar"></i> ${m.date} | 試合 ${m.type ? `(${escapeHtml(m.type)})` : ''}</div>
+                                        <div class="c-static-style--114"><i class="ti ti-calendar"></i> ${m.date} | 試合 ${m.type ? `(${escapeHtml(m.type)})` : ''}</div>
                                     </div>
-                                    <div class="c-static-style--143">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right c-static-style--111"></i></div>
+                                    <div class="c-static-style--143">${escapeHtml(m.result || '詳細')} <i class="ti ti-chevron-right c-static-style--111"></i></div>
                                 </div>
                             `;
                         });
@@ -1285,9 +1285,9 @@ function initDashboard() {
                                     onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('practices', { date: '${p.date}' });">
                                     <div>
                                         <strong>練習 ${p.location ? `(${escapeHtml(p.location)})` : ''}</strong>
-                                        <div class="c-static-style--114"><i class="fa-regular fa-calendar"></i> ${p.date}</div>
+                                        <div class="c-static-style--114"><i class="ti ti-calendar"></i> ${p.date}</div>
                                     </div>
-                                    <div class="c-static-style--144">練習記録 <i class="fa-solid fa-chevron-right c-static-style--111"></i></div>
+                                    <div class="c-static-style--144">練習記録 <i class="ti ti-chevron-right c-static-style--111"></i></div>
                                 </div>
                             `;
                         });
@@ -1309,15 +1309,15 @@ function initDashboard() {
                     const pmlContent = document.getElementById('pml-content');
                     if (!pmlTitle || !pmlContent) return;
 
-                    pmlTitle.innerHTML = `<i class="fa-solid fa-futbol c-static-style--022"></i> ${escapeHtml(player.name)} の得点した試合 (通算)`;
+                    pmlTitle.innerHTML = `<i class="ti ti-ball-football c-static-style--022"></i> ${escapeHtml(player.name)} の得点した試合 (通算)`;
                     pmlContent.innerHTML = matchesWithGoals.length > 0 ? matchesWithGoals.map(m => `
                         <div class="feedback-box c-static-style--084"
                             onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                             <div>
                                 <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
-                                <div class="c-static-style--114"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '')}</div>
+                                <div class="c-static-style--114"><i class="ti ti-calendar"></i> ${m.date} | ${escapeHtml(m.type || '')}</div>
                             </div>
-                            <div class="c-static-style--163">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right c-static-style--111"></i></div>
+                            <div class="c-static-style--163">${escapeHtml(m.result || '詳細')} <i class="ti ti-chevron-right c-static-style--111"></i></div>
                         </div>
                     `).join('') : '<p class="text-secondary c-static-style--146">得点した試合はありません。</p>';
 
@@ -1336,15 +1336,15 @@ function initDashboard() {
                     const pmlContent = document.getElementById('pml-content');
                     if (!pmlTitle || !pmlContent) return;
 
-                    pmlTitle.innerHTML = `<span class="c-static-style--092"><i class="fa-solid fa-shoe-prints"></i></span> ${escapeHtml(player.name)} のアシストした試合 (通算)`;
+                    pmlTitle.innerHTML = `<span class="c-static-style--092"><i class="ti ti-shoe"></i></span> ${escapeHtml(player.name)} のアシストした試合 (通算)`;
                     pmlContent.innerHTML = matchesWithAssists.length > 0 ? matchesWithAssists.map(m => `
                         <div class="feedback-box c-static-style--084"
                             onclick="document.getElementById('modal-player-matches-list').classList.add('hidden'); navigate('matches'); setTimeout(() => openMatchDetail(${m.id}), 100);">
                             <div>
                                 <strong>vs ${escapeHtml(m.opponent || '対戦相手未定')}</strong>
-                                <div class="c-static-style--114"><i class="fa-regular fa-calendar"></i> ${m.date} | ${escapeHtml(m.type || '')}</div>
+                                <div class="c-static-style--114"><i class="ti ti-calendar"></i> ${m.date} | ${escapeHtml(m.type || '')}</div>
                             </div>
-                            <div class="c-static-style--163">${escapeHtml(m.result || '詳細')} <i class="fa-solid fa-chevron-right c-static-style--111"></i></div>
+                            <div class="c-static-style--163">${escapeHtml(m.result || '詳細')} <i class="ti ti-chevron-right c-static-style--111"></i></div>
                         </div>
                     `).join('') : '<p class="text-secondary c-static-style--146">アシストした試合はありません。</p>';
 
@@ -1382,15 +1382,15 @@ function initDashboard() {
 
             teamFocusContent.innerHTML = `
                 <div class="c-focus-summary">
-                    <div class="c-focus-summary__kicker"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> 強化テーマ</div>
+                    <div class="c-focus-summary__kicker"><i class="ti ti-target" aria-hidden="true"></i> 強化テーマ</div>
                     <div class="c-focus-summary__title">${escapeHtml(focus.mainTheme)}</div>
                     ${pointsHtml}
-                    ${focus.note ? `<div class="c-focus-summary__note"><i class="fa-solid fa-clock" aria-hidden="true"></i> ${escapeHtml(focus.note)}</div>` : ''}
+                    ${focus.note ? `<div class="c-focus-summary__note"><i class="ti ti-clock" aria-hidden="true"></i> ${escapeHtml(focus.note)}</div>` : ''}
                 </div>
             `;
         } else {
             teamFocusContent.innerHTML = renderEmptyState({
-                icon: 'fa-bullseye',
+                icon: 'ti ti-target',
                 title: 'チーム強化テーマが未設定です',
                 actionLabel: 'テーマを設定する',
                 actionId: 'dash-btn-set-focus-empty',
@@ -1482,10 +1482,10 @@ function initDashboard() {
                     </article>
                 `).join('');
             } else {
-                playtimeContent.innerHTML = renderEmptyState({ icon: 'fa-people-group', title: 'フォーメーション登録データがありません', compact: true });
+                playtimeContent.innerHTML = renderEmptyState({ icon: 'ti ti-users-group', title: 'フォーメーション登録データがありません', compact: true });
             }
         } else {
-            playtimeContent.innerHTML = renderEmptyState({ icon: 'fa-chart-column', title: '出場時間の集計対象となる最近の試合データがありません', compact: true });
+            playtimeContent.innerHTML = renderEmptyState({ icon: 'ti ti-chart-column', title: '出場時間の集計対象となる最近の試合データがありません', compact: true });
         }
     }
 
@@ -1566,7 +1566,7 @@ function initDashboard() {
                     : navigate('practices', { date: nextEvent.date });
             }
         } else {
-            nextEventContent.innerHTML = renderEmptyState({ icon: 'fa-calendar', title: '予定はありません', compact: true });
+            nextEventContent.innerHTML = renderEmptyState({ icon: 'ti ti-calendar', title: '予定はありません', compact: true });
         }
     }
 
@@ -1605,8 +1605,8 @@ function initDashboard() {
     setEl('dash-record-win', wins);
     setEl('dash-record-loss', losses);
     setEl('dash-record-draw', draws);
-    setHtml('dash-record-goals', `<i class="fa-solid fa-futbol"></i> 得点: ${totalGoals}`);
-    setHtml('dash-record-concede', `<i class="fa-solid fa-shield-halved"></i> 失点: ${totalConceded}`);
+    setHtml('dash-record-goals', `<i class="ti ti-ball-football"></i> 得点: ${totalGoals}`);
+    setHtml('dash-record-concede', `<i class="ti ti-shield"></i> 失点: ${totalConceded}`);
     setEl('dash-db-record', `勝率 ${winRate}%`);
     const elBar = document.getElementById('dash-db-record-bar');
     if (elBar) elBar.style.width = `${winRate}%`;
@@ -1640,7 +1640,7 @@ function initDashboard() {
                 `;
             }).join('');
         } else {
-            formBar.innerHTML = renderEmptyState({ icon: 'fa-futbol', title: '試合記録がありません', description: '最初の試合を登録すると、ここに結果と学びが表示されます。', actionLabel: '試合を追加', actionId: 'dash-empty-add-match' });
+            formBar.innerHTML = renderEmptyState({ icon: 'ti ti-ball-football', title: '試合記録がありません', description: '最初の試合を登録すると、ここに結果と学びが表示されます。', actionLabel: '試合を追加', actionId: 'dash-empty-add-match' });
             document.getElementById('dash-empty-add-match')?.addEventListener('click', () => openMatchModal());
         }
     }
@@ -1687,7 +1687,7 @@ function initDashboard() {
                     </div>
                 </article>
             `).join('')
-            : renderEmptyState({ icon: 'fa-chart-line', title: '記録なし', compact: true });
+            : renderEmptyState({ icon: 'ti ti-chart-line', title: '記録なし', compact: true });
     };
     renderRankList(scorerCounts, '得点', 'dash-top-scorers');
     renderRankList(assistCounts, 'アシスト', 'dash-top-assists');
@@ -1749,7 +1749,7 @@ function initDashboard() {
                 `;
             }).join('');
         } else {
-            scheduleList.innerHTML = renderEmptyState({ icon: 'fa-calendar-days', title: '予定・実績はありません', description: '次の練習や試合を登録して、チームの予定を整理しましょう。', actionLabel: '試合を追加', actionId: 'dash-empty-add-schedule' });
+            scheduleList.innerHTML = renderEmptyState({ icon: 'ti ti-calendar-event', title: '予定・実績はありません', description: '次の練習や試合を登録して、チームの予定を整理しましょう。', actionLabel: '試合を追加', actionId: 'dash-empty-add-schedule' });
             document.getElementById('dash-empty-add-schedule')?.addEventListener('click', () => openMatchModal());
         }
     }
@@ -1792,7 +1792,7 @@ function initDashboard() {
                         </div>
                     </article>
                 `).join('')
-                : renderEmptyState({ icon: 'fa-user-check', title: '過去1か月の出席記録なし', compact: true });
+                : renderEmptyState({ icon: 'ti ti-user-check', title: '過去1か月の出席記録なし', compact: true });
         }
 
         const practiceFocusEl = document.getElementById('dash-recent-practice-focus');
@@ -1813,7 +1813,7 @@ function initDashboard() {
                         </article>
                     `;
                 }).join('')
-                : renderEmptyState({ icon: 'fa-clipboard', title: '練習記録なし', compact: true });
+                : renderEmptyState({ icon: 'ti ti-clipboard', title: '練習記録なし', compact: true });
         }
     }
 
@@ -1842,9 +1842,9 @@ function renderExperienceDashboard() {
         actionCount.textContent = `${center.actions.length}件`;
         actionList.innerHTML = center.actions.length ? center.actions.map(item => `
             <button type="button" class="dash-action-item is-${escapeHtml(item.tone || 'neutral')}" data-experience-action="${escapeHtml(item.action)}" data-experience-id="${escapeHtml(String(item.targetId || ''))}">
-                <span class="dash-action-icon"><i class="fa-solid ${escapeHtml(item.icon || 'fa-arrow-right')}"></i></span>
+                <span class="dash-action-icon"><i class="${escapeHtml(item.icon || 'ti ti-arrow-right')}"></i></span>
                 <span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description)}</small></span>
-                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                <i class="ti ti-chevron-right" aria-hidden="true"></i>
             </button>`).join('') : '<div class="c-dashboard-widget__empty">今すぐ対応が必要な項目はありません。</div>';
         actionList.querySelectorAll('[data-experience-action]').forEach(button => {
             button.onclick = () => runExperienceAction(button.dataset.experienceAction, button.dataset.experienceId || null, center.actions.find(item => item.action === button.dataset.experienceAction)?.recommendation || null);
@@ -1857,8 +1857,8 @@ function renderExperienceDashboard() {
         const agenda = buildParentHomeAgenda(state, { playerId, scopes: getParentAccessScopes() });
         parentAgenda.innerHTML = agenda.length ? agenda.map(item => `
             <button type="button" class="dash-action-item is-neutral" data-parent-agenda-action="${escapeHtml(item.action)}" data-parent-agenda-id="${escapeHtml(String(item.targetId || ''))}">
-                <span class="dash-action-icon"><i class="fa-solid ${escapeHtml(item.icon)}"></i></span>
-                <span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description)}</small></span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                <span class="dash-action-icon"><i class="${escapeHtml(item.icon)}"></i></span>
+                <span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description)}</small></span><i class="ti ti-chevron-right" aria-hidden="true"></i>
             </button>`).join('') : '<div class="c-dashboard-widget__empty">次の予定や回答待ちはありません。</div>';
         parentAgenda.querySelectorAll('[data-parent-agenda-action]').forEach(button => {
             button.onclick = () => runExperienceAction(button.dataset.parentAgendaAction, button.dataset.parentAgendaId || null);
@@ -2074,21 +2074,21 @@ export function updateRoleUI() {
         if (isCoach) {
             badge.style.background = 'rgba(242, 57, 50, 0.15)';
             badge.style.color = '#ef4444';
-            badge.innerHTML = '<i class="fa-solid fa-user-shield" aria-hidden="true"></i> <span>コーチ</span>';
+            badge.innerHTML = '<i class="ti ti-user-shield" aria-hidden="true"></i> <span>コーチ</span>';
         } else {
             badge.style.background = 'rgba(34, 197, 94, 0.15)';
             badge.style.color = '#15803d';
-            badge.innerHTML = '<i class="fa-solid fa-eye" aria-hidden="true"></i> <span>保護者</span>';
+            badge.innerHTML = '<i class="ti ti-eye" aria-hidden="true"></i> <span>保護者</span>';
         }
     }
 
     if (mobileTopBarRole) {
         if (isCoach) {
             mobileTopBarRole.classList.add('is-coach');
-            mobileTopBarRole.innerHTML = '<i class="fa-solid fa-user-shield" aria-hidden="true"></i> <span>コーチ</span>';
+            mobileTopBarRole.innerHTML = '<i class="ti ti-user-shield" aria-hidden="true"></i> <span>コーチ</span>';
         } else {
             mobileTopBarRole.classList.remove('is-coach');
-            mobileTopBarRole.innerHTML = '<i class="fa-solid fa-eye" aria-hidden="true"></i> <span>保護者</span>';
+            mobileTopBarRole.innerHTML = '<i class="ti ti-eye" aria-hidden="true"></i> <span>保護者</span>';
         }
     }
 
@@ -2097,7 +2097,7 @@ export function updateRoleUI() {
     }
 
     if (btnToggle) {
-        btnToggle.innerHTML = '<i class="fa-solid fa-right-left" aria-hidden="true"></i> <span>切替</span>';
+        btnToggle.innerHTML = '<i class="ti ti-arrows-exchange" aria-hidden="true"></i> <span>切替</span>';
     }
 
     const btnSyncStatus = document.getElementById('btn-topbar-sync-status');
@@ -2110,15 +2110,15 @@ export function updateRoleUI() {
 
     if (mobileSyncCard) {
         mobileSyncCard.style.display = hasUrl ? 'block' : 'none';
-        if (mobileIcon && !mobileIcon.classList.contains('fa-spin')) {
-            mobileIcon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        if (mobileIcon && !mobileIcon.classList.contains('')) {
+            mobileIcon.className = isCoach ? 'ti ti-cloud-upload' : 'ti ti-cloud-download';
         }
     }
 
     if (btnSyncStatus) {
         btnSyncStatus.style.display = hasUrl ? 'inline-flex' : 'none';
-        if (icon && !icon.classList.contains('fa-spin')) {
-            icon.className = isCoach ? 'fa-solid fa-cloud-arrow-up' : 'fa-solid fa-cloud-arrow-down';
+        if (icon && !icon.classList.contains('')) {
+            icon.className = isCoach ? 'ti ti-cloud-upload' : 'ti ti-cloud-download';
         }
         btnSyncStatus.onclick = (e) => {
             e.stopPropagation();
@@ -2610,12 +2610,12 @@ async function init() {
     const updateColorModeToggle = mode => {
         const isDark = mode === 'dark';
         if (toggleColorModeBtn) {
-            toggleColorModeBtn.innerHTML = `<i class="fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}" aria-hidden="true"></i>`;
+            toggleColorModeBtn.innerHTML = `<i class="${isDark ? 'ti ti-sun' : 'ti ti-moon'}" aria-hidden="true"></i>`;
             toggleColorModeBtn.setAttribute('aria-label', `${isDark ? 'ライト' : 'ダーク'}表示へ切り替えます`);
             toggleColorModeBtn.title = `${isDark ? 'ライト' : 'ダーク'}表示へ切り替えます`;
         }
         if (mobileToggleColorModeBtn) {
-            mobileToggleColorModeBtn.innerHTML = `<i class="fa-solid ${isDark ? 'fa-sun' : 'fa-moon'}" aria-hidden="true"></i> <span>${isDark ? 'ライト表示' : 'ダーク表示'}</span>`;
+            mobileToggleColorModeBtn.innerHTML = `<i class="${isDark ? 'ti ti-sun' : 'ti ti-moon'}" aria-hidden="true"></i> <span>${isDark ? 'ライト表示' : 'ダーク表示'}</span>`;
         }
     };
     updateColorModeToggle(uiPreferences.colorMode);
@@ -2639,7 +2639,7 @@ async function init() {
     }
 
     const sidebarTitle = document.querySelector('.c-sidebar__header h2');
-    if (sidebarTitle && state.teamInfo) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name || 'My Team')}`;
+    if (sidebarTitle && state.teamInfo) sidebarTitle.innerHTML = `<i class="ti ti-ball-football"></i> ${escapeHtml(state.teamInfo.name || 'My Team')}`;
 
     // バージョン表示とリリースノートモーダル初期化
     const topbarVersionText = document.getElementById('topbar-version-text');

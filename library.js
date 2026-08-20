@@ -18,12 +18,12 @@ export function openAssignPracticeModal(menuId) {
         practicesList.innerHTML = sortedPractices.map(p => `
             <article class="c-data-list__item">
                 <div class="c-data-list__header">
-                    <div class="c-data-list__identity"><i class="fa-regular fa-calendar" aria-hidden="true"></i> ${p.date}</div>
+                    <div class="c-data-list__identity"><i class="ti ti-calendar" aria-hidden="true"></i> ${p.date}</div>
                     <div class="c-data-list__actions">
-                        <button type="button" class="c-button btn c-button--primary btn-primary btn-execute-assign" data-pid="${p.id}"><i class="fa-solid fa-check" aria-hidden="true"></i> アサイン</button>
+                        <button type="button" class="c-button btn c-button--primary btn-primary btn-execute-assign" data-pid="${p.id}"><i class="ti ti-check" aria-hidden="true"></i> アサイン</button>
                     </div>
                 </div>
-                <div class="c-data-list__meta"><i class="fa-solid fa-users" aria-hidden="true"></i> ${p.attendance} | メニュー数: ${p.menus.length}</div>
+                <div class="c-data-list__meta"><i class="ti ti-users" aria-hidden="true"></i> ${p.attendance} | メニュー数: ${p.menus.length}</div>
             </article>
         `).join('');
 
@@ -67,7 +67,7 @@ export function openAssignPracticeModal(menuId) {
         practicesList.innerHTML = `
             <section class="c-empty-state c-empty-state--compact" aria-live="polite">
                 <div class="c-empty-state__body">
-                    <i class="c-empty-state__icon fa-solid fa-calendar-xmark" aria-hidden="true"></i>
+                    <i class="c-empty-state__icon ti ti-calendar-x" aria-hidden="true"></i>
                     <p class="c-empty-state__text">練習予定・記録がありません。</p>
                 </div>
             </section>
@@ -149,22 +149,22 @@ export function initLibrary(miniPitchObserver) {
 
     if (currentLibraryCategory !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="category">${escapeHtml(currentLibraryCategory)} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="category">${escapeHtml(currentLibraryCategory)} <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentLibraryMedia !== 'all') {
         activeFilterCount++;
         const mediaMap = { anim: '作図アニメあり', video: '参考動画あり', any: '作図/動画あり' };
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="media">${mediaMap[currentLibraryMedia] || currentLibraryMedia} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="media">${mediaMap[currentLibraryMedia] || currentLibraryMedia} <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentLibraryAssigned !== 'all') {
         activeFilterCount++;
         const assignMap = { frequent: 'よく使う (5回以上)', assigned: 'アサイン済み', unassigned: '未アサイン' };
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="assigned">${assignMap[currentLibraryAssigned] || currentLibraryAssigned} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="assigned">${assignMap[currentLibraryAssigned] || currentLibraryAssigned} <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentLibraryRating !== 'all') {
         activeFilterCount++;
         const ratingMap = { '5': '★5のみ', '4': '★4以上', '3': '★3以上', rated: '評価あり' };
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="rating">${ratingMap[currentLibraryRating] || `★${currentLibraryRating}`} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="rating">${ratingMap[currentLibraryRating] || `★${currentLibraryRating}`} <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
 
     if (activeTagsContainer) {
@@ -303,10 +303,10 @@ export function initLibrary(miniPitchObserver) {
         libraryList.innerHTML = `
             <section class="c-empty-state" aria-live="polite">
                 <div class="c-empty-state__body">
-                    <i class="c-empty-state__icon fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-book'}" aria-hidden="true"></i>
+                    <i class="c-empty-state__icon ${isSearchActive ? 'ti ti-search' : 'ti ti-book'}" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">${isSearchActive ? '該当する練習メニューが見つかりません' : 'メニューライブラリが空です'}</h3>
                     <p class="c-empty-state__text">${isSearchActive ? '検索キーワードまたは絞り込み条件（カテゴリ・メディア・アサイン・評価）を変更してお試しください。' : '練習のテーマ、オーガナイズ、キーファクターをライブラリ化し、戦術ボードで作図しておくことで、いつでも練習日へコピーして計画を立てられます。'}</p>
-                    ${!isSearchActive && isCoach ? `<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-library"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初のライブラリ作成</button>` : ''}
+                    ${!isSearchActive && isCoach ? `<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-library"><i class="ti ti-plus" aria-hidden="true"></i> 最初のライブラリ作成</button>` : ''}
                 </div>
             </section>
         `;
@@ -315,12 +315,12 @@ export function initLibrary(miniPitchObserver) {
             const menus = grouped[cat];
             const cardsHtml = menus.map(m => {
                 const actionBtns = isCoach ? `
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-assign-library" data-id="${m.id}" title="練習日にアサイン"><i class="fa-solid fa-calendar-plus"></i></button>
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-library" data-id="${m.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-anim-library" data-id="${m.id}" title="${m.frames && m.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="fa-solid fa-person-running"></i></button>
-                    <button type="button" class="c-button btn c-button--danger btn-danger btn-delete-library" data-id="${m.id}"><i class="fa-solid fa-trash"></i></button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-assign-library" data-id="${m.id}" title="練習日にアサイン"><i class="ti ti-calendar-plus"></i></button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-library" data-id="${m.id}" title="編集"><i class="ti ti-pencil"></i></button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-anim-library" data-id="${m.id}" title="${m.frames && m.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="ti ti-run"></i></button>
+                    <button type="button" class="c-button btn c-button--danger btn-danger btn-delete-library" data-id="${m.id}"><i class="ti ti-trash"></i></button>
                 ` : `
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-anim-library" data-id="${m.id}" title="作図を見る"><i class="fa-solid fa-person-running"></i></button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-anim-library" data-id="${m.id}" title="作図を見る"><i class="ti ti-run"></i></button>
                 `;
 
                 return `
@@ -342,7 +342,7 @@ export function initLibrary(miniPitchObserver) {
                         <div class="c-media-preview c-media-preview--interactive"  onclick="navigate('animation', { libraryId: ${m.id} })">
                             <canvas class="c-media-preview__canvas" id="library-mini-pitch-${m.id}" width="800" height="500" ></canvas>
                             <div class="c-media-preview__overlay" >
-                            <i class="fa-solid fa-person-running" ></i> 作図画面を開く
+                            <i class="ti ti-run" ></i> 作図画面を開く
                         </div>
                         ${m.frames && m.frames.length > 1 ? `
                             <div class="c-media-preview__status" >
@@ -353,14 +353,14 @@ export function initLibrary(miniPitchObserver) {
 
                     <details class="c-content-disclosure c-content-disclosure--soft" >
                         <summary class="c-content-disclosure__summary" >
-                            <i class="c-content-disclosure__chevron fa-solid fa-chevron-down" ></i> 詳細を表示
+                            <i class="c-content-disclosure__chevron ti ti-chevron-down" ></i> 詳細を表示
                         </summary>
                         <div class="c-content-disclosure__body"  onclick="event.stopPropagation();">
-                            ${m.organize ? `<div><strong class="c-content-disclosure__label" ><i class="fa-solid fa-users"></i> オーガナイズ</strong><div class="c-content-disclosure__text" >${escapeHtml(m.organize)}</div></div>` : ''}
-                            ${m.keyfactor ? `<div><strong class="c-content-disclosure__label" ><i class="fa-solid fa-key"></i> キーファクター</strong><div class="c-content-disclosure__text" >${escapeHtml(m.keyfactor)}</div></div>` : ''}
-                            ${m.videoUrl ? `<div><strong class="c-content-disclosure__label" ><i class="c-icon--brand fa-brands fa-youtube" ></i> 参考動画</strong><div class="c-content-disclosure__text" ><a class="c-content-disclosure__link" href="${escapeHtml(m.videoUrl)}" target="_blank" rel="noopener noreferrer" ><i class="c-icon--meta fa-solid fa-arrow-up-right-from-square" ></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
-                            ${m.options ? `<div><strong class="c-content-disclosure__label" ><i class="fa-solid fa-plus"></i> オプション</strong><div class="c-content-disclosure__text" >${escapeHtml(m.options)}</div></div>` : ''}
-                            ${m.reflection ? `<div><strong class="c-content-disclosure__label" ><i class="fa-solid fa-clipboard-user"></i> 指導者の振り返り・メモ</strong><div class="c-content-disclosure__note" >${escapeHtml(m.reflection)}</div></div>` : ''}
+                            ${m.organize ? `<div><strong class="c-content-disclosure__label" ><i class="ti ti-users"></i> オーガナイズ</strong><div class="c-content-disclosure__text" >${escapeHtml(m.organize)}</div></div>` : ''}
+                            ${m.keyfactor ? `<div><strong class="c-content-disclosure__label" ><i class="ti ti-key"></i> キーファクター</strong><div class="c-content-disclosure__text" >${escapeHtml(m.keyfactor)}</div></div>` : ''}
+                            ${m.videoUrl ? `<div><strong class="c-content-disclosure__label" ><i class="c-icon--brand ti ti-brand-youtube" ></i> 参考動画</strong><div class="c-content-disclosure__text" ><a class="c-content-disclosure__link" href="${escapeHtml(m.videoUrl)}" target="_blank" rel="noopener noreferrer" ><i class="c-icon--meta ti ti-external-link" ></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
+                            ${m.options ? `<div><strong class="c-content-disclosure__label" ><i class="ti ti-plus"></i> オプション</strong><div class="c-content-disclosure__text" >${escapeHtml(m.options)}</div></div>` : ''}
+                            ${m.reflection ? `<div><strong class="c-content-disclosure__label" ><i class="ti ti-clipboard"></i> 指導者の振り返り・メモ</strong><div class="c-content-disclosure__note" >${escapeHtml(m.reflection)}</div></div>` : ''}
                         </div>
                     </details>
                 </div>

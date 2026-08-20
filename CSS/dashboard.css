@@ -885,7 +885,7 @@ body[data-route="tactics"] .library-grid {
     border-bottom: none;
 }
 
-details[open] summary .fa-chevron-down {
+details[open] summary .ti-chevron-down {
     transform: rotate(180deg);
 }
 

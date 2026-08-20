@@ -132,7 +132,7 @@ export function initData() {
                 await loadData();
                 applyCurrentTeamTheme();
                 const sidebarTitle = document.querySelector('.c-sidebar__header h2');
-                if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(state.teamInfo.name)}`;
+                if (sidebarTitle) sidebarTitle.innerHTML = `<i class="ti ti-ball-football"></i> ${escapeHtml(state.teamInfo.name)}`;
                 showToast('データをインポートしました。ページを再読み込みします...');
                 setTimeout(() => location.reload(), 1500);
             } catch (err) {
@@ -207,8 +207,8 @@ function renderThemePreview(seed) {
         status.classList.toggle('is-pass', passed);
         status.classList.toggle('is-fallback', !passed);
         status.innerHTML = passed
-            ? '<i class="fa-solid fa-shield-halved" aria-hidden="true"></i> ライト／ダークの必須文字・UIコントラストを確認済みです。'
-            : '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> 安全な標準トーンで表示します。';
+            ? '<i class="ti ti-shield" aria-hidden="true"></i> ライト／ダークの必須文字・UIコントラストを確認済みです。'
+            : '<i class="ti ti-alert-triangle" aria-hidden="true"></i> 安全な標準トーンで表示します。';
     }
 }
 
@@ -282,7 +282,7 @@ export function initSettings() {
     const trustStatus = document.getElementById('parent-access-trust-status');
     if (trustStatus) {
         const summary = getParentAccessSummary(state.teamInfo || {});
-        trustStatus.innerHTML = `<i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span><strong>招待状態：</strong>有効 ${summary.active.length}件${summary.expired.length ? ` ・期限切れ ${summary.expired.length}件` : ''}${summary.revoked.length ? ` ・失効 ${summary.revoked.length}件` : ''}<small>現在の公開版では、招待URLの利用範囲を端末・同期データ上で確認します。本人確認とサーバー側遮断は認証バックエンド導入後に有効化します。</small></span>`;
+        trustStatus.innerHTML = `<i class="ti ti-shield" aria-hidden="true"></i><span><strong>招待状態：</strong>有効 ${summary.active.length}件${summary.expired.length ? ` ・期限切れ ${summary.expired.length}件` : ''}${summary.revoked.length ? ` ・失効 ${summary.revoked.length}件` : ''}<small>現在の公開版では、招待URLの利用範囲を端末・同期データ上で確認します。本人確認とサーバー側遮断は認証バックエンド導入後に有効化します。</small></span>`;
     }
 
     const diagnosticsContainer = document.getElementById('operations-diagnostics');
@@ -301,11 +301,11 @@ export function initSettings() {
     const refreshOperationalDiagnostics = () => {
         if (!diagnosticsContainer) return;
         const diagnostics = buildOperationalDiagnostics(state);
-        const icons = { backup: 'fa-box-archive', sync: 'fa-cloud', cloudRecovery: 'fa-clock-rotate-left', recovery: 'fa-clock-rotate-left', outbox: 'fa-list-check', team: 'fa-people-group', storage: 'fa-hard-drive' };
+        const icons = { backup: 'ti ti-archive', sync: 'ti ti-cloud', cloudRecovery: 'ti ti-history', recovery: 'ti ti-history', outbox: 'ti ti-list-check', team: 'ti ti-users-group', storage: 'ti ti-server' };
         diagnosticsContainer.innerHTML = diagnostics.checks.map(check => {
             const action = check.action ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" data-operation-action="${escapeHtml(check.action.action)}">${escapeHtml(check.action.label)}</button>` : '';
             return `<article class="c-data-list__item is-${check.status}${action ? ' has-action' : ''}">
-                <span class="c-data-list__identity"><i class="fa-solid ${icons[check.key] || 'fa-circle-info'}" aria-hidden="true"></i></span>
+                <span class="c-data-list__identity"><i class="${icons[check.key] || 'ti ti-info-circle'}" aria-hidden="true"></i></span>
                 <span class="c-data-list__content"><strong>${escapeHtml(check.label)}</strong><small title="${escapeHtml(check.detail)}">${escapeHtml(check.detail)}</small></span>
                 ${action ? `<span class="c-data-list__actions">${action}</span>` : ''}
             </article>`;
@@ -371,7 +371,7 @@ export function initSettings() {
         cloudRecoveryHistory.innerHTML = recoveries.map(item => `
             <article class="c-data-list__item">
                 <span class="c-data-list__content"><strong>世代 ${Number(item.revision)}</strong><small>${escapeHtml(item.updatedAt || '直前の確定版')} ・ ${escapeHtml(item.source === 'immediate' ? '直前の安全スロット' : '世代履歴')}</small></span>
-                <span class="c-data-list__actions"><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-restore-cloud-generation" data-revision="${Number(item.revision)}"><i class="fa-solid fa-clock-rotate-left"></i> 復元</button></span>
+                <span class="c-data-list__actions"><button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-restore-cloud-generation" data-revision="${Number(item.revision)}"><i class="ti ti-history"></i> 復元</button></span>
             </article>`).join('');
         cloudRecoveryHistory.querySelectorAll('.btn-restore-cloud-generation').forEach(button => {
             button.onclick = async () => {
@@ -401,7 +401,7 @@ export function initSettings() {
             cloudRecoveryHistory.innerHTML = '<p class="c-empty-state__text">クラウド世代の復元は安全モード（POST認証）で利用できます。</p>';
             return [];
         }
-        cloudRecoveryHistory.innerHTML = '<p class="c-empty-state__text"><i class="fa-solid fa-rotate fa-spin"></i> クラウド復旧世代を確認中...</p>';
+        cloudRecoveryHistory.innerHTML = '<p class="c-empty-state__text"><i class="ti ti-refresh "></i> クラウド復旧世代を確認中...</p>';
         try {
             const recoveries = await listCloudRecoveries({ teamInfo: state.teamInfo });
             renderCloudRecoveries(recoveries);
@@ -450,7 +450,7 @@ export function initSettings() {
                 const sidebarTitle = document.querySelector('.c-sidebar__header h2');
                 if (sidebarTitle) {
                     const icon = document.createElement('i');
-                    icon.className = 'fa-solid fa-futbol';
+                    icon.className = 'ti ti-ball-football';
                     sidebarTitle.replaceChildren(icon, document.createTextNode(` ${state.teamInfo.name}`));
                 }
             };
@@ -481,7 +481,7 @@ export function initSettings() {
         const team = getActiveTeam(state);
         const season = getActiveSeason(state);
         const sidebarTitle = document.querySelector('.c-sidebar__header h2');
-        if (sidebarTitle) sidebarTitle.innerHTML = `<i class="fa-solid fa-futbol"></i> ${escapeHtml(team.name)}`;
+        if (sidebarTitle) sidebarTitle.innerHTML = `<i class="ti ti-ball-football"></i> ${escapeHtml(team.name)}`;
         const topbarTitle = document.getElementById('topbar-title');
         if (topbarTitle) topbarTitle.dataset.workspace = season.name;
     };
@@ -760,14 +760,14 @@ export function initSettings() {
         };
         const entries = [...summary.active.map(item => ({ ...item, displayStatus: 'active' })), ...summary.expired.map(item => ({ ...item, displayStatus: 'expired' })), ...summary.revoked.map(item => ({ ...item, displayStatus: 'revoked' }))];
         if (!entries.length) {
-            parentAccessInvites.innerHTML = '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="fa-solid fa-user-shield c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">個別招待はまだありません。</p></div></div>';
+            parentAccessInvites.innerHTML = '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="ti ti-user-shield c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">個別招待はまだありません。</p></div></div>';
             return;
         }
         parentAccessInvites.innerHTML = entries.map(invite => {
             const scopeLabels = (invite.scopes || []).map(scope => PARENT_ACCESS_SCOPES.find(item => item.id === scope)?.label || scope).join('・');
             const statusLabel = invite.displayStatus === 'active' ? '有効' : invite.displayStatus === 'expired' ? '期限切れ' : '失効済み';
             const statusTone = invite.displayStatus === 'active' ? 'c-status--success' : invite.displayStatus === 'expired' ? 'c-status--warning' : 'c-status--muted';
-            return `<article class="c-data-list__item is-${escapeHtml(invite.displayStatus)}"><div class="c-data-list__content"><strong>${escapeHtml(invite.label || playerName(invite.playerId))}</strong><span>${escapeHtml(playerName(invite.playerId))} ・ ${escapeHtml(scopeLabels)}</span><small>${invite.expiresAt ? `期限 ${escapeHtml(invite.expiresAt)}` : '期限なし'}${invite.lastUsedAt ? ` ・ 最終利用 ${escapeHtml(new Date(invite.lastUsedAt).toLocaleDateString('ja-JP'))}` : ''}</small></div><div class="c-data-list__actions">${invite.displayStatus === 'active' ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" data-parent-access-copy="${escapeHtml(invite.id)}"><i class="fa-solid fa-copy"></i> コピー</button><button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm" data-parent-access-revoke="${escapeHtml(invite.id)}"><i class="fa-solid fa-ban"></i> 失効</button>` : ''}<span class="c-status c-status--compact ${statusTone}">${statusLabel}</span></div></article>`;
+            return `<article class="c-data-list__item is-${escapeHtml(invite.displayStatus)}"><div class="c-data-list__content"><strong>${escapeHtml(invite.label || playerName(invite.playerId))}</strong><span>${escapeHtml(playerName(invite.playerId))} ・ ${escapeHtml(scopeLabels)}</span><small>${invite.expiresAt ? `期限 ${escapeHtml(invite.expiresAt)}` : '期限なし'}${invite.lastUsedAt ? ` ・ 最終利用 ${escapeHtml(new Date(invite.lastUsedAt).toLocaleDateString('ja-JP'))}` : ''}</small></div><div class="c-data-list__actions">${invite.displayStatus === 'active' ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" data-parent-access-copy="${escapeHtml(invite.id)}"><i class="ti ti-copy"></i> コピー</button><button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm" data-parent-access-revoke="${escapeHtml(invite.id)}"><i class="ti ti-ban"></i> 失効</button>` : ''}<span class="c-status c-status--compact ${statusTone}">${statusLabel}</span></div></article>`;
         }).join('');
         parentAccessInvites.querySelectorAll('[data-parent-access-copy]').forEach(button => {
             button.onclick = () => {
@@ -850,13 +850,13 @@ export function initSettings() {
             const isCustomForm = listId === "custom-formation-list";
             const editBtnClass = isCustomForm ? "btn-edit-custom-formation" : "btn-edit-master-item";
             const itemLabel = itemLabelFunc(item);
-            const editBtn = `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm ${editBtnClass}" data-list="${listId}" data-index="${index}"><i class="fa-solid fa-pen" aria-hidden="true"></i> 編集</button>`;
+            const editBtn = `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm ${editBtnClass}" data-list="${listId}" data-index="${index}"><i class="ti ti-pencil" aria-hidden="true"></i> 編集</button>`;
             return `
                 <li class="c-data-item">
                     <span class="c-data-item__label">${escapeHtml(String(itemLabel))}</span>
                     <div class="c-action-group">
                         ${editBtn}
-                        <button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-item" data-list="${listId}" data-index="${index}" aria-label="${escapeHtml(String(itemLabel))}を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                        <button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-item" data-list="${listId}" data-index="${index}" aria-label="${escapeHtml(String(itemLabel))}を削除"><i class="ti ti-trash" aria-hidden="true"></i></button>
                     </div>
                 </li>
             `;
@@ -1003,8 +1003,8 @@ export function initSettings() {
         const titleEl = document.querySelector('#modal-custom-formation h2');
         if (titleEl) {
             titleEl.innerHTML = editIndex !== null
-                ? `<i class="fa-solid fa-street-view"></i> カスタムフォーメーション編集`
-                : `<i class="fa-solid fa-street-view"></i> カスタムフォーメーション作成`;
+                ? `<i class="ti ti-walk"></i> カスタムフォーメーション編集`
+                : `<i class="ti ti-walk"></i> カスタムフォーメーション作成`;
         }
 
         const pitchCanvas = document.getElementById('custom-formation-pitch-canvas');

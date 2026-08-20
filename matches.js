@@ -101,12 +101,12 @@ export function loadYouTubePlayer(url, containerId = 'period-yt-player') {
     if (!videoId) {
         playerEl.innerHTML = `
             <div class="c-static-style--049">
-                <i class="fa-brands fa-youtube c-static-style--168"></i>
+                <i class="ti ti-brand-youtube c-static-style--168"></i>
                 <div class="c-static-style--177">YouTube動画 URLが未設定です</div>
                 <p class="c-static-style--151">試合動画のURL（YouTube）を入力すると、ここで再生およびタイムライン分析が行えます。（保護者・指導者ともに追加・保存が可能です）</p>
                 <div class="c-static-style--064">
                     <input type="url" id="quick-yt-url-input" class="c-input form-control c-static-style--137" placeholder="https://www.youtube.com/watch?v=...">
-                    <button type="button" class="c-button btn c-button--primary btn-primary c-static-style--261" id="quick-yt-url-save-btn"><i class="fa-solid fa-plus"></i> 動画を追加</button>
+                    <button type="button" class="c-button btn c-button--primary btn-primary c-static-style--261" id="quick-yt-url-save-btn"><i class="ti ti-plus"></i> 動画を追加</button>
                 </div>
             </div>
         `;
@@ -251,7 +251,7 @@ export function addGoalRecordRow(scorerId = null, assistId = null, targetContain
         <select class="c-match-record-row__select c-input form-control goal-assist-select" >
             ${assistOptions}
         </select>
-        <button type="button" class="c-match-record-row__remove c-button btn c-button--danger btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash-can"></i></button>
+        <button type="button" class="c-match-record-row__remove c-button btn c-button--danger btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="ti ti-trash"></i></button>
     `;
     container.appendChild(div);
 }
@@ -269,14 +269,14 @@ export function addAnalysisMemoRow(timeStr = '00:00', textVal = '', tagVal = '�
 
     div.innerHTML = `
         <button type="button" class="c-match-analysis-row__seek c-button btn c-button--secondary btn-secondary btn-seek-video"  title="このシーンへジャンプ">
-            <i class="fa-solid fa-play"></i>
+            <i class="ti ti-player-play"></i>
         </button>
         <input type="text" class="c-match-analysis-row__time c-input form-control memo-time-input" value="${timeStr}" placeholder="00:00" >
         <select class="c-match-analysis-row__tag c-input form-control memo-tag-select" >
             ${tagOptions}
         </select>
         <input type="text" class="c-match-analysis-row__text c-input form-control memo-text-input" value="${escapeHtml(textVal)}" placeholder="メモ（例: 左展開からクロス）" >
-        <button type="button" class="c-match-analysis-row__remove c-button btn c-button--danger btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash-can"></i></button>
+        <button type="button" class="c-match-analysis-row__remove c-button btn c-button--danger btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="ti ti-trash"></i></button>
     `;
 
     const btnSeek = div.querySelector('.btn-seek-video');
@@ -299,7 +299,7 @@ export function addFormationVideoRow(urlVal = '') {
     div.className = 'formation-video-row c-match-record-row c-match-record-row--video';
     div.innerHTML = `
         <input type="url" class="c-match-video-row__input c-input form-control formation-video-input" value="${urlVal}" placeholder="https://www.youtube.com/watch?v=... または https://youtu.be/..." >
-        <button type="button" class="c-match-video-row__remove c-button btn c-button--danger btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="fa-solid fa-trash"></i></button>
+        <button type="button" class="c-match-video-row__remove c-button btn c-button--danger btn-danger" onclick="document.getElementById('${rowId}').remove()"  title="削除"><i class="ti ti-trash"></i></button>
     `;
     container.appendChild(div);
 }
@@ -772,11 +772,11 @@ export function renderMatchScoreHeaderBadge(m) {
     const status = getMatchStatus(m);
     let badgeHtml = '';
     if (status === 'win') {
-        badgeHtml = '<span class="c-status"><i class="fa-solid fa-trophy" aria-hidden="true"></i> WIN</span>';
+        badgeHtml = '<span class="c-status"><i class="ti ti-trophy" aria-hidden="true"></i> WIN</span>';
     } else if (status === 'loss') {
-        badgeHtml = '<span class="c-status c-status--muted"><i class="fa-solid fa-xmark" aria-hidden="true"></i> LOSE</span>';
+        badgeHtml = '<span class="c-status c-status--muted"><i class="ti ti-x" aria-hidden="true"></i> LOSE</span>';
     } else if (status === 'draw') {
-        badgeHtml = '<span class="c-status c-status--warning"><i class="fa-solid fa-handshake" aria-hidden="true"></i> DRAW</span>';
+        badgeHtml = '<span class="c-status c-status--warning"><i class="ti ti-heart-handshake" aria-hidden="true"></i> DRAW</span>';
     }
 
     const resultStr = m.result || `${m.scoreUs || 0}-${m.scoreThem || 0}`;
@@ -851,7 +851,7 @@ export function initMatchDetailView(matchId) {
         scoreBox.innerHTML = `
             <div class="c-action-group c-match-score-actions">
                 ${renderMatchScoreHeaderBadge(m)}
-                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" onclick="copyMatchShareText(${m.id})" title="LINE共有用テキストをコピー"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> 共有</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" onclick="copyMatchShareText(${m.id})" title="LINE共有用テキストをコピー"><i class="ti ti-share-3" aria-hidden="true"></i> 共有</button>
             </div>`;
     }
 
@@ -1106,7 +1106,7 @@ function renderPeriodGrid(m) {
     grid.innerHTML = m.formations.map((f, idx) => {
         const scoreUs = f.scoreUs !== undefined ? f.scoreUs : 0;
         const scoreThem = f.scoreThem !== undefined ? f.scoreThem : 0;
-        const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="c-icon--brand fa-brands fa-youtube" title="動画あり"></i>' : '';
+        const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="c-icon--brand ti ti-brand-youtube" title="動画あり"></i>' : '';
         const isPkPeriod = f.name && (f.name.trim() === 'PK戦' || f.name.toLowerCase().includes('pk'));
 
         let goalDetailsHtml = '';
@@ -1166,7 +1166,7 @@ function renderPeriodGrid(m) {
                 const pIn = state.players.find(p => p.id === sub.playerInId);
                 const outName = pOut ? `${pOut.number ? `#${pOut.number} ` : ''}${pOut.name}` : 'OUT未設定';
                 const inName = pIn ? `${pIn.number ? `#${pIn.number} ` : ''}${pIn.name}` : 'IN未設定';
-                return `<div class="c-period-card__substitution"><i class="fa-solid fa-arrows-rotate c-period-card__substitution-icon"></i> 交代: ${escapeHtml(outName)} ➔ <strong class="c-period-card__substitution-name">${escapeHtml(inName)}</strong> (0.5P)</div>`;
+                return `<div class="c-period-card__substitution"><i class="ti ti-refresh c-period-card__substitution-icon"></i> 交代: ${escapeHtml(outName)} ➔ <strong class="c-period-card__substitution-name">${escapeHtml(inName)}</strong> (0.5P)</div>`;
             }).join('');
         }
 
@@ -1196,10 +1196,10 @@ function renderPeriodGrid(m) {
                 </div>
 
                 <div class="c-period-card__actions" >
-                    <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm btn-open-analysis" data-index="${idx}" ><i class="fa-solid fa-film"></i> 動画分析 ➔</button>
+                    <button class="c-button btn c-button--primary btn-primary c-button--compact btn-sm btn-open-analysis" data-index="${idx}" ><i class="ti ti-movie"></i> 動画分析 ➔</button>
                     ${isCoach ? `
-                        <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-edit-period-card" data-id="${f.id}" title="ピリオド編集"><i class="fa-solid fa-pen"></i></button>
-                        <button class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-period-card" data-id="${f.id}" title="ピリオド削除"><i class="fa-solid fa-trash"></i></button>
+                        <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-edit-period-card" data-id="${f.id}" title="ピリオド編集"><i class="ti ti-pencil"></i></button>
+                        <button class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-period-card" data-id="${f.id}" title="ピリオド削除"><i class="ti ti-trash"></i></button>
                     ` : ''}
                 </div>
             </div>
@@ -1305,7 +1305,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
         if (isPkPeriod) {
             if (isCoach) {
-                if (sideHeading) sideHeading.innerHTML = '<i class="fa-solid fa-bullseye c-static-style--022"></i> PK戦情報編集';
+                if (sideHeading) sideHeading.innerHTML = '<i class="ti ti-target c-static-style--022"></i> PK戦情報編集';
 
                 let sidePkKickers = period.pkKickerRecords ? JSON.parse(JSON.stringify(period.pkKickerRecords)) : [];
                 if (sidePkKickers.length === 0) {
@@ -1332,7 +1332,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                             <div class="side-pk-row" data-idx="${idx}">
                                 <div class="c-static-style--073">
                                     <span class="c-static-style--122">${labelText}</span>
-                                    ${isSudden ? `<button type="button" class="btn-side-remove-pk c-static-style--006" data-idx="${idx}"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                    ${isSudden ? `<button type="button" class="btn-side-remove-pk c-static-style--006" data-idx="${idx}"><i class="ti ti-trash"></i></button>` : ''}
                                 </div>
                                 <select class="c-input form-control form-control-sm side-pk-kicker-select c-static-style--125" data-idx="${idx}">
                                     ${playerOptionsHtml}
@@ -1401,12 +1401,12 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     </div>
                     <div class="c-inspector-panel__item">
                         <div class="c-static-style--080">
-                            <span class="c-inspector-panel__label c-static-style--208"><i class="fa-solid fa-bullseye"></i> PKキッカー記録</span>
+                            <span class="c-inspector-panel__label c-static-style--208"><i class="ti ti-target"></i> PKキッカー記録</span>
                             <span id="side-pk-score-badge" class="c-status c-status--solid c-status--compact">PK 0 - 0</span>
                         </div>
                         <div class="c-static-style--220" id="side-pk-rows-container"></div>
                         <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs c-static-style--269" id="btn-side-add-pk">
-                            <i class="fa-solid fa-plus"></i> サドンデス枠を追加
+                            <i class="ti ti-plus"></i> サドンデス枠を追加
                         </button>
                     </div>
                     <div class="c-inspector-panel__item">
@@ -1415,7 +1415,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     </div>
                     <div class="c-period-editor__save-wrap">
                         <button type="button" class="c-period-editor__save c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-side-save-period">
-                            <i class="fa-solid fa-save"></i> 変更を保存
+                            <i class="ti ti-device-floppy"></i> 変更を保存
                         </button>
                     </div>
                 `;
@@ -1464,7 +1464,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 return;
             } else {
                 // 保護者モード: PK戦閲覧
-                if (sideHeading) sideHeading.innerHTML = '<i class="fa-solid fa-bullseye c-static-style--022"></i> PK戦情報';
+                if (sideHeading) sideHeading.innerHTML = '<i class="ti ti-target c-static-style--022"></i> PK戦情報';
                 const pkRows = period.pkKickerRecords || [];
                 const rowsHtml = pkRows.map((k, idx) => {
                     const p = state.players.find(pl => pl.id === k.kickerId);
@@ -1487,7 +1487,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                         <div class="c-static-style--164">PK ${period.scoreUs || 0} - ${period.scoreThem || 0}</div>
                     </div>
                     <div class="c-inspector-panel__item">
-                        <span class="c-inspector-panel__label"><i class="fa-solid fa-bullseye"></i> キッカー記録</span>
+                        <span class="c-inspector-panel__label"><i class="ti ti-target"></i> キッカー記録</span>
                         <div class="c-static-style--202">${rowsHtml}</div>
                     </div>
                     <div class="c-inspector-panel__item">
@@ -1501,7 +1501,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
         if (isCoach) {
             // コーチモード：編集フォーム（ミニピッチ付き）
-            if (sideHeading) sideHeading.innerHTML = '<i class="c-icon--meta fa-solid fa-pen" ></i> ピリオド情報編集';
+            if (sideHeading) sideHeading.innerHTML = '<i class="c-icon--meta ti ti-pencil" ></i> ピリオド情報編集';
 
             const systemOptions = state.customFormations.map(cf => `<option value="${cf.name}" ${period.system === cf.name ? 'selected' : ''}>${cf.name} (${cf.coords.length}人制)</option>`).join('');
 
@@ -1518,7 +1518,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                             <div class="c-period-editor__goal-row-header" >
                                 <span class="c-period-editor__ordinal" >#${rIdx + 1}</span>
                                 <select class="c-period-editor__field c-input form-control form-control-sm side-scorer-select" >${scorerOpts}</select>
-                                <button type="button" class="c-button btn c-button--danger btn-danger btn-xs btn-remove-side-goal"  title="この得点記録を削除"><i class="fa-solid fa-trash"></i></button>
+                                <button type="button" class="c-button btn c-button--danger btn-danger btn-xs btn-remove-side-goal"  title="この得点記録を削除"><i class="ti ti-trash"></i></button>
                             </div>
                             <div class="c-period-editor__goal-controls" >
                                 <select class="c-period-editor__field c-input form-control form-control-sm side-assist-select" >${assistOpts}</select>
@@ -1539,8 +1539,8 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     return `
                         <div class="side-sub-row c-data-list__item" data-index="${sIdx}">
                             <div class="c-data-list__header">
-                                <span class="c-inspector-panel__label"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> 交代 #${sIdx + 1}</span>
-                                <button type="button" class="c-button btn c-button--danger btn-danger btn-xs btn-remove-side-sub" title="この交代を削除" aria-label="交代 #${sIdx + 1} を削除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+                                <span class="c-inspector-panel__label"><i class="ti ti-refresh" aria-hidden="true"></i> 交代 #${sIdx + 1}</span>
+                                <button type="button" class="c-button btn c-button--danger btn-danger btn-xs btn-remove-side-sub" title="この交代を削除" aria-label="交代 #${sIdx + 1} を削除"><i class="ti ti-trash" aria-hidden="true"></i></button>
                             </div>
                             <div class="l-cluster l-cluster--compact">
                                 <label class="u-visually-hidden" for="side-sub-out-${sIdx}">交代 #${sIdx + 1} のOUT選手</label>
@@ -1631,15 +1631,15 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     <div class="c-score-stepper" >
                         <div class="c-score-stepper__group" >
                             <span class="c-score-stepper__label" >自</span>
-                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-us-minus" ><i class="fa-solid fa-minus"></i></button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-us-minus" ><i class="ti ti-minus"></i></button>
                             <span class="c-score-stepper__value" id="side-score-us-display" >${period.scoreUs || 0}</span>
-                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-us-plus" ><i class="fa-solid fa-plus"></i></button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-us-plus" ><i class="ti ti-plus"></i></button>
                         </div>
                         <span class="c-inline-separator" >-</span>
                         <div class="c-score-stepper__group" >
-                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-them-minus" ><i class="fa-solid fa-minus"></i></button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-them-minus" ><i class="ti ti-minus"></i></button>
                             <span class="c-score-stepper__value" id="side-score-them-display" >${period.scoreThem || 0}</span>
-                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-them-plus" ><i class="fa-solid fa-plus"></i></button>
+                            <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-side-them-plus" ><i class="ti ti-plus"></i></button>
                             <span class="c-score-stepper__label" >相</span>
                         </div>
                     </div>
@@ -1647,7 +1647,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 <div class="c-inspector-panel__item">
                     <div class="c-period-editor__section-header" >
                         <span class="c-inspector-panel__label" >得点者・アシスト記録</span>
-                        <button type="button" class="c-button btn c-button--primary btn-primary btn-xs" id="btn-add-side-goal" ><i class="fa-solid fa-plus"></i> 追加</button>
+                        <button type="button" class="c-button btn c-button--primary btn-primary btn-xs" id="btn-add-side-goal" ><i class="ti ti-plus"></i> 追加</button>
                     </div>
                     <div class="c-period-editor__scroll-list" id="side-goal-records-container" >
                         ${goalRowsHtml || '<div class="c-empty-inline" >得点記録なし</div>'}
@@ -1659,8 +1659,8 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 </div>
                 <section class="c-inspector-panel__item" aria-labelledby="side-substitutions-title">
                     <div class="c-section-header c-section-header--compact">
-                        <span id="side-substitutions-title" class="c-inspector-panel__label"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> このピリオドの交代選手</span>
-                        <button type="button" class="c-button btn c-button--primary btn-primary btn-xs" id="btn-add-side-sub"><i class="fa-solid fa-plus" aria-hidden="true"></i> 交代を追加</button>
+                        <span id="side-substitutions-title" class="c-inspector-panel__label"><i class="ti ti-refresh" aria-hidden="true"></i> このピリオドの交代選手</span>
+                        <button type="button" class="c-button btn c-button--primary btn-primary btn-xs" id="btn-add-side-sub"><i class="ti ti-plus" aria-hidden="true"></i> 交代を追加</button>
                     </div>
                     <p class="c-form-field__hint">OUT選手とIN選手の組を、実施したピリオドごとに記録します。</p>
                     <div id="side-substitutions-container">
@@ -1688,7 +1688,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                 </div>
                 <div class="c-period-editor__save-wrap">
                     <button type="button" class="c-period-editor__save c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-side-save-period">
-                        <i class="fa-solid fa-save"></i> 変更を保存
+                        <i class="ti ti-device-floppy"></i> 変更を保存
                     </button>
                 </div>
             `;
@@ -1895,7 +1895,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
             }
         } else {
             // 保護者モード：閲覧専用プレビュー（コーチモードと同じすべての情報を網羅）
-            if (sideHeading) sideHeading.innerHTML = '<i class="c-icon--meta fa-solid fa-circle-info" ></i> ピリオド情報';
+            if (sideHeading) sideHeading.innerHTML = '<i class="c-icon--meta ti ti-info-circle" ></i> ピリオド情報';
 
             const videoUrl = (period.videoUrls && period.videoUrls[0]) || period.videoUrl || '';
 
@@ -1984,10 +1984,10 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                     <div class="c-period-editor__value--strong c-inspector-panel__value" >${escapeHtml(period.name || '未設定')}</div>
                 </div>
                 <div class="c-inspector-panel__item">
-                    <span class="c-inspector-panel__label"><i class="fa-brands fa-youtube c-static-style--018"></i> YouTube動画 URL</span>
+                    <span class="c-inspector-panel__label"><i class="ti ti-brand-youtube c-static-style--018"></i> YouTube動画 URL</span>
                     <div class="c-static-style--062">
                         <input type="url" id="side-form-video-parent" class="c-input form-control form-control-sm c-static-style--096" value="${escapeHtml(videoUrl)}" placeholder="https://youtu.be/...">
-                        <button type="button" class="c-button btn c-button--primary btn-primary btn-xs c-static-style--238" id="btn-save-video-parent"><i class="fa-solid fa-save"></i> 保存</button>
+                        <button type="button" class="c-button btn c-button--primary btn-primary btn-xs c-static-style--238" id="btn-save-video-parent"><i class="ti ti-device-floppy"></i> 保存</button>
                     </div>
                 </div>
                 <div class="c-inspector-panel__item">
@@ -2243,7 +2243,7 @@ function renderPkShootoutEditor() {
             <div class="c-pk-kicker-row c-data-list__item" data-idx="${idx}">
                 <div class="c-pk-kicker-row__header">
                     <span class="c-pk-kicker-row__label">${labelText}</span>
-                    ${isSuddenDeath ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-remove-pk-row" data-idx="${idx}" aria-label="${labelText}を削除"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> 削除</button>` : ''}
+                    ${isSuddenDeath ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-remove-pk-row" data-idx="${idx}" aria-label="${labelText}を削除"><i class="ti ti-trash" aria-hidden="true"></i> 削除</button>` : ''}
                 </div>
                 <div class="c-pk-kicker-row__controls">
                     <div class="c-form-field c-form-field--compact c-pk-kicker-row__select">
@@ -2546,7 +2546,7 @@ function renderPeriodTimelineList(period) {
     if (memos.length === 0) {
         container.innerHTML = `
             <div class="c-empty-state c-empty-state--compact">
-                <i class="fa-regular fa-clock c-empty-state__icon" aria-hidden="true"></i>
+                <i class="ti ti-clock c-empty-state__icon" aria-hidden="true"></i>
                 <p class="c-empty-state__text">タイムライン記録がありません。</p>
             </div>`;
         return;
@@ -2557,10 +2557,10 @@ function renderPeriodTimelineList(period) {
         const timestampSec = getTimelineTimestampSeconds(m);
         const disabledAttr = isCoach ? '' : 'disabled';
         const deleteBtnHtml = isCoach
-            ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-memo" title="削除" aria-label="タイムラインイベントを削除"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>`
+            ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-memo" title="削除" aria-label="タイムラインイベントを削除"><i class="ti ti-trash" aria-hidden="true"></i></button>`
             : '';
         const useCurrentTimeBtnHtml = isCoach
-            ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-use-current-timestamp" title="動画の現在位置を秒数へ反映"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i><span class="u-visually-hidden">現在位置を反映</span></button>`
+            ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-use-current-timestamp" title="動画の現在位置を秒数へ反映"><i class="ti ti-crosshair" aria-hidden="true"></i><span class="u-visually-hidden">現在位置を反映</span></button>`
             : '';
         const tagOptionHtml = (state.analysisTags || []).map(t => `<option value="${escapeHtml(t)}" ${currentTag === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('');
 
@@ -2568,7 +2568,7 @@ function renderPeriodTimelineList(period) {
             <div class="timeline-edit-row c-data-list__item" data-index="${idx}">
                 <div class="c-data-list__header period-timeline-edit__controls">
                     <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm period-timeline-edit__seek btn-seek-timestamp" data-seconds="${timestampSec}" aria-label="${formatSeconds(timestampSec)}から動画を再生">
-                        <i class="fa-solid fa-play" aria-hidden="true"></i> ${formatSeconds(timestampSec)}
+                        <i class="ti ti-player-play" aria-hidden="true"></i> ${formatSeconds(timestampSec)}
                     </button>
                     <div class="c-form-field c-form-field--compact period-timeline-edit__seconds">
                         <label class="u-visually-hidden" for="period-memo-seconds-${idx}">タイムライン秒数</label>
@@ -2794,20 +2794,20 @@ export function initMatches() {
 
     if (currentMatchNendo !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="nendo">${currentMatchNendo}年度 <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="nendo">${currentMatchNendo}年度 <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentMatchType !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="type">${escapeHtml(currentMatchType)} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="type">${escapeHtml(currentMatchType)} <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentMatchOpponent !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="opponent">vs ${escapeHtml(currentMatchOpponent)} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="opponent">vs ${escapeHtml(currentMatchOpponent)} <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentMatchResult !== 'all') {
         activeFilterCount++;
         const resultMap = { win: '勝利', loss: '敗北', draw: '引き分け', upcoming: '試合予定' };
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="result">${resultMap[currentMatchResult] || currentMatchResult} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="result">${resultMap[currentMatchResult] || currentMatchResult} <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
 
     if (activeTagsContainer) {
@@ -2860,7 +2860,7 @@ export function initMatches() {
     const btnSort = document.getElementById('btn-sort-match');
     if (btnSort) {
         const isDesc = matchSortOrder === 'desc';
-        btnSort.innerHTML = `<i class="fa-solid ${isDesc ? 'fa-arrow-down-wide-short' : 'fa-arrow-up-wide-short'}"></i>`;
+        btnSort.innerHTML = `<i class="${isDesc ? 'ti ti-sort-descending' : 'ti ti-sort-ascending'}"></i>`;
         btnSort.title = isDesc ? '新しい順 (クリックで古い順へ)' : '古い順 (クリックで新しい順へ)';
         btnSort.onclick = () => {
             uiState.matchSortOrder = matchSortOrder === 'desc' ? 'asc' : 'desc';
@@ -2961,7 +2961,7 @@ export function initMatches() {
                 <div class="c-opponent-summary c-card card" >
                     <div class="c-opponent-summary__header" >
                         <div class="c-opponent-summary__icon" >
-                            <i class="fa-solid fa-shield-halved"></i>
+                            <i class="ti ti-shield"></i>
                         </div>
                         <div>
                             <div class="c-opponent-summary__title" >対戦相手 通算成績</div>
@@ -3024,21 +3024,21 @@ export function initMatches() {
                     : '<span class="c-attendee-list__empty">メンバー登録がありません</span>';
 
                 const actionBtns = `
-                    <button class="c-button btn c-button--secondary btn-secondary btn-share-match" data-id="${m.id}" title="LINE共有用テキストをコピー"><i class="fa-solid fa-share-nodes c-static-style--022"></i> 共有</button>
-                    <button class="c-button btn c-button--secondary btn-secondary btn-detail-match" data-id="${m.id}"><i class="fa-solid fa-circle-info"></i> 詳細</button>
-                    ${isCoach ? `<button class="c-button btn c-button--danger btn-danger btn-delete-match" data-id="${m.id}"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    <button class="c-button btn c-button--secondary btn-secondary btn-share-match" data-id="${m.id}" title="LINE共有用テキストをコピー"><i class="ti ti-share-3 c-static-style--022"></i> 共有</button>
+                    <button class="c-button btn c-button--secondary btn-secondary btn-detail-match" data-id="${m.id}"><i class="ti ti-info-circle"></i> 詳細</button>
+                    ${isCoach ? `<button class="c-button btn c-button--danger btn-danger btn-delete-match" data-id="${m.id}"><i class="ti ti-trash"></i></button>` : ''}
                 `;
 
                 html += `
                     <div class="c-card card match-card">
                         <div class="match-card-header">
                             <div>
-                                <div class="match-card-date"><i class="fa-regular fa-calendar"></i> ${m.date} | ${m.type}${m.tournament ? ` (${m.tournament})` : ''}</div>
+                                <div class="match-card-date"><i class="ti ti-calendar"></i> ${m.date} | ${m.type}${m.tournament ? ` (${m.tournament})` : ''}</div>
                                 <div class="match-card-opponent">vs ${escapeHtml(m.opponent)}</div>
                                 <div class="c-attendee-disclosure" >
                                     <details class="c-attendee-disclosure practice-attendance-details" >
                                         <summary class="c-attendee-disclosure__summary" >
-                                            <i class="c-attendee-disclosure__icon fa-solid fa-chevron-down" ></i>
+                                            <i class="c-attendee-disclosure__icon ti ti-chevron-down" ></i>
                                             <span>参加者 (${m.presentPlayerIds ? `${m.presentPlayerIds.length}/${state.players.length}` : `0/${state.players.length}`})</span>
                                         </summary>
                                         <div class="c-attendee-list">
@@ -3065,7 +3065,7 @@ export function initMatches() {
             html += `
                 <div class="c-load-more" >
                     <button class="c-load-more__button c-button btn c-button--secondary btn-secondary" id="btn-load-more-matches" >
-                        <i class="fa-solid fa-angle-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredMatches.length} 件)
+                        <i class="ti ti-chevron-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredMatches.length} 件)
                     </button>
                 </div>
             `;
@@ -3074,10 +3074,10 @@ export function initMatches() {
         const emptyHtml = `
             <section class="c-empty-state" aria-live="polite">
                 <div class="c-empty-state__body">
-                    <i class="c-empty-state__icon fa-solid fa-trophy" aria-hidden="true"></i>
+                    <i class="c-empty-state__icon ti ti-trophy" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">該当する試合記録がありません</h3>
                     <p class="c-empty-state__text">検索条件を変更するか、最初の試合を追加してください。</p>
-                    ${isCoach ? '<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-match"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の試合を追加</button>' : ''}
+                    ${isCoach ? '<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-match"><i class="ti ti-plus" aria-hidden="true"></i> 最初の試合を追加</button>' : ''}
                 </div>
             </section>
         `;
@@ -3232,7 +3232,7 @@ function renderMyPlayerSummaryCard(match) {
         <div class="my-player-summary-card c-static-style--200">
             <div class="c-static-style--079">
                 <span class="c-static-style--127">
-                    <i class="fa-solid fa-star"></i> ${escapeHtml(myPlayer.name)} 選手の出場記録
+                    <i class="ti ti-star"></i> ${escapeHtml(myPlayer.name)} 選手の出場記録
                 </span>
                 <span class="c-static-style--133">マイ選手</span>
             </div>

@@ -80,6 +80,28 @@
 .c-icon--warning-tone { color: var(--color-warning); }
 .c-icon--danger { color: var(--color-danger); }
 
+/* Tabler Icons: locally bundled outline icon pack for generic operations.
+   Custom .c-icon SVG masks remain the first choice for team-specific concepts. */
+.ti {
+    color: currentColor;
+    font-size: 1em;
+    line-height: 1;
+    vertical-align: -0.125em;
+}
+
+button > .ti[aria-hidden="true"],
+.c-button > .ti[aria-hidden="true"],
+.c-status > .ti[aria-hidden="true"] {
+    display: inline-block;
+    flex: 0 0 auto;
+}
+
+.c-tabler-icon--brand { color: var(--color-brand); }
+.c-tabler-icon--positive { color: var(--color-success); }
+.c-tabler-icon--warning { color: var(--color-warning); }
+.c-tabler-icon--danger { color: var(--color-danger); }
+.c-tabler-icon--muted { color: var(--color-text-muted); }
+
 @media (forced-colors: active) {
     .c-icon {
         background-color: CanvasText;

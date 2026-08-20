@@ -28,7 +28,7 @@ export function showSyncConflictDialog({ localSummary, remoteSummary, cloudRevis
         dialog.innerHTML = `<section class="c-modal c-modal--sync-conflict" role="dialog" aria-modal="true" aria-labelledby="sync-conflict-title">
             <div class="c-modal__header">
                 <div class="c-modal__heading-group">
-                    <span class="c-modal__context-icon" aria-hidden="true"><i class="fa-solid fa-code-compare"></i></span>
+                    <span class="c-modal__context-icon" aria-hidden="true"><i class="ti ti-git-compare"></i></span>
                     <h2 class="c-modal__title" id="sync-conflict-title">同期の競合を確認</h2>
                 </div>
             </div>
@@ -38,13 +38,13 @@ export function showSyncConflictDialog({ localSummary, remoteSummary, cloudRevis
                     ${renderSummary('この端末', localSummary, true)}
                     ${renderSummary(`クラウド（世代 ${Number(cloudRevision || remoteSummary?.cloudRevision || 0)}）`, remoteSummary)}
                 </div>
-                <p class="c-modal__notice"><i class="fa-solid fa-shield-heart" aria-hidden="true"></i><span>クラウドを復元する場合も、この端末の直前状態は自動復旧ポイントへ保存されます。</span></p>
+                <p class="c-modal__notice"><i class="ti ti-shield-heart" aria-hidden="true"></i><span>クラウドを復元する場合も、この端末の直前状態は自動復旧ポイントへ保存されます。</span></p>
             </div>
             <div class="c-modal__footer">
                 <button type="button" class="c-button btn c-button--secondary btn-secondary" data-action="cancel">あとで確認</button>
-                <button type="button" class="c-button btn c-button--secondary btn-secondary" data-action="cloud"><i class="fa-solid fa-cloud-arrow-down"></i> クラウドを復元</button>
-                <button type="button" class="c-button btn c-button--secondary btn-secondary" data-action="merge"><i class="fa-solid fa-code-branch"></i> 安全に統合</button>
-                <button type="button" class="c-button btn c-button--primary btn-primary" data-action="keep-local"><i class="fa-solid fa-hard-drive"></i> 端末版を残す</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary" data-action="cloud"><i class="ti ti-cloud-download"></i> クラウドを復元</button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary" data-action="merge"><i class="ti ti-git-branch"></i> 安全に統合</button>
+                <button type="button" class="c-button btn c-button--primary btn-primary" data-action="keep-local"><i class="ti ti-server"></i> 端末版を残す</button>
             </div>
         </section>`;
 

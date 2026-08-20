@@ -616,7 +616,7 @@ a,
     opacity: 1;
 }
 
-.c-topbar .btn span:not(.fa-solid):not(.fa-regular):not(.fas),
+.c-topbar .btn span:not(.ti),
 .c-topbar .c-topbar__button-text,
 .c-topbar__button span,
 .c-topbar__badge span {
@@ -705,7 +705,7 @@ body.role-read-only #pd-tab-goals textarea {
 /* Responsive Base */
 @media (max-width: 1200px) {
 
-    .c-topbar .btn span:not(.fa-solid):not(.fa-regular):not(.fas),
+    .c-topbar .btn span:not(.ti),
     .c-topbar #role-toggle-btn span {
         display: none !important;
     }
@@ -1529,7 +1529,7 @@ body #app .dash-widget-grid #dash-form-bar .dash-form-opponent {
         padding: 0 !important;
     }
 
-    .c-topbar .btn span:not(.fa-solid):not(.fa-regular):not(.fas),
+    .c-topbar .btn span:not(.ti),
     .c-topbar .c-topbar__button-text,
     .c-topbar__button span,
     .c-topbar__badge span,

@@ -55,7 +55,7 @@ export function buildMatchdaySaveStatus({ isOnline = true, outboxCount = 0, sync
     if (!isOnline) {
         return {
             tone: 'offline',
-            icon: 'fa-mobile-screen-button',
+            icon: 'ti ti-device-mobile',
             label: 'オフライン：端末に安全保存',
             description: '再接続すると同期待機を自動で再試行します。'
         };
@@ -63,7 +63,7 @@ export function buildMatchdaySaveStatus({ isOnline = true, outboxCount = 0, sync
     if (syncStatus === 'conflict') {
         return {
             tone: 'attention',
-            icon: 'fa-triangle-exclamation',
+            icon: 'ti ti-alert-triangle',
             label: '同期の確認が必要です',
             description: '記録は端末に保存済みです。試合後に設定画面で確認してください。'
         };
@@ -71,7 +71,7 @@ export function buildMatchdaySaveStatus({ isOnline = true, outboxCount = 0, sync
     if (syncStatus === 'error' || outboxCount) {
         return {
             tone: 'attention',
-            icon: 'fa-cloud-arrow-up',
+            icon: 'ti ti-cloud-upload',
             label: `端末に保存済み・同期待機 ${outboxCount || 1}件`,
             description: 'クラウド受領の確認まで記録を保持します。'
         };
@@ -79,14 +79,14 @@ export function buildMatchdaySaveStatus({ isOnline = true, outboxCount = 0, sync
     if (syncStatus === 'success') {
         return {
             tone: 'success',
-            icon: 'fa-cloud-check',
+            icon: 'ti ti-cloud-check',
             label: '端末・クラウドに保存済み',
             description: '最新の記録を確認しました。'
         };
     }
     return {
         tone: 'local',
-        icon: 'fa-hard-drive',
+        icon: 'ti ti-server',
         label: '端末に保存済み',
         description: '通信状態にかかわらず、記録はこの端末に残ります。'
     };

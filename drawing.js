@@ -169,12 +169,12 @@ function updateFrameCount() {
                     <div class="c-frame-strip__header c-data-list__header">
                         <span class="c-frame-strip__index">S${idx + 1}</span>
                         <div class="c-frame-strip__meta c-action-group">
-                            ${pauseVal > 0 ? `<span class="c-status c-status--compact c-status--info" title="停止時間 ${pauseVal}秒"><i class="fa-solid fa-clock" aria-hidden="true"></i> ${pauseVal}s</span>` : ''}
-                            ${captionStr ? `<span class="c-status c-status--compact c-status--muted" title="${escapeHtml(captionStr)}"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i><span class="u-visually-hidden">キャプションあり</span></span>` : ''}
+                            ${pauseVal > 0 ? `<span class="c-status c-status--compact c-status--info" title="停止時間 ${pauseVal}秒"><i class="ti ti-clock" aria-hidden="true"></i> ${pauseVal}s</span>` : ''}
+                            ${captionStr ? `<span class="c-status c-status--compact c-status--muted" title="${escapeHtml(captionStr)}"><i class="ti ti-message-circle" aria-hidden="true"></i><span class="u-visually-hidden">キャプションあり</span></span>` : ''}
                         </div>
                     </div>
                     <div class="c-frame-strip__title c-data-list__body">${escapeHtml(titleStr)}</div>
-                    <div class="c-frame-strip__actions c-action-group"><button type="button" class="c-button btn c-button--danger btn-danger c-frame-strip__delete" data-idx="${idx}" title="削除" aria-label="${escapeHtml(titleStr)}を削除"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
+                    <div class="c-frame-strip__actions c-action-group"><button type="button" class="c-button btn c-button--danger btn-danger c-frame-strip__delete" data-idx="${idx}" title="削除" aria-label="${escapeHtml(titleStr)}を削除"><i class="ti ti-x" aria-hidden="true"></i></button></div>
                 </div>
             `;
         }).join('');
@@ -1562,10 +1562,10 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         const isCoach = state.currentUserRole === 'coach';
 
         if (targetMenu) {
-            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-clipboard-list c-static-style--022"></i> メニュー詳細';
-            if (lblSideFocus) lblSideFocus.innerHTML = '<i class="fa-solid fa-bullseye c-static-style--022"></i> テーマ・フォーカス';
-            if (lblSideOrg) lblSideOrg.innerHTML = '<i class="fa-solid fa-users c-static-style--015"></i> オーガナイズ';
-            if (lblSideKf) lblSideKf.innerHTML = '<i class="fa-solid fa-key c-static-style--017"></i> キーファクター';
+            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="ti ti-clipboard-list c-static-style--022"></i> メニュー詳細';
+            if (lblSideFocus) lblSideFocus.innerHTML = '<i class="ti ti-target c-static-style--022"></i> テーマ・フォーカス';
+            if (lblSideOrg) lblSideOrg.innerHTML = '<i class="ti ti-users c-static-style--015"></i> オーガナイズ';
+            if (lblSideKf) lblSideKf.innerHTML = '<i class="ti ti-key c-static-style--017"></i> キーファクター';
             if (cardSideOpt) cardSideOpt.style.display = 'block';
 
             if (sideFocus) sideFocus.textContent = targetMenu.focus || targetMenu.name || '未設定';
@@ -1587,10 +1587,10 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 }
             }
         } else if (targetTactic) {
-            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-chess-board c-static-style--022"></i> 戦術詳細';
-            if (lblSideFocus) lblSideFocus.innerHTML = '<i class="fa-solid fa-heading c-static-style--022"></i> 戦術名';
-            if (lblSideOrg) lblSideOrg.innerHTML = '<i class="fa-solid fa-tags c-static-style--015"></i> カテゴリ';
-            if (lblSideKf) lblSideKf.innerHTML = '<i class="fa-solid fa-align-left c-static-style--017"></i> 説明';
+            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="ti ti-chess c-static-style--022"></i> 戦術詳細';
+            if (lblSideFocus) lblSideFocus.innerHTML = '<i class="ti ti-text-size c-static-style--022"></i> 戦術名';
+            if (lblSideOrg) lblSideOrg.innerHTML = '<i class="ti ti-tags c-static-style--015"></i> カテゴリ';
+            if (lblSideKf) lblSideKf.innerHTML = '<i class="ti ti-align-left c-static-style--017"></i> 説明';
             if (cardSideOpt) cardSideOpt.style.display = 'none';
 
             if (sideFocus) sideFocus.textContent = targetTactic.title || '未設定';
@@ -1611,7 +1611,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 }
             }
         } else {
-            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="fa-solid fa-clipboard-list c-static-style--022"></i> メニュー詳細';
+            if (lblSideTitle) lblSideTitle.innerHTML = '<i class="ti ti-clipboard-list c-static-style--022"></i> メニュー詳細';
             if (cardSideOpt) cardSideOpt.style.display = 'block';
 
             if (sideFocus) sideFocus.textContent = '未設定';
@@ -2000,7 +2000,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             e.stopPropagation();
             const isCollapsed = timelineBar.classList.toggle('collapsed');
             if (filmstripWrapper) filmstripWrapper.classList.toggle('collapsed', isCollapsed);
-            timelineToggleBtn.innerHTML = isCollapsed ? '<i class="fa-solid fa-film"></i>' : '<i class="fa-solid fa-chevron-down"></i>';
+            timelineToggleBtn.innerHTML = isCollapsed ? '<i class="ti ti-movie"></i>' : '<i class="ti ti-chevron-down"></i>';
         };
     }
 

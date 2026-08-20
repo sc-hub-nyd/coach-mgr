@@ -6,10 +6,12 @@ export const RELEASE_NOTES = [
     {
         version: 'v1.30.83',
         date: '2026-08-20',
-        title: '作図・戦術UIのハードコードカラーをセマンティックトークンへ移行',
+        title: 'アイコン体系のTabler移行と作図・戦術テーマ適合性を強化',
         features: [
-            '作図画面（drawing.css）および戦術画面（tactical.css）の直接指定色（#ffffff, #f1f5f9等）をvar(--surface), var(--bg-color)等のデザイントークンへ安全に移行しダークモード適合性を強化',
-            '契約テスト（全32件）の完全適合を維持'
+            '汎用アイコンパックをFont AwesomeからTabler Icons 3.46.0へ移行し、サッカー文脈のボール・ピッチ・シューズ・走力・戦術ターゲットを含むTabler語彙へ統一',
+            'Tabler WebfontのCSS・WOFF2・MITライセンスをローカル同梱し、Service Workerのprecacheへ追加して初回オフライン起動でもアイコンを表示',
+            '作図画面（drawing.css）および戦術画面（tactical.css）の直接指定色をセマンティックトークンへ移行し、ダークモード適合性を強化',
+            'P42でFont Awesomeの再導入禁止、ローカルTabler資産、サッカー主要アイコン、全使用クラスの定義を自動検証'
         ]
     },
     {

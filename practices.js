@@ -13,7 +13,7 @@ export function renderPracticeRoster(event = {}) {
         container.innerHTML = `
             <section class="c-empty-state c-empty-state--compact" role="status">
                 <div class="c-empty-state__body">
-                    <i class="c-empty-state__icon fa-solid fa-users" aria-hidden="true"></i>
+                    <i class="c-empty-state__icon ti ti-users" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">登録されている選手がいません</h3>
                     <p class="c-empty-state__text">「選手一覧」から選手を登録してください。</p>
                 </div>
@@ -202,21 +202,21 @@ export function initPractices(miniPitchObserver) {
 
     if (currentPracticeNendo !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="nendo">${currentPracticeNendo}年度 <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="nendo">${currentPracticeNendo}年度 <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentPracticeMonth !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="month">${parseInt(currentPracticeMonth, 10)}月 <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="month">${parseInt(currentPracticeMonth, 10)}月 <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentPracticeCategory !== 'all') {
         activeFilterCount++;
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="category">${escapeHtml(currentPracticeCategory)} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="category">${escapeHtml(currentPracticeCategory)} <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
     if (currentPracticePlayer !== 'all') {
         activeFilterCount++;
         const targetPlayer = state.players.find(p => String(p.id) === currentPracticePlayer);
         const playerName = targetPlayer ? targetPlayer.name : currentPracticePlayer;
-        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="player">${escapeHtml(playerName)} <i class="fa-solid fa-xmark c-status__dismiss" aria-hidden="true"></i></button>`;
+        activeTagsHtml += `<button type="button" class="c-status c-status--interactive c-status--compact" data-clear-key="player">${escapeHtml(playerName)} <i class="ti ti-x c-status__dismiss" aria-hidden="true"></i></button>`;
     }
 
     if (activeTagsContainer) {
@@ -269,7 +269,7 @@ export function initPractices(miniPitchObserver) {
     const btnSort = document.getElementById('btn-sort-practice');
     if (btnSort) {
         const isDesc = practiceSortOrder === 'desc';
-        btnSort.innerHTML = `<i class="fa-solid ${isDesc ? 'fa-arrow-down-wide-short' : 'fa-arrow-up-wide-short'}"></i>`;
+        btnSort.innerHTML = `<i class="${isDesc ? 'ti ti-sort-descending' : 'ti ti-sort-ascending'}"></i>`;
         btnSort.title = isDesc ? '新しい順 (クリックで古い順へ)' : '古い順 (クリックで新しい順へ)';
         btnSort.onclick = () => {
             uiState.practiceSortOrder = practiceSortOrder === 'desc' ? 'asc' : 'desc';
@@ -350,7 +350,7 @@ export function initPractices(miniPitchObserver) {
 
             // ★1. 練習場所バッジの表示用HTMLを定義（ここを追加）
             const locationHtml = p.location
-                ? `<span class="c-status c-status--muted c-status--compact"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> ${escapeHtml(p.location)}</span>`
+                ? `<span class="c-status c-status--muted c-status--compact"><i class="ti ti-map-pin" aria-hidden="true"></i> ${escapeHtml(p.location)}</span>`
                 : '';
 
             const attendeesHtml = p.presentPlayerIds && p.presentPlayerIds.length > 0
@@ -374,19 +374,19 @@ export function initPractices(miniPitchObserver) {
                 <div class="c-practice-card__actions">
                     ${isCoach ? `
                     <button type="button" class="c-button btn c-button--primary btn-primary btn-xs btn-add-menu" data-id="${p.id}" title="メニュー追加">
-                        <i class="fa-solid fa-plus"></i> メニュー
+                        <i class="ti ti-plus"></i> メニュー
                     </button>
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-save-practice-template" data-id="${p.id}" title="この構成をテンプレートとして保存">
-                        <i class="fa-solid fa-bookmark"></i> テンプレ
+                        <i class="ti ti-bookmark"></i> テンプレ
                     </button>
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-edit-practice" data-id="${p.id}" title="練習情報を編集">
-                        <i class="fa-solid fa-pen"></i>
+                        <i class="ti ti-pencil"></i>
                     </button>
                     <button type="button" class="c-button btn c-button--danger btn-danger btn-xs btn-delete-practice" data-id="${p.id}" title="練習を削除">
-                        <i class="fa-solid fa-trash"></i>
+                        <i class="ti ti-trash"></i>
                     </button>` : ''}
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-share-practice" data-id="${p.id}" title="保護者共有用テキストをコピー">
-                        <i class="fa-solid fa-share-nodes"></i> 共有
+                        <i class="ti ti-share-3"></i> 共有
                     </button>
                 </div>
             `;
@@ -397,13 +397,13 @@ export function initPractices(miniPitchObserver) {
                     <div class="c-practice-card__header">
                         <div class="c-practice-card__identity">
                             <div class="c-practice-card__title">
-                                <i class="fa-regular fa-calendar"></i> ${p.date}${locationHtml}
+                                <i class="ti ti-calendar"></i> ${p.date}${locationHtml}
                             </div>
                             <div class="c-practice-card__meta">
-                                <span class="c-status c-status--success c-status--compact"><i class="fa-solid fa-user-check" aria-hidden="true"></i> 参加 ${attendanceSummary.attending}名</span>
-                                <span class="c-status c-status--warning c-status--compact"><i class="fa-solid fa-user-clock" aria-hidden="true"></i> 未回答 ${attendanceSummary.pending}名</span>
-                                <span class="c-status c-status--danger c-status--compact"><i class="fa-solid fa-user-xmark" aria-hidden="true"></i> 欠席 ${attendanceSummary.absent}名</span>
-                                <span class="c-status c-status--muted c-status--compact"><i class="fa-solid fa-list-check" aria-hidden="true"></i> ${menuCount}メニュー</span>
+                                <span class="c-status c-status--success c-status--compact"><i class="ti ti-user-check" aria-hidden="true"></i> 参加 ${attendanceSummary.attending}名</span>
+                                <span class="c-status c-status--warning c-status--compact"><i class="ti ti-user" aria-hidden="true"></i> 未回答 ${attendanceSummary.pending}名</span>
+                                <span class="c-status c-status--danger c-status--compact"><i class="ti ti-user-x" aria-hidden="true"></i> 欠席 ${attendanceSummary.absent}名</span>
+                                <span class="c-status c-status--muted c-status--compact"><i class="ti ti-list-check" aria-hidden="true"></i> ${menuCount}メニュー</span>
                             </div>
                         </div>
                         ${actionBtns}
@@ -412,14 +412,14 @@ export function initPractices(miniPitchObserver) {
                     <!-- ★ 参加者と練習メニューをまとめて開閉するアコーディオン -->
                     <details class="c-practice-card__details">
                         <summary class="c-practice-card__summary">
-                            <i class="fa-solid fa-chevron-down summary-icon"></i>
+                            <i class="ti ti-chevron-down summary-icon"></i>
                             <span>詳細を表示 (参加者・メニュー)</span>
                         </summary>
 
                         <div class="c-practice-card__expanded">
                             <!-- 1. 参加選手領域 -->
                             <div class="practice-detail-section">
-                                <div class="practice-section-label"><i class="fa-solid fa-users"></i> 招集・出欠（参加 ${attendanceSummary.attending} / 欠席 ${attendanceSummary.absent} / 未回答 ${attendanceSummary.pending}）</div>
+                                <div class="practice-section-label"><i class="ti ti-users"></i> 招集・出欠（参加 ${attendanceSummary.attending} / 欠席 ${attendanceSummary.absent} / 未回答 ${attendanceSummary.pending}）</div>
                                 <div class="c-practice-card__attendance c-attendee-list">
                                     ${attendeesHtml}
                                 </div>
@@ -428,7 +428,7 @@ export function initPractices(miniPitchObserver) {
 
                             <!-- 2. 練習メニュー領域 -->
                             <div class="practice-detail-section">
-                                <div class="practice-section-label"><i class="fa-solid fa-layer-group"></i> 練習メニュー (${menuCount}件)</div>
+                                <div class="practice-section-label"><i class="ti ti-stack"></i> 練習メニュー (${menuCount}件)</div>
                                 <ul class="c-practice-card__menu-list c-content-disclosure-list">
                                         ${safeMenus.length > 0 ? safeMenus.map(menu => `
                                         <li class="c-content-disclosure-list__item">
@@ -436,16 +436,16 @@ export function initPractices(miniPitchObserver) {
                                                 <summary class="c-content-disclosure__summary c-content-disclosure__summary--menu">
                                                     <div class="c-content-disclosure__title">
                                                         <span class="c-content-disclosure__heading">
-                                                            <i class="c-content-disclosure__chevron fa-solid fa-chevron-down"></i>
+                                                            <i class="c-content-disclosure__chevron ti ti-chevron-down"></i>
                                                             ${escapeHtml(menu.focus)}
                                                         </span>
                                                         ${menu.engagement ? `<span class="c-content-disclosure__rating">${'★'.repeat(menu.engagement)}${'☆'.repeat(5 - menu.engagement)}</span>` : ''}
                                                     </div>
                                                     ${isCoach ? `
                                                     <div class="c-content-disclosure__actions" onclick="event.stopPropagation();">
-                                                        <button class="c-button btn c-button--secondary btn-secondary btn-edit-menu" data-pid="${p.id}" data-mid="${menu.id}" title="編集"><i class="fa-solid fa-pen"></i></button>
-                                                        <button class="c-button btn c-button--secondary btn-secondary btn-anim-practice" data-pid="${p.id}" data-mid="${menu.id}" title="作図"><i class="fa-solid fa-person-running"></i></button>
-                                                        <button class="c-button btn c-button--danger btn-danger btn-delete-menu" data-pid="${p.id}" data-mid="${menu.id}"><i class="fa-solid fa-times"></i></button>
+                                                        <button class="c-button btn c-button--secondary btn-secondary btn-edit-menu" data-pid="${p.id}" data-mid="${menu.id}" title="編集"><i class="ti ti-pencil"></i></button>
+                                                        <button class="c-button btn c-button--secondary btn-secondary btn-anim-practice" data-pid="${p.id}" data-mid="${menu.id}" title="作図"><i class="ti ti-run"></i></button>
+                                                        <button class="c-button btn c-button--danger btn-danger btn-delete-menu" data-pid="${p.id}" data-mid="${menu.id}"><i class="ti ti-x"></i></button>
                                                     </div>
                                                     ` : ''}
                                                 </summary>
@@ -459,11 +459,11 @@ export function initPractices(miniPitchObserver) {
                                                             </div>
                                                         ` : ''}
                                                     </div>
-                                                    ${menu.organize ? `<div><strong><i class="fa-solid fa-users"></i> オーガナイズ</strong><div class="c-content-disclosure__text">${escapeHtml(menu.organize)}</div></div>` : ''}
-                                                    ${menu.keyfactor ? `<div><strong><i class="fa-solid fa-key"></i> キーファクター</strong><div class="c-content-disclosure__text">${escapeHtml(menu.keyfactor)}</div></div>` : ''}
-                                                    ${menu.videoUrl ? `<div><strong><i class="c-icon--brand fa-brands fa-youtube"></i> 参考動画</strong><div class="c-content-disclosure__text"><a class="c-content-disclosure__link" href="${escapeHtml(menu.videoUrl)}" target="_blank" rel="noopener noreferrer"><i class="c-icon--meta fa-solid fa-arrow-up-right-from-square"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
-                                                    ${menu.options ? `<div><strong><i class="fa-solid fa-sliders"></i> オプション</strong><div class="c-content-disclosure__text">${escapeHtml(menu.options)}</div></div>` : ''}
-                                                    ${menu.reflection ? `<div><strong class="c-content-disclosure__label"><i class="fa-solid fa-clipboard-user"></i> 指導者の振り返り・メモ</strong><div class="c-content-disclosure__note">${escapeHtml(menu.reflection)}</div></div>` : ''}
+                                                    ${menu.organize ? `<div><strong><i class="ti ti-users"></i> オーガナイズ</strong><div class="c-content-disclosure__text">${escapeHtml(menu.organize)}</div></div>` : ''}
+                                                    ${menu.keyfactor ? `<div><strong><i class="ti ti-key"></i> キーファクター</strong><div class="c-content-disclosure__text">${escapeHtml(menu.keyfactor)}</div></div>` : ''}
+                                                    ${menu.videoUrl ? `<div><strong><i class="c-icon--brand ti ti-brand-youtube"></i> 参考動画</strong><div class="c-content-disclosure__text"><a class="c-content-disclosure__link" href="${escapeHtml(menu.videoUrl)}" target="_blank" rel="noopener noreferrer"><i class="c-icon--meta ti ti-external-link"></i> 参考動画を見る (YouTube)</a></div></div>` : ''}
+                                                    ${menu.options ? `<div><strong><i class="ti ti-adjustments"></i> オプション</strong><div class="c-content-disclosure__text">${escapeHtml(menu.options)}</div></div>` : ''}
+                                                    ${menu.reflection ? `<div><strong class="c-content-disclosure__label"><i class="ti ti-clipboard"></i> 指導者の振り返り・メモ</strong><div class="c-content-disclosure__note">${escapeHtml(menu.reflection)}</div></div>` : ''}
                                                 </div>
                                                 ` : '<div class="c-content-disclosure__empty">詳細説明はありません。</div>'}
                                             </details>
@@ -484,7 +484,7 @@ export function initPractices(miniPitchObserver) {
         html += `
             <div class="c-load-more" >
                 <button class="c-load-more__button c-button btn c-button--secondary btn-secondary" id="btn-load-more-practices" >
-                    <i class="fa-solid fa-angle-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredPractices.length} 件)
+                    <i class="ti ti-chevron-down"></i> さらに読み込む (残 ${remaining} 件 / 全 ${filteredPractices.length} 件)
                 </button>
             </div>
         `;
@@ -495,10 +495,10 @@ export function initPractices(miniPitchObserver) {
         html = `
             <section class="c-empty-state practice-empty-state" aria-live="polite">
                 <div class="c-empty-state__body">
-                    <i class="c-empty-state__icon fa-solid ${isSearchActive ? 'fa-magnifying-glass' : 'fa-calendar-check'}" aria-hidden="true"></i>
+                    <i class="c-empty-state__icon ${isSearchActive ? 'ti ti-search' : 'ti ti-calendar-check'}" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">${isSearchActive ? '該当する練習記録がありません' : 'まだ練習記録がありません'}</h3>
                     <p class="c-empty-state__text">${isSearchActive ? '検索キーワードまたは絞り込み条件（年度・月・カテゴリ・参加選手）を変更してお試しください。' : '日々の練習日を作成し、テーマに応じたトレーニングメニューのアサインや、戦術ボードでの作図を行いましょう。'}</p>
-                    ${!isSearchActive ? `<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-practice"><i class="fa-solid fa-plus" aria-hidden="true"></i> 最初の練習日を追加</button>` : ''}
+                    ${!isSearchActive ? `<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-practice"><i class="ti ti-plus" aria-hidden="true"></i> 最初の練習日を追加</button>` : ''}
                 </div>
             </section>
         `;
@@ -863,7 +863,7 @@ function startPreviewAnimation(frames, pitchTemplate) {
     previewIsPlaying = true;
 
     const playBtn = document.getElementById('btn-preview-play-toggle');
-    if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i> 一時停止';
+    if (playBtn) playBtn.innerHTML = '<i class="ti ti-player-pause"></i> 一時停止';
 
     function animate(timestamp) {
         if (!previewIsPlaying) return;
@@ -894,7 +894,7 @@ function startPreviewAnimation(frames, pitchTemplate) {
         if (previewFrames.length <= 1 || !rawNext) {
             drawPitchToCtx(currentFrame, canvas, ctx, previewPitchTemplate);
             previewIsPlaying = false;
-            if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-play"></i> 再生';
+            if (playBtn) playBtn.innerHTML = '<i class="ti ti-player-play"></i> 再生';
             return;
         }
 
@@ -943,7 +943,7 @@ function stopPreviewAnimation() {
         previewAnimationId = null;
     }
     const playBtn = document.getElementById('btn-preview-play-toggle');
-    if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-play"></i> 再生';
+    if (playBtn) playBtn.innerHTML = '<i class="ti ti-player-play"></i> 再生';
 }
 
 export function handleMenuSubmit(e) {
