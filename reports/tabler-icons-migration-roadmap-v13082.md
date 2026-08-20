@@ -1,6 +1,6 @@
 # Tabler Icons 移行ロードマップ
 
-**対象:** CoachMgr v1.30.82以降  
+**対象:** CoachMgr v1.30.82以降
 **目的:** Font Awesome依存をTabler Iconsへ置き換え、サッカー文脈を強めつつ、独自SVG・Canvas作図・PWA・アクセシビリティを維持する。
 
 ## 到達像
@@ -104,6 +104,6 @@ P4はTablerへの移行後に、CoachMgr固有の世界観を強化する継続�
 
 ## 参考文献
 
-[1] [Tabler Icons — Official icon browser](https://tabler.io/icons)  
-[2] [tabler/tabler-icons — GitHub repository](https://github.com/tabler/tabler-icons)  
+[1] [Tabler Icons — Official icon browser](https://tabler.io/icons)
+[2] [tabler/tabler-icons — GitHub repository](https://github.com/tabler/tabler-icons)
 [3] [Tabler Icons Webfont documentation](https://docs.tabler.io/icons/libraries/webfont)

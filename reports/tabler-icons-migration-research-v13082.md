@@ -1,6 +1,6 @@
 # Tabler Icons移行調査メモ
 
-**対象:** CoachMgr v1.30.82  
+**対象:** CoachMgr v1.30.82
 **調査日:** 2026-08-20
 
 ## 調査結論
@@ -52,8 +52,8 @@ CoachMgrはVanilla JSとPWAであり、既存のFont Awesomeも`<i>`要素とCSS
 
 ## 外部ソース
 
-[1] [Tabler Icons — Official icon browser](https://tabler.io/icons)  
-[2] [tabler/tabler-icons — GitHub repository](https://github.com/tabler/tabler-icons)  
+[1] [Tabler Icons — Official icon browser](https://tabler.io/icons)
+[2] [tabler/tabler-icons — GitHub repository](https://github.com/tabler/tabler-icons)
 [3] [Tabler Icons Webfont documentation](https://docs.tabler.io/icons/libraries/webfont)
 
 ## ローカル表示確認
