@@ -300,15 +300,18 @@ export function openQuickDrawer(index) {
     const curFrame = frames[index];
     const drawer = document.getElementById('anim-quick-drawer');
     const sceneNum = document.getElementById('drawer-scene-num');
+    const inputTitle = document.getElementById('drawer-title-text');
     const inputCaption = document.getElementById('drawer-caption-text');
     const selectPause = document.getElementById('drawer-pause-duration');
 
     if (!drawer) return;
     if (sceneNum) sceneNum.textContent = `シーン${index + 1}`;
 
+    const titleVal = (typeof curFrame === 'object' && curFrame !== null && curFrame.title) ? curFrame.title : '';
     const captionVal = (typeof curFrame === 'object' && curFrame !== null && curFrame.caption) ? curFrame.caption : '';
     const pauseVal = (typeof curFrame === 'object' && curFrame !== null && typeof curFrame.pauseDuration !== 'undefined') ? curFrame.pauseDuration : 2;
 
+    if (inputTitle) inputTitle.value = titleVal;
     if (inputCaption) inputCaption.value = captionVal;
     if (selectPause) selectPause.value = pauseVal;
 
@@ -321,6 +324,7 @@ export function closeQuickDrawer() {
 }
 
 function initQuickDrawerEvents() {
+    const inputTitle = document.getElementById('drawer-title-text');
     const inputCaption = document.getElementById('drawer-caption-text');
     const selectPause = document.getElementById('drawer-pause-duration');
     
@@ -331,6 +335,19 @@ function initQuickDrawerEvents() {
         if (calcPause > 5) calcPause = 5;
         curFrame.pauseDuration = calcPause;
         if (selectPause) selectPause.value = calcPause;
+    }
+
+    if (inputTitle) {
+        inputTitle.oninput = (e) => {
+            if (currentFrameIndex >= 0 && currentFrameIndex < frames.length) {
+                const curFrame = frames[currentFrameIndex];
+                if (typeof curFrame === 'object' && curFrame !== null) {
+                    curFrame.title = e.target.value.trim();
+                    isDirty = true;
+                    updateFrameCount();
+                }
+            }
+        };
     }
 
     if (inputCaption) {
@@ -421,48 +438,13 @@ function editFrameTitle() {
     if (currentFrameIndex < 0 || currentFrameIndex >= frames.length) {
         currentFrameIndex = Math.max(0, frames.length - 1);
     }
-    let f = frames[currentFrameIndex];
-    let currentTitle = (f && typeof f === 'object' && !Array.isArray(f) && f.title) ? f.title : '';
-    let currentCaption = (f && typeof f === 'object' && !Array.isArray(f) && f.caption) ? f.caption : '';
-    let currentPause = (f && typeof f === 'object' && !Array.isArray(f)) ? (Number(f.pauseDuration) || 0) : 0;
-
-    const modal = document.getElementById('modal-scene-title');
-    const input = document.getElementById('input-scene-title');
-    const captionInput = document.getElementById('input-scene-caption');
-    const pauseSelect = document.getElementById('input-scene-pause');
-    const form = document.getElementById('form-scene-title');
-    const heading = document.getElementById('scene-title-modal-heading');
-
-    if (modal && input && form) {
-        if (heading) heading.textContent = `シーン ${currentFrameIndex + 1} の見出し編集`;
-        input.value = currentTitle;
-        if (captionInput) captionInput.value = currentCaption;
-        if (pauseSelect) pauseSelect.value = String(currentPause);
-        modal.classList.remove('hidden');
+    openQuickDrawer(currentFrameIndex);
+    const inputTitle = document.getElementById('drawer-title-text');
+    if (inputTitle) {
         setTimeout(() => {
-            input.focus();
-            input.select();
+            inputTitle.focus();
+            inputTitle.select();
         }, 50);
-
-        // 既存のsubmitイベントが重複しないよう、一度クリアして再登録
-        form.onsubmit = (ev) => {
-            ev.preventDefault();
-            const trimmed = input.value.trim();
-            const captionVal = captionInput ? captionInput.value.trim() : '';
-            const pauseVal = pauseSelect ? (parseInt(pauseSelect.value, 10) || 0) : 0;
-            if (Array.isArray(f)) {
-                frames[currentFrameIndex] = { objects: f, title: trimmed, caption: captionVal, pauseDuration: pauseVal };
-            } else if (typeof f === 'object' && f !== null) {
-                f.title = trimmed;
-                f.caption = captionVal;
-                f.pauseDuration = pauseVal;
-            } else {
-                frames[currentFrameIndex] = { objects: [], title: trimmed, caption: captionVal, pauseDuration: pauseVal };
-            }
-            updateFrameCount();
-            showToast(`シーン ${currentFrameIndex + 1} の見出しを「${trimmed || '(なし)'}」に更新しました`);
-            modal.classList.add('hidden');
-        };
     }
 }
 

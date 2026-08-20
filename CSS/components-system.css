@@ -2316,18 +2316,22 @@
 /* Animation filmstrip: frame sequence and drag behavior remain domain-specific; card presentation uses shared list/action contracts. */
 .c-frame-strip__list.c-data-list {
     display: flex;
-    gap: var(--space-2);
+    align-items: center;
+    gap: var(--space-1);
     min-inline-size: 0;
     overflow-x: auto;
-    padding: var(--space-2);
+    padding: 2px var(--space-1);
     scroll-snap-type: x proximity;
 }
 
 .c-frame-strip__list .c-frame-strip__item.c-data-list__item {
-    flex: 0 0 min(12rem, 72vw);
-    gap: var(--space-2);
-    min-block-size: 6.5rem;
-    padding: var(--space-3);
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--space-1);
+    min-block-size: 1.55rem;
+    height: 28px;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-pill);
     scroll-snap-align: start;
     cursor: grab;
 }
