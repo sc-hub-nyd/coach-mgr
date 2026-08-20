@@ -1091,14 +1091,20 @@ screen and (max-width: 1024px) and (orientation: landscape) {
 
     .anim-main-workspace:has(.c-tool-dock) .c-popover--canvas {
         position: fixed;
-        top: auto;
-        bottom: 100px;
+        top: 45%;
         left: 50%;
-        transform: translateX(-50%);
+        bottom: auto;
         right: auto;
-        margin-top: 0;
-        z-index: 1000;
-        box-shadow: 0 -4px 16px var(--color-shadow-medium);
+        transform: translate(-50%, -50%);
+        width: min(320px, calc(100vw - 32px)) !important;
+        max-height: calc(100dvh - 160px);
+        overflow-y: auto;
+        margin: 0 !important;
+        z-index: 3500;
+        border-radius: var(--radius-lg);
+        box-shadow: 0 16px 40px var(--color-shadow-strong);
+        background: var(--surface);
+        border: 1px solid var(--surface-border);
     }
 
     /* Mobile: Toggle between Draw & Animation */

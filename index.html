@@ -1364,7 +1364,10 @@
                     <div class="dropdown-settings-wrapper tactics-only c-static-style--254">
                         <button class="c-tool-dock__button" id="anim-bulk-formation-btn" title="フォーメーション一括配置"><i class="ti ti-users-group"></i><span class="c-tool-dock__label">一括配置</span></button>
                         <div id="anim-bulk-formation-popover" class="c-popover c-popover--canvas hidden c-static-style--279">
-                            <div class="c-static-style--155"><i class="ti ti-users-group"></i> フォーメーション一括配置</div>
+                            <div class="c-static-style--155" style="display: flex; justify-content: space-between; align-items: center;">
+                                <span><i class="ti ti-users-group"></i> フォーメーション一括配置</span>
+                                <button type="button" class="btn-close-modal" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.25rem; line-height:1; padding:0 4px;" onclick="document.getElementById('anim-bulk-formation-popover').classList.add('hidden')" aria-label="閉じる">&times;</button>
+                            </div>
                             <div class="c-static-style--059">
                                 <div>
                                     <label class="c-static-style--119">配置対象</label>
@@ -1408,7 +1411,10 @@
                     <div class="dropdown-settings-wrapper tactics-only c-static-style--254">
                         <button class="c-tool-dock__button" id="anim-team-colors-btn" title="チームカラー一括変更"><i class="ti ti-palette"></i><span class="c-tool-dock__label">カラー</span></button>
                         <div id="anim-team-colors-popover" class="c-popover c-popover--canvas hidden c-static-style--278">
-                            <div class="c-static-style--155"><i class="ti ti-palette"></i> チームカラーの一括変更</div>
+                            <div class="c-static-style--155" style="display: flex; justify-content: space-between; align-items: center;">
+                                <span><i class="ti ti-palette"></i> チームカラーの一括変更</span>
+                                <button type="button" class="btn-close-modal" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.25rem; line-height:1; padding:0 4px;" onclick="document.getElementById('anim-team-colors-popover').classList.add('hidden')" aria-label="閉じる">&times;</button>
+                            </div>
                             <div class="c-static-style--059">
                                 <div class="c-static-style--073">
                                     <span class="c-static-style--117">自チーム:</span>

@@ -1934,6 +1934,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         isDirty = true;
         saveHistory();
         drawPitch(objects);
+        if (bulkFormationPopover) bulkFormationPopover.classList.add('hidden');
         showToast('フォーメーションを一括配置しました');
     }
 
