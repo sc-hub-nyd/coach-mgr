@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Tabler Soccer Icon Audit Preview</title>
+<link rel="stylesheet" href="../assets/vendor/tabler-icons/tabler-icons.css">
+<style>
+:root { color-scheme: light; font-family: system-ui, sans-serif; color: #172033; background: #f4f6f8; }
+main { max-width: 1120px; margin: 32px auto; padding: 0 24px 40px; }
+h1 { font-size: 24px; margin: 0 0 8px; } p { line-height: 1.6; }
+section { margin-top: 24px; padding: 20px; background: #fff; border: 1px solid #d7dde5; }
+h2 { font-size: 18px; margin: 0 0 16px; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.icon { min-height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 9px; padding: 10px; border: 1px solid #d7dde5; background: #fbfcfe; text-align: center; }
+.icon.current { border-color: #c71e34; background: #fff8f8; }
+.icon i { font-size: 36px; line-height: 1; color: #29354a; }
+.icon.current i { color: #b71c32; }
+.name { font-weight: 700; font-size: 13px; }.use { font-size: 12px; color: #516176; }
+.note { margin: 0; padding: 12px; border-left: 4px solid #c71e34; background: #fff8f8; }
+</style>
+</head>
+<body>
+<main>
+<h1>Tablerサッカー／作図アイコン比較</h1>
+<p>CoachMgr v1.30.83に同梱するTabler Icons 3.46.0を36pxで比較。赤枠は現在の作図ツールバーに採用されている表現です。</p>
+<section><h2>作図操作：現在と代替候補</h2><div class="grid">
+<div class="icon current"><i class="ti ti-arrow-right"></i><span class="name">ti-arrow-right</span><span class="use">現在：移動</span></div>
+<div class="icon"><i class="ti ti-arrow-narrow-right"></i><span class="name">ti-arrow-narrow-right</span><span class="use">候補：直線移動</span></div>
+<div class="icon"><i class="ti ti-route"></i><span class="name">ti-route</span><span class="use">候補：移動経路</span></div>
+<div class="icon"><i class="ti ti-route-alt-right"></i><span class="name">ti-route-alt-right</span><span class="use">候補：右方向の動線</span></div>
+<div class="icon"><i class="ti ti-target-arrow"></i><span class="name">ti-target-arrow</span><span class="use">候補：狙い・到達点</span></div>
+<div class="icon current"><i class="ti ti-dots"></i><span class="name">ti-dots</span><span class="use">現在：パス</span></div>
+<div class="icon"><i class="ti ti-arrow-right-dashed"></i><span class="name">ti-arrow-right-dashed</span><span class="use">候補：直線パス</span></div>
+<div class="icon"><i class="ti ti-arrow-curve-right"></i><span class="name">ti-arrow-curve-right</span><span class="use">候補：曲線パス</span></div>
+<div class="icon"><i class="ti ti-corner-up-right"></i><span class="name">ti-corner-up-right</span><span class="use">候補：方向付きのパス</span></div>
+<div class="icon current"><i class="ti ti-activity"></i><span class="name">ti-activity</span><span class="use">現在：ドリブル</span></div>
+<div class="icon"><i class="ti ti-arrow-zig-zag"></i><span class="name">ti-arrow-zig-zag</span><span class="use">候補：ジグザグ動線</span></div>
+<div class="icon"><i class="ti ti-scribble"></i><span class="name">ti-scribble</span><span class="use">候補：曲線動線</span></div>
+<div class="icon"><i class="ti ti-run"></i><span class="name">ti-run</span><span class="use">候補：走行／ドリブル</span></div>
+<div class="icon"><i class="ti ti-run-sprint"></i><span class="name">ti-run-sprint</span><span class="use">候補：加速／スプリント</span></div>
+<div class="icon current"><i class="ti ti-circle"></i><span class="name">ti-circle</span><span class="use">現在：マーカー</span></div>
+<div class="icon current"><i class="ti ti-caret-up"></i><span class="name">ti-caret-up</span><span class="use">現在：コーン</span></div>
+<div class="icon"><i class="ti ti-cone"></i><span class="name">ti-cone</span><span class="use">候補：コーン</span></div>
+<div class="icon current"><i class="ti ti-menu-2"></i><span class="name">ti-menu-2</span><span class="use">現在：ラダー</span></div>
+<div class="icon"><i class="ti ti-ladder"></i><span class="name">ti-ladder</span><span class="use">候補：ラダー</span></div>
+<div class="icon current"><i class="ti ti-square"></i><span class="name">ti-square</span><span class="use">現在：四角エリア</span></div>
+</div></section>
+<section><h2>サッカー固有・試合運営</h2><div class="grid">
+<div class="icon"><i class="ti ti-ball-football"></i><span class="name">ti-ball-football</span><span class="use">得点／ボール</span></div>
+<div class="icon"><i class="ti ti-soccer-field"></i><span class="name">ti-soccer-field</span><span class="use">戦術盤／ピッチ</span></div>
+<div class="icon"><i class="ti ti-shirt-sport"></i><span class="name">ti-shirt-sport</span><span class="use">ユニフォーム／選手配置</span></div>
+<div class="icon"><i class="ti ti-shoe"></i><span class="name">ti-shoe</span><span class="use">アシスト</span></div>
+<div class="icon"><span class="name">専用アイコンなし</span><span class="use">笛／審判カードは3.46.0に未提供</span></div>
+<div class="icon"><i class="ti ti-flag"></i><span class="name">ti-flag</span><span class="use">コーナー／目標・節目</span></div>
+<div class="icon"><i class="ti ti-trophy"></i><span class="name">ti-trophy</span><span class="use">試合結果／大会</span></div>
+<div class="icon"><i class="ti ti-target"></i><span class="name">ti-target</span><span class="use">テーマ／目標</span></div>
+</div></section>
+<p class="note">注記：本プレビューは候補の形状比較用です。未利用アイコンを追加するべきかは、操作上の意味・Canvas上の描画表現・アクセシビリティラベルを併せて判断します。</p>
+</main>
+</body>
+</html>
