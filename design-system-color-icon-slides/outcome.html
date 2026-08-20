@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>作図の意味を一貫して伝える</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; display: grid; grid-template-columns: 44% 56%; background: #ffffff; color: #15251e; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .left { min-height: 720px; background: #0b3d32; color: #ffffff; padding: 58px 52px 0; display: flex; flex-direction: column; }
+    .eyebrow { color: #a9d8bb; font-size: 14px; font-weight: 800; letter-spacing: .16em; }
+    h1 { margin-top: 34px; font-size: 53px; line-height: 1.12; letter-spacing: -.055em; font-weight: 800; }
+    .lead { margin-top: 21px; color: #d7ebde; max-width: 404px; font-size: 20px; line-height: 1.55; }
+    .lead strong { color: #ffffff; }
+    .motif { margin-top: auto; margin-bottom: 58px; display: flex; align-items: center; gap: 20px; color: #a9d8bb; }
+    .motif i { font-size: 40px; }
+    .motif span { font-size: 14px; font-weight: 800; letter-spacing: .08em; }
+    .right { min-height: 720px; padding: 58px 60px 0; }
+    .section { color: #0f766e; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    .headline { margin-top: 12px; color: #0b3d32; font-size: 35px; line-height: 1.22; font-weight: 800; letter-spacing: -.04em; }
+    .headline strong { color: #007c74; }
+    .done { margin-top: 28px; border-top: 2px solid #0b3d32; }
+    .row { min-height: 52px; display: grid; grid-template-columns: 58px 38px 1fr; align-items: center; gap: 10px; border-bottom: 1px solid #c8d8cf; }
+    .row .id { color: #0f766e; font: 800 13px/1 'Courier New', monospace; }
+    .row i { color: #0f766e; font-size: 21px; }
+    .row span { color: #315144; font-size: 16px; font-weight: 700; }
+    .next { margin-top: 28px; border-top: 2px solid #0f766e; padding-top: 13px; }
+    .next-title { color: #0b3d32; font-size: 16px; font-weight: 800; }
+    .next-grid { margin-top: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .next-item { min-height: 94px; border-top: 1px solid #b8d2c3; padding-top: 10px; }
+    .next-item i { color: #0b3d32; font-size: 27px; }
+    .next-item strong { display: block; margin-top: 8px; color: #315144; font-size: 14px; line-height: 1.2; }
+    .next-item span { display: block; margin-top: 4px; color: #60786d; font-size: 11px; line-height: 1.32; }
+    .footer { margin-top: 21px; color: #5b7167; font-size: 13px; line-height: 1.45; }
+    .footer strong { color: #0b3d32; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <section class="left">
+      <div class="eyebrow">OUTCOME / D1–D5 COMPLETE</div>
+      <h1>作図の意味を<br>一貫して<br>伝える。</h1>
+      <p class="lead">形、可視ラベル、選択状態、支援技術、Canvasの表現を<strong>一つの操作意図</strong>へそろえた。</p>
+      <div class="motif"><i class="ti ti-soccer-field" aria-hidden="true"></i><i class="ti ti-arrow-right-dashed" aria-hidden="true"></i><i class="ti ti-arrow-zig-zag" aria-hidden="true"></i><span>MEANING BEFORE DECORATION</span></div>
+    </section>
+    <section class="right">
+      <div class="section">IMPLEMENTED</div>
+      <div class="headline">迷いを減らすのは、<br><strong>アイコン交換だけではない。</strong></div>
+      <div class="done" aria-label="D1からD5の完了項目">
+        <div class="row"><div class="id">D1</div><i class="ti ti-check" aria-hidden="true"></i><span>移動・パス・ドリブル・コーン・ラダーを意味の近い形へ交換</span></div>
+        <div class="row"><div class="id">D2</div><i class="ti ti-check" aria-hidden="true"></i><span>未選択時にも日本語ラベルを常時表示し、タップ前に読めるよう改善</span></div>
+        <div class="row"><div class="id">D3</div><i class="ti ti-check" aria-hidden="true"></i><span>背景・ラベル・aria-pressed・フォーカスで選択状態を同期</span></div>
+        <div class="row"><div class="id">D4</div><i class="ti ti-check" aria-hidden="true"></i><span>独自SVG／Tabler／Canvasの役割台帳と変更レビュー規約を整備</span></div>
+        <div class="row"><div class="id">D5</div><i class="ti ti-check" aria-hidden="true"></i><span>P40・P42・P43で作図、アイコン定義、識別性の回帰を検証</span></div>
+      </div>
+      <div class="next">
+        <div class="next-title">NEXT — 意味が一致するときだけ拡張する</div>
+        <div class="next-grid">
+          <div class="next-item"><i class="ti ti-soccer-field" aria-hidden="true"></i><strong>ピッチ</strong><span>戦術テンプレート</span></div>
+          <div class="next-item"><i class="ti ti-run-sprint" aria-hidden="true"></i><strong>スプリント</strong><span>走力分析</span></div>
+          <div class="next-item"><i class="ti ti-target-arrow" aria-hidden="true"></i><strong>到達点</strong><span>狙い・優先度</span></div>
+          <div class="next-item"><i class="ti ti-flag" aria-hidden="true"></i><strong>固有SVG</strong><span>笛・審判カードなど</span></div>
+        </div>
+      </div>
+      <p class="footer"><strong>運用原則：</strong> Tablerに意味の一致する形がない競技固有概念は、曖昧な汎用記号で代用せず、カスタムSVGとして設計・台帳化する。</p>
+    </section>
+  </div>
+</body>
+</html>

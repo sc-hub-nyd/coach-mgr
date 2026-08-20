@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>サッカー語彙を作図へ展開</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #f8fbf9; color: #15251e; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding: 48px 64px 0; }
+    .eyebrow { color: #0f766e; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin-top: 10px; color: #0b3d32; font-size: 45px; line-height: 1.12; letter-spacing: -.04em; font-weight: 800; }
+    .lead { margin-top: 12px; color: #50685d; font-size: 19px; line-height: 1.5; }
+    .lead strong { color: #007c74; }
+    .bands { margin-top: 28px; display: grid; grid-template-rows: 1fr 1fr; gap: 16px; }
+    .band { min-height: 210px; display: grid; grid-template-columns: 232px 1fr; border-top: 2px solid #0b3d32; border-bottom: 1px solid #c8d8cf; }
+    .band-label { background: #0b3d32; color: #ffffff; padding: 26px 24px 0; }
+    .band-label .mini { color: #a9d8bb; font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+    .band-label h2 { margin-top: 10px; font-size: 26px; line-height: 1.18; }
+    .band-label p { margin-top: 12px; color: #d5ebdc; font-size: 14px; line-height: 1.46; }
+    .icons { display: grid; grid-template-columns: repeat(5, 1fr); align-items: stretch; background: #ffffff; }
+    .item { border-right: 1px solid #d8e3dc; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 16px 8px 0; }
+    .item:last-child { border-right: none; }
+    .item i { color: #0f766e; font-size: 38px; }
+    .name { margin-top: 12px; color: #173e31; font-size: 15px; font-weight: 800; }
+    .meta { margin-top: 5px; color: #60786d; font-size: 12px; line-height: 1.32; }
+    .count { margin-top: 5px; color: #0f766e; font: 800 13px/1.1 'Courier New', monospace; }
+    .foot { margin-top: 18px; display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: center; }
+    .statement { color: #264a3b; font-size: 17px; line-height: 1.5; }
+    .statement strong { color: #0b3d32; }
+    .local { border-top: 2px solid #0f766e; padding-top: 10px; color: #50685d; font-size: 13px; line-height: 1.42; }
+    .local i { color: #0f766e; margin-right: 6px; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">02 / SOCCER VOCABULARY</div>
+      <h1>サッカー語彙を、作図へ展開する</h1>
+      <p class="lead">基本業務で定着したTablerを、<strong>ピッチ・配置・動線・器具</strong>まで広げる。</p>
+      <div class="bands">
+        <section class="band">
+          <div class="band-label"><div class="mini">ALREADY ACTIVE</div><h2>基本業務で<br>意味が定着</h2><p>得点、アシスト、目標、結果、作図への入口に、意味の直接的な語彙を使う。</p></div>
+          <div class="icons">
+            <div class="item"><i class="ti ti-ball-football" aria-hidden="true"></i><div class="name">得点・ボール</div><div class="count">20 places</div></div>
+            <div class="item"><i class="ti ti-target" aria-hidden="true"></i><div class="name">強化テーマ</div><div class="count">16 places</div></div>
+            <div class="item"><i class="ti ti-trophy" aria-hidden="true"></i><div class="name">試合結果</div><div class="count">11 places</div></div>
+            <div class="item"><i class="ti ti-run" aria-hidden="true"></i><div class="name">走行・活動</div><div class="count">10 places</div></div>
+            <div class="item"><i class="ti ti-shoe" aria-hidden="true"></i><div class="name">アシスト</div><div class="count">8 places</div></div>
+          </div>
+        </section>
+        <section class="band">
+          <div class="band-label"><div class="mini">D4 EXPANSION</div><h2>戦術・作図へ<br>意味を拡張</h2><p>今回、戦術入口と選手配置をサッカー固有の形へ。線種と器具も操作の意味へ合わせる。</p></div>
+          <div class="icons">
+            <div class="item"><i class="ti ti-soccer-field" aria-hidden="true"></i><div class="name">戦術・ピッチ</div><div class="meta">戦術一覧・作図入口</div></div>
+            <div class="item"><i class="ti ti-shirt-sport" aria-hidden="true"></i><div class="name">選手配置</div><div class="meta">作図ツール</div></div>
+            <div class="item"><i class="ti ti-route" aria-hidden="true"></i><div class="name">移動経路</div><div class="meta">実線・矢印</div></div>
+            <div class="item"><i class="ti ti-arrow-right-dashed" aria-hidden="true"></i><div class="name">パス</div><div class="meta">点線・矢印</div></div>
+            <div class="item"><i class="ti ti-arrow-zig-zag" aria-hidden="true"></i><div class="name">ドリブル</div><div class="meta">ジグザグ・矢印</div></div>
+          </div>
+        </section>
+      </div>
+      <div class="foot"><p class="statement"><strong>選び方：</strong> アイコン名の近さではなく、操作・画面・Canvas上の表現が同じ意味を伝えるかで決める。</p><p class="local"><i class="ti ti-wifi-off" aria-hidden="true"></i>Tabler 3.46.0のCSS・WOFF2をローカル配信。Service WorkerのprecacheによりPWAオフライン時も同じ語彙を維持。</p></div>
+    </div>
+  </div>
+</body>
+</html>

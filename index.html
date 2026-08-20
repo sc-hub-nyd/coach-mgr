@@ -1335,12 +1335,12 @@
             <div class="anim-main-workspace">
 
                 <!-- Region 2: Left Icon Dock (Width ~50px, Restored All Tools, Vertical Scroll) -->
-                <nav class="c-tool-dock" id="anim-tool-dock">
-                    <button class="c-tool-dock__button active" data-tool="select" data-tooltip="選択 (👆)"
-                        title="選択 (👆)"><i class="ti ti-hand-click"></i><span
+                <nav class="c-tool-dock" id="anim-tool-dock" aria-label="作図ツール">
+                    <button class="c-tool-dock__button active" data-tool="select" data-tooltip="選択"
+                        title="選択" aria-label="選択ツール" aria-pressed="true"><i class="ti ti-hand-click" aria-hidden="true"></i><span
                             class="c-tool-dock__label">選択</span></button>
-                    <button class="c-tool-dock__button" data-tool="player" data-tooltip="選手配置 (👤)" title="選手配置 (👤)"><i
-                            class="ti ti-user-plus"></i><span class="c-tool-dock__label">選手</span></button>
+                    <button class="c-tool-dock__button" data-tool="player" data-tooltip="選手配置" title="選手配置" aria-label="選手配置ツール" aria-pressed="false"><i
+                            class="ti ti-shirt-sport" aria-hidden="true"></i><span class="c-tool-dock__label">選手</span></button>
 
                     <!-- Tactics Tools (Placed right below Player tool) -->
                     <!-- Bulk Formation Placement Dropdown -->
@@ -1415,42 +1415,42 @@
                     <!-- Divider Line -->
                     <div class="c-tool-dock__divider tactics-only c-static-style--266"></div>
 
-                    <button class="c-tool-dock__button" data-tool="ball" data-tooltip="ボール (⚽)" title="ボール (⚽)"><i
-                            class="ti ti-ball-football"></i><span class="c-tool-dock__label">ボール</span></button>
+                    <button class="c-tool-dock__button" data-tool="ball" data-tooltip="ボール" title="ボール" aria-label="ボール配置ツール" aria-pressed="false"><i
+                            class="ti ti-ball-football" aria-hidden="true"></i><span class="c-tool-dock__label">ボール</span></button>
 
-                    <button class="c-tool-dock__button" data-tool="line-move" data-tooltip="選手移動: 直線 (↗️)"
-                        title="選手移動: 直線 (↗️)"><i class="ti ti-arrow-right"></i><span
+                    <button class="c-tool-dock__button" data-tool="line-move" data-tooltip="選手移動: 実線"
+                        title="選手移動: 実線" aria-label="選手移動ツール: 実線" aria-pressed="false"><i class="ti ti-route" aria-hidden="true"></i><span
                             class="c-tool-dock__label">移動</span></button>
-                    <button class="c-tool-dock__button" data-tool="line-pass" data-tooltip="パス: 点線 (➡️)"
-                        title="パス: 点線 (➡️)"><i class="ti ti-dots"></i><span
+                    <button class="c-tool-dock__button" data-tool="line-pass" data-tooltip="パス: 点線矢印"
+                        title="パス: 点線矢印" aria-label="パスツール: 点線矢印" aria-pressed="false"><i class="ti ti-arrow-right-dashed" aria-hidden="true"></i><span
                             class="c-tool-dock__label">パス</span></button>
-                    <button class="c-tool-dock__button" data-tool="line-dribble" data-tooltip="ドリブル: 曲線・ジグザグ (〰️)"
-                        title="ドリブル: 曲線・ジグザグ (〰️)"><i class="ti ti-activity"></i><span
+                    <button class="c-tool-dock__button" data-tool="line-dribble" data-tooltip="ドリブル: ジグザグ"
+                        title="ドリブル: ジグザグ" aria-label="ドリブルツール: ジグザグ" aria-pressed="false"><i class="ti ti-arrow-zig-zag" aria-hidden="true"></i><span
                             class="c-tool-dock__label">ドリブル</span></button>
 
-                    <button class="c-tool-dock__button" data-tool="marker" data-tooltip="マーカー (🟠)" title="マーカー (🟠)"><i
-                            class="ti ti-circle c-static-style--019"></i><span
+                    <button class="c-tool-dock__button" data-tool="marker" data-tooltip="マーカー" title="マーカー" aria-label="マーカー配置ツール" aria-pressed="false"><i
+                            class="ti ti-circle c-static-style--019" aria-hidden="true"></i><span
                             class="c-tool-dock__label">マーカー</span></button>
-                    <button class="c-tool-dock__button" data-tool="cone" data-tooltip="コーン (🔺)" title="コーン (🔺)"><i
-                            class="ti ti-caret-up c-static-style--020"></i><span
+                    <button class="c-tool-dock__button" data-tool="cone" data-tooltip="コーン" title="コーン" aria-label="コーン配置ツール" aria-pressed="false"><i
+                            class="ti ti-cone c-static-style--020" aria-hidden="true"></i><span
                             class="c-tool-dock__label">コーン</span></button>
-                    <button class="c-tool-dock__button" data-tool="ladder" data-tooltip="ラダー (🪜)" title="ラダー (🪜)"><i
-                            class="ti ti-menu-2 c-static-style--258"></i><span
+                    <button class="c-tool-dock__button" data-tool="ladder" data-tooltip="ラダー" title="ラダー" aria-label="ラダー配置ツール" aria-pressed="false"><i
+                            class="ti ti-ladder c-static-style--258" aria-hidden="true"></i><span
                             class="c-tool-dock__label">ラダー</span></button>
-                    <button class="c-tool-dock__button" data-tool="minigoal" data-tooltip="ミニゴール (🥅)"
-                        title="ミニゴール (🥅)"><span class="c-static-style--093"
+                    <button class="c-tool-dock__button" data-tool="minigoal" data-tooltip="ミニゴール"
+                        title="ミニゴール" aria-label="ミニゴール配置ツール" aria-pressed="false"><span class="c-static-style--093" aria-hidden="true"
                            ></span><span
                             class="c-tool-dock__label">ゴール</span></button>
 
-                    <button class="c-tool-dock__button" data-tool="line-rect" data-tooltip="四角エリア (🔲)"
-                        title="四角エリア (🔲)"><i class="ti ti-square"></i><span
+                    <button class="c-tool-dock__button" data-tool="line-rect" data-tooltip="四角エリア"
+                        title="四角エリア" aria-label="四角エリア作図ツール" aria-pressed="false"><i class="ti ti-square" aria-hidden="true"></i><span
                             class="c-tool-dock__label">四角</span></button>
-                    <button class="c-tool-dock__button" data-tool="line-circle" data-tooltip="円エリア (⭕)"
-                        title="円エリア (⭕)"><i class="ti ti-circle"></i><span class="c-tool-dock__label">円</span></button>
-                    <button class="c-tool-dock__button" data-tool="vision" data-tooltip="視野・扇形 (👁️)"
-                        title="視野・扇形 (👁️)"><i class="ti ti-eye"></i><span class="c-tool-dock__label">視野</span></button>
-                    <button class="c-tool-dock__button" data-tool="text" data-tooltip="文字 (🔤)" title="文字 (🔤)"><i
-                            class="ti ti-typography"></i><span class="c-tool-dock__label">文字</span></button>
+                    <button class="c-tool-dock__button" data-tool="line-circle" data-tooltip="円エリア"
+                        title="円エリア" aria-label="円エリア作図ツール" aria-pressed="false"><i class="ti ti-circle" aria-hidden="true"></i><span class="c-tool-dock__label">円</span></button>
+                    <button class="c-tool-dock__button" data-tool="vision" data-tooltip="視野・扇形"
+                        title="視野・扇形" aria-label="視野・扇形作図ツール" aria-pressed="false"><i class="ti ti-eye" aria-hidden="true"></i><span class="c-tool-dock__label">視野</span></button>
+                    <button class="c-tool-dock__button" data-tool="text" data-tooltip="文字" title="文字" aria-label="文字配置ツール" aria-pressed="false"><i
+                            class="ti ti-typography" aria-hidden="true"></i><span class="c-tool-dock__label">文字</span></button>
                 </nav>
 
                 <!-- 3. Pitch Canvas (100% True Full Bleed) -->

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ラベルと状態で迷わせない</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #15251e; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding: 48px 64px 0; }
+    .eyebrow { color: #0f766e; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin-top: 10px; color: #0b3d32; font-size: 46px; line-height: 1.12; letter-spacing: -.04em; font-weight: 800; }
+    .lead { margin-top: 12px; color: #50685d; font-size: 19px; line-height: 1.5; }
+    .lead strong { color: #007c74; }
+    .grid { margin-top: 28px; display: grid; grid-template-columns: 255px 480px 1fr; gap: 28px; align-items: stretch; }
+    .problem { border-top: 3px solid #b45555; padding-top: 16px; }
+    .problem .tag { color: #a74444; font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+    .problem h2 { margin-top: 10px; color: #5a2727; font-size: 24px; line-height: 1.22; }
+    .problem p { margin-top: 14px; color: #785a5a; font-size: 15px; line-height: 1.55; }
+    .old-tools { margin-top: 22px; border-top: 1px solid #dec8c8; }
+    .old-tool { min-height: 54px; display: grid; grid-template-columns: 42px 1fr; gap: 12px; align-items: center; border-bottom: 1px solid #dec8c8; color: #785a5a; }
+    .old-tool i { color: #a74444; font-size: 26px; text-align: center; }
+    .old-tool span { font-size: 13px; line-height: 1.35; }
+    .dock-panel { min-height: 462px; background: #edf5ef; border-top: 3px solid #0b3d32; padding: 18px 20px 0; }
+    .dock-title { color: #0b3d32; font-size: 17px; font-weight: 800; }
+    .dock-note { margin-top: 5px; color: #547064; font-size: 13px; line-height: 1.4; }
+    .tools { margin-top: 18px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .tool { min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 1px solid #b7cfc0; background: #ffffff; color: #214538; text-align: center; }
+    .tool.active { background: #0f766e; border-color: #0f766e; color: #ffffff; }
+    .tool.focus { outline: 3px solid #fde047; outline-offset: 2px; }
+    .tool i { font-size: 31px; }
+    .tool strong { font-size: 14px; line-height: 1.1; }
+    .tool small { font-size: 11px; line-height: 1.2; }
+    .state-row { margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .state { border-top: 2px solid #0f766e; padding-top: 10px; color: #355a4b; font-size: 13px; line-height: 1.45; }
+    .state strong { display: block; color: #0b3d32; font-size: 14px; }
+    .contracts { border-top: 3px solid #0f766e; padding-top: 16px; }
+    .contracts .tag { color: #0f766e; font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+    .contracts h2 { margin-top: 10px; color: #0b3d32; font-size: 25px; line-height: 1.2; }
+    .contract { min-height: 76px; display: grid; grid-template-columns: 44px 1fr; gap: 13px; align-items: center; border-top: 1px solid #c8d8cf; }
+    .contract:first-of-type { margin-top: 16px; }
+    .contract i { color: #0f766e; font-size: 25px; text-align: center; }
+    .contract strong { display: block; color: #214538; font-size: 15px; }
+    .contract p { margin-top: 4px; color: #5a7167; font-size: 13px; line-height: 1.38; }
+    .footer { margin-top: 18px; border-top: 2px solid #0b3d32; padding-top: 12px; color: #4d685c; font-size: 14px; line-height: 1.45; }
+    .footer strong { color: #0b3d32; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">04 / TOUCH & ACCESSIBILITY</div>
+      <h1>ラベルと状態で、迷わせない</h1>
+      <p class="lead">タッチ端末ではホバー説明を前提にしない。<strong>選択前から読める名前</strong>と、色に依存しない状態を用意する。</p>
+      <div class="grid">
+        <section class="problem">
+          <div class="tag">BEFORE</div>
+          <h2>形だけでは、<br>意味が曖昧</h2>
+          <p>未選択のラベルが隠れ、パスは三点リーダー、ラダーはメニュー記号に見えた。タップ前に違いを判断しにくい。</p>
+          <div class="old-tools">
+            <div class="old-tool"><i class="ti ti-dots" aria-hidden="true"></i><span>パス<br>方向を示さない</span></div>
+            <div class="old-tool"><i class="ti ti-activity" aria-hidden="true"></i><span>ドリブル<br>心電図にも見える</span></div>
+            <div class="old-tool"><i class="ti ti-menu-2" aria-hidden="true"></i><span>ラダー<br>メニューと混同</span></div>
+          </div>
+        </section>
+        <section class="dock-panel">
+          <div class="dock-title">作図ツールドック — 常時ラベル</div>
+          <p class="dock-note">デスクトップは68px、モバイルも64pxの幅を確保。選択前から操作名を読める。</p>
+          <div class="tools" aria-label="改善後の作図ツール例">
+            <div class="tool"><i class="ti ti-route" aria-hidden="true"></i><strong>移動</strong><small>実線・矢印</small></div>
+            <div class="tool active"><i class="ti ti-arrow-right-dashed" aria-hidden="true"></i><strong>パス</strong><small>選択中</small></div>
+            <div class="tool"><i class="ti ti-arrow-zig-zag" aria-hidden="true"></i><strong>ドリブル</strong><small>ジグザグ</small></div>
+            <div class="tool"><i class="ti ti-cone" aria-hidden="true"></i><strong>コーン</strong><small>器具配置</small></div>
+            <div class="tool focus"><i class="ti ti-ladder" aria-hidden="true"></i><strong>ラダー</strong><small>キーボード焦点</small></div>
+          </div>
+          <div class="state-row"><div class="state"><strong>選択状態</strong>背景色だけでなく、アイコンとラベルを残したまま「選択中」を示す。</div><div class="state"><strong>キーボード操作</strong>黄色の可視フォーカスで、現在の操作位置を明確にする。</div></div>
+        </section>
+        <section class="contracts">
+          <div class="tag">D2 + D3</div>
+          <h2>視覚と支援技術を<br>同じ状態へ同期</h2>
+          <div class="contract"><i class="ti ti-text-size" aria-hidden="true"></i><div><strong>可視ラベルを常時表示</strong><p>アイコン名ではなく、利用者が操作目的を理解できる日本語を使う。</p></div></div>
+          <div class="contract"><i class="ti ti-circle-check" aria-hidden="true"></i><div><strong>色・背景・文言を併用</strong><p>選択中は主色面とラベルで強調し、非色彩的な手掛かりを残す。</p></div></div>
+          <div class="contract"><i class="ti ti-accessible" aria-hidden="true"></i><div><strong>aria-pressedを同期</strong><p>クリックで変わる視覚状態と、支援技術が読む選択状態を一致させる。</p></div></div>
+          <div class="contract"><i class="ti ti-focus-2" aria-hidden="true"></i><div><strong>focus-visibleを維持</strong><p>キーボード利用者にも、次に実行される操作を明示する。</p></div></div>
+        </section>
+      </div>
+      <div class="footer"><strong>操作安全性の原則：</strong> アイコン、可視ラベル、aria-label、title、Canvas上の線種は、同じ操作の意味を伝える。いずれか一つが欠けても、タッチ端末では誤操作の余地が残る。</div>
+    </div>
+  </div>
+</body>
+</html>

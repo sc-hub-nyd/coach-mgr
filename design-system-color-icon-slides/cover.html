@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>CoachMgr カラー・アイコン体系</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; display: grid; grid-template-columns: 46% 54%; background: #ffffff; color: #15251e; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .hero { min-height: 720px; background: #0b3d32; color: #ffffff; padding: 60px 54px 0; display: flex; flex-direction: column; }
+    .eyebrow { color: #a9d8bb; font-size: 14px; font-weight: 800; letter-spacing: .16em; }
+    h1 { margin-top: 28px; font-size: 59px; line-height: 1.08; letter-spacing: -.055em; font-weight: 800; }
+    .subtitle { margin-top: 22px; max-width: 405px; color: #d6ebdd; font-size: 21px; line-height: 1.55; }
+    .version { margin-top: auto; margin-bottom: 54px; color: #a9d8bb; font-size: 16px; font-weight: 700; letter-spacing: .05em; }
+    .content { min-height: 720px; padding: 76px 64px 0; display: flex; flex-direction: column; }
+    .kicker { color: #0f766e; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    .statement { margin-top: 34px; color: #0b3d32; font-size: 39px; line-height: 1.22; font-weight: 800; letter-spacing: -.035em; }
+    .statement strong { color: #007c74; }
+    .rule { margin-top: 32px; height: 2px; background: #0b3d32; }
+    .steps { margin-top: 34px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .step { min-height: 118px; border-top: 3px solid #0f766e; padding-top: 12px; }
+    .step-no { color: #0f766e; font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+    .step strong { display: block; margin-top: 10px; color: #183d31; font-size: 19px; line-height: 1.12; }
+    .step span { display: block; margin-top: 7px; color: #597066; font-size: 12px; line-height: 1.35; }
+    .symbol-line { margin-top: auto; margin-bottom: 58px; display: flex; align-items: center; gap: 18px; color: #0f766e; font-size: 34px; }
+    .symbol-line span { color: #597066; font-size: 15px; font-weight: 700; letter-spacing: .04em; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <section class="hero">
+      <div class="eyebrow">COACHMGR / DESIGN SYSTEM UPDATE</div>
+      <h1>カラー・<br>アイコン体系</h1>
+      <p class="subtitle">作図ツールの意味を、形・言葉・状態で一貫して伝える。</p>
+      <div class="version">v1.30.84 / D1–D5</div>
+    </section>
+    <section class="content">
+      <div class="kicker">DRAWING CLARITY</div>
+      <div class="statement">アイコンを<br><strong>意味の近い形</strong>へ。<br>操作前から、迷わせない。</div>
+      <div class="rule"></div>
+      <div class="steps">
+        <div class="step"><div class="step-no">D1</div><strong>形を交換</strong><span>パス・ドリブル・器具</span></div>
+        <div class="step"><div class="step-no">D2</div><strong>ラベル常時表示</strong><span>タップ前に読める</span></div>
+        <div class="step"><div class="step-no">D3</div><strong>状態を同期</strong><span>色・文言・ARIA</span></div>
+        <div class="step"><div class="step-no">D4</div><strong>台帳で運用</strong><span>役割と禁止を明文化</span></div>
+        <div class="step"><div class="step-no">D5</div><strong>テストで固定</strong><span>P40 / P42 / P43</span></div>
+      </div>
+      <div class="symbol-line"><i class="ti ti-soccer-field" aria-hidden="true"></i><i class="ti ti-arrow-right-dashed" aria-hidden="true"></i><i class="ti ti-arrow-zig-zag" aria-hidden="true"></i><span>LOCAL TABLER ICONS × CANVAS TACTICS</span></div>
+    </section>
+  </div>
+</body>
+</html>

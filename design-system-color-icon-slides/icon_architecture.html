@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>4層で意味を使い分ける</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #15251e; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding: 50px 64px 0; }
+    .eyebrow { color: #0f766e; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin-top: 10px; color: #0b3d32; font-size: 46px; line-height: 1.13; letter-spacing: -.04em; font-weight: 800; }
+    .lead { margin-top: 13px; color: #50685d; font-size: 20px; line-height: 1.5; }
+    .lead strong { color: #007c74; }
+    .layout { margin-top: 30px; display: grid; grid-template-columns: 310px 1fr; gap: 44px; }
+    .principle { border-top: 3px solid #0b3d32; padding-top: 19px; }
+    .principle .big { color: #0b3d32; font-size: 38px; line-height: 1.1; font-weight: 800; letter-spacing: -.04em; }
+    .principle p { margin-top: 15px; color: #526a60; font-size: 16px; line-height: 1.62; }
+    .principle strong { color: #0f766e; }
+    .layers { border-top: 2px solid #0b3d32; }
+    .layer { min-height: 99px; display: grid; grid-template-columns: 78px 62px 238px 1fr; align-items: center; gap: 16px; border-bottom: 1px solid #c8d8cf; }
+    .no { color: #0f766e; font-size: 14px; font-weight: 800; letter-spacing: .1em; }
+    .layer i { color: #0b3d32; font-size: 33px; text-align: center; }
+    .layer-title { color: #173e31; font-size: 20px; font-weight: 800; }
+    .layer-code { margin-top: 4px; color: #0f766e; font: 700 13px/1.25 'Courier New', monospace; }
+    .layer-use { color: #50685d; font-size: 15px; line-height: 1.42; }
+    .foot { margin-top: 22px; min-height: 72px; background: #edf5ef; border-top: 2px solid #0f766e; display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: center; padding: 14px 16px 0; }
+    .foot i { color: #0f766e; font-size: 22px; }
+    .foot p { color: #315144; font-size: 15px; line-height: 1.45; }
+    .foot strong { color: #0b3d32; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">01 / ICON ARCHITECTURE</div>
+      <h1>4層で、意味を使い分ける</h1>
+      <p class="lead">アイコンパックは万能ではない。<strong>概念に最も近い表現層</strong>を選び、画面・作図・テーマの整合を保つ。</p>
+      <div class="layout">
+        <section class="principle">
+          <div class="big">意味は<br>一つずつ<br>担当させる。</div>
+          <p>同じ操作に複数の記号を競合させない。迷ったときは、台帳の第一候補・可視ラベル・Canvas表現を確認する。</p>
+        </section>
+        <section class="layers" aria-label="アイコン体系の4層">
+          <div class="layer"><div class="no">LAYER 1</div><i class="ti ti-brand-abstract" aria-hidden="true"></i><div><div class="layer-title">カスタムSVG</div><div class="layer-code">.c-icon</div></div><div class="layer-use">チーム固有、主要ナビ、ミニゴールなど、Tablerに意味の一致する形がない概念。</div></div>
+          <div class="layer"><div class="no">LAYER 2</div><i class="ti ti-ball-football" aria-hidden="true"></i><div><div class="layer-title">Tabler Icons</div><div class="layer-code">.ti .ti-*</div></div><div class="layer-use">得点、アシスト、ピッチ、経路、コーン、ラダーなどの汎用業務・サッカー補助語彙。</div></div>
+          <div class="layer"><div class="no">LAYER 3</div><i class="ti ti-star" aria-hidden="true"></i><div><div class="layer-title">絵文字</div><div class="layer-code">rank only</div></div><div class="layer-use">順位のような、非操作的で補助的な情報。主要操作を絵文字だけで表さない。</div></div>
+          <div class="layer"><div class="no">LAYER 4</div><i class="ti ti-route" aria-hidden="true"></i><div><div class="layer-title">Canvas描画</div><div class="layer-code">tactics board</div></div><div class="layer-use">選手の位置、パス、ドリブル、エリア。記号ではなく、戦術表現そのものを描く。</div></div>
+        </section>
+      </div>
+      <div class="foot"><i class="ti ti-check" aria-hidden="true"></i><p><strong>選定規則：</strong> カスタムSVGが固有概念を担い、Tablerが補助語彙を担う。アイコンはラベルを置き換えず、色だけで状態を伝えない。</p></div>
+    </div>
+  </div>
+</body>
+</html>

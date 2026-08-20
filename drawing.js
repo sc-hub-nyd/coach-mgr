@@ -115,11 +115,10 @@ function updateUndoRedoButtons() {
 function updateToolDockActive() {
     const dockBtns = document.querySelectorAll('.c-tool-dock .c-tool-dock__button, .canvas-toolbar .tool-btn');
     dockBtns.forEach(btn => {
-        if (btn.dataset.tool === currentTool) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
+        if (!btn.dataset.tool) return;
+        const isActive = btn.dataset.tool === currentTool;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
     });
 }
 

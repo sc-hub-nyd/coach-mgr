@@ -98,7 +98,7 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
         tacticsList.innerHTML = `
             <section class="c-empty-state" aria-live="polite">
                 <div class="c-empty-state__body">
-                    <i class="c-empty-state__icon ${isSearchActive ? 'ti ti-search' : 'ti ti-chess-knight'}" aria-hidden="true"></i>
+                    <i class="c-empty-state__icon ${isSearchActive ? 'ti ti-search' : 'ti ti-soccer-field'}" aria-hidden="true"></i>
                     <h3 class="c-empty-state__title">${isSearchActive ? '該当する戦術が見つかりません' : '戦術が登録されていません'}</h3>
                     <p class="c-empty-state__text">${isSearchActive ? '検索キーワードまたはカテゴリフィルタを変更してお試しください。' : 'チームの戦術方針（攻撃・守備・ビルドアップ等）の狙いやキーファクターを記録・作図し、いつでも振り返ることができます。'}</p>
                     ${!isSearchActive && isCoach ? `<button class="c-button btn c-button--primary btn-primary" id="btn-empty-add-tactic"><i class="ti ti-plus" aria-hidden="true"></i> 最初の戦術作成</button>` : ''}
@@ -122,11 +122,11 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
         const cardsHtml = tactics.map(t => {
             const actionBtns = isCoach ? `
                 <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic" data-id="${t.id}" title="編集"><i class="ti ti-pencil"></i></button>
-                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="${t.frames && t.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="ti ti-run"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="${t.frames && t.frames.length > 0 ? '作図を編集' : '作図する'}" aria-label="${t.frames && t.frames.length > 0 ? '戦術作図を編集' : '戦術作図を開始'}"><i class="ti ti-soccer-field" aria-hidden="true"></i></button>
                 <button type="button" class="c-button btn c-button--secondary btn-secondary btn-add-to-library" data-id="${t.id}" title="練習メニューライブラリに追加"><i class="ti ti-plus"></i></button>
                 <button type="button" class="c-button btn c-button--danger btn-danger btn-delete-tactic" data-id="${t.id}" title="削除"><i class="ti ti-trash"></i></button>
             ` : `
-                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="作図を見る"><i class="ti ti-run"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="作図を見る" aria-label="戦術作図を見る"><i class="ti ti-soccer-field" aria-hidden="true"></i></button>
             `;
 
             return `
@@ -147,7 +147,7 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
                     <div class="c-media-preview c-media-preview--interactive" onclick="navigate('animation', { tacticId: ${t.id} })">
                         <canvas class="c-media-preview__canvas" id="tactic-mini-pitch-${t.id}" width="800" height="500"></canvas>
                         <div class="c-media-preview__overlay">
-                            <i class="ti ti-run"></i> 作図画面を開く
+                            <i class="ti ti-soccer-field" aria-hidden="true"></i> 作図画面を開く
                         </div>
                         ${t.frames && t.frames.length > 1 ? `
                             <div class="c-media-preview__status">

@@ -1,0 +1,89 @@
+{
+  "project_info": {
+    "title": "CoachMgr カラー・アイコン体系",
+    "created": 1787188515.929,
+    "last_updated": 1787188673.38,
+    "total_slides": 7
+  },
+  "slides": [
+    {
+      "id": "cover",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "icon_architecture",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "soccer_vocabulary",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "drawing_before_after",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "touch_accessibility",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "governance",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "outcome",
+      "state": "edited",
+      "pageNum": 7
+    }
+  ],
+  "outline": [
+    {
+      "id": "cover",
+      "title": "CoachMgr カラー・アイコン体系",
+      "summary": "作図ツールの識別性を高めるD1〜D5アップデートを示す表紙。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "icon_architecture",
+      "title": "4層で意味を使い分ける",
+      "summary": "カスタムSVG、Tabler、絵文字、Canvasの役割分担と選定原則を整理する。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "soccer_vocabulary",
+      "title": "サッカー語彙を作図へ展開",
+      "summary": "Tablerのサッカー関連アイコンの利用状況と、今回追加したピッチ・シャツ・経路語彙を示す。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "drawing_before_after",
+      "title": "似た形を、意味の近い形へ",
+      "summary": "移動、パス、ドリブル、コーン、ラダーの曖昧な旧アイコンとD1の新アイコンを対比する。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "touch_accessibility",
+      "title": "ラベルと状態で迷わせない",
+      "summary": "常時表示ラベル、選択状態、aria-pressed、キーボードフォーカスを組み合わせるD2・D3を説明する。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "governance",
+      "title": "台帳とP43で戻さない",
+      "summary": "アイコン台帳、変更レビュー規約、P42・P43・P40によるD4・D5の再発防止を示す。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "outcome",
+      "title": "作図の意味を一貫して伝える",
+      "summary": "D1〜D5の完了状態と、次に拡張するサッカー語彙をまとめる締めのページ。",
+      "image_plan": "Use a suitable image if needed"
+    }
+  ]
+}

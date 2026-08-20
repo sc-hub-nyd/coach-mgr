@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>台帳とP43で戻さない</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #ffffff; color: #15251e; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding: 48px 64px 0; }
+    .eyebrow { color: #0f766e; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin-top: 10px; color: #0b3d32; font-size: 45px; line-height: 1.12; letter-spacing: -.04em; font-weight: 800; }
+    .lead { margin-top: 8px; color: #50685d; font-size: 19px; line-height: 1.5; }
+    .lead strong { color: #007c74; }
+    .main { margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .section { border-top: 3px solid #0b3d32; min-height: 360px; padding-top: 10px; }
+    .section-head { display: grid; grid-template-columns: 54px 1fr; gap: 12px; align-items: center; }
+    .section-no { color: #0f766e; font: 800 13px/1 'Courier New', monospace; letter-spacing: .08em; }
+    .section-head h2 { color: #173e31; font-size: 25px; line-height: 1.2; }
+    .section-head p { grid-column: 2; margin-top: 2px; color: #5a7166; font-size: 14px; line-height: 1.42; }
+    .ledger { margin-top: 14px; border-top: 1px solid #c8d8cf; }
+    .ledger-row { min-height: 50px; display: grid; grid-template-columns: 116px 1fr 1fr; align-items: center; gap: 11px; border-bottom: 1px solid #d8e3dc; }
+    .ledger-row.header { min-height: 30px; color: #557064; font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+    .tool { color: #0b3d32; font: 700 13px/1.2 'Courier New', monospace; }
+    .approved { display: flex; align-items: center; gap: 7px; color: #204739; font-size: 13px; font-weight: 700; }
+    .approved i { color: #0f766e; font-size: 18px; }
+    .avoid { color: #9c3542; font-size: 12px; line-height: 1.35; }
+    .review { margin-top: 14px; padding-top: 10px; border-top: 2px solid #0f766e; color: #315144; font-size: 14px; line-height: 1.5; }
+    .review strong { color: #0b3d32; }
+    .tests { margin-top: 14px; border-top: 1px solid #c8d8cf; }
+    .test { min-height: 68px; display: grid; grid-template-columns: 68px 86px 1fr; align-items: center; gap: 13px; border-bottom: 1px solid #d8e3dc; }
+    .test-code { color: #0f766e; font: 800 18px/1 'Courier New', monospace; }
+    .test i { color: #0b3d32; font-size: 29px; text-align: center; }
+    .test strong { display: block; color: #173e31; font-size: 15px; }
+    .test span { display: block; margin-top: 4px; color: #5a7166; font-size: 13px; line-height: 1.35; }
+    .loop { margin-top: 16px; display: grid; grid-template-columns: 1fr 34px 1fr 34px 1fr; align-items: center; color: #0b3d32; }
+    .loop-step { min-height: 48px; background: #edf5ef; padding: 8px 10px 0; text-align: center; font-size: 13px; font-weight: 800; line-height: 1.25; }
+    .loop-step small { display: block; margin-top: 4px; color: #60786d; font-size: 11px; font-weight: 700; }
+    .arrow { color: #0f766e; font-size: 22px; font-weight: 800; text-align: center; }
+    .foot { margin-top: 18px; min-height: 68px; border-top: 2px solid #0b3d32; background: #f2f7f4; display: grid; grid-template-columns: 38px 1fr 228px; gap: 14px; align-items: center; padding: 10px 16px 0; }
+    .foot i { color: #0f766e; font-size: 24px; }
+    .foot p { color: #315144; font-size: 15px; line-height: 1.42; }
+    .foot strong { color: #0b3d32; }
+    .status { color: #0f766e; font: 800 14px/1.25 'Courier New', monospace; text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">05 / GOVERNANCE &amp; CONTRACT</div>
+      <h1>台帳とP43で、曖昧さを戻さない</h1>
+      <p class="lead">D4は選定の<strong>正本</strong>を残し、D5は変更後も意味・ラベル・状態の整合を<strong>自動で守る</strong>。</p>
+      <div class="main">
+        <section class="section" aria-label="D4 アイコン台帳とレビュー規約">
+          <div class="section-head"><div class="section-no">D4</div><h2>台帳を、選定の正本にする</h2><p>第一候補、禁止代替、可視ラベル、ARIA、Canvas表現を一行で確認できる。</p></div>
+          <div class="ledger">
+            <div class="ledger-row header"><div>TOOL</div><div>FIRST CHOICE</div><div>AVOID</div></div>
+            <div class="ledger-row"><div class="tool">line-move</div><div class="approved"><i class="ti ti-route" aria-hidden="true"></i>経路・実線</div><div class="avoid">単なる右矢印</div></div>
+            <div class="ledger-row"><div class="tool">line-pass</div><div class="approved"><i class="ti ti-arrow-right-dashed" aria-hidden="true"></i>点線矢印</div><div class="avoid">三点リーダー</div></div>
+            <div class="ledger-row"><div class="tool">line-dribble</div><div class="approved"><i class="ti ti-arrow-zig-zag" aria-hidden="true"></i>ジグザグ動線</div><div class="avoid">心電図の形</div></div>
+            <div class="ledger-row"><div class="tool">cone / ladder</div><div class="approved"><i class="ti ti-cone" aria-hidden="true"></i>器具の実形状</div><div class="avoid">三角 / メニュー</div></div>
+          </div>
+          <p class="review"><strong>変更レビュー：</strong> アイコン、ラベル、`aria-label`、`title`、Canvasの線種が同じ意味かを確認してから変更を承認する。</p>
+        </section>
+        <section class="section" aria-label="D5 契約テスト">
+          <div class="section-head"><div class="section-no">D5</div><h2>契約テストで、再発を防ぐ</h2><p>視覚だけでは見落とす、資産・機能・アクセシビリティの回帰を継続的に検出する。</p></div>
+          <div class="tests">
+            <div class="test"><div class="test-code">P40</div><i class="ti ti-pencil" aria-hidden="true"></i><div><strong>作図機能の回帰</strong><span>配置、線・図形、Undo/Redo、フォーメーション、保存と戻る操作を保護。</span></div></div>
+            <div class="test"><div class="test-code">P42</div><i class="ti ti-shield-check" aria-hidden="true"></i><div><strong>Tabler資産の回帰</strong><span>Font Awesome再導入、ローカル配信、未定義アイコンを検出。</span></div></div>
+            <div class="test"><div class="test-code">P43</div><i class="ti ti-accessible" aria-hidden="true"></i><div><strong>作図の意味・操作性</strong><span>意味に近いアイコン、常時ラベル、フォーカス、`aria-pressed`を保護。</span></div></div>
+          </div>
+          <div class="loop"><div class="loop-step">変更<small>台帳と実装</small></div><div class="arrow">→</div><div class="loop-step">検証<small>P40 / P42 / P43</small></div><div class="arrow">→</div><div class="loop-step">公開<small>PWA・端末確認</small></div></div>
+        </section>
+      </div>
+      <div class="foot"><i class="ti ti-lock-check" aria-hidden="true"></i><p><strong>品質ゲート：</strong> 「形が近い」ではなく、「意味が一致し、選択前から読め、将来も戻らない」状態をリリース条件にする。</p><div class="status">D4 + D5<br>IMPLEMENTED</div></div>
+    </div>
+  </div>
+</body>
+</html>
