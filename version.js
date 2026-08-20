@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.97';
+export const APP_VERSION = 'v1.30.98';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.98',
+        date: '2026-08-20',
+        title: '浮遊ナビとその他メニューの素材感・位置を調整',
+        features: [
+            '浮遊ボトムナビの枠線を除去し、透過率を高めたフロストsurfaceと強めの二層shadowで浮遊感を強化',
+            'その他メニューをSafe Areaとナビ浮遊余白の上へ移動し、全周角丸の独立したシート面へ変更',
+            'その他シートが浮いた後の不要なSafe Area下余白を整理し、操作内容をよりコンパクトに表示',
+            'P47/P49/P54へ境界線なしのドック、強透過shadow、浮遊その他シートの契約を追加'
+        ]
+    },
     {
         version: 'v1.30.97',
         date: '2026-08-20',

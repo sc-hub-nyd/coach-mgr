@@ -29,7 +29,8 @@ requireAll(system, [
     'border-start-start-radius: var(--radius-lg);',
     'border-start-end-radius: var(--radius-lg);',
     '.c-mobile-more__sheet {',
-    'border-radius: var(--radius-lg) var(--radius-lg) 0 0;',
+    'margin-block-end: calc(var(--safe-bottom) + var(--bottom-nav-float-gap));',
+    'border-radius: var(--radius-lg);',
     '.c-modal-overlay.is-opening .c-modal--bottom-sheet,',
     '.c-modal-overlay.is-closing .c-modal--bottom-sheet {',
     '.c-modal--legacy .c-modal__heading {',
@@ -80,6 +81,6 @@ requireAll(system, [
 ], '練習カード操作の均等二段構成');
 
 requireAll(version, ['v1.30.86', 'モーダル・ランキング・練習管理の共通部品整合性を改善'], 'v1.30.86更新履歴');
-requireAll(serviceWorker, ["const CACHE_VERSION = 'coachmgr-v207';", './CSS/components.css', './CSS/components-system.css', './canvas-palette.js', './pitch-renderer.js'], 'R1〜R6 PWA資産');
+requireAll(serviceWorker, ["const CACHE_VERSION = 'coachmgr-v208';", './CSS/components.css', './CSS/components-system.css', './canvas-palette.js', './pitch-renderer.js'], 'R1〜R6 PWA資産');
 
 console.log('P49 modal, ranking, and practice consistency contracts passed');
