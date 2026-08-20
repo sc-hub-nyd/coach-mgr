@@ -1,6 +1,7 @@
 # 残る119件の直接指定色：内訳と次期削減ロードマップ
 
-**対象:** CoachMgr v1.30.87  
+**対象:** CoachMgr v1.30.87
+
 **監査基準:** `reports/design-system-audit-v13085.json`（2026-08-20）
 
 ## 結論
