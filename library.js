@@ -4,6 +4,22 @@ import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
 import { navigate, openModal } from './app-context.js';
 import { drawPitchToCtx } from './drawing.js';
 
+function redrawLibraryMiniPitchesForTheme() {
+    document.querySelectorAll('canvas[id^="library-mini-pitch-"]').forEach(canvas => {
+        const context = canvas.getContext('2d');
+        if (!context) return;
+        const frames = Array.isArray(canvas._animationFrames) ? canvas._animationFrames : [];
+        drawPitchToCtx(frames[0] || [], canvas, context, canvas._pitchTemplate || 'full');
+    });
+}
+
+if (typeof window !== 'undefined' && !window.__coachMgrLibraryPitchThemeBound) {
+    window.__coachMgrLibraryPitchThemeBound = true;
+    window.addEventListener('coachmgr:color-mode-changed', () => {
+        requestAnimationFrame(redrawLibraryMiniPitchesForTheme);
+    });
+}
+
 export function openAssignPracticeModal(menuId) {
     const modal = document.getElementById('modal-assign-practice');
     const inputMenuId = document.getElementById('assign-menu-id');

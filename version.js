@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.31.2';
+export const APP_VERSION = 'v1.31.3';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.31.3',
+        date: '2026-08-20',
+        title: 'テーマ切替後のメニュー管理ピッチ表示を同期',
+        features: [
+            'ダークからライトへ戻した際、表示済みのメニュー管理ミニピッチCanvasをテーマ切替後のCSS変数で再描画する処理を追加',
+            'アプリ内の色モード切替後にcoachmgr:color-mode-changedイベントを発火し、メニュー管理が次フレームでピッチ背景・ラインを同期',
+            '既存のピッチテンプレート、フレーム、Intersection Observerによるアニメーションプレビュー、ダークモードの描画を維持',
+            'P34へテーマ適用後のイベント通知とミニピッチ再描画の再発防止契約を追加'
+        ]
+    },
     {
         version: 'v1.31.2',
         date: '2026-08-20',

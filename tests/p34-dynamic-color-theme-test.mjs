@@ -1,5 +1,11 @@
 import assert from 'node:assert/strict';
 import { buildTeamTheme, contrastRatio, normalizeHex, validateThemePalette } from '../color-theme-service.js';
+import { readFile } from 'node:fs/promises';
+
+const [appJs, libraryJs] = await Promise.all([
+    readFile(new URL('../app.js', import.meta.url), 'utf8'),
+    readFile(new URL('../library.js', import.meta.url), 'utf8')
+]);
 
 const SEEDS = [
     '#000000', '#ffffff', '#808080', '#ef3340', '#ff0000', '#ff7a00', '#fff000', '#00a86b',
@@ -27,5 +33,9 @@ const charcoalDarkPalette = buildTeamTheme('#ef3340', 'dark');
 assert.notEqual(charcoalDarkPalette.canvas, '#000000', 'ダークテーマのキャンバスを純黒へ戻してはいけません');
 assert.notEqual(charcoalDarkPalette.surface, charcoalDarkPalette.canvas, 'ダークテーマはキャンバスとsurfaceの面階層を維持する必要があります');
 assert.ok(contrastRatio(charcoalDarkPalette.text, charcoalDarkPalette.canvas) >= 5, 'チャコールキャンバス上の本文は十分なコントラストを維持する必要があります');
+
+assert.match(appJs, /applyCurrentTeamTheme\(\{ colorMode: next\.colorMode \}\);\s*window\.dispatchEvent\(new CustomEvent\('coachmgr:color-mode-changed', \{ detail: \{ colorMode: next\.colorMode \} \}\)\);/, 'アプリ内の色モード切替はテーマ適用後に再描画通知を発火する必要があります');
+assert.match(libraryJs, /function redrawLibraryMiniPitchesForTheme\(\) \{[\s\S]*?canvas\[id\^="library-mini-pitch-"\][\s\S]*?drawPitchToCtx\(frames\[0\] \|\| \[\], canvas, context, canvas\._pitchTemplate \|\| 'full'\);/, 'メニュー管理は表示済みミニピッチをテーマ色で再描画する必要があります');
+assert.match(libraryJs, /window\.addEventListener\('coachmgr:color-mode-changed', \(\) => \{\s*requestAnimationFrame\(redrawLibraryMiniPitchesForTheme\);/, 'メニュー管理は色モード変更後の描画フレームでミニピッチを再描画する必要があります');
 
 console.log(`P34 dynamic team theme tests passed (${SEEDS.length} seeds × 2 modes)`);

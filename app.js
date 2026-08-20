@@ -2736,6 +2736,7 @@ async function init() {
         saveUiPreferences(next);
         applyUiPreferences(next);
         applyCurrentTeamTheme({ colorMode: next.colorMode });
+        window.dispatchEvent(new CustomEvent('coachmgr:color-mode-changed', { detail: { colorMode: next.colorMode } }));
         updateColorModeToggle(next.colorMode);
         showToast(`${next.colorMode === 'dark' ? 'ダーク' : 'ライト'}表示に切り替えました`);
     };
