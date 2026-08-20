@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.90';
+export const APP_VERSION = 'v1.30.91';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.91',
+        date: '2026-08-20',
+        title: '練習操作を二段構成へ補正',
+        features: [
+            '練習カードの5操作一列表示を廃止し、メニュー・テンプレートを1段目、共有・編集・削除を2段目へ固定',
+            'ボトムナビのその他を展開中も他タブと同じ丸角・選択面で表示し、ARIA展開状態とモーダル開閉を同期'
+        ]
+    },
     {
         version: 'v1.30.90',
         date: '2026-08-20',

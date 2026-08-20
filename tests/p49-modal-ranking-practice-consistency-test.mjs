@@ -52,19 +52,22 @@ requireAll(practices, [
     'ti ti-share-3"></i> 共有'
 ], '練習管理の操作文言');
 requireAll(system, [
-    '/* Practice-card action hierarchy: primary action, supporting actions, then compact edit and destructive actions. */',
-    'grid-template-columns: minmax(4.75rem, 1.18fr) minmax(4.4rem, 1fr) minmax(3.9rem, 0.78fr) repeat(2, var(--tap-target-min));',
+    '/* Practice-card actions use two stable rows: create/save first, then share and compact maintenance actions. */',
+    'grid-template-columns: repeat(6, minmax(0, 1fr));',
     '.c-practice-card--toolbar-actions .btn-add-menu {',
+    'grid-column: 1 / 4;',
+    '.c-practice-card--toolbar-actions .btn-save-practice-template {',
+    'grid-column: 4 / -1;',
     '.c-practice-card--toolbar-actions .btn-share-practice {',
+    'grid-column: 1 / 5;',
+    'grid-row: 2;',
+    '.c-practice-card--toolbar-actions .btn-edit-practice { grid-column: 5; }',
+    '.c-practice-card--toolbar-actions .btn-delete-practice { grid-column: 6; }',
     'overflow: visible;',
-    'text-overflow: clip;',
-    '@container (max-width: 22rem)',
-    'grid-template-columns: repeat(3, minmax(0, 1fr));',
-    '@container (min-width: 47.0625rem)',
-    'grid-template-columns: max-content max-content max-content repeat(2, var(--tap-target-min));'
-], '練習カード操作の可読性');
+    'text-overflow: clip;'
+], '練習カード操作の二段構成');
 
 requireAll(version, ['v1.30.86', 'モーダル・ランキング・練習管理の共通部品整合性を改善'], 'v1.30.86更新履歴');
-requireAll(serviceWorker, ["const CACHE_VERSION = 'coachmgr-v200';", './CSS/components.css', './CSS/components-system.css', './canvas-palette.js', './pitch-renderer.js'], 'R1〜R6 PWA資産');
+requireAll(serviceWorker, ["const CACHE_VERSION = 'coachmgr-v201';", './CSS/components.css', './CSS/components-system.css', './canvas-palette.js', './pitch-renderer.js'], 'R1〜R6 PWA資産');
 
 console.log('P49 modal, ranking, and practice consistency contracts passed');

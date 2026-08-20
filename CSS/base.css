@@ -892,6 +892,17 @@ body.role-read-only #pd-tab-goals textarea {
         background: rgba(242, 57, 50, 0.08) !important;
     }
 
+    .c-bottom-nav .c-bottom-nav__item--more {
+        border-radius: 8px !important;
+    }
+
+    .c-bottom-nav .c-bottom-nav__item--more.is-expanded {
+        border-radius: 8px !important;
+        color: var(--primary) !important;
+        font-weight: 700 !important;
+        background: rgba(242, 57, 50, 0.08) !important;
+    }
+
     .c-bottom-nav .c-bottom-nav__item[style*="display: none"] {
         display: none !important;
     }

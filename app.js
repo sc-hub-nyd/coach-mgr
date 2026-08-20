@@ -1897,10 +1897,25 @@ function setupEventListeners() {
     });
 
     const btnBottomNavMore = document.getElementById('btn-bottom-nav-more');
+    const mobileMoreModal = document.getElementById('modal-mobile-more');
+    const syncBottomNavMoreState = () => {
+        if (!btnBottomNavMore || !mobileMoreModal) return;
+        const isExpanded = !mobileMoreModal.classList.contains('hidden');
+        btnBottomNavMore.classList.toggle('is-expanded', isExpanded);
+        btnBottomNavMore.setAttribute('aria-expanded', String(isExpanded));
+    };
     if (btnBottomNavMore) {
         btnBottomNavMore.addEventListener('click', () => {
             openModal('modal-mobile-more');
+            syncBottomNavMoreState();
         });
+    }
+    if (mobileMoreModal) {
+        new MutationObserver(syncBottomNavMoreState).observe(mobileMoreModal, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+        syncBottomNavMoreState();
     }
 
     document.querySelectorAll('.mobile-more-item[data-mobile-route]').forEach(item => {

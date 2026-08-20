@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T03:44:12.906Z",
+  "generatedAt": "2026-08-20T04:01:29.200Z",
   "scope": {
     "cssFiles": 12,
     "sourceFiles": 41,
@@ -9,7 +9,7 @@
     ]
   },
   "directColors": {
-    "totalOccurrences": 120,
+    "totalOccurrences": 121,
     "componentOrPageOccurrences": 0,
     "files": [
       {
@@ -35,7 +35,7 @@
       {
         "file": "CSS/base.css",
         "layer": "foundation",
-        "directColorOccurrences": 52,
+        "directColorOccurrences": 53,
         "uniqueDirectColors": 42,
         "topValues": [
           "#c72c38",
@@ -133,6 +133,10 @@
         "occurrences": 8
       },
       {
+        "value": "rgba(242, 57, 50, 0.08)",
+        "occurrences": 3
+      },
+      {
         "value": "rgba(0, 0, 0, 0.15)",
         "occurrences": 3
       },
@@ -142,10 +146,6 @@
       },
       {
         "value": "#24171a",
-        "occurrences": 2
-      },
-      {
-        "value": "rgba(242, 57, 50, 0.08)",
         "occurrences": 2
       },
       {

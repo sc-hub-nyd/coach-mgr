@@ -3729,10 +3729,10 @@
     white-space: nowrap;
 }
 
-/* Practice-card action hierarchy: primary action, supporting actions, then compact edit and destructive actions. */
+/* Practice-card actions use two stable rows: create/save first, then share and compact maintenance actions. */
 .c-practice-card--toolbar-actions .c-practice-card__actions {
     display: grid;
-    grid-template-columns: minmax(4.75rem, 1.18fr) minmax(4.4rem, 1fr) minmax(3.9rem, 0.78fr) repeat(2, var(--tap-target-min));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     align-items: stretch;
     gap: var(--space-2);
     margin-block: var(--space-2) 0;
@@ -3749,7 +3749,19 @@
 }
 
 .c-practice-card--toolbar-actions .btn-add-menu {
+    grid-column: 1 / 4;
+    grid-row: 1;
     font-weight: 700;
+}
+
+.c-practice-card--toolbar-actions .btn-save-practice-template {
+    grid-column: 4 / -1;
+    grid-row: 1;
+}
+
+.c-practice-card--toolbar-actions .btn-share-practice {
+    grid-column: 1 / 5;
+    grid-row: 2;
 }
 
 .c-practice-card--toolbar-actions .btn-save-practice-template,
@@ -3759,14 +3771,18 @@
 
 .c-practice-card--toolbar-actions .btn-edit-practice,
 .c-practice-card--toolbar-actions .btn-delete-practice {
+    grid-row: 2;
     flex: initial;
-    inline-size: var(--tap-target-min);
-    block-size: var(--tap-target-min);
+    min-inline-size: var(--tap-target-min);
     padding: 0;
 }
 
+.c-practice-card--toolbar-actions .btn-edit-practice { grid-column: 5; }
+.c-practice-card--toolbar-actions .btn-delete-practice { grid-column: 6; }
+
 .c-practice-card--toolbar-actions .btn-share-practice:only-child {
     grid-column: 1 / -1;
+    grid-row: 1;
 }
 
 @container (max-width: 47rem) {
@@ -3775,24 +3791,9 @@
     }
 }
 
-@container (max-width: 22rem) {
-    .c-practice-card--toolbar-actions .c-practice-card__actions {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .c-practice-card--toolbar-actions .btn-edit-practice {
-        grid-column: 2;
-    }
-
-    .c-practice-card--toolbar-actions .btn-delete-practice {
-        grid-column: 3;
-    }
-}
-
 @container (min-width: 47.0625rem) {
     .c-practice-card--toolbar-actions .c-practice-card__actions {
-        grid-template-columns: max-content max-content max-content repeat(2, var(--tap-target-min));
-        inline-size: auto;
+        inline-size: 100%;
     }
 }
 
