@@ -1013,8 +1013,8 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         grid-template-rows: repeat(2, 38px);
         align-items: center;
         justify-items: center;
-        padding: 3px 4px;
-        gap: 2px 2px;
+        padding: 2px 2px;
+        gap: 2px 0;
         overflow: hidden;
         border-right: none;
         border-top: 1px solid var(--surface-border);
@@ -1036,7 +1036,8 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         max-width: 48px;
         height: 36px;
         min-height: 36px;
-        padding: 1px 1px;
+        padding: 0;
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1046,15 +1047,31 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         box-sizing: border-box;
     }
 
-    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button i {
-        font-size: 0.95rem;
-        line-height: 1;
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button i,
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button span:not(.c-tool-dock__label) {
+        width: 20px;
+        height: 20px;
+        font-size: 1rem;
+        line-height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        flex-shrink: 0;
     }
 
     .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button .c-tool-dock__label {
-        font-size: 0.56rem;
-        line-height: 1;
+        height: 12px;
+        line-height: 12px;
+        font-size: 0.58rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
         letter-spacing: -0.05em;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .anim-main-workspace:has(.c-tool-dock) .c-tool-dock .dropdown-settings-wrapper {
@@ -1067,7 +1084,8 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         padding: 0;
     }
 
-    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__divider {
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__divider,
+    .is-tactics-mode .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__divider {
         display: none !important;
     }
 
@@ -1385,7 +1403,7 @@ aside#period-info-side-panel textarea#side-form-summary {
 .tactics-only {
     display: none !important;
 }
-.is-tactics-mode .tactics-only {
+.is-tactics-mode .tactics-only:not(.c-tool-dock__divider) {
     display: block !important;
 }
 
