@@ -53,7 +53,7 @@ assert.doesNotMatch(components, /\.pwa-update-banner \.btn-primary\s*\{/, 'PWA�
 assert.match(tokens, /--color-update-action-hover-surface:/, 'PWA更新操作のhover surfaceトークンが必要です');
 assert.match(tokens, /--color-update-action-hover-text:/, 'PWA更新操作のhover textトークンが必要です');
 assert.match(tokens, /--color-update-action-pressed-surface:/, 'PWA更新操作のpressed surfaceトークンが必要です');
-assert.match(serviceWorker, /coachmgr-v211/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
+assert.match(serviceWorker, /coachmgr-v212/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
 assert.match(serviceWorker, /canvas-palette\.js/, 'PWA更新シナリオはCanvasパレットをprecacheする必要があります');
 assert.match(serviceWorker, /pitch-renderer\.js/, 'PWA更新シナリオはピッチレンダラをprecacheする必要があります');
 assert.match(serviceWorker, /tabler-icons-subset\.css/, 'PWA更新シナリオはTablerサブセットCSSをprecacheする必要があります');
@@ -73,7 +73,7 @@ assert.match(tokens, /--bottom-nav-float-gap:\s*0\.625rem;/, '浮遊ボトムナ
 assert.match(tokens, /--color-nav-floating-surface:/, '浮遊ボトムナビのテーマ追随透過surfaceトークンが必要です');
 assert.match(tokens, /--surface-nav-floating:/, '浮遊ボトムナビのライト／ダーク別ガラスsurfaceトークンが必要です');
 assert.match(tokens, /--liquid-veil:\s*radial-gradient\(/, 'ライトモードの白基調でもガラス感を見せる背景ベールが必要です');
-assert.match(tokens, /--nav-floating-blur:\s*blur\(1\.9rem\) saturate\(205%\) brightness\(1\.04\);/, 'ライトモードの浮遊ナビは高透過面を補う専用blurトークンを持つ必要があります');
+assert.match(tokens, /--nav-floating-blur:\s*blur\(2\.1rem\) saturate\(220%\) brightness\(1\.05\);/, 'ライトモードの浮遊ナビは超高透過面を補う専用blurトークンを持つ必要があります');
 assert.match(tokens, /--shadow-nav-floating:/, '浮遊ボトムナビのテーマ追随shadowトークンが必要です');
 assert.match(tokens, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?--duration-sheet-close:\s*1ms;/, 'OSの動きを減らす設定ではボトムシートの動きも1msへ短縮する必要があります');
 assert.match(tokens, /:root\[data-reduce-motion="true"\][\s\S]*?--duration-sheet-close:\s*1ms;/, 'アプリ内の動きを減らす設定ではボトムシートの動きも1msへ短縮する必要があります');

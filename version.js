@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.31.1';
+export const APP_VERSION = 'v1.31.2';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.31.2',
+        date: '2026-08-20',
+        title: 'ライトモードの浮遊ナビを超高透過リキッドガラスへ調整',
+        features: [
+            'ライトの浮遊ナビsurfaceを26%へさらに高透過化し、背後のチームカラーベールがより明確に見えるよう調整',
+            '白い反射を20%へ抑え、brand / companionの低彩度反射と背景ベールを強めてリキッドガラスらしい屈折感を追加',
+            'blur 2.1rem・saturate 220%・brightness 1.05へ強化し、白基調でも透明素材の存在感を確保',
+            'ダークモードのチャコール階層、選択面・ブランドライン、操作状態・PWA動作は維持'
+        ]
+    },
     {
         version: 'v1.31.1',
         date: '2026-08-20',
