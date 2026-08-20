@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.94';
+export const APP_VERSION = 'v1.30.95';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.95',
+        date: '2026-08-20',
+        title: 'UIの色役割・操作状態・形状尺度を横断標準化',
+        features: [
+            'サイドバー、ボトムナビ、ロール切替、同期状態、予定チップの固定色を意味トークンへ移行し、チームカラーとlight/darkへ追随',
+            'モーダル閉じる操作、行操作、ステータスタグ、危険アイコン操作にhover・focus-visible・active・disabledの共通状態契約を追加',
+            'ダッシュボード、作図、戦術、一般コンポーネントの角丸を標準トークンへ統一し、例外はUI例外台帳で明文化',
+            'ダッシュボード空状態の重複CTAを整理し、上部の試合追加を唯一の主操作として明確化'
+        ]
+    },
     {
         version: 'v1.30.94',
         date: '2026-08-20',

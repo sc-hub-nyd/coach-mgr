@@ -394,15 +394,29 @@
     transition: transform var(--duration-fast) var(--ease-spring), box-shadow var(--duration-fast) var(--ease-spring);
 }
 
-.c-data-list__item--button:hover {
+.c-data-list__item--button:not(:disabled):hover {
     box-shadow: var(--shadow-neo-raised-hover);
     transform: translateY(-0.5px);
 }
 
-.c-data-list__item--button:active {
+.c-data-list__item--button:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-neo-raised), var(--shadow-focus);
+}
+
+.c-data-list__item--button:not(:disabled):active {
     transform: translateY(1.5px) scale(0.985);
     background: var(--neo-surface-pressed);
     box-shadow: var(--shadow-neo-pressed);
+}
+
+.c-data-list__item--button:disabled,
+.c-data-list__item--button[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.56;
+    pointer-events: none;
+    transform: none;
+    box-shadow: var(--shadow-neo-raised);
 }
 
 .c-data-list__header {
@@ -1001,6 +1015,30 @@
     color: var(--color-text-muted);
     font-size: 1.5rem;
     line-height: 1;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-spring);
+}
+
+.c-modal__close:not(:disabled):hover {
+    background: var(--color-surface-subtle);
+    color: var(--color-text);
+}
+
+.c-modal__close:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 0.1875rem color-mix(in srgb, var(--color-focus) 42%, transparent);
+}
+
+.c-modal__close:not(:disabled):active {
+    background: color-mix(in srgb, var(--color-text) 8%, var(--color-surface));
+    transform: scale(0.94);
+}
+
+.c-modal__close:disabled,
+.c-modal__close[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.56;
+    pointer-events: none;
 }
 
 .c-modal__body {
@@ -3342,7 +3380,6 @@
 .c-static-style--003 { background:var(--color-swatch-orange); }
 .c-static-style--004 { background:var(--color-swatch-red); }
 .c-static-style--005 { background:var(--color-surface-subtle); padding:0.65rem 0.85rem; border-radius:8px; border:1px solid var(--surface-border); }
-.c-static-style--006 { background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.7rem; }
 .c-static-style--007 { background:color-mix(in srgb, var(--color-text) 1.5%, transparent); border:1px solid var(--surface-border); border-radius:6px; padding:0.3rem 0.6rem; }
 .c-static-style--008 { background:color-mix(in srgb, var(--color-text) 2%, transparent); border:1px solid var(--surface-border); border-radius:6px; padding:0.4rem 0.5rem; }
 .c-static-style--009 { background:color-mix(in srgb, var(--color-success) 15%, transparent); color:var(--color-text-success-strong); }

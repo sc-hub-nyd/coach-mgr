@@ -149,7 +149,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--color-brand-surface);
     color: var(--color-brand);
     font-size: 1.25rem;
@@ -403,7 +403,7 @@ body[data-route="tactics"] .library-grid {
     .c-practice-card,
     .library-grid .card {
         padding: 0.75rem 0.85rem;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         min-height: auto;
     }
 
@@ -480,7 +480,7 @@ body[data-route="tactics"] .library-grid {
     }
 
     .c-content-disclosure--menu {
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
     }
 
     .c-content-disclosure__summary--menu {
@@ -526,7 +526,7 @@ body[data-route="tactics"] .library-grid {
     background: var(--color-action);
     color: var(--color-text-on-action);
     padding: 0.1rem 0.4rem;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-size: 0.7rem;
     margin-left: 0.5rem;
     font-weight: 600;
@@ -564,7 +564,7 @@ body[data-route="tactics"] .library-grid {
     align-items: center;
     background: var(--color-surface-subtle);
     border: none;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     padding: 0.75rem 1rem;
     transition: var(--transition);
 }
@@ -646,7 +646,7 @@ body[data-route="tactics"] .library-grid {
 .schedule-badge {
     font-size: 0.65rem;
     padding: 0.1rem 0.35rem;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     font-weight: bold;
     text-transform: uppercase;
     white-space: nowrap !important;
@@ -701,7 +701,7 @@ body[data-route="tactics"] .library-grid {
 #dash-upcoming-schedule-content::-webkit-scrollbar-thumb,
 #dash-past-schedule-content::-webkit-scrollbar-thumb {
     background: var(--color-overlay-scrim-subtle);
-    border-radius: 2px;
+    border-radius: var(--radius-micro);
 }
 
 /* Dashboard Utils */
@@ -743,7 +743,7 @@ body[data-route="tactics"] .library-grid {
     width: 100%;
     height: 6px;
     background: var(--color-overlay-scrim-subtle);
-    border-radius: 3px;
+    border-radius: var(--radius-progress);
     overflow: hidden;
     margin-top: 0.6rem;
 }
@@ -753,7 +753,7 @@ body[data-route="tactics"] .library-grid {
     background: linear-gradient(90deg, var(--color-action) 0%, var(--color-action-hover) 100%);
     width: 0%;
     transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 3px;
+    border-radius: var(--radius-progress);
 }
 
 .item-list {
@@ -779,7 +779,7 @@ body[data-route="tactics"] .library-grid {
     gap: 0.5rem;
     background: var(--color-surface-subtle);
     padding: 0.3rem 0.75rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     border: none;
 }
 
@@ -805,7 +805,7 @@ body[data-route="tactics"] .library-grid {
     flex: 1;
     padding: 0.3rem 0.5rem;
     font-size: 0.85rem;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
 }
 
 .goal-record-row .btn {
@@ -959,7 +959,7 @@ summary {
     flex-direction: column;
     align-items: stretch;
     padding: 0.45rem 0.5rem;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     gap: 0.2rem;
     min-height: 0;
     cursor: default;
@@ -1126,7 +1126,7 @@ summary {
     background: var(--color-warning);
     color: var(--color-text-on-action);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 0.3rem 0.75rem;
     font-size: 0.78rem;
     font-weight: 600;
@@ -1351,7 +1351,7 @@ summary {
     align-items: center;
     gap: 0.5rem;
     padding: 0.35rem 0.55rem;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     background: var(--color-surface-subtle);
     border: none;
     cursor: pointer;
@@ -1436,7 +1436,7 @@ summary {
     align-items: center;
     gap: 0.75rem;
     padding: 0.55rem 0.75rem;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--color-surface-subtle);
     border: none;
     transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
@@ -1508,7 +1508,7 @@ summary {
     font-size: 0.72rem;
     font-weight: 700;
     padding: 0.1rem 0.4rem;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     white-space: nowrap;
 }
 
@@ -1557,7 +1557,7 @@ summary {
 .dash-myplayer-metric-box {
     background: var(--color-surface-subtle);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 0.4rem 0.6rem;
     display: flex;
     flex-direction: column;
@@ -1575,7 +1575,7 @@ summary {
     grid-column: 1 / -1;
     background: color-mix(in srgb, var(--color-action) 4%, transparent);
     border: 1px dashed color-mix(in srgb, var(--color-action) 20%, transparent);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 0.6rem 0.8rem;
     font-size: 0.78rem;
     line-height: 1.5;
@@ -1588,7 +1588,7 @@ summary {
     align-items: center;
     font-size: 0.76rem;
     padding: 0.35rem 0.5rem;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: var(--color-surface-subtle);
     border: none;
 }
@@ -1597,7 +1597,7 @@ summary {
     flex: 1;
     height: 8px;
     background: var(--color-overlay-scrim-subtle);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     margin: 0 0.6rem;
     position: relative;
     overflow: hidden;
@@ -1606,7 +1606,7 @@ summary {
 .dash-playtime-bar-inner {
     height: 100%;
     background: var(--color-action);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 }
 
 .dash-correlation-row {
@@ -1615,7 +1615,7 @@ summary {
     align-items: center;
     font-size: 0.76rem;
     padding: 0.35rem 0.5rem;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: var(--color-surface-subtle);
 }
 
@@ -1696,7 +1696,7 @@ summary {
     color: var(--color-text-muted);
     font-weight: 700;
     text-align: center;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     white-space: normal;
     word-break: break-word;
     line-height: 1.2;
@@ -1706,7 +1706,7 @@ summary {
 .skill-heatmap-table td {
     padding: 0.4rem 0.2rem;
     text-align: center;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-weight: 700;
     transition: all 0.2s ease;
     white-space: nowrap;
@@ -1813,7 +1813,7 @@ summary {
 .stat-bar-outer {
     background: color-mix(in srgb, var(--color-text) 5%, transparent);
     height: 8px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     overflow: hidden;
     width: 100%;
     margin-top: 0.25rem;
@@ -1821,7 +1821,7 @@ summary {
 
 .stat-bar-inner {
     height: 100%;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     transition: width 0.4s ease;
 }
 

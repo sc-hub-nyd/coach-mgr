@@ -46,6 +46,45 @@
     padding: 0;
 }
 
+.c-icon-button {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--tap-target-min);
+    min-inline-size: var(--tap-target-min);
+    block-size: var(--tap-target-min);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-spring);
+}
+
+.c-icon-button--danger {
+    color: var(--color-danger);
+}
+
+.c-icon-button--danger:not(:disabled):hover {
+    background: var(--color-danger-surface);
+}
+
+.c-icon-button:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+}
+
+.c-icon-button:not(:disabled):active {
+    transform: scale(0.94);
+}
+
+.c-icon-button:disabled,
+.c-icon-button[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.56;
+    pointer-events: none;
+}
+
 .c-button:focus-visible {
     outline: none;
     box-shadow: var(--shadow-focus);
@@ -430,13 +469,25 @@
     color: var(--color-brand);
 }
 
-.c-status--interactive:hover {
+.c-status--interactive:not(:disabled):hover {
     transform: translateY(-1px);
 }
 
 .c-status--interactive:focus-visible {
     outline: none;
     box-shadow: var(--shadow-focus);
+}
+
+.c-status--interactive:not(:disabled):active {
+    transform: translateY(0);
+    background: color-mix(in srgb, var(--color-brand) 28%, var(--color-surface));
+}
+
+.c-status--interactive:disabled,
+.c-status--interactive[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.56;
+    pointer-events: none;
 }
 
 .c-status--interactive[aria-pressed="true"] {

@@ -64,6 +64,13 @@
     --color-warning-surface: var(--theme-warning-surface);
     --color-danger-surface: var(--theme-danger-surface);
     --color-info-surface: var(--theme-info-surface);
+    --color-text-info-strong: color-mix(in srgb, var(--color-info) 82%, var(--color-text));
+    --color-surface-info-strong: color-mix(in srgb, var(--color-info-surface) 74%, var(--color-surface));
+    --color-surface-info-soft: color-mix(in srgb, var(--color-info-surface) 46%, var(--color-surface));
+    --color-border-info: color-mix(in srgb, var(--color-info) 35%, var(--color-border));
+    --color-shadow-success: color-mix(in srgb, var(--color-success) 28%, transparent);
+    --color-shadow-danger: color-mix(in srgb, var(--color-danger) 28%, transparent);
+    --color-shadow-info: color-mix(in srgb, var(--color-info) 28%, transparent);
 
     /* Shared state component roles. Status, notices and generated notifications consume these aliases. */
     --color-status: var(--color-brand);
@@ -182,6 +189,8 @@
     --space-7: 3rem;
     --space-8: 4rem;
 
+    --radius-micro: 0.125rem;
+    --radius-progress: 0.1875rem;
     --radius-sm: 0.5rem;
     --radius-md: 0.75rem;
     --radius-lg: var(--border-radius);
@@ -197,8 +206,8 @@
     --control-radius: var(--radius-sm);
     --icon-control-size: var(--tap-target-min);
 
-    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-    --shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
+    --shadow-sm: 0 1px 2px color-mix(in srgb, var(--color-text) 6%, transparent);
+    --shadow-md: 0 10px 24px color-mix(in srgb, var(--color-text) 8%, transparent);
     --shadow-focus: 0 0 0 3px color-mix(in srgb, var(--color-focus) 30%, transparent);
 
     /* Neumorphic depth (CALC/RATE silicone tactile style):

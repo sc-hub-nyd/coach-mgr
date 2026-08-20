@@ -1749,8 +1749,7 @@ function initDashboard() {
                 `;
             }).join('');
         } else {
-            scheduleList.innerHTML = renderEmptyState({ icon: 'ti ti-calendar-event', title: '予定・実績はありません', description: '次の練習や試合を登録して、チームの予定を整理しましょう。', actionLabel: '試合を追加', actionId: 'dash-empty-add-schedule' });
-            document.getElementById('dash-empty-add-schedule')?.addEventListener('click', () => openMatchModal());
+            scheduleList.innerHTML = renderEmptyState({ icon: 'ti ti-calendar-event', title: '予定・実績はありません', description: '最初の試合は上部の「試合を追加」から登録できます。登録後は、練習と試合をここでまとめて確認できます。' });
         }
     }
 

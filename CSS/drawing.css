@@ -114,7 +114,7 @@ body[data-route="animation"] .c-bottom-nav {
     font-size: 0.95rem;
     color: var(--text-primary);
     padding: 2px 8px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     border: none;
     transition: all 0.15s ease;
     cursor: pointer;
@@ -148,7 +148,7 @@ body[data-route="animation"] .c-bottom-nav {
     /* Design */
     background: var(--surface);
     border: 1px solid var(--surface-border);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
 }
 
@@ -192,7 +192,7 @@ body[data-route="animation"] .c-bottom-nav {
     min-height: 52px;
     flex-shrink: 0;
     border: 1px solid transparent;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--text-primary);
     display: flex;
@@ -253,7 +253,7 @@ body[data-route="animation"] .c-bottom-nav {
     font-size: 0.75rem;
     font-weight: 600;
     padding: 4px 8px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
@@ -373,7 +373,7 @@ body[data-route="animation"] .c-bottom-nav {
     height: 100%;
     object-fit: contain;
     box-sizing: border-box;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     box-shadow: 0 6px 20px var(--color-shadow-subtle);
     touch-action: none;
     cursor: crosshair;
@@ -431,7 +431,7 @@ body[data-route="animation"] .c-bottom-nav {
     background: var(--surface);
     border: 1px solid var(--surface-border);
     border-right: none;
-    border-radius: 8px 0 0 8px;
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -466,7 +466,7 @@ body[data-route="animation"] .c-bottom-nav {
 .c-inspector-panel__item {
     background: var(--color-surface-subtle);
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     padding: 0.8rem 1rem;
 }
 
@@ -527,7 +527,7 @@ body[data-route="animation"] .c-bottom-nav {
     backdrop-filter: blur(12px) saturate(180%);
     -webkit-backdrop-filter: blur(12px) saturate(180%);
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     padding: 0.35rem 0.55rem;
     box-shadow: 0 8px 24px var(--color-shadow-medium);
     display: flex;
@@ -552,7 +552,7 @@ body[data-route="animation"] .c-bottom-nav {
     width: 44px;
     height: 26px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     text-align: center;
     font-size: 0.85rem;
     font-weight: 700;
@@ -632,7 +632,7 @@ body[data-route="animation"] .c-bottom-nav {
     backdrop-filter: blur(14px) saturate(180%);
     -webkit-backdrop-filter: blur(14px) saturate(180%);
     border: none;
-    border-radius: 22px;
+    border-radius: var(--radius-pill);
     box-shadow: 0 8px 24px var(--color-shadow-medium);
 }
 
@@ -654,7 +654,7 @@ body[data-route="animation"] .c-bottom-nav {
     font-size: 0.8rem;
     font-weight: 700;
     padding: 0 0.6rem;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: none;
     background: var(--color-surface-raised);
     color: var(--text-primary);
@@ -668,7 +668,7 @@ body[data-route="animation"] .c-bottom-nav {
 .anim-player-bar .btn-xs {
     height: 30px;
     padding: 0 0.65rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-weight: 700;
     font-size: 0.75rem;
     display: inline-flex;
@@ -806,7 +806,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         background: var(--color-surface-raised);
         border: none;
         border-right: none;
-        border-radius: 8px 0 0 8px;
+        border-radius: var(--radius-sm) 0 0 var(--radius-sm);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1062,7 +1062,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
     padding: 0.35rem 0.5rem;
     background: var(--color-surface-raised);
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     margin-bottom: 0.3rem;
 }
 
@@ -1164,7 +1164,7 @@ aside#period-info-side-panel textarea#side-form-summary {
     background: var(--canvas-overlay-surface);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     box-shadow: 0 4px 16px var(--color-shadow-medium);
     text-align: center;
     animation: captionFadeIn 0.35s ease-out;
@@ -1226,7 +1226,7 @@ aside#period-info-side-panel textarea#side-form-summary {
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
     border: none;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     padding: 12px 18px;
     box-shadow: 0 12px 36px var(--color-shadow-medium);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1294,7 +1294,7 @@ aside#period-info-side-panel textarea#side-form-summary {
     background: var(--color-surface-raised);
     border: none;
     color: var(--color-text);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 6px 10px;
     font-size: 0.85rem;
     box-shadow: var(--shadow-sm);
@@ -1324,7 +1324,7 @@ aside#period-info-side-panel textarea#side-form-summary {
     flex: 0 0 auto;
     background: var(--color-overlay-scrim-subtle);
     border: none;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     padding: 3px 8px;
     font-size: 0.7rem;
     color: var(--color-text-muted);

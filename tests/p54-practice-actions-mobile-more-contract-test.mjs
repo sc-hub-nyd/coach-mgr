@@ -61,7 +61,7 @@ assert.doesNotMatch(index, /mobile-more-(?:role|sync)-card c-card/, 'その他�
 
 assert.match(index, /id="btn-bottom-nav-more"[^>]*aria-controls="modal-mobile-more"[^>]*aria-expanded="false"/, 'その他タブはモーダルと展開状態を関連付ける必要があります');
 assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item\s*\{[\s\S]*?border:\s*0\s*!important;[\s\S]*?background:\s*transparent\s*!important;/, 'その他を含むボトムナビ項目はbuttonの既定枠線を持ってはいけません');
-assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item--more\.is-expanded\s*\{[\s\S]*?border-radius:\s*8px\s*!important;[\s\S]*?background:\s*rgba\(242, 57, 50, 0\.08\)\s*!important;/, '展開中のその他は他タブと同じ丸角の選択面を持つ必要があります');
+assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item--more\.is-expanded\s*\{[\s\S]*?border-radius:\s*var\(--control-radius\);[\s\S]*?background:\s*var\(--color-surface-selected\);/, '展開中のその他は他タブと同じチームカラー追随の丸角選択面を持つ必要があります');
 assert.match(app, /syncBottomNavMoreState[\s\S]*?classList\.toggle\('is-expanded'/, 'その他タブの選択状態はモーダル開閉と同期する必要があります');
 assert.match(app, /btnBottomNavMore\.addEventListener\('click'[\s\S]*?openModal\('modal-mobile-more'\)/, 'その他タブは共通モーダルを開く必要があります');
 assert.match(app, /mobile-more-item\[data-mobile-route\]/, 'その他メニューの経路ボタンは既存ナビゲーションへ接続する必要があります');

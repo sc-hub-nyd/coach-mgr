@@ -1332,7 +1332,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
                             <div class="side-pk-row" data-idx="${idx}">
                                 <div class="c-static-style--073">
                                     <span class="c-static-style--122">${labelText}</span>
-                                    ${isSudden ? `<button type="button" class="btn-side-remove-pk c-static-style--006" data-idx="${idx}"><i class="ti ti-trash"></i></button>` : ''}
+                                    ${isSudden ? `<button type="button" class="c-icon-button c-icon-button--danger btn-side-remove-pk" data-idx="${idx}" aria-label="PK戦の記録を削除"><i class="ti ti-trash" aria-hidden="true"></i></button>` : ''}
                                 </div>
                                 <select class="c-input form-control form-control-sm side-pk-kicker-select c-static-style--125" data-idx="${idx}">
                                     ${playerOptionsHtml}

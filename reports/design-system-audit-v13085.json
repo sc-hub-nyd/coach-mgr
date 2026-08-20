@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T04:48:12.313Z",
+  "generatedAt": "2026-08-20T05:21:30.942Z",
   "scope": {
     "cssFiles": 12,
     "sourceFiles": 41,
@@ -9,14 +9,14 @@
     ]
   },
   "directColors": {
-    "totalOccurrences": 121,
+    "totalOccurrences": 91,
     "componentOrPageOccurrences": 0,
     "files": [
       {
         "file": "CSS/tokens.css",
         "layer": "foundation",
-        "directColorOccurrences": 68,
-        "uniqueDirectColors": 49,
+        "directColorOccurrences": 66,
+        "uniqueDirectColors": 47,
         "topValues": [
           "#ef3340",
           "#000000",
@@ -35,8 +35,8 @@
       {
         "file": "CSS/base.css",
         "layer": "foundation",
-        "directColorOccurrences": 53,
-        "uniqueDirectColors": 42,
+        "directColorOccurrences": 25,
+        "uniqueDirectColors": 20,
         "topValues": [
           "#c72c38",
           "#a92330",
@@ -126,19 +126,11 @@
     "topValues": [
       {
         "value": "#ffffff",
-        "occurrences": 17
+        "occurrences": 16
       },
       {
         "value": "#000000",
         "occurrences": 8
-      },
-      {
-        "value": "rgba(242, 57, 50, 0.08)",
-        "occurrences": 3
-      },
-      {
-        "value": "rgba(0, 0, 0, 0.15)",
-        "occurrences": 3
       },
       {
         "value": "#c72c38",
@@ -146,14 +138,6 @@
       },
       {
         "value": "#24171a",
-        "occurrences": 2
-      },
-      {
-        "value": "#ef4444",
-        "occurrences": 2
-      },
-      {
-        "value": "rgba(0, 0, 0, 0.02)",
         "occurrences": 2
       },
       {
@@ -229,19 +213,35 @@
         "occurrences": 1
       },
       {
-        "value": "rgba(0, 0, 0, 0.4)",
+        "value": "#ef3340",
         "occurrences": 1
       },
       {
-        "value": "#22c55e",
+        "value": "#3d79d5",
         "occurrences": 1
       },
       {
-        "value": "rgba(34, 197, 94, 0.4)",
+        "value": "#63a84d",
         "occurrences": 1
       },
       {
-        "value": "rgba(239, 68, 68, 0.4)",
+        "value": "#f09f4d",
+        "occurrences": 1
+      },
+      {
+        "value": "#f23932",
+        "occurrences": 1
+      },
+      {
+        "value": "#a855f7",
+        "occurrences": 1
+      },
+      {
+        "value": "#f1f5f9",
+        "occurrences": 1
+      },
+      {
+        "value": "#4ade80",
         "occurrences": 1
       }
     ]
