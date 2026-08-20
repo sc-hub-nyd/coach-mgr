@@ -80,3 +80,10 @@ node tests/p34-dynamic-color-theme-test.mjs
 node scripts/analyze-direct-color-debt-v13086.mjs
 git diff --check
 ```
+
+
+## 公開PWA確認
+
+2026-08-20にGitHub Pages公開版で更新通知から新しいService Workerを適用した。バージョン表示は`v1.30.87`となり、更新履歴モーダルにはR1〜R6の4項目が表示された。共通`c-modal`のsurface、overlay、close操作、スクロール可能な履歴本文が正常に機能し、ダッシュボードもエラーなく表示された。
+
+GitHub Actionsでは、補正コミット`39b9c1f`に対する契約テストとPagesデプロイが成功した。
