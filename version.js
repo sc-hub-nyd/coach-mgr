@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.99';
+export const APP_VERSION = 'v1.31.0';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.31.0',
+        date: '2026-08-20',
+        title: 'ライトモードの浮遊ガラス表現を可視化',
+        features: [
+            '白基調で透過感が埋もれないよう、画面下部へごく淡いチームカラーベールを追加し、浮遊ナビ背後の素材差を可視化',
+            '浮遊ナビのライト用surfaceをさらに高透過化し、反射gradient・blur・彩度・brightnessでフロストガラス感を強化',
+            'ダークモードのチャコール階層と、選択面・ブランドライン・shadowの設計は維持',
+            'P47へライト用背景ベールと専用blurの再発防止契約を追加'
+        ]
+    },
     {
         version: 'v1.30.99',
         date: '2026-08-20',
