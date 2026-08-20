@@ -1481,7 +1481,6 @@ function initDashboard() {
 
             teamFocusContent.innerHTML = `
                 <div class="c-focus-summary">
-                    <div class="c-focus-summary__kicker"><i class="ti ti-target" aria-hidden="true"></i> 強化テーマ</div>
                     <div class="c-focus-summary__title">${escapeHtml(focus.mainTheme)}</div>
                     ${pointsHtml}
                     ${focus.note ? `<div class="c-focus-summary__note"><i class="ti ti-clock" aria-hidden="true"></i> ${escapeHtml(focus.note)}</div>` : ''}
