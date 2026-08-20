@@ -961,7 +961,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         margin: 2px auto 0 auto;
     }
 
-    /* Mobile Bottom Dock Tabs (Placed at bottom-most) */
+    /* Mobile Bottom Dock Tabs (Placed above tool dock) */
     .anim-mobile-dock-tabs {
         display: flex;
         width: 100%;
@@ -970,7 +970,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         background: var(--surface);
         border-top: 1px solid var(--surface-border);
         box-shadow: var(--shadow-sm);
-        order: 10;
+        order: 2;
         z-index: 100;
     }
 
@@ -1019,7 +1019,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         border-right: none;
         border-top: 1px solid var(--surface-border);
         background: var(--surface);
-        order: 2;
+        order: 3;
         box-sizing: border-box;
     }
 
@@ -1162,7 +1162,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         border-radius: 0;
         border: none;
         border-top: 1px solid var(--surface-border);
-        order: 3;
+        order: 4;
         box-sizing: border-box;
         padding: 4px 6px;
         overflow-x: auto;
@@ -1222,7 +1222,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         border-radius: 0;
         border: none;
         border-top: 1px solid var(--surface-border);
-        order: 2;
+        order: 3;
         margin: 0;
         padding: 6px 10px;
         box-sizing: border-box;
