@@ -1089,36 +1089,12 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         display: none !important;
     }
 
-    /* Mobile Tooltips: Pop UP above dock buttons without clipping on right edge */
+    /* Mobile Tooltips: Suppress pseudo-hover tooltips on mobile since permanent labels are already visible */
     .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button[data-tooltip]::after {
-        left: 50%;
-        top: auto;
-        bottom: calc(100% + 6px);
-        transform: translateX(-50%);
-        margin-left: 0;
-        margin-bottom: 0;
-        z-index: 500;
-        box-shadow: 0 4px 12px var(--color-shadow-medium);
-        pointer-events: none;
+        display: none !important;
     }
 
-    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:nth-child(6n)[data-tooltip]::after,
-    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:nth-child(7n)[data-tooltip]::after,
-    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:last-child[data-tooltip]::after {
-        left: auto;
-        right: 2px;
-        transform: none;
-    }
-
-    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:nth-child(6n+1)[data-tooltip]::after,
-    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:nth-child(7n+1)[data-tooltip]::after,
-    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:first-child[data-tooltip]::after {
-        left: 2px;
-        right: auto;
-        transform: none;
-    }
-
-    /* Mobile Canvas Popovers: Bottom Sheet style completely below the pitch canvas */
+    /* Mobile Canvas Popovers: Ultra-compact Bottom Sheet style strictly below the pitch canvas */
     .anim-main-workspace:has(.c-tool-dock) .c-popover--canvas {
         position: fixed;
         top: auto;
@@ -1128,10 +1104,10 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         transform: none;
         width: 100% !important;
         max-width: 100% !important;
-        max-height: calc(100dvh - 280px);
+        max-height: 220px;
         overflow-y: auto;
         margin: 0 !important;
-        padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom, 0px));
+        padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
         z-index: 4000;
         border-radius: var(--radius-lg) var(--radius-lg) 0 0;
         box-shadow: 0 -8px 32px var(--color-shadow-strong);
@@ -1139,6 +1115,29 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         border: 1px solid var(--surface-border);
         border-bottom: none;
         box-sizing: border-box;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock) #anim-bulk-formation-popover .c-static-style--059 {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock) #anim-bulk-formation-popover select {
+        height: 32px;
+        font-size: 0.82rem;
+        padding: 2px 8px;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock) #bulk-formation-apply-help {
+        display: none !important;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock) #btn-apply-bulk-formation {
+        height: 36px;
+        margin-top: 4px;
+        font-size: 0.85rem;
+        font-weight: 700;
     }
 
     /* Mobile: Toggle between Draw & Animation */
@@ -1151,42 +1150,93 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         display: none !important;
     }
 
+    /* Mobile Animation Mode: Generous touch targets for player controls */
     .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .anim-player-bar {
         display: flex !important;
         position: static;
         transform: none;
         width: 100%;
-        height: 48px;
-        min-height: 48px;
-        max-height: 48px;
+        height: 52px;
+        min-height: 52px;
+        max-height: 52px;
         border-radius: 0;
         border: none;
         border-top: 1px solid var(--surface-border);
         order: 4;
         box-sizing: border-box;
-        padding: 4px 6px;
+        padding: 4px 8px;
         overflow-x: auto;
         scrollbar-width: none;
         background: var(--surface);
+        align-items: center;
+        justify-content: space-around;
     }
 
+    .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .anim-player-bar .c-button {
+        min-height: 38px;
+        height: 38px;
+        padding: 0 10px;
+        font-size: 0.92rem;
+        border-radius: var(--radius-sm);
+    }
+
+    /* Mobile Animation Mode: Taller, comfortable touch-friendly Scene/Frame strip */
     .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip {
         display: flex !important;
         position: static;
         transform: none;
         width: 100%;
-        height: 36px;
-        min-height: 36px;
-        max-height: 36px;
+        height: 54px;
+        min-height: 54px;
+        max-height: 54px;
         border-radius: 0;
         border: none;
         border-top: 1px solid var(--surface-border);
         order: 3;
         margin: 0;
-        padding: 2px 6px;
+        padding: 4px 8px;
         box-sizing: border-box;
         align-items: center;
         background: var(--surface);
+    }
+
+    .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip__list {
+        height: 100%;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip__item {
+        min-height: 40px;
+        height: 40px;
+        padding: 0 12px;
+        border-radius: var(--radius-pill);
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: var(--shadow-sm);
+        cursor: pointer;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip__index {
+        font-size: 0.85rem;
+        font-weight: 800;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip__title {
+        font-size: 0.82rem;
+        max-width: 90px;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip__delete {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .anim-main-workspace:has(.c-tool-dock) .c-inspector-panel {
