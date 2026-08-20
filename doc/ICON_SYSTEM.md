@@ -1,19 +1,22 @@
-# 南陽台FCアイコンシステム
+# CoachMgr アイコンシステム
+
+**現行基準：v1.30.84**
 
 ## 目的
 
-CoachMgrは、南陽台FCの44個のSVGを、チーム固有の視覚言語として採用する。アイコンは単なる装飾ではなく、ナビゲーション、記録、練習、保護者連絡、状態表示に一貫した手掛かりを与えるためのデザインシステム部品である。
+CoachMgrは、南陽台FCの44個のSVGをチーム固有の視覚言語として維持し、ローカル配信のTabler Icons 3.46.0を業務操作・試合記録・サッカー補助語彙として併用する。アイコンは単なる装飾ではなく、ナビゲーション、記録、練習、保護者連絡、状態表示、戦術作図に一貫した手掛かりを与えるデザインシステム部品である。
 
-SVGは`assets/icons/nanyodai/`にカテゴリ・ファイル名を変えずに格納する。`CSS/icon-system.css`はSVGをCSSマスクとして参照し、`currentColor`相当の`background-color: currentColor`で描画する。この方式により、light/darkモード、チーム色、主操作上の前景色へアイコンを自動で適応させる。
+SVGは`assets/icons/nanyodai/`にカテゴリ・ファイル名を変えずに格納する。`CSS/icon-system.css`はSVGをCSSマスクとして参照し、`currentColor`相当の`background-color: currentColor`で描画する。Tablerは`assets/vendor/tabler-icons/`からローカル配信し、どちらもlight/darkモード、チーム色、主操作上の前景色へ適応させる。
 
 ## コンポーネント契約
 
-> 新しいUIでは、意味に合う南陽台FCアイコンがある場合、Font Awesomeなどの別系統のアイコンを追加しない。パッケージに意味の合う資産がないレガシーアイコンは、移行対象として明記した上で暫定利用できる。
+> 新しいUIでは、チーム固有概念にはカスタムSVG、汎用業務・サッカー補助語彙にはローカルTablerを優先する。Font Awesomeまたは外部アイコンCDNを新しい必須依存として追加しない。どちらにも意味が一致する資産がない競技固有概念は、カスタムSVGとして設計し、台帳へ登録する。
 
 | 要素 | 規則 |
 |---|---|
-| ベースクラス | `c-icon`を必ず付ける。 |
-| 意味クラス | `c-icon--home`、`c-icon--trophy`、`c-icon--rising-pass`のように意味で指定する。ファイル名や色名をUIから参照しない。 |
+| カスタムSVG | `c-icon`を必ず付ける。 |
+| SVGの意味クラス | `c-icon--home`、`c-icon--trophy`、`c-icon--rising-pass`のように意味で指定する。ファイル名や色名をUIから参照しない。 |
+| Tabler | `.ti .ti-*`を使い、ローカルCSSに定義される意味クラスだけを指定する。操作にラベルがある場合はアイコンを装飾として扱う。 |
 | サイズ | `c-icon--xs`、`--sm`、`--md`、`--lg`、`--xl`を使う。任意の固定px指定は追加しない。 |
 | 色 | 親要素の`color`を継承する。ブランド表示には`c-icon--brand`と`--color-brand`、ブランド面上には`c-icon--on-brand`と`--color-text-on-brand`、主操作面では`--color-text-on-action`、本文では`--color-text`、補助情報では`--color-text-muted`を使う。 |
 | 装飾 | 隣接テキストが同じ意味を示す場合は`aria-hidden="true"`を付ける。 |
@@ -41,7 +44,7 @@ SVGは`assets/icons/nanyodai/`にカテゴリ・ファイル名を変えずに�
 
 ## 導入・検証
 
-新しいアイコンを使う前に、`CSS/icon-system.css`のマッピング、サイズ、表示コンテキストと`c-icon--brand`／`c-icon--on-brand`の役割を確認する。導入後は、アイコンシステム契約テスト、light/darkでの目視、320px幅のボトムナビゲーション表示、PWAオフラインキャッシュを確認する。
+新しいアイコンを使う前に、`CSS/icon-system.css`またはローカルTabler CSSの定義、サイズ、表示コンテキスト、`c-icon--brand`／`c-icon--on-brand`の役割を確認する。導入後は、P42（Tabler資産）、P43（作図アイコンの意味・ラベル・ARIA）、必要に応じてP40（作図機能）、light/dark、320px幅、PWAオフラインキャッシュを確認する。詳細な品質基準は[`ICON_SYSTEM_VALIDATION.md`](./ICON_SYSTEM_VALIDATION.md)を正本とする。
 
 ## Tabler Iconsとの役割分担
 
@@ -58,7 +61,7 @@ Tablerの単独アイコン操作では、`aria-label`、`title`、可視ラベ�
 
 ## 作図ツールのアイコン台帳
 
-作図ツールは、**アイコン、常時表示ラベル、Canvas上の線種**の三つを同じ意味にそろえる。色だけ、選択状態だけ、ホバー説明だけで操作内容を伝えてはならない。
+作図ツールは、**アイコン、常時表示ラベル、Canvas上の線種**の三つを同じ意味にそろえる。色だけ、選択状態だけ、ホバー説明だけで操作内容を伝えてはならない。ツールドックはデスクトップ68px・モバイル64pxの幅を確保し、未選択時にも日本語ラベルを表示する。
 
 | `data-tool` | 可視ラベル | Tabler／SVGの第一候補 | Canvas上の表現 | 禁止する曖昧な代替 |
 |---|---|---|---|---|
@@ -82,4 +85,10 @@ Tablerの単独アイコン操作では、`aria-label`、`title`、可視ラベ�
 2. アイコンの意味、可視ラベル、`aria-label`、`title`、Canvas上の表現が矛盾しないことを確認する。
 3. アイコン単独でのみ意味を伝えず、タッチ端末で選択前に読める日本語ラベルを維持する。
 4. 新しい`.ti-*`クラスがローカルTabler CSSに定義され、P42の未定義クラス検査を通過することを確認する。
-5. 追加・変更した作図ツールはD系契約テスト、P40回帰テスト、ライト／ダーク、縦横スマートフォンで確認する。
+5. 追加・変更した作図ツールはP40・P42・P43、ライト／ダーク、縦横スマートフォンで確認する。
+
+## 関連文書
+
+- [`NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md`](./NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md)
+- [`ICON_SYSTEM_VALIDATION.md`](./ICON_SYSTEM_VALIDATION.md)
+- [`DESIGN_SYSTEM_EVOLUTION_ROADMAP_V13084.md`](./DESIGN_SYSTEM_EVOLUTION_ROADMAP_V13084.md)

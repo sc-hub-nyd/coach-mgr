@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>台帳と契約テストで品質を戻さない</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fffdfd; color: #24171a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding: 48px 64px 0; }
+    .eyebrow { color: #a92330; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin-top: 10px; color: #24171a; font-size: 45px; line-height: 1.12; letter-spacing: -.04em; font-weight: 800; }
+    .lead { margin-top: 11px; color: #6d5559; font-size: 19px; line-height: 1.5; }
+    .lead strong { color: #c72c38; }
+    .main { margin-top: 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 34px; }
+    .panel { min-height: 356px; border-top: 3px solid #c72c38; padding-top: 14px; }
+    .head { display: grid; grid-template-columns: 58px 1fr; gap: 13px; align-items: center; }
+    .phase { color: #a92330; font: 800 14px/1 'Courier New', monospace; letter-spacing: .08em; }
+    h2 { color: #3d2428; font-size: 24px; line-height: 1.2; }
+    .head p { grid-column: 2; margin-top: 2px; color: #74565b; font-size: 14px; line-height: 1.42; }
+    .ledger { margin-top: 16px; border-top: 1px solid #dfc4c8; }
+    .ledger-row { min-height: 50px; display: grid; grid-template-columns: 114px 1fr 1fr; gap: 10px; align-items: center; border-bottom: 1px solid #dfc4c8; }
+    .ledger-row.header { min-height: 31px; color: #87656b; font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+    .tool { color: #3d2428; font: 700 12px/1.2 'Courier New', monospace; }
+    .choice { display: flex; align-items: center; gap: 7px; color: #3d2428; font-size: 13px; font-weight: 700; }
+    .choice i { color: #c72c38; font-size: 18px; }
+    .avoid { color: #9f3f4a; font-size: 12px; line-height: 1.32; }
+    .review { margin-top: 13px; border-top: 2px solid #c72c38; padding-top: 9px; color: #654b50; font-size: 13px; line-height: 1.45; }
+    .review strong { color: #3d2428; }
+    .tests { margin-top: 16px; border-top: 1px solid #dfc4c8; }
+    .test { min-height: 68px; display: grid; grid-template-columns: 66px 42px 1fr; gap: 11px; align-items: center; border-bottom: 1px solid #dfc4c8; }
+    .test-id { color: #a92330; font: 800 18px/1 'Courier New', monospace; }
+    .test i { color: #c72c38; font-size: 23px; text-align: center; }
+    .test strong { display: block; color: #3d2428; font-size: 15px; }
+    .test span { display: block; margin-top: 3px; color: #74565b; font-size: 12px; line-height: 1.33; }
+    .metrics { margin-top: 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .metric { min-height: 64px; border-top: 2px solid #167c5a; padding-top: 8px; }
+    .metric strong { display: block; color: #167c5a; font: 800 22px/1 'Courier New', monospace; }
+    .metric span { display: block; margin-top: 4px; color: #74565b; font-size: 11px; line-height: 1.25; }
+    .gate { margin-top: 21px; min-height: 85px; display: grid; grid-template-columns: 1fr 35px 1fr 35px 1fr 35px 1fr; align-items: center; border-top: 2px solid #c72c38; background: #fde8eb; padding: 13px 17px 0; }
+    .gate-step { color: #3d2428; text-align: center; font-size: 13px; font-weight: 800; line-height: 1.2; }
+    .gate-step small { display: block; margin-top: 4px; color: #765d61; font-size: 11px; font-weight: 700; }
+    .arrow { color: #c72c38; font-size: 22px; font-weight: 800; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">07 / QUALITY GOVERNANCE</div>
+      <h1>台帳と契約テストで、品質を戻さない</h1>
+      <p class="lead">D4で選定の<strong>正本</strong>を持ち、D5で作図・アイコン・テーマの回帰を<strong>公開前に止める</strong>。</p>
+      <div class="main">
+        <section class="panel">
+          <div class="head"><div class="phase">D4</div><h2>台帳とレビューで意味を固定</h2><p>第一候補、禁止代替、可視ラベル、ARIA、Canvas上の線種を一行で照合する。</p></div>
+          <div class="ledger">
+            <div class="ledger-row header"><div>TOOL</div><div>FIRST CHOICE</div><div>AVOID</div></div>
+            <div class="ledger-row"><div class="tool">line-move</div><div class="choice"><i class="ti ti-route" aria-hidden="true"></i>経路・実線</div><div class="avoid">単なる右矢印</div></div>
+            <div class="ledger-row"><div class="tool">line-pass</div><div class="choice"><i class="ti ti-arrow-right-dashed" aria-hidden="true"></i>点線矢印</div><div class="avoid">三点リーダー</div></div>
+            <div class="ledger-row"><div class="tool">line-dribble</div><div class="choice"><i class="ti ti-arrow-zig-zag" aria-hidden="true"></i>ジグザグ動線</div><div class="avoid">心電図の形</div></div>
+            <div class="ledger-row"><div class="tool">cone / ladder</div><div class="choice"><i class="ti ti-cone" aria-hidden="true"></i>器具の実形状</div><div class="avoid">三角 / メニュー</div></div>
+          </div>
+          <p class="review"><strong>レビュー規約：</strong> アイコン、可視ラベル、`aria-label`、`title`、Canvas上の表現が、同じ操作意図を伝えることを確認する。</p>
+        </section>
+        <section class="panel">
+          <div class="head"><div class="phase">D5</div><h2>自動検証で再発を検出</h2><p>見た目だけでは見落とす機能・資産・アクセシビリティの後退を契約として検証する。</p></div>
+          <div class="tests">
+            <div class="test"><div class="test-id">P40</div><i class="ti ti-pencil" aria-hidden="true"></i><div><strong>作図の機能回帰</strong><span>配置、線・図形、Undo/Redo、フォーメーション、保存を保護。</span></div></div>
+            <div class="test"><div class="test-id">P42</div><i class="ti ti-shield-check" aria-hidden="true"></i><div><strong>Tabler資産の回帰</strong><span>Font Awesome再導入、ローカル配信、未定義クラスを検出。</span></div></div>
+            <div class="test"><div class="test-id">P43</div><i class="ti ti-accessible" aria-hidden="true"></i><div><strong>作図の識別性</strong><span>意味の近い形、常時ラベル、ARIA、モバイル幅を固定。</span></div></div>
+          </div>
+          <div class="metrics"><div class="metric"><strong>34/34</strong><span>契約テスト成功</span></div><div class="metric"><strong>20 / 0</strong><span>レスポンシブ検証 / 違反</span></div><div class="metric"><strong>15×2</strong><span>チーム色 × 表示モード</span></div></div>
+        </section>
+      </div>
+      <div class="gate"><div class="gate-step">変更<small>台帳・実装</small></div><div class="arrow">→</div><div class="gate-step">契約検証<small>P40 / P42 / P43</small></div><div class="arrow">→</div><div class="gate-step">表示確認<small>ライト / ダーク / モバイル</small></div><div class="arrow">→</div><div class="gate-step">公開<small>PWA更新・Pages</small></div></div>
+    </div>
+  </div>
+</body>
+</html>

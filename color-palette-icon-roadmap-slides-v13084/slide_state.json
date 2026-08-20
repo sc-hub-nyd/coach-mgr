@@ -1,0 +1,111 @@
+{
+  "project_info": {
+    "title": "CoachMgr カラーパレットとアイコン体系",
+    "created": 1787189134.564,
+    "last_updated": 1787189320.925,
+    "total_slides": 9
+  },
+  "slides": [
+    {
+      "id": "cover",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "palette_foundation",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "semantic_tokens",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "light_dark",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "team_theme",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "icon_architecture",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "drawing_clarity",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "quality_governance",
+      "state": "edited",
+      "pageNum": 8
+    },
+    {
+      "id": "roadmap",
+      "state": "edited",
+      "pageNum": 9
+    }
+  ],
+  "outline": [
+    {
+      "id": "cover",
+      "title": "CoachMgr カラーパレットとアイコン体系",
+      "summary": "チームカラーを拡張しながら、作図・PWA・アクセシビリティの一貫性を保つデザインシステムを示す表紙。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "palette_foundation",
+      "title": "赤を起点に、役割で色を使う",
+      "summary": "南陽台FCの既定赤系を起点とした、キャンバス・面・文字・状態色の実装済みプリミティブを示す。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "semantic_tokens",
+      "title": "部品は色名でなく役割を参照する",
+      "summary": "テーマプリミティブからセマンティックトークンへ接続し、チーム色変更に追随する仕組みを説明する。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "light_dark",
+      "title": "ライトとダークで役割を保つ",
+      "summary": "ライトとOLED向けダークにおける面・文字・状態・フォーカスの設計と検証基準を示す。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "team_theme",
+      "title": "選んだチーム色を安全なテーマへ変換",
+      "summary": "利用者のシードカラーから動的テーマを生成し、文字・操作・境界のコントラストを検証する流れを示す。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "icon_architecture",
+      "title": "アイコンは4層で意味を分担する",
+      "summary": "カスタムSVG、Tabler、絵文字、Canvasの担当範囲と選定規則を整理する。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "drawing_clarity",
+      "title": "作図は形・ラベル・状態をそろえる",
+      "summary": "D1〜D3で実装した作図ツールのアイコン置換、常時ラベル、ARIA・フォーカスの改善を示す。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "quality_governance",
+      "title": "台帳と契約テストで品質を戻さない",
+      "summary": "D4・D5のアイコン台帳、変更レビュー、P40/P42/P43とテーマ検証の品質ゲートを示す。",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "roadmap",
+      "title": "次は拡張より、意味と性能を磨く",
+      "summary": "アイコン、カラー、PWA、アクセシビリティの今後の改善策を優先順位付きでまとめる。",
+      "image_plan": "Use a suitable image if needed"
+    }
+  ]
+}

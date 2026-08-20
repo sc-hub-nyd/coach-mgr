@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ライトとダークで役割を保つ</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fffdfd; color: #24171a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding: 48px 64px 0; }
+    .eyebrow { color: #a92330; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin-top: 10px; color: #24171a; font-size: 46px; line-height: 1.12; letter-spacing: -.045em; font-weight: 800; }
+    .lead { margin-top: 8px; color: #6d5559; font-size: 19px; line-height: 1.5; }
+    .lead strong { color: #c72c38; }
+    .modes { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .mode { min-height: 316px; border-top: 3px solid #c72c38; padding-top: 14px; }
+    .mode-head { display: grid; grid-template-columns: 43px 1fr; gap: 11px; align-items: center; }
+    .mode-head i { color: #c72c38; font-size: 28px; }
+    .mode-head h2 { color: #3d2428; font-size: 23px; }
+    .mode-head p { grid-column: 2; margin-top: 3px; color: #74565b; font-size: 13px; line-height: 1.42; }
+    .palette { margin-top: 16px; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #dfc4c8; }
+    .swatch { min-height: 128px; border-right: 1px solid #dfc4c8; padding: 11px 10px 0; }
+    .swatch:last-child { border-right: none; }
+    .paint { width: 100%; height: 40px; border: 1px solid rgba(36,23,26,.18); }
+    .swatch strong { display: block; margin-top: 9px; color: #3d2428; font-size: 13px; }
+    .swatch span { display: block; margin-top: 4px; color: #765d61; font: 700 11px/1.25 'Courier New', monospace; }
+    .dark-wrap { background: #0d0f12; color: #f8fafc; padding: 13px 13px 0; }
+    .dark-wrap .mode-head h2 { color: #f8fafc; }
+    .dark-wrap .mode-head p, .dark-wrap .swatch span { color: #aeb9c7; }
+    .dark-wrap .swatch strong { color: #f8fafc; }
+    .dark-wrap .palette { border-color: #38414e; }
+    .dark-wrap .swatch { border-color: #38414e; }
+    .dark-wrap .paint { border-color: #64748b; }
+    .checks { margin-top: 18px; min-height: 130px; display: grid; grid-template-columns: 245px repeat(3, 1fr); gap: 18px; border-top: 2px solid #c72c38; padding-top: 15px; }
+    .checks h2 { color: #3d2428; font-size: 20px; line-height: 1.25; }
+    .checks p { margin-top: 7px; color: #74565b; font-size: 13px; line-height: 1.42; }
+    .check { border-top: 1px solid #dfc4c8; padding-top: 10px; }
+    .check .ratio { color: #c72c38; font: 800 27px/1 'Courier New', monospace; }
+    .check strong { display: block; margin-top: 8px; color: #3d2428; font-size: 14px; }
+    .check span { display: block; margin-top: 4px; color: #74565b; font-size: 12px; line-height: 1.35; }
+    .footer { margin-top: 9px; color: #765d61; font-size: 12px; line-height: 1.4; }
+    .footer strong { color: #3d2428; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">03 / LIGHT &amp; DARK</div>
+      <h1>ライトとダークで、役割を保つ</h1>
+      <p class="lead">モードが変わっても、<strong>面・文字・状態・フォーカスの意味</strong>を変えない。高コントラストモードは設けず、二つのテーマで判別性を検証する。</p>
+      <div class="modes">
+        <section class="mode">
+          <div class="mode-head"><i class="ti ti-sun" aria-hidden="true"></i><h2>ライトモード</h2><p>温かい白の面と深い文字色で、日中の屋外・屋内でも読みやすい基盤をつくる。</p></div>
+          <div class="palette">
+            <div class="swatch"><div class="paint" style="background:#faf6f6"></div><strong>Canvas</strong><span>#FAF6F6</span></div>
+            <div class="swatch"><div class="paint" style="background:#ffffff"></div><strong>Surface</strong><span>#FFFFFF</span></div>
+            <div class="swatch"><div class="paint" style="background:#14201c"></div><strong>Text</strong><span>#14201C</span></div>
+            <div class="swatch"><div class="paint" style="background:#c72c38"></div><strong>Action / Focus</strong><span>team-derived</span></div>
+          </div>
+        </section>
+        <section class="mode dark-wrap">
+          <div class="mode-head"><i class="ti ti-moon" aria-hidden="true"></i><h2>ダークモード</h2><p>OLEDを意識した黒いCanvasとニュートラルチャコール。赤の主操作と状態色は明度を調整する。</p></div>
+          <div class="palette">
+            <div class="swatch"><div class="paint" style="background:#000000"></div><strong>Canvas</strong><span>#000000</span></div>
+            <div class="swatch"><div class="paint" style="background:#0d0f12"></div><strong>Surface</strong><span>#0D0F12</span></div>
+            <div class="swatch"><div class="paint" style="background:#f8fafc"></div><strong>Text</strong><span>#F8FAFC</span></div>
+            <div class="swatch"><div class="paint" style="background:#5bd3a5"></div><strong>Success</strong><span>#5BD3A5</span></div>
+          </div>
+        </section>
+      </div>
+      <div class="checks">
+        <div><h2>テーマは自動検証する</h2><p>テーマ生成器は、主操作と文字、文字と面、境界・フォーカスの対比をパレット生成時に確認する。</p></div>
+        <div class="check"><div class="ratio">5:1</div><strong>本文・主操作の前景色</strong><span>本文対Canvas／Surface、主操作上の文字を検証。</span></div>
+        <div class="check"><div class="ratio">4.5:1</div><strong>補助文字・強い境界</strong><span>Muted textと強い境界の読解・識別を検証。</span></div>
+        <div class="check"><div class="ratio">3.5:1</div><strong>操作・境界・フォーカス</strong><span>Canvas上の主操作、境界、フォーカスリングを検証。</span></div>
+      </div>
+      <p class="footer"><strong>実装：</strong>`color-theme-service.js`がライト／ダークのセマンティックパレットを生成し、`P34`は15色×2モードで検証する。状態は色だけでなく、文言・アイコン・形状でも伝える。</p>
+    </div>
+  </div>
+</body>
+</html>

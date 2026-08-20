@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>作図は形・ラベル・状態をそろえる</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fffdfd; color: #24171a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding: 48px 64px 0; }
+    .eyebrow { color: #a92330; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin-top: 10px; color: #24171a; font-size: 45px; line-height: 1.12; letter-spacing: -.04em; font-weight: 800; }
+    .lead { margin-top: 12px; color: #6d5559; font-size: 19px; line-height: 1.5; }
+    .lead strong { color: #c72c38; }
+    .grid { margin-top: 27px; display: grid; grid-template-columns: 1.15fr .85fr; gap: 35px; }
+    .pane { border-top: 3px solid #c72c38; padding-top: 15px; }
+    .pane-tag { color: #a92330; font: 800 12px/1 'Courier New', monospace; letter-spacing: .11em; }
+    .pane h2 { margin-top: 8px; color: #3d2428; font-size: 23px; line-height: 1.22; }
+    .pane p { margin-top: 7px; color: #74565b; font-size: 14px; line-height: 1.42; }
+    .compare { margin-top: 16px; border-top: 1px solid #dfc4c8; }
+    .compare-head, .compare-row { display: grid; grid-template-columns: 106px 1fr 44px 1fr; align-items: center; gap: 10px; }
+    .compare-head { min-height: 32px; color: #8b676c; font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+    .compare-row { min-height: 52px; border-top: 1px solid #ead8db; }
+    .tool { color: #3d2428; font-size: 14px; font-weight: 800; }
+    .icon-line { display: grid; grid-template-columns: 33px 1fr; align-items: center; gap: 7px; }
+    .icon-line i { font-size: 25px; text-align: center; }
+    .old i { color: #a74444; }.new i { color: #c72c38; }
+    .code { color: #3d2428; font: 700 11px/1.2 'Courier New', monospace; }
+    .desc { display: block; margin-top: 2px; color: #7b6266; font: 400 11px/1.22 'Noto Sans JP', sans-serif; }
+    .arrow { color: #c72c38; font-size: 20px; text-align: center; }
+    .dock { margin-top: 16px; min-height: 146px; background: #fde8eb; border-top: 2px solid #c72c38; padding: 15px 17px 0; }
+    .dock-title { color: #3d2428; font-size: 16px; font-weight: 800; }
+    .tools { margin-top: 14px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .tool-btn { min-height: 92px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; background: #ffffff; border: 1px solid #e0bcc1; color: #3d2428; text-align: center; }
+    .tool-btn.active { background: #c72c38; border-color: #c72c38; color: #ffffff; }
+    .tool-btn.focus { outline: 3px solid #f4c35e; outline-offset: 2px; }
+    .tool-btn i { font-size: 28px; }
+    .tool-btn strong { font-size: 13px; line-height: 1.1; }
+    .tool-btn small { font-size: 10px; line-height: 1.15; }
+    .contracts { margin-top: 18px; border-top: 1px solid #dfc4c8; }
+    .contract { min-height: 54px; display: grid; grid-template-columns: 37px 1fr; align-items: center; gap: 9px; border-bottom: 1px solid #dfc4c8; }
+    .contract i { color: #c72c38; font-size: 22px; text-align: center; }
+    .contract strong { color: #3d2428; font-size: 14px; }
+    .contract span { display: block; margin-top: 2px; color: #74565b; font-size: 12px; line-height: 1.25; }
+    .footer { margin-top: 18px; min-height: 62px; display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: center; background: #f7eff0; border-top: 2px solid #c72c38; padding: 11px 15px 0; }
+    .footer i { color: #c72c38; font-size: 23px; }
+    .footer p { color: #5f464b; font-size: 14px; line-height: 1.42; }
+    .footer strong { color: #3d2428; }
+  </style>
+</head>
+<body>
+  <div class="slide-container"><div class="frame">
+    <div class="eyebrow">06 / DRAWING CLARITY — D1 TO D3</div>
+    <h1>作図は、形・ラベル・状態をそろえる</h1>
+    <p class="lead">Canvasの表現は維持し、<strong>ツールを選ぶ前の識別性</strong>と、選択中の操作状態を改善した。</p>
+    <div class="grid">
+      <section class="pane"><div class="pane-tag">D1 / ICON SEMANTICS</div><h2>似た形を、意味の近い形へ</h2><p>操作名、Tablerアイコン、Canvas上の線種を一つの意図に合わせる。</p>
+        <div class="compare"><div class="compare-head"><div>操作</div><div>BEFORE</div><div></div><div>AFTER</div></div>
+          <div class="compare-row"><div class="tool">移動</div><div class="icon-line old"><i class="ti ti-arrow-right"></i><div><div class="code">arrow-right</div><span class="desc">単なる右矢印</span></div></div><div class="arrow">→</div><div class="icon-line new"><i class="ti ti-route"></i><div><div class="code">route</div><span class="desc">実線の経路</span></div></div></div>
+          <div class="compare-row"><div class="tool">パス</div><div class="icon-line old"><i class="ti ti-dots"></i><div><div class="code">dots</div><span class="desc">三点リーダー</span></div></div><div class="arrow">→</div><div class="icon-line new"><i class="ti ti-arrow-right-dashed"></i><div><div class="code">arrow-right-dashed</div><span class="desc">点線・矢印</span></div></div></div>
+          <div class="compare-row"><div class="tool">ドリブル</div><div class="icon-line old"><i class="ti ti-activity"></i><div><div class="code">activity</div><span class="desc">心電図に見える</span></div></div><div class="arrow">→</div><div class="icon-line new"><i class="ti ti-arrow-zig-zag"></i><div><div class="code">arrow-zig-zag</div><span class="desc">ジグザグ動線</span></div></div></div>
+          <div class="compare-row"><div class="tool">器具</div><div class="icon-line old"><i class="ti ti-menu-2"></i><div><div class="code">menu-2</div><span class="desc">メニュー記号</span></div></div><div class="arrow">→</div><div class="icon-line new"><i class="ti ti-cone"></i><div><div class="code">cone / ladder</div><span class="desc">器具の実形状</span></div></div></div>
+        </div>
+      </section>
+      <section class="pane"><div class="pane-tag">D2 + D3 / TOUCH &amp; A11Y</div><h2>操作前から、読める・分かる</h2><p>未選択時も日本語ラベルを表示し、視覚と支援技術の状態を同期する。</p>
+        <div class="dock"><div class="dock-title">ツールドック — 常時表示ラベル</div><div class="tools"><div class="tool-btn"><i class="ti ti-route"></i><strong>移動</strong><small>実線</small></div><div class="tool-btn active"><i class="ti ti-arrow-right-dashed"></i><strong>パス</strong><small>選択中</small></div><div class="tool-btn"><i class="ti ti-arrow-zig-zag"></i><strong>ドリブル</strong><small>ジグザグ</small></div><div class="tool-btn"><i class="ti ti-cone"></i><strong>コーン</strong><small>器具配置</small></div><div class="tool-btn focus"><i class="ti ti-ladder"></i><strong>ラダー</strong><small>焦点位置</small></div></div></div>
+        <div class="contracts"><div class="contract"><i class="ti ti-text-size"></i><div><strong>ラベルを常時表示</strong><span>デスクトップ68px・モバイル64pxのツールドックで、タップ前に操作名を読む。</span></div></div><div class="contract"><i class="ti ti-accessible"></i><div><strong>aria-pressedを同期</strong><span>クリック後の背景・アイコン・ラベルの状態と、支援技術が読む選択状態を一致させる。</span></div></div><div class="contract"><i class="ti ti-focus-2"></i><div><strong>可視フォーカスを維持</strong><span>黄色のアウトラインで、キーボード利用時の現在位置を示す。</span></div></div></div>
+      </section>
+    </div>
+    <div class="footer"><i class="ti ti-check"></i><p><strong>実装結果：</strong> アイコン、可視ラベル、`aria-label`、`title`、Canvas上の線種が同じ意味を伝える。色やホバー説明だけに依存しない作図操作へ更新した。</p></div>
+  </div></div>
+</body>
+</html>

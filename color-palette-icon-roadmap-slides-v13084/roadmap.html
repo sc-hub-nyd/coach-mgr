@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>次は拡張より、意味と性能を磨く</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; display: grid; grid-template-columns: 35% 65%; background: #fffdfd; color: #24171a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .left { min-height: 720px; background: #c72c38; color: #ffffff; padding: 56px 46px 0; display: flex; flex-direction: column; }
+    .eyebrow { color: #ffe5e8; font-size: 13px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin-top: 27px; font-size: 43px; line-height: 1.14; letter-spacing: -.055em; font-weight: 800; }
+    .left p { margin-top: 20px; color: #fff0f2; font-size: 17px; line-height: 1.55; }
+    .principles { margin-top: 34px; border-top: 1px solid rgba(255,255,255,.42); }
+    .principle { min-height: 66px; display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: center; border-bottom: 1px solid rgba(255,255,255,.30); }
+    .principle i { color: #ffe5e8; font-size: 19px; }
+    .principle strong { display: block; color: #ffffff; font-size: 14px; }
+    .principle span { display: block; margin-top: 3px; color: #ffe5e8; font-size: 11px; line-height: 1.3; }
+    .mark { margin-top: auto; margin-bottom: 52px; color: #ffe5e8; font: 800 13px/1.45 'Courier New', monospace; letter-spacing: .05em; }
+    .right { min-height: 720px; padding: 54px 60px 0; }
+    .section { color: #a92330; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    .headline { margin-top: 11px; color: #24171a; font-size: 34px; line-height: 1.2; font-weight: 800; letter-spacing: -.04em; }
+    .headline strong { color: #c72c38; }
+    .roadmap { margin-top: 25px; border-top: 2px solid #24171a; }
+    .row { min-height: 101px; display: grid; grid-template-columns: 80px 52px 1fr 210px; gap: 14px; align-items: center; border-bottom: 1px solid #dfc4c8; }
+    .priority { color: #a92330; font: 800 13px/1.1 'Courier New', monospace; letter-spacing: .07em; }
+    .row i { color: #c72c38; font-size: 29px; text-align: center; }
+    .row h2 { color: #3d2428; font-size: 18px; line-height: 1.2; }
+    .row p { margin-top: 5px; color: #74565b; font-size: 13px; line-height: 1.4; }
+    .exit { border-top: 2px solid #167c5a; padding-top: 8px; color: #356252; font-size: 12px; line-height: 1.35; }
+    .exit strong { display: block; color: #167c5a; font-size: 12px; }
+    .footer { margin-top: 20px; min-height: 72px; display: grid; grid-template-columns: 36px 1fr; gap: 13px; align-items: center; background: #fde8eb; border-top: 2px solid #c72c38; padding: 13px 16px 0; }
+    .footer i { color: #c72c38; font-size: 23px; }
+    .footer strong { color: #3d2428; font-size: 15px; }
+    .footer p { margin-top: 4px; color: #654b50; font-size: 13px; line-height: 1.42; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <section class="left">
+      <div class="eyebrow">NEXT / ROADMAP</div>
+      <h1>次は拡張より、<br>意味と性能を<br>磨く。</h1>
+      <p>新しいアイコンを増やす前に、選定基準、配信容量、直接指定色、競技固有表現を整える。</p>
+      <div class="principles">
+        <div class="principle"><i class="ti ti-scale" aria-hidden="true"></i><div><strong>意味を優先</strong><span>似た形でなく、操作意図に近い表現を選ぶ。</span></div></div>
+        <div class="principle"><i class="ti ti-accessible" aria-hidden="true"></i><div><strong>情報を重ねる</strong><span>色・形・ラベル・ARIAの一つだけに依存しない。</span></div></div>
+        <div class="principle"><i class="ti ti-gauge" aria-hidden="true"></i><div><strong>配信を軽くする</strong><span>PWAの初回キャッシュと更新体験を維持する。</span></div></div>
+      </div>
+      <div class="mark">DESIGN SYSTEM<br>IS A PRODUCT ASSET</div>
+    </section>
+    <section class="right">
+      <div class="section">PRIORITIZED IMPROVEMENTS</div>
+      <div class="headline">次の価値は、<strong>一貫性・軽さ・運用</strong>にある。</div>
+      <div class="roadmap">
+        <div class="row"><div class="priority">P4 / 01</div><i class="ti ti-notebook" aria-hidden="true"></i><div><h2>アイコン台帳を運用へ定着</h2><p>新規UI・レビュー時に、意図→第一候補→代替禁止→ラベル／ARIA／Canvas整合を必ず照合する。</p></div><div class="exit"><strong>完了条件</strong>変更レビューで台帳参照が標準化され、P43対象の作図操作に例外がない。</div></div>
+        <div class="row"><div class="priority">P4 / 02</div><i class="ti ti-file-zip" aria-hidden="true"></i><div><h2>Webfontのサブセット化を評価</h2><p>実利用のTablerクラスを基に、初回キャッシュ容量と将来の追加コストを測定して最適な配信単位を決める。</p></div><div class="exit"><strong>完了条件</strong>容量削減と未定義アイコン防止を両立する方式を決定し、P42へ反映する。</div></div>
+        <div class="row"><div class="priority">P5 / 03</div><i class="ti ti-color-swatch" aria-hidden="true"></i><div><h2>残る直接指定色をトークンへ移行</h2><p>ダッシュボードや旧画面の赤系グラデーション・状態色を棚卸しし、`--color-*`の役割へ置き換える。</p></div><div class="exit"><strong>完了条件</strong>チーム色・ライト／ダーク切替で、対象画面の色がセマンティックトークンだけで追随する。</div></div>
+        <div class="row"><div class="priority">P5 / 04</div><i class="ti ti-flag" aria-hidden="true"></i><div><h2>競技固有の不足語彙をSVG化</h2><p>笛や審判カードなど、Tablerに直接対応しない概念は曖昧な汎用記号で代用せず、カスタムSVGとして追加する。</p></div><div class="exit"><strong>完了条件</strong>意味、色継承、ラベル、台帳、PWA precacheをそろえた固有SVGとして採用する。</div></div>
+      </div>
+      <div class="footer"><i class="ti ti-target-arrow" aria-hidden="true"></i><div><strong>判断基準：</strong><p>追加する前に、既存の4層・セマンティックカラー・Canvas表現のどこが担当すべきかを確認する。新しい表現は、意味の重複を減らすときだけ採用する。</p></div></div>
+    </section>
+  </div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>部品は色名でなく役割を参照する</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background:#fffdfd; color:#24171a; font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif; }
+    .frame { min-height:720px; padding:50px 64px 0; }
+    .eyebrow { color:#a92330; font-size:14px; font-weight:800; letter-spacing:.15em; }
+    h1 { margin-top:10px; font-size:45px; line-height:1.12; letter-spacing:-.04em; font-weight:800; }
+    .lead { margin-top:12px; color:#6d5559; font-size:19px; line-height:1.5; }
+    .lead strong { color:#c72c38; }
+    .flow { margin-top:28px; display:grid; grid-template-columns:215px 1fr 1fr 1fr; gap:20px; align-items:stretch; }
+    .why { border-top:3px solid #c72c38; padding-top:16px; }
+    .why h2 { font-size:23px; color:#3d2428; line-height:1.25; }
+    .why p { margin-top:14px; color:#74565b; font-size:15px; line-height:1.55; }
+    .stage { border-top:3px solid #c72c38; padding-top:15px; }
+    .stage-label { color:#a92330; font:800 12px/1 'Courier New',monospace; letter-spacing:.1em; }
+    .stage h2 { margin-top:10px; font-size:22px; color:#3d2428; }
+    .stage p { margin-top:6px; color:#74565b; font-size:13px; line-height:1.42; }
+    .items { margin-top:17px; border-top:1px solid #dfc4c8; }
+    .item { min-height:52px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #dfc4c8; color:#3d2428; font:700 12px/1.25 'Courier New',monospace; }
+    .item i { color:#c72c38; font-size:18px; }
+    .example { margin-top:20px; min-height:132px; display:grid; grid-template-columns:185px 1fr 210px; gap:22px; align-items:center; background:#fde8eb; border-top:2px solid #c72c38; padding:18px 21px 0; }
+    .example h2 { color:#3d2428; font-size:19px; }
+    .example p { margin-top:6px; color:#74565b; font-size:13px; line-height:1.42; }
+    .code { min-height:75px; background:#ffffff; border:1px solid #e4cdd0; padding:13px 15px 0; color:#7e2833; font:700 13px/1.6 'Courier New',monospace; }
+    .result { color:#3d2428; font-size:15px; line-height:1.45; }
+    .result strong { color:#c72c38; }
+    .footer { margin-top:18px; color:#765d61; font-size:13px; }
+  </style>
+</head>
+<body>
+  <div class="slide-container"><div class="frame">
+    <div class="eyebrow">02 / SEMANTIC COLOR SYSTEM</div>
+    <h1>部品は、色名でなく役割を参照する</h1>
+    <p class="lead">チームカラーを変えても、<strong>「主操作」「注意」「文字」</strong>の意味が崩れないCSS API。</p>
+    <div class="flow">
+      <section class="why"><h2>HEX直書きでは、<br>テーマ変更に<br>耐えられない。</h2><p>画面ごとに赤・緑・白を指定すると、ライト／ダークやチーム色変更で整合性を失う。</p></section>
+      <section class="stage"><div class="stage-label">STEP 1</div><h2>テーマプリミティブ</h2><p>テーマ生成器が色値を差し替える層。</p><div class="items"><div class="item"><i class="ti ti-color-swatch"></i>--theme-primary</div><div class="item"><i class="ti ti-square"></i>--theme-surface</div><div class="item"><i class="ti ti-letter-t"></i>--theme-text</div><div class="item"><i class="ti ti-focus-2"></i>--theme-focus</div></div></section>
+      <section class="stage"><div class="stage-label">STEP 2</div><h2>セマンティックトークン</h2><p>部品に渡す、変わらない役割名。</p><div class="items"><div class="item"><i class="ti ti-click"></i>--color-action</div><div class="item"><i class="ti ti-layout"></i>--color-surface</div><div class="item"><i class="ti ti-text-size"></i>--color-text</div><div class="item"><i class="ti ti-alert-circle"></i>--color-danger</div></div></section>
+      <section class="stage"><div class="stage-label">STEP 3</div><h2>コンポーネント</h2><p>部品の目的に合わせて役割だけを消費。</p><div class="items"><div class="item"><i class="ti ti-button"></i>主操作ボタン</div><div class="item"><i class="ti ti-app-window"></i>カード・入力面</div><div class="item"><i class="ti ti-check"></i>成功・警告・エラー</div><div class="item"><i class="ti ti-accessible"></i>フォーカス表示</div></div></section>
+    </div>
+    <div class="example"><div><h2>実装例</h2><p>同じ部品CSSを、すべてのチーム色・表示モードで再利用する。</p></div><div class="code">.c-button--primary {<br>&nbsp;&nbsp;background: var(--color-action);<br>&nbsp;&nbsp;color: var(--color-text-on-action);<br>}</div><div class="result"><strong>結果：</strong> チーム色を変えても、部品の意図・前景色・コントラスト判定が一緒に追随する。</div></div>
+    <div class="footer">ルール：新しい部品はチームのHEX値を直接参照せず、`--color-*`のセマンティックトークンを使用する。</div>
+  </div></div>
+</body>
+</html>

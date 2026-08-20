@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>選んだチーム色を安全なテーマへ変換</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fffdfd; color: #24171a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding: 48px 64px 0; }
+    .eyebrow { color: #a92330; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin-top: 10px; color: #24171a; font-size: 45px; line-height: 1.12; letter-spacing: -.045em; font-weight: 800; }
+    .lead { margin-top: 12px; color: #6d5559; font-size: 19px; line-height: 1.5; }
+    .lead strong { color: #c72c38; }
+    .flow { margin-top: 30px; display: grid; grid-template-columns: 180px 38px 188px 38px 220px 38px 188px 38px 1fr; align-items: center; }
+    .step { min-height: 208px; border-top: 3px solid #c72c38; padding-top: 15px; }
+    .step-no { color: #a92330; font: 800 12px/1 'Courier New', monospace; letter-spacing: .1em; }
+    .step i { display: block; margin-top: 17px; color: #c72c38; font-size: 34px; }
+    .step h2 { margin-top: 13px; color: #3d2428; font-size: 19px; line-height: 1.2; }
+    .step p { margin-top: 8px; color: #74565b; font-size: 13px; line-height: 1.42; }
+    .step code { display: block; margin-top: 9px; color: #8a2735; font: 700 12px/1.3 'Courier New', monospace; }
+    .arrow { color: #c72c38; font-size: 25px; text-align: center; }
+    .seed { width: 62px; height: 62px; margin-top: 12px; background: #ef3340; border: 4px solid #fde8eb; }
+    .generated { margin-top: 13px; display: flex; gap: 6px; }
+    .generated span { width: 24px; height: 24px; border: 1px solid rgba(36,23,26,.16); }
+    .checks { margin-top: 27px; display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+    .panel { min-height: 136px; border-top: 2px solid #c72c38; padding-top: 13px; }
+    .panel h2 { color: #3d2428; font-size: 18px; }
+    .panel p { margin-top: 6px; color: #74565b; font-size: 14px; line-height: 1.45; }
+    .checks-grid { margin-top: 12px; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #dfc4c8; }
+    .check { min-height: 43px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #dfc4c8; color: #4e3439; font-size: 11px; font-weight: 700; }
+    .check i { color: #167c5a; font-size: 15px; }
+    .modes { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+    .mode { min-height: 63px; display: grid; grid-template-columns: 37px 1fr; align-items: center; gap: 10px; border-top: 1px solid #dfc4c8; padding-top: 9px; }
+    .mode.light i { color: #c72c38; }.mode.dark i { color: #28323b; }
+    .mode strong { color: #3d2428; font-size: 13px; }.mode span { display: block; margin-top: 3px; color: #74565b; font-size: 11px; line-height: 1.3; }
+    .footer { margin-top: 18px; min-height: 55px; background: #fde8eb; border-top: 2px solid #c72c38; padding: 12px 16px 0; color: #5d3a40; font-size: 14px; line-height: 1.4; }
+    .footer strong { color: #3d2428; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">04 / DYNAMIC TEAM THEME</div>
+      <h1>選んだチーム色を、安全なテーマへ変換する</h1>
+      <p class="lead">利用者が色を選んでも、<strong>文字・操作・境界・状態</strong>の役割と読みやすさを自動で保つ。</p>
+      <div class="flow">
+        <section class="step"><div class="step-no">INPUT</div><div class="seed"></div><h2>チームのシード色</h2><p>既定は南陽台FCの赤系。</p><code>#EF3340</code></section><div class="arrow">→</div>
+        <section class="step"><div class="step-no">NORMALIZE</div><i class="ti ti-adjustments" aria-hidden="true"></i><h2>入力を正規化</h2><p>3桁・6桁HEXを正規化。無効値は既定色へ戻す。</p><code>normalizeHex()</code></section><div class="arrow">→</div>
+        <section class="step"><div class="step-no">COMPOSE</div><i class="ti ti-color-swatch" aria-hidden="true"></i><h2>トーンを生成</h2><p>主操作、hover、soft、面、文字、補助色、状態色をモード別に構成。</p><div class="generated"><span style="background:#c72c38"></span><span style="background:#fde8eb"></span><span style="background:#faf6f6"></span><span style="background:#24171a"></span><span style="background:#167c5a"></span></div></section><div class="arrow">→</div>
+        <section class="step"><div class="step-no">VALIDATE</div><i class="ti ti-shield-check" aria-hidden="true"></i><h2>コントラストを検証</h2><p>必要な組合せを判定し、満たせない場合は安全な既定テーマへフォールバック。</p><code>validateThemePalette()</code></section><div class="arrow">→</div>
+        <section class="step"><div class="step-no">APPLY</div><i class="ti ti-device-mobile" aria-hidden="true"></i><h2>CSS変数へ適用</h2><p>セマンティックトークンを通して、全コンポーネントへ同じ役割を配布。</p><code>--theme-*</code></section>
+      </div>
+      <div class="checks">
+        <section class="panel"><h2>8つの基準で、安全側へ判定</h2><p>本文、主操作、境界、フォーカスなど、利用中に意味を担う組合せを検査する。</p><div class="checks-grid"><div class="check"><i class="ti ti-check"></i>文字 × Canvas</div><div class="check"><i class="ti ti-check"></i>文字 × Surface</div><div class="check"><i class="ti ti-check"></i>主操作 × 前景</div><div class="check"><i class="ti ti-check"></i>Primary × Canvas</div><div class="check"><i class="ti ti-check"></i>Muted × Surface</div><div class="check"><i class="ti ti-check"></i>Border × Surface</div><div class="check"><i class="ti ti-check"></i>Focus × Surface</div><div class="check"><i class="ti ti-check"></i>Hover × 前景</div></div></section>
+        <section class="panel"><h2>ライトとダークは別の中立面で支える</h2><p>色相だけを反転せず、面・影・文字・状態の役割をモードごとに再構成する。</p><div class="modes"><div class="mode light"><i class="ti ti-sun" aria-hidden="true"></i><div><strong>Light</strong><span>温かい白のCanvasと深い本文色を組み合わせる。</span></div></div><div class="mode dark"><i class="ti ti-moon" aria-hidden="true"></i><div><strong>Dark</strong><span>OLED向けの黒Canvasとニュートラルチャコールを使用する。</span></div></div></div></section>
+      </div>
+      <div class="footer"><strong>結果：</strong> チームカラーは利用者が選べる。一方で、UI部品は色名に依存せず、検証済みのセマンティック役割を受け取るため、テーマ全体の統一感と可読性を保てる。</div>
+    </div>
+  </div>
+</body>
+</html>

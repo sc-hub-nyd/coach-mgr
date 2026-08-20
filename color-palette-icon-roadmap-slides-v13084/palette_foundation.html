@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>赤を起点に、役割で色を使う</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fffdfd; color: #24171a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding: 48px 64px 0; }
+    .eyebrow { color: #a92330; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin-top: 10px; color: #24171a; font-size: 46px; line-height: 1.12; letter-spacing: -.045em; font-weight: 800; }
+    .lead { margin-top: 12px; color: #6d5559; font-size: 19px; line-height: 1.5; }
+    .lead strong { color: #c72c38; }
+    .groups { margin-top: 29px; display: grid; grid-template-columns: 1.08fr 1fr 1.1fr; gap: 28px; }
+    .group { border-top: 3px solid #c72c38; padding-top: 15px; }
+    .group h2 { color: #3d2428; font-size: 18px; }
+    .group p { margin-top: 5px; color: #74565b; font-size: 13px; line-height: 1.4; }
+    .swatches { margin-top: 16px; border-top: 1px solid #dfc4c8; }
+    .swatch { min-height: 70px; display: grid; grid-template-columns: 58px 1fr auto; align-items: center; gap: 12px; border-bottom: 1px solid #dfc4c8; }
+    .chip { width: 42px; height: 42px; border: 1px solid rgba(36,23,26,.16); }
+    .name { color: #3d2428; font-size: 15px; font-weight: 800; }
+    .role { display: block; margin-top: 3px; color: #765d61; font-size: 12px; line-height: 1.25; }
+    .hex { color: #a92330; font: 700 13px/1 'Courier New', monospace; }
+    .wide { margin-top: 22px; min-height: 95px; background: #fde8eb; border-top: 2px solid #c72c38; padding: 17px 20px 0; display: grid; grid-template-columns: 44px 1fr; gap: 14px; }
+    .wide i { color: #c72c38; font-size: 29px; }
+    .wide strong { color: #3d2428; font-size: 17px; }
+    .wide p { margin-top: 5px; color: #6d5559; font-size: 14px; line-height: 1.45; }
+    .footer { margin-top: 15px; color: #765d61; font-size: 12px; line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">01 / PALETTE FOUNDATION</div>
+      <h1>赤を起点に、役割で色を使う</h1>
+      <p class="lead">既定テーマは南陽台FCの赤系。<strong>色名ではなく役割</strong>を部品へ渡し、チーム色の変更にも追随する。</p>
+      <div class="groups">
+        <section class="group"><h2>BRAND &amp; ACTION</h2><p>主操作と選択の起点。白文字との組合せを前提にする。</p><div class="swatches">
+          <div class="swatch"><div class="chip" style="background:#c72c38"></div><div><div class="name">Primary</div><span class="role">主操作・選択・フォーカス</span></div><div class="hex">#C72C38</div></div>
+          <div class="swatch"><div class="chip" style="background:#a92330"></div><div><div class="name">Primary hover</div><span class="role">主操作の押下前後</span></div><div class="hex">#A92330</div></div>
+          <div class="swatch"><div class="chip" style="background:#fde8eb"></div><div><div class="name">Primary soft</div><span class="role">選択面・控えめな強調</span></div><div class="hex">#FDE8EB</div></div>
+        </div></section>
+        <section class="group"><h2>NEUTRAL SURFACES</h2><p>読みやすさをつくる、温かい白と深い文字色の組合せ。</p><div class="swatches">
+          <div class="swatch"><div class="chip" style="background:#faf6f6"></div><div><div class="name">Canvas</div><span class="role">画面全体の背景</span></div><div class="hex">#FAF6F6</div></div>
+          <div class="swatch"><div class="chip" style="background:#ffffff"></div><div><div class="name">Surface</div><span class="role">カード・入力・浮上面</span></div><div class="hex">#FFFFFF</div></div>
+          <div class="swatch"><div class="chip" style="background:#24171a"></div><div><div class="name">Text</div><span class="role">本文・見出し</span></div><div class="hex">#24171A</div></div>
+        </div></section>
+        <section class="group"><h2>STATUS ROLES</h2><p>状態を色だけで完結させず、文言・アイコン・数値も併記する。</p><div class="swatches">
+          <div class="swatch"><div class="chip" style="background:#167c5a"></div><div><div class="name">Success</div><span class="role">完了・正常・肯定</span></div><div class="hex">#167C5A</div></div>
+          <div class="swatch"><div class="chip" style="background:#925f00"></div><div><div class="name">Warning</div><span class="role">注意・確認が必要</span></div><div class="hex">#925F00</div></div>
+          <div class="swatch"><div class="chip" style="background:#b42318"></div><div><div class="name">Danger</div><span class="role">破壊的操作・失敗</span></div><div class="hex">#B42318</div></div>
+          <div class="swatch"><div class="chip" style="background:#1769aa"></div><div><div class="name">Info</div><span class="role">補足・進行案内</span></div><div class="hex">#1769AA</div></div>
+        </div></section>
+      </div>
+      <div class="wide"><i class="ti ti-palette" aria-hidden="true"></i><div><strong>赤はブランド、緑・黄・青は意味を持つ状態だけに使う。</strong><p>成功・警告・危険・情報の色を、チームカラーの補色として再利用しない。これにより、チーム色を変えても状態の意味を保てる。</p></div></div>
+      <p class="footer">実装根拠：`CSS/base.css`のテーマプリミティブ。部品は`CSS/tokens.css`のセマンティックトークンを経由して参照する。</p>
+    </div>
+  </div>
+</body>
+</html>

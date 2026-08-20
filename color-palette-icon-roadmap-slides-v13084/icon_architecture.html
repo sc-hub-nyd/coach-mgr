@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>アイコンは4層で意味を分担する</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #fffdfd; color: #24171a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .frame { min-height: 720px; padding: 48px 64px 0; }
+    .eyebrow { color: #a92330; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    h1 { margin-top: 10px; color: #24171a; font-size: 46px; line-height: 1.12; letter-spacing: -.045em; font-weight: 800; }
+    .lead { margin-top: 12px; color: #6d5559; font-size: 19px; line-height: 1.5; }
+    .lead strong { color: #c72c38; }
+    .layout { margin-top: 28px; display: grid; grid-template-columns: 260px 1fr; gap: 38px; }
+    .principle { border-top: 3px solid #c72c38; padding-top: 17px; }
+    .principle h2 { color: #3d2428; font-size: 27px; line-height: 1.22; letter-spacing: -.03em; }
+    .principle p { margin-top: 14px; color: #74565b; font-size: 15px; line-height: 1.55; }
+    .principle strong { color: #c72c38; }
+    .priority { margin-top: 22px; border-top: 1px solid #dfc4c8; }
+    .priority div { min-height: 48px; display: grid; grid-template-columns: 29px 1fr; gap: 9px; align-items: center; border-bottom: 1px solid #dfc4c8; color: #4e3338; font-size: 13px; font-weight: 700; }
+    .priority b { color: #c72c38; font: 800 12px/1 'Courier New', monospace; }
+    .layers { border-top: 2px solid #24171a; }
+    .layer { min-height: 88px; display: grid; grid-template-columns: 74px 62px 190px 1fr; align-items: center; gap: 15px; border-bottom: 1px solid #dfc4c8; }
+    .number { color: #a92330; font: 800 13px/1 'Courier New', monospace; letter-spacing: .08em; }
+    .layer i { color: #c72c38; font-size: 34px; text-align: center; }
+    .title { color: #3d2428; font-size: 19px; font-weight: 800; }
+    .code { margin-top: 4px; color: #a92330; font: 700 12px/1.2 'Courier New', monospace; }
+    .use { color: #6d5559; font-size: 14px; line-height: 1.42; }
+    .rule { margin-top: 19px; min-height: 93px; display: grid; grid-template-columns: 40px 1fr 250px; gap: 14px; align-items: center; background: #fde8eb; border-top: 2px solid #c72c38; padding: 15px 18px 0; }
+    .rule i { color: #c72c38; font-size: 25px; }
+    .rule strong { color: #3d2428; font-size: 16px; }
+    .rule p { margin-top: 5px; color: #6d5559; font-size: 13px; line-height: 1.42; }
+    .rule-side { color: #8a2835; font: 700 12px/1.45 'Courier New', monospace; text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <div class="frame">
+      <div class="eyebrow">06 / ICON ARCHITECTURE</div>
+      <h1>アイコンは、4層で意味を分担する</h1>
+      <p class="lead">一つのパックにすべてを任せない。<strong>概念に最も近い表現層</strong>を選び、チーム固有性と業務の分かりやすさを両立する。</p>
+      <div class="layout">
+        <section class="principle">
+          <h2>似た形ではなく、<br>近い意味を選ぶ。</h2>
+          <p>アイコンは装飾ではなく、操作・状態・文脈を補う部品。意味の重複や誤読を避けるため、採用順序を固定する。</p>
+          <div class="priority"><div><b>01</b><span>チーム・固有概念</span></div><div><b>02</b><span>汎用業務・サッカー語彙</span></div><div><b>03</b><span>順位などの補助表示</span></div><div><b>04</b><span>戦術そのものの表現</span></div></div>
+        </section>
+        <section class="layers" aria-label="CoachMgrのアイコン体系4層">
+          <div class="layer"><div class="number">LAYER 1</div><i class="ti ti-brand-abstract" aria-hidden="true"></i><div><div class="title">カスタムSVG</div><div class="code">.c-icon</div></div><div class="use">チームシグナル、主要ナビ、ミニゴールなど。Tablerに直接対応する形がない固有概念を担当。</div></div>
+          <div class="layer"><div class="number">LAYER 2</div><i class="ti ti-ball-football" aria-hidden="true"></i><div><div class="title">Tabler Icons</div><div class="code">.ti .ti-*</div></div><div class="use">得点、アシスト、ピッチ、経路、コーン、ラダー。ローカル配信の汎用・サッカー補助語彙を担当。</div></div>
+          <div class="layer"><div class="number">LAYER 3</div><i class="ti ti-star" aria-hidden="true"></i><div><div class="title">絵文字</div><div class="code">rank only</div></div><div class="use">ランキング順位などの非操作的な補助表示。主要な操作や重要な状態には使わない。</div></div>
+          <div class="layer"><div class="number">LAYER 4</div><i class="ti ti-route" aria-hidden="true"></i><div><div class="title">Canvas描画</div><div class="code">tactics board</div></div><div class="use">選手位置、パス、ドリブル、エリア。アイコンではなく、戦術表現そのものを担当。</div></div>
+        </section>
+      </div>
+      <div class="rule"><i class="ti ti-check" aria-hidden="true"></i><div><strong>アイコン、ラベル、ARIA、Canvas表現は、同じ意味を伝える。</strong><p>ラベルがある操作のアイコンは装飾として扱い、単独操作には日本語の`aria-label`を与える。色や形だけで状態を伝えない。</p></div><div class="rule-side">CUSTOM SVG × TABLER<br>EMOJI × CANVAS</div></div>
+    </div>
+  </div>
+</body>
+</html>

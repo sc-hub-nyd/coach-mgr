@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>CoachMgr カラーパレットとアイコン体系</title>
+  <link rel="stylesheet" href="/home/ubuntu/coach-mgr-label-shape-unification/assets/vendor/tabler-icons/tabler-icons.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; display: grid; grid-template-columns: 48% 52%; background: #fffdfd; color: #24171a; font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+    .left { min-height: 720px; background: #c72c38; color: #ffffff; padding: 62px 58px 0; display: flex; flex-direction: column; }
+    .eyebrow { color: #ffe6e9; font-size: 14px; font-weight: 800; letter-spacing: .16em; }
+    h1 { margin-top: 34px; font-size: 59px; line-height: 1.08; letter-spacing: -.06em; font-weight: 800; }
+    .lead { margin-top: 25px; max-width: 440px; color: #fff1f3; font-size: 21px; line-height: 1.55; }
+    .meta { margin-top: auto; margin-bottom: 57px; display: flex; align-items: center; gap: 12px; color: #ffe6e9; font-size: 15px; font-weight: 700; letter-spacing: .04em; }
+    .meta i { font-size: 21px; }
+    .right { min-height: 720px; padding: 78px 66px 0; display: flex; flex-direction: column; }
+    .kicker { color: #a92330; font-size: 14px; font-weight: 800; letter-spacing: .15em; }
+    .statement { margin-top: 32px; color: #24171a; font-size: 40px; line-height: 1.2; font-weight: 800; letter-spacing: -.045em; }
+    .statement strong { color: #c72c38; }
+    .rule { margin-top: 30px; height: 3px; background: #c72c38; }
+    .topics { margin-top: 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .topic { min-height: 150px; border-top: 2px solid #d9b6bb; padding-top: 14px; }
+    .topic i { color: #c72c38; font-size: 31px; }
+    .topic strong { display: block; margin-top: 14px; color: #3d2428; font-size: 18px; line-height: 1.2; }
+    .topic span { display: block; margin-top: 8px; color: #74565b; font-size: 13px; line-height: 1.45; }
+    .footer { margin-top: auto; margin-bottom: 60px; color: #74565b; font-size: 14px; line-height: 1.48; }
+    .footer strong { color: #3d2428; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <section class="left">
+      <div class="eyebrow">COACHMGR / DESIGN SYSTEM</div>
+      <h1>カラー<br>パレットと<br>アイコン体系</h1>
+      <p class="lead">チームの個性を活かしながら、試合・練習・作図・PWAで一貫した意味と操作性を保つ。</p>
+      <div class="meta"><i class="ti ti-palette" aria-hidden="true"></i><span>v1.30.84 / LIGHT &amp; DARK / PWA</span></div>
+    </section>
+    <section class="right">
+      <div class="kicker">SYSTEM OVERVIEW</div>
+      <div class="statement">色は<strong>役割</strong>で選ぶ。<br>アイコンは<strong>意味</strong>で選ぶ。</div>
+      <div class="rule"></div>
+      <div class="topics">
+        <div class="topic"><i class="ti ti-color-swatch" aria-hidden="true"></i><strong>カラー</strong><span>赤を起点に、面・文字・操作・状態をトークン化</span></div>
+        <div class="topic"><i class="ti ti-icons" aria-hidden="true"></i><strong>アイコン</strong><span>独自SVG、Tabler、絵文字、Canvasの4層</span></div>
+        <div class="topic"><i class="ti ti-route" aria-hidden="true"></i><strong>改善策</strong><span>識別性、台帳、検証、性能を優先順に実行</span></div>
+      </div>
+      <p class="footer"><strong>対象：</strong> コーチ・保護者が、端末・テーマ・チームカラーを問わず、同じ意味で操作できるUI基盤。</p>
+    </section>
+  </div>
+</body>
+</html>
