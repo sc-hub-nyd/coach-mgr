@@ -201,7 +201,10 @@ function updateFrameCount() {
 
             card.ondblclick = () => {
                 const idx = parseInt(card.dataset.frameIndex, 10);
-                if (idx >= 0) openQuickDrawer(idx);
+                if (idx >= 0) {
+                    currentFrameIndex = idx;
+                    editFrameTitle();
+                }
             };
 
             card.ondragstart = (e) => {
@@ -259,7 +262,6 @@ function selectFrame(index) {
         selectedObject = null;
         updateFrameCount();
         drawPitch(objects);
-        openQuickDrawer(index);
         showToast(`シーン ${index + 1} を表示中`);
     }
 }
@@ -291,143 +293,20 @@ function addFrame() {
     currentFrameIndex = insertIdx;
     updateFrameCount();
     drawPitch(objects);
-    openQuickDrawer(insertIdx);
     showToast(`シーン ${insertIdx + 1} を追加しました`);
 }
 
 export function openQuickDrawer(index) {
-    if (index < 0 || index >= frames.length) return;
-    const curFrame = frames[index];
-    const drawer = document.getElementById('anim-quick-drawer');
-    const sceneNum = document.getElementById('drawer-scene-num');
-    const inputTitle = document.getElementById('drawer-title-text');
-    const inputCaption = document.getElementById('drawer-caption-text');
-    const selectPause = document.getElementById('drawer-pause-duration');
-
-    if (!drawer) return;
-    if (sceneNum) sceneNum.textContent = `シーン${index + 1}`;
-
-    const titleVal = (typeof curFrame === 'object' && curFrame !== null && curFrame.title) ? curFrame.title : '';
-    const captionVal = (typeof curFrame === 'object' && curFrame !== null && curFrame.caption) ? curFrame.caption : '';
-    const pauseVal = (typeof curFrame === 'object' && curFrame !== null && typeof curFrame.pauseDuration !== 'undefined') ? curFrame.pauseDuration : 2;
-
-    if (inputTitle) inputTitle.value = titleVal;
-    if (inputCaption) inputCaption.value = captionVal;
-    if (selectPause) selectPause.value = pauseVal;
-
-    drawer.classList.remove('hidden');
+    editFrameTitle();
 }
 
 export function closeQuickDrawer() {
-    const drawer = document.getElementById('anim-quick-drawer');
-    if (drawer) drawer.classList.add('hidden');
+    const modal = document.getElementById('modal-scene-title');
+    if (modal) modal.classList.add('hidden');
 }
 
 function initQuickDrawerEvents() {
-    const inputTitle = document.getElementById('drawer-title-text');
-    const inputCaption = document.getElementById('drawer-caption-text');
-    const selectPause = document.getElementById('drawer-pause-duration');
-    
-    function updatePauseDuration(text, curFrame) {
-        if (!text || text.length === 0) return;
-        let calcPause = Math.max(2, Math.ceil(text.length / 10));
-        if (calcPause === 4) calcPause = 5; // Fallback for missing '4' option
-        if (calcPause > 5) calcPause = 5;
-        curFrame.pauseDuration = calcPause;
-        if (selectPause) selectPause.value = calcPause;
-    }
-
-    if (inputTitle) {
-        inputTitle.oninput = (e) => {
-            if (currentFrameIndex >= 0 && currentFrameIndex < frames.length) {
-                const curFrame = frames[currentFrameIndex];
-                if (typeof curFrame === 'object' && curFrame !== null) {
-                    curFrame.title = e.target.value.trim();
-                    isDirty = true;
-                    updateFrameCount();
-                }
-            }
-        };
-    }
-
-    if (inputCaption) {
-        inputCaption.oninput = (e) => {
-            if (currentFrameIndex >= 0 && currentFrameIndex < frames.length) {
-                const curFrame = frames[currentFrameIndex];
-                if (typeof curFrame === 'object' && curFrame !== null) {
-                    curFrame.caption = e.target.value;
-                    updatePauseDuration(e.target.value, curFrame);
-                    isDirty = true;
-                    updateFrameCount();
-                }
-            }
-        };
-    }
-    if (selectPause) {
-        selectPause.onchange = (e) => {
-            if (currentFrameIndex >= 0 && currentFrameIndex < frames.length) {
-                const curFrame = frames[currentFrameIndex];
-                if (typeof curFrame === 'object' && curFrame !== null) {
-                    curFrame.pauseDuration = parseFloat(e.target.value) || 0;
-                    isDirty = true;
-                    updateFrameCount();
-                }
-            }
-        };
-    }
-    const btnClose = document.getElementById('btn-close-quick-drawer');
-    if (btnClose) btnClose.onclick = closeQuickDrawer;
-
-    const presetChips = document.querySelectorAll('.c-drawer__preset-chip');
-    presetChips.forEach(chip => {
-        chip.onclick = () => {
-            if (currentFrameIndex >= 0 && currentFrameIndex < frames.length) {
-                const curFrame = frames[currentFrameIndex];
-                if (typeof curFrame === 'object' && curFrame !== null) {
-                    const text = chip.textContent;
-                    if (inputCaption) inputCaption.value = text;
-                    curFrame.caption = text;
-                    updatePauseDuration(text, curFrame);
-                    isDirty = true;
-                    updateFrameCount();
-                }
-            }
-        };
-    });
-
-    if (!window._quickDrawerEventsInitialized) {
-        document.addEventListener('pointerdown', (e) => {
-            const drawer = document.getElementById('anim-quick-drawer');
-            if (!drawer || drawer.classList.contains('hidden')) return;
-
-            const isInsideDrawer = drawer.contains(e.target);
-            const isFilmstripCard = e.target.closest('.c-frame-strip__item');
-            const isAnimAddBtn = e.target.closest('#anim-add-frame');
-
-            if (!isInsideDrawer && !isFilmstripCard && !isAnimAddBtn) {
-                closeQuickDrawer();
-            }
-        });
-
-        const drawer = document.getElementById('anim-quick-drawer');
-        if (drawer) {
-            let startY = 0;
-            let currentY = 0;
-            drawer.addEventListener('touchstart', (e) => {
-                startY = e.touches[0].clientY;
-                currentY = startY;
-            }, {passive: true});
-            drawer.addEventListener('touchmove', (e) => {
-                currentY = e.touches[0].clientY;
-            }, {passive: true});
-            drawer.addEventListener('touchend', (e) => {
-                if (currentY > startY + 40) { // 40px swipe down threshold
-                    closeQuickDrawer();
-                }
-            }, {passive: true});
-        }
-        window._quickDrawerEventsInitialized = true;
-    }
+    // Legacy drawer compatibility no-op
 }
 
 function editFrameTitle() {
@@ -438,13 +317,69 @@ function editFrameTitle() {
     if (currentFrameIndex < 0 || currentFrameIndex >= frames.length) {
         currentFrameIndex = Math.max(0, frames.length - 1);
     }
-    openQuickDrawer(currentFrameIndex);
-    const inputTitle = document.getElementById('drawer-title-text');
-    if (inputTitle) {
+    const f = frames[currentFrameIndex];
+    const currentTitle = (f && typeof f === 'object' && !Array.isArray(f) && f.title) ? f.title : '';
+    const currentCaption = (f && typeof f === 'object' && !Array.isArray(f) && f.caption) ? f.caption : '';
+    const currentPause = (f && typeof f === 'object' && !Array.isArray(f)) ? (Number(f.pauseDuration) || 0) : 0;
+
+    const modal = document.getElementById('modal-scene-title');
+    const input = document.getElementById('input-scene-title');
+    const captionInput = document.getElementById('input-scene-caption');
+    const pauseSelect = document.getElementById('input-scene-pause');
+    const form = document.getElementById('form-scene-title');
+    const heading = document.getElementById('scene-title-modal-heading');
+
+    if (modal && input && form) {
+        if (heading) heading.textContent = `シーン ${currentFrameIndex + 1} の設定`;
+        input.value = currentTitle;
+        if (captionInput) captionInput.value = currentCaption;
+        if (pauseSelect) pauseSelect.value = String(currentPause);
+        modal.classList.remove('hidden');
+
         setTimeout(() => {
-            inputTitle.focus();
-            inputTitle.select();
+            input.focus();
+            input.select();
         }, 50);
+
+        form.onsubmit = (ev) => {
+            ev.preventDefault();
+            const trimmed = input.value.trim();
+            const captionVal = captionInput ? captionInput.value.trim() : '';
+            const pauseVal = pauseSelect ? (parseInt(pauseSelect.value, 10) || 0) : 0;
+
+            if (Array.isArray(f)) {
+                frames[currentFrameIndex] = { objects: f, title: trimmed, caption: captionVal, pauseDuration: pauseVal };
+            } else if (typeof f === 'object' && f !== null) {
+                f.title = trimmed;
+                f.caption = captionVal;
+                f.pauseDuration = pauseVal;
+            } else {
+                frames[currentFrameIndex] = { objects: [], title: trimmed, caption: captionVal, pauseDuration: pauseVal };
+            }
+            isDirty = true;
+            updateFrameCount();
+            showToast(`シーン ${currentFrameIndex + 1} の設定を保存しました`);
+            modal.classList.add('hidden');
+        };
+
+        const cancelBtns = modal.querySelectorAll('.btn-close-modal');
+        cancelBtns.forEach(btn => {
+            btn.onclick = () => {
+                modal.classList.add('hidden');
+            };
+        });
+
+        const presetChips = modal.querySelectorAll('.c-drawer__preset-chip');
+        presetChips.forEach(chip => {
+            chip.onclick = () => {
+                if (captionInput) {
+                    captionInput.value = chip.textContent;
+                    if (pauseSelect && pauseSelect.value === '0') {
+                        pauseSelect.value = '2';
+                    }
+                }
+            };
+        });
     }
 }
 

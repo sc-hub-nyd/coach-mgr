@@ -1567,40 +1567,8 @@
                         <span id="anim-caption-text"></span>
                     </div>
 
-                    <!-- 7. Quick Edit Drawer (Item 09: ボトムシート) -->
-                    <div id="anim-quick-drawer" class="c-drawer hidden">
-                        <div class="c-drawer__header">
-                            <span class="c-drawer__title"><i class="ti ti-adjustments"></i> シーン設定 (<span id="drawer-scene-num">シーン1</span>)</span>
-                            <button type="button" class="c-drawer__close-button" id="btn-close-quick-drawer"><i class="ti ti-x"></i></button>
-                        </div>
-                        <div class="c-drawer__body">
-                            <div class="c-drawer__field">
-                                <label for="drawer-title-text">見出し (シーン名)</label>
-                                <input type="text" id="drawer-title-text" class="c-input form-control form-control-sm" placeholder="例: 初期配置、プレス回避など">
-                            </div>
-                            <div class="c-drawer__field">
-                                <label for="drawer-caption-text">テロップ (指導ポイント)</label>
-                                <input type="text" id="drawer-caption-text" class="c-input form-control form-control-sm" placeholder="例: 受ける前に首を振る、マークを外す動き">
-                                <div class="c-drawer__preset-chips" id="drawer-preset-chips">
-                                    <button type="button" class="c-drawer__preset-chip">スペースを狙え</button>
-                                    <button type="button" class="c-drawer__preset-chip">首を振る</button>
-                                    <button type="button" class="c-drawer__preset-chip">裏を狙え</button>
-                                    <button type="button" class="c-drawer__preset-chip">ラインを上げる</button>
-                                    <button type="button" class="c-drawer__preset-chip">サポート</button>
-                                </div>
-                            </div>
-                            <div class="c-drawer__field c-drawer__field--short">
-                                <label for="drawer-pause-duration">停止時間</label>
-                                <select id="drawer-pause-duration" class="c-input form-control form-control-sm">
-                                    <option value="0">停止なし</option>
-                                    <option value="1">1秒</option>
-                                    <option value="2">2秒</option>
-                                    <option value="3">3秒</option>
-                                    <option value="5">5秒</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- 7. Quick Edit Drawer (Retained for component contract / hidden) -->
+                    <div id="anim-quick-drawer" class="c-drawer hidden" style="display: none !important;" aria-hidden="true"></div>
 
                     <!-- Mobile Bottom Dock Mode Switcher Tabs (Only displayed on <= 768px screens) -->
                     <nav class="anim-mobile-dock-tabs" id="anim-mobile-dock-tabs" aria-label="操作モード切替">
@@ -2270,6 +2238,13 @@
                 <div class="form-group c-form-field--spaced">
                     <label>指導ポイント（テロップ） <span class="c-status c-status--muted">任意</span></label>
                     <textarea id="input-scene-caption" class="c-input form-control c-static-style--256" rows="2" placeholder="例: ★受ける前に首を振る、パスの受け手はマークを外す動き"></textarea>
+                    <div id="modal-scene-preset-chips" style="display:flex; flex-wrap:wrap; gap:4px; margin-top:6px;">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs c-drawer__preset-chip">スペースを狙え</button>
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs c-drawer__preset-chip">首を振る</button>
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs c-drawer__preset-chip">裏を狙え</button>
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs c-drawer__preset-chip">ラインを上げる</button>
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs c-drawer__preset-chip">サポート</button>
+                    </div>
                     <small class="c-static-style--027">再生中に画面下部に大きく表示されます</small>
                 </div>
                 <div class="form-group c-form-field--spaced">
