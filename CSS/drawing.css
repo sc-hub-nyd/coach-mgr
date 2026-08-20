@@ -1023,6 +1023,13 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         box-sizing: border-box;
     }
 
+    /* Tactics Mode: 12 active tools -> 6 columns x 2 rows, perfectly balanced top and bottom */
+    .is-tactics-mode .anim-main-workspace:has(.c-tool-dock) .c-tool-dock,
+    .anim-main-workspace.is-tactics-mode:has(.c-tool-dock) .c-tool-dock,
+    .anim-main-workspace:has(.c-tool-dock):has(.tactics-only:not([style*="display: none"])) .c-tool-dock {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
     .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button {
         width: 44px;
         min-width: 44px;
@@ -1036,6 +1043,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         justify-content: center;
         gap: 1px;
         border-radius: var(--radius-sm);
+        box-sizing: border-box;
     }
 
     .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button i {
@@ -1051,8 +1059,12 @@ screen and (max-width: 1024px) and (orientation: landscape) {
 
     .anim-main-workspace:has(.c-tool-dock) .c-tool-dock .dropdown-settings-wrapper {
         width: 100%;
+        height: 36px;
         display: flex;
+        align-items: center;
         justify-content: center;
+        margin: 0;
+        padding: 0;
     }
 
     .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__divider {
