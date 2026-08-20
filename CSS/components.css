@@ -1377,7 +1377,7 @@ input[type="checkbox"] {
 .operations-body { display: grid; gap: 0.85rem; }
 .operations-intro { margin: 0; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.55; }
 .operations-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-@media (max-width: 600px) { .pwa-update-banner { right: 0.7rem; bottom: calc(0.7rem + env(safe-area-inset-bottom)); left: 0.7rem; max-width: none; } .pwa-update-banner .btn { min-height: 38px; } .operations-actions .btn { min-height: 42px; flex: 1; justify-content: center; } }
+@media (max-width: 600px) { .pwa-update-banner { right: 0.7rem; bottom: calc(var(--bottom-nav-reserve) + 0.7rem); left: 0.7rem; max-width: none; } .pwa-update-banner .btn { min-height: 38px; } .operations-actions .btn { min-height: 42px; flex: 1; justify-content: center; } }
 
 /* P20: 保護者共有・RSVP管理 */
 .parent-share-body { display: grid; gap: 0.7rem; }.parent-share-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }.parent-share-controls label { display: grid; gap: 0.25rem; color: var(--text-secondary); font-size: 0.72rem; font-weight: 750; }.parent-share-controls .c-input { width: 100%; min-height: 40px; }.parent-share-status { margin: 0; padding: 0.55rem 0.65rem; color: var(--text-secondary); background: color-mix(in srgb, var(--primary) 7%, var(--surface)); border-radius: var(--radius-sm); font-size: 0.72rem; line-height: 1.5; }.parent-share-security-note { margin: 0; padding: 0.6rem 0.7rem; color: var(--color-text-warning-strong); background: var(--color-surface-warning-soft); border: 1px solid var(--color-border-warning); border-radius: var(--radius-sm); font-size: 0.7rem; line-height: 1.5; }.parent-share-security-note i { margin-right: 0.2rem; }

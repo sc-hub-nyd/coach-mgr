@@ -826,13 +826,13 @@ body.role-read-only #pd-tab-goals textarea {
     .c-bottom-nav {
         display: flex !important;
         position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
-        min-height: 64px !important;
-        height: calc(64px + var(--safe-bottom)) !important;
-        /* 親指操作とSafe Areaを優先 */
+        inset-inline-start: max(var(--space-2), env(safe-area-inset-left, 0px)) !important;
+        inset-inline-end: max(var(--space-2), env(safe-area-inset-right, 0px)) !important;
+        bottom: calc(var(--safe-bottom) + var(--bottom-nav-float-gap)) !important;
+        width: auto !important;
+        min-height: var(--bottom-nav-height) !important;
+        height: var(--bottom-nav-height) !important;
+        /* 親指操作とSafe Areaを優先しながら、コンテンツから独立したフロストドックとして浮かせる。 */
 
         flex-direction: row !important;
         justify-content: space-around !important;
@@ -840,14 +840,14 @@ body.role-read-only #pd-tab-goals textarea {
         overflow-x: hidden !important;
         overflow-y: hidden !important;
         z-index: 900 !important;
-        background: var(--glass-surface-strong) !important;
+        background: var(--color-nav-floating-surface) !important;
         backdrop-filter: var(--glass-blur) !important;
         -webkit-backdrop-filter: var(--glass-blur) !important;
-        border: none;
-        border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
-        box-shadow: 0 -0.45rem 1.5rem color-mix(in srgb, var(--color-text) 12%, transparent) !important;
+        border: 1px solid var(--color-nav-floating-border) !important;
+        border-radius: var(--radius-lg) !important;
+        box-shadow: var(--shadow-nav-floating) !important;
         box-sizing: border-box !important;
-        padding: 4px 2px var(--safe-bottom) !important;
+        padding: 4px 2px !important;
     }
 
     .c-bottom-nav .c-bottom-nav__item {
@@ -1003,7 +1003,7 @@ body.role-read-only #pd-tab-goals textarea {
     .c-context-bar {
         display: flex !important;
         position: fixed !important;
-        bottom: calc(64px + var(--safe-bottom)) !important;
+        bottom: calc(var(--safe-bottom) + var(--bottom-nav-float-gap) + var(--bottom-nav-height) + var(--bottom-nav-stack-gap)) !important;
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;

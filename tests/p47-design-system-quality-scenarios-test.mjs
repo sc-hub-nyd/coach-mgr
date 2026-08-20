@@ -45,6 +45,7 @@ assert.match(standard, /\.c-button:focus-visible/, '主要操作はキーボー�
 assert.match(standard, /\.c-button:disabled/, '主要操作はdisabled状態を持つ必要があります');
 assert.match(components, /\.pwa-update-banner #btn-pwa-reload\s*\{[\s\S]*?var\(--color-update-action-surface\)/, 'PWA更新操作は成功状態の通常surfaceトークンを使う必要があります');
 assert.match(components, /\.pwa-update-banner #btn-pwa-reload\s*\{[\s\S]*?var\(--color-update-action-text\)/, 'PWA更新操作は成功状態の通常textトークンを使う必要があります');
+assert.match(components, /@media \(max-width: 600px\) \{ \.pwa-update-banner \{[\s\S]*?bottom: calc\(var\(--bottom-nav-reserve\) \+ 0\.7rem\);/, 'PWA更新通知は浮遊ボトムナビの保護余白より上に配置する必要があります');
 assert.match(components, /\.pwa-update-banner #btn-pwa-reload:not\(:disabled\):hover\s*\{[\s\S]*?var\(--color-update-action-hover-surface\)/, 'PWA更新操作のhoverは成功状態のsurfaceトークンを使う必要があります');
 assert.match(components, /\.pwa-update-banner #btn-pwa-reload:not\(:disabled\):hover\s*\{[\s\S]*?var\(--color-update-action-hover-text\)/, 'PWA更新操作のhoverは成功状態のtextトークンを使う必要があります');
 assert.match(components, /\.pwa-update-banner #btn-pwa-reload:focus-visible\s*\{[\s\S]*?var\(--color-success\)/, 'PWA更新操作のfocusは成功状態のフォーカスリングを持つ必要があります');
@@ -52,7 +53,7 @@ assert.doesNotMatch(components, /\.pwa-update-banner \.btn-primary\s*\{/, 'PWA�
 assert.match(tokens, /--color-update-action-hover-surface:/, 'PWA更新操作のhover surfaceトークンが必要です');
 assert.match(tokens, /--color-update-action-hover-text:/, 'PWA更新操作のhover textトークンが必要です');
 assert.match(tokens, /--color-update-action-pressed-surface:/, 'PWA更新操作のpressed surfaceトークンが必要です');
-assert.match(serviceWorker, /coachmgr-v206/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
+assert.match(serviceWorker, /coachmgr-v207/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
 assert.match(serviceWorker, /canvas-palette\.js/, 'PWA更新シナリオはCanvasパレットをprecacheする必要があります');
 assert.match(serviceWorker, /pitch-renderer\.js/, 'PWA更新シナリオはピッチレンダラをprecacheする必要があります');
 assert.match(serviceWorker, /tabler-icons-subset\.css/, 'PWA更新シナリオはTablerサブセットCSSをprecacheする必要があります');
@@ -67,9 +68,15 @@ assert.match(tokens, /--color-shadow-info:/, '同期中状態のshadowトーク�
 assert.match(tokens, /--duration-micro:\s*80ms;/, '押下と短いアクセントには80msの共通トークンが必要です');
 assert.match(tokens, /--duration-sheet:\s*260ms;/, 'ボトムシートの開く操作には260msの共通トークンが必要です');
 assert.match(tokens, /--duration-sheet-close:\s*180ms;/, 'ボトムシートの閉じる操作には180msの共通トークンが必要です');
+assert.match(tokens, /--bottom-nav-height:\s*4rem;/, '浮遊ボトムナビの高さトークンが必要です');
+assert.match(tokens, /--bottom-nav-float-gap:\s*0\.625rem;/, '浮遊ボトムナビのSafe Area上余白トークンが必要です');
+assert.match(tokens, /--color-nav-floating-surface:/, '浮遊ボトムナビのテーマ追随透過surfaceトークンが必要です');
+assert.match(tokens, /--color-nav-floating-border:/, '浮遊ボトムナビのテーマ追随borderトークンが必要です');
+assert.match(tokens, /--shadow-nav-floating:/, '浮遊ボトムナビのテーマ追随shadowトークンが必要です');
 assert.match(tokens, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?--duration-sheet-close:\s*1ms;/, 'OSの動きを減らす設定ではボトムシートの動きも1msへ短縮する必要があります');
 assert.match(tokens, /:root\[data-reduce-motion="true"\][\s\S]*?--duration-sheet-close:\s*1ms;/, 'アプリ内の動きを減らす設定ではボトムシートの動きも1msへ短縮する必要があります');
 assert.match(base, /\.c-sidebar__nav li:hover,[\s\S]*?background: var\(--color-surface-selected\);/, 'サイドバーの選択面はチームカラー追随トークンを使う必要があります');
+assert.match(base, /\.c-bottom-nav \{[\s\S]*?bottom: calc\(var\(--safe-bottom\) \+ var\(--bottom-nav-float-gap\)\) !important;[\s\S]*?background: var\(--color-nav-floating-surface\) !important;[\s\S]*?border: 1px solid var\(--color-nav-floating-border\) !important;[\s\S]*?box-shadow: var\(--shadow-nav-floating\) !important;/, 'ボトムナビはSafe Areaの上でテーマ追随のフロストドックとして浮遊する必要があります');
 assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item::before \{[\s\S]*?background: var\(--color-surface-selected\);/, 'ボトムナビの選択面はチームカラー追随トークンを使う必要があります');
 assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item\.active::before,[\s\S]*?transform: scale\(1\);/, '選択中のボトムナビはレンズ面を収束させる必要があります');
 assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item\.is-kinetic-feedback::after/, 'ボトムナビは一度だけのキネティック余韻状態を持つ必要があります');

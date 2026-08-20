@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.96';
+export const APP_VERSION = 'v1.30.97';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.97',
+        date: '2026-08-20',
+        title: 'モバイルボトムナビを浮遊フロストドックへ調整',
+        features: [
+            'ボトムナビをSafe Areaの上へ浮遊させ、左右余白、全周角丸、テーマ追随のフロスト透過surface・border・shadowを追加',
+            'コンテキストバーを浮遊ドックの上へ再配置し、詳細画面での戻る操作とナビの重なりを防止',
+            'モバイルPWA更新通知もナビ保護余白の上へ移動し、更新時の操作面との重なりを解消',
+            'P38/P47へ浮遊位置、Safe Area、透過surface、積層位置の再発防止契約を追加'
+        ]
+    },
     {
         version: 'v1.30.96',
         date: '2026-08-20',

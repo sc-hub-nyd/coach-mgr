@@ -91,8 +91,13 @@ test('P38-7: スマホ向けスリム戻るコンテキストバー（Mobile Con
 test('P38-8: 戻るドックの44px操作領域とセーフエリア配置を検証', () => {
     assert.match(
         baseCss,
-        /\.c-context-bar\s*\{[\s\S]*?bottom:\s*calc\(64px\s*\+\s*var\(--safe-bottom\)\)\s*!important;[\s\S]*?height:\s*48px\s*!important;[\s\S]*?min-height:\s*48px\s*!important;/,
-        'mobile context bar reserves the bottom safe area and a 48px bar height'
+        /\.c-bottom-nav\s*\{[\s\S]*?bottom:\s*calc\(var\(--safe-bottom\)\s*\+\s*var\(--bottom-nav-float-gap\)\)\s*!important;[\s\S]*?min-height:\s*var\(--bottom-nav-height\)\s*!important;[\s\S]*?background:\s*var\(--color-nav-floating-surface\)\s*!important;/,
+        'mobile bottom nav floats above the safe area with the semantic frosted surface'
+    );
+    assert.match(
+        baseCss,
+        /\.c-context-bar\s*\{[\s\S]*?bottom:\s*calc\(var\(--safe-bottom\)\s*\+\s*var\(--bottom-nav-float-gap\)\s*\+\s*var\(--bottom-nav-height\)\s*\+\s*var\(--bottom-nav-stack-gap\)\)\s*!important;[\s\S]*?height:\s*48px\s*!important;[\s\S]*?min-height:\s*48px\s*!important;/,
+        'mobile context bar stacks above the floating bottom nav while preserving the 48px bar height'
     );
     assert.match(
         baseCss,

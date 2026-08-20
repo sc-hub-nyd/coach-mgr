@@ -245,6 +245,9 @@
     --glass-surface-strong: color-mix(in srgb, var(--color-surface) 94%, transparent);
     --glass-border: color-mix(in srgb, #ffffff 58%, var(--color-border));
     --glass-shadow: 0 1rem 2.6rem color-mix(in srgb, var(--color-text) 13%, transparent);
+    --color-nav-floating-surface: color-mix(in srgb, var(--color-surface) 82%, transparent);
+    --color-nav-floating-border: color-mix(in srgb, var(--color-border) 72%, transparent);
+    --shadow-nav-floating: 0 0.75rem 1.75rem color-mix(in srgb, var(--color-text) 16%, transparent), inset 0 1px 0 color-mix(in srgb, var(--color-text-on-action) 52%, transparent);
     --glass-blur: blur(1.25rem) saturate(145%);
     --liquid-veil: linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 10%, transparent) 0%, transparent 44%, color-mix(in srgb, var(--theme-companion) 9%, transparent) 100%);
     --liquid-sheen: linear-gradient(115deg, transparent 10%, color-mix(in srgb, #ffffff 38%, transparent) 48%, transparent 78%);
@@ -258,7 +261,10 @@
     --tap-target-min: 2.5rem;
     --modal-max-inline: 40rem;
     --modal-footer-reserve: calc(5.5rem + env(safe-area-inset-bottom, 0px));
-    --bottom-nav-reserve: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+    --bottom-nav-height: 4rem;
+    --bottom-nav-float-gap: 0.625rem;
+    --bottom-nav-stack-gap: 0.5rem;
+    --bottom-nav-reserve: calc(var(--bottom-nav-height) + var(--bottom-nav-float-gap) + var(--space-4) + env(safe-area-inset-bottom, 0px));
     --card-actions-min-inline: 18rem;
 
     --surface-muted: var(--color-surface-subtle);
@@ -305,6 +311,9 @@
     --glass-surface-strong: color-mix(in srgb, var(--color-surface) 96%, transparent);
     --glass-border: color-mix(in srgb, #ffffff 14%, var(--color-border));
     --glass-shadow: 0 1rem 2.6rem color-mix(in srgb, #000000 80%, transparent);
+    --color-nav-floating-surface: color-mix(in srgb, var(--color-surface) 78%, transparent);
+    --color-nav-floating-border: color-mix(in srgb, var(--color-border) 86%, transparent);
+    --shadow-nav-floating: 0 0.75rem 1.75rem color-mix(in srgb, #000000 54%, transparent), inset 0 1px 0 color-mix(in srgb, #ffffff 8%, transparent);
     --liquid-veil: none;
     --liquid-sheen: none;
 
