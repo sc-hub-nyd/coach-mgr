@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.31.0';
+export const APP_VERSION = 'v1.31.1';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.31.1',
+        date: '2026-08-20',
+        title: 'ライトモードの浮遊ガラスを高透過化',
+        features: [
+            'ライトの浮遊ナビsurfaceを40%まで高透過化し、背景ベールのチームカラー濃度と面積を拡大',
+            '反射gradientを抑えつつ、blur 1.9rem・saturate 205%・brightness 1.04で透けたガラス面の屈折感を強化',
+            '白基調のコンテンツ面、選択面・ブランドライン、ダークモードのチャコール階層は維持',
+            'P47のライト用高透過blur契約を更新'
+        ]
+    },
     {
         version: 'v1.31.0',
         date: '2026-08-20',

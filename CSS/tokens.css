@@ -245,12 +245,12 @@
     --glass-surface-strong: color-mix(in srgb, var(--color-surface) 94%, transparent);
     --glass-border: color-mix(in srgb, #ffffff 58%, var(--color-border));
     --glass-shadow: 0 1rem 2.6rem color-mix(in srgb, var(--color-text) 13%, transparent);
-    --color-nav-floating-surface: color-mix(in srgb, var(--color-surface) 54%, transparent);
-    --surface-nav-floating: linear-gradient(132deg, color-mix(in srgb, #ffffff 50%, transparent) 0%, color-mix(in srgb, var(--color-brand) 8%, transparent) 46%, color-mix(in srgb, var(--theme-companion) 7%, transparent) 100%), var(--color-nav-floating-surface);
+    --color-nav-floating-surface: color-mix(in srgb, var(--color-surface) 40%, transparent);
+    --surface-nav-floating: linear-gradient(132deg, color-mix(in srgb, #ffffff 34%, transparent) 0%, color-mix(in srgb, var(--color-brand) 11%, transparent) 46%, color-mix(in srgb, var(--theme-companion) 10%, transparent) 100%), var(--color-nav-floating-surface);
     --shadow-nav-floating: 0 1.1rem 2.6rem color-mix(in srgb, var(--color-text) 24%, transparent), 0 0.3rem 0.85rem color-mix(in srgb, var(--color-text) 10%, transparent);
-    --nav-floating-blur: blur(1.7rem) saturate(188%) brightness(1.03);
+    --nav-floating-blur: blur(1.9rem) saturate(205%) brightness(1.04);
     --glass-blur: blur(1.25rem) saturate(145%);
-    --liquid-veil: radial-gradient(ellipse 78% 24% at 50% 100%, color-mix(in srgb, var(--color-brand) 13%, transparent) 0%, color-mix(in srgb, var(--theme-companion) 6%, transparent) 42%, transparent 76%), linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 7%, transparent) 0%, transparent 44%, color-mix(in srgb, var(--theme-companion) 6%, transparent) 100%);
+    --liquid-veil: radial-gradient(ellipse 82% 27% at 50% 100%, color-mix(in srgb, var(--color-brand) 18%, transparent) 0%, color-mix(in srgb, var(--theme-companion) 10%, transparent) 44%, transparent 78%), linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 9%, transparent) 0%, transparent 44%, color-mix(in srgb, var(--theme-companion) 8%, transparent) 100%);
     --liquid-sheen: linear-gradient(115deg, transparent 10%, color-mix(in srgb, #ffffff 38%, transparent) 48%, transparent 78%);
 
     --content-max: 78rem;
