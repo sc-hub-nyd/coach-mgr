@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.31.3';
+export const APP_VERSION = 'v1.31.4';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.31.4',
+        date: '2026-08-20',
+        title: '作図・動画分析サイドメニューの背景透過を解消し視認性を改善',
+        features: [
+            'CSS変数--surfaceのエイリアスを定義し、作図ツールドック・インスペクターパネル・動画分析サイドパネルの背景透過を完全に解消',
+            'クイック編集ドロワーの背景を不透明なサーフェスと境界線に強化し、下層コンテンツの透過による視認性悪化を防止',
+            '全45件の自動契約テストが100%パスすることを検証'
+        ]
+    },
     {
         version: 'v1.31.3',
         date: '2026-08-20',

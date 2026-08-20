@@ -33,6 +33,7 @@
     --primary-soft: var(--theme-primary-soft);
     --accent: var(--theme-companion);
     --bg-color: var(--theme-canvas);
+    --surface: var(--theme-surface);
     --surface-color: var(--theme-surface-raised);
     --surface-border: var(--theme-border);
     --text-primary: var(--theme-text);
