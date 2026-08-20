@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.91';
+export const APP_VERSION = 'v1.30.92';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.92',
+        date: '2026-08-20',
+        title: 'その他メニュー面と練習操作の均整を補正',
+        features: [
+            'その他メニュー面を共通モーダルと同じ角丸のボトムシートへ統一し、上端の角張りを解消',
+            '練習カードの操作を2段・各段均等幅へ再配分し、編集・削除に可視ラベルを追加してボタンの大きさと重心を統一'
+        ]
+    },
     {
         version: 'v1.30.91',
         date: '2026-08-20',

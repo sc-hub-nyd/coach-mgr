@@ -14,21 +14,26 @@ const shareIndex = practices.indexOf('btn-share-practice');
 const editIndex = practices.indexOf('btn-edit-practice');
 const deleteIndex = practices.indexOf('btn-delete-practice');
 assert.ok(shareIndex >= 0 && editIndex > shareIndex && deleteIndex > editIndex, '共有は文言付き操作群に置き、編集・削除より前に並べる必要があります');
-assert.match(practices, /btn-edit-practice[^>]*aria-label="練習情報を編集"/, '編集アイコンには操作名が必要です');
-assert.match(practices, /btn-delete-practice[^>]*aria-label="練習を削除"/, '削除アイコンには操作名が必要です');
+assert.match(practices, /btn-edit-practice[^>]*aria-label="練習情報を編集"/, '編集操作には支援技術向けの操作名が必要です');
+assert.match(practices, /btn-delete-practice[^>]*aria-label="練習を削除"/, '削除操作には支援技術向けの操作名が必要です');
+assert.match(practices, /btn-edit-practice[\s\S]*?<span>編集<\/span>/, '均等幅の編集操作には可視ラベルが必要です');
+assert.match(practices, /btn-delete-practice[\s\S]*?<span>削除<\/span>/, '均等幅の削除操作には可視ラベルが必要です');
 
 [
-    '/* Practice-card actions use two stable rows: create/save first, then share and compact maintenance actions. */',
+    '/* Practice-card actions use two ordered rows. Each row distributes its controls evenly to avoid a cramped share button beside oversized icon buttons. */',
     'grid-template-columns: repeat(6, minmax(0, 1fr));',
     '.c-practice-card--toolbar-actions .btn-add-menu {',
     'grid-column: 1 / 4;',
     '.c-practice-card--toolbar-actions .btn-save-practice-template {',
     'grid-column: 4 / -1;',
     '.c-practice-card--toolbar-actions .btn-share-practice {',
-    'grid-column: 1 / 5;',
-    'grid-row: 2;',
-    '.c-practice-card--toolbar-actions .btn-edit-practice { grid-column: 5; }',
-    '.c-practice-card--toolbar-actions .btn-delete-practice { grid-column: 6; }'
+    'grid-column: 1 / 3;',
+    '.c-practice-card--toolbar-actions .btn-edit-practice {',
+    'grid-column: 3 / 5;',
+    '.c-practice-card--toolbar-actions .btn-delete-practice {',
+    'grid-column: 5 / -1;',
+    'min-block-size: var(--tap-target-min);',
+    'text-overflow: ellipsis;'
 ].forEach(fragment => assert.ok(system.includes(fragment), `練習操作の二段構成契約が不足しています: ${fragment}`));
 
 assert.match(index, /id="modal-mobile-more"[^>]*aria-describedby="mobile-more-description"/, 'その他メニューは説明文と関連付ける必要があります');
@@ -39,6 +44,11 @@ assert.match(index, /<section id="mobile-more-navigation-section" class="c-mobil
 assert.doesNotMatch(index, /mobile-more-(?:role|sync)-card c-card/, 'その他メニューに独立カードの積み重ねを再導入してはいけません');
 
 [
+    '.c-modal--bottom-sheet {',
+    'border-start-start-radius: var(--radius-lg);',
+    'border-start-end-radius: var(--radius-lg);',
+    '.c-mobile-more__sheet {',
+    'border-radius: var(--radius-lg) var(--radius-lg) 0 0;',
     '.c-mobile-more__sheet::before',
     'background: var(--color-surface);',
     '.c-mobile-more__section {',

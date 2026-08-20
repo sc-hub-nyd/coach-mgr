@@ -384,10 +384,10 @@ export function initPractices(miniPitchObserver) {
                     </button>
                     ${isCoach ? `
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs btn-edit-practice" data-id="${p.id}" title="練習情報を編集" aria-label="練習情報を編集">
-                        <i class="ti ti-pencil" aria-hidden="true"></i>
+                        <i class="ti ti-pencil" aria-hidden="true"></i><span>編集</span>
                     </button>
                     <button type="button" class="c-button btn c-button--danger btn-danger btn-xs btn-delete-practice" data-id="${p.id}" title="練習を削除" aria-label="練習を削除">
-                        <i class="ti ti-trash" aria-hidden="true"></i>
+                        <i class="ti ti-trash" aria-hidden="true"></i><span>削除</span>
                     </button>` : ''}
                 </div>
             `;

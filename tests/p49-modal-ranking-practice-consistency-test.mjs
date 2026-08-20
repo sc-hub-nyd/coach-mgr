@@ -25,6 +25,10 @@ requireAll(system, [
     'background: var(--color-surface);',
     '.c-modal-overlay.hidden .c-modal {',
     '.c-modal--bottom-sheet {',
+    'border-start-start-radius: var(--radius-lg);',
+    'border-start-end-radius: var(--radius-lg);',
+    '.c-mobile-more__sheet {',
+    'border-radius: var(--radius-lg) var(--radius-lg) 0 0;',
     '.c-modal-overlay.hidden .c-modal--bottom-sheet {',
     '.c-modal--legacy .c-modal__heading {',
     '.c-modal--legacy .c-modal__actions {'
@@ -45,29 +49,32 @@ requireAll(system, [
     'text-align: end;'
 ], 'ランキングのラベル左・値右整列');
 
-// P49-3: 練習操作は狭いカードでヘッダー下に並び、文言付き操作をellipsisで切らない。
+// P49-3: 練習操作は二段に分け、各段の操作を均等幅・統一高で配分する。
 requireAll(practices, [
     'ti ti-plus"></i> メニュー',
     'ti ti-bookmark"></i> テンプレ',
-    'ti ti-share-3"></i> 共有'
+    'ti ti-share-3"></i> 共有',
+    'ti ti-pencil" aria-hidden="true"></i><span>編集</span>',
+    'ti ti-trash" aria-hidden="true"></i><span>削除</span>'
 ], '練習管理の操作文言');
 requireAll(system, [
-    '/* Practice-card actions use two stable rows: create/save first, then share and compact maintenance actions. */',
+    '/* Practice-card actions use two ordered rows. Each row distributes its controls evenly to avoid a cramped share button beside oversized icon buttons. */',
     'grid-template-columns: repeat(6, minmax(0, 1fr));',
     '.c-practice-card--toolbar-actions .btn-add-menu {',
     'grid-column: 1 / 4;',
     '.c-practice-card--toolbar-actions .btn-save-practice-template {',
     'grid-column: 4 / -1;',
     '.c-practice-card--toolbar-actions .btn-share-practice {',
-    'grid-column: 1 / 5;',
-    'grid-row: 2;',
-    '.c-practice-card--toolbar-actions .btn-edit-practice { grid-column: 5; }',
-    '.c-practice-card--toolbar-actions .btn-delete-practice { grid-column: 6; }',
-    'overflow: visible;',
-    'text-overflow: clip;'
-], '練習カード操作の二段構成');
+    'grid-column: 1 / 3;',
+    '.c-practice-card--toolbar-actions .btn-edit-practice {',
+    'grid-column: 3 / 5;',
+    '.c-practice-card--toolbar-actions .btn-delete-practice {',
+    'grid-column: 5 / -1;',
+    'min-block-size: var(--tap-target-min);',
+    'text-overflow: ellipsis;'
+], '練習カード操作の均等二段構成');
 
 requireAll(version, ['v1.30.86', 'モーダル・ランキング・練習管理の共通部品整合性を改善'], 'v1.30.86更新履歴');
-requireAll(serviceWorker, ["const CACHE_VERSION = 'coachmgr-v201';", './CSS/components.css', './CSS/components-system.css', './canvas-palette.js', './pitch-renderer.js'], 'R1〜R6 PWA資産');
+requireAll(serviceWorker, ["const CACHE_VERSION = 'coachmgr-v202';", './CSS/components.css', './CSS/components-system.css', './canvas-palette.js', './pitch-renderer.js'], 'R1〜R6 PWA資産');
 
 console.log('P49 modal, ranking, and practice consistency contracts passed');
