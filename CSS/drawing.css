@@ -944,10 +944,10 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         width: 100%;
         height: auto;
         min-height: 0;
-        padding: 0.25rem;
+        padding: 4px 4px 0 4px;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         overflow: hidden;
         order: 1;
     }
@@ -958,7 +958,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         max-width: 100%;
         max-height: 100%;
         aspect-ratio: 8 / 5;
-        margin: auto;
+        margin: 2px auto 0 auto;
     }
 
     /* Mobile Bottom Dock Tabs */
@@ -1094,7 +1094,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         display: none !important;
     }
 
-    /* Mobile Canvas Popovers: Mid-Zone Floating Card (Cleanly between Pitch and Tool Dock) */
+    /* Mobile Canvas Popovers: Mid-Zone Floating Card (Cleanly between Pitch and Tool Dock, NO scroll) */
     .anim-main-workspace:has(.c-tool-dock) .c-popover--canvas {
         position: fixed;
         top: auto;
@@ -1104,8 +1104,9 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         transform: translateX(-50%);
         width: min(340px, calc(100vw - 24px)) !important;
         max-width: calc(100vw - 24px) !important;
-        max-height: 230px;
-        overflow-y: auto;
+        height: auto;
+        max-height: calc(100dvh - 270px);
+        overflow-y: visible;
         margin: 0 !important;
         padding: 0.75rem 1rem;
         z-index: 4000;
@@ -1149,7 +1150,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         display: none !important;
     }
 
-    /* Mobile Animation Mode: Generous touch targets for player controls */
+    /* Mobile Animation Mode: Generous touch targets for player controls (no clipping) */
     .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .anim-player-bar {
         display: flex !important;
         position: static;
@@ -1163,21 +1164,50 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         border-top: 1px solid var(--surface-border);
         order: 4;
         box-sizing: border-box;
-        padding: 6px 10px;
+        padding: 4px 6px;
         overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
         background: var(--surface);
         align-items: center;
-        justify-content: space-around;
+        justify-content: flex-start;
+        gap: 6px;
+        flex-wrap: nowrap;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .anim-player-bar .player-bar-group {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-shrink: 0;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .anim-player-bar .player-bar-divider {
+        display: none !important;
     }
 
     .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .anim-player-bar .c-button {
         min-height: 44px;
         height: 44px;
-        min-width: 44px;
-        padding: 0 12px;
-        font-size: 1.05rem;
+        padding: 0 8px;
+        font-size: 0.95rem;
         border-radius: var(--radius-md);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .anim-player-bar select {
+        height: 44px;
+        min-height: 44px;
+        padding: 0 6px;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+        max-width: 110px;
     }
 
     /* Mobile Animation Mode: Generous touch-friendly Scene/Frame strip */
@@ -1198,12 +1228,16 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         box-sizing: border-box;
         align-items: center;
         background: var(--surface);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
     }
 
     .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip__list {
         height: 100%;
         align-items: center;
         gap: 10px;
+        flex-wrap: nowrap;
     }
 
     .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip__item {
@@ -1218,6 +1252,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         gap: 10px;
         box-shadow: var(--shadow-sm);
         cursor: pointer;
+        flex-shrink: 0;
     }
 
     .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip__index {
