@@ -29,9 +29,10 @@ requireAll(system, [
     '@media \\(max-width: 40rem\\) \\{[\\s\\S]*?#dash-coach-row\\.c-dashboard-grid__row--ranking-pair \\{\\s*grid-template-columns: repeat\\(2, minmax\\(0, 1fr\\)\\);',
     '\\.c-dashboard-rank-item \\.c-data-list__header \\{[\\s\\S]*?flex-wrap: nowrap;[\\s\\S]*?min-inline-size: 0;',
     '\\.c-dashboard-rank-item \\.c-data-list__identity \\{[\\s\\S]*?flex: 1 1 0;[\\s\\S]*?text-overflow: ellipsis;[\\s\\S]*?white-space: nowrap;',
-    '\\.c-dashboard-rank-item \\.c-data-list__metric \\{[\\s\\S]*?box-sizing: border-box;[\\s\\S]*?flex: 0 0 5\\.5rem;[\\s\\S]*?inline-size: 5\\.5rem;[\\s\\S]*?min-inline-size: 0;[\\s\\S]*?max-inline-size: 100%;[\\s\\S]*?gap: var\\(--space-1\\);[\\s\\S]*?padding-inline: var\\(--space-1\\);[\\s\\S]*?margin-inline-start: auto;',
-    '\\.c-dashboard-rank-item \\.c-data-list__metric-label,[\\s\\S]*?\\.c-dashboard-rank-item \\.c-data-list__metric-value \\{[\\s\\S]*?white-space: nowrap;'
-], '共通2列レイアウト・右揃え指標');
+    '\\.c-dashboard-rank-item \\.c-data-list__metric \\{[\\s\\S]*?display: grid;[\\s\\S]*?flex: 0 0 min\\(6\\.5rem, 46%\\);[\\s\\S]*?inline-size: min\\(6\\.5rem, 46%\\);[\\s\\S]*?grid-template-columns: minmax\\(0, 1fr\\) auto;[\\s\\S]*?padding-inline: var\\(--space-2\\);[\\s\\S]*?margin-inline-start: auto;',
+    '\\.c-dashboard-rank-item \\.c-data-list__metric-label \\{[\\s\\S]*?justify-self: start;[\\s\\S]*?text-align: start;',
+    '\\.c-dashboard-rank-item \\.c-data-list__metric-value \\{[\\s\\S]*?justify-self: end;[\\s\\S]*?text-align: end;'
+], '共通2列レイアウト・ラベル左揃え／値右揃え指標');
 
 // 4カードは氏名と指標を同一のc-data-list構造で生成し、CSSだけで整列を統一する。
 requireAll(app, [

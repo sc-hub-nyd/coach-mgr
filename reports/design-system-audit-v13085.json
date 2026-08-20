@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T02:10:06.232Z",
+  "generatedAt": "2026-08-20T02:28:05.338Z",
   "scope": {
     "cssFiles": 12,
     "sourceFiles": 40,
@@ -9,29 +9,9 @@
     ]
   },
   "directColors": {
-    "totalOccurrences": 348,
-    "componentOrPageOccurrences": 278,
+    "totalOccurrences": 347,
+    "componentOrPageOccurrences": 277,
     "files": [
-      {
-        "file": "CSS/components-system.css",
-        "layer": "component_or_page",
-        "directColorOccurrences": 66,
-        "uniqueDirectColors": 40,
-        "topValues": [
-          "rgba(0, 0, 0, 0.5)",
-          "#f1f5f9",
-          "#334155",
-          "#ffffff",
-          "rgba(0, 0, 0, 0.25)",
-          "rgba(255, 255, 255, 0.25)",
-          "#f59e0b",
-          "#1e293b",
-          "#fff",
-          "rgb(0 0 0 / 40%)",
-          "rgb(0 0 0 / 60%)",
-          "#eab308"
-        ]
-      },
       {
         "file": "CSS/components.css",
         "layer": "component_or_page",
@@ -50,6 +30,26 @@
           "rgba(0, 0, 0, 0.04)",
           "rgba(0, 0, 0, 0.02)",
           "rgba(0, 0, 0, 0.2)"
+        ]
+      },
+      {
+        "file": "CSS/components-system.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 65,
+        "uniqueDirectColors": 39,
+        "topValues": [
+          "#f1f5f9",
+          "#334155",
+          "#ffffff",
+          "rgba(0, 0, 0, 0.25)",
+          "rgba(255, 255, 255, 0.25)",
+          "#f59e0b",
+          "#1e293b",
+          "#fff",
+          "rgb(0 0 0 / 40%)",
+          "rgb(0 0 0 / 60%)",
+          "#eab308",
+          "#ef4444"
         ]
       },
       {

@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.85';
+export const APP_VERSION = 'v1.30.86';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.86',
+        date: '2026-08-20',
+        title: 'モーダル・ランキング・練習管理の共通部品整合性を改善',
+        features: [
+            '旧.modal／.modal-overlayの装飾規則を未移行マークアップだけに限定し、c-modalとc-modal--legacyのsurface、overlay、radius、shadow、header、actionsを共通契約へ統一',
+            'ランキング4カードの氏名横にある種別ラベルを左揃え、数値を右揃えに変更し、狭い2列カードでも値がはみ出さない収縮幅へ改善',
+            '練習カードのメニュー・テンプレート・共有操作を狭いカードではヘッダー下に再配置し、文字省略をやめて日本語ラベルを常時表示',
+            '直接指定色の47件削減と残る278件を、ファイル・用途・優先度ごとに再生成可能な監査レポートへ記録'
+        ]
+    },
     {
         version: 'v1.30.85',
         date: '2026-08-20',
