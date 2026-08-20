@@ -840,9 +840,9 @@ body.role-read-only #pd-tab-goals textarea {
         overflow-x: hidden !important;
         overflow-y: hidden !important;
         z-index: 900 !important;
-        background: var(--color-nav-floating-surface) !important;
-        backdrop-filter: var(--glass-blur) !important;
-        -webkit-backdrop-filter: var(--glass-blur) !important;
+        background: var(--surface-nav-floating) !important;
+        backdrop-filter: var(--nav-floating-blur) !important;
+        -webkit-backdrop-filter: var(--nav-floating-blur) !important;
         border: 0 !important;
         border-radius: var(--radius-lg) !important;
         box-shadow: var(--shadow-nav-floating) !important;

@@ -164,11 +164,11 @@ function staticStatus(mode) {
 
 function buildNeutralPalette(hue, mode) {
     if (mode === 'dark') {
-        // 有機EL（OLED）向けピュアブラック（発光ゼロ）＆ニュートラルチャコール（茶色みを完全排除）
-        const canvas = '#000000';
-        const surface = '#0d0f12';
-        const raised = '#16191f';
-        const subtle = '#060708';
+        // Pure blackを避けた深いニュートラルチャコール。面の階層とフロスト素材感を保ち、チームカラーの選択面を引き立てる。
+        const canvas = '#17191e';
+        const surface = '#20232a';
+        const raised = '#292d35';
+        const subtle = '#13151a';
         return {
             canvas,
             surface,

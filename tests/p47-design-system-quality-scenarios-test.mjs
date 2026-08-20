@@ -53,7 +53,7 @@ assert.doesNotMatch(components, /\.pwa-update-banner \.btn-primary\s*\{/, 'PWA�
 assert.match(tokens, /--color-update-action-hover-surface:/, 'PWA更新操作のhover surfaceトークンが必要です');
 assert.match(tokens, /--color-update-action-hover-text:/, 'PWA更新操作のhover textトークンが必要です');
 assert.match(tokens, /--color-update-action-pressed-surface:/, 'PWA更新操作のpressed surfaceトークンが必要です');
-assert.match(serviceWorker, /coachmgr-v208/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
+assert.match(serviceWorker, /coachmgr-v209/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
 assert.match(serviceWorker, /canvas-palette\.js/, 'PWA更新シナリオはCanvasパレットをprecacheする必要があります');
 assert.match(serviceWorker, /pitch-renderer\.js/, 'PWA更新シナリオはピッチレンダラをprecacheする必要があります');
 assert.match(serviceWorker, /tabler-icons-subset\.css/, 'PWA更新シナリオはTablerサブセットCSSをprecacheする必要があります');
@@ -71,11 +71,13 @@ assert.match(tokens, /--duration-sheet-close:\s*180ms;/, 'ボトムシートの�
 assert.match(tokens, /--bottom-nav-height:\s*4rem;/, '浮遊ボトムナビの高さトークンが必要です');
 assert.match(tokens, /--bottom-nav-float-gap:\s*0\.625rem;/, '浮遊ボトムナビのSafe Area上余白トークンが必要です');
 assert.match(tokens, /--color-nav-floating-surface:/, '浮遊ボトムナビのテーマ追随透過surfaceトークンが必要です');
+assert.match(tokens, /--surface-nav-floating:/, '浮遊ボトムナビのライト／ダーク別ガラスsurfaceトークンが必要です');
+assert.match(tokens, /--nav-floating-blur:/, '浮遊ボトムナビのライト／ダーク別blurトークンが必要です');
 assert.match(tokens, /--shadow-nav-floating:/, '浮遊ボトムナビのテーマ追随shadowトークンが必要です');
 assert.match(tokens, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?--duration-sheet-close:\s*1ms;/, 'OSの動きを減らす設定ではボトムシートの動きも1msへ短縮する必要があります');
 assert.match(tokens, /:root\[data-reduce-motion="true"\][\s\S]*?--duration-sheet-close:\s*1ms;/, 'アプリ内の動きを減らす設定ではボトムシートの動きも1msへ短縮する必要があります');
 assert.match(base, /\.c-sidebar__nav li:hover,[\s\S]*?background: var\(--color-surface-selected\);/, 'サイドバーの選択面はチームカラー追随トークンを使う必要があります');
-assert.match(base, /\.c-bottom-nav \{[\s\S]*?bottom: calc\(var\(--safe-bottom\) \+ var\(--bottom-nav-float-gap\)\) !important;[\s\S]*?background: var\(--color-nav-floating-surface\) !important;[\s\S]*?border: 0 !important;[\s\S]*?box-shadow: var\(--shadow-nav-floating\) !important;/, 'ボトムナビは境界線なしのテーマ追随フロストドックとしてSafe Areaの上へ浮遊する必要があります');
+assert.match(base, /\.c-bottom-nav \{[\s\S]*?bottom: calc\(var\(--safe-bottom\) \+ var\(--bottom-nav-float-gap\)\) !important;[\s\S]*?background: var\(--surface-nav-floating\) !important;[\s\S]*?backdrop-filter: var\(--nav-floating-blur\) !important;[\s\S]*?border: 0 !important;[\s\S]*?box-shadow: var\(--shadow-nav-floating\) !important;/, 'ボトムナビは境界線なしのテーマ別ガラスsurfaceとしてSafe Areaの上へ浮遊する必要があります');
 assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item::before \{[\s\S]*?background: var\(--color-surface-selected\);/, 'ボトムナビの選択面はチームカラー追随トークンを使う必要があります');
 assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item\.active::before,[\s\S]*?transform: scale\(1\);/, '選択中のボトムナビはレンズ面を収束させる必要があります');
 assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item\.is-kinetic-feedback::after/, 'ボトムナビは一度だけのキネティック余韻状態を持つ必要があります');

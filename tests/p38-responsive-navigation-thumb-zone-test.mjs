@@ -91,8 +91,8 @@ test('P38-7: スマホ向けスリム戻るコンテキストバー（Mobile Con
 test('P38-8: 戻るドックの44px操作領域とセーフエリア配置を検証', () => {
     assert.match(
         baseCss,
-        /\.c-bottom-nav\s*\{[\s\S]*?bottom:\s*calc\(var\(--safe-bottom\)\s*\+\s*var\(--bottom-nav-float-gap\)\)\s*!important;[\s\S]*?min-height:\s*var\(--bottom-nav-height\)\s*!important;[\s\S]*?background:\s*var\(--color-nav-floating-surface\)\s*!important;/,
-        'mobile bottom nav floats above the safe area with the semantic frosted surface'
+        /\.c-bottom-nav\s*\{[\s\S]*?bottom:\s*calc\(var\(--safe-bottom\)\s*\+\s*var\(--bottom-nav-float-gap\)\)\s*!important;[\s\S]*?min-height:\s*var\(--bottom-nav-height\)\s*!important;[\s\S]*?background:\s*var\(--surface-nav-floating\)\s*!important;[\s\S]*?backdrop-filter:\s*var\(--nav-floating-blur\)\s*!important;/,
+        'mobile bottom nav floats above the safe area with the theme-specific frosted surface and blur'
     );
     assert.match(
         baseCss,

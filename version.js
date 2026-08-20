@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.98';
+export const APP_VERSION = 'v1.30.99';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.99',
+        date: '2026-08-20',
+        title: 'ライトのガラス感とダークのチャコール素材感を強化',
+        features: [
+            'ライトモードの浮遊ナビを、より高い透過率、ハイライトgradient、強めのblur・saturateで明確なフロストガラスへ調整',
+            'ダークモードの画面基調を純黒から深いニュートラルチャコールグレーへ移行し、canvas・surface・raisedの面階層を強化',
+            'ダーク時の浮遊ナビはチャコールsurfaceをより不透明に保ち、控えめなハイライトで存在感と可読性を両立',
+            'P34/P47へ純黒禁止、ダーク面階層、テーマ別ガラスsurface・blurの再発防止契約を追加'
+        ]
+    },
     {
         version: 'v1.30.98',
         date: '2026-08-20',

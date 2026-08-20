@@ -245,8 +245,10 @@
     --glass-surface-strong: color-mix(in srgb, var(--color-surface) 94%, transparent);
     --glass-border: color-mix(in srgb, #ffffff 58%, var(--color-border));
     --glass-shadow: 0 1rem 2.6rem color-mix(in srgb, var(--color-text) 13%, transparent);
-    --color-nav-floating-surface: color-mix(in srgb, var(--color-surface) 72%, transparent);
+    --color-nav-floating-surface: color-mix(in srgb, var(--color-surface) 64%, transparent);
+    --surface-nav-floating: linear-gradient(132deg, color-mix(in srgb, #ffffff 52%, transparent) 0%, color-mix(in srgb, #ffffff 16%, transparent) 33%, transparent 68%), var(--color-nav-floating-surface);
     --shadow-nav-floating: 0 1.1rem 2.6rem color-mix(in srgb, var(--color-text) 24%, transparent), 0 0.3rem 0.85rem color-mix(in srgb, var(--color-text) 10%, transparent);
+    --nav-floating-blur: blur(1.55rem) saturate(175%);
     --glass-blur: blur(1.25rem) saturate(145%);
     --liquid-veil: linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 10%, transparent) 0%, transparent 44%, color-mix(in srgb, var(--theme-companion) 9%, transparent) 100%);
     --liquid-sheen: linear-gradient(115deg, transparent 10%, color-mix(in srgb, #ffffff 38%, transparent) 48%, transparent 78%);
@@ -310,8 +312,10 @@
     --glass-surface-strong: color-mix(in srgb, var(--color-surface) 96%, transparent);
     --glass-border: color-mix(in srgb, #ffffff 14%, var(--color-border));
     --glass-shadow: 0 1rem 2.6rem color-mix(in srgb, #000000 80%, transparent);
-    --color-nav-floating-surface: color-mix(in srgb, var(--color-surface) 68%, transparent);
+    --color-nav-floating-surface: color-mix(in srgb, var(--color-surface) 82%, transparent);
+    --surface-nav-floating: linear-gradient(132deg, color-mix(in srgb, #ffffff 12%, transparent) 0%, color-mix(in srgb, #ffffff 4%, transparent) 33%, transparent 68%), var(--color-nav-floating-surface);
     --shadow-nav-floating: 0 1.1rem 2.6rem color-mix(in srgb, #000000 72%, transparent), 0 0.3rem 0.85rem color-mix(in srgb, #000000 42%, transparent);
+    --nav-floating-blur: blur(1.4rem) saturate(128%) brightness(1.08);
     --liquid-veil: none;
     --liquid-sheen: none;
 

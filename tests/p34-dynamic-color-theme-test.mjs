@@ -23,4 +23,9 @@ for (const seed of SEEDS) {
     }
 }
 
+const charcoalDarkPalette = buildTeamTheme('#ef3340', 'dark');
+assert.notEqual(charcoalDarkPalette.canvas, '#000000', 'ダークテーマのキャンバスを純黒へ戻してはいけません');
+assert.notEqual(charcoalDarkPalette.surface, charcoalDarkPalette.canvas, 'ダークテーマはキャンバスとsurfaceの面階層を維持する必要があります');
+assert.ok(contrastRatio(charcoalDarkPalette.text, charcoalDarkPalette.canvas) >= 5, 'チャコールキャンバス上の本文は十分なコントラストを維持する必要があります');
+
 console.log(`P34 dynamic team theme tests passed (${SEEDS.length} seeds × 2 modes)`);
