@@ -2190,6 +2190,8 @@ export function updateRoleUI() {
     document.querySelectorAll('#modal-mobile-more .parent-only').forEach(el => {
         el.style.display = !isCoach ? 'flex' : 'none';
     });
+    const mobileMoreNavigationSection = document.getElementById('mobile-more-navigation-section');
+    if (mobileMoreNavigationSection) mobileMoreNavigationSection.style.display = isCoach ? 'grid' : 'none';
 
     const libraryLink = document.querySelector('.c-sidebar__nav li[data-route="library"]');
     if (libraryLink) libraryLink.style.display = isCoach ? 'flex' : 'none';

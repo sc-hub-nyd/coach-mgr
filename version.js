@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.89';
+export const APP_VERSION = 'v1.30.90';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.90',
+        date: '2026-08-20',
+        title: 'その他メニューの保護者表示を補正',
+        features: [
+            '保護者モードでコーチ専用経路が非表示のとき、「チーム管理」見出しだけが残らないよう管理セクション全体をロール連動で非表示化',
+            'P54にロール別の空セクション退出契約を追加し、その他メニューの情報階層を保護'
+        ]
+    },
     {
         version: 'v1.30.89',
         date: '2026-08-20',
