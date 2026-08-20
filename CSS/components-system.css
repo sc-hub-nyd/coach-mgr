@@ -908,12 +908,20 @@
     opacity: 1;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    transition: opacity var(--duration-base) var(--ease-out);
+    transition: opacity var(--duration-fast) var(--ease-out);
 }
 
+.c-modal-overlay.is-opening,
 .c-modal-overlay.hidden {
     opacity: 0;
     pointer-events: none;
+}
+
+.c-modal-overlay.is-closing {
+    opacity: 0;
+    pointer-events: none;
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-in-out);
 }
 
 .c-modal-overlay--critical {
@@ -943,11 +951,22 @@
     border-start-end-radius: var(--radius-lg);
     border-end-start-radius: 0;
     border-end-end-radius: 0;
+    opacity: 1;
     transform: translateY(0);
+    transition: transform var(--duration-sheet) var(--ease-out), opacity var(--duration-fast) var(--ease-out);
 }
 
+.c-modal-overlay.is-opening .c-modal--bottom-sheet,
 .c-modal-overlay.hidden .c-modal--bottom-sheet {
-    transform: translateY(100%);
+    opacity: 0;
+    transform: translateY(1rem);
+}
+
+.c-modal-overlay.is-closing .c-modal--bottom-sheet {
+    opacity: 0;
+    transform: translateY(1rem);
+    transition-duration: var(--duration-sheet-close), var(--duration-fast);
+    transition-timing-function: var(--ease-in-out), var(--ease-in-out);
 }
 
 /* Compatibility variant for legacy modal markup while headers and footers migrate to c-modal elements. */
@@ -965,9 +984,17 @@
     transition: transform var(--duration-base) var(--ease-spring), opacity var(--duration-base) var(--ease-out);
 }
 
-.c-modal-overlay.hidden .c-modal {
+.c-modal-overlay.is-opening .c-modal:not(.c-modal--bottom-sheet),
+.c-modal-overlay.hidden .c-modal:not(.c-modal--bottom-sheet) {
     opacity: 0;
     transform: scale(0.95);
+}
+
+.c-modal-overlay.is-closing .c-modal:not(.c-modal--bottom-sheet) {
+    opacity: 0;
+    transform: scale(0.95);
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-in-out);
 }
 
 .c-modal--legacy .c-modal__heading {

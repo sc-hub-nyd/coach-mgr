@@ -48,6 +48,9 @@ assert.doesNotMatch(index, /mobile-more-(?:role|sync)-card c-card/, 'その他�
 
 [
     '.c-modal--bottom-sheet {',
+    'transition: transform var(--duration-sheet) var(--ease-out), opacity var(--duration-fast) var(--ease-out);',
+    '.c-modal-overlay.is-closing .c-modal--bottom-sheet {',
+    'var(--duration-sheet-close)',
     'border-start-start-radius: var(--radius-lg);',
     'border-start-end-radius: var(--radius-lg);',
     '.c-mobile-more__sheet {',
@@ -61,9 +64,14 @@ assert.doesNotMatch(index, /mobile-more-(?:role|sync)-card c-card/, 'その他�
 
 assert.match(index, /id="btn-bottom-nav-more"[^>]*aria-controls="modal-mobile-more"[^>]*aria-expanded="false"/, 'その他タブはモーダルと展開状態を関連付ける必要があります');
 assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item\s*\{[\s\S]*?border:\s*0\s*!important;[\s\S]*?background:\s*transparent\s*!important;/, 'その他を含むボトムナビ項目はbuttonの既定枠線を持ってはいけません');
-assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item--more\.is-expanded\s*\{[\s\S]*?border-radius:\s*var\(--control-radius\);[\s\S]*?background:\s*var\(--color-surface-selected\);/, '展開中のその他は他タブと同じチームカラー追随の丸角選択面を持つ必要があります');
-assert.match(app, /syncBottomNavMoreState[\s\S]*?classList\.toggle\('is-expanded'/, 'その他タブの選択状態はモーダル開閉と同期する必要があります');
-assert.match(app, /btnBottomNavMore\.addEventListener\('click'[\s\S]*?openModal\('modal-mobile-more'\)/, 'その他タブは共通モーダルを開く必要があります');
+assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item--more\.is-expanded::before \{[\s\S]*?opacity:\s*1;[\s\S]*?transform:\s*scale\(1\);/, '展開中のその他は他タブと同じチームカラー追随のレンズ選択面を持つ必要があります');
+assert.match(base, /\.c-bottom-nav \.c-bottom-nav__item--more\.is-expanded::after \{[\s\S]*?transform:\s*scaleX\(1\);/, '展開中のその他はブランドラインを表示する必要があります');
+assert.match(app, /syncBottomNavMoreState[\s\S]*?!mobileMoreModal\.classList\.contains\('hidden'\) && !mobileMoreModal\.classList\.contains\('is-closing'\)[\s\S]*?classList\.toggle\('is-expanded'/, 'その他タブの選択状態はモーダル開閉と即時に同期する必要があります');
+assert.match(app, /btnBottomNavMore\.addEventListener\('click'[\s\S]*?openModal\('modal-mobile-more', \{ trigger: btnBottomNavMore \}\)/, 'その他タブは共通モーダルをトリガー情報付きで開く必要があります');
+assert.match(app, /export function closeModal[\s\S]*?modalEl\.classList\.add\('is-closing'\)/, 'その他を含むモーダルは閉じるモーションを共通化する必要があります');
+assert.match(app, /if \(returnFocus && trigger instanceof HTMLElement && trigger\.isConnected\) trigger\.focus\(\);/, 'モーダルを閉じた後はトリガーへフォーカスを復帰する必要があります');
+assert.match(app, /function getTopOpenModal\(\)[\s\S]*?\.modal-overlay:not\(\.hidden\):not\(\.is-closing\)/, 'フォーカストラップは閉じる途中のモーダルを操作対象にしてはいけません');
+assert.match(app, /if \(e\.key !== 'Tab'\) return;[\s\S]*?e\.preventDefault\(\);[\s\S]*?focusableElements\[nextIndex\]\.focus\(\);/, '開いているモーダルではTabフォーカスを循環する必要があります');
 assert.match(app, /mobile-more-item\[data-mobile-route\]/, 'その他メニューの経路ボタンは既存ナビゲーションへ接続する必要があります');
 assert.match(app, /mobileMoreNavigationSection\.style\.display = isCoach \? 'grid' : 'none'/, '保護者モードでは空のチーム管理セクションを表示してはいけません');
 

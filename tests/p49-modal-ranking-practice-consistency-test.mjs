@@ -23,13 +23,15 @@ requireAll(system, [
     'background: var(--color-overlay-scrim);',
     '.c-modal--legacy {',
     'background: var(--color-surface);',
-    '.c-modal-overlay.hidden .c-modal {',
+    '.c-modal-overlay.is-opening .c-modal:not(.c-modal--bottom-sheet),',
+    '.c-modal-overlay.is-closing .c-modal:not(.c-modal--bottom-sheet) {',
     '.c-modal--bottom-sheet {',
     'border-start-start-radius: var(--radius-lg);',
     'border-start-end-radius: var(--radius-lg);',
     '.c-mobile-more__sheet {',
     'border-radius: var(--radius-lg) var(--radius-lg) 0 0;',
-    '.c-modal-overlay.hidden .c-modal--bottom-sheet {',
+    '.c-modal-overlay.is-opening .c-modal--bottom-sheet,',
+    '.c-modal-overlay.is-closing .c-modal--bottom-sheet {',
     '.c-modal--legacy .c-modal__heading {',
     '.c-modal--legacy .c-modal__actions {'
 ], '共通モーダルシェル');
@@ -78,6 +80,6 @@ requireAll(system, [
 ], '練習カード操作の均等二段構成');
 
 requireAll(version, ['v1.30.86', 'モーダル・ランキング・練習管理の共通部品整合性を改善'], 'v1.30.86更新履歴');
-requireAll(serviceWorker, ["const CACHE_VERSION = 'coachmgr-v205';", './CSS/components.css', './CSS/components-system.css', './canvas-palette.js', './pitch-renderer.js'], 'R1〜R6 PWA資産');
+requireAll(serviceWorker, ["const CACHE_VERSION = 'coachmgr-v206';", './CSS/components.css', './CSS/components-system.css', './canvas-palette.js', './pitch-renderer.js'], 'R1〜R6 PWA資産');
 
 console.log('P49 modal, ranking, and practice consistency contracts passed');

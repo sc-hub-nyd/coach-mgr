@@ -21,6 +21,69 @@ import { acknowledgeSyncOutboxItem, appendSyncAudit, enqueueSyncSnapshot, ensure
 import { configureAppContext } from './app-context.js';
 import { buildCoachActionCenter, buildParentHomeAgenda, buildPracticePlanDraft, ensurePracticePlan, savePracticePlan, loadUiPreferences, saveUiPreferences, applyUiPreferences } from './experience-service.js';
 
+const modalFocusTriggers = new WeakMap();
+const modalCloseTimers = new WeakMap();
+const contextBarCloseTimers = new WeakMap();
+
+function getMotionDurationMs(tokenName) {
+    const tokenValue = getComputedStyle(document.documentElement).getPropertyValue(tokenName).trim();
+    const numericValue = Number.parseFloat(tokenValue);
+    if (!Number.isFinite(numericValue)) return 0;
+    return tokenValue.endsWith('s') && !tokenValue.endsWith('ms') ? numericValue * 1000 : numericValue;
+}
+
+function getModalCloseDuration(modalEl) {
+    return modalEl.querySelector('.c-modal--bottom-sheet')
+        ? getMotionDurationMs('--duration-sheet-close')
+        : getMotionDurationMs('--duration-fast');
+}
+
+function setMobileContextBarVisibility(contextBar, isVisible) {
+    if (!(contextBar instanceof HTMLElement)) return;
+    const pendingClose = contextBarCloseTimers.get(contextBar);
+    if (pendingClose) {
+        clearTimeout(pendingClose);
+        contextBarCloseTimers.delete(contextBar);
+    }
+
+    if (isVisible) {
+        contextBar.classList.remove('hidden', 'is-closing', 'is-open');
+        contextBar.classList.add('is-opening');
+        requestAnimationFrame(() => {
+            if (contextBar.classList.contains('hidden') || contextBar.classList.contains('is-closing')) return;
+            contextBar.classList.remove('is-opening');
+            contextBar.classList.add('is-open');
+        });
+        return;
+    }
+
+    if (contextBar.classList.contains('hidden')) return;
+    const closeDuration = getMotionDurationMs('--duration-fast');
+    if (closeDuration <= 1) {
+        contextBar.classList.remove('is-opening', 'is-open', 'is-closing');
+        contextBar.classList.add('hidden');
+        return;
+    }
+
+    contextBar.classList.remove('is-opening', 'is-open');
+    contextBar.classList.add('is-closing');
+    const closeTimer = window.setTimeout(() => {
+        contextBar.classList.remove('is-closing');
+        contextBar.classList.add('hidden');
+        contextBarCloseTimers.delete(contextBar);
+    }, closeDuration);
+    contextBarCloseTimers.set(contextBar, closeTimer);
+}
+
+function getTopOpenModal() {
+    const openModals = Array.from(document.querySelectorAll('.modal-overlay:not(.hidden):not(.is-closing)'));
+    return openModals.at(-1) || null;
+}
+
+function getModalFocusableElements(modalEl) {
+    return Array.from(modalEl.querySelectorAll('button:not([disabled]), [href], input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'));
+}
+
 function renderEmptyState({ icon = 'ti ti-inbox', title, description = '', actionLabel = '', actionId = '', compact = false }) {
     const action = actionLabel && actionId
         ? `<button type="button" class="c-button btn c-button--primary btn-primary" id="${actionId}">${actionLabel}</button>`
@@ -461,7 +524,7 @@ export async function syncPullGasCloud(isSilent = false) {
     }
 }
 
-export function openModal(id) {
+export function openModal(id, { trigger = null } = {}) {
     if (id === 'modal-menu') {
         const catSel = document.getElementById('menu-category');
         if (catSel) {
@@ -476,17 +539,54 @@ export function openModal(id) {
     }
     const modalEl = document.getElementById(id);
     if (modalEl) {
-        modalEl.classList.remove('hidden');
+        const pendingClose = modalCloseTimers.get(modalEl);
+        if (pendingClose) {
+            clearTimeout(pendingClose);
+            modalCloseTimers.delete(modalEl);
+        }
+        if (trigger instanceof HTMLElement) modalFocusTriggers.set(modalEl, trigger);
+        modalEl.classList.remove('hidden', 'is-closing', 'is-open');
+        modalEl.classList.add('is-opening');
         document.body.classList.add('modal-open');
 
-        // ★ 修正: select() を除外し、完全にフォーカスのみにする
-        setTimeout(() => {
-            const firstInput = modalEl.querySelector('input:not([type="hidden"]), select, textarea');
-            if (firstInput && typeof firstInput.focus === 'function') {
-                firstInput.focus();
-            }
-        }, 100);
+        requestAnimationFrame(() => {
+            if (modalEl.classList.contains('hidden') || modalEl.classList.contains('is-closing')) return;
+            modalEl.classList.remove('is-opening');
+            modalEl.classList.add('is-open');
+        });
+
+        requestAnimationFrame(() => {
+            if (modalEl.classList.contains('hidden') || modalEl.classList.contains('is-closing')) return;
+            const formControl = modalEl.querySelector('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])');
+            const firstFocusable = formControl || modalEl.querySelector('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])');
+            if (firstFocusable && typeof firstFocusable.focus === 'function') firstFocusable.focus();
+        });
     }
+}
+
+export function closeModal(idOrElement, { returnFocus = true, immediate = false } = {}) {
+    const modalEl = typeof idOrElement === 'string' ? document.getElementById(idOrElement) : idOrElement;
+    if (!(modalEl instanceof HTMLElement) || modalEl.classList.contains('hidden')) return;
+
+    const finalizeClose = () => {
+        modalEl.classList.remove('is-opening', 'is-open', 'is-closing');
+        modalEl.classList.add('hidden');
+        modalCloseTimers.delete(modalEl);
+        if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) document.body.classList.remove('modal-open');
+        const trigger = modalFocusTriggers.get(modalEl);
+        if (returnFocus && trigger instanceof HTMLElement && trigger.isConnected) trigger.focus();
+    };
+
+    const closeDuration = getModalCloseDuration(modalEl);
+    if (immediate || closeDuration <= 1) {
+        finalizeClose();
+        return;
+    }
+
+    modalEl.classList.remove('is-opening', 'is-open');
+    modalEl.classList.add('is-closing');
+    const closeTimer = window.setTimeout(finalizeClose, closeDuration);
+    modalCloseTimers.set(modalEl, closeTimer);
 }
 
 export function openLeaderRankingModal(type = 'all') {
@@ -891,35 +991,34 @@ function setupModals() {
     closeBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const overlay = e.target.closest('.modal-overlay');
-            if (overlay) {
-                overlay.classList.add('hidden');
-                if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
-                    document.body.classList.remove('modal-open');
-                }
-            }
+            if (overlay) closeModal(overlay);
         });
     });
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) {
-                overlay.classList.add('hidden');
-                if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
-                    document.body.classList.remove('modal-open');
-                }
-            }
+            if (e.target === overlay) closeModal(overlay);
         });
     });
 
     document.addEventListener('keydown', (e) => {
+        const topOpenModal = getTopOpenModal();
+        if (!topOpenModal) return;
+
         if (e.key === 'Escape') {
-            const openModals = Array.from(document.querySelectorAll('.modal-overlay:not(.hidden)'));
-            if (openModals.length > 0) {
-                openModals[openModals.length - 1].classList.add('hidden');
-                if (document.querySelectorAll('.modal-overlay:not(.hidden)').length === 0) {
-                    document.body.classList.remove('modal-open');
-                }
-            }
+            closeModal(topOpenModal);
+            return;
         }
+
+        if (e.key !== 'Tab') return;
+        const focusableElements = getModalFocusableElements(topOpenModal);
+        if (focusableElements.length === 0) return;
+
+        const currentIndex = focusableElements.indexOf(document.activeElement);
+        const nextIndex = e.shiftKey
+            ? (currentIndex <= 0 ? focusableElements.length - 1 : currentIndex - 1)
+            : (currentIndex === focusableElements.length - 1 ? 0 : currentIndex + 1);
+        e.preventDefault();
+        focusableElements[nextIndex].focus();
     });
 
     const formFocus = document.getElementById('form-edit-team-focus');
@@ -1899,13 +1998,13 @@ function setupEventListeners() {
     const mobileMoreModal = document.getElementById('modal-mobile-more');
     const syncBottomNavMoreState = () => {
         if (!btnBottomNavMore || !mobileMoreModal) return;
-        const isExpanded = !mobileMoreModal.classList.contains('hidden');
+        const isExpanded = !mobileMoreModal.classList.contains('hidden') && !mobileMoreModal.classList.contains('is-closing');
         btnBottomNavMore.classList.toggle('is-expanded', isExpanded);
         btnBottomNavMore.setAttribute('aria-expanded', String(isExpanded));
     };
     if (btnBottomNavMore) {
         btnBottomNavMore.addEventListener('click', () => {
-            openModal('modal-mobile-more');
+            openModal('modal-mobile-more', { trigger: btnBottomNavMore });
             syncBottomNavMoreState();
         });
     }
@@ -1921,9 +2020,7 @@ function setupEventListeners() {
         item.addEventListener('click', (e) => {
             const route = e.currentTarget.dataset.mobileRoute;
             if (route) {
-                const modal = document.getElementById('modal-mobile-more');
-                if (modal) modal.classList.add('hidden');
-                document.body.classList.remove('modal-open');
+                closeModal('modal-mobile-more', { returnFocus: false, immediate: true });
                 navigate(route);
             }
         });
@@ -1932,9 +2029,7 @@ function setupEventListeners() {
     const mobileBtnMyPlayer = document.getElementById('mobile-btn-my-player');
     if (mobileBtnMyPlayer) {
         mobileBtnMyPlayer.addEventListener('click', () => {
-            const modal = document.getElementById('modal-mobile-more');
-            if (modal) modal.classList.add('hidden');
-            document.body.classList.remove('modal-open');
+            closeModal('modal-mobile-more', { returnFocus: false, immediate: true });
             openMyPlayerSelectModal();
         });
     }
@@ -1955,7 +2050,7 @@ function setupEventListeners() {
     const mobileTopBarRoleBadge = document.getElementById('mobile-topbar-role-badge');
     if (mobileTopBarRoleBadge) {
         mobileTopBarRoleBadge.addEventListener('click', () => {
-            openModal('modal-mobile-more');
+            openModal('modal-mobile-more', { trigger: mobileTopBarRoleBadge });
         });
     }
 
@@ -1976,9 +2071,7 @@ function setupEventListeners() {
         e.preventDefault();
 
         // モバイルその他メニューが開いていれば閉じる
-        const mobileModal = document.getElementById('modal-mobile-more');
-        if (mobileModal) mobileModal.classList.add('hidden');
-        document.body.classList.remove('modal-open');
+        closeModal('modal-mobile-more', { returnFocus: false, immediate: true });
 
         // 現在がコーチモードの場合：パスコード不要で保護者モードへ
         if (state.currentUserRole === 'coach') {
@@ -2438,7 +2531,7 @@ export function navigate(route, params = null, isBack = false, restoredRouteCont
     if (mobileContextBar) {
         const isDetailRoute = (route === 'match-detail' || route === 'player-detail');
         if (isDetailRoute) {
-            mobileContextBar.classList.remove('hidden');
+            setMobileContextBarVisibility(mobileContextBar, true);
             if (mobileContextBackBtn) {
                 mobileContextBackBtn.onclick = (e) => {
                     if (e) {
@@ -2462,7 +2555,7 @@ export function navigate(route, params = null, isBack = false, restoredRouteCont
                 }
             }
         } else {
-            mobileContextBar.classList.add('hidden');
+            setMobileContextBarVisibility(mobileContextBar, false);
             if (mobileContextBackBtn) mobileContextBackBtn.onclick = null;
         }
     }
