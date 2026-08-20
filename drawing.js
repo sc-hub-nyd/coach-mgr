@@ -322,6 +322,57 @@ function editFrameTitle() {
     const currentCaption = (f && typeof f === 'object' && !Array.isArray(f) && f.caption) ? f.caption : '';
     const currentPause = (f && typeof f === 'object' && !Array.isArray(f)) ? (Number(f.pauseDuration) || 0) : 0;
 
+    // Mobile: Show scene detail popover in the lower panel
+    const mobilePopover = document.getElementById('anim-scene-detail-popover');
+    const mobileMenuDetails = document.getElementById('anim-mobile-menu-details');
+    const inputMobileTitle = document.getElementById('input-mobile-scene-title');
+    const inputMobilePause = document.getElementById('input-mobile-scene-pause');
+    const inputMobileCaption = document.getElementById('input-mobile-scene-caption');
+    const headingMobile = document.getElementById('mobile-scene-detail-heading');
+    const btnSaveMobile = document.getElementById('btn-save-mobile-scene-detail');
+    const btnCloseMobile = document.getElementById('btn-close-mobile-scene-detail');
+
+    if (window.innerWidth <= 768 && mobilePopover) {
+        if (headingMobile) headingMobile.innerHTML = `<i class="ti ti-movie"></i> シーン ${currentFrameIndex + 1} の詳細`;
+        if (inputMobileTitle) inputMobileTitle.value = currentTitle;
+        if (inputMobilePause) inputMobilePause.value = String(currentPause);
+        if (inputMobileCaption) inputMobileCaption.value = currentCaption;
+
+        if (mobileMenuDetails) mobileMenuDetails.classList.add('hidden');
+        mobilePopover.classList.remove('hidden');
+
+        if (btnSaveMobile) {
+            btnSaveMobile.onclick = () => {
+                const trimmed = inputMobileTitle ? inputMobileTitle.value.trim() : '';
+                const captionVal = inputMobileCaption ? inputMobileCaption.value.trim() : '';
+                const pauseVal = inputMobilePause ? (parseInt(inputMobilePause.value, 10) || 0) : 0;
+
+                if (Array.isArray(f)) {
+                    frames[currentFrameIndex] = { objects: f, title: trimmed, caption: captionVal, pauseDuration: pauseVal };
+                } else if (typeof f === 'object' && f !== null) {
+                    f.title = trimmed;
+                    f.caption = captionVal;
+                    f.pauseDuration = pauseVal;
+                } else {
+                    frames[currentFrameIndex] = { objects: [], title: trimmed, caption: captionVal, pauseDuration: pauseVal };
+                }
+                isDirty = true;
+                updateFrameCount();
+                showToast(`シーン ${currentFrameIndex + 1} の設定を保存しました`);
+                mobilePopover.classList.add('hidden');
+                if (mobileMenuDetails) mobileMenuDetails.classList.remove('hidden');
+            };
+        }
+
+        if (btnCloseMobile) {
+            btnCloseMobile.onclick = () => {
+                mobilePopover.classList.add('hidden');
+                if (mobileMenuDetails) mobileMenuDetails.classList.remove('hidden');
+            };
+        }
+        return;
+    }
+
     const modal = document.getElementById('modal-scene-title');
     const input = document.getElementById('input-scene-title');
     const captionInput = document.getElementById('input-scene-caption');
@@ -1488,14 +1539,19 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         titleEl.onclick = () => showToast(titleEl.textContent);
     }
 
-    // ★ 右側詳細パネルの情報反映＆開閉トグル復元
+    // ★ 右側詳細パネル & スマホ下部詳細エリアの情報反映
     const sidePanel = document.getElementById('anim-detail-side-panel');
     const sideToggleBtn = document.getElementById('anim-side-panel-toggle-btn');
-    if (sidePanel && sideToggleBtn) {
+    if (sidePanel) {
         const sideFocus = document.getElementById('side-info-focus');
         const sideOrg = document.getElementById('side-info-organize');
         const sideKf = document.getElementById('side-info-keyfactor');
         const sideOpt = document.getElementById('side-info-options');
+
+        const mobileFocus = document.getElementById('mobile-info-focus');
+        const mobileOrg = document.getElementById('mobile-info-organize');
+        const mobileKf = document.getElementById('mobile-info-keyfactor');
+        const mobileOpt = document.getElementById('mobile-info-options');
 
         const lblSideTitle = document.getElementById('anim-side-panel-title');
         const lblSideFocus = document.getElementById('lbl-side-focus');
@@ -1504,6 +1560,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         const cardSideOpt = document.getElementById('side-card-opt');
 
         const btnEditSide = document.getElementById('btn-edit-anim-side-info');
+        const btnEditMobile = document.getElementById('btn-edit-anim-side-info-mobile');
         const isCoach = state.currentUserRole === 'coach';
 
         if (targetMenu) {
@@ -1513,22 +1570,42 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             if (lblSideKf) lblSideKf.innerHTML = '<i class="ti ti-key c-static-style--017"></i> キーファクター';
             if (cardSideOpt) cardSideOpt.style.display = 'block';
 
-            if (sideFocus) sideFocus.textContent = targetMenu.focus || targetMenu.name || '未設定';
-            if (sideOrg) sideOrg.textContent = targetMenu.organize || 'なし';
-            if (sideKf) sideKf.textContent = targetMenu.keyfactor || 'なし';
-            if (sideOpt) sideOpt.textContent = targetMenu.options || 'なし';
+            const focusVal = targetMenu.focus || targetMenu.name || '未設定';
+            const orgVal = targetMenu.organize || 'なし';
+            const kfVal = targetMenu.keyfactor || 'なし';
+            const optVal = targetMenu.options || 'なし';
+
+            if (sideFocus) sideFocus.textContent = focusVal;
+            if (sideOrg) sideOrg.textContent = orgVal;
+            if (sideKf) sideKf.textContent = kfVal;
+            if (sideOpt) sideOpt.textContent = optVal;
+
+            if (mobileFocus) mobileFocus.textContent = focusVal;
+            if (mobileOrg) mobileOrg.textContent = orgVal;
+            if (mobileKf) mobileKf.textContent = kfVal;
+            if (mobileOpt) mobileOpt.textContent = optVal;
+
+            const handleEdit = (e) => {
+                e.stopPropagation();
+                if (window.openLibraryMenuModal) {
+                    window.openLibraryMenuModal(targetMenu);
+                }
+            };
 
             if (btnEditSide) {
                 if (isCoach) {
                     btnEditSide.style.display = 'inline-flex';
-                    btnEditSide.onclick = (e) => {
-                        e.stopPropagation();
-                        if (window.openLibraryMenuModal) {
-                            window.openLibraryMenuModal(targetMenu);
-                        }
-                    };
+                    btnEditSide.onclick = handleEdit;
                 } else {
                     btnEditSide.style.display = 'none';
+                }
+            }
+            if (btnEditMobile) {
+                if (isCoach) {
+                    btnEditMobile.style.display = 'inline-flex';
+                    btnEditMobile.onclick = handleEdit;
+                } else {
+                    btnEditMobile.style.display = 'none';
                 }
             }
         } else if (targetTactic) {
@@ -1538,21 +1615,40 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             if (lblSideKf) lblSideKf.innerHTML = '<i class="ti ti-align-left c-static-style--017"></i> 説明';
             if (cardSideOpt) cardSideOpt.style.display = 'none';
 
-            if (sideFocus) sideFocus.textContent = targetTactic.title || '未設定';
-            if (sideOrg) sideOrg.textContent = targetTactic.category || 'その他';
-            if (sideKf) sideKf.textContent = targetTactic.description || 'なし';
+            const focusVal = targetTactic.title || '未設定';
+            const orgVal = targetTactic.category || 'その他';
+            const kfVal = targetTactic.description || 'なし';
+
+            if (sideFocus) sideFocus.textContent = focusVal;
+            if (sideOrg) sideOrg.textContent = orgVal;
+            if (sideKf) sideKf.textContent = kfVal;
+
+            if (mobileFocus) mobileFocus.textContent = focusVal;
+            if (mobileOrg) mobileOrg.textContent = orgVal;
+            if (mobileKf) mobileKf.textContent = kfVal;
+            if (mobileOpt) mobileOpt.textContent = 'なし';
+
+            const handleEdit = (e) => {
+                e.stopPropagation();
+                if (window.openTacticModal) {
+                    window.openTacticModal(targetTactic);
+                }
+            };
 
             if (btnEditSide) {
                 if (isCoach) {
                     btnEditSide.style.display = 'inline-flex';
-                    btnEditSide.onclick = (e) => {
-                        e.stopPropagation();
-                        if (window.openTacticModal) {
-                            window.openTacticModal(targetTactic);
-                        }
-                    };
+                    btnEditSide.onclick = handleEdit;
                 } else {
                     btnEditSide.style.display = 'none';
+                }
+            }
+            if (btnEditMobile) {
+                if (isCoach) {
+                    btnEditMobile.style.display = 'inline-flex';
+                    btnEditMobile.onclick = handleEdit;
+                } else {
+                    btnEditMobile.style.display = 'none';
                 }
             }
         } else {
@@ -1564,7 +1660,13 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             if (sideKf) sideKf.textContent = 'なし';
             if (sideOpt) sideOpt.textContent = 'なし';
 
+            if (mobileFocus) mobileFocus.textContent = '未設定';
+            if (mobileOrg) mobileOrg.textContent = 'なし';
+            if (mobileKf) mobileKf.textContent = 'なし';
+            if (mobileOpt) mobileOpt.textContent = 'なし';
+
             if (btnEditSide) btnEditSide.style.display = 'none';
+            if (btnEditMobile) btnEditMobile.style.display = 'none';
         }
 
         sidePanel.classList.remove('open');

@@ -1602,6 +1602,68 @@
                             <i class="ti ti-movie" aria-hidden="true"></i><span>アニメーション</span>
                         </button>
                     </nav>
+
+                    <!-- Mobile Lower Info / Details Area (Displays Menu Details by default, or Scene Details / Popovers when active) -->
+                    <div id="anim-mobile-lower-panel" class="anim-mobile-lower-panel">
+                        <!-- Menu Details (Default view on mobile) -->
+                        <div id="anim-mobile-menu-details" class="anim-mobile-menu-details">
+                            <div class="anim-mobile-details-header">
+                                <h5><i class="ti ti-clipboard-list"></i> メニュー詳細</h5>
+                                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-xs" id="btn-edit-anim-side-info-mobile">
+                                    <i class="ti ti-pencil"></i> 編集
+                                </button>
+                            </div>
+                            <div class="anim-mobile-details-grid">
+                                <div class="anim-mobile-detail-item">
+                                    <span class="anim-mobile-detail-label"><i class="ti ti-target"></i> テーマ・フォーカス</span>
+                                    <div id="mobile-info-focus" class="anim-mobile-detail-value">未設定</div>
+                                </div>
+                                <div class="anim-mobile-detail-item">
+                                    <span class="anim-mobile-detail-label"><i class="ti ti-users"></i> オーガナイズ</span>
+                                    <div id="mobile-info-organize" class="anim-mobile-detail-value">なし</div>
+                                </div>
+                                <div class="anim-mobile-detail-item">
+                                    <span class="anim-mobile-detail-label"><i class="ti ti-key"></i> キーファクター</span>
+                                    <div id="mobile-info-keyfactor" class="anim-mobile-detail-value">なし</div>
+                                </div>
+                                <div class="anim-mobile-detail-item">
+                                    <span class="anim-mobile-detail-label"><i class="ti ti-circle-plus"></i> オプション</span>
+                                    <div id="mobile-info-options" class="anim-mobile-detail-value">なし</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scene Details Popover (Embedded in Lower Area for Mobile) -->
+                        <div id="anim-scene-detail-popover" class="c-popover--canvas anim-scene-detail-popover hidden">
+                            <div class="anim-mobile-details-header">
+                                <h5 id="mobile-scene-detail-heading"><i class="ti ti-movie"></i> シーン詳細</h5>
+                                <button type="button" class="btn-close-modal" id="btn-close-mobile-scene-detail" aria-label="閉じる">&times;</button>
+                            </div>
+                            <div class="anim-scene-detail-form">
+                                <div class="anim-scene-detail-row">
+                                    <label for="input-mobile-scene-title">見出し・タイトル</label>
+                                    <input type="text" id="input-mobile-scene-title" class="c-input form-control form-control-sm" placeholder="例: プレッシング開始">
+                                </div>
+                                <div class="anim-scene-detail-row">
+                                    <label for="input-mobile-scene-pause">停止時間（秒）</label>
+                                    <select id="input-mobile-scene-pause" class="c-input form-control form-control-sm">
+                                        <option value="0">停止なし (0秒)</option>
+                                        <option value="1">1秒</option>
+                                        <option value="2">2秒</option>
+                                        <option value="3">3秒</option>
+                                        <option value="5">5秒</option>
+                                    </select>
+                                </div>
+                                <div class="anim-scene-detail-row">
+                                    <label for="input-mobile-scene-caption">キャプション・解説文</label>
+                                    <input type="text" id="input-mobile-scene-caption" class="c-input form-control form-control-sm" placeholder="画面上部に表示される解説文">
+                                </div>
+                                <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-save-mobile-scene-detail">
+                                    <i class="ti ti-check"></i> シーン詳細を保存
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Collapsible Detail Side Panel (Organize, Key Factors, Options) -->

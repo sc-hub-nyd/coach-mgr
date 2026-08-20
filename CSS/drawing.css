@@ -922,6 +922,10 @@ screen and (max-width: 1024px) and (orientation: landscape) {
     }
 }
 
+.anim-mobile-lower-panel {
+    display: none;
+}
+
 /* css/drawing.css 最下部 */
 @media (max-width: 768px) {
 
@@ -931,25 +935,32 @@ screen and (max-width: 1024px) and (orientation: landscape) {
     }
 
     /* ==========================================
-       1. 作図モード（モバイル: 縦並び・ボトムシート集約）
+       1. 作図モード（モバイル: 縦並び・ピッチ→タブ＆ツール→下部詳細/フロート）
        ========================================== */
     .anim-main-workspace:has(.c-tool-dock) {
         flex-direction: column;
         height: 100%;
-        overflow: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Deprecate mobile right side panel completely */
+    .anim-main-workspace .c-inspector-panel,
+    .anim-main-workspace:has(.c-tool-dock) .c-inspector-panel {
+        display: none !important;
     }
 
     .anim-main-workspace:has(.c-tool-dock) .anim-canvas-area {
         flex: 1;
         width: 100%;
-        height: 100%;
+        height: auto;
         min-height: 0;
-        padding: 4px 4px 0 4px;
+        padding: 4px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        overflow: hidden;
+        overflow: visible;
         order: 1;
         box-sizing: border-box;
     }
@@ -960,11 +971,12 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         max-width: 100%;
         max-height: 100%;
         aspect-ratio: 8 / 5;
-        margin: 2px auto auto auto;
+        margin: 2px auto 0 auto;
         flex-shrink: 0;
+        order: 1;
     }
 
-    /* Mobile Bottom Dock Tabs (Placed above tool dock) */
+    /* Mobile Bottom Dock Tabs (Placed directly below pitch canvas) */
     .anim-mobile-dock-tabs {
         display: flex;
         width: 100%;
@@ -974,6 +986,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         border-top: 1px solid var(--surface-border);
         box-shadow: var(--shadow-sm);
         order: 2;
+        margin-top: 4px;
         z-index: 100;
     }
 
@@ -1097,18 +1110,129 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         display: none !important;
     }
 
-    /* Mobile Canvas Popovers: Mid-Zone Floating Card (Cleanly between Pitch and Tool Dock, NO scroll) */
+    /* Mobile Lower Details Panel: Displays Menu Details by default, or Scene Details / Popovers when active */
+    .anim-mobile-lower-panel {
+        display: block !important;
+        width: 100%;
+        min-height: 140px;
+        margin-top: 8px;
+        margin-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        padding: 10px 12px;
+        background: var(--surface);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        order: 10;
+        box-sizing: border-box;
+    }
+
+    .anim-mobile-menu-details {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .anim-mobile-details-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 6px;
+        border-bottom: 1px solid var(--surface-border);
+    }
+
+    .anim-mobile-details-header h5 {
+        margin: 0;
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .anim-mobile-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .anim-mobile-detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        background: var(--surface-hover);
+        padding: 6px 8px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--surface-border);
+    }
+
+    .anim-mobile-detail-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .anim-mobile-detail-value {
+        font-size: 0.84rem;
+        color: var(--text-primary);
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Scene Detail Popover inside Mobile Lower Panel */
+    .anim-scene-detail-popover {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .anim-scene-detail-form {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .anim-scene-detail-row {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .anim-scene-detail-row label {
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+    }
+
+    .anim-scene-detail-row input,
+    .anim-scene-detail-row select {
+        height: 34px;
+        font-size: 0.85rem;
+    }
+
+    #btn-save-mobile-scene-detail {
+        margin-top: 4px;
+        height: 36px;
+        font-weight: 700;
+    }
+
+    /* Mobile Canvas Popovers: Mid-Zone Floating Card in lower area */
     .anim-main-workspace:has(.c-tool-dock) .c-popover--canvas {
         position: fixed;
         top: auto;
-        bottom: calc(166px + env(safe-area-inset-bottom, 0px));
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
         left: 50%;
         right: auto;
         transform: translateX(-50%);
-        width: min(340px, calc(100vw - 24px)) !important;
-        max-width: calc(100vw - 24px) !important;
+        width: min(360px, calc(100vw - 20px)) !important;
+        max-width: calc(100vw - 20px) !important;
         height: auto;
-        max-height: calc(100dvh - 300px);
+        max-height: calc(100dvh - 220px);
         overflow-y: visible;
         margin: 0 !important;
         padding: 0.75rem 1rem;
