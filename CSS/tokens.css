@@ -65,6 +65,17 @@
     --color-danger-surface: var(--theme-danger-surface);
     --color-info-surface: var(--theme-info-surface);
 
+    /* Shared state component roles. Status, notices and generated notifications consume these aliases. */
+    --color-status: var(--color-brand);
+    --color-status-surface: var(--color-brand-surface);
+    --color-status-muted: var(--color-text-muted);
+    --color-status-muted-surface: var(--color-surface-subtle);
+    --color-notice-border: color-mix(in srgb, currentColor 22%, var(--color-border));
+    --color-overlay-scrim: color-mix(in srgb, var(--color-text) 72%, transparent);
+    --color-overlay-scrim-subtle: color-mix(in srgb, var(--color-text) 10%, transparent);
+    --color-toast-surface: color-mix(in srgb, var(--color-surface-raised) 92%, var(--color-text));
+    --color-toast-text: var(--color-text-on-action);
+
     /* Spacing and dimensions. */
     --space-1: 0.25rem;
     --space-2: 0.5rem;

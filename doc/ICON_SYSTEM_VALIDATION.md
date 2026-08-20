@@ -1,6 +1,6 @@
 # CoachMgr アイコンシステム・検証基準
 
-**現行基準：CoachMgr v1.30.84**
+**現行基準：CoachMgr v1.30.85**
 
 ## 1. 目的と対象
 
@@ -13,11 +13,11 @@
 | 層 | 実装 | 担当する意味 | 検証対象 |
 |---:|---|---|---|
 | 1 | 44個の南陽台FCカスタムSVGと`.c-icon` | チーム固有、主要ナビ、Tablerにない競技固有概念 | `currentColor`、意味クラス、装飾時の`aria-hidden` |
-| 2 | ローカルTabler Icons 3.46.0のCSS・WOFF2と`.ti` | 操作、試合記録、サッカー補助語彙 | ローカル定義、未定義クラス、Font Awesome再導入禁止 |
+| 2 | ローカルTabler Icons 3.46.0の144クラス・サブセットCSS／WOFF2と`.ti` | 操作、試合記録、サッカー補助語彙 | ローカル定義、未定義クラス、再生成、Font Awesome再導入禁止 |
 | 3 | 絵文字 | ランキング順位などの非操作的な補助 | 単独の主要操作へ使わない |
 | 4 | `pitch-renderer.js`のCanvas描画 | 選手位置、パス、ドリブル、エリア、器具 | ツール選択の意味と線種・オブジェクトの整合 |
 
-TablerのCSSとWOFF2は`assets/vendor/tabler-icons/`へ同梱し、Service Workerのprecacheへ登録する。外部アイコンCDNをPWAの必須経路にしない。
+Tablerのフル版CSS・WOFF2は再生成の正本として`assets/vendor/tabler-icons/`へ同梱する。実行時は、144クラスの`tabler-icons-subset.css`と`tabler-icons-subset.woff2`だけをService Workerのprecacheへ登録する。外部アイコンCDNをPWAの必須経路にしない。
 
 ## 3. 作図ツールのD1〜D3契約
 
@@ -54,21 +54,26 @@ Tablerに意味の一致する笛やサッカー固有の警告・退場アイ�
 | 検証 | 保護する内容 | 現行の基準 |
 |---|---|---|
 | P40 | Canvas作図の機能 | 配置、線・図形、履歴、フォーメーション、保存・復帰を保護する。 |
-| P42 | Tabler移行 | Font Awesome再導入禁止、ローカルCSS・WOFF2、サッカー主要アイコン、全利用クラスの定義を確認する。 |
+| P42 | Tabler移行・サブセット | Font Awesome再導入禁止、サブセットCSS・WOFF2、サッカー主要アイコン、全利用クラスの定義、フル版のprecache不使用を確認する。 |
 | P43 | 作図の識別性 | D1の第一候補、旧アイコンの再導入禁止、常時ラベル、ARIA、モバイル幅、戦術導線を確認する。 |
 | P34 | テーマ | 15種色×light/darkで、文字・主操作・境界・フォーカスの対比を確認する。 |
+| P45 | 状態部品 | 状態トークン、notice、toast、確認ダイアログ、live region、ダッシュボード状態色を確認する。 |
+| P46 | 部品状態・高密度行 | button/input/action group/data rowの状態、モバイル操作群を確認する。 |
+| P47 | 品質シナリオ | 12名の高密度シード、5ビューポート、通知アクセシビリティ、PWA更新資産を確認する。 |
+| P48 | リリース統制 | PRテンプレート、変更履歴、ロードマップ、再生成・監査手順を確認する。 |
 | レスポンシブ検証 | 操作面の表示 | 主要画面で横方向の違反が0件であることを確認する。 |
 
 公開前には、対象変更に応じた契約テストを実行し、`git diff --check`、JavaScript構文確認、PWAのService Workerキャッシュ更新を完了する。作図またはアイコン体系を変更した場合、P40・P42・P43を省略しない。
 
 ## 6. 現行検証記録
 
-v1.30.84のD1〜D5更新では、P40、P42、P43を通過し、契約テストは34/34成功、レスポンシブ検証は20件・違反0件、動的テーマは15種色×light/darkで成功した。公開PWAはService Workerの`coachmgr-v194`で更新され、v1.30.84表示を確認している。
+v1.30.85では、P40、P42、P43、P45、P46、P47、P48を通過し、状態部品、144クラスのTablerサブセット、高密度シード、リリース統制を追加した。TablerのPWA precache対象は720,051 bytesから26,023 bytesへ96.38%削減され、Service Workerは`coachmgr-v195`へ更新した。ローカルPWAで更新適用後のv1.30.85表示を確認している。
 
 ## 7. 運用上の禁止事項
 
 - Font Awesomeまたは外部アイコンCDNを新たな必須依存として追加しない。
 - 画面固有の都合だけで、台帳にない`ti-*`クラスや曖昧な代替アイコンを追加しない。
+- `ti-*`クラスを追加・削除した際に、サブセットCSS・WOFF2・マニフェストを再生成せずに公開しない。
 - ラベルをホバー時だけに隠し、タッチ端末で操作の意味を判別不能にしない。
 - 色だけ、アイコンだけ、ツールチップだけで、選択状態または業務状態を伝えない。
 - Canvas上の線種とツールドックの操作アイコンの意味を食い違わせない。
@@ -81,3 +86,5 @@ v1.30.84のD1〜D5更新では、P40、P42、P43を通過し、契約テスト�
 - [`DARK_MODE_SEMANTIC_TOKEN_DESIGN.md`](./DARK_MODE_SEMANTIC_TOKEN_DESIGN.md)
 - [`WCAG21_LIGHT_DARK_CONTRAST_VALIDATION_SPEC.md`](./WCAG21_LIGHT_DARK_CONTRAST_VALIDATION_SPEC.md)
 - [`../reports/drawing-icon-clarity-implementation-v13084.md`](../reports/drawing-icon-clarity-implementation-v13084.md)
+- [`../reports/tabler-subset-evaluation-v13085.md`](../reports/tabler-subset-evaluation-v13085.md)
+- [`DESIGN_SYSTEM_VISUAL_REGRESSION_PROTOCOL.md`](./DESIGN_SYSTEM_VISUAL_REGRESSION_PROTOCOL.md)

@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "purpose": "デザインシステムの高密度・長文・状態混在の回帰検証",
+    "locale": "ja-JP",
+    "playerCount": 12,
+    "viewportProfiles": [320, 390, 768, 1024, 1280]
+  },
+  "players": [
+    { "id": "fixture-p01", "name": "佐藤陽翔", "position": "GK", "attendance": "100%", "minutes": "1,240分", "status": "active" },
+    { "id": "fixture-p02", "name": "鈴木蒼真", "position": "DF", "attendance": "94%", "minutes": "1,180分", "status": "active" },
+    { "id": "fixture-p03", "name": "高橋凛太郎", "position": "DF", "attendance": "88%", "minutes": "1,060分", "status": "active" },
+    { "id": "fixture-p04", "name": "田中陽向", "position": "DF", "attendance": "82%", "minutes": "980分", "status": "pending" },
+    { "id": "fixture-p05", "name": "伊藤颯太", "position": "MF", "attendance": "100%", "minutes": "1,215分", "status": "active" },
+    { "id": "fixture-p06", "name": "渡辺悠真", "position": "MF", "attendance": "76%", "minutes": "840分", "status": "warning" },
+    { "id": "fixture-p07", "name": "山本結人", "position": "MF", "attendance": "94%", "minutes": "1,134分", "status": "active" },
+    { "id": "fixture-p08", "name": "中村蒼太朗", "position": "MF", "attendance": "68%", "minutes": "720分", "status": "warning" },
+    { "id": "fixture-p09", "name": "小林大翔", "position": "FW", "attendance": "100%", "minutes": "1,198分", "status": "active" },
+    { "id": "fixture-p10", "name": "加藤琥太郎", "position": "FW", "attendance": "88%", "minutes": "1,016分", "status": "active" },
+    { "id": "fixture-p11", "name": "吉田悠之介", "position": "FW", "attendance": "59%", "minutes": "550分", "status": "warning" },
+    { "id": "fixture-p12", "name": "山田悠仁アレクサンダー", "position": "DF / MF", "attendance": "未回答", "minutes": "0分", "status": "pending" }
+  ],
+  "schedule": [
+    {
+      "id": "fixture-s01",
+      "type": "practice",
+      "title": "夏季公式戦直前：守備ブロックと前進の連動を確認する高密度トレーニングセッション",
+      "meta": "2026年8月22日（土） 18:30〜20:30 / 南陽台小学校第2グラウンド",
+      "status": "practice",
+      "actions": ["詳細", "出欠", "共有", "編集", "削除"]
+    },
+    {
+      "id": "fixture-s02",
+      "type": "match",
+      "title": "U-12多摩地区リーグ第7節 対 多摩ニュータウンユナイテッドジュニアサッカークラブ",
+      "meta": "2026年8月24日（月） 09:00キックオフ / 多摩市立スポーツフィールドA面",
+      "status": "match",
+      "actions": ["詳細", "招集", "共有", "編集", "削除"]
+    }
+  ],
+  "states": ["success", "warning", "danger", "info", "pending", "empty", "loading", "disabled"]
+}

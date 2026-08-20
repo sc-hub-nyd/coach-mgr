@@ -19,7 +19,7 @@ const requireAll = (text, values, label) => values.forEach(value => {
 
 // P44: ブランド標準はセマンティックカラー、4層アイコン、作図の意味契約を正本として明記する。
 requireAll(brandStandard, [
-    'CoachMgr v1.30.84',
+    'CoachMgr v1.30.85',
     '--color-action',
     '--color-text-on-action',
     'Tabler Icons 3.46.0',
@@ -59,15 +59,16 @@ requireAll(iconValidation, [
 
 // 現行ロードマップは、次期の優先順位・品質ゲート・完了条件を管理する正本である。
 requireAll(evolutionRoadmap, [
-    '## 3. 優先順位付きロードマップ',
+    '## 3. DS-R1〜DS-R6 実装状況（v1.30.85）',
+    '## 4. 優先順位付きロードマップ',
     '### DS-R1：統制・計測を先に固定する',
     '### DS-R2：カラーと状態のトークン移行を完了する',
     '### DS-R3：アイコン資産を軽量化し、競技語彙を補完する',
     '### DS-R4：コンポーネント状態と高密度画面を標準化する',
     '### DS-R5：視覚回帰とアクセシビリティ検証を実データへ広げる',
     '### DS-R6：運用を製品開発サイクルへ定着させる',
-    '## 5. リリース品質ゲート',
-    '## 6. 完了の定義'
+    '## 6. リリース品質ゲート',
+    '## 7. 完了の定義'
 ], 'デザインシステム進化ロードマップ');
 assert.ok(legacyRoadmap.includes('DESIGN_SYSTEM_EVOLUTION_ROADMAP_V13084.md'), '導入初期ロードマップから現行ロードマップへ誘導されていません');
 

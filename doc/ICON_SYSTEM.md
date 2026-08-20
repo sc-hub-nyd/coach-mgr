@@ -92,3 +92,4 @@ Tablerの単独アイコン操作では、`aria-label`、`title`、可視ラベ�
 - [`NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md`](./NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md)
 - [`ICON_SYSTEM_VALIDATION.md`](./ICON_SYSTEM_VALIDATION.md)
 - [`DESIGN_SYSTEM_EVOLUTION_ROADMAP_V13084.md`](./DESIGN_SYSTEM_EVOLUTION_ROADMAP_V13084.md)
+- [`../reports/tabler-subset-evaluation-v13085.md`](../reports/tabler-subset-evaluation-v13085.md)

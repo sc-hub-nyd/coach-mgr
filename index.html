@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
-    <link rel="stylesheet" href="./CSS/main.css?v=86">
+    <link rel="stylesheet" href="./CSS/main.css?v=87">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Tabler Icons 3.46.0 (MIT): bundled locally so the PWA works on first offline launch. -->
-    <link rel="stylesheet" href="./assets/vendor/tabler-icons/tabler-icons.css?v=3.46.0">
+    <link rel="stylesheet" href="./assets/vendor/tabler-icons/tabler-icons-subset.css?v=3.46.0-subset.144">
     <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#10b981">
@@ -2277,7 +2277,7 @@
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast-container" class="toast-container"></div>
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="false"></div>
 
     <!-- Library Assign Modal -->
     <div id="modal-assign-practice" class="c-modal-overlay modal-overlay hidden c-static-style--283">
@@ -2566,9 +2566,10 @@
 
     <!-- Global Custom Confirm Modal -->
     <div id="modal-global-confirm" class="c-modal-overlay modal-overlay hidden c-static-style--282">
-        <div class="c-modal c-modal--legacy modal confirm-modal-content">
-            <div class="confirm-modal-icon" id="global-confirm-icon">
-                <i class="ti ti-alert-triangle"></i>
+        <div class="c-modal c-modal--legacy modal confirm-modal-content" role="dialog" aria-modal="true"
+            aria-labelledby="global-confirm-title" aria-describedby="global-confirm-message">
+            <div class="confirm-modal-icon c-state-icon c-state-icon--info" id="global-confirm-icon">
+                <i class="ti ti-info-circle" aria-hidden="true"></i>
             </div>
             <h3 class="confirm-modal-title" id="global-confirm-title">確認</h3>
             <p class="confirm-modal-message" id="global-confirm-message"></p>

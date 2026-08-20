@@ -42,19 +42,39 @@ export function getNendo(dateStr) {
     return year;
 }
 
-export function showToast(message) {
+const TOAST_TYPES = {
+    success: { icon: 'ti-circle-check', role: 'status' },
+    warning: { icon: 'ti-alert-triangle', role: 'status' },
+    danger: { icon: 'ti-alert-circle', role: 'alert' },
+    info: { icon: 'ti-info-circle', role: 'status' }
+};
+
+export function showToast(message, { type = 'success', duration = 3000 } = {}) {
     const container = document.getElementById('toast-container');
     if (!container) return;
+
+    const normalizedType = Object.hasOwn(TOAST_TYPES, type) ? type : 'info';
+    const definition = TOAST_TYPES[normalizedType];
     const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.innerHTML = `<i class="ti ti-circle-check"></i> ${message}`;
+    const icon = document.createElement('i');
+    const text = document.createElement('span');
+
+    toast.className = `toast c-toast c-toast--${normalizedType}`;
+    toast.setAttribute('role', definition.role);
+    toast.setAttribute('aria-atomic', 'true');
+    icon.className = `ti ${definition.icon}`;
+    icon.setAttribute('aria-hidden', 'true');
+    text.className = 'c-toast__text';
+    text.textContent = String(message ?? '');
+
+    toast.append(icon, text);
     container.appendChild(toast);
 
     setTimeout(() => { toast.classList.add('show'); }, 10);
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    }, Math.max(1000, Number(duration) || 3000));
 }
 
 export function setupScoreCounters() {
@@ -122,17 +142,18 @@ export function showCustomConfirm(message, title = '確認', options = {}) {
         if (titleEl) titleEl.textContent = title;
         if (msgEl) msgEl.textContent = message;
 
+        const confirmType = ['danger', 'warning', 'info'].includes(options.type) ? options.type : 'info';
         if (iconEl) {
-            let iconHtml = '<i class="ti ti-alert-triangle"></i>';
-            if (options.type === 'danger') {
-                iconHtml = '<i class="ti ti-trash"></i>';
-                iconEl.style.background = 'rgba(239, 68, 68, 0.08)';
-                iconEl.style.color = '#ef4444';
-            } else {
-                iconEl.style.background = 'rgba(242, 57, 50, 0.08)';
-                iconEl.style.color = 'var(--primary)';
-            }
-            iconEl.innerHTML = iconHtml;
+            const icon = document.createElement('i');
+            icon.className = `ti ${confirmType === 'danger' ? 'ti-trash' : confirmType === 'warning' ? 'ti-alert-triangle' : 'ti-info-circle'}`;
+            icon.setAttribute('aria-hidden', 'true');
+            iconEl.className = `confirm-modal-icon c-state-icon c-state-icon--${confirmType}`;
+            iconEl.replaceChildren(icon);
+        }
+
+        if (btnOk) {
+            btnOk.classList.toggle('c-button--danger', confirmType === 'danger');
+            btnOk.classList.toggle('c-button--primary', confirmType !== 'danger');
         }
 
         if (btnOk && options.okText) btnOk.textContent = options.okText;

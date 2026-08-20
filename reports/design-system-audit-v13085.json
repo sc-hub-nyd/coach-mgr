@@ -1,0 +1,512 @@
+{
+  "generatedAt": "2026-08-20T02:10:06.232Z",
+  "scope": {
+    "cssFiles": 12,
+    "sourceFiles": 40,
+    "foundationFiles": [
+      "CSS/base.css",
+      "CSS/tokens.css"
+    ]
+  },
+  "directColors": {
+    "totalOccurrences": 348,
+    "componentOrPageOccurrences": 278,
+    "files": [
+      {
+        "file": "CSS/components-system.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 66,
+        "uniqueDirectColors": 40,
+        "topValues": [
+          "rgba(0, 0, 0, 0.5)",
+          "#f1f5f9",
+          "#334155",
+          "#ffffff",
+          "rgba(0, 0, 0, 0.25)",
+          "rgba(255, 255, 255, 0.25)",
+          "#f59e0b",
+          "#1e293b",
+          "#fff",
+          "rgb(0 0 0 / 40%)",
+          "rgb(0 0 0 / 60%)",
+          "#eab308"
+        ]
+      },
+      {
+        "file": "CSS/components.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 66,
+        "uniqueDirectColors": 35,
+        "topValues": [
+          "#ffffff",
+          "rgba(0, 0, 0, 0.25)",
+          "rgba(0, 0, 0, 0.5)",
+          "#000",
+          "#f1f5f9",
+          "#334155",
+          "#f8fafc",
+          "rgba(242, 57, 50, 0.1)",
+          "rgba(0, 0, 0, 0.06)",
+          "rgba(0, 0, 0, 0.04)",
+          "rgba(0, 0, 0, 0.02)",
+          "rgba(0, 0, 0, 0.2)"
+        ]
+      },
+      {
+        "file": "CSS/drawing.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 61,
+        "uniqueDirectColors": 33,
+        "topValues": [
+          "rgba(0, 0, 0, 0.06)",
+          "#ffffff",
+          "#fde047",
+          "rgba(15, 23, 42, 0.92)",
+          "rgba(0, 0, 0, 0.15)",
+          "rgba(0, 0, 0, 0.1)",
+          "#f1f5f9",
+          "#4ade80",
+          "rgba(0, 0, 0, 0.3)",
+          "rgba(0, 0, 0, 0.08)",
+          "#f8fafc",
+          "rgba(255, 255, 255, 0.95)"
+        ]
+      },
+      {
+        "file": "CSS/base.css",
+        "layer": "foundation",
+        "directColorOccurrences": 52,
+        "uniqueDirectColors": 42,
+        "topValues": [
+          "#c72c38",
+          "#a92330",
+          "#fde8eb",
+          "#ffffff",
+          "#24171a",
+          "#a82b36",
+          "#faf6f6",
+          "#f7eff0",
+          "#b9a5a8",
+          "#85666c",
+          "#635257",
+          "#167c5a"
+        ]
+      },
+      {
+        "file": "CSS/dashboard.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 47,
+        "uniqueDirectColors": 38,
+        "topValues": [
+          "rgba(0, 0, 0, 0.05)",
+          "rgba(0, 0, 0, 0.04)",
+          "rgba(0, 0, 0, 0.03)",
+          "rgba(245, 158, 11, 0.15)",
+          "rgba(251, 191, 36, 0.1)",
+          "rgba(245, 158, 11, 0.4)",
+          "rgba(245, 158, 11, 0.8)",
+          "#92400e",
+          "#f59e0b",
+          "#d97706",
+          "rgba(242, 57, 50, 0.04)",
+          "rgba(242, 57, 50, 0.06)"
+        ]
+      },
+      {
+        "file": "CSS/tactical.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 31,
+        "uniqueDirectColors": 11,
+        "topValues": [
+          "#f1f5f9",
+          "#334155",
+          "rgba(0, 0, 0, 0.05)",
+          "rgba(0, 0, 0, 0.15)",
+          "rgba(51, 65, 85, 0.07)",
+          "rgba(0, 0, 0, 0.3)",
+          "rgba(0, 0, 0, 0.4)",
+          "rgba(0, 0, 0, 0.75)",
+          "#ffffff",
+          "rgba(0, 0, 0, 0.2)",
+          "rgba(0, 0, 0, 0.03)"
+        ]
+      },
+      {
+        "file": "CSS/tokens.css",
+        "layer": "foundation",
+        "directColorOccurrences": 18,
+        "uniqueDirectColors": 5,
+        "topValues": [
+          "#ef3340",
+          "rgba(15, 23, 42, 0.06)",
+          "rgba(15, 23, 42, 0.08)",
+          "#ffffff",
+          "#000000"
+        ]
+      },
+      {
+        "file": "CSS/components-standard.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 4,
+        "uniqueDirectColors": 1,
+        "topValues": [
+          "#ffffff"
+        ]
+      },
+      {
+        "file": "CSS/main.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 3,
+        "uniqueDirectColors": 2,
+        "topValues": [
+          "rgba(242, 57, 50, 0.15)",
+          "rgba(242, 57, 50, 0.02)"
+        ]
+      },
+      {
+        "file": "CSS/icon-system.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 0,
+        "uniqueDirectColors": 0,
+        "topValues": []
+      },
+      {
+        "file": "CSS/layouts.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 0,
+        "uniqueDirectColors": 0,
+        "topValues": []
+      },
+      {
+        "file": "CSS/utilities.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 0,
+        "uniqueDirectColors": 0,
+        "topValues": []
+      }
+    ],
+    "topValues": [
+      {
+        "value": "#ffffff",
+        "occurrences": 41
+      },
+      {
+        "value": "#334155",
+        "occurrences": 24
+      },
+      {
+        "value": "#fff",
+        "occurrences": 11
+      },
+      {
+        "value": "#22c55e",
+        "occurrences": 7
+      },
+      {
+        "value": "#15803d",
+        "occurrences": 7
+      },
+      {
+        "value": "rgba(0, 0, 0, 0.15)",
+        "occurrences": 7
+      },
+      {
+        "value": "#ef4444",
+        "occurrences": 6
+      },
+      {
+        "value": "rgba(0, 0, 0, 0.04)",
+        "occurrences": 6
+      },
+      {
+        "value": "#f1f5f9",
+        "occurrences": 6
+      },
+      {
+        "value": "#000000",
+        "occurrences": 6
+      },
+      {
+        "value": "rgba(242, 57, 50, 0.15)",
+        "occurrences": 5
+      },
+      {
+        "value": "rgba(0, 0, 0, 0.12)",
+        "occurrences": 5
+      },
+      {
+        "value": "rgba(0, 0, 0, 0.25)",
+        "occurrences": 5
+      },
+      {
+        "value": "#f59e0b",
+        "occurrences": 5
+      },
+      {
+        "value": "#1e293b",
+        "occurrences": 5
+      },
+      {
+        "value": "#f23932",
+        "occurrences": 5
+      },
+      {
+        "value": "#f8fafc",
+        "occurrences": 5
+      },
+      {
+        "value": "#16a34a",
+        "occurrences": 5
+      },
+      {
+        "value": "#d97706",
+        "occurrences": 5
+      },
+      {
+        "value": "rgba(242, 57, 50, 0.08)",
+        "occurrences": 4
+      },
+      {
+        "value": "rgba(0, 0, 0, 0.02)",
+        "occurrences": 4
+      },
+      {
+        "value": "#000",
+        "occurrences": 4
+      },
+      {
+        "value": "#94a3b8",
+        "occurrences": 4
+      },
+      {
+        "value": "#b91c1c",
+        "occurrences": 4
+      },
+      {
+        "value": "#dcfce7",
+        "occurrences": 4
+      },
+      {
+        "value": "rgba(0, 0, 0, 0.05)",
+        "occurrences": 4
+      },
+      {
+        "value": "#64748b",
+        "occurrences": 4
+      },
+      {
+        "value": "rgba(0, 0, 0, 0.4)",
+        "occurrences": 3
+      },
+      {
+        "value": "#3b82f6",
+        "occurrences": 3
+      },
+      {
+        "value": "rgba(34, 197, 94, 0.15)",
+        "occurrences": 3
+      }
+    ]
+  },
+  "tabler": {
+    "usedClasses": [
+      "ti-accessible",
+      "ti-adjustments",
+      "ti-alert-circle",
+      "ti-alert-triangle",
+      "ti-align-left",
+      "ti-archive",
+      "ti-arrow-back-up",
+      "ti-arrow-down",
+      "ti-arrow-left",
+      "ti-arrow-right",
+      "ti-arrow-right-dashed",
+      "ti-arrow-zig-zag",
+      "ti-arrows-exchange",
+      "ti-ball-football",
+      "ti-ban",
+      "ti-book",
+      "ti-book-2",
+      "ti-bookmark",
+      "ti-brand-youtube",
+      "ti-bulb",
+      "ti-calendar",
+      "ti-calendar-check",
+      "ti-calendar-event",
+      "ti-calendar-minus",
+      "ti-calendar-plus",
+      "ti-calendar-x",
+      "ti-chart-bar",
+      "ti-chart-column",
+      "ti-chart-line",
+      "ti-chart-pie",
+      "ti-check",
+      "ti-chess",
+      "ti-chess-knight",
+      "ti-chevron-down",
+      "ti-chevron-left",
+      "ti-chevron-right",
+      "ti-circle",
+      "ti-circle-check",
+      "ti-circle-plus",
+      "ti-circle-x",
+      "ti-clipboard",
+      "ti-clipboard-check",
+      "ti-clipboard-list",
+      "ti-clock",
+      "ti-cloud",
+      "ti-cloud-check",
+      "ti-cloud-download",
+      "ti-cloud-upload",
+      "ti-cone",
+      "ti-copy",
+      "ti-corner-up-left",
+      "ti-crosshair",
+      "ti-database",
+      "ti-device-floppy",
+      "ti-device-mobile",
+      "ti-dots",
+      "ti-download",
+      "ti-droplet",
+      "ti-external-link",
+      "ti-eye",
+      "ti-file-export",
+      "ti-file-import",
+      "ti-file-text",
+      "ti-file-type-csv",
+      "ti-filter",
+      "ti-flag",
+      "ti-flame",
+      "ti-folder-plus",
+      "ti-git-branch",
+      "ti-git-compare",
+      "ti-grip-vertical",
+      "ti-hand-click",
+      "ti-heart-handshake",
+      "ti-help-circle",
+      "ti-history",
+      "ti-home",
+      "ti-id",
+      "ti-id-badge",
+      "ti-inbox",
+      "ti-info-circle",
+      "ti-key",
+      "ti-ladder",
+      "ti-link",
+      "ti-list",
+      "ti-list-check",
+      "ti-loader",
+      "ti-map-pin",
+      "ti-menu-2",
+      "ti-message-circle",
+      "ti-minus",
+      "ti-moon",
+      "ti-movie",
+      "ti-note",
+      "ti-palette",
+      "ti-pencil",
+      "ti-photo-video",
+      "ti-plant",
+      "ti-player-pause",
+      "ti-player-play",
+      "ti-player-stop",
+      "ti-plus",
+      "ti-printer",
+      "ti-refresh",
+      "ti-rocket",
+      "ti-rotate-2",
+      "ti-rotate-clockwise",
+      "ti-route",
+      "ti-run",
+      "ti-scale",
+      "ti-search",
+      "ti-server",
+      "ti-settings",
+      "ti-share-3",
+      "ti-shield",
+      "ti-shield-heart",
+      "ti-shirt-sport",
+      "ti-shoe",
+      "ti-soccer-field",
+      "ti-sort-ascending",
+      "ti-sort-descending",
+      "ti-square",
+      "ti-stack",
+      "ti-star",
+      "ti-stopwatch",
+      "ti-sun",
+      "ti-tag",
+      "ti-tags",
+      "ti-target",
+      "ti-text-size",
+      "ti-trash",
+      "ti-trending-down",
+      "ti-trophy",
+      "ti-typography",
+      "ti-upload",
+      "ti-user",
+      "ti-user-check",
+      "ti-user-cog",
+      "ti-user-plus",
+      "ti-user-shield",
+      "ti-user-x",
+      "ti-users",
+      "ti-users-group",
+      "ti-walk",
+      "ti-x"
+    ],
+    "usedClassCount": 144,
+    "undefinedClasses": [],
+    "cssBytes": 257851,
+    "fontBytes": 462200,
+    "combinedBytes": 720051
+  },
+  "statusInventory": [
+    {
+      "pattern": "c-status",
+      "files": [
+        "CSS/base.css",
+        "CSS/components-standard.css",
+        "CSS/components-system.css",
+        "CSS/drawing.css",
+        "CSS/icon-system.css"
+      ]
+    },
+    {
+      "pattern": "toast",
+      "files": [
+        "CSS/components-standard.css",
+        "CSS/components.css",
+        "CSS/tokens.css"
+      ]
+    },
+    {
+      "pattern": "empty-state",
+      "files": [
+        "CSS/components-standard.css",
+        "CSS/components-system.css",
+        "CSS/components.css"
+      ]
+    },
+    {
+      "pattern": "sync-status-dot",
+      "files": [
+        "CSS/base.css",
+        "CSS/drawing.css"
+      ]
+    },
+    {
+      "pattern": "is-warning",
+      "files": [
+        "CSS/components.css"
+      ]
+    },
+    {
+      "pattern": "status--",
+      "files": [
+        "CSS/components-standard.css",
+        "CSS/components-system.css"
+      ]
+    }
+  ]
+}
