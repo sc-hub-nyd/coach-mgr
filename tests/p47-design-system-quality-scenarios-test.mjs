@@ -2,13 +2,15 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const read = file => readFile(new URL(file, import.meta.url), 'utf8');
-const [fixtureText, protocol, index, serviceWorker, utils, standard] = await Promise.all([
+const [fixtureText, protocol, index, serviceWorker, utils, standard, components, tokens] = await Promise.all([
     read('./fixtures/design-system-high-density-fixture.json'),
     read('../doc/DESIGN_SYSTEM_VISUAL_REGRESSION_PROTOCOL.md'),
     read('../index.html'),
     read('../sw.js'),
     read('../utils.js'),
-    read('../CSS/components-standard.css')
+    read('../CSS/components-standard.css'),
+    read('../CSS/components.css'),
+    read('../CSS/tokens.css')
 ]);
 const fixture = JSON.parse(fixtureText);
 
@@ -34,7 +36,16 @@ assert.match(index, /role="dialog" aria-modal="true"[\s\S]*?aria-labelledby="glo
 assert.match(utils, /role: 'alert'/, '危険通知は緊急度を伝えるalertロールを持つ必要があります');
 assert.match(standard, /\.c-button:focus-visible/, '主要操作はキーボードフォーカスを持つ必要があります');
 assert.match(standard, /\.c-button:disabled/, '主要操作はdisabled状態を持つ必要があります');
-assert.match(serviceWorker, /coachmgr-v203/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
+assert.match(components, /\.pwa-update-banner #btn-pwa-reload\s*\{[\s\S]*?var\(--color-update-action-surface\)/, 'PWA更新操作は成功状態の通常surfaceトークンを使う必要があります');
+assert.match(components, /\.pwa-update-banner #btn-pwa-reload\s*\{[\s\S]*?var\(--color-update-action-text\)/, 'PWA更新操作は成功状態の通常textトークンを使う必要があります');
+assert.match(components, /\.pwa-update-banner #btn-pwa-reload:not\(:disabled\):hover\s*\{[\s\S]*?var\(--color-update-action-hover-surface\)/, 'PWA更新操作のhoverは成功状態のsurfaceトークンを使う必要があります');
+assert.match(components, /\.pwa-update-banner #btn-pwa-reload:not\(:disabled\):hover\s*\{[\s\S]*?var\(--color-update-action-hover-text\)/, 'PWA更新操作のhoverは成功状態のtextトークンを使う必要があります');
+assert.match(components, /\.pwa-update-banner #btn-pwa-reload:focus-visible\s*\{[\s\S]*?var\(--color-success\)/, 'PWA更新操作のfocusは成功状態のフォーカスリングを持つ必要があります');
+assert.doesNotMatch(components, /\.pwa-update-banner \.btn-primary\s*\{/, 'PWA更新操作を汎用primaryの色役割へ再結合してはいけません');
+assert.match(tokens, /--color-update-action-hover-surface:/, 'PWA更新操作のhover surfaceトークンが必要です');
+assert.match(tokens, /--color-update-action-hover-text:/, 'PWA更新操作のhover textトークンが必要です');
+assert.match(tokens, /--color-update-action-pressed-surface:/, 'PWA更新操作のpressed surfaceトークンが必要です');
+assert.match(serviceWorker, /coachmgr-v204/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
 assert.match(serviceWorker, /canvas-palette\.js/, 'PWA更新シナリオはCanvasパレットをprecacheする必要があります');
 assert.match(serviceWorker, /pitch-renderer\.js/, 'PWA更新シナリオはピッチレンダラをprecacheする必要があります');
 assert.match(serviceWorker, /tabler-icons-subset\.css/, 'PWA更新シナリオはTablerサブセットCSSをprecacheする必要があります');

@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.93';
+export const APP_VERSION = 'v1.30.94';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.94',
+        date: '2026-08-20',
+        title: '更新通知の色役割を成功トーンへ統一',
+        features: [
+            '更新通知内の「更新する」を赤系primaryから独立させ、通常・ホバー・押下を成功状態のトークンだけで表現',
+            '更新操作のフォーカスリングも成功トーンへ統一し、緑の通知surface内で赤・緑が混在する状態を解消'
+        ]
+    },
     {
         version: 'v1.30.93',
         date: '2026-08-20',

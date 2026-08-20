@@ -103,6 +103,9 @@
     --color-update-border: color-mix(in srgb, var(--color-success-surface) 48%, transparent);
     --color-update-action-surface: var(--color-surface-success-strong);
     --color-update-action-text: var(--color-text-success-strong);
+    --color-update-action-hover-surface: color-mix(in srgb, var(--color-success) 82%, var(--color-text));
+    --color-update-action-hover-text: var(--color-text-on-action);
+    --color-update-action-pressed-surface: color-mix(in srgb, var(--color-success) 70%, var(--color-text));
     --color-success-hover: color-mix(in srgb, var(--color-success) 82%, var(--color-text));
     --color-warning-hover: color-mix(in srgb, var(--color-warning) 82%, var(--color-text));
 

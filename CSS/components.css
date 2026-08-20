@@ -1369,7 +1369,10 @@ input[type="checkbox"] {
 .pwa-update-banner { position: fixed; z-index: 1200; right: max(1rem, env(safe-area-inset-right)); bottom: calc(1rem + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 0.65rem; max-width: min(31rem, calc(100vw - 2rem)); padding: 0.65rem 0.75rem 0.65rem 1rem; color: var(--color-text-inverse); background: var(--color-update-surface); border: 1px solid var(--color-update-border); border-radius: 14px; box-shadow: 0 14px 30px var(--color-shadow-strong); font-size: 0.82rem; font-weight: 700; }
 .pwa-update-banner.hidden { display: none; }
 .pwa-update-banner > span { flex: 1; }
-.pwa-update-banner .btn-primary { color: var(--color-update-action-text); background: var(--color-update-action-surface); border-color: var(--color-update-action-surface); }
+.pwa-update-banner #btn-pwa-reload { color: var(--color-update-action-text); background: var(--color-update-action-surface); border-color: var(--color-update-action-surface); box-shadow: 0 0.1875rem 0.5rem color-mix(in srgb, var(--color-success) 24%, transparent); }
+.pwa-update-banner #btn-pwa-reload:not(:disabled):hover { color: var(--color-update-action-hover-text); background: var(--color-update-action-hover-surface); border-color: var(--color-update-action-hover-surface); box-shadow: 0 0.375rem 0.875rem color-mix(in srgb, var(--color-success) 36%, transparent); transform: translateY(-0.5px); }
+.pwa-update-banner #btn-pwa-reload:focus-visible { outline: none; box-shadow: 0 0 0 0.1875rem color-mix(in srgb, var(--color-success) 36%, transparent), 0 0.1875rem 0.5rem color-mix(in srgb, var(--color-success) 24%, transparent); }
+.pwa-update-banner #btn-pwa-reload:not(:disabled):active { color: var(--color-update-action-hover-text); background: var(--color-update-action-pressed-surface); border-color: var(--color-update-action-pressed-surface); box-shadow: 0 0.125rem 0.375rem color-mix(in srgb, var(--color-success) 26%, transparent); }
 .pwa-update-banner .btn-secondary { min-width: 34px; padding: 0.35rem 0.45rem; color: var(--color-text-inverse); background: transparent; border-color: color-mix(in srgb, var(--color-text-inverse) 35%, transparent); }
 .operations-body { display: grid; gap: 0.85rem; }
 .operations-intro { margin: 0; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.55; }
