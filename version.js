@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.86';
+export const APP_VERSION = 'v1.30.87';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.87',
+        date: '2026-08-20',
+        title: 'Canvasパレットとレガシー画面の色移行を完了',
+        features: [
+            '戦術盤・作図画面の直接指定色92件をCanvas意味トークンへ移行し、light/darkでピッチ・ライン・オブジェクト・注釈の識別性を維持',
+            'Canvas API向けのcanvas-palette解決層を追加し、保存済みのred/blue等の旧値と任意HEXを変換せずに描画・軌跡・export・選択UIへ適用',
+            'レガシー画面・モーダル互換規則の直接指定色66件を状態・surfaceトークンへ移行し、旧modal shellとbottom-sheet規則を共通c-modalへ統合',
+            'P51 Canvasパレット契約とP52レガシー色退出契約を追加し、作図機能・PWAオフライン資産・モーダル共通化の再発を自動検証'
+        ]
+    },
     {
         version: 'v1.30.86',
         date: '2026-08-20',

@@ -76,6 +76,74 @@
     --color-toast-surface: color-mix(in srgb, var(--color-surface-raised) 92%, var(--color-text));
     --color-toast-text: var(--color-text-on-action);
 
+    /* Legacy migration roles. Screens and compatibility rules use semantics, not literal values. */
+    --color-text-inverse: var(--color-text-on-action);
+    --color-text-success-strong: color-mix(in srgb, var(--color-success) 82%, var(--color-text));
+    --color-text-warning-strong: color-mix(in srgb, var(--color-warning) 82%, var(--color-text));
+    --color-text-danger-strong: color-mix(in srgb, var(--color-danger) 82%, var(--color-text));
+    --color-surface-success-strong: color-mix(in srgb, var(--color-success-surface) 74%, var(--color-surface));
+    --color-surface-success-soft: color-mix(in srgb, var(--color-success-surface) 48%, var(--color-surface));
+    --color-surface-warning-strong: color-mix(in srgb, var(--color-warning-surface) 84%, var(--color-surface));
+    --color-surface-warning-soft: color-mix(in srgb, var(--color-warning-surface) 58%, var(--color-surface));
+    --color-surface-danger-strong: color-mix(in srgb, var(--color-danger-surface) 84%, var(--color-surface));
+    --color-surface-danger-soft: color-mix(in srgb, var(--color-danger-surface) 58%, var(--color-surface));
+    --color-surface-info-soft: color-mix(in srgb, var(--color-info-surface) 46%, var(--color-surface));
+    --color-border-success: color-mix(in srgb, var(--color-success) 35%, var(--color-border));
+    --color-border-warning: color-mix(in srgb, var(--color-warning) 36%, var(--color-border));
+    --color-border-danger: color-mix(in srgb, var(--color-danger) 36%, var(--color-border));
+    --color-shadow-strong: color-mix(in srgb, var(--color-text) 32%, transparent);
+    --color-shadow-medium: color-mix(in srgb, var(--color-text) 22%, transparent);
+    --color-shadow-subtle: color-mix(in srgb, var(--color-text) 8%, transparent);
+    --color-media-surface: #000000;
+    --color-action-surface-soft: color-mix(in srgb, var(--color-action) 10%, var(--color-surface));
+    --color-update-surface: color-mix(in srgb, var(--color-success) 88%, var(--color-text));
+    --color-update-border: color-mix(in srgb, var(--color-success-surface) 48%, transparent);
+    --color-update-action-surface: var(--color-surface-success-strong);
+    --color-update-action-text: var(--color-text-success-strong);
+    --color-success-hover: color-mix(in srgb, var(--color-success) 82%, var(--color-text));
+
+    /* Canvas semantic API. Literal values belong only to this palette and canvas-palette.js fallbacks. */
+    --canvas-workspace-surface: var(--color-canvas);
+    --canvas-pitch-surface: #f1f5f9;
+    --canvas-pitch-frame: #4ade80;
+    --canvas-pitch-line: #334155;
+    --canvas-grid-line: rgba(51, 65, 85, 0.07);
+    --canvas-pitch-guide: rgba(0, 0, 0, 0.20);
+    --canvas-pitch-guide-subtle: rgba(0, 0, 0, 0.15);
+    --canvas-pitch-guide-strong: rgba(51, 65, 85, 0.70);
+    --canvas-object-player: #1d0b5e;
+    --canvas-object-player-red: #800a1d;
+    --canvas-object-player-blue: #1d0b5e;
+    --canvas-object-player-green: #064e3b;
+    --canvas-object-player-orange: #7c2d12;
+    --canvas-object-player-skin: #ffdfc4;
+    --canvas-object-player-blue-highlight: #311096;
+    --canvas-object-player-blue-shadow: #0f0538;
+    --canvas-object-ball: #ffffff;
+    --canvas-object-marker: #f97316;
+    --canvas-object-cone: #facc15;
+    --canvas-object-ladder: #eab308;
+    --canvas-object-vision: #38bdf8;
+    --canvas-object-annotation: #06b6d4;
+    --canvas-object-text: #000000;
+    --canvas-object-outline-light: #ffffff;
+    --canvas-object-outline-dark: #0f172a;
+    --canvas-object-shadow: rgba(0, 0, 0, 0.30);
+    --canvas-selection: var(--color-action);
+    --canvas-selection-handle-primary: #10b981;
+    --canvas-selection-handle-secondary: #f59e0b;
+    --canvas-overlay-surface: rgba(15, 23, 42, 0.82);
+    --canvas-overlay-text: #ffffff;
+    --canvas-overlay-border: rgba(255, 255, 255, 0.28);
+    --canvas-chrome-line: #64748b;
+    --canvas-chrome-line-subtle: rgba(100, 116, 139, 0.40);
+    --canvas-chrome-surface: var(--color-surface-raised);
+    --canvas-chrome-border: #cbd5e1;
+    --canvas-chrome-text: var(--color-text-muted);
+    --canvas-chrome-text-strong: var(--color-text);
+    --canvas-selection-fill: rgba(148, 163, 184, 0.25);
+    --canvas-selection-stroke: rgba(100, 116, 139, 0.80);
+
     /* Spacing and dimensions. */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
@@ -199,6 +267,18 @@
     --glass-shadow: 0 1rem 2.6rem color-mix(in srgb, #000000 80%, transparent);
     --liquid-veil: none;
     --liquid-sheen: none;
+
+    /* Canvas keeps its pitch semantics stable; surrounding chrome follows dark theme. */
+    --canvas-workspace-surface: var(--color-canvas);
+    --canvas-pitch-surface: #17251f;
+    --canvas-pitch-frame: #225c37;
+    --canvas-pitch-line: #d9e5dc;
+    --canvas-grid-line: rgba(217, 229, 220, 0.12);
+    --canvas-pitch-guide: rgba(255, 255, 255, 0.24);
+    --canvas-pitch-guide-subtle: rgba(255, 255, 255, 0.16);
+    --canvas-pitch-guide-strong: rgba(217, 229, 220, 0.76);
+    --canvas-chrome-border: #475569;
+    --canvas-object-outline-dark: #0b1210;
 }
 
 @media (min-width: 48rem) {

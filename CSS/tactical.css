@@ -7,10 +7,10 @@
     aspect-ratio: 8/10;
     overflow: hidden;
     /* Design */
-    background: #f1f5f9;
-    border: 3px solid #334155;
+    background: var(--canvas-pitch-surface);
+    border: 3px solid var(--canvas-pitch-line);
     border-radius: 12px;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: inset 0 0 10px var(--neo-shadow-ambient), var(--shadow-md);
 }
 
 /* ⚽ ハーフコートピッチ (色が統一感のあるベース、上がセンターライン、下がゴール) */
@@ -18,16 +18,16 @@
     position: relative;
     width: 100%;
     aspect-ratio: 4 / 3;
-    background: #f1f5f9;
-    border: 2px solid #334155;
+    background: var(--canvas-pitch-surface);
+    border: 2px solid var(--canvas-pitch-line);
     border-radius: 8px;
     overflow: hidden;
 }
 
 #custom-formation-pitch-canvas {
     background-image:
-        linear-gradient(to right, rgba(51, 65, 85, 0.07) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(51, 65, 85, 0.07) 1px, transparent 1px);
+        linear-gradient(to right, var(--canvas-grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--canvas-grid-line) 1px, transparent 1px);
     background-size: 5% 5%;
 }
 
@@ -38,7 +38,7 @@
     left: 0;
     width: 100%;
     height: 2px;
-    background: #334155;
+    background: var(--canvas-pitch-line);
     transform: none;
 }
 
@@ -49,7 +49,7 @@
     left: 50%;
     width: 30%;
     aspect-ratio: 1;
-    border: 2px solid #334155;
+    border: 2px solid var(--canvas-pitch-line);
     border-radius: 50%;
     transform: translateX(-50%);
     pointer-events: none;
@@ -63,7 +63,7 @@
     left: 0;
     width: 100%;
     height: 3px;
-    background: #334155;
+    background: var(--canvas-pitch-line);
     transform: translateY(-50%);
 }
 
@@ -74,7 +74,7 @@
     left: 50%;
     width: 25%;
     aspect-ratio: 1;
-    border: 3px solid #334155;
+    border: 3px solid var(--canvas-pitch-line);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
@@ -86,7 +86,7 @@
     left: 20%;
     width: 60%;
     height: 18%;
-    border: 3px solid #334155;
+    border: 3px solid var(--canvas-pitch-line);
     border-top: none;
     pointer-events: none;
 }
@@ -97,7 +97,7 @@
     left: 20%;
     width: 60%;
     height: 18%;
-    border: 3px solid #334155;
+    border: 3px solid var(--canvas-pitch-line);
     border-bottom: none;
     pointer-events: none;
 }
@@ -108,7 +108,7 @@
     left: 33%;
     width: 34%;
     height: 6%;
-    border: 3px solid #334155;
+    border: 3px solid var(--canvas-pitch-line);
     border-top: none;
     pointer-events: none;
 }
@@ -119,7 +119,7 @@
     left: 33%;
     width: 34%;
     height: 6%;
-    border: 3px solid #334155;
+    border: 3px solid var(--canvas-pitch-line);
     border-bottom: none;
     pointer-events: none;
 }
@@ -130,7 +130,7 @@
     left: 50%;
     width: 16%;
     height: 6%;
-    border: 3px solid #334155;
+    border: 3px solid var(--canvas-pitch-line);
     border-top: none;
     border-radius: 0 0 50% 50% / 0 0 100% 100%;
     transform: translateX(-50%);
@@ -143,7 +143,7 @@
     left: 50%;
     width: 16%;
     height: 6%;
-    border: 3px solid #334155;
+    border: 3px solid var(--canvas-pitch-line);
     border-bottom: none;
     border-radius: 50% 50% 0 0 / 100% 100% 0 0;
     transform: translateX(-50%);
@@ -156,7 +156,7 @@
     left: 50%;
     width: 8px;
     height: 8px;
-    background: #334155;
+    background: var(--canvas-pitch-line);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
@@ -168,7 +168,7 @@
     left: 50%;
     width: 6px;
     height: 6px;
-    background: #334155;
+    background: var(--canvas-pitch-line);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
@@ -180,7 +180,7 @@
     left: 50%;
     width: 6px;
     height: 6px;
-    background: #334155;
+    background: var(--canvas-pitch-line);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
@@ -192,7 +192,7 @@
     left: -10px;
     width: 20px;
     height: 20px;
-    border: 3px solid #334155;
+    border: 3px solid var(--canvas-pitch-line);
     border-radius: 50%;
     pointer-events: none;
 }
@@ -203,7 +203,7 @@
     right: -10px;
     width: 20px;
     height: 20px;
-    border: 3px solid #334155;
+    border: 3px solid var(--canvas-pitch-line);
     border-radius: 50%;
     pointer-events: none;
 }
@@ -214,7 +214,7 @@
     left: -10px;
     width: 20px;
     height: 20px;
-    border: 3px solid #334155;
+    border: 3px solid var(--canvas-pitch-line);
     border-radius: 50%;
     pointer-events: none;
 }
@@ -225,7 +225,7 @@
     right: -10px;
     width: 20px;
     height: 20px;
-    border: 3px solid #334155;
+    border: 3px solid var(--canvas-pitch-line);
     border-radius: 50%;
     pointer-events: none;
 }
@@ -245,14 +245,14 @@
     border-radius: 50%;
     background: var(--surface);
     border: 2px solid var(--primary);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px var(--canvas-object-shadow);
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .pitch-node:hover {
     transform: translate(-50%, -50%) scale(1.1);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 6px 15px var(--neo-shadow);
 }
 
 .pitch-node-role {
@@ -278,13 +278,13 @@
     padding: 0.15rem 0.4rem;
     pointer-events: none;
     /* Design */
-    background: rgba(0, 0, 0, 0.75);
-    color: #ffffff;
+    background: var(--canvas-overlay-surface);
+    color: var(--canvas-overlay-text);
     font-size: 0.7rem;
     font-weight: bold;
     border-radius: 4px;
     white-space: nowrap;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-sm);
 }
 
 .custom-formation-editor-layout {
@@ -307,7 +307,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(0, 0, 0, 0.03);
+    background: var(--color-overlay-scrim-subtle);
     padding: 0.5rem;
     border-radius: 6px;
     border: none;

@@ -1,5 +1,7 @@
 // pitch-renderer.js - ピッチとオブジェクトの描画を行う純粋な関数群
 
+import { getCanvasPalette, resolveCanvasObjectColor, withCanvasAlpha } from './canvas-palette.js';
+
 export function drawArrowToCtx(x1, y1, x2, y2, lineType, targetCtx, cx, cy) {
     const headlen = 10;
     const actualCx = typeof cx !== 'undefined' ? cx : (x1 + x2) / 2;
@@ -8,7 +10,7 @@ export function drawArrowToCtx(x1, y1, x2, y2, lineType, targetCtx, cx, cy) {
     const midX = (x1 + x2) / 2;
     const midY = (y1 + y2) / 2;
     const isCurved = Math.sqrt((actualCx - midX) * (actualCx - midX) + (actualCy - midY) * (actualCy - midY)) > 1.5;
-    const color = '#334155';
+    const color = getCanvasPalette().pitchLine;
 
     targetCtx.beginPath();
 
@@ -84,6 +86,7 @@ export function drawArrowToCtx(x1, y1, x2, y2, lineType, targetCtx, cx, cy) {
 }
 
 export function drawLadderToCtx(x1, y1, x2, y2, targetCtx) {
+    const palette = getCanvasPalette();
     const dx = x2 - x1;
     const dy = y2 - y1;
     const dist = Math.sqrt(dx * dx + dy * dy);
@@ -101,7 +104,7 @@ export function drawLadderToCtx(x1, y1, x2, y2, targetCtx) {
     targetCtx.moveTo(x1 - nx * width, y1 - ny * width);
     targetCtx.lineTo(x2 - nx * width, y2 - ny * width);
 
-    targetCtx.strokeStyle = '#334155';
+    targetCtx.strokeStyle = palette.pitchLine;
     targetCtx.lineWidth = 2.5;
     targetCtx.stroke();
 
@@ -113,13 +116,14 @@ export function drawLadderToCtx(x1, y1, x2, y2, targetCtx) {
         targetCtx.moveTo(rx + nx * width, ry + ny * width);
         targetCtx.lineTo(rx - nx * width, ry - ny * width);
     }
-    targetCtx.strokeStyle = '#334155';
+    targetCtx.strokeStyle = palette.pitchLine;
     targetCtx.lineWidth = 2;
     targetCtx.stroke();
 }
 
 export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, template = 'full', selectedObj = null) {
     const renderObjects = Array.isArray(renderObjectsInput) ? renderObjectsInput : ((renderObjectsInput && renderObjectsInput.objects) || []);
+    const palette = getCanvasPalette();
 
     const w = targetCanvas.width;
     const h = targetCanvas.height;
@@ -137,15 +141,15 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
     const pitchH = 500 - 32;
 
     if (template !== 'blank') {
-        targetCtx.fillStyle = '#f1f5f9';
+        targetCtx.fillStyle = palette.pitchSurface;
         targetCtx.fillRect(0, 0, 800, 500);
 
-        targetCtx.strokeStyle = '#334155';
+        targetCtx.strokeStyle = palette.pitchLine;
         targetCtx.lineWidth = 1.5;
         targetCtx.strokeRect(pitchX, pitchY, pitchW, pitchH);
     } else {
         if (targetCanvas.id !== 'pitch-canvas') {
-            targetCtx.fillStyle = '#ffffff';
+            targetCtx.fillStyle = palette.objectOutlineLight;
             targetCtx.fillRect(0, 0, 800, 500);
         }
     }
@@ -164,7 +168,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
         const centerCircleR = pitchH * 0.135;
         const penSpotDist = pitchW * 0.105;
 
-        targetCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+        targetCtx.strokeStyle = palette.pitchGuide;
         targetCtx.lineWidth = 1;
         targetCtx.setLineDash([4, 4]);
 
@@ -203,7 +207,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
         targetCtx.setLineDash([]);
 
         if (template === 'grid') {
-            targetCtx.strokeStyle = 'rgba(0, 0, 0, 0.15)';
+            targetCtx.strokeStyle = palette.pitchGuideSubtle;
             targetCtx.lineWidth = 1;
             targetCtx.setLineDash([2, 2]);
             targetCtx.beginPath();
@@ -219,7 +223,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             targetCtx.setLineDash([]);
         }
 
-        targetCtx.strokeStyle = '#334155';
+        targetCtx.strokeStyle = palette.pitchLine;
         targetCtx.lineWidth = 1.5;
 
         targetCtx.beginPath();
@@ -233,7 +237,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
         targetCtx.beginPath();
         targetCtx.arc(pitchX + pitchW / 2, pitchY + pitchH / 2, 3, 0, Math.PI * 2);
-        targetCtx.fillStyle = '#334155';
+        targetCtx.fillStyle = palette.pitchLine;
         targetCtx.fill();
 
         targetCtx.strokeRect(pitchX, penY, penW, penH);
@@ -285,7 +289,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
         targetCtx.beginPath();
         targetCtx.arc(400, pitchY + pitchH, 3, 0, Math.PI * 2);
-        targetCtx.fillStyle = '#334155';
+        targetCtx.fillStyle = palette.pitchLine;
         targetCtx.fill();
 
         targetCtx.strokeRect(penX_left, pitchY, penX_right - penX_left, penY_half - pitchY);
@@ -302,7 +306,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
         targetCtx.strokeRect(goalLeftX_half, pitchY - 10, goalW_half, 10);
 
-        targetCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+        targetCtx.strokeStyle = palette.pitchGuide;
         targetCtx.lineWidth = 1;
         targetCtx.setLineDash([4, 4]);
 
@@ -358,7 +362,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
         targetCtx.beginPath();
         targetCtx.arc(400, pitchY, 3, 0, Math.PI * 2);
-        targetCtx.fillStyle = '#334155';
+        targetCtx.fillStyle = palette.pitchLine;
         targetCtx.fill();
 
         targetCtx.strokeRect(penX_left, penY_half, penX_right - penX_left, (pitchY + pitchH) - penY_half);
@@ -375,7 +379,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
         targetCtx.strokeRect(goalLeftX_half, pitchY + pitchH, goalW_half, 10);
 
-        targetCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+        targetCtx.strokeStyle = palette.pitchGuide;
         targetCtx.lineWidth = 1;
         targetCtx.setLineDash([4, 4]);
 
@@ -408,31 +412,31 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
         if (obj.type === 'line') {
             drawArrowToCtx(obj.x1, obj.y1, obj.x2, obj.y2, obj.lineType || 'pass', targetCtx, obj.cx, obj.cy);
             if (selectedObj && selectedObj === obj) {
-                targetCtx.fillStyle = 'var(--primary)';
+                targetCtx.fillStyle = palette.objectSelection;
                 targetCtx.beginPath(); targetCtx.arc(obj.x1, obj.y1, 5, 0, Math.PI * 2); targetCtx.fill();
                 targetCtx.beginPath(); targetCtx.arc(obj.x2, obj.y2, 5, 0, Math.PI * 2); targetCtx.fill();
                 
                 const cx = typeof obj.cx !== 'undefined' ? obj.cx : (obj.x1 + obj.x2) / 2;
                 const cy = typeof obj.cy !== 'undefined' ? obj.cy : (obj.y1 + obj.y2) / 2;
                 targetCtx.beginPath(); targetCtx.arc(cx, cy, 6, 0, Math.PI * 2); targetCtx.fill();
-                targetCtx.strokeStyle = '#ffffff';
+                targetCtx.strokeStyle = palette.objectOutlineLight;
                 targetCtx.lineWidth = 1.5;
                 targetCtx.stroke();
             }
         } else if (obj.type === 'ladder') {
             drawLadderToCtx(obj.x1, obj.y1, obj.x2, obj.y2, targetCtx);
             if (selectedObj && selectedObj === obj) {
-                targetCtx.fillStyle = 'var(--primary)';
+                targetCtx.fillStyle = palette.objectSelection;
                 targetCtx.beginPath(); targetCtx.arc(obj.x1, obj.y1, 5, 0, Math.PI * 2); targetCtx.fill();
                 targetCtx.beginPath(); targetCtx.arc(obj.x2, obj.y2, 5, 0, Math.PI * 2); targetCtx.fill();
             }
         } else if (obj.type === 'rect') {
-            targetCtx.strokeStyle = 'rgba(51, 65, 85, 0.7)';
+            targetCtx.strokeStyle = palette.pitchGuideStrong;
             targetCtx.lineWidth = 1.5;
             targetCtx.strokeRect(Math.min(obj.x1, obj.x2), Math.min(obj.y1, obj.y2), Math.abs(obj.x2 - obj.x1), Math.abs(obj.y2 - obj.y1));
 
             if (selectedObj && selectedObj === obj) {
-                targetCtx.fillStyle = 'var(--primary)';
+                targetCtx.fillStyle = palette.objectSelection;
                 const s = 8;
                 targetCtx.fillRect(obj.x1 - s / 2, obj.y1 - s / 2, s, s);
                 targetCtx.fillRect(obj.x2 - s / 2, obj.y1 - s / 2, s, s);
@@ -447,16 +451,16 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
             targetCtx.beginPath();
             targetCtx.ellipse(cx, cy, Math.max(1, rx), Math.max(1, ry), 0, 0, Math.PI * 2);
-            targetCtx.fillStyle = 'rgba(148, 163, 184, 0.25)';
+            targetCtx.fillStyle = palette.selectionFill;
             targetCtx.fill();
-            targetCtx.strokeStyle = 'rgba(100, 116, 139, 0.8)';
+            targetCtx.strokeStyle = palette.selectionStroke;
             targetCtx.lineWidth = 1.5;
             targetCtx.setLineDash([4, 4]);
             targetCtx.stroke();
             targetCtx.setLineDash([]);
 
             if (selectedObj && selectedObj === obj) {
-                targetCtx.fillStyle = 'var(--primary)';
+                targetCtx.fillStyle = palette.objectSelection;
                 const s = 8;
                 targetCtx.fillRect(obj.x1 - s / 2, obj.y1 - s / 2, s, s);
                 targetCtx.fillRect(obj.x2 - s / 2, obj.y1 - s / 2, s, s);
@@ -479,9 +483,11 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             targetCtx.moveTo(0, 0);
             targetCtx.arc(0, 0, r, -Math.PI / 2 - halfFov, -Math.PI / 2 + halfFov);
             targetCtx.closePath();
-            const visionColor = obj.color || '#38bdf8';
-            targetCtx.fillStyle = visionColor + '40'; // 25% opacity
-            targetCtx.fill();
+            const visionColor = resolveCanvasObjectColor(obj, palette);
+            withCanvasAlpha(targetCtx, 0.25, () => {
+                targetCtx.fillStyle = visionColor;
+                targetCtx.fill();
+            });
 
             // 扇形の輪郭（破線）
             targetCtx.beginPath();
@@ -515,7 +521,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
                     targetCtx.arc(hx, hy, 6, 0, Math.PI * 2);
                     targetCtx.fillStyle = fillColor;
                     targetCtx.fill();
-                    targetCtx.strokeStyle = '#ffffff';
+                    targetCtx.strokeStyle = palette.objectOutlineLight;
                     targetCtx.lineWidth = 1.5;
                     targetCtx.stroke();
                 };
@@ -523,15 +529,15 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
                 // 中心選択インジケータ
                 targetCtx.beginPath();
                 targetCtx.arc(obj.x, obj.y, 7, 0, Math.PI * 2);
-                targetCtx.strokeStyle = 'var(--primary)';
+                targetCtx.strokeStyle = palette.objectSelection;
                 targetCtx.lineWidth = 2;
                 targetCtx.setLineDash([2, 2]);
                 targetCtx.stroke();
                 targetCtx.setLineDash([]);
 
-                drawHandle(rHx, rHy, '#10b981');   // 緑：半径ハンドル
-                drawHandle(fovLx, fovLy, '#f59e0b'); // 黄：FOV左ハンドル
-                drawHandle(fovRx, fovRy, '#f59e0b'); // 黄：FOV右ハンドル
+                drawHandle(rHx, rHy, palette.objectSelectionHandlePrimary);
+                drawHandle(fovLx, fovLy, palette.objectSelectionHandleSecondary);
+                drawHandle(fovRx, fovRy, palette.objectSelectionHandleSecondary);
             }
         } else if (obj.type === 'marker') {
             targetCtx.save();
@@ -540,9 +546,9 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
             targetCtx.beginPath();
             targetCtx.ellipse(0, 0, 8, 4, 0, 0, Math.PI * 2);
-            targetCtx.fillStyle = obj.color || '#f97316';
+            targetCtx.fillStyle = resolveCanvasObjectColor(obj, palette);
             targetCtx.fill();
-            targetCtx.strokeStyle = '#000000';
+            targetCtx.strokeStyle = palette.objectOutlineDark;
             targetCtx.lineWidth = 1;
             targetCtx.stroke();
             targetCtx.restore();
@@ -550,7 +556,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             if (selectedObj && selectedObj === obj) {
                 targetCtx.beginPath();
                 targetCtx.arc(obj.x, obj.y, 12, 0, Math.PI * 2);
-                targetCtx.strokeStyle = 'var(--primary)';
+                targetCtx.strokeStyle = palette.objectSelection;
                 targetCtx.lineWidth = 1.5;
                 targetCtx.setLineDash([2, 2]);
                 targetCtx.stroke();
@@ -563,9 +569,9 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
             targetCtx.beginPath();
             targetCtx.ellipse(0, obj.radius * 0.8, obj.radius * 0.8, 3, 0, 0, Math.PI * 2);
-            targetCtx.fillStyle = '#eab308';
+            targetCtx.fillStyle = palette.objectLadder;
             targetCtx.fill();
-            targetCtx.strokeStyle = '#000000';
+            targetCtx.strokeStyle = palette.objectOutlineDark;
             targetCtx.lineWidth = 1;
             targetCtx.stroke();
 
@@ -574,7 +580,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             targetCtx.lineTo(obj.radius * 0.7, obj.radius * 0.8);
             targetCtx.lineTo(-obj.radius * 0.7, obj.radius * 0.8);
             targetCtx.closePath();
-            targetCtx.fillStyle = obj.color || '#facc15';
+            targetCtx.fillStyle = resolveCanvasObjectColor(obj, palette);
             targetCtx.fill();
             targetCtx.stroke();
             targetCtx.restore();
@@ -582,7 +588,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             if (selectedObj && selectedObj === obj) {
                 targetCtx.beginPath();
                 targetCtx.arc(obj.x, obj.y, obj.radius + 4, 0, Math.PI * 2);
-                targetCtx.strokeStyle = 'var(--primary)';
+                targetCtx.strokeStyle = palette.objectSelection;
                 targetCtx.lineWidth = 2;
                 targetCtx.setLineDash([2, 2]);
                 targetCtx.stroke();
@@ -605,7 +611,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             const hw = gw / 2;
 
             // Draw net frame (back, left, right walls)
-            targetCtx.strokeStyle = '#64748b';
+            targetCtx.strokeStyle = palette.chromeLine;
             targetCtx.lineWidth = Math.max(1.5, 2 * scale);
             targetCtx.beginPath();
             targetCtx.moveTo(-hw, gh * 0.33);
@@ -617,7 +623,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             // Draw net grid
             targetCtx.beginPath();
             targetCtx.lineWidth = 0.8 * scale;
-            targetCtx.strokeStyle = 'rgba(100, 116, 139, 0.4)';
+            targetCtx.strokeStyle = palette.chromeLineSubtle;
             const gridStepX = 5 * scale;
             for (let nx = -hw + gridStepX; nx < hw; nx += gridStepX) {
                 targetCtx.moveTo(nx, -gh * 0.66);
@@ -631,7 +637,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             targetCtx.stroke();
 
             // Draw faint goal line
-            targetCtx.strokeStyle = '#cbd5e1';
+            targetCtx.strokeStyle = palette.chromeBorder;
             targetCtx.lineWidth = 1;
             targetCtx.beginPath();
             targetCtx.moveTo(-hw, gh * 0.33);
@@ -639,7 +645,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             targetCtx.stroke();
 
             // Draw goal posts (at front corners)
-            targetCtx.fillStyle = '#475569';
+            targetCtx.fillStyle = palette.chromeText;
             targetCtx.beginPath();
             targetCtx.arc(-hw, gh * 0.33, Math.max(2, 3 * scale), 0, Math.PI * 2);
             targetCtx.arc(hw, gh * 0.33, Math.max(2, 3 * scale), 0, Math.PI * 2);
@@ -651,13 +657,13 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
                 const selR = (obj.radius || 15) * scale + 6;
                 targetCtx.beginPath();
                 targetCtx.arc(obj.x, obj.y, selR, 0, Math.PI * 2);
-                targetCtx.strokeStyle = 'var(--primary)';
+                targetCtx.strokeStyle = palette.objectSelection;
                 targetCtx.lineWidth = 2;
                 targetCtx.setLineDash([2, 2]);
                 targetCtx.stroke();
                 targetCtx.setLineDash([]);
 
-                targetCtx.fillStyle = 'var(--primary)';
+                targetCtx.fillStyle = palette.objectSelection;
                 const handleSize = 8;
                 [
                     { hx: obj.x - selR, hy: obj.y },
@@ -678,8 +684,8 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
             if (obj.bgOpaque) {
                 const tw = targetCtx.measureText(txt).width;
-                targetCtx.fillStyle = '#ffffff';
-                targetCtx.strokeStyle = '#cbd5e1';
+                targetCtx.fillStyle = palette.objectOutlineLight;
+                targetCtx.strokeStyle = palette.chromeBorder;
                 targetCtx.lineWidth = 1;
                 targetCtx.beginPath();
                 targetCtx.roundRect(-tw / 2 - 6, -12, tw + 12, 24, 6);
@@ -687,7 +693,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
                 targetCtx.stroke();
             }
 
-            targetCtx.fillStyle = obj.color || '#000000';
+            targetCtx.fillStyle = resolveCanvasObjectColor(obj, palette);
             targetCtx.textAlign = 'center';
             targetCtx.textBaseline = 'middle';
             targetCtx.fillText(txt, 0, 0);
@@ -697,7 +703,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
                 targetCtx.beginPath();
                 const tw = targetCtx.measureText(obj.text || '').width;
                 targetCtx.rect(obj.x - tw / 2 - 4, obj.y - 12, tw + 8, 24);
-                targetCtx.strokeStyle = 'var(--primary)';
+                targetCtx.strokeStyle = palette.objectSelection;
                 targetCtx.lineWidth = 1.5;
                 targetCtx.setLineDash([2, 2]);
                 targetCtx.stroke();
@@ -709,12 +715,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             targetCtx.save();
             targetCtx.translate(obj.x, obj.y);
 
-            let mainColor = '#1d0b5e';
-            if (obj.color === 'red') mainColor = '#800a1d';
-            else if (obj.color === 'blue') mainColor = '#1d0b5e';
-            else if (obj.color === 'green') mainColor = '#064e3b';
-            else if (obj.color === 'orange') mainColor = '#7c2d12';
-            else if (obj.color) mainColor = obj.color;
+            const mainColor = resolveCanvasObjectColor(obj, palette);
 
             targetCtx.rotate((angle * Math.PI) / 180);
 
@@ -750,7 +751,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             // 左手先
             targetCtx.beginPath();
             targetCtx.arc(-r * 0.85, -r * 0.8, handRadius, 0, Math.PI * 2);
-            targetCtx.fillStyle = '#ffdfc4';
+            targetCtx.fillStyle = palette.objectPlayerSkin;
             targetCtx.fill();
             targetCtx.strokeStyle = mainColor;
             targetCtx.lineWidth = 1.2;
@@ -759,16 +760,16 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             // 右手先
             targetCtx.beginPath();
             targetCtx.arc(r * 0.85, -r * 0.8, handRadius, 0, Math.PI * 2);
-            targetCtx.fillStyle = '#ffdfc4';
+            targetCtx.fillStyle = palette.objectPlayerSkin;
             targetCtx.fill();
             targetCtx.strokeStyle = mainColor;
             targetCtx.lineWidth = 1.2;
             targetCtx.stroke();
 
             const grad = targetCtx.createRadialGradient(0, -r * 0.3, r * 0.1, 0, 0, r);
-            grad.addColorStop(0, '#311096');
+            grad.addColorStop(0, palette.objectPlayerBlueHighlight);
             grad.addColorStop(0.7, mainColor);
-            grad.addColorStop(1, '#0f0538');
+            grad.addColorStop(1, palette.objectPlayerBlueShadow);
 
             targetCtx.beginPath();
             targetCtx.arc(0, 0, r, 0, Math.PI * 2);
@@ -777,14 +778,14 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
 
             targetCtx.beginPath();
             targetCtx.arc(0, 0, r - 0.75, 0, Math.PI * 2);
-            targetCtx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+            targetCtx.strokeStyle = palette.overlayBorder;
             targetCtx.lineWidth = 1.2;
             targetCtx.stroke();
 
             targetCtx.rotate((-angle * Math.PI) / 180);
 
             let label = obj.number !== undefined && obj.number !== null ? String(obj.number) : '';
-            targetCtx.fillStyle = '#ffffff';
+            targetCtx.fillStyle = palette.objectOutlineLight;
             targetCtx.font = 'bold 12px "Inter", "Meiryo", sans-serif';
             targetCtx.textAlign = 'center';
             targetCtx.textBaseline = 'middle';
@@ -795,7 +796,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             if (selectedObj && selectedObj === obj) {
                 targetCtx.beginPath();
                 targetCtx.arc(obj.x, obj.y, r + 6, 0, Math.PI * 2);
-                targetCtx.strokeStyle = 'var(--primary)';
+                targetCtx.strokeStyle = palette.objectSelection;
                 targetCtx.lineWidth = 2;
                 targetCtx.setLineDash([2, 2]);
                 targetCtx.stroke();
@@ -804,14 +805,14 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
         } else if (obj.type === 'ball') {
             targetCtx.beginPath();
             targetCtx.arc(obj.x + 1, obj.y + 1, obj.radius, 0, Math.PI * 2);
-            targetCtx.fillStyle = 'rgba(0,0,0,0.3)';
+            targetCtx.fillStyle = palette.objectShadow;
             targetCtx.fill();
 
             targetCtx.beginPath();
             targetCtx.arc(obj.x, obj.y, obj.radius, 0, Math.PI * 2);
-            targetCtx.fillStyle = '#ffffff';
+            targetCtx.fillStyle = palette.objectOutlineLight;
             targetCtx.fill();
-            targetCtx.strokeStyle = '#334155';
+            targetCtx.strokeStyle = palette.pitchLine;
             targetCtx.lineWidth = 1.5;
             targetCtx.stroke();
 
@@ -826,11 +827,11 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
                 else targetCtx.lineTo(px, py);
             }
             targetCtx.closePath();
-            targetCtx.fillStyle = '#1e293b';
+            targetCtx.fillStyle = palette.chromeTextStrong;
             targetCtx.fill();
 
             targetCtx.beginPath();
-            targetCtx.strokeStyle = '#334155';
+            targetCtx.strokeStyle = palette.pitchLine;
             targetCtx.lineWidth = 1.2;
             for (let i = 0; i < 5; i++) {
                 const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
@@ -864,7 +865,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
             if (selectedObj && selectedObj === obj) {
                 targetCtx.beginPath();
                 targetCtx.arc(obj.x, obj.y, obj.radius + 4, 0, Math.PI * 2);
-                targetCtx.strokeStyle = 'var(--primary)';
+                targetCtx.strokeStyle = palette.objectSelection;
                 targetCtx.lineWidth = 2;
                 targetCtx.setLineDash([2, 2]);
                 targetCtx.stroke();

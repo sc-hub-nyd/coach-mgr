@@ -5,6 +5,7 @@ import { registerListener, cleanupScope } from './event-manager.js';
 import { tacticsStore } from './store.js';
 import { commandStack, SetObjectsCommand } from './command-stack.js';
 import { drawPitchToCtx, drawArrowToCtx, drawLadderToCtx } from './pitch-renderer.js';
+import { getCanvasPalette, getCanvasSwatchColor, getCanvasSwatchName, resolveCanvasObjectColor, resolveCanvasOutline } from './canvas-palette.js';
 export { drawPitchToCtx };
 
 let canvas, ctx;
@@ -713,6 +714,7 @@ export function exportAnimationVideo() {
         // Draw caption text overlay directly on canvas for video export
         function drawCaptionOnCanvas(captionText) {
             if (!captionText || !captionText.trim()) return;
+            const palette = getCanvasPalette();
             const pitchCanvasEl = document.getElementById('pitch-canvas');
             if (!pitchCanvasEl) return;
             const exportCtx = pitchCanvasEl.getContext('2d');
@@ -749,12 +751,12 @@ export function exportAnimationVideo() {
             const barX = (w - barWidth) / 2;
             const radius = Math.round(h * 0.015);
 
-            exportCtx.fillStyle = 'rgba(15, 23, 42, 0.82)';
+            exportCtx.fillStyle = palette.overlaySurface;
             exportCtx.beginPath();
             exportCtx.roundRect(barX, barY, barWidth, barHeight, radius);
             exportCtx.fill();
 
-            exportCtx.fillStyle = '#ffffff';
+            exportCtx.fillStyle = palette.overlayText;
             exportCtx.textAlign = 'center';
             exportCtx.textBaseline = 'middle';
             
@@ -929,7 +931,7 @@ function drawRectPreview(x1, y1, x2, y2) {
     ctx.save();
     const dpr = getHiDPIScale();
     ctx.scale(dpr, dpr);
-    ctx.strokeStyle = 'rgba(51, 65, 85, 0.7)';
+    ctx.strokeStyle = getCanvasPalette().pitchGuideStrong;
     ctx.lineWidth = 1.5;
     ctx.setLineDash([4, 4]);
     ctx.strokeRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1));
@@ -946,9 +948,9 @@ function drawCirclePreview(x1, y1, x2, y2) {
     const cy = Math.min(y1, y2) + ry;
     ctx.beginPath();
     ctx.ellipse(cx, cy, Math.max(1, rx), Math.max(1, ry), 0, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(148, 163, 184, 0.25)';
+    ctx.fillStyle = getCanvasPalette().selectionFill;
     ctx.fill();
-    ctx.strokeStyle = 'rgba(100, 116, 139, 0.8)';
+    ctx.strokeStyle = getCanvasPalette().selectionStroke;
     ctx.lineWidth = 1.5;
     ctx.setLineDash([4, 4]);
     ctx.stroke();
@@ -1058,22 +1060,9 @@ export function drawTrajectoryTrailOnUI() {
         uiCtx.lineTo(points[i].x, points[i].y);
     }
     
-    let objColor = selectedObject.color;
-    if (!objColor) {
-        if (selectedObject.type === 'player') objColor = '#1d0b5e';
-        else if (selectedObject.type === 'marker') objColor = '#f97316';
-        else if (selectedObject.type === 'cone') objColor = '#facc15';
-        else if (selectedObject.type === 'ball') objColor = '#ffffff';
-        else if (selectedObject.type === 'vision') objColor = '#38bdf8';
-        else objColor = '#06b6d4';
-    } else {
-        if (objColor === 'red') objColor = '#800a1d';
-        else if (objColor === 'blue') objColor = '#1d0b5e';
-        else if (objColor === 'green') objColor = '#064e3b';
-        else if (objColor === 'orange') objColor = '#7c2d12';
-    }
-    
-    const outlineColor = (objColor === '#ffffff' || objColor === '#facc15') ? '#0f172a' : '#ffffff';
+    const palette = getCanvasPalette();
+    const objColor = resolveCanvasObjectColor(selectedObject, palette);
+    const outlineColor = resolveCanvasOutline(objColor, palette);
 
     // Draw outline first for contrast
     uiCtx.strokeStyle = outlineColor;
@@ -1096,13 +1085,13 @@ export function drawTrajectoryTrailOnUI() {
         uiCtx.lineWidth = 1.5;
         uiCtx.stroke();
 
-        uiCtx.fillStyle = '#0f172a';
+        uiCtx.fillStyle = palette.objectOutlineDark;
         uiCtx.fillRect(pt.x - 11, pt.y - 20, 22, 12);
         uiCtx.strokeStyle = objColor;
         uiCtx.lineWidth = 1;
         uiCtx.strokeRect(pt.x - 11, pt.y - 20, 22, 12);
 
-        uiCtx.fillStyle = '#ffffff';
+        uiCtx.fillStyle = palette.objectOutlineLight;
         uiCtx.font = 'bold 8px sans-serif';
         uiCtx.textAlign = 'center';
         uiCtx.textBaseline = 'middle';
@@ -1118,7 +1107,7 @@ export function drawSnapGuidesOnUI() {
     uiCtx.save();
     uiCtx.scale(dpr, dpr);
 
-    uiCtx.strokeStyle = '#06b6d4';
+    uiCtx.strokeStyle = getCanvasPalette().objectAnnotation;
     uiCtx.lineWidth = 1.5;
     uiCtx.setLineDash([4, 4]);
 
@@ -1249,18 +1238,9 @@ function updateContextPopover() {
             }
 
             const colorDots = popover.querySelectorAll('.color-dot');
-            const currentColor = selectedObject.color || (selectedObject.type === 'marker' ? '#f97316' : 'red');
+            const swatchName = getCanvasSwatchName(selectedObject.color, selectedObject.type, getCanvasPalette());
             colorDots.forEach(dot => {
-                const c = dot.dataset.color;
-                if ((c === 'red' && (currentColor === '#f23932' || currentColor === 'red' || currentColor === '#ef4444')) ||
-                    (c === 'blue' && (currentColor === '#3d79d5' || currentColor === 'blue' || currentColor === '#3b82f6')) ||
-                    (c === 'green' && (currentColor === '#63a84d' || currentColor === 'green')) ||
-                    (c === 'orange' && (currentColor === '#f09f4d' || currentColor === 'orange' || currentColor === '#f97316')) ||
-                    currentColor === c) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
+                dot.classList.toggle('active', dot.dataset.color === swatchName);
             });
         } else {
             playerControls.style.display = 'none';
@@ -1742,8 +1722,9 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
     const inputHomeColor = document.getElementById('input-home-team-color');
     const inputAwayColor = document.getElementById('input-away-team-color');
 
-    let homeTeamColor = (inputHomeColor && inputHomeColor.value) || '#f23932';
-    let awayTeamColor = (inputAwayColor && inputAwayColor.value) || '#2563eb';
+    const palette = getCanvasPalette();
+    let homeTeamColor = (inputHomeColor && inputHomeColor.value) || palette.teamHome;
+    let awayTeamColor = (inputAwayColor && inputAwayColor.value) || palette.teamAway;
 
     // ポップオーバー開閉ハンドラの個別登録
     if (settingsBtn && settingsPopover) {
@@ -2096,20 +2077,10 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         dot.onclick = (e) => {
             e.stopPropagation();
             const colorName = dot.dataset.color;
-            let hexColor = '#f23932';
-            if (colorName === 'blue') hexColor = '#3d79d5';
-            else if (colorName === 'green') hexColor = '#63a84d';
-            else if (colorName === 'orange') hexColor = '#f09f4d';
 
             if (selectedObject) {
-                if (selectedObject.type === 'marker') {
-                    if (colorName === 'orange') hexColor = '#f97316';
-                    else if (colorName === 'blue') hexColor = '#3b82f6';
-                    else if (colorName === 'red') hexColor = '#ef4444';
-                    else if (colorName === 'green') hexColor = '#22c55e';
-                    selectedObject.color = hexColor;
-                } else if (selectedObject.type === 'player') {
-                    selectedObject.color = hexColor;
+                if (selectedObject.type === 'marker' || selectedObject.type === 'player') {
+                    selectedObject.color = getCanvasSwatchColor(colorName, selectedObject.type, getCanvasPalette());
                 }
                 saveHistory();
                 drawPitch(objects);
@@ -2506,18 +2477,19 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             x = applyGridSnap(x);
             y = applyGridSnap(y);
 
+            const palette = getCanvasPalette();
             let color, radius, type, number = '';
             if (currentTool === 'player') {
-                color = '#f23932'; radius = 14; type = 'player';
+                color = palette.teamHome; radius = 14; type = 'player';
                 const elNum = document.getElementById('canvas-player-number');
                 if (elNum) number = elNum.value || '';
             }
-            if (currentTool === 'ball') { color = '#ffffff'; radius = 8; type = 'ball'; }
-            if (currentTool === 'marker') { color = '#f97316'; radius = 8; type = 'marker'; }
-            if (currentTool === 'cone') { color = '#facc15'; radius = 10; type = 'cone'; }
-            if (currentTool === 'minigoal') { color = '#ffffff'; radius = 15; type = 'minigoal'; }
-            if (currentTool === 'vision') { color = '#38bdf8'; radius = 60; type = 'vision'; }
-            if (currentTool === 'text') { color = '#000000'; radius = 0; type = 'text'; }
+            if (currentTool === 'ball') { color = palette.objectBall; radius = 8; type = 'ball'; }
+            if (currentTool === 'marker') { color = palette.objectMarker; radius = 8; type = 'marker'; }
+            if (currentTool === 'cone') { color = palette.objectCone; radius = 10; type = 'cone'; }
+            if (currentTool === 'minigoal') { color = palette.objectBall; radius = 15; type = 'minigoal'; }
+            if (currentTool === 'vision') { color = palette.objectVision; radius = 60; type = 'vision'; }
+            if (currentTool === 'text') { color = palette.objectText; radius = 0; type = 'text'; }
 
             if (type) {
                 const newObj = { id: objectIdCounter++, type, x, y, radius, color, number };

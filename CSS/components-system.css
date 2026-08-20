@@ -919,6 +919,21 @@
     box-shadow: var(--shadow-md);
 }
 
+/* Bottom sheets use the same surface, shadow and hidden transition as every c-modal. */
+.c-modal--bottom-sheet {
+    align-self: end;
+    inline-size: min(100%, 37.5rem);
+    max-block-size: min(85dvh, 48rem);
+    padding: var(--surface-inset-block) var(--surface-inset-inline) calc(var(--surface-inset-block) + var(--safe-bottom));
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+    transform: translateY(0);
+}
+
+.c-modal-overlay.hidden .c-modal--bottom-sheet {
+    transform: translateY(100%);
+}
+
 /* Compatibility variant for legacy modal markup while headers and footers migrate to c-modal elements. */
 .c-modal--legacy {
     display: block;

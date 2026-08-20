@@ -1,37 +1,17 @@
 {
-  "generatedAt": "2026-08-20T02:28:05.338Z",
+  "generatedAt": "2026-08-20T03:10:27.681Z",
   "scope": {
     "cssFiles": 12,
-    "sourceFiles": 40,
+    "sourceFiles": 41,
     "foundationFiles": [
       "CSS/base.css",
       "CSS/tokens.css"
     ]
   },
   "directColors": {
-    "totalOccurrences": 347,
-    "componentOrPageOccurrences": 277,
+    "totalOccurrences": 234,
+    "componentOrPageOccurrences": 119,
     "files": [
-      {
-        "file": "CSS/components.css",
-        "layer": "component_or_page",
-        "directColorOccurrences": 66,
-        "uniqueDirectColors": 35,
-        "topValues": [
-          "#ffffff",
-          "rgba(0, 0, 0, 0.25)",
-          "rgba(0, 0, 0, 0.5)",
-          "#000",
-          "#f1f5f9",
-          "#334155",
-          "#f8fafc",
-          "rgba(242, 57, 50, 0.1)",
-          "rgba(0, 0, 0, 0.06)",
-          "rgba(0, 0, 0, 0.04)",
-          "rgba(0, 0, 0, 0.02)",
-          "rgba(0, 0, 0, 0.2)"
-        ]
-      },
       {
         "file": "CSS/components-system.css",
         "layer": "component_or_page",
@@ -53,23 +33,23 @@
         ]
       },
       {
-        "file": "CSS/drawing.css",
-        "layer": "component_or_page",
-        "directColorOccurrences": 61,
-        "uniqueDirectColors": 33,
+        "file": "CSS/tokens.css",
+        "layer": "foundation",
+        "directColorOccurrences": 63,
+        "uniqueDirectColors": 44,
         "topValues": [
-          "rgba(0, 0, 0, 0.06)",
-          "#ffffff",
-          "#fde047",
-          "rgba(15, 23, 42, 0.92)",
-          "rgba(0, 0, 0, 0.15)",
-          "rgba(0, 0, 0, 0.1)",
+          "#ef3340",
+          "#000000",
           "#f1f5f9",
           "#4ade80",
-          "rgba(0, 0, 0, 0.3)",
-          "rgba(0, 0, 0, 0.08)",
-          "#f8fafc",
-          "rgba(255, 255, 255, 0.95)"
+          "#334155",
+          "rgba(51, 65, 85, 0.07)",
+          "rgba(0, 0, 0, 0.20)",
+          "rgba(0, 0, 0, 0.15)",
+          "rgba(51, 65, 85, 0.70)",
+          "#1d0b5e",
+          "#800a1d",
+          "#064e3b"
         ]
       },
       {
@@ -113,38 +93,6 @@
         ]
       },
       {
-        "file": "CSS/tactical.css",
-        "layer": "component_or_page",
-        "directColorOccurrences": 31,
-        "uniqueDirectColors": 11,
-        "topValues": [
-          "#f1f5f9",
-          "#334155",
-          "rgba(0, 0, 0, 0.05)",
-          "rgba(0, 0, 0, 0.15)",
-          "rgba(51, 65, 85, 0.07)",
-          "rgba(0, 0, 0, 0.3)",
-          "rgba(0, 0, 0, 0.4)",
-          "rgba(0, 0, 0, 0.75)",
-          "#ffffff",
-          "rgba(0, 0, 0, 0.2)",
-          "rgba(0, 0, 0, 0.03)"
-        ]
-      },
-      {
-        "file": "CSS/tokens.css",
-        "layer": "foundation",
-        "directColorOccurrences": 18,
-        "uniqueDirectColors": 5,
-        "topValues": [
-          "#ef3340",
-          "rgba(15, 23, 42, 0.06)",
-          "rgba(15, 23, 42, 0.08)",
-          "#ffffff",
-          "#000000"
-        ]
-      },
-      {
         "file": "CSS/components-standard.css",
         "layer": "component_or_page",
         "directColorOccurrences": 4,
@@ -164,6 +112,20 @@
         ]
       },
       {
+        "file": "CSS/components.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 0,
+        "uniqueDirectColors": 0,
+        "topValues": []
+      },
+      {
+        "file": "CSS/drawing.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 0,
+        "uniqueDirectColors": 0,
+        "topValues": []
+      },
+      {
         "file": "CSS/icon-system.css",
         "layer": "component_or_page",
         "directColorOccurrences": 0,
@@ -172,6 +134,13 @@
       },
       {
         "file": "CSS/layouts.css",
+        "layer": "component_or_page",
+        "directColorOccurrences": 0,
+        "uniqueDirectColors": 0,
+        "topValues": []
+      },
+      {
+        "file": "CSS/tactical.css",
         "layer": "component_or_page",
         "directColorOccurrences": 0,
         "uniqueDirectColors": 0,
@@ -188,54 +157,22 @@
     "topValues": [
       {
         "value": "#ffffff",
-        "occurrences": 41
-      },
-      {
-        "value": "#334155",
-        "occurrences": 24
-      },
-      {
-        "value": "#fff",
-        "occurrences": 11
-      },
-      {
-        "value": "#22c55e",
-        "occurrences": 7
-      },
-      {
-        "value": "#15803d",
-        "occurrences": 7
-      },
-      {
-        "value": "rgba(0, 0, 0, 0.15)",
-        "occurrences": 7
-      },
-      {
-        "value": "#ef4444",
-        "occurrences": 6
-      },
-      {
-        "value": "rgba(0, 0, 0, 0.04)",
-        "occurrences": 6
-      },
-      {
-        "value": "#f1f5f9",
-        "occurrences": 6
+        "occurrences": 22
       },
       {
         "value": "#000000",
+        "occurrences": 8
+      },
+      {
+        "value": "#22c55e",
         "occurrences": 6
       },
       {
-        "value": "rgba(242, 57, 50, 0.15)",
-        "occurrences": 5
+        "value": "#fff",
+        "occurrences": 6
       },
       {
-        "value": "rgba(0, 0, 0, 0.12)",
-        "occurrences": 5
-      },
-      {
-        "value": "rgba(0, 0, 0, 0.25)",
+        "value": "#ef4444",
         "occurrences": 5
       },
       {
@@ -243,35 +180,11 @@
         "occurrences": 5
       },
       {
-        "value": "#1e293b",
-        "occurrences": 5
-      },
-      {
-        "value": "#f23932",
-        "occurrences": 5
-      },
-      {
-        "value": "#f8fafc",
-        "occurrences": 5
-      },
-      {
-        "value": "#16a34a",
-        "occurrences": 5
-      },
-      {
-        "value": "#d97706",
-        "occurrences": 5
-      },
-      {
-        "value": "rgba(242, 57, 50, 0.08)",
+        "value": "rgba(0, 0, 0, 0.15)",
         "occurrences": 4
       },
       {
-        "value": "rgba(0, 0, 0, 0.02)",
-        "occurrences": 4
-      },
-      {
-        "value": "#000",
+        "value": "rgba(0, 0, 0, 0.04)",
         "occurrences": 4
       },
       {
@@ -279,32 +192,88 @@
         "occurrences": 4
       },
       {
-        "value": "#b91c1c",
-        "occurrences": 4
-      },
-      {
-        "value": "#dcfce7",
-        "occurrences": 4
-      },
-      {
-        "value": "rgba(0, 0, 0, 0.05)",
-        "occurrences": 4
-      },
-      {
-        "value": "#64748b",
-        "occurrences": 4
-      },
-      {
-        "value": "rgba(0, 0, 0, 0.4)",
+        "value": "rgba(34, 197, 94, 0.15)",
         "occurrences": 3
+      },
+      {
+        "value": "#15803d",
+        "occurrences": 3
+      },
+      {
+        "value": "rgba(242, 57, 50, 0.15)",
+        "occurrences": 3
+      },
+      {
+        "value": "rgba(0, 0, 0, 0.02)",
+        "occurrences": 3
+      },
+      {
+        "value": "rgba(242, 57, 50, 0.04)",
+        "occurrences": 3
+      },
+      {
+        "value": "#334155",
+        "occurrences": 3
+      },
+      {
+        "value": "#1e293b",
+        "occurrences": 3
+      },
+      {
+        "value": "#eab308",
+        "occurrences": 3
+      },
+      {
+        "value": "#f8fafc",
+        "occurrences": 3
+      },
+      {
+        "value": "rgba(0,0,0,0.02)",
+        "occurrences": 3
+      },
+      {
+        "value": "#c72c38",
+        "occurrences": 2
+      },
+      {
+        "value": "#24171a",
+        "occurrences": 2
+      },
+      {
+        "value": "rgba(242, 57, 50, 0.08)",
+        "occurrences": 2
       },
       {
         "value": "#3b82f6",
-        "occurrences": 3
+        "occurrences": 2
       },
       {
-        "value": "rgba(34, 197, 94, 0.15)",
-        "occurrences": 3
+        "value": "rgba(242, 57, 50, 0.1)",
+        "occurrences": 2
+      },
+      {
+        "value": "#f1f5f9",
+        "occurrences": 2
+      },
+      {
+        "value": "rgba(0, 0, 0, 0.25)",
+        "occurrences": 2
+      },
+      {
+        "value": "rgb(0 0 0 / 40%)",
+        "occurrences": 2
+      },
+      {
+        "value": "#10b981",
+        "occurrences": 2
+      },
+      {
+        "value": "#f97316",
+        "occurrences": 2
+      },
+      {
+        "value": "#facc15",
+        "occurrences": 2
       }
     ]
   },
