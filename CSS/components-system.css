@@ -2006,17 +2006,17 @@
 /* Frame sequence: reusable compact timeline strip for ordered visual states. */
 .c-frame-strip {
     position: absolute;
-    inset-block-end: 4.125rem;
+    inset-block-end: 3.85rem;
     inset-inline-start: 50%;
     z-index: 180;
-    max-inline-size: 85%;
-    padding: 0.25rem 0.5rem;
+    max-inline-size: 90%;
+    padding: 0.2rem 0.4rem;
     overflow-x: auto;
     scrollbar-width: none;
-    border: 0;
+    border: 1px solid var(--surface-border);
     border-radius: var(--radius-pill);
-    background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-    box-shadow: var(--shadow-md);
+    background: var(--glass-surface-strong);
+    box-shadow: var(--shadow-sm);
     backdrop-filter: blur(0.75rem) saturate(180%);
     -webkit-backdrop-filter: blur(0.75rem) saturate(180%);
     transform: translateX(-50%);
@@ -2042,14 +2042,16 @@
     flex: 0 0 auto;
     align-items: center;
     gap: var(--space-1);
-    min-block-size: 1.75rem;
+    min-block-size: 1.55rem;
     padding: 0 var(--space-2);
-    border: 0;
+    border: 1px solid transparent;
     border-radius: var(--radius-pill);
     background: var(--color-surface);
     box-shadow: var(--shadow-xs);
     cursor: grab;
     user-select: none;
+    font-size: 0.72rem;
+    transition: all 0.15s ease;
 }
 
 .c-frame-strip__item:hover {
