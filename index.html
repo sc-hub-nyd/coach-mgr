@@ -766,7 +766,12 @@
         <section class="c-filter-bar" aria-label="メニューの検索と絞り込み">
             <div class="c-filter-bar__main">
                 <div class="c-filter-bar__search"><i class="ti ti-search" aria-hidden="true"></i><input type="search" id="input-library-search" placeholder="メニューをキーワード検索..." class="c-input form-control filter-search-input"></div>
-                <div class="c-action-group c-filter-bar__actions"><button class="c-button btn c-button--secondary btn-secondary btn-filter-detail" id="btn-toggle-filter-library" title="絞り込み条件"><i class="ti ti-adjustments" aria-hidden="true"></i> 絞り込み<span class="c-status c-status--count c-status--compact hidden" id="badge-filter-library">0</span></button><button class="c-button btn c-button--primary btn-primary" id="btn-add-library-menu"><i class="ti ti-plus" aria-hidden="true"></i> 追加</button></div>
+                <div class="c-action-group c-filter-bar__actions">
+                    <button class="c-button btn c-button--secondary btn-secondary btn-filter-detail" id="btn-toggle-filter-library" title="絞り込み条件"><i class="ti ti-adjustments" aria-hidden="true"></i> 絞り込み<span class="c-status c-status--count c-status--compact hidden" id="badge-filter-library">0</span></button>
+                    <button class="c-button btn c-button--secondary btn-secondary" id="btn-import-library-menu" title="他学年やコーチから共有されたメニューファイル(.json)を取り込む"><i class="ti ti-file-import" aria-hidden="true"></i> 取込</button>
+                    <button class="c-button btn c-button--primary btn-primary" id="btn-add-library-menu"><i class="ti ti-plus" aria-hidden="true"></i> 追加</button>
+                    <input type="file" id="input-import-library-file" accept=".json,application/json" class="u-visually-hidden">
+                </div>
             </div>
             <div class="active-tags-bar hidden" id="active-tags-library"></div>
             <div class="c-filter-bar__filters filter-accordion-panel hidden" id="filter-accordion-library">
@@ -788,7 +793,15 @@
         <section class="c-filter-bar" aria-label="戦術の検索と絞り込み">
             <div class="c-filter-bar__main">
                 <div class="c-filter-bar__search"><i class="ti ti-search" aria-hidden="true"></i><input type="search" id="input-tactics-search" placeholder="戦術をキーワード検索..." class="c-input form-control filter-search-input"></div>
-                <div class="c-action-group c-filter-bar__actions"><div class="c-form-field c-form-field--compact"><label class="u-visually-hidden" for="filter-tactics-category">カテゴリ</label><select id="filter-tactics-category" class="c-input form-control"><option value="all">すべてのカテゴリ</option></select></div><button class="c-button btn c-button--primary btn-primary" id="btn-add-tactic"><i class="ti ti-plus" aria-hidden="true"></i> 追加</button></div>
+                <div class="c-action-group c-filter-bar__actions">
+                    <div class="c-form-field c-form-field--compact">
+                        <label class="u-visually-hidden" for="filter-tactics-category">カテゴリ</label>
+                        <select id="filter-tactics-category" class="c-input form-control"><option value="all">すべてのカテゴリ</option></select>
+                    </div>
+                    <button class="c-button btn c-button--secondary btn-secondary" id="btn-import-tactic" title="他学年やコーチから共有された戦術ファイル(.json)を取り込む"><i class="ti ti-file-import" aria-hidden="true"></i> 取込</button>
+                    <button class="c-button btn c-button--primary btn-primary" id="btn-add-tactic"><i class="ti ti-plus" aria-hidden="true"></i> 追加</button>
+                    <input type="file" id="input-import-tactic-file" accept=".json,application/json" class="u-visually-hidden">
+                </div>
             </div>
         </section>
         <div class="c-static-style--057" id="tactics-list">
@@ -1514,6 +1527,12 @@
                             </div>
                             <div class="popover-arrow"></div>
                         </div>
+
+                        <!-- 6. Animation Caption Top Banner Overlay (100% Full-Width Pitch Header) -->
+                        <div id="anim-caption-bar" class="anim-caption-bar hidden">
+                            <span id="anim-caption-title" class="anim-caption-title"></span>
+                            <span id="anim-caption-text" class="anim-caption-text"></span>
+                        </div>
                     </div> <!-- End of canvas-wrapper -->
 
                     <!-- 5a. Filmstrip Timeline Card Strip (Item 08: フィルムスリップ型タイムライン) -->
@@ -1530,9 +1549,9 @@
                         <!-- Left Group: Play / Stop -->
                         <div class="player-bar-group player-bar-left c-action-group">
                             <button class="c-button btn c-button--primary btn-primary btn-xs" id="anim-play" title="アニメーション再生"><i
-                                    class="ti ti-player-play"></i> 再生</button>
+                                    class="ti ti-player-play"></i> <span>再生</span></button>
                             <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-stop" title="停止"><i
-                                    class="ti ti-player-stop"></i> 停止</button>
+                                    class="ti ti-player-stop"></i> <span>停止</span></button>
                         </div>
 
                         <span class="player-bar-divider"></span>
@@ -1540,11 +1559,11 @@
                         <!-- Center Group: Prev / Select Scene Dropdown / Edit Title / Next -->
                         <div class="player-bar-group player-bar-center c-action-group">
                             <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-prev-frame" title="前のシーンへ"><i
-                                    class="ti ti-chevron-left"></i> 前へ</button>
+                                    class="ti ti-chevron-left"></i> <span>前へ</span></button>
                             <select id="anim-frame-select" title="シーン切替プルダウン"></select>
                             <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-edit-frame-title"
                                 title="現在のシーンの見出し（例: 初期配置）を編集"><i class="ti ti-pencil"></i></button>
-                            <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-next-frame" title="次のシーンへ">次へ <i
+                            <button class="c-button btn c-button--secondary btn-secondary btn-xs" id="anim-next-frame" title="次のシーンへ"><span>次へ</span> <i
                                     class="ti ti-chevron-right"></i></button>
                         </div>
 
@@ -1553,19 +1572,14 @@
                         <!-- Right Group: Add Scene / Delete Scene / Video Export -->
                         <div class="player-bar-group player-bar-right c-action-group">
                             <button class="c-button btn c-button--primary btn-primary btn-xs" id="anim-add-frame" title="現在のシーンの次に新しいシーンを挿入"><i
-                                    class="ti ti-plus"></i> 追加</button>
+                                    class="ti ti-plus"></i> <span>追加</span></button>
                             <button class="c-button btn c-button--danger btn-danger btn-xs" id="anim-delete-frame" title="現在のシーンを削除"><i
-                                    class="ti ti-trash"></i> 削除</button>
+                                    class="ti ti-trash"></i> <span>削除</span></button>
                             <button class="c-button btn c-button--secondary btn-secondary btn-xs c-static-style--234" id="anim-export-video" title="ダウンロード (LINE共有用)"
                                ><i class="ti ti-download c-static-style--022"
                                    ></i></button>
                         </div>
                     </footer>
-
-                    <!-- 6. Animation Caption Telop Bar -->
-                    <div id="anim-caption-bar" class="anim-caption-bar hidden">
-                        <span id="anim-caption-text"></span>
-                    </div>
 
                     <!-- 7. Quick Edit Drawer (Retained for component contract / hidden) -->
                     <div id="anim-quick-drawer" class="c-drawer hidden" style="display: none !important;" aria-hidden="true"></div>

@@ -47,9 +47,26 @@ export function initTactics(miniPitchObserver) {
         if (!isCoach) {
             btnAdd.style.display = 'none';
         } else {
-            btnAdd.style.display = 'inline-block';
+            btnAdd.style.display = 'inline-flex';
             btnAdd.onclick = () => openTacticModal();
         }
+    }
+
+    // Import Tactic Button
+    const btnImport = document.getElementById('btn-import-tactic');
+    const inputImport = document.getElementById('input-import-tactic-file');
+    if (btnImport && inputImport) {
+        btnImport.style.display = isCoach ? 'inline-flex' : 'none';
+        btnImport.onclick = () => {
+            inputImport.value = '';
+            inputImport.click();
+        };
+        inputImport.onchange = (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (file) {
+                importTactic(file, miniPitchObserver);
+            }
+        };
     }
 
     renderTacticsList(miniPitchObserver, currentCategory, currentSearch, isCoach);
@@ -121,11 +138,13 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
 
         const cardsHtml = tactics.map(t => {
             const actionBtns = isCoach ? `
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-export-tactic" data-id="${t.id}" title="共有ファイル(.json)をダウンロード"><i class="ti ti-download"></i></button>
                 <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic" data-id="${t.id}" title="編集"><i class="ti ti-pencil"></i></button>
                 <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="${t.frames && t.frames.length > 0 ? '作図を編集' : '作図する'}" aria-label="${t.frames && t.frames.length > 0 ? '戦術作図を編集' : '戦術作図を開始'}"><i class="ti ti-soccer-field" aria-hidden="true"></i></button>
                 <button type="button" class="c-button btn c-button--secondary btn-secondary btn-add-to-library" data-id="${t.id}" title="練習メニューライブラリに追加"><i class="ti ti-plus"></i></button>
                 <button type="button" class="c-button btn c-button--danger btn-danger btn-delete-tactic" data-id="${t.id}" title="削除"><i class="ti ti-trash"></i></button>
             ` : `
+                <button type="button" class="c-button btn c-button--secondary btn-secondary btn-export-tactic" data-id="${t.id}" title="共有ファイル(.json)をダウンロード"><i class="ti ti-download"></i></button>
                 <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-tactic-board" data-id="${t.id}" title="作図を見る" aria-label="戦術作図を見る"><i class="ti ti-soccer-field" aria-hidden="true"></i></button>
             `;
 
@@ -182,6 +201,13 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
     }).join('');
 
     // Attach Events
+    document.querySelectorAll('.btn-export-tactic').forEach(btn => {
+        btn.onclick = (e) => {
+            const id = parseInt(e.currentTarget.dataset.id, 10);
+            exportTactic(id);
+        };
+    });
+
     document.querySelectorAll('.btn-edit-tactic').forEach(btn => {
         btn.onclick = (e) => {
             const id = parseInt(e.currentTarget.dataset.id);
@@ -256,6 +282,84 @@ function renderTacticsList(miniPitchObserver, category, search, isCoach) {
             }
         });
     }, 50);
+}
+
+export function exportTactic(tacticId) {
+    const tactic = (state.tactics || []).find(t => t.id === tacticId);
+    if (!tactic) {
+        showToast('戦術が見つかりません');
+        return;
+    }
+    const exportData = {
+        _exportType: 'coachmgr_tactic',
+        _exportVersion: '1.0',
+        _exportedAt: new Date().toISOString(),
+        tactic: {
+            category: tactic.category || 'その他',
+            title: tactic.title || '無題の戦術',
+            description: tactic.description || '',
+            formation: tactic.formation || '4-3-3',
+            pitchTemplate: tactic.pitchTemplate || 'full',
+            frames: tactic.frames || []
+        }
+    };
+    const jsonStr = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const safeTitle = (tactic.title || '無題の戦術').replace(/[/\\?%*:|"<>]/g, '_');
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `【戦術】${safeTitle}.json`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        if (a.parentNode) a.parentNode.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 400);
+    showToast(`📤 「${tactic.title}」をダウンロードしました`);
+}
+
+export function importTactic(file, miniPitchObserver) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            const tacticData = (data && data.tactic) ? data.tactic : data;
+            if (!tacticData || (!tacticData.title && !tacticData.category)) {
+                showToast('無効な戦術ファイルです。JSONの形式をご確認ください。', { type: 'error' });
+                return;
+            }
+
+            const newId = Date.now();
+            const category = tacticData.category || 'その他';
+            const newTactic = {
+                id: newId,
+                category: category,
+                title: tacticData.title || '取り込み戦術',
+                description: tacticData.description || '',
+                formation: tacticData.formation || '4-3-3',
+                pitchTemplate: tacticData.pitchTemplate || 'full',
+                frames: Array.isArray(tacticData.frames) ? tacticData.frames : []
+            };
+
+            if (!state.tactics) state.tactics = [];
+            state.tactics.push(newTactic);
+
+            if (!state.tacticsCategories) state.tacticsCategories = [];
+            if (!state.tacticsCategories.includes(category)) {
+                state.tacticsCategories.push(category);
+            }
+
+            saveData();
+            showToast(`📥 「${newTactic.title}」を取り込みました！`);
+            initTactics(miniPitchObserver);
+        } catch (err) {
+            console.error('Import error:', err);
+            showToast('戦術ファイルの読み込みに失敗しました。有効なJSONファイルを選択してください。', { type: 'error' });
+        }
+    };
+    reader.readAsText(file);
 }
 
 export function openTacticModal(tactic = null) {

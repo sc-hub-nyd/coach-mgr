@@ -332,10 +332,12 @@ export function initLibrary(miniPitchObserver) {
             const cardsHtml = menus.map(m => {
                 const actionBtns = isCoach ? `
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-assign-library" data-id="${m.id}" title="練習日にアサイン"><i class="ti ti-calendar-plus"></i></button>
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-export-library" data-id="${m.id}" title="共有ファイル(.json)をダウンロード"><i class="ti ti-download"></i></button>
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-edit-library" data-id="${m.id}" title="編集"><i class="ti ti-pencil"></i></button>
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-anim-library" data-id="${m.id}" title="${m.frames && m.frames.length > 0 ? '作図を編集' : '作図する'}"><i class="ti ti-run"></i></button>
                     <button type="button" class="c-button btn c-button--danger btn-danger btn-delete-library" data-id="${m.id}"><i class="ti ti-trash"></i></button>
                 ` : `
+                    <button type="button" class="c-button btn c-button--secondary btn-secondary btn-export-library" data-id="${m.id}" title="共有ファイル(.json)をダウンロード"><i class="ti ti-download"></i></button>
                     <button type="button" class="c-button btn c-button--secondary btn-secondary btn-anim-library" data-id="${m.id}" title="作図を見る"><i class="ti ti-run"></i></button>
                 `;
 
@@ -438,6 +440,29 @@ export function initLibrary(miniPitchObserver) {
         };
     }
 
+    const btnImport = document.getElementById('btn-import-library-menu');
+    const inputImport = document.getElementById('input-import-library-file');
+    if (btnImport && inputImport) {
+        btnImport.style.display = isCoach ? 'inline-flex' : 'none';
+        btnImport.onclick = () => {
+            inputImport.value = '';
+            inputImport.click();
+        };
+        inputImport.onchange = (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (file) {
+                importLibraryMenu(file, miniPitchObserver);
+            }
+        };
+    }
+
+    document.querySelectorAll('.btn-export-library').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = parseInt(e.currentTarget.dataset.id, 10);
+            exportLibraryMenu(id);
+        });
+    });
+
     document.querySelectorAll('.btn-edit-library').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const id = parseInt(e.currentTarget.dataset.id);
@@ -475,6 +500,92 @@ export function initLibrary(miniPitchObserver) {
             openAssignPracticeModal(id);
         });
     });
+}
+
+export function exportLibraryMenu(menuId) {
+    const menu = (state.menuLibrary || []).find(m => m.id === menuId);
+    if (!menu) {
+        showToast('メニューが見つかりません');
+        return;
+    }
+    const exportData = {
+        _exportType: 'coachmgr_menu',
+        _exportVersion: '1.0',
+        _exportedAt: new Date().toISOString(),
+        menu: {
+            category: menu.category || 'その他',
+            focus: menu.focus || '練習メニュー',
+            organize: menu.organize || '',
+            keyfactor: menu.keyfactor || '',
+            options: menu.options || '',
+            reflection: menu.reflection || '',
+            videoUrl: menu.videoUrl || '',
+            engagement: menu.engagement || 0,
+            pitchTemplate: menu.pitchTemplate || 'full',
+            frames: menu.frames || []
+        }
+    };
+    const jsonStr = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const safeTitle = (menu.focus || '練習メニュー').replace(/[/\\?%*:|"<>]/g, '_');
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `【メニュー】${safeTitle}.json`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        if (a.parentNode) a.parentNode.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 400);
+    showToast(`📤 「${menu.focus}」をダウンロードしました`);
+}
+
+export function importLibraryMenu(file, miniPitchObserver) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            const menuData = (data && data.menu) ? data.menu : data;
+            if (!menuData || typeof menuData !== 'object' || (!menuData.focus && !menuData.category)) {
+                showToast('無効なメニューファイルです。JSONの形式をご確認ください。', { type: 'error' });
+                return;
+            }
+
+            const newId = Date.now();
+            const category = menuData.category || 'その他';
+            const newMenu = {
+                id: newId,
+                category: category,
+                focus: menuData.focus || '取り込みメニュー',
+                organize: menuData.organize || '',
+                keyfactor: menuData.keyfactor || '',
+                options: menuData.options || '',
+                reflection: menuData.reflection || '',
+                videoUrl: menuData.videoUrl || '',
+                engagement: menuData.engagement || 0,
+                pitchTemplate: menuData.pitchTemplate || 'full',
+                frames: Array.isArray(menuData.frames) ? menuData.frames : []
+            };
+
+            if (!state.menuLibrary) state.menuLibrary = [];
+            state.menuLibrary.push(newMenu);
+
+            if (!state.menuCategories) state.menuCategories = [];
+            if (!state.menuCategories.includes(category)) {
+                state.menuCategories.push(category);
+            }
+
+            saveData();
+            showToast(`📥 「${newMenu.focus}」を取り込みました！`);
+            initLibrary(miniPitchObserver);
+        } catch (err) {
+            console.error('Import error:', err);
+            showToast('メニューファイルの読み込みに失敗しました。有効なJSONファイルを選択してください。', { type: 'error' });
+        }
+    };
+    reader.readAsText(file);
 }
 
 export function openLibraryMenuModal(menu) {

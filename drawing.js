@@ -401,12 +401,24 @@ function stopAnimation() {
 
 let animPauseTimer = null;
 
-function showCaptionBar(text) {
+function showCaptionBar(title, text) {
     const bar = document.getElementById('anim-caption-bar');
-    const span = document.getElementById('anim-caption-text');
-    if (!bar || !span) return;
-    if (text && text.trim()) {
-        span.textContent = text;
+    const titleSpan = document.getElementById('anim-caption-title');
+    const textSpan = document.getElementById('anim-caption-text');
+    if (!bar) return;
+
+    const hasTitle = Boolean(title && title.trim());
+    const hasText = Boolean(text && text.trim());
+
+    if (hasTitle || hasText) {
+        if (titleSpan) {
+            titleSpan.textContent = hasTitle ? title.trim() : '';
+            titleSpan.style.display = hasTitle ? 'inline-block' : 'none';
+        }
+        if (textSpan) {
+            textSpan.textContent = hasText ? text.trim() : '';
+            textSpan.style.display = hasText ? 'inline' : 'none';
+        }
         bar.classList.remove('hidden');
     } else {
         bar.classList.add('hidden');
@@ -439,7 +451,7 @@ function getFrameObjects(frame) {
 function playAnimation() {
     syncCurrentFrameObjects();
     if (frames.length < 2) {
-        alert('アニメーションを作成するには、少なくとも2つのシーンを記録してください。');
+        showToast('⚠️ アニメーションを作成するには、少なくとも2つのシーンを記録してください。', { type: 'warning' });
         return;
     }
     isPlaying = true;
@@ -452,7 +464,19 @@ function playAnimation() {
         if (!isPlaying) return;
         currentFrameIdx = idx;
         const rawFrame = frames[idx];
-        showCaptionBar(getFrameCaptionText(rawFrame));
+        const rawTitle = (typeof rawFrame === 'object' && rawFrame && rawFrame.title) ? rawFrame.title.trim() : '';
+        const captionText = getFrameCaptionText(rawFrame);
+        const hasCustomTitle = Boolean(rawTitle && rawTitle !== `シーン ${idx + 1}` && rawTitle !== `シーン${idx + 1}`);
+        const hasCaption = Boolean(captionText && captionText.trim().length > 0);
+
+        let titleForDisplay = '';
+        if (hasCustomTitle) {
+            titleForDisplay = `【${rawTitle}】`;
+        } else if (hasCaption) {
+            titleForDisplay = `【S${idx + 1}】`;
+        }
+
+        showCaptionBar(titleForDisplay, captionText);
         drawPitch(getFrameObjects(rawFrame));
 
         const pauseSec = getFramePauseSec(rawFrame);
@@ -543,8 +567,14 @@ function playAnimation() {
 
 export function exportAnimationVideo() {
     const pitchCanvas = document.getElementById('pitch-canvas');
+    const pitchBgCanvas = document.getElementById('pitch-bg-canvas');
     if (!pitchCanvas) {
-        alert('キャンバスが見つかりません');
+        showToast('キャンバスが見つかりません', { type: 'error' });
+        return;
+    }
+    
+    if (frames.length < 2) {
+        showToast('⚠️ 動画を書き出すには、少なくとも2つのシーンを記録してください。', { type: 'warning' });
         return;
     }
 
@@ -569,10 +599,15 @@ export function exportAnimationVideo() {
 
     stopAnimation();
 
-    showToast('📹 .webm 動画ファイルを作成中...（完了まで数秒お待ちください）');
+    showToast('📹 動画ファイルを作成中...（完了まで数秒お待ちください）');
 
     try {
-        const stream = pitchCanvas.captureStream(30);
+        const recCanvas = document.createElement('canvas');
+        recCanvas.width = 800;
+        recCanvas.height = 500;
+        const recCtx = recCanvas.getContext('2d');
+
+        const stream = recCanvas.captureStream(30);
         let options = {};
         const types = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'];
         for (const t of types) {
@@ -598,7 +633,7 @@ export function exportAnimationVideo() {
 
         mediaRecorder.onstop = () => {
             if (recordedChunks.length === 0) {
-                alert('動画の書き出しに失敗しました。もう一度お試しください。');
+                showToast('動画の書き出しに失敗しました。もう一度お試しください。', { type: 'error' });
                 return;
             }
             const mime = mediaRecorder.mimeType || 'video/webm';
@@ -617,72 +652,87 @@ export function exportAnimationVideo() {
         let startTime = null;
         let isRecording = true;
         let recFrameIdx = 0;
-        let recPauseUntil = 0; // timestamp until which we are paused
+        let recPauseUntil = 0;
         let recFrameStartTime = null;
 
-        // Pre-calculate total pause durations for accurate recording
         function getFramePause(idx) {
             return getFramePauseSec(frames[idx]);
         }
         function getFrameCaption(idx) {
             return getFrameCaptionText(frames[idx]);
         }
+        function getFrameDisplayTitle(idx) {
+            const rawF = frames[idx];
+            const rawTitle = (typeof rawF === 'object' && rawF && rawF.title) ? rawF.title.trim() : '';
+            const cap = getFrameCaption(idx);
+            const hasCustom = Boolean(rawTitle && rawTitle !== `シーン ${idx + 1}` && rawTitle !== `シーン${idx + 1}`);
+            if (hasCustom) return `【${rawTitle}】`;
+            if (cap && cap.trim().length > 0) return `【S${idx + 1}】`;
+            return '';
+        }
 
-        // Draw caption text overlay directly on canvas for video export
-        function drawCaptionOnCanvas(captionText) {
-            if (!captionText || !captionText.trim()) return;
-            const palette = getCanvasPalette();
-            const pitchCanvasEl = document.getElementById('pitch-canvas');
-            if (!pitchCanvasEl) return;
-            const exportCtx = pitchCanvasEl.getContext('2d');
-            const w = pitchCanvasEl.width;
-            const h = pitchCanvasEl.height;
-            const fontSize = Math.round(h * 0.045);
-            const padding = Math.round(h * 0.02);
-            const maxTextWidth = Math.min(w * 0.85, w) - padding * 2;
-            
-            exportCtx.save();
-            exportCtx.font = `bold ${fontSize}px 'Inter', sans-serif`;
-            
-            const words = captionText.split(''); 
-            let lines = [];
-            let currentLine = '';
-            
-            for (let i = 0; i < words.length; i++) {
-                const testLine = currentLine + words[i];
-                const metrics = exportCtx.measureText(testLine);
-                const testWidth = metrics.width;
-                if (testWidth > maxTextWidth && i > 0) {
-                    lines.push(currentLine);
-                    currentLine = words[i];
+        function renderRecordFrame(frameObjs, idx) {
+            recCtx.clearRect(0, 0, 800, 500);
+            const palette = getCanvasPalette(pitchCanvas);
+
+            // 1. 静的ピッチ背景を描画 (緑の芝生と白線)
+            if (pitchBgCanvas && pitchBgCanvas.width > 0) {
+                recCtx.drawImage(pitchBgCanvas, 0, 0, 800, 500);
+            } else {
+                recCtx.fillStyle = palette.pitchSurface;
+                recCtx.fillRect(0, 0, 800, 500);
+            }
+
+            // 2. 動的オブジェクト（選手、ボール、矢印等）を描画
+            drawPitch(frameObjs);
+            recCtx.drawImage(pitchCanvas, 0, 0, 800, 500);
+
+            // 3. シーン見出し・テロップのオーバーレイバナーを録画フレーム上に描画
+            const titleText = getFrameDisplayTitle(idx);
+            const captionText = getFrameCaption(idx);
+            const hasTitle = Boolean(titleText && titleText.trim());
+            const hasCap = Boolean(captionText && captionText.trim());
+
+            if (hasTitle || hasCap) {
+                recCtx.save();
+                const bannerH = 34;
+
+                recCtx.fillStyle = palette.overlaySurface;
+                recCtx.fillRect(0, 0, 800, bannerH);
+                recCtx.strokeStyle = palette.overlayBorder;
+                recCtx.lineWidth = 1;
+                recCtx.beginPath();
+                recCtx.moveTo(0, bannerH);
+                recCtx.lineTo(800, bannerH);
+                recCtx.stroke();
+
+                recCtx.textBaseline = 'middle';
+
+                if (hasTitle && hasCap) {
+                    recCtx.font = "bold 14px sans-serif";
+                    const titleW = recCtx.measureText(titleText + ' ').width;
+                    const capW = recCtx.measureText(captionText).width;
+                    const startX = 400 - (titleW + capW) / 2;
+
+                    recCtx.textAlign = 'left';
+                    recCtx.fillStyle = palette.objectCone;
+                    recCtx.fillText(titleText, startX, bannerH / 2);
+
+                    recCtx.fillStyle = palette.overlayText;
+                    recCtx.fillText(captionText, startX + titleW, bannerH / 2);
+                } else if (hasTitle) {
+                    recCtx.textAlign = 'center';
+                    recCtx.font = "bold 14px sans-serif";
+                    recCtx.fillStyle = palette.objectCone;
+                    recCtx.fillText(titleText, 400, bannerH / 2);
                 } else {
-                    currentLine = testLine;
+                    recCtx.textAlign = 'center';
+                    recCtx.font = "bold 14px sans-serif";
+                    recCtx.fillStyle = palette.overlayText;
+                    recCtx.fillText(captionText, 400, bannerH / 2);
                 }
+                recCtx.restore();
             }
-            lines.push(currentLine);
-
-            const lineHeight = fontSize * 1.5;
-            const barHeight = (lines.length * lineHeight) + padding * 2;
-            const barY = h - barHeight - Math.round(h * 0.12);
-            const barWidth = Math.min(w * 0.85, w);
-            const barX = (w - barWidth) / 2;
-            const radius = Math.round(h * 0.015);
-
-            exportCtx.fillStyle = palette.overlaySurface;
-            exportCtx.beginPath();
-            exportCtx.roundRect(barX, barY, barWidth, barHeight, radius);
-            exportCtx.fill();
-
-            exportCtx.fillStyle = palette.overlayText;
-            exportCtx.textAlign = 'center';
-            exportCtx.textBaseline = 'middle';
-            
-            let textY = barY + padding + (lineHeight / 2);
-            for (let i = 0; i < lines.length; i++) {
-                exportCtx.fillText(lines[i], w / 2, textY);
-                textY += lineHeight;
-            }
-            exportCtx.restore();
         }
 
         function recordLoop(timestamp) {
@@ -691,12 +741,12 @@ export function exportAnimationVideo() {
                 startTime = timestamp; 
                 recFrameStartTime = timestamp; 
                 const initPause = getFramePause(0);
+                const rawF = frames[0];
+                const pauseObjs = Array.isArray(rawF) ? rawF : ((rawF && rawF.objects) || []);
+                renderRecordFrame(pauseObjs, 0);
+
                 if (initPause > 0) {
                     recPauseUntil = timestamp + initPause * 1000;
-                    const rawF = frames[0];
-                    const pauseObjs = Array.isArray(rawF) ? rawF : ((rawF && rawF.objects) || []);
-                    drawPitch(pauseObjs);
-                    drawCaptionOnCanvas(getFrameCaption(0));
                     requestAnimationFrame(recordLoop);
                     return;
                 }
@@ -704,16 +754,13 @@ export function exportAnimationVideo() {
 
             // Handle pause at frame
             if (recPauseUntil > 0 && timestamp < recPauseUntil) {
-                // Still paused: just keep drawing the current frame with caption
                 const rawF = frames[recFrameIdx];
                 const pauseObjs = Array.isArray(rawF) ? rawF : ((rawF && rawF.objects) || []);
-                drawPitch(pauseObjs);
-                drawCaptionOnCanvas(getFrameCaption(recFrameIdx));
+                renderRecordFrame(pauseObjs, recFrameIdx);
                 requestAnimationFrame(recordLoop);
                 return;
             }
             if (recPauseUntil > 0) {
-                // Pause just ended, advance to interpolation
                 recPauseUntil = 0;
                 recFrameStartTime = timestamp;
             }
@@ -725,11 +772,9 @@ export function exportAnimationVideo() {
                 if (progress >= 1) {
                     recFrameIdx++;
                     if (recFrameIdx >= frames.length - 1) {
-                        // Draw last frame with caption before stopping
                         const lastRaw = frames[frames.length - 1];
                         const lastObjs = Array.isArray(lastRaw) ? lastRaw : ((lastRaw && lastRaw.objects) || []);
-                        drawPitch(lastObjs);
-                        drawCaptionOnCanvas(getFrameCaption(frames.length - 1));
+                        renderRecordFrame(lastObjs, frames.length - 1);
 
                         isRecording = false;
                         try {
@@ -741,14 +786,12 @@ export function exportAnimationVideo() {
                         return;
                     }
 
-                    // Check for pause at this frame
                     const pauseSec = getFramePause(recFrameIdx);
                     if (pauseSec > 0) {
                         recPauseUntil = timestamp + pauseSec * 1000;
                         const rawF = frames[recFrameIdx];
                         const pauseObjs = Array.isArray(rawF) ? rawF : ((rawF && rawF.objects) || []);
-                        drawPitch(pauseObjs);
-                        drawCaptionOnCanvas(getFrameCaption(recFrameIdx));
+                        renderRecordFrame(pauseObjs, recFrameIdx);
                         requestAnimationFrame(recordLoop);
                         return;
                     }
@@ -781,6 +824,14 @@ export function exportAnimationVideo() {
                             while (diff < -180) diff += 360;
                             interpolatedObj.angle = a1 + diff * p;
                         }
+                        if (typeof obj1.radius !== 'undefined' && typeof obj2.radius !== 'undefined') {
+                            interpolatedObj.radius = obj1.radius + (obj2.radius - obj1.radius) * p;
+                        }
+                        if (typeof obj1.fov !== 'undefined' || typeof obj2.fov !== 'undefined') {
+                            let f1 = typeof obj1.fov !== 'undefined' ? obj1.fov : 60;
+                            let f2 = typeof obj2.fov !== 'undefined' ? obj2.fov : 60;
+                            interpolatedObj.fov = f1 + (f2 - f1) * p;
+                        }
                         return interpolatedObj;
                     } else if (typeof obj1.x1 !== 'undefined') {
                         const res = {
@@ -799,11 +850,9 @@ export function exportAnimationVideo() {
                     return obj1;
                 });
 
-                drawPitch(interpolatedObjects);
-                // Draw caption overlay for current frame during interpolation
-                drawCaptionOnCanvas(getFrameCaption(recFrameIdx));
+                renderRecordFrame(interpolatedObjects, recFrameIdx);
             } else {
-                drawPitch(objects);
+                renderRecordFrame(objects, 0);
                 const elapsed = timestamp - startTime;
                 if (elapsed >= 2000) {
                     isRecording = false;
