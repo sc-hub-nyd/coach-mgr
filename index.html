@@ -161,33 +161,33 @@
 
     </div><!-- /#app -->
 
-    <!-- Mobile More Bottom Sheet (親指で届く片手操作コントロールセンター) -->
-    <div id="modal-mobile-more" class="c-modal-overlay modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-more-title">
+    <!-- Mobile More Bottom Sheet: shared modal shell with grouped, thumb-reachable team controls. -->
+    <div id="modal-mobile-more" class="c-modal-overlay modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-more-title" aria-describedby="mobile-more-description">
         <div class="c-modal c-modal--bottom-sheet mobile-more-sheet c-mobile-more__sheet">
             <div class="modal-header c-modal__header c-mobile-more__header">
                 <div class="c-mobile-more__title-group">
-                    <i class="ti ti-grip-vertical c-mobile-more__grip" aria-hidden="true"></i>
-                    <h2 id="mobile-more-title" class="c-mobile-more__heading">その他メニュー</h2>
+                    <span class="c-mobile-more__eyebrow">チーム操作</span>
+                    <h2 id="mobile-more-title" class="c-mobile-more__heading">その他</h2>
                 </div>
-                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-close-modal" aria-label="メニューを閉じる"><i class="ti ti-x"></i></button>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-close-modal" aria-label="その他メニューを閉じる"><i class="ti ti-x" aria-hidden="true"></i></button>
             </div>
 
-            <div class="mobile-more-body c-mobile-more__body">
-                <!-- ロール切替カード -->
-                <div class="mobile-more-role-card c-card c-mobile-more__role-card">
+            <div class="mobile-more-body c-modal__body c-mobile-more__body">
+                <p id="mobile-more-description" class="c-mobile-more__intro">チームの表示、同期、管理画面をまとめて操作できます。</p>
+
+                <section class="mobile-more-role-card c-mobile-more__section c-mobile-more__role-card" aria-labelledby="mobile-more-role-heading">
                     <div>
-                        <div class="c-mobile-more__eyebrow">現在のモード</div>
+                        <div id="mobile-more-role-heading" class="c-mobile-more__section-label">表示モード</div>
                         <div id="mobile-user-role-label" class="c-mobile-more__role-label">保護者モード</div>
                     </div>
                     <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-mobile-more__role-action" id="mobile-btn-toggle-role">
                         <i class="ti ti-arrows-exchange" aria-hidden="true"></i> モード切替
                     </button>
-                </div>
+                </section>
 
-                <!-- クラウド同期カード（モバイル統合・ステータスランプ付き） -->
-                <div class="mobile-more-sync-card c-card c-mobile-more__sync-card" id="mobile-sync-card">
+                <section class="mobile-more-sync-card c-mobile-more__section c-mobile-more__sync-card" id="mobile-sync-card" aria-labelledby="mobile-more-sync-heading">
                     <div class="c-mobile-more__sync-header">
-                        <div class="c-mobile-more__sync-label">
+                        <div id="mobile-more-sync-heading" class="c-mobile-more__sync-label">
                             <span class="sync-icon-wrapper c-static-style--255">
                                 <i class="ti ti-cloud c-static-style--022" aria-hidden="true"></i>
                                 <span class="sync-status-dot" id="mobile-sync-status-dot"></span>
@@ -199,31 +199,32 @@
                     <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-mobile-more__sync-button" id="mobile-btn-sync-now">
                         <i class="ti ti-cloud-download" id="mobile-sync-icon" aria-hidden="true"></i> <span id="mobile-sync-btn-text">データを同期する</span>
                     </button>
-                </div>
+                </section>
 
-                <!-- ナビゲーショングリッド -->
-                <div class="mobile-more-grid c-mobile-more__grid">
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="tactics">
-                        <span class="c-icon c-icon--pass-ladder c-icon--md" aria-hidden="true"></span>
-                        <span>戦術管理</span>
-                    </button>
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="players">
-                        <span class="c-icon c-icon--team c-icon--md" aria-hidden="true"></span>
-                        <span>選手管理</span>
-                    </button>
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="settings">
-                        <i class="ti ti-settings c-static-style--166" aria-hidden="true"></i>
-                        <span>設定</span>
-                    </button>
-                </div>
+                <section class="c-mobile-more__navigation" aria-labelledby="mobile-more-navigation-heading">
+                    <div id="mobile-more-navigation-heading" class="c-mobile-more__section-label">チーム管理</div>
+                    <div class="mobile-more-grid c-mobile-more__grid">
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="tactics">
+                            <span class="c-icon c-icon--pass-ladder c-icon--md" aria-hidden="true"></span>
+                            <span>戦術管理</span>
+                        </button>
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="players">
+                            <span class="c-icon c-icon--team c-icon--md" aria-hidden="true"></span>
+                            <span>選手管理</span>
+                        </button>
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="settings">
+                            <i class="ti ti-settings c-static-style--166" aria-hidden="true"></i>
+                            <span>設定</span>
+                        </button>
+                    </div>
+                </section>
 
-                <!-- ユーティリティ行（テーマ切替・バージョン） -->
                 <div class="mobile-more-utility-row c-mobile-more__utility-row">
                     <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="mobile-btn-toggle-color-mode">
                         <i class="ti ti-moon" aria-hidden="true"></i> <span id="mobile-color-mode-text">ダーク表示</span>
                     </button>
                     <button type="button" class="btn-link c-mobile-more__version" id="mobile-version-badge" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <span id="mobile-version-text">v1.30.33</span>
+                        <span id="mobile-version-text">v1.30.88</span>
                     </button>
                 </div>
             </div>

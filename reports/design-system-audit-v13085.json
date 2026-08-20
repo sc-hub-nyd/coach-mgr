@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-20T03:28:35.680Z",
+  "generatedAt": "2026-08-20T03:44:12.906Z",
   "scope": {
     "cssFiles": 12,
     "sourceFiles": 41,
@@ -318,7 +318,6 @@
       "ti-folder-plus",
       "ti-git-branch",
       "ti-git-compare",
-      "ti-grip-vertical",
       "ti-hand-click",
       "ti-heart-handshake",
       "ti-help-circle",
@@ -393,7 +392,7 @@
       "ti-walk",
       "ti-x"
     ],
-    "usedClassCount": 144,
+    "usedClassCount": 143,
     "undefinedClasses": [],
     "cssBytes": 257851,
     "fontBytes": 462200,

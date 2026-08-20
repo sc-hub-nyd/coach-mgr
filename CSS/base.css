@@ -864,7 +864,10 @@ body.role-read-only #pd-tab-goals textarea {
         padding: 4px 1px !important;
         color: var(--text-secondary) !important;
         text-decoration: none !important;
+        border: 0 !important;
         border-radius: 8px !important;
+        background: transparent !important;
+        cursor: pointer;
         box-sizing: border-box !important;
     }
 
