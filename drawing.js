@@ -2163,6 +2163,28 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
 
     initQuickDrawerEvents();
 
+    // モバイル用ボトムドック モード切替タブ (描画ツール ⇄ アニメーション)
+    const tabDraw = document.getElementById('anim-mobile-tab-draw');
+    const tabAnim = document.getElementById('anim-mobile-tab-anim');
+    const workspaceEl = document.querySelector('.anim-main-workspace');
+
+    if (tabDraw && tabAnim && workspaceEl) {
+        tabDraw.onclick = () => {
+            tabDraw.classList.add('active');
+            tabDraw.setAttribute('aria-pressed', 'true');
+            tabAnim.classList.remove('active');
+            tabAnim.setAttribute('aria-pressed', 'false');
+            workspaceEl.classList.remove('is-mobile-anim-mode');
+        };
+        tabAnim.onclick = () => {
+            tabAnim.classList.add('active');
+            tabAnim.setAttribute('aria-pressed', 'true');
+            tabDraw.classList.remove('active');
+            tabDraw.setAttribute('aria-pressed', 'false');
+            workspaceEl.classList.add('is-mobile-anim-mode');
+        };
+    }
+
     // 保存ボタン
     const btnSave = document.getElementById('anim-save');
     if (btnSave) {

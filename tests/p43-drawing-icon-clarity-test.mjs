@@ -50,8 +50,8 @@ assert.match(index, /<nav class="c-tool-dock" id="anim-tool-dock" aria-label="�
 // 常時ラベル、キーボードフォーカス、モバイルでも読めるツールドック幅を保護する。
 assert.match(drawingCss, /\.c-tool-dock__button \.c-tool-dock__label \{[\s\S]*?display: block;/, 'ツールドックのラベルが常時表示されません');
 assert.match(drawingCss, /\.c-tool-dock__button:focus-visible \{[\s\S]*?outline:/, 'ツールドックのキーボードフォーカスがありません');
-assert.match(drawingCss, /\.anim-main-workspace:has\(\.c-tool-dock\) \.c-tool-dock \{[\s\S]*?width: 64px;/, 'モバイルツールドックのラベル表示幅がありません');
-assert.match(drawingCss, /\.anim-main-workspace:has\(\.c-tool-dock\) \.c-tool-dock__button \{[\s\S]*?width: 60px;/, 'モバイルツールボタンの幅がラベルを収容しません');
+assert.match(drawingCss, /\.anim-main-workspace:has\(\.c-tool-dock\) \.c-tool-dock \{[\s\S]*?width: 100%;/, 'モバイルツールドックのボトム表示幅がありません');
+assert.match(drawingCss, /\.anim-main-workspace:has\(\.c-tool-dock\) \.c-tool-dock__button \{[\s\S]*?width: 44px;/, 'モバイルツールボタンの幅がラベルを収容しません');
 
 // 視覚状態と支援技術向け状態を同期する。
 assert.match(drawing, /const isActive = btn\.dataset\.tool === currentTool;/, 'ツール選択状態を算出していません');
