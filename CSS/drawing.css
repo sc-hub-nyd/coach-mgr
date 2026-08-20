@@ -1089,22 +1089,56 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         display: none !important;
     }
 
+    /* Mobile Tooltips: Pop UP above dock buttons without clipping on right edge */
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button[data-tooltip]::after {
+        left: 50%;
+        top: auto;
+        bottom: calc(100% + 6px);
+        transform: translateX(-50%);
+        margin-left: 0;
+        margin-bottom: 0;
+        z-index: 500;
+        box-shadow: 0 4px 12px var(--color-shadow-medium);
+        pointer-events: none;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:nth-child(6n)[data-tooltip]::after,
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:nth-child(7n)[data-tooltip]::after,
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:last-child[data-tooltip]::after {
+        left: auto;
+        right: 2px;
+        transform: none;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:nth-child(6n+1)[data-tooltip]::after,
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:nth-child(7n+1)[data-tooltip]::after,
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button:first-child[data-tooltip]::after {
+        left: 2px;
+        right: auto;
+        transform: none;
+    }
+
+    /* Mobile Canvas Popovers: Bottom Sheet style completely below the pitch canvas */
     .anim-main-workspace:has(.c-tool-dock) .c-popover--canvas {
         position: fixed;
-        top: 45%;
-        left: 50%;
-        bottom: auto;
-        right: auto;
-        transform: translate(-50%, -50%);
-        width: min(320px, calc(100vw - 32px)) !important;
-        max-height: calc(100dvh - 160px);
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        transform: none;
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: calc(100dvh - 280px);
         overflow-y: auto;
         margin: 0 !important;
-        z-index: 3500;
-        border-radius: var(--radius-lg);
-        box-shadow: 0 16px 40px var(--color-shadow-strong);
+        padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom, 0px));
+        z-index: 4000;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        box-shadow: 0 -8px 32px var(--color-shadow-strong);
         background: var(--surface);
         border: 1px solid var(--surface-border);
+        border-bottom: none;
+        box-sizing: border-box;
     }
 
     /* Mobile: Toggle between Draw & Animation */
