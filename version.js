@@ -1,8 +1,17 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.30.92';
+export const APP_VERSION = 'v1.30.93';
 export const RELEASE_DATE = '2026-08-20';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.30.93',
+        date: '2026-08-20',
+        title: '練習操作の共有ボタン縮小を修正',
+        features: [
+            'コンテナ規則が共有ボタンの列指定を上書きしていた競合を解消し、共有・編集・削除を常に3等分へ固定',
+            '全操作の高さ・余白・中央配置を統一し、操作群が一体的に見えるよう補正'
+        ]
+    },
     {
         version: 'v1.30.92',
         date: '2026-08-20',

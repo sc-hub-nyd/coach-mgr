@@ -20,20 +20,23 @@ assert.match(practices, /btn-edit-practice[\s\S]*?<span>編集<\/span>/, '均等
 assert.match(practices, /btn-delete-practice[\s\S]*?<span>削除<\/span>/, '均等幅の削除操作には可視ラベルが必要です');
 
 [
-    '/* Practice-card actions use two ordered rows. Each row distributes its controls evenly to avoid a cramped share button beside oversized icon buttons. */',
+    '/* Practice-card actions use two ordered rows. The explicit card modifier outranks generic container rules, so the three maintenance actions always occupy equal columns. */',
+    '.c-practice-card.c-practice-card--toolbar-actions .c-practice-card__actions {',
     'grid-template-columns: repeat(6, minmax(0, 1fr));',
-    '.c-practice-card--toolbar-actions .btn-add-menu {',
+    'inline-size: 100%;',
+    '.c-practice-card.c-practice-card--toolbar-actions .c-practice-card__actions .btn-add-menu {',
     'grid-column: 1 / 4;',
-    '.c-practice-card--toolbar-actions .btn-save-practice-template {',
+    '.c-practice-card.c-practice-card--toolbar-actions .c-practice-card__actions .btn-save-practice-template {',
     'grid-column: 4 / -1;',
-    '.c-practice-card--toolbar-actions .btn-share-practice {',
+    '.c-practice-card.c-practice-card--toolbar-actions .c-practice-card__actions .btn-share-practice {',
     'grid-column: 1 / 3;',
-    '.c-practice-card--toolbar-actions .btn-edit-practice {',
+    '.c-practice-card.c-practice-card--toolbar-actions .c-practice-card__actions .btn-edit-practice {',
     'grid-column: 3 / 5;',
-    '.c-practice-card--toolbar-actions .btn-delete-practice {',
+    '.c-practice-card.c-practice-card--toolbar-actions .c-practice-card__actions .btn-delete-practice {',
     'grid-column: 5 / -1;',
+    'block-size: var(--tap-target-min);',
     'min-block-size: var(--tap-target-min);',
-    'text-overflow: ellipsis;'
+    'margin: 0;'
 ].forEach(fragment => assert.ok(system.includes(fragment), `練習操作の二段構成契約が不足しています: ${fragment}`));
 
 assert.match(index, /id="modal-mobile-more"[^>]*aria-describedby="mobile-more-description"/, 'その他メニューは説明文と関連付ける必要があります');
