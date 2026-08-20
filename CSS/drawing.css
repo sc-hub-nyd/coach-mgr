@@ -903,7 +903,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
 
     .anim-main-workspace:has(.c-tool-dock) .canvas-wrapper {
         width: 100%;
-        height: 100%;
+        height: auto;
         max-width: 100%;
         max-height: 100%;
         aspect-ratio: 8 / 5;
@@ -967,10 +967,20 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         border-top: 1px solid var(--surface-border);
         background: var(--surface);
         order: 3;
-        scrollbar-width: none;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary) var(--surface-border);
+        padding-bottom: 2px;
     }
     .anim-main-workspace:has(.c-tool-dock) .c-tool-dock::-webkit-scrollbar {
-        display: none;
+        height: 4px;
+        display: block;
+    }
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock::-webkit-scrollbar-track {
+        background: var(--surface-border);
+    }
+    .anim-main-workspace:has(.c-tool-dock) .c-tool-dock::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: var(--radius-sm);
     }
 
     .anim-main-workspace:has(.c-tool-dock) .c-tool-dock__button {
@@ -995,6 +1005,18 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         height: 60%;
         margin: 0 4px;
         flex-shrink: 0;
+    }
+
+    .anim-main-workspace:has(.c-tool-dock) .c-popover--canvas {
+        position: fixed;
+        top: auto;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        right: auto;
+        margin-top: 0;
+        z-index: 1000;
+        box-shadow: 0 -4px 16px var(--color-shadow-medium);
     }
 
     /* Mobile: Toggle between Draw & Animation */
