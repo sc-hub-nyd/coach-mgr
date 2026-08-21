@@ -18,6 +18,7 @@ const planningIndex = index.indexOf('id="btn-bottom-nav-library-tactics"');
 const moreIndex = index.indexOf('id="btn-bottom-nav-more"');
 assert.ok(homeIndex >= 0 && playersIndex > homeIndex && scheduleIndex > playersIndex && planningIndex > scheduleIndex && moreIndex > planningIndex,
     'コーチのボトムナビはホーム→選手管理→試合／練習→メニュー／戦術→その他の順である必要があります');
+assert.match(index, /id="btn-bottom-nav-library-tactics"[\s\S]*?ti-soccer-field/, 'メニュー／戦術トリガーはピッチを表すTablerアイコンを使う必要があります');
 
 assert.match(index, /class="[^"]*c-bottom-nav__item--parent-route[^"]*" data-route="matches"/, '保護者用の試合導線を維持する必要があります');
 assert.match(index, /class="[^"]*c-bottom-nav__item--parent-route[^"]*" data-route="practices"/, '保護者用の練習導線を維持する必要があります');

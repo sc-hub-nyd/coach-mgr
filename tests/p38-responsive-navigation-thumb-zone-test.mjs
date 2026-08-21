@@ -16,6 +16,8 @@ test('P38-1: PCサイドバーフッターの配置と機能契約検証', () =>
     assert.match(indexHtml, /id="btn-toggle-role"/, 'btn-toggle-role exists in sidebar');
     assert.match(indexHtml, /id="btn-toggle-color-mode"/, 'btn-toggle-color-mode exists in sidebar');
     assert.match(indexHtml, /id="btn-topbar-sync-status"/, 'sync-status exists in sidebar');
+    assert.match(indexHtml, /class="c-sidebar__theme-row"[\s\S]*?ti-palette[\s\S]*?<span>テーマ<\/span>/, 'PCサイドバーのテーマ行は簡潔な「テーマ」表記を使う');
+    assert.doesNotMatch(indexHtml, /class="c-sidebar__theme-row"[\s\S]*?<span>表示テーマ<\/span>/, 'PCサイドバーに旧「表示テーマ」表記を戻してはいけない');
     assert.match(indexHtml, /id="topbar-version-badge"/, 'topbar-version-badge exists in sidebar');
     assert.match(baseCss, /\.c-sidebar\s*\{[\s\S]*?box-sizing:\s*border-box;[\s\S]*?overflow:\s*hidden;/, 'sidebar owns the viewport and does not create a competing page scroll area');
     assert.match(baseCss, /\.c-sidebar__nav\s*\{[\s\S]*?min-block-size:\s*0;[\s\S]*?flex-grow:\s*1;[\s\S]*?overflow-y:\s*auto;[\s\S]*?overscroll-behavior:\s*contain;/, 'sidebar navigation is the stable, contained scroll region');
@@ -30,8 +32,8 @@ test('P38-1: PCサイドバーフッターの配置と機能契約検証', () =>
     const syncRowIndex = indexHtml.indexOf('class="c-sidebar__sync-row');
     const themeRowIndex = indexHtml.indexOf('class="c-sidebar__theme-row"');
     const versionRowIndex = indexHtml.indexOf('class="c-sidebar__version-row"');
-    assert.ok(roleRowIndex < syncRowIndex && syncRowIndex < themeRowIndex && themeRowIndex < versionRowIndex, 'sidebar utilities stay vertically ordered as mode, cloud sync, display theme, then version');
-    assert.match(baseCss, /\.c-sidebar__user-card,\s*\.c-sidebar__theme-row\s*\{[\s\S]*?inline-size:\s*100%;[\s\S]*?min-block-size:\s*2\.35rem;[\s\S]*?justify-content:\s*space-between;/, 'mode and display-theme rows share a full-width balanced layout');
+    assert.ok(roleRowIndex < syncRowIndex && syncRowIndex < themeRowIndex && themeRowIndex < versionRowIndex, 'sidebar utilities stay vertically ordered as mode, cloud sync, theme, then version');
+    assert.match(baseCss, /\.c-sidebar__user-card,\s*\.c-sidebar__theme-row\s*\{[\s\S]*?inline-size:\s*100%;[\s\S]*?min-block-size:\s*2\.35rem;[\s\S]*?justify-content:\s*space-between;/, 'mode and theme rows share a full-width balanced layout');
     assert.match(baseCss, /\.c-sidebar__sync-button\s*\{[\s\S]*?min-block-size:\s*2\.35rem;/, 'cloud sync uses the same minimum touch-row height');
     assert.match(indexHtml, /class="c-role-mode-switch" id="btn-toggle-role" aria-pressed="false" data-user-role="parent"/, 'desktop role control uses the accessible two-choice pill');
     assert.match(indexHtml, /class="c-role-mode-switch c-role-mode-switch--mobile" id="mobile-btn-toggle-role" aria-pressed="false" data-user-role="parent"/, 'mobile role control uses the same accessible two-choice pill');

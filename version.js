@@ -1,8 +1,18 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.31.17';
+export const APP_VERSION = 'v1.31.18';
 export const RELEASE_DATE = '2026-08-21';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.31.18',
+        date: '2026-08-21',
+        title: 'モバイル戦術導線をピッチアイコンへ更新',
+        features: [
+            'UI：コーチ用モバイルボトムナビの「メニュー／戦術」を、戦術経路ではなくピッチを表すTablerアイコンへ変更',
+            '表記：PC左サイドバー下部の「表示テーマ」を、簡潔な「テーマ」へ短縮',
+            '互換性：メニュー／戦術の二択シート、保護者用ナビ、Light／Dark切替、ARIA、ローカルTabler Icons専用体系を維持'
+        ]
+    },
     {
         version: 'v1.31.17',
         date: '2026-08-21',
