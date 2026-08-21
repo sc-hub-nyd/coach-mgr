@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.31.14';
+export const APP_VERSION = 'v1.31.15';
 export const RELEASE_DATE = '2026-08-21';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.31.15',
+        date: '2026-08-21',
+        title: '役割・表示テーマ切替をアイコン付きテキスト型へ統一',
+        features: [
+            'UI：保護者／コーチ切替を、保護者アイコン＋保護者、コーチアイコン＋コーチを常時表示する二択セグメントへ変更',
+            'UI：Light／Dark切替を、太陽アイコン＋ライト、月アイコン＋ダークを常時表示する二択セグメントへ変更',
+            '状態：スライダー移動ではなく、選択中セグメントのsurface・文字色・shadowで現在状態を明示',
+            '互換性：既存の役割パスコード確認、権限制御、テーマ状態同期、ARIA、キーボード操作、動きを減らす設定を維持'
+        ]
+    },
     {
         version: 'v1.31.14',
         date: '2026-08-21',

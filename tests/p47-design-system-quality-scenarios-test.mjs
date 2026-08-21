@@ -56,7 +56,7 @@ assert.doesNotMatch(components, /\.pwa-update-banner \.btn-primary\s*\{/, 'PWA�
 assert.match(tokens, /--color-update-action-hover-surface:/, 'PWA更新操作のhover surfaceトークンが必要です');
 assert.match(tokens, /--color-update-action-hover-text:/, 'PWA更新操作のhover textトークンが必要です');
 assert.match(tokens, /--color-update-action-pressed-surface:/, 'PWA更新操作のpressed surfaceトークンが必要です');
-assert.match(serviceWorker, /coachmgr-v241/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
+assert.match(serviceWorker, /coachmgr-v242/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
 assert.match(index, /rel="apple-touch-icon" sizes="180x180" href="\.\/icons\/apple-touch-icon\.png"/, 'iOSは文字なしApple Touch Iconを参照する必要があります');
 assert.match(index, /rel="icon" type="image\/png" sizes="32x32" href="\.\/icons\/favicon-32\.png"/, 'ブラウザは32pxの文字なしFaviconを参照する必要があります');
 assert.ok(manifest.icons.some(icon => icon.src === './icons/icon-192.png' && icon.sizes === '192x192' && icon.purpose === 'any'), 'manifestは通常PWA用192px文字なしアイコンを宣言する必要があります');
@@ -71,10 +71,10 @@ assert.match(serviceWorker, /tabler-icons-subset\.css/, 'PWA更新シナリオ�
 assert.match(serviceWorker, /tabler-icons-subset\.woff2/, 'PWA更新シナリオはTablerサブセットWOFF2をprecacheする必要があります');
 assert.match(index, /id="btn-toggle-color-mode" role="switch" aria-checked="false" data-color-mode="light"/, 'PCテーマ切替は状態を読めるswitchとして提供する必要があります');
 assert.match(index, /id="mobile-btn-toggle-color-mode" role="switch" aria-checked="false" data-color-mode="light"/, 'モバイルテーマ切替は状態を読めるswitchとして提供する必要があります');
-assert.match(index, /c-theme-mode-switch__sun[\s\S]*?c-theme-mode-switch__moon[\s\S]*?c-theme-mode-switch__thumb/, 'テーマ切替は太陽・月・スライダーを持つピル構造を維持する必要があります');
-assert.match(base, /\.c-theme-mode-switch__thumb\s*\{[\s\S]*?transition: transform var\(--duration-base\) var\(--ease-spring\)/, 'テーマ切替スライダーは共通モーションで移動する必要があります');
-assert.match(base, /:root\[data-color-mode="dark"\] \.c-theme-mode-switch__thumb\s*\{[\s\S]*?transform: translateX\(2\.3rem\)/, 'ダークテーマではスライダーを月側へ移動する必要があります');
-assert.match(base, /prefers-reduced-motion: reduce[\s\S]*?\.c-theme-mode-switch__thumb[\s\S]*?transition-duration: 1ms/, '動きを減らす設定ではテーマ切替のスライダーも1msへ縮退する必要があります');
+assert.match(index, /c-theme-mode-switch__segment--light[\s\S]*?ti-sun[\s\S]*?ライト[\s\S]*?c-theme-mode-switch__segment--dark[\s\S]*?ti-moon[\s\S]*?ダーク/, 'テーマ切替は太陽＋ライトと月＋ダークを常時表示する必要があります');
+assert.match(base, /\.c-theme-mode-switch\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'テーマ切替は二択セグメントを等幅で配置する必要があります');
+assert.match(base, /\.c-theme-mode-switch\[data-color-mode="dark"\] \.c-theme-mode-switch__segment--dark[\s\S]*?background: var\(--color-surface-raised\);/, 'ダークテーマではダークセグメントを選択面として表示する必要があります');
+assert.match(base, /prefers-reduced-motion: reduce[\s\S]*?\.c-theme-mode-switch__segment[\s\S]*?transition-duration: 1ms/, '動きを減らす設定ではテーマ切替セグメントも1msへ縮退する必要があります');
 assert.match(appJs, /toggle\.setAttribute\('aria-checked', String\(isDark\)\)/, 'テーマ切替はモードに合わせてaria-checkedを同期する必要があります');
 
 // P47-UI: P1〜P3の色役割、非標準操作、形状尺度、例外台帳を保護する。

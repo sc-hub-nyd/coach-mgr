@@ -35,10 +35,10 @@ test('P38-1: PCサイドバーフッターの配置と機能契約検証', () =>
     assert.match(baseCss, /\.c-sidebar__sync-button\s*\{[\s\S]*?min-block-size:\s*2\.35rem;/, 'cloud sync uses the same minimum touch-row height');
     assert.match(indexHtml, /class="c-role-mode-switch" id="btn-toggle-role" aria-pressed="false" data-user-role="parent"/, 'desktop role control uses the accessible two-choice pill');
     assert.match(indexHtml, /class="c-role-mode-switch c-role-mode-switch--mobile" id="mobile-btn-toggle-role" aria-pressed="false" data-user-role="parent"/, 'mobile role control uses the same accessible two-choice pill');
-    assert.match(indexHtml, /c-role-mode-switch__label--parent[\s\S]*?c-role-mode-switch__label--coach[\s\S]*?c-role-mode-switch__thumb/, 'role control exposes parent, coach, and the selected-position thumb');
-    assert.match(baseCss, /\.c-role-mode-switch__thumb\s*\{[\s\S]*?transition: transform var\(--duration-base\) var\(--ease-spring\)/, 'role thumb settles with the shared motion tokens');
-    assert.match(baseCss, /\.c-role-mode-switch\[data-user-role="coach"\] \.c-role-mode-switch__thumb\s*\{[\s\S]*?transform: translateX\(3\.8rem\)/, 'coach state moves the role thumb to the coach side');
-    assert.match(baseCss, /prefers-reduced-motion: reduce[\s\S]*?\.c-role-mode-switch__thumb[\s\S]*?transition-duration: 1ms/, 'reduced motion shortens the role thumb animation');
+    assert.match(indexHtml, /c-role-mode-switch__segment--parent[\s\S]*?ti-eye[\s\S]*?保護者[\s\S]*?c-role-mode-switch__segment--coach[\s\S]*?ti-user-shield[\s\S]*?コーチ/, 'role control keeps an icon and text for both guardian and coach segments');
+    assert.match(baseCss, /\.c-role-mode-switch\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'role control uses two equal visible segments');
+    assert.match(baseCss, /\.c-role-mode-switch\[data-user-role="coach"\] \.c-role-mode-switch__segment--coach[\s\S]*?background: var\(--color-surface-raised\);/, 'coach state selects the coach segment surface');
+    assert.match(baseCss, /prefers-reduced-motion: reduce[\s\S]*?\.c-role-mode-switch__segment[\s\S]*?transition-duration: 1ms/, 'reduced motion shortens the role segment animation');
     assert.match(appJs, /toggle\.dataset\.userRole = isCoach \? 'coach' : 'parent';/, 'role control synchronizes its visual state with currentUserRole');
     assert.match(appJs, /toggle\.setAttribute\('aria-pressed', String\(isCoach\)\)/, 'role control exposes its selected role state to assistive technology');
 });

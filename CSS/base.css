@@ -329,14 +329,15 @@ a,
     font-size: 0.75rem;
 }
 
-/* Role mode switch: two named roles share the theme-switch pill language without treating role as an on/off switch. */
+/* Role mode switch: named role segments make the current operating mode explicit without treating it as an on/off switch. */
 .c-role-mode-switch {
     inline-size: 8.2rem;
     block-size: 2.35rem;
-    display: inline-flex;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: center;
-    justify-content: center;
-    padding: 0;
+    gap: 0.1rem;
+    padding: 0.2rem;
     border: 1px solid color-mix(in srgb, var(--color-border) 74%, transparent);
     border-radius: 9999px;
     background: color-mix(in srgb, var(--color-surface-subtle) 88%, var(--color-brand));
@@ -356,79 +357,55 @@ a,
     outline-offset: 0.18rem;
 }
 
-.c-role-mode-switch__track {
-    position: relative;
-    inline-size: 7.55rem;
-    block-size: 1.8rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.c-role-mode-switch__segment {
+    min-inline-size: 0;
+    min-block-size: 1.7rem;
+    display: inline-flex;
     align-items: center;
-    justify-items: center;
-}
-
-.c-role-mode-switch__label {
-    position: relative;
-    z-index: 1;
+    justify-content: center;
+    gap: 0.2rem;
+    border-radius: 9999px;
     color: var(--color-text-muted);
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 800;
     white-space: nowrap;
-    transition: color var(--duration-fast) var(--ease-out), opacity var(--duration-fast) var(--ease-out), transform var(--duration-base) var(--ease-spring);
+    transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out), transform var(--duration-base) var(--ease-spring);
 }
 
-.c-role-mode-switch__label--parent {
-    color: var(--color-brand);
+.c-role-mode-switch__segment .ti {
+    flex: 0 0 auto;
+    font-size: 0.84rem;
 }
 
-.c-role-mode-switch__thumb {
-    position: absolute;
-    z-index: 0;
-    inset-block-start: 0.05rem;
-    inset-inline-start: 0.05rem;
-    inline-size: 3.65rem;
-    block-size: 1.7rem;
-    border-radius: 9999px;
+.c-role-mode-switch[data-user-role="parent"] .c-role-mode-switch__segment--parent,
+.c-role-mode-switch[data-user-role="coach"] .c-role-mode-switch__segment--coach {
     background: var(--color-surface-raised);
+    color: var(--color-brand);
     box-shadow: var(--shadow-sm);
-    transition: transform var(--duration-base) var(--ease-spring), background-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
 }
 
 :root[data-color-mode="dark"] .c-role-mode-switch {
     background: color-mix(in srgb, var(--color-surface-raised) 86%, var(--color-brand));
 }
 
-:root[data-color-mode="dark"] .c-role-mode-switch__thumb {
+:root[data-color-mode="dark"] .c-role-mode-switch[data-user-role="parent"] .c-role-mode-switch__segment--parent,
+:root[data-color-mode="dark"] .c-role-mode-switch[data-user-role="coach"] .c-role-mode-switch__segment--coach {
     background: var(--color-surface);
-}
-
-.c-role-mode-switch[data-user-role="coach"] .c-role-mode-switch__thumb {
-    transform: translateX(3.8rem);
-}
-
-.c-role-mode-switch[data-user-role="coach"] .c-role-mode-switch__label--parent {
-    color: var(--color-text-muted);
-    opacity: 0.72;
-    transform: scale(0.94);
-}
-
-.c-role-mode-switch[data-user-role="coach"] .c-role-mode-switch__label--coach {
-    color: var(--color-brand);
-    opacity: 1;
-    transform: scale(1.04);
 }
 
 .c-role-mode-switch--mobile {
     flex: 0 0 auto;
 }
 
-/* Theme mode switch: compact sun/moon pill with an immediate theme swap and a token-driven thumb settle. */
+/* Theme mode switch: named light/dark segments make both destinations visible at all times. */
 .c-theme-mode-switch {
-    inline-size: 4.65rem;
+    inline-size: 8.2rem;
     block-size: 2.35rem;
-    display: inline-flex;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: center;
-    justify-content: center;
-    padding: 0;
+    gap: 0.1rem;
+    padding: 0.2rem;
     border: 1px solid color-mix(in srgb, var(--color-border) 74%, transparent);
     border-radius: 9999px;
     background: color-mix(in srgb, var(--color-surface-subtle) 88%, var(--color-brand));
@@ -448,101 +425,60 @@ a,
     outline-offset: 0.18rem;
 }
 
-.c-theme-mode-switch__track {
-    position: relative;
-    inline-size: 4.1rem;
-    block-size: 1.8rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.c-theme-mode-switch__segment {
+    min-inline-size: 0;
+    min-block-size: 1.7rem;
+    display: inline-flex;
     align-items: center;
-    justify-items: center;
-}
-
-.c-theme-mode-switch__sun,
-.c-theme-mode-switch__moon {
-    position: relative;
-    z-index: 1;
-    font-size: 0.9rem;
-    transition: color var(--duration-fast) var(--ease-out), opacity var(--duration-fast) var(--ease-out), transform var(--duration-base) var(--ease-spring);
-}
-
-.c-theme-mode-switch__sun {
-    color: var(--color-brand);
-}
-
-.c-theme-mode-switch__moon {
-    color: var(--color-text-muted);
-    opacity: 0.72;
-}
-
-.c-theme-mode-switch__thumb {
-    position: absolute;
-    z-index: 0;
-    inset-block-start: 0.05rem;
-    inset-inline-start: 0.05rem;
-    inline-size: 1.7rem;
-    block-size: 1.7rem;
+    justify-content: center;
+    gap: 0.2rem;
     border-radius: 9999px;
+    color: var(--color-text-muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    white-space: nowrap;
+    transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out), transform var(--duration-base) var(--ease-spring);
+}
+
+.c-theme-mode-switch__segment .ti {
+    flex: 0 0 auto;
+    font-size: 0.84rem;
+}
+
+.c-theme-mode-switch[data-color-mode="light"] .c-theme-mode-switch__segment--light,
+.c-theme-mode-switch[data-color-mode="dark"] .c-theme-mode-switch__segment--dark {
     background: var(--color-surface-raised);
+    color: var(--color-brand);
     box-shadow: var(--shadow-sm);
-    transition: transform var(--duration-base) var(--ease-spring), background-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
 }
 
 :root[data-color-mode="dark"] .c-theme-mode-switch {
     background: color-mix(in srgb, var(--color-surface-raised) 86%, var(--color-brand));
 }
 
-:root[data-color-mode="dark"] .c-theme-mode-switch__thumb {
-    transform: translateX(2.3rem);
+:root[data-color-mode="dark"] .c-theme-mode-switch[data-color-mode="light"] .c-theme-mode-switch__segment--light,
+:root[data-color-mode="dark"] .c-theme-mode-switch[data-color-mode="dark"] .c-theme-mode-switch__segment--dark {
     background: var(--color-surface);
 }
 
-:root[data-color-mode="dark"] .c-theme-mode-switch__sun {
-    color: var(--color-text-muted);
-    opacity: 0.72;
-    transform: scale(0.9);
-}
-
-:root[data-color-mode="dark"] .c-theme-mode-switch__moon {
-    color: var(--color-brand);
-    opacity: 1;
-    transform: scale(1.08);
-}
-
 .c-theme-mode-switch--mobile {
-    inline-size: auto;
-    min-inline-size: 8.7rem;
-    justify-content: flex-start;
-    gap: 0.45rem;
-    padding-inline: 0.25rem 0.55rem;
-}
-
-.c-theme-mode-switch__label {
-    color: var(--color-text);
-    font-size: 0.78rem;
-    font-weight: 700;
-    white-space: nowrap;
+    inline-size: 8.2rem;
+    min-inline-size: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
     .c-role-mode-switch,
-    .c-role-mode-switch__label,
-    .c-role-mode-switch__thumb,
+    .c-role-mode-switch__segment,
     .c-theme-mode-switch,
-    .c-theme-mode-switch__sun,
-    .c-theme-mode-switch__moon,
-    .c-theme-mode-switch__thumb {
+    .c-theme-mode-switch__segment {
         transition-duration: 1ms;
     }
 }
 
 :root[data-reduce-motion="true"] .c-role-mode-switch,
-:root[data-reduce-motion="true"] .c-role-mode-switch__label,
-:root[data-reduce-motion="true"] .c-role-mode-switch__thumb,
+:root[data-reduce-motion="true"] .c-role-mode-switch__segment,
 :root[data-reduce-motion="true"] .c-theme-mode-switch,
-:root[data-reduce-motion="true"] .c-theme-mode-switch__sun,
-:root[data-reduce-motion="true"] .c-theme-mode-switch__moon,
-:root[data-reduce-motion="true"] .c-theme-mode-switch__thumb {
+:root[data-reduce-motion="true"] .c-theme-mode-switch__segment {
     transition-duration: 1ms;
 }
 
