@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.31.11';
+export const APP_VERSION = 'v1.31.12';
 export const RELEASE_DATE = '2026-08-21';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.31.12',
+        date: '2026-08-21',
+        title: 'Light／Dark切替を太陽・月ピルスイッチへ刷新',
+        features: [
+            'UI：PCサイドバーとモバイルその他メニューのテーマ切替を、太陽・月・円形スライダーを持つピル型スイッチへ統一',
+            '状態：Lightでは太陽側、Darkでは月側へスライダーを移動し、背景テーマは既存のチャコール基調・リキッドガラス設計を即時に切り替え',
+            'アクセシビリティ：role=switch、aria-checked、状態別aria-label、キーボード操作、focus-visible、動きを減らす設定での1ms縮退を追加',
+            '検証：P47へテーマ切替の構造・状態同期・モーション削減契約を追加'
+        ]
+    },
     {
         version: 'v1.31.11',
         date: '2026-08-21',

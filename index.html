@@ -54,8 +54,12 @@
                         <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-sidebar__footer-button" id="btn-toggle-role" title="モードを切り替えます">
                             <i class="ti ti-arrows-exchange" aria-hidden="true"></i><span>切替</span>
                         </button>
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-sidebar__footer-button" id="btn-toggle-color-mode" title="ライト／ダーク表示を切り替えます" aria-label="ライト／ダーク表示を切り替えます">
-                            <i class="ti ti-moon" aria-hidden="true"></i>
+                        <button type="button" class="c-theme-mode-switch" id="btn-toggle-color-mode" role="switch" aria-checked="false" data-color-mode="light" title="ダーク表示へ切り替えます" aria-label="ダーク表示へ切り替えます">
+                            <span class="c-theme-mode-switch__track" aria-hidden="true">
+                                <i class="ti ti-sun c-theme-mode-switch__sun"></i>
+                                <i class="ti ti-moon c-theme-mode-switch__moon"></i>
+                                <span class="c-theme-mode-switch__thumb"></span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -91,7 +95,7 @@
 
                 <div class="c-sidebar__version-row">
                     <button type="button" class="btn-link c-sidebar__version-button" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <i class="ti ti-info-circle" aria-hidden="true"></i> <span id="topbar-version-text">v1.31.11</span>
+                        <i class="ti ti-info-circle" aria-hidden="true"></i> <span id="topbar-version-text">v1.31.12</span>
                     </button>
                 </div>
             </div>
@@ -224,11 +228,16 @@
                 </section>
 
                 <div class="mobile-more-utility-row c-mobile-more__utility-row">
-                    <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="mobile-btn-toggle-color-mode">
-                        <i class="ti ti-moon" aria-hidden="true"></i> <span id="mobile-color-mode-text">ダーク表示</span>
+                    <button type="button" class="c-theme-mode-switch c-theme-mode-switch--mobile" id="mobile-btn-toggle-color-mode" role="switch" aria-checked="false" data-color-mode="light" title="ダーク表示へ切り替えます" aria-label="ダーク表示へ切り替えます">
+                        <span class="c-theme-mode-switch__track" aria-hidden="true">
+                            <i class="ti ti-sun c-theme-mode-switch__sun"></i>
+                            <i class="ti ti-moon c-theme-mode-switch__moon"></i>
+                            <span class="c-theme-mode-switch__thumb"></span>
+                        </span>
+                        <span class="c-theme-mode-switch__label" id="mobile-color-mode-text">ダーク表示</span>
                     </button>
                     <button type="button" class="btn-link c-mobile-more__version" id="mobile-version-badge" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <span id="mobile-version-text">v1.31.9</span>
+                        <span id="mobile-version-text">v1.31.12</span>
                     </button>
                 </div>
             </div>

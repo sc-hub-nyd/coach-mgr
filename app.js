@@ -2717,14 +2717,14 @@ async function init() {
 
     const updateColorModeToggle = mode => {
         const isDark = mode === 'dark';
-        if (toggleColorModeBtn) {
-            toggleColorModeBtn.innerHTML = `<i class="${isDark ? 'ti ti-sun' : 'ti ti-moon'}" aria-hidden="true"></i>`;
-            toggleColorModeBtn.setAttribute('aria-label', `${isDark ? 'ライト' : 'ダーク'}表示へ切り替えます`);
-            toggleColorModeBtn.title = `${isDark ? 'ライト' : 'ダーク'}表示へ切り替えます`;
-        }
-        if (mobileToggleColorModeBtn) {
-            mobileToggleColorModeBtn.innerHTML = `<i class="${isDark ? 'ti ti-sun' : 'ti ti-moon'}" aria-hidden="true"></i> <span>${isDark ? 'ライト表示' : 'ダーク表示'}</span>`;
-        }
+        const nextLabel = `${isDark ? 'ライト' : 'ダーク'}表示へ切り替えます`;
+        [toggleColorModeBtn, mobileToggleColorModeBtn].filter(Boolean).forEach(toggle => {
+            toggle.dataset.colorMode = mode;
+            toggle.setAttribute('aria-checked', String(isDark));
+            toggle.setAttribute('aria-label', nextLabel);
+            toggle.title = nextLabel;
+        });
+        if (mobileColorModeText) mobileColorModeText.textContent = isDark ? 'ライト表示' : 'ダーク表示';
     };
     updateColorModeToggle(uiPreferences.colorMode);
     window.addEventListener('coachmgr:color-mode-changed', event => updateColorModeToggle(event.detail?.colorMode));

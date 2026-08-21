@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const read = file => readFile(new URL(file, import.meta.url), 'utf8');
-const [fixtureText, protocol, index, serviceWorker, utils, standard, components, tokens, base, system, dashboard, drawing, tactical, matches, exceptionLedger, manifestText] = await Promise.all([
+const [fixtureText, protocol, index, serviceWorker, utils, standard, components, tokens, base, system, dashboard, drawing, tactical, matches, exceptionLedger, manifestText, appJs] = await Promise.all([
     read('./fixtures/design-system-high-density-fixture.json'),
     read('../doc/DESIGN_SYSTEM_VISUAL_REGRESSION_PROTOCOL.md'),
     read('../index.html'),
@@ -18,7 +18,8 @@ const [fixtureText, protocol, index, serviceWorker, utils, standard, components,
     read('../CSS/tactical.css'),
     read('../matches.js'),
     read('../doc/UI_EXCEPTION_LEDGER.md'),
-    read('../manifest.json')
+    read('../manifest.json'),
+    read('../app.js')
 ]);
 const fixture = JSON.parse(fixtureText);
 const manifest = JSON.parse(manifestText);
@@ -55,7 +56,7 @@ assert.doesNotMatch(components, /\.pwa-update-banner \.btn-primary\s*\{/, 'PWA�
 assert.match(tokens, /--color-update-action-hover-surface:/, 'PWA更新操作のhover surfaceトークンが必要です');
 assert.match(tokens, /--color-update-action-hover-text:/, 'PWA更新操作のhover textトークンが必要です');
 assert.match(tokens, /--color-update-action-pressed-surface:/, 'PWA更新操作のpressed surfaceトークンが必要です');
-assert.match(serviceWorker, /coachmgr-v238/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
+assert.match(serviceWorker, /coachmgr-v239/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
 assert.match(index, /rel="apple-touch-icon" sizes="180x180" href="\.\/icons\/apple-touch-icon\.png"/, 'iOSは文字なしApple Touch Iconを参照する必要があります');
 assert.match(index, /rel="icon" type="image\/png" sizes="32x32" href="\.\/icons\/favicon-32\.png"/, 'ブラウザは32pxの文字なしFaviconを参照する必要があります');
 assert.ok(manifest.icons.some(icon => icon.src === './icons/icon-192.png' && icon.sizes === '192x192' && icon.purpose === 'any'), 'manifestは通常PWA用192px文字なしアイコンを宣言する必要があります');
@@ -68,6 +69,13 @@ assert.match(serviceWorker, /canvas-palette\.js/, 'PWA更新シナリオはCanva
 assert.match(serviceWorker, /pitch-renderer\.js/, 'PWA更新シナリオはピッチレンダラをprecacheする必要があります');
 assert.match(serviceWorker, /tabler-icons-subset\.css/, 'PWA更新シナリオはTablerサブセットCSSをprecacheする必要があります');
 assert.match(serviceWorker, /tabler-icons-subset\.woff2/, 'PWA更新シナリオはTablerサブセットWOFF2をprecacheする必要があります');
+assert.match(index, /id="btn-toggle-color-mode" role="switch" aria-checked="false" data-color-mode="light"/, 'PCテーマ切替は状態を読めるswitchとして提供する必要があります');
+assert.match(index, /id="mobile-btn-toggle-color-mode" role="switch" aria-checked="false" data-color-mode="light"/, 'モバイルテーマ切替は状態を読めるswitchとして提供する必要があります');
+assert.match(index, /c-theme-mode-switch__sun[\s\S]*?c-theme-mode-switch__moon[\s\S]*?c-theme-mode-switch__thumb/, 'テーマ切替は太陽・月・スライダーを持つピル構造を維持する必要があります');
+assert.match(base, /\.c-theme-mode-switch__thumb\s*\{[\s\S]*?transition: transform var\(--duration-base\) var\(--ease-spring\)/, 'テーマ切替スライダーは共通モーションで移動する必要があります');
+assert.match(base, /:root\[data-color-mode="dark"\] \.c-theme-mode-switch__thumb\s*\{[\s\S]*?transform: translateX\(2\.3rem\)/, 'ダークテーマではスライダーを月側へ移動する必要があります');
+assert.match(base, /prefers-reduced-motion: reduce[\s\S]*?\.c-theme-mode-switch__thumb[\s\S]*?transition-duration: 1ms/, '動きを減らす設定ではテーマ切替のスライダーも1msへ縮退する必要があります');
+assert.match(appJs, /toggle\.setAttribute\('aria-checked', String\(isDark\)\)/, 'テーマ切替はモードに合わせてaria-checkedを同期する必要があります');
 
 // P47-UI: P1〜P3の色役割、非標準操作、形状尺度、例外台帳を保護する。
 assert.match(tokens, /--radius-micro:/, 'スクロールバー用の微小半径トークンが必要です');
