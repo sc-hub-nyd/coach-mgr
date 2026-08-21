@@ -77,8 +77,7 @@ export function buildDevelopmentTimeline(player, { matches = [], practices = [] 
         .filter(practice => (practice.presentPlayerIds || []).some(id => Number(id) === playerId))
         .map(practice => ({ kind: 'practice', date: practice.date, id: practice.id, title: '練習に参加', detail: practice.location || '練習記録' }));
     return [...notes, ...observations, ...matchActivities, ...practiceActivities]
-        .sort((a, b) => toTimestamp(b.date) - toTimestamp(a.date))
-        .slice(0, 300);
+        .sort((a, b) => toTimestamp(b.date) - toTimestamp(a.date));
 }
 
 export function buildDevelopmentSummary(player, options = {}) {
