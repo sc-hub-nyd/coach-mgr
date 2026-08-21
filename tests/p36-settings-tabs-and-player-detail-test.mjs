@@ -100,7 +100,6 @@ test('3. 選手詳細の個別ページ化 & 選手編集モーダル検証', ()
     assert.match(playersJs, /developmentNoteForm\.hidden = !canEdit;[\s\S]*?control\.disabled = !canEdit;/, 'Development note form is disabled in parent mode');
     assert.match(baseCss, /body\.role-read-only #pd-btn-edit,[\s\S]*?body\.role-read-only #pd-btn-delete,/, 'Read-only CSS covers the current player-detail action IDs');
     assert.match(playersJs, /getPlayerStatistics\(p, \{[\s\S]*?appearanceMatches: playerMatchesList/, 'Player detail uses the shared statistics definition for KPIs and appearances');
-    assert.match(playersJs, /getMatchGoalRecords\(m\)/, 'Player detail uses shared goal-record compatibility for appearance rows');
     assert.match(appJs, /getPlayerStatistics\(player, \{[\s\S]*?attendanceRate: attendancePct,[\s\S]*?goals: playerGoals,[\s\S]*?assists: playerAssists/, 'Dashboard uses the shared statistics definition for my-player KPIs');
     assert.match(dashboardCss, /player-card__identity[\s\S]*?grid-template-rows: 1\.5rem 1\.75rem;/, 'Player cards reserve fixed identity rows');
     assert.match(dashboardCss, /player-card__summary[\s\S]*?grid-template-rows: minmax\(2\.75rem, 1fr\) 1\.5rem 1\.75rem;/, 'Player cards reserve fixed summary rows');

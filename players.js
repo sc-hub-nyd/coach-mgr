@@ -305,27 +305,7 @@ export function initPlayerDetailView(playerId) {
         }
     }
 
-    // 出場試合履歴一覧：フォーメーション登録と参加記録の両方を出場根拠として扱う。
-    const matchesListEl = document.getElementById('pd-matches-list');
-    if (matchesListEl) {
-        matchesListEl.innerHTML = playerMatchesList.length > 0 ? playerMatchesList.map(m => {
-            const goalRecords = getMatchGoalRecords(m);
-            const goalsInMatch = goalRecords.filter(r => String(r.scorerId) === String(p.id)).length;
-            const assistsInMatch = goalRecords.filter(r => String(r.assistId) === String(p.id)).length;
-            let statsBadge = '';
-            if (goalsInMatch > 0) statsBadge += ` <span class="c-status c-status--warning">${goalsInMatch}得点</span>`;
-            if (assistsInMatch > 0) statsBadge += ` <span class="c-status c-status--success">${assistsInMatch}アシスト</span>`;
-            return `
-                <div class="c-data-item c-static-style--031" onclick="navigate('match-detail', { matchId: ${m.id} })">
-                    <div class="c-data-item__label">
-                        <strong>vs ${escapeHtml(m.opponent)}</strong>
-                        <div class="c-static-style--171"><i class="ti ti-calendar"></i> ${m.date} | ${escapeHtml(m.type || '試合')}${statsBadge}</div>
-                    </div>
-                    <span class="c-status c-status--info">${escapeHtml(m.result || '詳細')}</span>
-                </div>
-            `;
-        }).join('') : '<p class="text-secondary c-static-style--247">出場した試合の記録はありません。</p>';
-    }
+    renderDevelopmentNotebook(p);
 }
 
 export function parsePlayerCSV(csvText) {
