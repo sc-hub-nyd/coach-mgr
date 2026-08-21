@@ -1648,18 +1648,18 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
     position: relative;
     z-index: 1;
     margin-bottom: 1rem;
-    background: rgba(255, 255, 255, 0.7);
+    background: color-mix(in srgb, var(--surface) 70%, transparent);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-radius: var(--radius-lg);
     padding: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255, 255, 255, 1);
+    border: 1px solid color-mix(in srgb, var(--surface-border) 80%, transparent);
+    box-shadow: var(--shadow-sm);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .c-data-list--notebook .c-data-list__item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+    box-shadow: var(--shadow-md);
 }
 .c-data-list--notebook .c-data-list__item::before {
     content: '';
@@ -1784,7 +1784,7 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
     height: 10px;
     background: var(--color-brand);
     box-shadow: 0 0 0 2px var(--surface);
-    border-radius: 2px; /* Slight square for flag */
+    border-radius: var(--radius-micro); /* Slight square for flag */
 }
 
 .c-timeline-section {
@@ -1824,7 +1824,7 @@ body.has-context-bar .c-fab {
 }
 
 /* Custom footprint icon */
-.ti-footprints {
+.custom-footprints {
     display: inline-block;
     width: 1.25em;
     height: 1.25em;

@@ -51,7 +51,7 @@ function renderDevelopmentNotebook(player) {
         }).join('') : '<p class="c-focus-summary__note">スキル評価を記録すると、現在のフェーズが表示されます。</p>';
     }
     const labels = { note: '育成ノート', observation: '観察メモ', match: '試合', practice: '練習' };
-    const icons = { note: 'ti-footprints', observation: 'ti-footprints', match: 'ti ti-ball-football', practice: 'ti ti-run' };
+    const icons = { note: 'custom-footprints', observation: 'custom-footprints', match: 'ti ti-ball-football', practice: 'ti ti-run' };
     
     // タイムライン描画関数（インラインフィルター対応・階層化）
     const renderTimeline = () => {
