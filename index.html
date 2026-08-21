@@ -2316,10 +2316,9 @@
                 <form id="form-player-development-note" class="c-settings-form">
                     <input type="hidden" id="development-player-id">
                     <div class="c-form-grid">
-                        <div class="c-form-field"><label class="c-form-field__label" for="development-note-date">日付</label><input id="development-note-date" type="date" class="c-input form-control" required></div>
-                        <div class="c-form-field"><label class="c-form-field__label" for="development-note-focus">今日のテーマ</label><input id="development-note-focus" class="c-input form-control" maxlength="80" placeholder="例：守備の寄せる方向を自分で選ぶ"></div>
+                        <div class="c-form-field"><label class="c-form-field__label" for="development-note-date">日付 <span class="c-status-label c-status-label--required">必須</span></label><input id="development-note-date" type="date" class="c-input form-control" required></div>
                     </div>
-                    <div class="c-form-field"><label class="c-form-field__label" for="development-note-observation">観察メモ</label><textarea id="development-note-observation" class="c-input form-control" rows="3" placeholder="成長した行動・事実を短く記録"></textarea></div>
+                    <div class="c-form-field"><label class="c-form-field__label" for="development-note-observation">観察メモ <span class="c-status-label c-status-label--required">必須</span></label><textarea id="development-note-observation" class="c-input form-control" rows="3" placeholder="成長した行動・事実を短く記録" required></textarea></div>
                     <div class="c-form-field"><label class="c-form-field__label" for="development-note-next-step">次の一歩</label><textarea id="development-note-next-step" class="c-input form-control" rows="2" placeholder="次回練習で取り組む具体的な一歩"></textarea></div>
                     <fieldset class="c-fieldset"><legend class="c-fieldset__legend">スキル自己評価・コーチ評価（任意）</legend><div id="development-note-ratings" class="c-form-grid"></div></fieldset>
                     <div class="c-action-group"><button type="submit" class="c-button btn c-button--primary btn-primary"><i class="ti ti-bookmark"></i> 保存</button></div>

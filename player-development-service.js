@@ -29,8 +29,8 @@ export function addDevelopmentNote(player, { date, focus = '', observation = '',
         skillRatings: normalizedRatings,
         createdAt: now.toISOString()
     };
-    if (!note.focus && !note.observation && !note.nextStep && Object.keys(normalizedRatings).length === 0) {
-        throw new Error('テーマ、観察メモ、次の一歩、またはスキル評価を入力してください');
+    if (!note.observation && !note.nextStep && Object.keys(normalizedRatings).length === 0) {
+        throw new Error('観察メモ、次の一歩、またはスキル評価を入力してください');
     }
     notes.push(note);
     notes.sort((a, b) => toTimestamp(b.date) - toTimestamp(a.date) || toTimestamp(b.createdAt) - toTimestamp(a.createdAt));

@@ -28,7 +28,7 @@ assert.equal(summary.noteCount, 2);
 assert.equal(summary.timeline[0].kind, 'match');
 assert.equal(removeDevelopmentNote(player, first.id).id, first.id);
 assert.equal(player.developmentNotes.length, 1);
-assert.throws(() => addDevelopmentNote(player, {}), /テーマ、観察メモ/);
+assert.throws(() => addDevelopmentNote(player, {}), /観察メモ、次の一歩/);
 
 const [html, players, css, base] = await Promise.all([
     readFile(new URL('../index.html', import.meta.url), 'utf8'),

@@ -360,7 +360,6 @@ export function initPlayerDetailView(playerId) {
         if (canEdit) {
             developmentNoteForm.onsubmit = async (e) => {
                 e.preventDefault();
-                const focus = document.getElementById('development-note-focus').value.trim();
                 const observation = document.getElementById('development-note-observation').value.trim();
                 const nextStep = document.getElementById('development-note-next-step').value.trim();
                 const date = document.getElementById('development-note-date').value;
@@ -376,12 +375,11 @@ export function initPlayerDetailView(playerId) {
                     });
                 }
                 
-                addDevelopmentNote(p, { date, focus, observation, nextStep, skillRatings });
+                addDevelopmentNote(p, { date, observation, nextStep, skillRatings });
                 await saveData();
                 showToast('育成ノートを記録しました');
                 
                 // フォームリセット
-                document.getElementById('development-note-focus').value = '';
                 document.getElementById('development-note-observation').value = '';
                 document.getElementById('development-note-next-step').value = '';
                 if (ratingsEl) {
