@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const read = file => readFile(new URL(file, import.meta.url), 'utf8');
-const [fixtureText, protocol, index, serviceWorker, utils, standard, components, tokens, base, system, dashboard, drawing, tactical, matches, exceptionLedger] = await Promise.all([
+const [fixtureText, protocol, index, serviceWorker, utils, standard, components, tokens, base, system, dashboard, drawing, tactical, matches, exceptionLedger, manifestText] = await Promise.all([
     read('./fixtures/design-system-high-density-fixture.json'),
     read('../doc/DESIGN_SYSTEM_VISUAL_REGRESSION_PROTOCOL.md'),
     read('../index.html'),
@@ -17,9 +17,11 @@ const [fixtureText, protocol, index, serviceWorker, utils, standard, components,
     read('../CSS/drawing.css'),
     read('../CSS/tactical.css'),
     read('../matches.js'),
-    read('../doc/UI_EXCEPTION_LEDGER.md')
+    read('../doc/UI_EXCEPTION_LEDGER.md'),
+    read('../manifest.json')
 ]);
 const fixture = JSON.parse(fixtureText);
+const manifest = JSON.parse(manifestText);
 
 assert.equal(fixture.players.length, 12, '高密度シードは選手12名を含む必要があります');
 assert.deepEqual(fixture.meta.viewportProfiles, [320, 390, 768, 1024, 1280],
@@ -53,7 +55,15 @@ assert.doesNotMatch(components, /\.pwa-update-banner \.btn-primary\s*\{/, 'PWA�
 assert.match(tokens, /--color-update-action-hover-surface:/, 'PWA更新操作のhover surfaceトークンが必要です');
 assert.match(tokens, /--color-update-action-hover-text:/, 'PWA更新操作のhover textトークンが必要です');
 assert.match(tokens, /--color-update-action-pressed-surface:/, 'PWA更新操作のpressed surfaceトークンが必要です');
-assert.match(serviceWorker, /coachmgr-v237/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
+assert.match(serviceWorker, /coachmgr-v238/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
+assert.match(index, /rel="apple-touch-icon" sizes="180x180" href="\.\/icons\/apple-touch-icon\.png"/, 'iOSは文字なしApple Touch Iconを参照する必要があります');
+assert.match(index, /rel="icon" type="image\/png" sizes="32x32" href="\.\/icons\/favicon-32\.png"/, 'ブラウザは32pxの文字なしFaviconを参照する必要があります');
+assert.ok(manifest.icons.some(icon => icon.src === './icons/icon-192.png' && icon.sizes === '192x192' && icon.purpose === 'any'), 'manifestは通常PWA用192px文字なしアイコンを宣言する必要があります');
+assert.ok(manifest.icons.some(icon => icon.src === './icons/icon-512.png' && icon.sizes === '512x512' && icon.purpose === 'any'), 'manifestは通常PWA用512px文字なしアイコンを宣言する必要があります');
+assert.ok(manifest.icons.some(icon => icon.src === './icons/icon-512-maskable.png' && icon.sizes === '512x512' && icon.purpose === 'maskable'), 'manifestはmaskable専用512pxアイコンを宣言する必要があります');
+['./icons/icon-192.png', './icons/icon-512.png', './icons/icon-512-maskable.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/favicon-16.png'].forEach(asset => {
+    assert.match(serviceWorker, new RegExp(asset.replace(/[./]/g, '\\$&')), `PWA更新シナリオは${asset}をprecacheする必要があります`);
+});
 assert.match(serviceWorker, /canvas-palette\.js/, 'PWA更新シナリオはCanvasパレットをprecacheする必要があります');
 assert.match(serviceWorker, /pitch-renderer\.js/, 'PWA更新シナリオはピッチレンダラをprecacheする必要があります');
 assert.match(serviceWorker, /tabler-icons-subset\.css/, 'PWA更新シナリオはTablerサブセットCSSをprecacheする必要があります');

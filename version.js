@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.31.10';
+export const APP_VERSION = 'v1.31.11';
 export const RELEASE_DATE = '2026-08-21';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.31.11',
+        date: '2026-08-21',
+        title: '文字なしPWAアイコンと用途別アイコン資産を導入',
+        features: [
+            'PWAアイコン：既存ネオンアイコンのCoachMgr文字を外し、盾とボールを中央の安全領域へ再配置して、ホーム画面での再認性を改善',
+            'アセット：通常PWA用192px・512px、maskable専用512px、Apple Touch Icon、16px・32px Faviconを用途別PNGとして追加',
+            '互換性：OSが表示するアプリ名をアイコン内の文字と重複させず、既存の赤・コーラル・エメラルド・チャコールのブランド世界観を維持',
+            'PWA：manifest、HTMLのアイコン宣言、Service Worker precacheを新アセットへ統一し、更新後もオフライン利用を維持'
+        ]
+    },
     {
         version: 'v1.31.10',
         date: '2026-08-21',

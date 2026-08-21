@@ -1,7 +1,7 @@
 // sw.js - Service Worker for CoachMgr PWA
 // Cache-First strategy for offline support
 
-const CACHE_VERSION = 'coachmgr-v237';
+const CACHE_VERSION = 'coachmgr-v238';
 
 // Core app files to pre-cache on install
 const PRECACHE_URLS = [
@@ -69,8 +69,12 @@ const PRECACHE_URLS = [
   './assets/icons/nanyodai/activity/activity-trophy.svg',
   './assets/icons/nanyodai/family/family-document.svg',
   './manifest.json',
-  './icons/icon-512x512.jpg',
-  './icons/icon.svg'
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-512-maskable.png',
+  './icons/apple-touch-icon.png',
+  './icons/favicon-32.png',
+  './icons/favicon-16.png'
 ];
 
 // External CDN resources to cache on first fetch
