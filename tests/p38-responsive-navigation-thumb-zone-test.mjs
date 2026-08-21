@@ -20,11 +20,19 @@ test('P38-1: PCサイドバーフッターの配置と機能契約検証', () =>
     assert.match(baseCss, /\.c-sidebar\s*\{[\s\S]*?box-sizing:\s*border-box;[\s\S]*?overflow:\s*hidden;/, 'sidebar owns the viewport and does not create a competing page scroll area');
     assert.match(baseCss, /\.c-sidebar__nav\s*\{[\s\S]*?min-block-size:\s*0;[\s\S]*?flex-grow:\s*1;[\s\S]*?overflow-y:\s*auto;[\s\S]*?overscroll-behavior:\s*contain;/, 'sidebar navigation is the stable, contained scroll region');
     assert.match(baseCss, /\.c-sidebar__footer\s*\{[\s\S]*?flex:\s*0\s+0\s+auto;/, 'sidebar footer remains fixed while navigation scrolls');
-    assert.match(baseCss, /\.c-sidebar__user-card\s*\{/, 'CSS defines c-sidebar user card');
+    assert.match(baseCss, /\.c-sidebar__user-card(?:,|\s*\{)/, 'CSS defines c-sidebar user card');
     assert.match(indexHtml, /class="c-sidebar"/, 'sidebar uses the common app-shell class');
     assert.match(appJs, /badge\.innerHTML = .*?<span>コーチ<\/span>';/, 'sidebar role badge uses the concise coach label');
     assert.match(appJs, /badge\.innerHTML = .*?<span>保護者<\/span>';/, 'sidebar role badge uses the concise guardian label');
     assert.doesNotMatch(appJs, /badge\.innerHTML = .*?<span>(?:コーチ|保護者)モード<\/span>';/, 'sidebar role badge must not restore the redundant モード suffix');
+
+    const roleRowIndex = indexHtml.indexOf('class="c-sidebar__user-card"');
+    const syncRowIndex = indexHtml.indexOf('class="c-sidebar__sync-row');
+    const themeRowIndex = indexHtml.indexOf('class="c-sidebar__theme-row"');
+    const versionRowIndex = indexHtml.indexOf('class="c-sidebar__version-row"');
+    assert.ok(roleRowIndex < syncRowIndex && syncRowIndex < themeRowIndex && themeRowIndex < versionRowIndex, 'sidebar utilities stay vertically ordered as mode, cloud sync, display theme, then version');
+    assert.match(baseCss, /\.c-sidebar__user-card,\s*\.c-sidebar__theme-row\s*\{[\s\S]*?inline-size:\s*100%;[\s\S]*?min-block-size:\s*2\.35rem;[\s\S]*?justify-content:\s*space-between;/, 'mode and display-theme rows share a full-width balanced layout');
+    assert.match(baseCss, /\.c-sidebar__sync-button\s*\{[\s\S]*?min-block-size:\s*2\.35rem;/, 'cloud sync uses the same minimum touch-row height');
 });
 
 test('P38-2: トップバーのスリム化とタイトル＆スマホモード表示検証', () => {
