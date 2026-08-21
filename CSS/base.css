@@ -151,7 +151,7 @@ a,
 }
 
 
-.hidden {
+[hidden], .hidden {
     display: none !important;
 }
 
