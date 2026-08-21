@@ -993,3 +993,53 @@
 .c-data-item .c-action-group {
     flex-shrink: 0;
 }
+
+/* Player detail KPI: retain the shared metric component while exposing all four key values in one mobile row. */
+.c-metric-grid--player-detail {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 40rem) {
+    .c-metric-grid--player-detail {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--space-1);
+    }
+
+    .c-metric-grid--player-detail .c-metric {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        min-block-size: 5.25rem;
+        padding: var(--space-2) var(--space-1);
+        gap: var(--space-1);
+        text-align: center;
+    }
+
+    .c-metric-grid--player-detail .c-metric__icon {
+        inline-size: 1.75rem;
+        block-size: 1.75rem;
+        flex-basis: 1.75rem;
+        font-size: var(--text-meta-size);
+    }
+
+    .c-metric-grid--player-detail .c-metric__content {
+        justify-items: center;
+        gap: 0;
+        inline-size: 100%;
+    }
+
+    .c-metric-grid--player-detail .c-metric__label {
+        max-inline-size: 100%;
+        overflow: hidden;
+        font-size: var(--text-kicker-size);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .c-metric-grid--player-detail .c-metric__value {
+        font-size: 1rem;
+    }
+
+    .c-metric-grid--player-detail .c-metric__note {
+        display: none;
+    }
+}

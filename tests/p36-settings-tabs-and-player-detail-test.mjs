@@ -55,11 +55,13 @@ test('3. 選手詳細の個別ページ化 & 選手編集モーダル検証', ()
     assert.doesNotMatch(indexHtml, /id="btn-back-to-players"/, 'Duplicate inline back button is removed for unified topbar back');
     assert.match(indexHtml, /id="topbar-back"/, 'Unified topbar-back button exists');
     assert.match(indexHtml, /class="player-detail-number-badge"/, 'Player number badge exists');
-    assert.match(indexHtml, /<section class="c-metric-grid" id="pd-kpi-summary" aria-label="選手の成績サマリー"/, 'Player KPI summary uses the standard metric grid');
+    assert.match(indexHtml, /<section class="c-metric-grid c-metric-grid--player-detail" id="pd-kpi-summary" aria-label="選手の成績サマリー"/, 'Player KPI summary uses the standard metric grid');
     assert.match(indexHtml, /<article class="c-metric">[\s\S]*?id="pd-attendance-rate"/, 'Attendance KPI uses the standard metric component');
     assert.match(indexHtml, /<article class="c-metric">[\s\S]*?id="pd-assists"/, 'Assist KPI uses the standard metric component');
     assert.doesNotMatch(indexHtml, /c-metric-card/, 'Undefined legacy metric-card markup is removed');
     assert.match(standardCss, /\.c-metric \{[\s\S]*?background: var\(--neo-surface-gradient\);[\s\S]*?box-shadow: var\(--shadow-neo-raised\);/, 'Standard metric component provides the surface and elevation');
+    assert.match(standardCss, /@media \(max-width: 40rem\) \{[\s\S]*?\.c-metric-grid--player-detail \{[\s\S]*?grid-template-columns: repeat\(4, minmax\(0, 1fr\)\);/, 'Player-detail KPIs remain a four-column row on mobile');
+    assert.match(standardCss, /\.c-metric-grid--player-detail \.c-metric__note \{[\s\S]*?display: none;/, 'Compact mobile KPI row omits secondary notes rather than wrapping');
     assert.match(indexHtml, /id="pd-profile-title"/, 'Profile section exists');
     assert.match(indexHtml, /id="pd-timeline-title"/, 'Timeline section exists');
     assert.match(indexHtml, /id="pd-matches-title"/, 'Matches section exists');
