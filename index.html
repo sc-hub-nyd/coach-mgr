@@ -107,7 +107,7 @@
 
                 <div class="c-sidebar__version-row">
                     <button type="button" class="btn-link c-sidebar__version-button" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <i class="ti ti-info-circle" aria-hidden="true"></i> <span id="topbar-version-text">v1.31.23</span>
+                        <i class="ti ti-info-circle" aria-hidden="true"></i> <span id="topbar-version-text">v1.31.24</span>
                     </button>
                 </div>
             </div>
@@ -255,7 +255,7 @@
                         <span class="u-visually-hidden" id="mobile-color-mode-text">ライト表示</span>
                     </button>
                     <button type="button" class="btn-link c-mobile-more__version" id="mobile-version-badge" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <span id="mobile-version-text">v1.31.23</span>
+                        <span id="mobile-version-text">v1.31.24</span>
                     </button>
                 </div>
             </div>
@@ -704,25 +704,41 @@
                 </div>
             </section>
 
-            <!-- KPI メトリックスサマリー -->
-            <div class="c-metric-grid">
-                <div class="c-metric-card">
-                    <span class="c-metric-card__label"><i class="ti ti-user-check" aria-hidden="true"></i> 出席率</span>
-                    <strong class="c-metric-card__value u-tabular-nums" id="pd-attendance-rate">-</strong>
-                </div>
-                <div class="c-metric-card">
-                    <span class="c-metric-card__label"><i class="ti ti-trophy" aria-hidden="true"></i> 試合出場</span>
-                    <strong class="c-metric-card__value u-tabular-nums" id="pd-matches-count">-</strong>
-                </div>
-                <div class="c-metric-card">
-                    <span class="c-metric-card__label"><i class="ti ti-ball-football" aria-hidden="true"></i> 通算得点</span>
-                    <strong class="c-metric-card__value u-tabular-nums" id="pd-goals">-</strong>
-                </div>
-                <div class="c-metric-card">
-                    <span class="c-metric-card__label"><i class="ti ti-shoe" aria-hidden="true"></i> 通算アシスト</span>
-                    <strong class="c-metric-card__value u-tabular-nums" id="pd-assists">-</strong>
-                </div>
-            </div>
+            <!-- KPI メトリックスサマリー: 標準c-metricで情報階層・余白・数値表現を統一 -->
+            <section class="c-metric-grid" id="pd-kpi-summary" aria-label="選手の成績サマリー">
+                <article class="c-metric">
+                    <span class="c-metric__icon" aria-hidden="true"><i class="ti ti-user-check"></i></span>
+                    <div class="c-metric__content">
+                        <span class="c-metric__label">年度出席率</span>
+                        <strong class="c-metric__value u-tabular-nums" id="pd-attendance-rate">-</strong>
+                        <span class="c-metric__note">試合・練習</span>
+                    </div>
+                </article>
+                <article class="c-metric">
+                    <span class="c-metric__icon" aria-hidden="true"><i class="ti ti-trophy"></i></span>
+                    <div class="c-metric__content">
+                        <span class="c-metric__label">試合出場</span>
+                        <strong class="c-metric__value u-tabular-nums" id="pd-matches-count">-</strong>
+                        <span class="c-metric__note">通算</span>
+                    </div>
+                </article>
+                <article class="c-metric">
+                    <span class="c-metric__icon" aria-hidden="true"><i class="ti ti-ball-football"></i></span>
+                    <div class="c-metric__content">
+                        <span class="c-metric__label">通算得点</span>
+                        <strong class="c-metric__value u-tabular-nums" id="pd-goals">-</strong>
+                        <span class="c-metric__note">全期間</span>
+                    </div>
+                </article>
+                <article class="c-metric">
+                    <span class="c-metric__icon" aria-hidden="true"><i class="ti ti-shoe"></i></span>
+                    <div class="c-metric__content">
+                        <span class="c-metric__label">通算アシスト</span>
+                        <strong class="c-metric__value u-tabular-nums" id="pd-assists">-</strong>
+                        <span class="c-metric__note">全期間</span>
+                    </div>
+                </article>
+            </section>
 
             <!-- セクション 1: 選手の特徴・ストロングポイント -->
             <section class="card c-card" aria-labelledby="pd-profile-title">
@@ -777,15 +793,19 @@
             </section>
 
             <!-- セクション 4: 成長ノート (Coaching Notebook) -->
-            <section class="card c-card player-detail-tab-pane" id="pd-tab-notebook" aria-labelledby="pd-notebook-title">
+            <section class="card c-card" id="pd-tab-notebook" aria-labelledby="pd-notebook-title">
                 <div class="c-section-header c-card__header">
                     <div class="c-section-header__content">
                         <span class="c-kicker"><i class="ti ti-book-2" aria-hidden="true"></i> COACHING NOTEBOOK</span>
                         <h3 class="c-section-header__title c-card__title c-text-effect--shimmer" id="pd-notebook-title">成長の現在地</h3>
                     </div>
                 </div>
-                <div class="c-card__body">
-                    <section class="c-focus-summary" aria-labelledby="pd-notebook-title">
+                <div class="c-card__body l-stack l-stack--spacious">
+                    <section class="c-focus-summary" aria-labelledby="pd-notebook-trends-title">
+                        <div>
+                            <span class="c-focus-summary__kicker">SKILL TREND</span>
+                            <h4 class="c-focus-summary__title" id="pd-notebook-trends-title">スキルの推移</h4>
+                        </div>
                         <div id="pd-notebook-trends" class="c-metric-grid c-metric-grid--inline" aria-live="polite"></div>
                     </section>
                     <div id="pd-notebook-timeline" class="c-data-list c-data-list--scrollable c-data-list--notebook" aria-live="polite"></div>
@@ -1329,7 +1349,7 @@
                             <i class="ti ti-info-circle c-static-style--022"></i> アプリケーション情報
                         </div>
                         <div class="text-secondary c-static-style--158" id="settings-version-text">
-                            CoachMgr v1.31.23 (2026-08-21)
+                            CoachMgr v1.31.24 (2026-08-21)
                         </div>
                     </div>
                     <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-static-style--150" id="btn-show-release-notes">

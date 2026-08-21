@@ -13,6 +13,7 @@ const settingsJs = fs.readFileSync(path.join(basePath, 'settings.js'), 'utf8');
 const libraryJs = fs.readFileSync(path.join(basePath, 'library.js'), 'utf8');
 const practicesJs = fs.readFileSync(path.join(basePath, 'practices.js'), 'utf8');
 const systemCss = fs.readFileSync(path.join(basePath, 'CSS', 'components-system.css'), 'utf8');
+const standardCss = fs.readFileSync(path.join(basePath, 'CSS', 'components-standard.css'), 'utf8');
 const baseCss = fs.readFileSync(path.join(basePath, 'CSS', 'base.css'), 'utf8');
 const dashboardCss = fs.readFileSync(path.join(basePath, 'CSS', 'dashboard.css'), 'utf8');
 const serviceWorker = fs.readFileSync(path.join(basePath, 'sw.js'), 'utf8');
@@ -54,14 +55,21 @@ test('3. 選手詳細の個別ページ化 & 選手編集モーダル検証', ()
     assert.doesNotMatch(indexHtml, /id="btn-back-to-players"/, 'Duplicate inline back button is removed for unified topbar back');
     assert.match(indexHtml, /id="topbar-back"/, 'Unified topbar-back button exists');
     assert.match(indexHtml, /class="player-detail-number-badge"/, 'Player number badge exists');
-    assert.match(indexHtml, /id="pd-attendance-rate"/, 'Attendance KPI exists');
+    assert.match(indexHtml, /<section class="c-metric-grid" id="pd-kpi-summary" aria-label="選手の成績サマリー"/, 'Player KPI summary uses the standard metric grid');
+    assert.match(indexHtml, /<article class="c-metric">[\s\S]*?id="pd-attendance-rate"/, 'Attendance KPI uses the standard metric component');
+    assert.match(indexHtml, /<article class="c-metric">[\s\S]*?id="pd-assists"/, 'Assist KPI uses the standard metric component');
+    assert.doesNotMatch(indexHtml, /c-metric-card/, 'Undefined legacy metric-card markup is removed');
+    assert.match(standardCss, /\.c-metric \{[\s\S]*?background: var\(--neo-surface-gradient\);[\s\S]*?box-shadow: var\(--shadow-neo-raised\);/, 'Standard metric component provides the surface and elevation');
     assert.match(indexHtml, /id="pd-profile-title"/, 'Profile section exists');
     assert.match(indexHtml, /id="pd-timeline-title"/, 'Timeline section exists');
     assert.match(indexHtml, /id="pd-matches-title"/, 'Matches section exists');
     assert.match(indexHtml, /id="pd-btn-edit"/, 'Player detail edit action exists for coach mode');
     assert.match(indexHtml, /id="pd-btn-delete"/, 'Player detail delete action exists for coach mode');
     assert.match(indexHtml, /id="form-player-development-note"/, 'Development note form exists for coach mode');
+    assert.match(indexHtml, /id="pd-notebook-trends-title">スキルの推移<\//, 'Development notebook has a standard summary heading');
     assert.doesNotMatch(indexHtml, /data-pd-tab=/, 'Tab switcher is removed for flat vertical view');
+    assert.doesNotMatch(indexHtml, /player-detail-tab-pane/, 'Development notebook remains a visible vertical section, not a hidden legacy tab pane');
+    assert.doesNotMatch(dashboardCss, /player-detail-tab-pane|player-detail-tabs/, 'Obsolete player-detail tab CSS is removed');
 
     // 選手登録・編集モーダル (modal-player) の検証
     assert.match(indexHtml, /id="player-grade"/, 'player-grade input exists in modal-player');
