@@ -1242,23 +1242,18 @@ function initDashboard() {
             myPlayerContent.innerHTML = `
                 <div class="c-static-style--053">
 
-                    <!-- ヘッダー（名前・背番号・ポジション・変更ボタン） -->
-                    <div class="dash-myplayer-header c-static-style--074">
-                        <div class="c-static-style--045">
-                            <div class="player-number c-static-style--280">
-                                ${player.number}
-                            </div>
-                            <div class="c-static-style--037">
-                                <h2 class="c-static-style--210">
-                                    ${escapeHtml(player.name)}
-                                </h2>
-                                <span class="c-static-style--115">
-                                    (${(Array.isArray(player.position) ? player.position : [player.position]).join(', ')})
-                                </span>
-                            </div>
-                        </div>
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-static-style--108" id="btn-change-myplayer">
-                            <i class="ti ti-refresh"></i> 選手変更
+                    <!-- ヘッダー: マイ選手の表示領域から詳細を開く。選手変更は独立操作として維持する。 -->
+                    <div class="dash-myplayer-header">
+                        <button type="button" class="dash-myplayer-profile-trigger" id="dash-btn-open-myplayer-detail" aria-label="${escapeHtml(player.name)}の選手詳細を開く">
+                            <span class="player-number dash-myplayer-profile-trigger__number">${player.number}</span>
+                            <span class="dash-myplayer-profile-trigger__copy">
+                                <span class="dash-myplayer-profile-trigger__name">${escapeHtml(player.name)}</span>
+                                <span class="dash-myplayer-profile-trigger__position">${(Array.isArray(player.position) ? player.position : [player.position]).join(', ')}</span>
+                            </span>
+                            <span class="dash-myplayer-profile-trigger__detail">詳細 <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+                        </button>
+                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm" id="btn-change-myplayer">
+                            <i class="ti ti-refresh" aria-hidden="true"></i> 選手変更
                         </button>
                     </div>
 
@@ -1299,6 +1294,9 @@ function initDashboard() {
             `;
 
             // イベントバインド
+            const btnOpenDetail = document.getElementById('dash-btn-open-myplayer-detail');
+            if (btnOpenDetail) btnOpenDetail.onclick = () => navigate('player-detail', { playerId: player.id, returnRoute: 'dashboard', source: 'parent-my-player' });
+
             const btnChange = document.getElementById('btn-change-myplayer');
             if (btnChange) btnChange.onclick = () => openMyPlayerSelectModal();
 
@@ -2435,6 +2433,14 @@ function restoreRouteContextDom(context) {
 export function navigateBack() {
     const current = uiState.currentRoute;
     const detailRoutes = ['player-detail', 'match-detail'];
+    const detailParams = uiState.currentParams && typeof uiState.currentParams === 'object' ? uiState.currentParams : {};
+
+    // 保護者ダッシュボードのマイ選手詳細は、履歴状態に関係なく必ずダッシュボードへ戻る。
+    if (current === 'player-detail' && detailParams.returnRoute === 'dashboard') {
+        state.navHistory = [];
+        navigate('dashboard', null, true);
+        return;
+    }
 
     if (detailRoutes.includes(current)) {
         // 詳細画面の場合：直前の親画面（ダッシュボード または 各一覧画面）へ戻る

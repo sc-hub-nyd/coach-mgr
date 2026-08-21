@@ -56,7 +56,7 @@ assert.doesNotMatch(components, /\.pwa-update-banner \.btn-primary\s*\{/, 'PWA�
 assert.match(tokens, /--color-update-action-hover-surface:/, 'PWA更新操作のhover surfaceトークンが必要です');
 assert.match(tokens, /--color-update-action-hover-text:/, 'PWA更新操作のhover textトークンが必要です');
 assert.match(tokens, /--color-update-action-pressed-surface:/, 'PWA更新操作のpressed surfaceトークンが必要です');
-assert.match(serviceWorker, /coachmgr-v247/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
+assert.match(serviceWorker, /coachmgr-v248/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
 assert.match(index, /rel="apple-touch-icon" sizes="180x180" href="\.\/icons\/apple-touch-icon\.png"/, 'iOSは文字なしApple Touch Iconを参照する必要があります');
 assert.match(index, /rel="icon" type="image\/png" sizes="32x32" href="\.\/icons\/favicon-32\.png"/, 'ブラウザは32pxの文字なしFaviconを参照する必要があります');
 assert.ok(manifest.icons.some(icon => icon.src === './icons/icon-192.png' && icon.sizes === '192x192' && icon.purpose === 'any'), 'manifestは通常PWA用192px文字なしアイコンを宣言する必要があります');
@@ -76,6 +76,11 @@ assert.match(base, /\.c-theme-mode-switch\s*\{[\s\S]*?grid-template-columns:\s*r
 assert.match(base, /\.c-theme-mode-switch\[data-color-mode="dark"\] \.c-theme-mode-switch__segment--dark[\s\S]*?background: var\(--color-surface-raised\);/, 'ダークテーマではダークセグメントを選択面として表示する必要があります');
 assert.match(base, /prefers-reduced-motion: reduce[\s\S]*?\.c-theme-mode-switch__segment[\s\S]*?transition-duration: 1ms/, '動きを減らす設定ではテーマ切替セグメントも1msへ縮退する必要があります');
 assert.match(appJs, /toggle\.setAttribute\('aria-checked', String\(isDark\)\)/, 'テーマ切替はモードに合わせてaria-checkedを同期する必要があります');
+assert.match(base, /h1,[\s\S]*?h6 \{[\s\S]*?text-align: center;/, '全画面のh1〜h6は中央揃えのタイトル基準を使う必要があります');
+assert.match(standard, /\.c-section-header \{[\s\S]*?flex-direction: column;[\s\S]*?align-items: center;[\s\S]*?text-align: center;/, '共通セクション見出しは中央揃えである必要があります');
+assert.match(system, /\.c-modal__title \{[\s\S]*?text-align: center;/, 'モーダルタイトルは中央揃えである必要があります');
+assert.match(system, /\.c-dashboard-widget__label \{[\s\S]*?justify-content: center;[\s\S]*?text-align: center;/, 'ダッシュボード見出しは中央揃えである必要があります');
+assert.match(system, /\.c-mobile-route-choice__heading,[\s\S]*?text-align: center;/, '非h要素の共通タイトルも中央揃えである必要があります');
 
 // P47-UI: P1〜P3の色役割、非標準操作、形状尺度、例外台帳を保護する。
 assert.match(tokens, /--radius-micro:/, 'スクロールバー用の微小半径トークンが必要です');

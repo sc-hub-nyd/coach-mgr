@@ -1029,6 +1029,7 @@
     font-size: 1.25rem;
     line-height: 1.35;
     overflow-wrap: anywhere;
+    text-align: center;
 }
 
 .c-modal__close {
@@ -1835,12 +1836,14 @@
 .c-dashboard-widget__label {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: var(--space-2);
     margin: 0;
     color: var(--color-text-muted);
     font-size: var(--text-meta-size);
     font-weight: 700;
     letter-spacing: 0.02em;
+    text-align: center;
     line-height: var(--text-dense-leading);
 }
 
@@ -2591,6 +2594,7 @@
     margin: 0;
     font-size: var(--text-title-lg);
     color: var(--color-text);
+    text-align: center;
 }
 
 .player-detail-badges {
@@ -4033,3 +4037,27 @@
 
 /* R4: Drawing side-information value. */
 .c-inspector-panel__event-summary { color: var(--text-primary); font-size: 0.8rem; font-weight: 500; }
+
+/* Title alignment convention: page, card, sheet, and operational headings use one centered baseline. */
+.c-practice-card__title,
+.c-data-management__title,
+.c-data-management__operation-title,
+.c-focus-summary__title,
+.c-content-disclosure__title,
+.c-content-disclosure__heading,
+.c-library-card__title,
+.c-tactic-card__title,
+.c-section-group__title,
+.c-period-card__title,
+.c-opponent-summary__title,
+.c-mobile-more__heading,
+.c-mobile-route-choice__heading,
+.c-loading-state__title {
+    text-align: center;
+}
+
+.c-content-disclosure__title,
+.c-mobile-more__heading,
+.c-mobile-route-choice__heading {
+    justify-content: center;
+}
