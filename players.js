@@ -91,18 +91,25 @@ function renderDevelopmentNotebook(player) {
         });
 
         let html = '';
+        const isSearchActive = query.length > 0 || filterType !== 'all';
+        let isFirstMonthGlobal = true;
+        
         const sortedNendos = Object.keys(grouped).sort((a, b) => b - a);
-        sortedNendos.forEach(nendo => {
+        sortedNendos.forEach((nendo, nIndex) => {
+            const isFirstChapter = nIndex === 0;
+            const isChapterExpanded = isFirstChapter || isSearchActive;
+            const chapterArrow = isChapterExpanded ? '▼' : '▶';
+            
             const gradeStr = getRelativeGrade(player.grade, nendo, todayNendo);
-            const titleText = gradeStr ? `▼ ${escapeHtml(gradeStr)} ${nendo}年度` : `▼ ${nendo}年度`;
+            const titleText = gradeStr ? `${chapterArrow} ${escapeHtml(gradeStr)} ${nendo}年度` : `${chapterArrow} ${nendo}年度`;
             const nendoCount = grouped[nendo].items.length;
             
             html += `
-                <div class="c-timeline-chapter">
+                <div class="c-timeline-chapter" style="cursor: pointer; user-select: none;" onclick="const s = this.nextElementSibling; const isHidden = s.classList.toggle('hidden'); const t = this.querySelector('.c-timeline-chapter__title'); t.innerHTML = t.innerHTML.replace(isHidden ? '▼' : '▶', isHidden ? '▶' : '▼');">
                     <span class="c-timeline-chapter__title">${titleText}</span>
                     <span class="c-timeline-chapter__count">${nendoCount}件</span>
                 </div>
-                <div class="c-timeline-section">
+                <div class="c-timeline-section ${isChapterExpanded ? '' : 'hidden'}">
             `;
 
             // Month sort desc (e.g. 12, 11, ... 1) inside a nendo, wait nendo starts from 4 to 3.
@@ -116,13 +123,16 @@ function renderDevelopmentNotebook(player) {
 
             sortedMonths.forEach(mm => {
                 const mGroup = grouped[nendo].months[mm];
-                const titleText = mGroup.focus ? `${mm}月 ${mGroup.focus}` : `${mm}月`;
+                const isMonthExpanded = isFirstMonthGlobal || isSearchActive;
+                const mArrow = isMonthExpanded ? '▼' : '▶';
+                const mTitleText = mGroup.focus ? `${mArrow} ${mm}月 ${mGroup.focus}` : `${mArrow} ${mm}月`;
                 
                 html += `
-                    <div class="c-timeline-route">
-                        <span class="c-timeline-route__title">▼ ${escapeHtml(titleText)}</span>
+                    <div class="c-timeline-route" style="cursor: pointer; user-select: none;" onclick="const s = this.nextElementSibling; const isHidden = s.classList.toggle('hidden'); const t = this.querySelector('.c-timeline-route__title'); t.innerHTML = t.innerHTML.replace(isHidden ? '▼' : '▶', isHidden ? '▶' : '▼');">
+                        <span class="c-timeline-route__title">${escapeHtml(mTitleText)}</span>
                         <span class="c-timeline-route__count">${mGroup.items.length}件</span>
                     </div>
+                    <div class="c-timeline-items ${isMonthExpanded ? '' : 'hidden'}">
                 `;
                 
                 mGroup.items.forEach(item => {
@@ -133,6 +143,9 @@ function renderDevelopmentNotebook(player) {
                         ${canEdit && item.kind === 'note' ? `<div class="c-data-list__actions"><button type="button" class="c-button btn c-button--secondary btn-secondary btn-remove-development-note" data-development-note-id="${escapeHtml(item.id)}" aria-label="育成ノートを削除"><i class="ti ti-trash"></i></button></div>` : ''}
                     </article>`;
                 });
+                
+                html += `</div>`; // Close c-timeline-items
+                isFirstMonthGlobal = false;
             });
             
             html += `</div>`; // Close c-timeline-section
