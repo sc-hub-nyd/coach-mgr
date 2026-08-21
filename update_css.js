@@ -3,55 +3,42 @@ const fs = require('fs');
 const file = '/home/l0mochi/antigravity/coach-mgr/CSS/components.css';
 let content = fs.readFileSync(file, 'utf8');
 
-const additionalCss = `
-/* Timeline Headers */
-.c-timeline-chapter {
-    background: var(--color-brand);
-    color: var(--color-text-on-brand);
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius-sm);
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    margin-left: -24px; /* Pull left to cover the padding */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 600;
-    position: relative;
-    z-index: 2;
-    box-shadow: var(--shadow-sm);
-}
-.c-timeline-chapter:first-child {
-    margin-top: 0.5rem;
-}
+// 1. Remove padding and ::before from .c-data-list--notebook
+content = content.replace(
+    /\.c-data-list--notebook {\n    position: relative;\n    padding-left: 24px;\n    margin-top: 1rem;\n}/,
+    '.c-data-list--notebook {\n    position: relative;\n    margin-top: 1rem;\n}'
+);
 
-.c-timeline-route {
-    background: var(--color-brand-surface);
-    color: var(--color-text);
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-sm);
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 600;
+content = content.replace(
+    /\.c-data-list--notebook::before {[\s\S]*?z-index: 0;\n}/,
+    ''
+);
+
+// 2. Adjust .c-timeline-chapter margin-left
+content = content.replace(
+    /margin-left: -24px; \/\* Pull left to cover the padding \*\//,
+    'margin-left: 0;'
+);
+
+// 3. Add .c-timeline-section
+const sectionCss = `
+.c-timeline-section {
     position: relative;
-    z-index: 2;
+    padding-left: 24px;
+    padding-bottom: 0.5rem;
 }
-.c-timeline-route::before {
+.c-timeline-section::before {
     content: '';
     position: absolute;
-    left: -23px; /* align with vertical line */
-    top: 50%;
-    transform: translateY(-50%);
-    width: 10px;
-    height: 10px;
-    background: var(--color-brand);
-    box-shadow: 0 0 0 2px var(--surface);
-    border-radius: 2px; /* Slight square for flag */
+    top: 2rem;
+    bottom: 0;
+    left: 6px;
+    width: 2px;
+    background: var(--surface-border);
+    z-index: 0;
 }
 `;
 
-content = content + additionalCss;
+content = content + sectionCss;
+
 fs.writeFileSync(file, content);

@@ -8,14 +8,15 @@ import { getMatchGoalRecords, getPlayerStatistics } from './player-statistics-se
 
 function getRelativeGrade(currentGrade, recordNendo, currentNendo) {
     const diff = parseInt(recordNendo, 10) - parseInt(currentNendo, 10);
-    if (diff === 0 || !currentGrade) return currentGrade || `${recordNendo}年度`;
+    if (!currentGrade) return '';
+    if (diff === 0) return currentGrade;
     const match = currentGrade.match(/(\d+)/);
     if (match) {
         const num = parseInt(match[1], 10);
         const newNum = num + diff;
         if (newNum > 0) return currentGrade.replace(match[1], newNum);
     }
-    return `${recordNendo}年度`;
+    return '';
 }
 
 function renderDevelopmentNotebook(player) {
@@ -93,13 +94,15 @@ function renderDevelopmentNotebook(player) {
         const sortedNendos = Object.keys(grouped).sort((a, b) => b - a);
         sortedNendos.forEach(nendo => {
             const gradeStr = getRelativeGrade(player.grade, nendo, todayNendo);
+            const titleText = gradeStr ? `▼ ${escapeHtml(gradeStr)} ${nendo}年度` : `▼ ${nendo}年度`;
             const nendoCount = grouped[nendo].items.length;
             
             html += `
                 <div class="c-timeline-chapter">
-                    <span class="c-timeline-chapter__title">▼ ${escapeHtml(gradeStr)} ${nendo}年度</span>
+                    <span class="c-timeline-chapter__title">${titleText}</span>
                     <span class="c-timeline-chapter__count">${nendoCount}件</span>
                 </div>
+                <div class="c-timeline-section">
             `;
 
             // Month sort desc (e.g. 12, 11, ... 1) inside a nendo, wait nendo starts from 4 to 3.
@@ -131,6 +134,8 @@ function renderDevelopmentNotebook(player) {
                     </article>`;
                 });
             });
+            
+            html += `</div>`; // Close c-timeline-section
         });
 
         timeline.innerHTML = html;

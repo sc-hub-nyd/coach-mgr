@@ -1,5 +1,5 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.31.30';
+export const APP_VERSION = 'v1.31.31';
 export const RELEASE_DATE = '2026-08-21';
 
 export const RELEASE_NOTES = [
