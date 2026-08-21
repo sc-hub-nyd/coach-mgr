@@ -36,6 +36,12 @@ let currentFormationId = null;
 let currentLibraryId = null;
 
 let isDirty = false;
+let animationBackHandler = null;
+
+export async function requestAnimationBack() {
+    if (typeof animationBackHandler !== 'function') return false;
+    return animationBackHandler();
+}
 
 // We now rely on event-manager.js for listener storage and cleanup
 let boundListeners = {}; // Keeping an empty object for backwards compatibility if needed internally, but no longer used for management.
@@ -2361,25 +2367,29 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
         };
     }
 
+    const navigateBackFromAnimation = async () => {
+        if (isDirty) {
+            const proceed = await showCustomConfirm('変更内容が保存されていません。編集を破棄して戻りますか？', '未保存の変更', { okText: '戻る', type: 'danger' });
+            if (!proceed) {
+                return false;
+            }
+        }
+        if (isFormationMode) {
+            if (typeof navigateFunc === 'function') navigateFunc('matches', null, true);
+        } else if (isLibraryMode) {
+            if (typeof navigateFunc === 'function') navigateFunc('library', null, true);
+        } else if (isTacticsMode) {
+            if (typeof navigateFunc === 'function') navigateFunc('tactics', null, true);
+        } else {
+            if (typeof navigateFunc === 'function') navigateFunc('practices', null, true);
+        }
+        return true;
+    };
+
+    animationBackHandler = navigateBackFromAnimation;
     const btnBack = document.getElementById('anim-back');
     if (btnBack) {
-        btnBack.onclick = async () => {
-            if (isDirty) {
-                const proceed = await showCustomConfirm('変更内容が保存されていません。編集を破棄して戻りますか？', '未保存の変更', { okText: '戻る', type: 'danger' });
-                if (!proceed) {
-                    return;
-                }
-            }
-            if (isFormationMode) {
-                if (typeof navigateFunc === 'function') navigateFunc('matches', null, true);
-            } else if (isLibraryMode) {
-                if (typeof navigateFunc === 'function') navigateFunc('library', null, true);
-            } else if (isTacticsMode) {
-                if (typeof navigateFunc === 'function') navigateFunc('tactics', null, true);
-            } else {
-                if (typeof navigateFunc === 'function') navigateFunc('practices', null, true);
-            }
-        };
+        btnBack.onclick = navigateBackFromAnimation;
     }
 
     const handleMouseDown = (e) => {

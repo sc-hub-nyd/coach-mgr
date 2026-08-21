@@ -59,7 +59,10 @@ requireAll(drawingCss, [
     '\\.anim-main-workspace:has\\(\\.c-tool-dock\\) \\.canvas-wrapper \\{[\\s\\S]*?order: 1;',
     '\\.anim-mobile-dock-tabs \\{[\\s\\S]*?order: 2;',
     '\\.anim-main-workspace:has\\(\\.c-tool-dock\\) \\.c-tool-dock \\{[\\s\\S]*?order: 3;',
-    '\\.anim-mobile-lower-panel \\{[\\s\\S]*?order: 10;'
+    '\\.anim-mobile-lower-panel \\{[\\s\\S]*?order: 10;',
+    '#anim-back[\\s\\S]*?display: none !important;',
+    '\\.c-frame-strip__item:only-child[\\s\\S]*?inline-size: 100%;',
+    '\\.anim-mobile-lower-panel \\{[\\s\\S]*?margin-bottom: calc\\([\\s\\S]*?48px'
 ], 'モバイル作図のピッチ・操作・詳細の順序');
 
 // 作図初期化は練習・試合フォーメーション・ライブラリ・戦術の4保存先を解決する。
@@ -178,6 +181,13 @@ requireAll(drawing, [
     'playAnimation',
     'stopAnimation'
 ], 'フレーム操作・アニメーション');
+
+// 共通モバイル戻るバーからも、作図の未保存確認付き戻る処理を呼び出せる。
+requireAll(drawing, [
+    'export async function requestAnimationBack\\(\\)',
+    'let animationBackHandler = null;',
+    'animationBackHandler = navigateBackFromAnimation;'
+], '共通戻るバーとの連携');
 
 // 保存は4モードごとに状態を更新し、保存後に正しい画面へ戻る。
 requireAll(drawing, [

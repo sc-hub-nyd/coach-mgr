@@ -7,7 +7,7 @@ import { initPlayers, openPlayerDetail, initPlayerDetailView } from './players.j
 import { initLibrary } from './library.js';
 import { initTactics } from './tactics.js';
 import { initSettings, initData, applyCurrentTeamTheme } from './settings.js';
-import { initAnimation, cleanupCanvasEvents, drawPitchToCtx } from './drawing.js';
+import { initAnimation, cleanupCanvasEvents, drawPitchToCtx, requestAnimationBack } from './drawing.js';
 import { cleanupScope } from './event-manager.js';
 import { APP_VERSION, RELEASE_DATE, RELEASE_NOTES } from './version.js';
 import { loadPersistedSnapshot, savePersistedSnapshot, createStateSnapshot, createCloudSnapshot, loadSyncAudit, loadSyncOutbox, saveSyncAudit, saveSyncOutbox } from './repository.js';
@@ -2245,15 +2245,7 @@ export function updateRoleUI() {
     const isCoach = state.currentUserRole === 'coach';
 
     if (badge) {
-        if (isCoach) {
-            badge.style.background = 'rgba(242, 57, 50, 0.15)';
-            badge.style.color = '#ef4444';
-            badge.innerHTML = '<i class="ti ti-user-shield" aria-hidden="true"></i> <span>コーチ</span>';
-        } else {
-            badge.style.background = 'rgba(34, 197, 94, 0.15)';
-            badge.style.color = '#15803d';
-            badge.innerHTML = '<i class="ti ti-eye" aria-hidden="true"></i> <span>保護者</span>';
-        }
+        badge.innerHTML = '<i class="ti ti-user-cog" aria-hidden="true"></i> <span>役割</span>';
     }
 
     if (mobileTopBarRole) {
@@ -2612,20 +2604,26 @@ export function navigate(route, params = null, isBack = false, restoredRouteCont
     const mobileContextBackBtn = document.getElementById('mobile-context-back-btn');
 
     if (mobileContextBar) {
-        const isDetailRoute = (route === 'match-detail' || route === 'player-detail');
+        const isDetailRoute = (route === 'match-detail' || route === 'player-detail' || route === 'animation');
         if (isDetailRoute) {
             setMobileContextBarVisibility(mobileContextBar, true);
             if (mobileContextBackBtn) {
-                mobileContextBackBtn.onclick = (e) => {
+                mobileContextBackBtn.onclick = async (e) => {
                     if (e) {
                         e.preventDefault();
                         e.stopPropagation();
                     }
-                    navigateBack();
+                    if (route === 'animation') {
+                        await requestAnimationBack();
+                    } else {
+                        navigateBack();
+                    }
                 };
             }
             if (mobileContextTitle) {
-                if (route === 'match-detail') {
+                if (route === 'animation') {
+                    mobileContextTitle.textContent = '作図';
+                } else if (route === 'match-detail') {
                     const matchId = params && (typeof params === 'object') ? params.matchId : params;
                     const match = (state.matches || []).find(m => m.id === parseInt(matchId, 10));
                     mobileContextTitle.textContent = match ? `試合: vs ${match.opponent}` : '試合詳細';

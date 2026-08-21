@@ -2518,6 +2518,34 @@
     display: none;
 }
 
+/* Mobile settings: keep category navigation in the same reachable dock zone as the primary navigation. */
+@media (max-width: 48rem) {
+    body[data-route="settings"] .sl-settings {
+        padding-bottom: calc(
+            6.25rem + var(--safe-bottom) + var(--bottom-nav-float-gap) + var(--bottom-nav-height) + var(--bottom-nav-stack-gap)
+        );
+    }
+
+    body[data-route="settings"] .settings-tabs-nav {
+        position: fixed;
+        inset-inline: max(var(--space-2), env(safe-area-inset-left, 0px));
+        bottom: calc(var(--safe-bottom) + var(--bottom-nav-float-gap) + var(--bottom-nav-height) + var(--bottom-nav-stack-gap));
+        z-index: 880;
+        margin: 0;
+        padding: var(--space-1);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-lg);
+        background: var(--surface-nav-floating);
+        backdrop-filter: var(--nav-floating-blur);
+        -webkit-backdrop-filter: var(--nav-floating-blur);
+        box-shadow: var(--shadow-md);
+    }
+
+    body[data-route="settings"] .settings-tabs {
+        inline-size: 100%;
+    }
+}
+
 /* Player Detail dedicated page view */
 .player-detail-page {
     display: grid;

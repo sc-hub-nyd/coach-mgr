@@ -24,15 +24,15 @@ test('P38-1: PCサイドバーフッターの配置と機能契約検証', () =>
     assert.match(baseCss, /\.c-sidebar__footer\s*\{[\s\S]*?flex:\s*0\s+0\s+auto;/, 'sidebar footer remains fixed while navigation scrolls');
     assert.match(baseCss, /\.c-sidebar__user-card(?:,|\s*\{)/, 'CSS defines c-sidebar user card');
     assert.match(indexHtml, /class="c-sidebar"/, 'sidebar uses the common app-shell class');
-    assert.match(appJs, /badge\.innerHTML = .*?<span>コーチ<\/span>';/, 'sidebar role badge uses the concise coach label');
-    assert.match(appJs, /badge\.innerHTML = .*?<span>保護者<\/span>';/, 'sidebar role badge uses the concise guardian label');
-    assert.doesNotMatch(appJs, /badge\.innerHTML = .*?<span>(?:コーチ|保護者)モード<\/span>';/, 'sidebar role badge must not restore the redundant モード suffix');
+    assert.match(indexHtml, /id="user-role-badge"[\s\S]*?ti-user-cog[\s\S]*?<span>役割<\/span>/, 'sidebar role row uses the fixed 「役割」 label');
+    assert.match(appJs, /badge\.innerHTML = '<i class="ti ti-user-cog" aria-hidden="true"><\/i> <span>役割<\/span>';/, 'sidebar role label stays fixed when the selected role changes');
+    assert.doesNotMatch(appJs, /badge\.innerHTML = .*?<span>(?:コーチ|保護者)(?:モード)?<\/span>';/, 'sidebar role label must not duplicate the switch state');
 
     const roleRowIndex = indexHtml.indexOf('class="c-sidebar__user-card"');
     const syncRowIndex = indexHtml.indexOf('class="c-sidebar__sync-row');
     const themeRowIndex = indexHtml.indexOf('class="c-sidebar__theme-row"');
     const versionRowIndex = indexHtml.indexOf('class="c-sidebar__version-row"');
-    assert.ok(roleRowIndex < syncRowIndex && syncRowIndex < themeRowIndex && themeRowIndex < versionRowIndex, 'sidebar utilities stay vertically ordered as mode, cloud sync, theme, then version');
+    assert.ok(roleRowIndex < themeRowIndex && themeRowIndex < syncRowIndex && syncRowIndex < versionRowIndex, 'sidebar utilities stay vertically ordered as role, theme mode, cloud sync, then version');
     assert.match(baseCss, /\.c-sidebar__user-card,\s*\.c-sidebar__theme-row\s*\{[\s\S]*?inline-size:\s*100%;[\s\S]*?min-block-size:\s*2\.35rem;[\s\S]*?justify-content:\s*space-between;/, 'mode and theme rows share a full-width balanced layout');
     assert.match(baseCss, /\.c-sidebar__sync-button\s*\{[\s\S]*?min-block-size:\s*2\.35rem;/, 'cloud sync uses the same minimum touch-row height');
     assert.match(indexHtml, /class="c-role-mode-switch" id="btn-toggle-role" aria-pressed="false" data-user-role="parent"/, 'desktop role control uses the accessible two-choice pill');
@@ -106,6 +106,8 @@ test('P38-7: スマホ向けスリム戻るコンテキストバー（Mobile Con
     assert.match(baseCss, /\.c-context-bar\s*\{[\s\S]*?position:\s*fixed/i, 'context bar is fixed on mobile');
     assert.match(appJs, /const mobileContextBar = document\.getElementById\('mobile-context-bar'\);/, 'app.js accesses mobile-context-bar');
     assert.match(appJs, /mobileContextBackBtn\.onclick[\s\S]*?navigateBack\(\)/, 'mobile-context-back-btn triggers navigateBack');
+    assert.match(appJs, /route === 'match-detail' \|\| route === 'player-detail' \|\| route === 'animation'/, 'animation uses the shared mobile context bar as a detail route');
+    assert.match(appJs, /if \(route === 'animation'\) \{[\s\S]*?await requestAnimationBack\(\);/, 'animation context back keeps the drawing-specific safe return flow');
 });
 
 
@@ -127,7 +129,12 @@ test('P38-8: 戻るドックの44px操作領域とセーフエリア配置を検
     );
 });
 
-test('P38-9: 詳細画面から一覧文脈を保存・復元する契約検証', () => {
+test('P38-9: スマホ設定タブをボトムナビ直上に固定する契約検証', () => {
+    assert.match(systemCss, /body\[data-route="settings"\] \.settings-tabs-nav\s*\{[\s\S]*?position:\s*fixed;[\s\S]*?bottom:\s*calc\(var\(--safe-bottom\) \+ var\(--bottom-nav-float-gap\) \+ var\(--bottom-nav-height\) \+ var\(--bottom-nav-stack-gap\)\);/, 'settings tabs are fixed directly above the mobile bottom navigation');
+    assert.match(systemCss, /body\[data-route="settings"\] \.sl-settings\s*\{[\s\S]*?padding-bottom:/, 'settings content reserves room for the docked tab navigation');
+});
+
+test('P38-10: 詳細画面から一覧文脈を保存・復元する契約検証', () => {
     assert.match(appJs, /function captureRouteContext\(route\)/, 'app.js captures list context before entering detail');
     assert.match(appJs, /currentMatchSearch/, 'match search state is included in the saved context');
     assert.match(appJs, /currentMatchPage/, 'match pagination state is included in the saved context');

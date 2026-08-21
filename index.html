@@ -43,14 +43,13 @@
                 <li data-route="settings"><i class="ti ti-settings" aria-hidden="true"></i> 設定</li>
             </ul>
 
-            <!-- PC用サイドバーフッター（システム設定・モード切替・同期・バージョン） -->
+            <!-- PC用サイドバーフッター（役割・テーマ・同期・バージョン） -->
             <div class="c-sidebar__footer" id="sidebar-footer">
-                <!-- 表示順: モード → クラウド同期 → 表示テーマ -->
+                <!-- 表示順: 役割 → モード → クラウド同期 → バージョン -->
                 <div class="c-sidebar__user-card">
-                    <div id="user-role-badge" class="c-sidebar__role-badge c-static-style--009"
-                       >
-                        <i class="ti ti-eye" aria-hidden="true"></i><span>保護者モード</span>
-                    </div>
+                    <span id="user-role-badge" class="c-sidebar__role-badge">
+                        <i class="ti ti-user-cog" aria-hidden="true"></i><span>役割</span>
+                    </span>
                     <div class="c-sidebar__footer-actions">
                         <button type="button" class="c-role-mode-switch" id="btn-toggle-role" aria-pressed="false" data-user-role="parent" title="コーチモードへ切り替えます" aria-label="現在は保護者モードです。コーチモードへ切り替えます">
                             <span class="c-role-mode-switch__segment c-role-mode-switch__segment--parent" aria-hidden="true">
@@ -61,6 +60,20 @@
                             </span>
                         </button>
                     </div>
+                </div>
+
+                <div class="c-sidebar__theme-row">
+                    <span class="c-sidebar__utility-label">
+                        <i class="ti ti-palette" aria-hidden="true"></i><span>テーマ</span>
+                    </span>
+                    <button type="button" class="c-theme-mode-switch" id="btn-toggle-color-mode" role="switch" aria-checked="false" data-color-mode="light" title="ダーク表示へ切り替えます" aria-label="ダーク表示へ切り替えます">
+                        <span class="c-theme-mode-switch__segment c-theme-mode-switch__segment--light" aria-hidden="true">
+                            <i class="ti ti-sun"></i><span>ライト</span>
+                        </span>
+                        <span class="c-theme-mode-switch__segment c-theme-mode-switch__segment--dark" aria-hidden="true">
+                            <i class="ti ti-moon"></i><span>ダーク</span>
+                        </span>
+                    </button>
                 </div>
 
                 <!-- PC用サイドバークラウド同期ステータス -->
@@ -92,23 +105,9 @@
                     </div>
                 </div>
 
-                <div class="c-sidebar__theme-row">
-                    <span class="c-sidebar__utility-label">
-                        <i class="ti ti-palette" aria-hidden="true"></i><span>テーマ</span>
-                    </span>
-                    <button type="button" class="c-theme-mode-switch" id="btn-toggle-color-mode" role="switch" aria-checked="false" data-color-mode="light" title="ダーク表示へ切り替えます" aria-label="ダーク表示へ切り替えます">
-                        <span class="c-theme-mode-switch__segment c-theme-mode-switch__segment--light" aria-hidden="true">
-                            <i class="ti ti-sun"></i><span>ライト</span>
-                        </span>
-                        <span class="c-theme-mode-switch__segment c-theme-mode-switch__segment--dark" aria-hidden="true">
-                            <i class="ti ti-moon"></i><span>ダーク</span>
-                        </span>
-                    </button>
-                </div>
-
                 <div class="c-sidebar__version-row">
                     <button type="button" class="btn-link c-sidebar__version-button" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <i class="ti ti-info-circle" aria-hidden="true"></i> <span id="topbar-version-text">v1.31.18</span>
+                        <i class="ti ti-info-circle" aria-hidden="true"></i> <span id="topbar-version-text">v1.31.19</span>
                     </button>
                 </div>
             </div>
@@ -256,7 +255,7 @@
                         <span class="u-visually-hidden" id="mobile-color-mode-text">ライト表示</span>
                     </button>
                     <button type="button" class="btn-link c-mobile-more__version" id="mobile-version-badge" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <span id="mobile-version-text">v1.31.18</span>
+                        <span id="mobile-version-text">v1.31.19</span>
                     </button>
                 </div>
             </div>
@@ -1330,7 +1329,7 @@
                             <i class="ti ti-info-circle c-static-style--022"></i> アプリケーション情報
                         </div>
                         <div class="text-secondary c-static-style--158" id="settings-version-text">
-                            CoachMgr v1.31.9 (2026-08-20)
+                            CoachMgr v1.31.19 (2026-08-21)
                         </div>
                     </div>
                     <button class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-static-style--150" id="btn-show-release-notes">

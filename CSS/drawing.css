@@ -934,6 +934,12 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         height: 100dvh;
     }
 
+    /* The shared bottom context bar replaces the drawing-specific header back button. */
+    .anim-header-left,
+    #anim-back {
+        display: none !important;
+    }
+
     /* ==========================================
        1. 作図モード（モバイル: 縦並び・ピッチ→タブ＆ツール→下部詳細/フロート）
        ========================================== */
@@ -1111,7 +1117,9 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         width: 100%;
         min-height: 140px;
         margin-top: 8px;
-        margin-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        margin-bottom: calc(
+            12px + var(--safe-bottom) + var(--bottom-nav-float-gap) + var(--bottom-nav-height) + var(--bottom-nav-stack-gap) + 48px
+        );
         padding: 10px 12px;
         background: var(--surface);
         border: 1px solid var(--surface-border);
@@ -1356,10 +1364,20 @@ screen and (max-width: 1024px) and (orientation: landscape) {
     }
 
     .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip__list {
+        width: 100%;
+        min-width: 0;
         height: 100%;
         align-items: center;
         gap: 10px;
         flex-wrap: nowrap;
+        box-sizing: border-box;
+    }
+
+    /* A single scene represents the full sequence; let it occupy the strip instead of leaving a dead zone on the right. */
+    .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip__item:only-child {
+        flex: 1 0 100%;
+        inline-size: 100%;
+        justify-content: space-between;
     }
 
     .anim-main-workspace:has(.c-tool-dock).is-mobile-anim-mode .c-frame-strip__item {
