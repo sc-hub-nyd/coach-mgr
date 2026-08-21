@@ -1741,8 +1741,8 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
 
 /* Timeline Headers */
 .c-timeline-chapter {
-    background: var(--color-brand);
-    color: var(--color-text-on-brand);
+    background: var(--color-brand-surface);
+    color: var(--color-text-strong);
     padding: 0.75rem 1rem;
     border-radius: var(--radius-sm);
     margin-top: 2rem;
@@ -1797,9 +1797,10 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
     position: absolute;
     top: 2rem;
     bottom: 0;
-    left: 6px;
-    width: 2px;
-    background: var(--surface-border);
+    left: 2px;
+    width: 12px;
+    background-image: url('data:image/svg+xml;utf8,<svg width="12" height="40" viewBox="0 0 12 40" xmlns="http://www.w3.org/2000/svg"><path d="M 6 0 C 12 10 0 30 6 40" fill="transparent" stroke="%23cbd5e1" stroke-width="2" stroke-linecap="round"/></svg>');
+    background-repeat: repeat-y;
     z-index: 0;
 }
 

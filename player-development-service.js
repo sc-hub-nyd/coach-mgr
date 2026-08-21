@@ -68,7 +68,7 @@ export function buildDevelopmentTimeline(player, { matches = [], practices = [] 
         kind: 'note', date: note.date, id: note.id, title: note.focus || '育成ノート', detail: note.observation || note.nextStep || '記録', note
     }));
     const observations = (player?.history || []).map(item => ({
-        kind: 'observation', date: item.date, id: item.id, title: '観察メモ', detail: item.comment || '記録'
+        kind: 'note', date: item.date, id: item.id, title: '観察メモ', detail: item.comment || '記録'
     }));
     const matchActivities = matches
         .filter(match => (match.presentPlayerIds || []).some(id => Number(id) === playerId) || (match.playerFeedback || []).some(item => Number(item.playerId) === playerId))
@@ -78,7 +78,7 @@ export function buildDevelopmentTimeline(player, { matches = [], practices = [] 
         .map(practice => ({ kind: 'practice', date: practice.date, id: practice.id, title: '練習に参加', detail: practice.location || '練習記録' }));
     return [...notes, ...observations, ...matchActivities, ...practiceActivities]
         .sort((a, b) => toTimestamp(b.date) - toTimestamp(a.date))
-        .slice(0, 30);
+        .slice(0, 300);
 }
 
 export function buildDevelopmentSummary(player, options = {}) {

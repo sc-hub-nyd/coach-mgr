@@ -51,7 +51,7 @@ function renderDevelopmentNotebook(player) {
         }).join('') : '<p class="c-focus-summary__note">スキル評価を記録すると、現在のフェーズが表示されます。</p>';
     }
     const labels = { note: '育成ノート', observation: '観察メモ', match: '試合', practice: '練習' };
-    const icons = { note: 'ti ti-book-2', observation: 'ti ti-eye', match: 'ti ti-ball-football', practice: 'ti ti-run' };
+    const icons = { note: 'ti ti-shoe', observation: 'ti ti-shoe', match: 'ti ti-ball-football', practice: 'ti ti-run' };
     
     // タイムライン描画関数（インラインフィルター対応・階層化）
     const renderTimeline = () => {
@@ -145,8 +145,10 @@ function renderDevelopmentNotebook(player) {
                 `;
                 
                 mGroup.items.forEach(item => {
+                    const isMatch = item.kind === 'match';
+                    const clickAttr = isMatch ? ` onclick="window.router.navigate('match-detail', { id: ${item.id} })" style="cursor: pointer;" title="試合詳細を見る"` : '';
                     html += `
-                    <article class="c-data-list__item is-${escapeHtml(item.kind)}">
+                    <article class="c-data-list__item is-${escapeHtml(item.kind)}"${clickAttr}>
                         <span class="c-data-list__identity"><i class="${icons[item.kind] || 'ti ti-circle'}" aria-hidden="true"></i></span>
                         <div class="c-data-list__content"><span class="c-data-list__meta">${escapeHtml(item.date || '')} ・ ${labels[item.kind] || '記録'}</span><strong>${escapeHtml(item.title || '')}</strong><p class="c-data-list__body">${escapeHtml(item.detail || '')}</p></div>
                         ${canEdit && item.kind === 'note' ? `<div class="c-data-list__actions"><button type="button" class="c-button btn c-button--secondary btn-secondary btn-remove-development-note" data-development-note-id="${escapeHtml(item.id)}" aria-label="育成ノートを削除"><i class="ti ti-trash"></i></button></div>` : ''}
