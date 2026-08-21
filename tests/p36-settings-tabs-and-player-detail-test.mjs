@@ -62,6 +62,9 @@ test('3. 選手詳細の個別ページ化 & 選手編集モーダル検証', ()
     assert.match(standardCss, /\.c-metric \{[\s\S]*?background: var\(--neo-surface-gradient\);[\s\S]*?box-shadow: var\(--shadow-neo-raised\);/, 'Standard metric component provides the surface and elevation');
     assert.match(standardCss, /@media \(max-width: 40rem\) \{[\s\S]*?\.c-metric-grid--player-detail \{[\s\S]*?grid-template-columns: repeat\(4, minmax\(0, 1fr\)\);/, 'Player-detail KPIs remain a four-column row on mobile');
     assert.match(standardCss, /\.c-metric-grid--player-detail \.c-metric__note \{[\s\S]*?display: none;/, 'Compact mobile KPI row omits secondary notes rather than wrapping');
+    const cumulativeKpiNotes = indexHtml.match(/<span class="c-metric__note">通算<\/span>/g) || [];
+    assert.equal(cumulativeKpiNotes.length, 3, 'Match, goal, and assist metrics consistently disclose their cumulative scope');
+    assert.doesNotMatch(indexHtml, /<section class="c-metric-grid c-metric-grid--player-detail"[\s\S]*?<span class="c-metric__note">全期間<\/span>/, 'Player KPI summary does not mix the cumulative-scope wording');
     assert.match(indexHtml, /id="pd-profile-title"/, 'Profile section exists');
     assert.match(indexHtml, /id="pd-timeline-title"/, 'Timeline section exists');
     assert.match(indexHtml, /id="pd-matches-title"/, 'Matches section exists');
