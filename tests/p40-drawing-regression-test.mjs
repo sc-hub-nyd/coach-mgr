@@ -63,6 +63,9 @@ requireAll(drawingCss, [
     '\\.anim-mobile-lower-panel \\{[\\s\\S]*?order: 10;',
     '#anim-back[\\s\\S]*?display: none !important;',
     '\\.c-frame-strip__item:only-child[\\s\\S]*?inline-size: 100%;',
+    '\\.c-frame-strip \\{[\\s\\S]*?overflow: hidden;',
+    '\\.c-frame-strip__list \\{[\\s\\S]*?flex: 1 1 auto;[\\s\\S]*?width: auto;[\\s\\S]*?overflow-x: auto;[\\s\\S]*?padding: 2px 0;',
+    '\\.c-frame-strip__item \\{[\\s\\S]*?flex: 0 0 auto;',
     '\\.anim-mobile-lower-panel \\{[\\s\\S]*?margin-bottom: calc\\([\\s\\S]*?48px',
     'body\\[data-route="animation"\\] #mobile-context-bar \\{[\\s\\S]*?bottom: calc\\(var\\(--safe-bottom\\) \\+ var\\(--bottom-nav-float-gap\\)\\)'
 ], 'モバイル作図のピッチ・操作・詳細の順序');

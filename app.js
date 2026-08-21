@@ -4,6 +4,7 @@ import { escapeHtml, encryptData, decryptData, showToast, showCustomConfirm, set
 import { initPractices, openPracticeModal, renderPracticeRoster, handleMenuSubmit } from './practices.js';
 import { initMatches, openMatchModal, openMatchDetail, initMatchDetailView, getMatchStatus, copyMatchShareText } from './matches.js';
 import { initPlayers, openPlayerDetail, initPlayerDetailView } from './players.js';
+import { getPlayerStatistics } from './player-statistics-service.js';
 import { initLibrary } from './library.js';
 import { initTactics } from './tactics.js';
 import { initSettings, initData, applyCurrentTeamTheme } from './settings.js';
@@ -1164,34 +1165,21 @@ function initDashboard() {
             }
 
             // ── 以下、選手が正しく選択されている場合の描画処理 ──
-            const currentNendo = getNendo(todayStr);
-
-            // 今年度の全試合・全練習
-            const thisYearMatches = state.matches.filter(m => getNendo(m.date) === currentNendo);
-            const thisYearPractices = state.practices.filter(p => getNendo(p.date) === currentNendo);
-            const totalThisYearEvents = thisYearMatches.length + thisYearPractices.length;
-
-            // 今年度の参加記録
-            const attendedMatches = thisYearMatches.filter(m => (m.presentPlayerIds || []).includes(player.id));
-            const attendedPractices = thisYearPractices.filter(p => (p.presentPlayerIds || []).includes(player.id));
-            const attendedThisYearCount = attendedMatches.length + attendedPractices.length;
-
-            // 出席率の算出
-            const attendancePct = totalThisYearEvents > 0
-                ? Math.round((attendedThisYearCount / totalThisYearEvents) * 100)
-                : 0;
-
-            // 通算（全期間）得点・アシストの集計
-            let playerGoals = 0;
-            let playerAssists = 0;
-            state.matches.forEach(m => {
-                if (m.goalRecords) {
-                    m.goalRecords.forEach(r => {
-                        if (r.scorerId === player.id) playerGoals++;
-                        if (r.assistId === player.id) playerAssists++;
-                    });
-                }
+            const playerStatistics = getPlayerStatistics(player, {
+                matches: state.matches,
+                practices: state.practices,
+                referenceDate: now
             });
+            const {
+                currentNendo,
+                attendedMatches,
+                attendedPractices,
+                attendanceNumerator: attendedThisYearCount,
+                attendanceDenominator: totalThisYearEvents,
+                attendanceRate: attendancePct,
+                goals: playerGoals,
+                assists: playerAssists
+            } = playerStatistics;
 
             // 最新フィードバックの抽出
             let timeline = [];

@@ -1897,3 +1897,100 @@ summary {
         grid-template-columns: 1fr;
     }
 }
+
+/* Player management: fixed information rows keep every player card aligned. */
+body[data-route="players"] #player-grid {
+    align-items: stretch;
+}
+
+body[data-route="players"] #player-grid .player-card {
+    display: grid;
+    grid-template-rows: 4.5rem minmax(0, 1fr);
+    gap: var(--space-2);
+    min-block-size: 13rem;
+    height: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+body[data-route="players"] #player-grid .player-card-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    min-block-size: 0;
+    margin: 0;
+}
+
+body[data-route="players"] #player-grid .player-card__identity {
+    display: grid;
+    grid-template-rows: 1.5rem 1.75rem;
+    min-width: 0;
+}
+
+body[data-route="players"] #player-grid .player-card__positions {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-1);
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+}
+
+body[data-route="players"] #player-grid .player-card__positions::-webkit-scrollbar {
+    display: none;
+}
+
+body[data-route="players"] #player-grid .player-card__positions .player-position,
+body[data-route="players"] #player-grid .player-card__positions .c-status {
+    flex: 0 0 auto;
+}
+
+body[data-route="players"] #player-grid .player-card__name {
+    align-self: end;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body[data-route="players"] #player-grid .player-card__summary {
+    display: grid;
+    grid-template-rows: minmax(2.75rem, 1fr) 1.5rem 1.75rem;
+    align-items: end;
+    gap: var(--space-1);
+    min-width: 0;
+}
+
+body[data-route="players"] #player-grid .player-card__playstyle,
+body[data-route="players"] #player-grid .player-card__focus {
+    margin: 0;
+}
+
+body[data-route="players"] #player-grid .player-card__playstyle {
+    align-self: center;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+body[data-route="players"] #player-grid .player-card__strongpoints {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+body[data-route="players"] #player-grid .player-card__focus {
+    align-self: end;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body[data-route="players"] #player-grid .player-card:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+}

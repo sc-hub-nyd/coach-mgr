@@ -3,6 +3,7 @@ import { state } from './state.js';
 import { escapeHtml, showToast, showCustomConfirm } from './utils.js';
 import { saveData, navigate, openModal } from './app-context.js';
 import { addDevelopmentNote, buildDevelopmentSummary, removeDevelopmentNote } from './player-development-service.js';
+import { getMatchGoalRecords, getPlayerStatistics } from './player-statistics-service.js';
 
 function renderDevelopmentNotebook(player) {
     const canEdit = state.currentUserRole === 'coach';
@@ -174,42 +175,26 @@ export function initPlayerDetailView(playerId) {
         } : null;
     }
 
-    // スタッツ集計
-    let playerGoals = 0;
-    let playerAssists = 0;
-    let playerMatches = 0;
-    state.matches.forEach(m => {
-        let participated = false;
-        if (m.formations) {
-            m.formations.forEach(f => {
-                if (f.slots && f.slots.some(s => s.playerId === p.id)) participated = true;
-            });
-        }
-        if (participated) playerMatches++;
-        if (m.goalRecords) {
-            m.goalRecords.forEach(r => {
-                if (r.scorerId === p.id) playerGoals++;
-                if (r.assistId === p.id) playerAssists++;
-            });
-        }
+    // ダッシュボードと同じ選手統計を使い、年度出席・通算得点／アシスト・出場試合を一貫して表示する。
+    const playerStatistics = getPlayerStatistics(p, {
+        matches: state.matches,
+        practices: state.practices
     });
-
-    // 出席率
-    let attendanceRate = '—';
-    if (state.practices && state.practices.length > 0) {
-        const total = state.practices.length;
-        const attended = state.practices.filter(pr => pr.attendedPlayerIds && pr.attendedPlayerIds.includes(p.id)).length;
-        attendanceRate = total > 0 ? `${Math.round((attended / total) * 100)}%` : '—';
-    }
+    const {
+        attendanceRate,
+        goals: playerGoals,
+        assists: playerAssists,
+        appearanceMatches: playerMatchesList
+    } = playerStatistics;
 
     const elAtt = document.getElementById('pd-attendance-rate');
     const elMatches = document.getElementById('pd-matches-count');
     const elGoals = document.getElementById('pd-goals');
     const elAssists = document.getElementById('pd-assists');
-    if (elAtt) elAtt.textContent = attendanceRate;
-    if (elMatches) elMatches.textContent = `${playerMatches} 試合`;
+    if (elAtt) elAtt.textContent = `${attendanceRate}%`;
+    if (elMatches) elMatches.textContent = `${playerMatchesList.length} 試合`;
     if (elGoals) elGoals.textContent = `${playerGoals} 点`;
-    if (elAssists) elAssists.textContent = `${playerAssists} 点`;
+    if (elAssists) elAssists.textContent = `${playerAssists} 回`;
 
 
     // タイムライン描画
@@ -370,15 +355,13 @@ export function initPlayerDetailView(playerId) {
         }
     }
 
-    // 出場試合履歴一覧
+    // 出場試合履歴一覧：フォーメーション登録と参加記録の両方を出場根拠として扱う。
     const matchesListEl = document.getElementById('pd-matches-list');
     if (matchesListEl) {
-        const playerMatchesList = state.matches.filter(m => {
-            return m.formations && m.formations.some(f => f.slots && f.slots.some(s => s.playerId === p.id));
-        });
         matchesListEl.innerHTML = playerMatchesList.length > 0 ? playerMatchesList.map(m => {
-            const goalsInMatch = (m.goalRecords || []).filter(r => r.scorerId === p.id).length;
-            const assistsInMatch = (m.goalRecords || []).filter(r => r.assistId === p.id).length;
+            const goalRecords = getMatchGoalRecords(m);
+            const goalsInMatch = goalRecords.filter(r => String(r.scorerId) === String(p.id)).length;
+            const assistsInMatch = goalRecords.filter(r => String(r.assistId) === String(p.id)).length;
             let statsBadge = '';
             if (goalsInMatch > 0) statsBadge += ` <span class="c-status c-status--warning">${goalsInMatch}得点</span>`;
             if (assistsInMatch > 0) statsBadge += ` <span class="c-status c-status--success">${assistsInMatch}アシスト</span>`;
@@ -627,26 +610,20 @@ export function initPlayers() {
             ).join('');
 
             return `
-                <div class="player-card c-card c-static-style--032" onclick="openPlayerDetail(${p.id});">
+                <article class="player-card c-card c-static-style--032" role="button" tabindex="0" aria-label="${escapeHtml(p.name)}の選手詳細を開く" onclick="openPlayerDetail(${p.id});" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openPlayerDetail(${p.id}); }">
                     <div class="player-card-header">
-                        <div>
-                            <div class="c-static-style--069">${badges}</div>
-                            <div class="c-static-style--162">${escapeHtml(p.name)}</div>
+                        <div class="player-card__identity">
+                            <div class="player-card__positions c-static-style--069">${badges || '<span class="c-status c-status--muted c-status--compact">未設定</span>'}</div>
+                            <div class="player-card__name c-static-style--162">${escapeHtml(p.name)}</div>
                         </div>
                         <div class="player-number">${p.number}</div>
                     </div>
-                    <div class="c-static-style--097">
-                        <div class="c-static-style--173">
-                            ${escapeHtml(p.playStyle || 'プレースタイル未設定')}
-                        </div>
-                        <div class="c-static-style--060">
-                            ${spTags}
-                        </div>
-                        <div class="c-static-style--207">
-                            <i class="ti ti-crosshair c-static-style--022"></i> ${escapeHtml(p.shortFocus || 'フォーカス未設定')}
-                        </div>
+                    <div class="player-card__summary c-static-style--097">
+                        <p class="player-card__playstyle c-static-style--173">${escapeHtml(p.playStyle || 'プレースタイル未設定')}</p>
+                        <div class="player-card__strongpoints c-static-style--060">${spTags}</div>
+                        <p class="player-card__focus c-static-style--207"><i class="ti ti-crosshair c-static-style--022" aria-hidden="true"></i> ${escapeHtml(p.shortFocus || 'フォーカス未設定')}</p>
                     </div>
-                </div>
+                </article>
             `;
         }).join('');
     }
