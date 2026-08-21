@@ -66,8 +66,8 @@ test('3. 選手詳細の個別ページ化 & 選手編集モーダル検証', ()
     assert.equal(cumulativeKpiNotes.length, 3, 'Match, goal, and assist metrics consistently disclose their cumulative scope');
     assert.doesNotMatch(indexHtml, /<section class="c-metric-grid c-metric-grid--player-detail"[\s\S]*?<span class="c-metric__note">全期間<\/span>/, 'Player KPI summary does not mix the cumulative-scope wording');
     assert.match(indexHtml, /id="pd-profile-title"/, 'Profile section exists');
-    assert.match(indexHtml, /id="pd-timeline-title"/, 'Timeline section exists');
-    assert.match(indexHtml, /id="pd-matches-title"/, 'Matches section exists');
+    assert.match(indexHtml, /id="pd-notebook-title"/, 'Timeline section exists');
+
     assert.match(indexHtml, /id="pd-btn-edit"/, 'Player detail edit action exists for coach mode');
     assert.match(indexHtml, /id="pd-btn-delete"/, 'Player detail delete action exists for coach mode');
     assert.match(indexHtml, /id="form-player-development-note"/, 'Development note form exists for coach mode');
@@ -96,7 +96,7 @@ test('3. 選手詳細の個別ページ化 & 選手編集モーダル検証', ()
     assert.match(playersJs, /btnEdit\.hidden = !canEdit;[\s\S]*?btnEdit\.disabled = !canEdit;/, 'Parent mode hides and disables player edit');
     assert.match(playersJs, /btnDelete\.hidden = !canEdit;[\s\S]*?btnDelete\.disabled = !canEdit;/, 'Parent mode hides and disables player deletion');
     assert.match(playersJs, /if \(state\.currentUserRole !== 'coach'\) \{[\s\S]*?保護者モードでは選手情報を編集できません/, 'Direct player-edit calls reject parent mode');
-    assert.match(playersJs, /canEdit && hId \?/, 'Assessment edit and delete actions render only for coach mode');
+    assert.match(playersJs, /canEdit && item\.kind === 'note' \?/, 'Assessment edit and delete actions render only for coach mode');
     assert.match(playersJs, /developmentNoteForm\.hidden = !canEdit;[\s\S]*?control\.disabled = !canEdit;/, 'Development note form is disabled in parent mode');
     assert.match(baseCss, /body\.role-read-only #pd-btn-edit,[\s\S]*?body\.role-read-only #pd-btn-delete,/, 'Read-only CSS covers the current player-detail action IDs');
     assert.match(playersJs, /getPlayerStatistics\(p, \{[\s\S]*?appearanceMatches: playerMatchesList/, 'Player detail uses the shared statistics definition for KPIs and appearances');

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Soccer Coach Manager</title>
     <meta name="description" content="サッカー指導者向けの試合・練習記録管理アプリケーション">
-    <link rel="stylesheet" href="./CSS/main.css?v=87">
+    <link rel="stylesheet" href="./CSS/main.css?v=88">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -764,33 +764,6 @@
                 </div>
             </section>
 
-            <!-- セクション 2: 成長の軌跡・指導メモ -->
-            <section class="card c-card" aria-labelledby="pd-timeline-title">
-                <div class="c-section-header c-card__header">
-                    <div class="c-section-header__content">
-                        <span class="c-kicker"><i class="ti ti-clipboard-check" aria-hidden="true"></i> TIMELINE</span>
-                        <h3 class="c-section-header__title c-card__title c-text-effect--shimmer" id="pd-timeline-title">成長の軌跡・指導メモ</h3>
-                    </div>
-                    <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm" id="btn-add-assessment"><i class="ti ti-plus" aria-hidden="true"></i> 観察メモ追加</button>
-                </div>
-                <div class="c-card__body">
-                    <div class="timeline c-data-list c-data-list--scrollable" id="pd-timeline" aria-live="polite"></div>
-                    <div id="pd-history-list" class="u-visually-hidden"></div>
-                </div>
-            </section>
-
-            <!-- セクション 3: 出場試合履歴 -->
-            <section class="card c-card" aria-labelledby="pd-matches-title">
-                <div class="c-section-header c-card__header">
-                    <div class="c-section-header__content">
-                        <span class="c-kicker"><i class="ti ti-trophy" aria-hidden="true"></i> MATCH HISTORY</span>
-                        <h3 class="c-section-header__title c-card__title c-text-effect--shimmer" id="pd-matches-title">出場試合一覧</h3>
-                    </div>
-                </div>
-                <div class="c-card__body">
-                    <div id="pd-matches-list" class="c-data-list"></div>
-                </div>
-            </section>
 
             <!-- セクション 4: 成長ノート (Coaching Notebook) -->
             <section class="card c-card" id="pd-tab-notebook" aria-labelledby="pd-notebook-title">
@@ -808,21 +781,25 @@
                         </div>
                         <div id="pd-notebook-trends" class="c-metric-grid c-metric-grid--inline" aria-live="polite"></div>
                     </section>
+                    <div id="pd-notebook-filters" class="c-filter-bar c-static-style--290" style="margin-bottom: var(--space-4);">
+                        <div class="c-filter-bar__main" style="flex-wrap: wrap; gap: var(--space-2);">
+                            <div class="c-filter-bar__search">
+                                <i class="ti ti-search" aria-hidden="true"></i>
+                                <input type="search" id="input-notebook-search" placeholder="記録をキーワード検索..." class="c-input form-control filter-search-input">
+                            </div>
+                            <div class="c-filter-chips" id="notebook-type-filters">
+                                <button type="button" class="c-chip c-chip--selectable active" data-type="all">すべて</button>
+                                <button type="button" class="c-chip c-chip--selectable" data-type="note">ノート</button>
+                                <button type="button" class="c-chip c-chip--selectable" data-type="observation">観察</button>
+                                <button type="button" class="c-chip c-chip--selectable" data-type="match">試合</button>
+                                <button type="button" class="c-chip c-chip--selectable" data-type="practice">練習</button>
+                            </div>
+                        </div>
+                    </div>
                     <div id="pd-notebook-timeline" class="c-data-list c-data-list--scrollable c-data-list--notebook" aria-live="polite"></div>
-                    <form id="form-player-development-note" class="c-settings-form">
-                        <input type="hidden" id="development-player-id">
-                        <div class="c-section-header c-section-header--compact">
-                            <div class="c-section-header__content"><span class="c-kicker"><i class="ti ti-plus" aria-hidden="true"></i> NEW NOTE</span><h4 class="c-section-header__title">育成ノートを記録</h4></div>
-                        </div>
-                        <div class="c-form-grid">
-                            <div class="c-form-field"><label class="c-form-field__label" for="development-note-date">日付</label><input id="development-note-date" type="date" class="c-input form-control" required></div>
-                            <div class="c-form-field"><label class="c-form-field__label" for="development-note-focus">今日のテーマ</label><input id="development-note-focus" class="c-input form-control" maxlength="80" placeholder="例：守備の寄せる方向を自分で選ぶ"></div>
-                        </div>
-                        <div class="c-form-field"><label class="c-form-field__label" for="development-note-observation">観察メモ</label><textarea id="development-note-observation" class="c-input form-control" rows="3" placeholder="成長した行動・事実を短く記録"></textarea></div>
-                        <div class="c-form-field"><label class="c-form-field__label" for="development-note-next-step">次の一歩</label><textarea id="development-note-next-step" class="c-input form-control" rows="2" placeholder="次回練習で取り組む具体的な一歩"></textarea></div>
-                        <fieldset class="c-fieldset"><legend class="c-fieldset__legend">スキル自己評価・コーチ評価（任意）</legend><div id="development-note-ratings" class="c-form-grid"></div></fieldset>
-                        <div class="c-action-group"><button type="submit" class="c-button btn c-button--primary btn-primary"><i class="ti ti-bookmark"></i> 保存</button></div>
-                    </form>
+                    <button type="button" class="c-fab btn-new-development-note" onclick="document.getElementById('modal-player-development-note').classList.remove('hidden')" aria-label="育成ノートを記録する" title="育成ノートを記録">
+                        <i class="ti ti-pencil plus-icon" aria-hidden="true"></i>
+                    </button>
                 </div>
             </section>
         </div>
@@ -2329,6 +2306,28 @@
     </div>
 
     <!-- Player Assessment Form Modal -->
+    <div id="modal-player-development-note" class="c-modal-overlay modal-overlay hidden">
+        <div class="modal c-modal" role="dialog" aria-modal="true" aria-labelledby="modal-player-development-note-title">
+            <header class="c-modal__header">
+                <h3 id="modal-player-development-note-title" class="c-modal__title"><i class="ti ti-book-2" aria-hidden="true"></i> 育成ノートを記録</h3>
+                <button type="button" class="c-button c-button--icon btn-close" onclick="document.getElementById('modal-player-development-note').classList.add('hidden')" aria-label="閉じる"><i class="ti ti-x" aria-hidden="true"></i></button>
+            </header>
+            <div class="c-modal__body">
+                <form id="form-player-development-note" class="c-settings-form">
+                    <input type="hidden" id="development-player-id">
+                    <div class="c-form-grid">
+                        <div class="c-form-field"><label class="c-form-field__label" for="development-note-date">日付</label><input id="development-note-date" type="date" class="c-input form-control" required></div>
+                        <div class="c-form-field"><label class="c-form-field__label" for="development-note-focus">今日のテーマ</label><input id="development-note-focus" class="c-input form-control" maxlength="80" placeholder="例：守備の寄せる方向を自分で選ぶ"></div>
+                    </div>
+                    <div class="c-form-field"><label class="c-form-field__label" for="development-note-observation">観察メモ</label><textarea id="development-note-observation" class="c-input form-control" rows="3" placeholder="成長した行動・事実を短く記録"></textarea></div>
+                    <div class="c-form-field"><label class="c-form-field__label" for="development-note-next-step">次の一歩</label><textarea id="development-note-next-step" class="c-input form-control" rows="2" placeholder="次回練習で取り組む具体的な一歩"></textarea></div>
+                    <fieldset class="c-fieldset"><legend class="c-fieldset__legend">スキル自己評価・コーチ評価（任意）</legend><div id="development-note-ratings" class="c-form-grid"></div></fieldset>
+                    <div class="c-action-group"><button type="submit" class="c-button btn c-button--primary btn-primary"><i class="ti ti-bookmark"></i> 保存</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-player-assessment" class="c-modal-overlay modal-overlay hidden c-static-style--283">
         <div class="modal c-modal" role="dialog" aria-modal="true" aria-labelledby="assessment-modal-title">
             <div class="c-modal__header">

@@ -309,10 +309,7 @@ requireAll(source.players, [
     'btn-empty-add-player',
     'player-view-tab',
     'c-data-list__item',
-    'c-data-list__actions',
-    'btn-edit-assessment',
-    'btn-delete-assessment',
-    'btn-timeline-anim'
+    'c-data-list__actions'
 ], '選手空状態・履歴');
 
 requireAll(source.practices, [
@@ -338,7 +335,6 @@ requireAll(source.index, [
     'player-view-tab',
     'id="player-grid"',
     'id="player-view-participation"',
-    'id="pd-history-list"',
     'c-data-list--scrollable',
     'id="btn-import-players-csv"',
     'id="btn-add-player"',
