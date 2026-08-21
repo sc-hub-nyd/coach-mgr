@@ -1,8 +1,20 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.31.16';
+export const APP_VERSION = 'v1.31.17';
 export const RELEASE_DATE = '2026-08-21';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.31.17',
+        date: '2026-08-21',
+        title: 'Tabler Icons専用化とコーチ用モバイルナビの再設計',
+        features: [
+            'アイコン：アプリ実行時のカスタムSVG・CSSマスク・PWA precacheを廃止し、ローカル配信のTabler Iconsへ統一',
+            'モバイル：コーチのボトムナビをホーム、選手管理、試合／練習、メニュー／戦術、その他の5項目へ再構成',
+            '操作：試合／練習とメニュー／戦術は、画面名と説明を伴う共通ボトムシートで遷移先を選択',
+            '互換性：保護者モードの既存ボトムナビ、役割権限、フォーカストラップ、PWAオフライン、Light／Darkを維持',
+            '統制：P56を追加し、Tabler専用体系、コーチ用5項目順、二択シート、保護者導線維持を検証'
+        ]
+    },
     {
         version: 'v1.31.16',
         date: '2026-08-21',

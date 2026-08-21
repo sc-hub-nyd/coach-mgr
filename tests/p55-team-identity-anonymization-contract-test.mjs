@@ -46,19 +46,28 @@ test('P55-2: ソース・設定・ドキュメントに特定チーム名・略�
     assert.deepEqual(matches, [], `特定チーム名・略称を含むテキストが残っています: ${matches.join(', ')}`);
 });
 
-test('P55-3: 汎用化したアイコン資産と実行時参照を完全に維持する', async () => {
-    const iconDirectories = ['custom', 'ui', 'activity', 'family'];
-    const iconCount = (await Promise.all(iconDirectories.map(async directory => (
-        await readdir(join(rootDir, 'assets', 'icons', 'team', directory))
-    ))).then(groups => groups.flat().filter(file => file.endsWith('.svg')).length));
-    const [iconSystem, serviceWorker] = await Promise.all([
+test('P55-3: カスタムSVGを残さず、Tabler Iconsだけを実行時アイコン体系にする', async () => {
+    const [iconSystem, serviceWorker, tablerCss] = await Promise.all([
         readFile(join(rootDir, 'CSS', 'icon-system.css'), 'utf8'),
-        readFile(join(rootDir, 'sw.js'), 'utf8')
+        readFile(join(rootDir, 'sw.js'), 'utf8'),
+        readFile(join(rootDir, 'assets', 'vendor', 'tabler-icons', 'tabler-icons-subset.css'), 'utf8')
     ]);
 
-    assert.equal(iconCount, 44, '汎用チームアイコンは44個すべてを管理対象にする');
-    assert.match(iconSystem, /assets\/icons\/team\//, 'icon-system.cssは汎用チームアイコンディレクトリを参照する');
-    assert.match(serviceWorker, /assets\/icons\/team\//, 'Service Workerは汎用チームアイコンをprecacheする');
+    await assert.rejects(
+        () => readdir(join(rootDir, 'assets', 'icons')),
+        error => error && error.code === 'ENOENT',
+        'カスタムSVG用assets/iconsディレクトリを残してはいけません'
+    );
+    assert.match(iconSystem, /\.ti\s*\{[\s\S]*?color:\s*currentColor/, 'Tablerアイコンはテーマ色へ追従する必要があります');
+    assert.doesNotMatch(iconSystem, /c-icon|assets\/icons\/|mask:/, 'カスタムSVGの部品・資産参照・マスク描画を残してはいけません');
+    assert.doesNotMatch(serviceWorker, /assets\/icons\//, 'Service Workerは削除済みカスタムSVGをprecacheしてはいけません');
+    const remainingSvgAssets = (await collectRepositoryFiles(rootDir))
+        .map(file => relative(rootDir, file))
+        .filter(file => file.endsWith('.svg'));
+    assert.deepEqual(remainingSvgAssets, [], `Tabler専用体系にSVG資産を再導入してはいけません: ${remainingSvgAssets.join(', ')}`);
+    ['ti-home', 'ti-users', 'ti-ball-football', 'ti-book-2', 'ti-route'].forEach(icon => {
+        assert.match(tablerCss, new RegExp(`\\.${icon}:before`), `必要なTablerアイコンが不足しています: ${icon}`);
+    });
 });
 
 console.log('P55 team identity anonymization contracts passed');

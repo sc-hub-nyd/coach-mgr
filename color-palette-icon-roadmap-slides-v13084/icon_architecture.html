@@ -43,17 +43,17 @@
       <div class="layout">
         <section class="principle">
           <h2>似た形ではなく、<br>近い意味を選ぶ。</h2>
-          <p>アイコンは装飾ではなく、操作・状態・文脈を補う部品。意味の重複や誤読を避けるため、採用順序を固定する。</p>
-          <div class="priority"><div><b>01</b><span>チーム・固有概念</span></div><div><b>02</b><span>汎用業務・サッカー語彙</span></div><div><b>03</b><span>順位などの補助表示</span></div><div><b>04</b><span>戦術そのものの表現</span></div></div>
+          <p>アイコンは装飾ではなく、操作・状態・文脈を補う部品。単一のTabler体系を使い、意味の重複や誤読を避ける。</p>
+          <div class="priority"><div><b>01</b><span>Tabler Icons</span></div><div><b>02</b><span>可視テキストラベル</span></div><div><b>03</b><span>順位などの補助表示</span></div><div><b>04</b><span>戦術そのものの表現</span></div></div>
         </section>
         <section class="layers" aria-label="CoachMgrのアイコン体系4層">
-          <div class="layer"><div class="number">LAYER 1</div><i class="ti ti-brand-abstract" aria-hidden="true"></i><div><div class="title">カスタムSVG</div><div class="code">.c-icon</div></div><div class="use">チームシグナル、主要ナビ、ミニゴールなど。Tablerに直接対応する形がない固有概念を担当。</div></div>
-          <div class="layer"><div class="number">LAYER 2</div><i class="ti ti-ball-football" aria-hidden="true"></i><div><div class="title">Tabler Icons</div><div class="code">.ti .ti-*</div></div><div class="use">得点、アシスト、ピッチ、経路、コーン、ラダー。ローカル配信の汎用・サッカー補助語彙を担当。</div></div>
+          <div class="layer"><div class="number">LAYER 1</div><i class="ti ti-ball-football" aria-hidden="true"></i><div><div class="title">Tabler Icons</div><div class="code">.ti .ti-*</div></div><div class="use">主要ナビ、得点、アシスト、ピッチ、経路、コーン、ラダーをローカル配信で提供。</div></div>
+          <div class="layer"><div class="number">LAYER 2</div><i class="ti ti-letter-case" aria-hidden="true"></i><div><div class="title">可視テキストラベル</div><div class="code">visible label</div></div><div class="use">画面名、操作名、状態をアイコンと併記し、意味を一意にする。</div></div>
           <div class="layer"><div class="number">LAYER 3</div><i class="ti ti-star" aria-hidden="true"></i><div><div class="title">絵文字</div><div class="code">rank only</div></div><div class="use">ランキング順位などの非操作的な補助表示。主要な操作や重要な状態には使わない。</div></div>
           <div class="layer"><div class="number">LAYER 4</div><i class="ti ti-route" aria-hidden="true"></i><div><div class="title">Canvas描画</div><div class="code">tactics board</div></div><div class="use">選手位置、パス、ドリブル、エリア。アイコンではなく、戦術表現そのものを担当。</div></div>
         </section>
       </div>
-      <div class="rule"><i class="ti ti-check" aria-hidden="true"></i><div><strong>アイコン、ラベル、ARIA、Canvas表現は、同じ意味を伝える。</strong><p>ラベルがある操作のアイコンは装飾として扱い、単独操作には日本語の`aria-label`を与える。色や形だけで状態を伝えない。</p></div><div class="rule-side">CUSTOM SVG × TABLER<br>EMOJI × CANVAS</div></div>
+      <div class="rule"><i class="ti ti-check" aria-hidden="true"></i><div><strong>アイコン、ラベル、ARIA、Canvas表現は、同じ意味を伝える。</strong><p>ラベルがある操作のアイコンは装飾として扱い、単独操作には日本語の`aria-label`を与える。色や形だけで状態を伝えない。</p></div><div class="rule-side">TABLER × LABEL<br>EMOJI × CANVAS</div></div>
     </div>
   </div>
 </body>

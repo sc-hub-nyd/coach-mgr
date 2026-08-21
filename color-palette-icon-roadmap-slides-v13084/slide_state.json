@@ -86,7 +86,7 @@
     {
       "id": "icon_architecture",
       "title": "アイコンは4層で意味を分担する",
-      "summary": "カスタムSVG、Tabler、絵文字、Canvasの担当範囲と選定規則を整理する。",
+      "summary": "ローカルTabler Icons、Tabler、絵文字、Canvasの担当範囲と選定規則を整理する。",
       "image_plan": "Use a suitable image if needed"
     },
     {

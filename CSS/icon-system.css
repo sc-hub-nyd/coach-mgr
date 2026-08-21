@@ -1,87 +1,9 @@
-/* icon-system.css — 既定チーム SVGアイコンのデザインシステム層 */
+/* icon-system.css — ローカル配信Tabler Iconsの共通テーマ追従層 */
 /*
- * SVGはマスクとして表示し、親要素のcolor（= currentColor）を継承する。
- * 見た目は c-icon、意味は隣接テキストまたは aria-label で提供する。
+ * アイコンはローカルのTabler Webfontだけを使用し、親要素のcurrentColorを継承する。
+ * 単独操作にはaria-labelを付け、状態はアイコン・色だけで表現しない。
  */
 
-.c-icon {
-    --icon-size: 1.25rem;
-    display: inline-block;
-    flex: 0 0 var(--icon-size);
-    inline-size: var(--icon-size);
-    block-size: var(--icon-size);
-    background-color: currentColor;
-    -webkit-mask: var(--icon-source) center / contain no-repeat;
-    mask: var(--icon-source) center / contain no-repeat;
-    vertical-align: -0.18em;
-}
-
-.c-icon--xs { --icon-size: 1rem; }
-.c-icon--sm { --icon-size: 1.125rem; }
-.c-icon--md { --icon-size: 1.25rem; }
-.c-icon--lg { --icon-size: 1.5rem; }
-.c-icon--xl { --icon-size: 2rem; }
-
-/* Team-specific: brand and coaching concepts */
-.c-icon--rising-pass { --icon-source: url('../assets/icons/team/custom/rising-pass.svg'); }
-.c-icon--pass-ladder { --icon-source: url('../assets/icons/team/custom/pass-ladder.svg'); }
-.c-icon--together-ring { --icon-source: url('../assets/icons/team/custom/together-ring.svg'); }
-.c-icon--team-signal { --icon-source: url('../assets/icons/team/custom/team-signal.svg'); }
-.c-icon--dream-gate { --icon-source: url('../assets/icons/team/custom/dream-gate.svg'); }
-.c-icon--field-horizon { --icon-source: url('../assets/icons/team/custom/field-horizon.svg'); }
-
-/* UI and state */
-.c-icon--home { --icon-source: url('../assets/icons/team/ui/ui-home.svg'); }
-.c-icon--calendar { --icon-source: url('../assets/icons/team/ui/ui-calendar.svg'); }
-.c-icon--search { --icon-source: url('../assets/icons/team/ui/ui-search.svg'); }
-.c-icon--filter { --icon-source: url('../assets/icons/team/ui/ui-filter.svg'); }
-.c-icon--sort { --icon-source: url('../assets/icons/team/ui/ui-sort.svg'); }
-.c-icon--add { --icon-source: url('../assets/icons/team/ui/ui-add.svg'); }
-.c-icon--edit { --icon-source: url('../assets/icons/team/ui/ui-edit.svg'); }
-.c-icon--delete { --icon-source: url('../assets/icons/team/ui/ui-delete.svg'); }
-.c-icon--close { --icon-source: url('../assets/icons/team/ui/ui-close.svg'); }
-.c-icon--back { --icon-source: url('../assets/icons/team/ui/ui-back.svg'); }
-.c-icon--chevron-right { --icon-source: url('../assets/icons/team/ui/ui-chevron-right.svg'); }
-.c-icon--chevron-down { --icon-source: url('../assets/icons/team/ui/ui-chevron-down.svg'); }
-.c-icon--refresh { --icon-source: url('../assets/icons/team/ui/ui-refresh.svg'); }
-.c-icon--save { --icon-source: url('../assets/icons/team/ui/ui-save.svg'); }
-.c-icon--publish { --icon-source: url('../assets/icons/team/ui/ui-publish.svg'); }
-.c-icon--check { --icon-source: url('../assets/icons/team/ui/ui-check.svg'); }
-.c-icon--status-clock { --icon-source: url('../assets/icons/team/ui/ui-status-clock.svg'); }
-.c-icon--warning { --icon-source: url('../assets/icons/team/ui/ui-warning.svg'); }
-.c-icon--error { --icon-source: url('../assets/icons/team/ui/ui-error.svg'); }
-.c-icon--unread-dot { --icon-source: url('../assets/icons/team/ui/ui-unread-dot.svg'); }
-.c-icon--lock { --icon-source: url('../assets/icons/team/ui/ui-lock.svg'); }
-.c-icon--eye { --icon-source: url('../assets/icons/team/ui/ui-eye.svg'); }
-.c-icon--eye-off { --icon-source: url('../assets/icons/team/ui/ui-eye-off.svg'); }
-.c-icon--checklist { --icon-source: url('../assets/icons/team/ui/ui-checklist.svg'); }
-.c-icon--progress-ring { --icon-source: url('../assets/icons/team/ui/ui-progress-ring.svg'); }
-
-/* Activities and family communication */
-.c-icon--cone { --icon-source: url('../assets/icons/team/activity/activity-cone.svg'); }
-.c-icon--trophy { --icon-source: url('../assets/icons/team/activity/activity-trophy.svg'); }
-.c-icon--team { --icon-source: url('../assets/icons/team/activity/activity-team.svg'); }
-.c-icon--user { --icon-source: url('../assets/icons/team/activity/activity-user.svg'); }
-.c-icon--location { --icon-source: url('../assets/icons/team/activity/activity-location.svg'); }
-.c-icon--time { --icon-source: url('../assets/icons/team/activity/activity-time.svg'); }
-.c-icon--bag { --icon-source: url('../assets/icons/team/activity/activity-bag.svg'); }
-.c-icon--attendance { --icon-source: url('../assets/icons/team/activity/activity-attendance.svg'); }
-.c-icon--message { --icon-source: url('../assets/icons/team/activity/activity-message.svg'); }
-.c-icon--megaphone { --icon-source: url('../assets/icons/team/activity/activity-megaphone.svg'); }
-.c-icon--bell { --icon-source: url('../assets/icons/team/family/family-bell.svg'); }
-.c-icon--photo { --icon-source: url('../assets/icons/team/family/family-photo.svg'); }
-.c-icon--document { --icon-source: url('../assets/icons/team/family/family-document.svg'); }
-
-.c-icon--brand { color: var(--color-brand); }
-.c-icon--on-brand { color: var(--color-text-on-brand); }
-.c-icon--on-action { color: var(--color-text-on-action); }
-.c-icon--muted { color: var(--color-text-muted); }
-.c-icon--positive { color: var(--color-success); }
-.c-icon--warning-tone { color: var(--color-warning); }
-.c-icon--danger { color: var(--color-danger); }
-
-/* Tabler Icons: locally bundled outline icon pack for generic operations.
-   Custom .c-icon SVG masks remain the first choice for team-specific concepts. */
 .ti {
     color: currentColor;
     font-size: 1em;
@@ -101,10 +23,3 @@ button > .ti[aria-hidden="true"],
 .c-tabler-icon--warning { color: var(--color-warning); }
 .c-tabler-icon--danger { color: var(--color-danger); }
 .c-tabler-icon--muted { color: var(--color-text-muted); }
-
-@media (forced-colors: active) {
-    .c-icon {
-        background-color: CanvasText;
-        forced-color-adjust: auto;
-    }
-}

@@ -50,15 +50,18 @@ test('P38-2: トップバーのスリム化とタイトル＆スマホモード�
     assert.match(appJs, /mobileTopBarRoleBadge\.addEventListener\('click'/, 'app.js binds mobile role badge');
 });
 
-test('P38-3: スマホ向けボトムナビゲーション（5項目親指最適化＆権限制御）検証', () => {
-    assert.match(indexHtml, /id="bottom-nav"/, 'bottom-nav exists');
-    assert.match(indexHtml, /data-route="dashboard"/, 'bottom-nav has dashboard');
-    assert.match(indexHtml, /data-route="matches"/, 'bottom-nav has matches');
-    assert.match(indexHtml, /data-route="practices"/, 'bottom-nav has practices');
-    assert.match(indexHtml, /class="c-bottom-nav__item coach-only" data-route="library"/, 'bottom-nav library is coach-only');
+test('P38-3: スマホ向けボトムナビゲーション（コーチ5項目・二択・保護者互換）検証', () => {
     assert.match(indexHtml, /class="c-bottom-nav" id="bottom-nav"/, 'bottom-nav uses the common app-shell class');
+    assert.match(indexHtml, /data-route="dashboard"/, 'bottom-nav has dashboard');
+    assert.match(indexHtml, /class="[^"]*coach-only[^"]*" data-route="players"/, 'コーチ用の選手管理を直接導線として提供する必要があります');
+    assert.match(indexHtml, /id="btn-bottom-nav-match-practice"[^>]*data-mobile-route-group="schedule"/, '試合／練習の二択トリガーを提供する必要があります');
+    assert.match(indexHtml, /id="btn-bottom-nav-library-tactics"[^>]*data-mobile-route-group="planning"/, 'メニュー／戦術の二択トリガーを提供する必要があります');
+    assert.match(indexHtml, /class="[^"]*c-bottom-nav__item--parent-route[^"]*" data-route="matches"/, '保護者用の試合導線を維持する必要があります');
+    assert.match(indexHtml, /class="[^"]*c-bottom-nav__item--parent-route[^"]*" data-route="practices"/, '保護者用の練習導線を維持する必要があります');
     assert.match(indexHtml, /id="btn-bottom-nav-more"/, 'bottom-nav has more button');
     assert.match(appJs, /btnBottomNavMore\.addEventListener\('click'/, 'app.js binds bottom nav more button');
+    assert.match(appJs, /const mobileRouteChoiceTriggers = document\.querySelectorAll\('\[data-mobile-route-group\]'\)/, 'app.js collects both mobile route-choice triggers');
+    assert.match(appJs, /mobileRouteChoiceTriggers\.forEach\(trigger => \{[\s\S]*?trigger\.addEventListener\('click', \(\) => openMobileRouteChoice\(trigger\.dataset\.mobileRouteGroup, trigger\)\);/, 'app.js binds both choice triggers to the shared selection sheet');
     assert.match(appJs, /#bottom-nav \.coach-only/, 'app.js controls bottom-nav coach-only items');
 });
 

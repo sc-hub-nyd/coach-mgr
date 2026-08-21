@@ -2015,6 +2015,74 @@ function setupEventListeners() {
         syncBottomNavMoreState();
     }
 
+    // コーチ用の二択ナビ。試合／練習とメニュー／戦術は、現在地を失わずに共通の選択シートから遷移する。
+    const mobileRouteChoiceGroups = {
+        schedule: {
+            title: '試合または練習を選択',
+            description: '記録・管理する画面を選択してください。',
+            options: [
+                { route: 'matches', label: '試合記録', icon: 'ti-trophy', description: '試合結果・出場・イベントを管理' },
+                { route: 'practices', label: '練習管理', icon: 'ti-calendar', description: '練習メニュー・出欠・振り返りを管理' }
+            ]
+        },
+        planning: {
+            title: 'メニューまたは戦術を選択',
+            description: '準備・設計する画面を選択してください。',
+            options: [
+                { route: 'library', label: 'メニュー管理', icon: 'ti-book-2', description: '練習メニューとテンプレートを管理' },
+                { route: 'tactics', label: '戦術管理', icon: 'ti-route', description: 'フォーメーションと作図を管理' }
+            ]
+        }
+    };
+    const mobileRouteChoiceModal = document.getElementById('modal-mobile-route-choice');
+    const mobileRouteChoiceTitle = document.getElementById('mobile-route-choice-title');
+    const mobileRouteChoiceDescription = document.getElementById('mobile-route-choice-description');
+    const mobileRouteChoiceList = document.getElementById('mobile-route-choice-list');
+    const mobileRouteChoiceTriggers = document.querySelectorAll('[data-mobile-route-group]');
+    let activeMobileRouteChoiceTrigger = null;
+    const syncMobileRouteChoiceState = () => {
+        const isExpanded = mobileRouteChoiceModal && !mobileRouteChoiceModal.classList.contains('hidden') && !mobileRouteChoiceModal.classList.contains('is-closing');
+        mobileRouteChoiceTriggers.forEach(trigger => {
+            const isTriggerExpanded = Boolean(isExpanded && trigger === activeMobileRouteChoiceTrigger);
+            trigger.classList.toggle('is-expanded', isTriggerExpanded);
+            trigger.setAttribute('aria-expanded', String(isTriggerExpanded));
+        });
+        if (!isExpanded) activeMobileRouteChoiceTrigger = null;
+    };
+    const openMobileRouteChoice = (groupName, trigger) => {
+        const group = mobileRouteChoiceGroups[groupName];
+        if (!group || !mobileRouteChoiceModal || !mobileRouteChoiceTitle || !mobileRouteChoiceDescription || !mobileRouteChoiceList) return;
+        mobileRouteChoiceTitle.textContent = group.title;
+        mobileRouteChoiceDescription.textContent = group.description;
+        mobileRouteChoiceList.innerHTML = group.options.map(option => `
+            <button type="button" class="c-button btn c-button--secondary btn-secondary c-mobile-route-choice__item" data-mobile-choice-route="${option.route}">
+                <i class="ti ${option.icon}" aria-hidden="true"></i>
+                <span class="c-mobile-route-choice__copy"><strong>${option.label}</strong><small>${option.description}</small></span>
+                <i class="ti ti-chevron-right" aria-hidden="true"></i>
+            </button>
+        `).join('');
+        mobileRouteChoiceList.querySelectorAll('[data-mobile-choice-route]').forEach(item => {
+            item.addEventListener('click', event => {
+                const route = event.currentTarget.dataset.mobileChoiceRoute;
+                closeModal('modal-mobile-route-choice', { returnFocus: false, immediate: true });
+                if (route) navigate(route);
+            });
+        });
+        activeMobileRouteChoiceTrigger = trigger;
+        openModal('modal-mobile-route-choice', { trigger });
+        syncMobileRouteChoiceState();
+    };
+    mobileRouteChoiceTriggers.forEach(trigger => {
+        trigger.addEventListener('click', () => openMobileRouteChoice(trigger.dataset.mobileRouteGroup, trigger));
+    });
+    if (mobileRouteChoiceModal) {
+        new MutationObserver(syncMobileRouteChoiceState).observe(mobileRouteChoiceModal, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+        syncMobileRouteChoiceState();
+    }
+
     document.querySelectorAll('.mobile-more-item[data-mobile-route]').forEach(item => {
         item.addEventListener('click', (e) => {
             const route = e.currentTarget.dataset.mobileRoute;
@@ -2281,18 +2349,22 @@ export function updateRoleUI() {
         if (practicesLink) practicesLink.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
     }
 
-    // スマホボトムバー
+    // スマホボトムバー：保護者は従来の試合・練習導線を維持し、コーチは5項目の二択導線へ切り替える。
     document.querySelectorAll('#bottom-nav .coach-only').forEach(el => {
         el.style.display = isCoach ? 'flex' : 'none';
     });
     const bottomMatches = document.querySelector('#bottom-nav [data-route="matches"]');
     const bottomPractices = document.querySelector('#bottom-nav [data-route="practices"]');
+    const bottomParentRoutes = document.querySelectorAll('#bottom-nav .c-bottom-nav__item--parent-route');
     if (!isCoach) {
         if (bottomMatches) bottomMatches.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
         if (bottomPractices) bottomPractices.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
+        bottomParentRoutes.forEach(el => {
+            if (!el.dataset.route || !['matches', 'practices'].includes(el.dataset.route)) return;
+            el.style.display = parentScopes.includes('schedule') ? 'flex' : 'none';
+        });
     } else {
-        if (bottomMatches) bottomMatches.style.display = 'flex';
-        if (bottomPractices) bottomPractices.style.display = 'flex';
+        bottomParentRoutes.forEach(el => { el.style.display = 'none'; });
     }
 
     // モバイルその他メニュー内の coach-only / parent-only 表示制御
@@ -2523,9 +2595,15 @@ export function navigate(route, params = null, isBack = false, restoredRouteCont
         }
     });
 
+    const activeMobileRouteGroup = ['matches', 'practices', 'match-detail'].includes(route)
+        ? 'schedule'
+        : (['library', 'tactics'].includes(route) ? 'planning' : null);
     bottomNavLinks.forEach(link => {
-        const isActive = link.dataset.route === route || (route === 'match-detail' && link.dataset.route === 'matches') || (route === 'player-detail' && link.dataset.route === 'players');
-        link.classList.toggle('active', isActive);
+        const isDirectRoute = link.dataset.route === route
+            || (route === 'match-detail' && link.dataset.route === 'matches')
+            || (route === 'player-detail' && link.dataset.route === 'players');
+        const isGroupedRoute = link.dataset.mobileRouteGroup === activeMobileRouteGroup;
+        link.classList.toggle('active', isDirectRoute || isGroupedRoute);
     });
 
     // スマホ用スリム戻るコンテキストバーの表示・非表示・タイトル制御

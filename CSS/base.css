@@ -1081,7 +1081,7 @@ body.role-read-only #pd-tab-goals textarea {
         z-index: 2;
     }
 
-    .c-bottom-nav .c-bottom-nav__item i, .c-bottom-nav .c-bottom-nav__item .c-icon {
+    .c-bottom-nav .c-bottom-nav__item i {
         font-size: 1rem !important;
         line-height: 1 !important;
         display: block !important;
@@ -1098,27 +1098,29 @@ body.role-read-only #pd-tab-goals textarea {
     }
 
     .c-bottom-nav .c-bottom-nav__item.active,
-    .c-bottom-nav .c-bottom-nav__item--more.is-expanded {
+    .c-bottom-nav .c-bottom-nav__item--more.is-expanded,
+    .c-bottom-nav .c-bottom-nav__item--choice.is-expanded {
         color: var(--color-brand);
         font-weight: 700;
     }
 
     .c-bottom-nav .c-bottom-nav__item.active::before,
+    .c-bottom-nav .c-bottom-nav__item--choice.is-expanded::before,
     .c-bottom-nav .c-bottom-nav__item--more.is-expanded::before {
         opacity: 1;
         transform: scale(1);
     }
 
     .c-bottom-nav .c-bottom-nav__item.active::after,
+    .c-bottom-nav .c-bottom-nav__item--choice.is-expanded::after,
     .c-bottom-nav .c-bottom-nav__item--more.is-expanded::after {
         opacity: 1;
         transform: scaleX(1);
     }
 
     .c-bottom-nav .c-bottom-nav__item.active i,
-    .c-bottom-nav .c-bottom-nav__item.active .c-icon,
     .c-bottom-nav .c-bottom-nav__item--more.is-expanded i,
-    .c-bottom-nav .c-bottom-nav__item--more.is-expanded .c-icon {
+    .c-bottom-nav .c-bottom-nav__item--choice.is-expanded i {
         transform: translateY(-1px);
     }
 
@@ -1148,9 +1150,8 @@ body.role-read-only #pd-tab-goals textarea {
         .c-bottom-nav .c-bottom-nav__item.is-pressing,
         .c-bottom-nav .c-bottom-nav__item:active,
         .c-bottom-nav .c-bottom-nav__item.active i,
-        .c-bottom-nav .c-bottom-nav__item.active .c-icon,
         .c-bottom-nav .c-bottom-nav__item--more.is-expanded i,
-        .c-bottom-nav .c-bottom-nav__item--more.is-expanded .c-icon,
+        .c-bottom-nav .c-bottom-nav__item--choice.is-expanded i,
         .c-context-bar.is-opening,
         .c-context-bar.is-closing {
             transform: none;
@@ -1160,9 +1161,8 @@ body.role-read-only #pd-tab-goals textarea {
     :root[data-reduce-motion="true"] .c-bottom-nav .c-bottom-nav__item.is-pressing,
     :root[data-reduce-motion="true"] .c-bottom-nav .c-bottom-nav__item:active,
     :root[data-reduce-motion="true"] .c-bottom-nav .c-bottom-nav__item.active i,
-    :root[data-reduce-motion="true"] .c-bottom-nav .c-bottom-nav__item.active .c-icon,
     :root[data-reduce-motion="true"] .c-bottom-nav .c-bottom-nav__item--more.is-expanded i,
-    :root[data-reduce-motion="true"] .c-bottom-nav .c-bottom-nav__item--more.is-expanded .c-icon,
+    :root[data-reduce-motion="true"] .c-bottom-nav .c-bottom-nav__item--choice.is-expanded i,
     :root[data-reduce-motion="true"] .c-context-bar.is-opening,
     :root[data-reduce-motion="true"] .c-context-bar.is-closing {
         transform: none;

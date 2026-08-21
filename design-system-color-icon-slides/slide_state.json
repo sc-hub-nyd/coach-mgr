@@ -52,7 +52,7 @@
     {
       "id": "icon_architecture",
       "title": "4層で意味を使い分ける",
-      "summary": "カスタムSVG、Tabler、絵文字、Canvasの役割分担と選定原則を整理する。",
+      "summary": "ローカルTabler Icons、Tabler、絵文字、Canvasの役割分担と選定原則を整理する。",
       "image_plan": "Use a suitable image if needed"
     },
     {

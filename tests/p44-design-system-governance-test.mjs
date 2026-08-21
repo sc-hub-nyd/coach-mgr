@@ -32,17 +32,16 @@ requireAll(brandStandard, [
     'P43 作図アイコン識別性テスト'
 ], 'ブランド・デザインシステム標準');
 
-// アイコン台帳はローカルTabler、4層、タッチ操作時の可視ラベル、変更レビューを持つ。
+// アイコン台帳はローカルTabler専用、可視ラベル、モバイル二択導線、変更検証を持つ。
 requireAll(iconSystem, [
     'ローカル配信のTabler Icons 3.46.0',
-    '第1層のカスタムSVG',
-    '第2層のTabler Icons',
-    '第3層の絵文字',
-    '第4層のCanvas描画',
-    '作図ツールのアイコン台帳',
-    'デスクトップ68px・モバイル64px',
-    'P40・P42・P43'
+    '別のカスタムSVG資産は保持せず',
+    'assets/vendor/tabler-icons/',
+    '可視ラベル・ARIA・色・フォーカス',
+    '試合／練習とメニュー／戦術を二択トリガー',
+    'P33、P42、P47、P53、P55、P56'
 ], 'アイコン台帳');
+assert.doesNotMatch(iconSystem, /\.c-icon|assets\/icons\/|\bmask:\s*/, 'アイコン台帳はカスタムSVG部品・資産参照・マスク描画を再導入してはいけません');
 
 // 検証標準はD1〜D5とテーマ・PWAを横断する品質ゲートを明記する。
 requireAll(iconValidation, [

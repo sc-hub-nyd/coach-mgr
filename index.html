@@ -31,16 +31,16 @@
         <!-- Sidebar -->
         <nav class="c-sidebar" id="sidebar">
             <div class="c-sidebar__header c-static-style--031" id="sidebar-team-brand">
-                <h2><span class="c-icon c-icon--team-signal c-icon--md c-icon--brand" aria-hidden="true"></span> CoachMgr</h2>
+                <h2><i class="ti ti-ball-football c-tabler-icon--brand" aria-hidden="true"></i> CoachMgr</h2>
             </div>
             <ul class="c-sidebar__nav">
-                <li class="active" data-route="dashboard"><span class="c-icon c-icon--home c-icon--sm" aria-hidden="true"></span> ダッシュボード</li>
-                <li data-route="matches"><span class="c-icon c-icon--trophy c-icon--sm" aria-hidden="true"></span> 試合記録</li>
-                <li data-route="practices"><span class="c-icon c-icon--cone c-icon--sm" aria-hidden="true"></span> 練習管理</li>
-                <li data-route="library"><span class="c-icon c-icon--document c-icon--sm" aria-hidden="true"></span> メニュー管理</li>
-                <li data-route="tactics"><span class="c-icon c-icon--pass-ladder c-icon--sm" aria-hidden="true"></span> 戦術管理</li>
-                <li data-route="players"><span class="c-icon c-icon--team c-icon--sm" aria-hidden="true"></span> 選手管理</li>
-                <li data-route="settings"><i class="ti ti-settings"></i> 設定</li>
+                <li class="active" data-route="dashboard"><i class="ti ti-home" aria-hidden="true"></i> ダッシュボード</li>
+                <li data-route="matches"><i class="ti ti-trophy" aria-hidden="true"></i> 試合記録</li>
+                <li data-route="practices"><i class="ti ti-calendar" aria-hidden="true"></i> 練習管理</li>
+                <li data-route="library"><i class="ti ti-book-2" aria-hidden="true"></i> メニュー管理</li>
+                <li data-route="tactics"><i class="ti ti-route" aria-hidden="true"></i> 戦術管理</li>
+                <li data-route="players"><i class="ti ti-users" aria-hidden="true"></i> 選手管理</li>
+                <li data-route="settings"><i class="ti ti-settings" aria-hidden="true"></i> 設定</li>
             </ul>
 
             <!-- PC用サイドバーフッター（システム設定・モード切替・同期・バージョン） -->
@@ -108,7 +108,7 @@
 
                 <div class="c-sidebar__version-row">
                     <button type="button" class="btn-link c-sidebar__version-button" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <i class="ti ti-info-circle" aria-hidden="true"></i> <span id="topbar-version-text">v1.31.16</span>
+                        <i class="ti ti-info-circle" aria-hidden="true"></i> <span id="topbar-version-text">v1.31.17</span>
                     </button>
                 </div>
             </div>
@@ -155,24 +155,32 @@
                 </button>
             </div>
 
-            <!-- スマホ用5項目ナビゲーション（片手親指リーチ設計） -->
+            <!-- スマホ用ボトムナビゲーション：保護者は従来構成、コーチは5項目＋二択シート。 -->
             <nav class="c-bottom-nav" id="bottom-nav" aria-label="主要ナビゲーション">
-                <a href="#" class="c-bottom-nav__item active" data-route="dashboard" aria-label="ダッシュボード">
-                    <span class="c-icon c-icon--home c-icon--sm" aria-hidden="true"></span>
+                <a href="#" class="c-bottom-nav__item active" data-route="dashboard" aria-label="ホーム">
+                    <i class="ti ti-home" aria-hidden="true"></i>
                     <span>ホーム</span>
                 </a>
-                <a href="#" class="c-bottom-nav__item" data-route="matches" aria-label="試合記録">
-                    <span class="c-icon c-icon--trophy c-icon--sm" aria-hidden="true"></span>
+                <a href="#" class="c-bottom-nav__item c-bottom-nav__item--parent-route" data-route="matches" aria-label="試合記録">
+                    <i class="ti ti-trophy" aria-hidden="true"></i>
                     <span>試合</span>
                 </a>
-                <a href="#" class="c-bottom-nav__item" data-route="practices" aria-label="練習管理">
-                    <span class="c-icon c-icon--cone c-icon--sm" aria-hidden="true"></span>
+                <a href="#" class="c-bottom-nav__item c-bottom-nav__item--parent-route" data-route="practices" aria-label="練習管理">
+                    <i class="ti ti-calendar" aria-hidden="true"></i>
                     <span>練習</span>
                 </a>
-                <a href="#" class="c-bottom-nav__item coach-only" data-route="library" aria-label="メニュー管理">
-                    <span class="c-icon c-icon--document c-icon--sm" aria-hidden="true"></span>
-                    <span>メニュー</span>
+                <a href="#" class="c-bottom-nav__item coach-only c-bottom-nav__item--coach-route" data-route="players" aria-label="選手管理">
+                    <i class="ti ti-users" aria-hidden="true"></i>
+                    <span>選手管理</span>
                 </a>
+                <button type="button" class="c-bottom-nav__item c-bottom-nav__item--choice coach-only" id="btn-bottom-nav-match-practice" data-mobile-route-group="schedule" aria-label="試合または練習を選択" aria-controls="modal-mobile-route-choice" aria-expanded="false">
+                    <i class="ti ti-ball-football" aria-hidden="true"></i>
+                    <span>試合／練習</span>
+                </button>
+                <button type="button" class="c-bottom-nav__item c-bottom-nav__item--choice coach-only" id="btn-bottom-nav-library-tactics" data-mobile-route-group="planning" aria-label="メニューまたは戦術を選択" aria-controls="modal-mobile-route-choice" aria-expanded="false">
+                    <i class="ti ti-route" aria-hidden="true"></i>
+                    <span>メニュー／戦術</span>
+                </button>
                 <button type="button" class="c-bottom-nav__item c-bottom-nav__item--more" id="btn-bottom-nav-more" aria-label="その他のメニューを開く" aria-controls="modal-mobile-more" aria-expanded="false">
                     <i class="ti ti-dots c-static-style--165" aria-hidden="true"></i>
                     <span>その他</span>
@@ -230,14 +238,6 @@
                 <section id="mobile-more-navigation-section" class="c-mobile-more__navigation" aria-labelledby="mobile-more-navigation-heading">
                     <div id="mobile-more-navigation-heading" class="c-mobile-more__section-label">チーム管理</div>
                     <div class="mobile-more-grid c-mobile-more__grid">
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="tactics">
-                            <span class="c-icon c-icon--pass-ladder c-icon--md" aria-hidden="true"></span>
-                            <span>戦術管理</span>
-                        </button>
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="players">
-                            <span class="c-icon c-icon--team c-icon--md" aria-hidden="true"></span>
-                            <span>選手管理</span>
-                        </button>
                         <button type="button" class="c-button btn c-button--secondary btn-secondary mobile-more-item c-mobile-more__item coach-only" data-mobile-route="settings">
                             <i class="ti ti-settings c-static-style--166" aria-hidden="true"></i>
                             <span>設定</span>
@@ -256,13 +256,29 @@
                         <span class="u-visually-hidden" id="mobile-color-mode-text">ライト表示</span>
                     </button>
                     <button type="button" class="btn-link c-mobile-more__version" id="mobile-version-badge" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <span id="mobile-version-text">v1.31.16</span>
+                        <span id="mobile-version-text">v1.31.17</span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Coach-only route choice sheet: one accessible modal is shared by the two grouped bottom-nav actions. -->
+    <div id="modal-mobile-route-choice" class="c-modal-overlay modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-route-choice-title" aria-describedby="mobile-route-choice-description">
+        <div class="c-modal c-modal--bottom-sheet c-mobile-route-choice__sheet">
+            <div class="modal-header c-modal__header c-mobile-route-choice__header">
+                <div>
+                    <span class="c-mobile-route-choice__eyebrow">コーチ操作</span>
+                    <h2 id="mobile-route-choice-title" class="c-mobile-route-choice__heading">画面を選択</h2>
+                </div>
+                <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-close-modal" aria-label="画面選択を閉じる"><i class="ti ti-x" aria-hidden="true"></i></button>
+            </div>
+            <div class="c-modal__body c-mobile-route-choice__body">
+                <p id="mobile-route-choice-description" class="c-mobile-route-choice__description">表示する管理画面を選択してください。</p>
+                <div id="mobile-route-choice-list" class="c-mobile-route-choice__list" aria-label="画面の選択肢"></div>
+            </div>
+        </div>
+    </div>
 
     <div id="pwa-update-banner" class="pwa-update-banner hidden" role="status" aria-live="polite">
         <span><i class="ti ti-refresh"></i> 新しいバージョンを利用できます</span>

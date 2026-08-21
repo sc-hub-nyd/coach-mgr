@@ -1106,7 +1106,7 @@ function renderPeriodGrid(m) {
     grid.innerHTML = m.formations.map((f, idx) => {
         const scoreUs = f.scoreUs !== undefined ? f.scoreUs : 0;
         const scoreThem = f.scoreThem !== undefined ? f.scoreThem : 0;
-        const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="c-icon--brand ti ti-brand-youtube" title="動画あり"></i>' : '';
+        const videoBadge = (f.videoUrls?.length || f.videoUrl) ? '<i class="c-tabler-icon--brand ti ti-brand-youtube" title="動画あり"></i>' : '';
         const isPkPeriod = f.name && (f.name.trim() === 'PK戦' || f.name.toLowerCase().includes('pk'));
 
         let goalDetailsHtml = '';
@@ -1501,7 +1501,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
 
         if (isCoach) {
             // コーチモード：編集フォーム（ミニピッチ付き）
-            if (sideHeading) sideHeading.innerHTML = '<i class="c-icon--meta ti ti-pencil" ></i> ピリオド情報編集';
+            if (sideHeading) sideHeading.innerHTML = '<i class="c-tabler-icon--meta ti ti-pencil" ></i> ピリオド情報編集';
 
             const systemOptions = state.customFormations.map(cf => `<option value="${cf.name}" ${period.system === cf.name ? 'selected' : ''}>${cf.name} (${cf.coords.length}人制)</option>`).join('');
 
@@ -1895,7 +1895,7 @@ export function openPeriodAnalysis(matchId, periodIndex) {
             }
         } else {
             // 保護者モード：閲覧専用プレビュー（コーチモードと同じすべての情報を網羅）
-            if (sideHeading) sideHeading.innerHTML = '<i class="c-icon--meta ti ti-info-circle" ></i> ピリオド情報';
+            if (sideHeading) sideHeading.innerHTML = '<i class="c-tabler-icon--meta ti ti-info-circle" ></i> ピリオド情報';
 
             const videoUrl = (period.videoUrls && period.videoUrls[0]) || period.videoUrl || '';
 

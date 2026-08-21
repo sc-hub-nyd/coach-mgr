@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 
 const files = {
     index: '../index.html',
@@ -127,14 +127,13 @@ assert.match(source.systemComponents, /\.c-data-list__metric-value/);
 assert.match(source.systemComponents, /font-variant-numeric:\s*tabular-nums slashed-zero/);
 assert.match(source.utilities, /\.u-tabular-nums/);
 assert.match(source.utilities, /\.u-mono/);
-assert.match(source.iconSystem, /\.c-icon\s*\{/);
-assert.match(source.iconSystem, /c-icon--team-signal/);
-assert.match(source.iconSystem, /c-icon--brand/);
-assert.match(source.iconSystem, /c-icon--on-brand/);
-assert.match(source.iconSystem, /forced-colors/);
-assert.match(source.index, /c-icon--team-signal/);
-assert.match(source.index, /c-icon--home/);
-assert.match(source.index, /c-icon--trophy/);
+assert.match(source.iconSystem, /\.ti\s*\{[\s\S]*?color:\s*currentColor/);
+assert.match(source.iconSystem, /c-tabler-icon--brand/);
+assert.match(source.index, /ti-ball-football/);
+assert.match(source.index, /ti-home/);
+assert.match(source.index, /ti-trophy/);
+assert.doesNotMatch(source.iconSystem, /c-icon|mask:|assets\/icons\//);
+assert.doesNotMatch(source.index, /c-icon--|class="c-icon/);
 assert.match(source.themeService, /export function buildTeamTheme/);
 assert.match(source.themeService, /export function validateThemePalette/);
 assert.match(source.settings, /applyCurrentTeamTheme/);
@@ -174,11 +173,7 @@ assert.match(source.typographyStandard, /Noto Sans JP/);
 assert.match(source.typographyStandard, /Inter/);
 assert.match(source.typographyStandard, /tabular-nums/);
 
-const iconDirectories = ['custom', 'ui', 'activity', 'family'];
-const iconCount = (await Promise.all(iconDirectories.map(async directory => (
-    await readdir(new URL(`../assets/icons/team/${directory}/`, import.meta.url))
-))).then(groups => groups.flat().filter(file => file.endsWith('.svg')).length));
-assert.equal(iconCount, 44, '既定チームアイコンは44個すべてを管理対象にする');
+assert.doesNotMatch(source.serviceWorker, /assets\/icons\/team\//, 'Service Workerは削除済みカスタムSVGをprecacheしてはいけません');
 
 for (const [name, css] of Object.entries({ tokens: source.tokens, layouts: source.layouts, components: source.components, systemComponents: source.systemComponents, iconSystem: source.iconSystem, utilities: source.utilities })) {
     const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '');
