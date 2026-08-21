@@ -1219,6 +1219,7 @@ function initDashboard() {
                 let labelStr = '観察メモ';
                 if (latestFeedbackItem.type === 'match') labelStr = '試合評価';
                 if (latestFeedbackItem.type === 'note') labelStr = '育成ノート';
+                const commentText = latestFeedbackItem.comment || '';
                 latestFeedbackHTML = `
                     <div class="c-static-style--199">
                         <div class="c-static-style--078">
@@ -1226,11 +1227,7 @@ function initDashboard() {
                             <span class="c-static-style--105">${latestFeedbackItem.date} (${labelStr})</span>
                         </div>
                         <p class="c-static-style--154">
-                            ${escapeHtml(latestFeedbackItem.comment)
-                        .trim()
-                        .replace(/\n\s*\n/g, '\n')
-                        .replace(/\n/g, '<br>')
-                    }
+                            ${escapeHtml(commentText).trim().replace(/\n\s*\n/g, '\n').replace(/\n/g, '<br>')}
                         </p>
                     </div>
                 `;
