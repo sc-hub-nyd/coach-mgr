@@ -38,10 +38,17 @@ function renderDevelopmentNotebook(player) {
     }
     if (trends) {
         trends.innerHTML = summary.skillTrend.length ? summary.skillTrend.map(trend => {
-            const delta = trend.delta === null ? '—' : trend.delta > 0 ? `+${trend.delta}` : String(trend.delta);
-            const trendClass = trend.delta > 0 ? 'c-metric--positive' : trend.delta < 0 ? 'c-metric--negative' : '';
-            return `<article class="c-metric c-metric--inline ${trendClass}"><div class="c-metric__content"><span class="c-metric__label">${escapeHtml(trend.metric)}</span><strong class="c-metric__value">${trend.latest ?? '—'}</strong><small class="c-metric__note">${delta}</small></div></article>`;
-        }).join('') : '<p class="c-focus-summary__note">スキル評価を記録すると、前回との変化を確認できます。</p>';
+            const phaseMap = { 1: '🌱 挑戦中', 2: '💦 基礎固め', 3: '⚖️ 安定', 4: '🔥 実力発揮', 5: '⭐ 圧倒的強み' };
+            const phaseText = trend.latest ? phaseMap[trend.latest] : '—';
+            let deltaText = '—';
+            let trendClass = '';
+            if (trend.delta !== null) {
+                if (trend.delta > 0) { deltaText = '📈 成長サイクル'; trendClass = 'c-metric--positive'; }
+                else if (trend.delta < 0) { deltaText = '🔍 振り返り期'; trendClass = 'c-metric--negative'; }
+                else { deltaText = '➡️ キープ'; trendClass = 'c-metric--neutral'; }
+            }
+            return `<article class="c-metric c-metric--inline ${trendClass}"><div class="c-metric__content"><span class="c-metric__label">${escapeHtml(trend.metric)}</span><strong class="c-metric__value" style="font-size: 1.1rem;">${phaseText}</strong><small class="c-metric__note">${deltaText}</small></div></article>`;
+        }).join('') : '<p class="c-focus-summary__note">スキル評価を記録すると、現在のフェーズが表示されます。</p>';
     }
     const labels = { note: '育成ノート', observation: '観察メモ', match: '試合', practice: '練習' };
     const icons = { note: 'ti ti-book-2', observation: 'ti ti-eye', match: 'ti ti-ball-football', practice: 'ti ti-run' };
@@ -105,11 +112,12 @@ function renderDevelopmentNotebook(player) {
             const nendoCount = grouped[nendo].items.length;
             
             html += `
-                <div class="c-timeline-chapter" style="cursor: pointer; user-select: none;" onclick="const s = this.nextElementSibling; const isHidden = s.classList.toggle('hidden'); const t = this.querySelector('.c-timeline-chapter__title'); t.innerHTML = t.innerHTML.replace(isHidden ? '▼' : '▶', isHidden ? '▶' : '▼');">
+                <div class="c-timeline-chapter" style="cursor: pointer; user-select: none;" onclick="const s = this.nextElementSibling; const isHidden = s.classList.toggle('is-collapsed'); const t = this.querySelector('.c-timeline-chapter__title'); t.innerHTML = t.innerHTML.replace(isHidden ? '▼' : '▶', isHidden ? '▶' : '▼');">
                     <span class="c-timeline-chapter__title">${titleText}</span>
                     <span class="c-timeline-chapter__count">${nendoCount}件</span>
                 </div>
-                <div class="c-timeline-section ${isChapterExpanded ? '' : 'hidden'}">
+                <div class="c-timeline-grid ${isChapterExpanded ? '' : 'is-collapsed'}">
+                    <div class="c-timeline-section">
             `;
 
             // Month sort desc (e.g. 12, 11, ... 1) inside a nendo, wait nendo starts from 4 to 3.
@@ -128,11 +136,12 @@ function renderDevelopmentNotebook(player) {
                 const mTitleText = mGroup.focus ? `${mArrow} ${mm}月 ${mGroup.focus}` : `${mArrow} ${mm}月`;
                 
                 html += `
-                    <div class="c-timeline-route" style="cursor: pointer; user-select: none;" onclick="const s = this.nextElementSibling; const isHidden = s.classList.toggle('hidden'); const t = this.querySelector('.c-timeline-route__title'); t.innerHTML = t.innerHTML.replace(isHidden ? '▼' : '▶', isHidden ? '▶' : '▼');">
+                    <div class="c-timeline-route" style="cursor: pointer; user-select: none;" onclick="const s = this.nextElementSibling; const isHidden = s.classList.toggle('is-collapsed'); const t = this.querySelector('.c-timeline-route__title'); t.innerHTML = t.innerHTML.replace(isHidden ? '▼' : '▶', isHidden ? '▶' : '▼');">
                         <span class="c-timeline-route__title">${escapeHtml(mTitleText)}</span>
                         <span class="c-timeline-route__count">${mGroup.items.length}件</span>
                     </div>
-                    <div class="c-timeline-items ${isMonthExpanded ? '' : 'hidden'}">
+                    <div class="c-timeline-grid ${isMonthExpanded ? '' : 'is-collapsed'}">
+                        <div class="c-timeline-items">
                 `;
                 
                 mGroup.items.forEach(item => {
@@ -144,11 +153,15 @@ function renderDevelopmentNotebook(player) {
                     </article>`;
                 });
                 
-                html += `</div>`; // Close c-timeline-items
+                html += `
+                        </div>
+                    </div>`; // Close c-timeline-items inner and grid
                 isFirstMonthGlobal = false;
             });
             
-            html += `</div>`; // Close c-timeline-section
+            html += `
+                </div>
+            </div>`; // Close c-timeline-section inner and grid
         });
 
         timeline.innerHTML = html;
@@ -373,7 +386,7 @@ export function initPlayerDetailView(playerId) {
                     ratingsEl.querySelectorAll('.development-rating').forEach(sel => sel.value = '');
                 }
                 
-                document.getElementById('modal-player-development-note').classList.add('hidden');
+                document.getElementById('modal-player-development-note').classList.add('is-collapsed');
                 
                 // 再描画
                 initPlayerDetailView(p.id);
@@ -582,13 +595,13 @@ export function openPlayerCSVImportModal() {
             });
 
             saveData();
-            modal.classList.add('hidden');
+            modal.classList.add('is-collapsed');
             showToast(`${addedCount}名の選手を一括登録しました！`);
             initPlayers();
         };
     }
 
-    modal.classList.remove('hidden');
+    modal.classList.remove('is-collapsed');
 }
 
 export function initPlayers() {
@@ -692,7 +705,7 @@ export function initPlayers() {
 
                     saveData();
                     showToast('選手情報を更新しました');
-                    document.getElementById('modal-player').classList.add('hidden');
+                    document.getElementById('modal-player').classList.add('is-collapsed');
                     openPlayerDetail(player.id);
                     initPlayers();
                 }
@@ -711,7 +724,7 @@ export function initPlayers() {
                 state.players.push(newPlayer);
                 saveData();
                 showToast('選手を登録しました');
-                document.getElementById('modal-player').classList.add('hidden');
+                document.getElementById('modal-player').classList.add('is-collapsed');
                 initPlayers();
             }
         };
@@ -753,7 +766,7 @@ export function initPlayers() {
 
                 player.history.sort((a, b) => new Date(b.date) - new Date(a.date));
                 saveData();
-                document.getElementById('modal-player-assessment').classList.add('hidden');
+                document.getElementById('modal-player-assessment').classList.add('is-collapsed');
                 openPlayerDetail(playerId);
                 initPlayers();
             }
@@ -830,13 +843,13 @@ export function initPlayers() {
                 e.currentTarget.setAttribute('aria-selected', 'true');
 
                 document.querySelectorAll('.player-subview').forEach(view => {
-                    view.classList.add('hidden');
+                    view.classList.add('is-collapsed');
                 });
 
                 if (targetView === 'cards') {
-                    document.getElementById('player-grid')?.classList.remove('hidden');
+                    document.getElementById('player-grid')?.classList.remove('is-collapsed');
                 } else if (targetView === 'participation') {
-                    document.getElementById('player-view-participation')?.classList.remove('hidden');
+                    document.getElementById('player-view-participation')?.classList.remove('is-collapsed');
                     renderParticipationGraph();
                 }
             };
