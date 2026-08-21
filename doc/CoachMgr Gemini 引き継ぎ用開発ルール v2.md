@@ -108,15 +108,15 @@ P0-5 テスト保全・回帰:
 | 項目 | 内容 |
 |---|---|
 | プロジェクト | CoachMgr（サッカーチーム運営PWA） |
-| リポジトリ | `sc-hub-nyd/coach-mgr` |
+| リポジトリ | `YOUR_ORGANIZATION/coach-mgr` |
 | ローカルパス | `/home/ubuntu/coach-mgr-css` |
-| 公開先 | `https://sc-hub-nyd.github.io/coach-mgr/` |
+| 公開先 | `GitHub Pages公開URL` |
 | 技術 | Vanilla JS、ES Modules、CSS Variables、localForage、Service Worker、Google Apps Script連携 |
 | フレームワーク | なし。React等への置換禁止 |
-| ブランド | 南陽台FCの赤系を既定値とする。既定種色は`#EF3340`系。ただし任意チームカラーに対応 |
+| ブランド | 既定チームの赤系を既定値とする。既定種色は`#EF3340`系。ただし任意チームカラーに対応 |
 | 表示モード | ライト／ダークの2モード |
 | 日本語UI | Noto Sans JP。英数字・数値はInterを優先 |
-| アイコン | 南陽台FC提供の44個のSVGアイコン。currentColor継承を維持 |
+| アイコン | 既定チーム提供の44個のSVGアイコン。currentColor継承を維持 |
 
 現在の版数、commit、作業ツリー、Service Worker世代は記憶せず、必ず確認してください。
 

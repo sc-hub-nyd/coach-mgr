@@ -5,7 +5,7 @@
 
 ## 到達像
 
-CoachMgrでは、**チーム固有の概念は既存の南陽台FCカスタムSVG**、**汎用の業務操作とサッカー補助語彙はTabler Icons**、**戦術そのものはCanvas図形**という三層を基本とします。Font AwesomeのCDN参照は最終的に削除し、Tabler Webfontをローカル配信・Service Worker precacheへ組み込みます。
+CoachMgrでは、**チーム固有の概念は既存の既定チームカスタムSVG**、**汎用の業務操作とサッカー補助語彙はTabler Icons**、**戦術そのものはCanvas図形**という三層を基本とします。Font AwesomeのCDN参照は最終的に削除し、Tabler Webfontをローカル配信・Service Worker precacheへ組み込みます。
 
 > TablerはMITライセンス、24pxグリッド、2pxストローク、Webfont／SVGの提供を公式に案内しています。[1] [2] [3]
 

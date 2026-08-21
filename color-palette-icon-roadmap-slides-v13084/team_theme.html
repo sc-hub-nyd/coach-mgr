@@ -45,7 +45,7 @@
       <h1>選んだチーム色を、安全なテーマへ変換する</h1>
       <p class="lead">利用者が色を選んでも、<strong>文字・操作・境界・状態</strong>の役割と読みやすさを自動で保つ。</p>
       <div class="flow">
-        <section class="step"><div class="step-no">INPUT</div><div class="seed"></div><h2>チームのシード色</h2><p>既定は南陽台FCの赤系。</p><code>#EF3340</code></section><div class="arrow">→</div>
+        <section class="step"><div class="step-no">INPUT</div><div class="seed"></div><h2>チームのシード色</h2><p>既定は既定チームの赤系。</p><code>#EF3340</code></section><div class="arrow">→</div>
         <section class="step"><div class="step-no">NORMALIZE</div><i class="ti ti-adjustments" aria-hidden="true"></i><h2>入力を正規化</h2><p>3桁・6桁HEXを正規化。無効値は既定色へ戻す。</p><code>normalizeHex()</code></section><div class="arrow">→</div>
         <section class="step"><div class="step-no">COMPOSE</div><i class="ti ti-color-swatch" aria-hidden="true"></i><h2>トーンを生成</h2><p>主操作、hover、soft、面、文字、補助色、状態色をモード別に構成。</p><div class="generated"><span style="background:#c72c38"></span><span style="background:#fde8eb"></span><span style="background:#faf6f6"></span><span style="background:#24171a"></span><span style="background:#167c5a"></span></div></section><div class="arrow">→</div>
         <section class="step"><div class="step-no">VALIDATE</div><i class="ti ti-shield-check" aria-hidden="true"></i><h2>コントラストを検証</h2><p>必要な組合せを判定し、満たせない場合は安全な既定テーマへフォールバック。</p><code>validateThemePalette()</code></section><div class="arrow">→</div>

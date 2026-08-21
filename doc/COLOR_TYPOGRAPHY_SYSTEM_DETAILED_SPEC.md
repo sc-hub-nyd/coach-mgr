@@ -2,13 +2,13 @@
 
 **文書版：1.0**
 **適用実装：CoachMgr v1.23.0**
-**対象：CoachMgr PWAのアプリシェル、ナビゲーション、共通コンポーネント、設定、試合・練習・振り返り、保護者画面、南陽台FCアイコン**
+**対象：CoachMgr PWAのアプリシェル、ナビゲーション、共通コンポーネント、設定、試合・練習・振り返り、保護者画面、既定チームアイコン**
 
 ---
 
 ## 1. 目的と設計原則
 
-CoachMgrは、サッカーチームの運営情報を、試合中・練習中・保護者対応などの異なる状況で継続して扱う業務PWAである。本仕様は、南陽台FCの赤系ブランドを既定の出発点としながら、他チームの任意色にも対応し、日本語の高密度な情報を誤読なく提示するための**カラーシステム**と**タイポグラフィ体系**を定義する。
+CoachMgrは、サッカーチームの運営情報を、試合中・練習中・保護者対応などの異なる状況で継続して扱う業務PWAである。本仕様は、汎用的な赤系の既定ブランド種色を出発点としながら、任意のチームカラーにも対応し、日本語の高密度な情報を誤読なく提示するための**カラーシステム**と**タイポグラフィ体系**を定義する。
 
 > **基本原則：利用者が選ぶのは種色だけであり、コンポーネントが参照するのは意味トークンだけである。**
 
@@ -55,7 +55,7 @@ CoachMgrは、サッカーチームの運営情報を、試合中・練習中・
 
 ## 3. ブランド基準とカラー階層
 
-南陽台FC公式サイトの赤系表現を、CoachMgrの新規・未設定チームにおける既定ブランド種色として採用する。[1] 既定値は`#EF3340`である。ただし、この色はコンポーネントの完成色ではない。種色を起点に、利用状況と表示モードに応じた役割色を生成する。
+`#EF3340`を、CoachMgrの新規・未設定チームにおける汎用的な既定ブランド種色として採用する。ただし、この色はコンポーネントの完成色ではない。種色を起点に、利用状況と表示モードに応じた役割色を生成する。
 
 | 層 | 主な値・接頭辞 | 役割 | 禁止事項 |
 |---|---|---|---|
@@ -211,7 +211,7 @@ invalid          #ef3340
 | 危険操作 | `--color-danger` / `--color-danger-hover` | チーム種色、ブランド赤。 |
 | 成功・警告・情報 | 対応する`--color-*`と`--color-*-surface` | チーム種色。 |
 
-南陽台FC SVGはCSSマスクで描画し、`background-color: currentColor`を使う。`c-icon--brand`は`--color-brand`、`c-icon--on-brand`は`--color-text-on-brand`、`c-icon--on-action`は`--color-text-on-action`を使う。SVGファイル内部へテーマ色を固定してはならない。
+既定チーム SVGはCSSマスクで描画し、`background-color: currentColor`を使う。`c-icon--brand`は`--color-brand`、`c-icon--on-brand`は`--color-text-on-brand`、`c-icon--on-action`は`--color-text-on-action`を使う。SVGファイル内部へテーマ色を固定してはならない。
 
 ---
 
@@ -379,7 +379,7 @@ WCAG 2.1のコントラスト最小基準は、通常テキストで4.5:1、意�
 
 ## 14. 参照資料
 
-[1] [南陽台FC 公式サイト](https://nanyodai-fc.com/)
+[1] [WCAG 2.1 — Contrast (Minimum)](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html)
 
 [2] [Google Fonts — Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP)
 

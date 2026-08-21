@@ -47,7 +47,7 @@
     --color-text-on-action-hover: var(--theme-on-primary-hover);
     --color-text-on-selected: var(--theme-on-primary-soft);
 
-    /* Brand roles: #EF3340 is the default seed for Nanyodai FC, but components consume roles. */
+    /* Brand roles: #EF3340 is the default seed, while components consume semantic roles. */
     --color-brand: var(--theme-primary);
     --color-brand-surface: var(--theme-primary-soft);
     --color-text-on-brand: var(--theme-on-primary);

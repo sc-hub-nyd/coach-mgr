@@ -17,7 +17,7 @@ const files = {
     app: '../app.js',
     serviceWorker: '../sw.js',
     architecture: '../doc/CSS_ARCHITECTURE.md',
-    brandStandard: '../doc/NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md',
+    brandStandard: '../doc/TEAM_AGNOSTIC_BRAND_DESIGN_SYSTEM_STANDARD.md',
     typographyStandard: '../doc/TYPOGRAPHY_SYSTEM.md',
     surfaceDesign: '../doc/NEUMORPHISM_DESIGN_SYSTEM.md',
     migrationLedger: '../doc/CSS_MIGRATION_LEDGER.md',
@@ -145,7 +145,7 @@ assert.match(source.architecture, /`l-`/);
 assert.match(source.architecture, /`c-`/);
 assert.match(source.architecture, /`is-`/);
 assert.match(source.architecture, /#EF3340/);
-assert.match(source.architecture, /NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD/);
+assert.match(source.architecture, /TEAM_AGNOSTIC_BRAND_DESIGN_SYSTEM_STANDARD/);
 assert.match(source.brandStandard, /#EF3340/);
 assert.match(source.architecture, /--color-brand/);
 assert.match(source.architecture, /サーフェスシステム/);
@@ -176,9 +176,9 @@ assert.match(source.typographyStandard, /tabular-nums/);
 
 const iconDirectories = ['custom', 'ui', 'activity', 'family'];
 const iconCount = (await Promise.all(iconDirectories.map(async directory => (
-    await readdir(new URL(`../assets/icons/nanyodai/${directory}/`, import.meta.url))
+    await readdir(new URL(`../assets/icons/team/${directory}/`, import.meta.url))
 ))).then(groups => groups.flat().filter(file => file.endsWith('.svg')).length));
-assert.equal(iconCount, 44, '南陽台FCアイコンは44個すべてを管理対象にする');
+assert.equal(iconCount, 44, '既定チームアイコンは44個すべてを管理対象にする');
 
 for (const [name, css] of Object.entries({ tokens: source.tokens, layouts: source.layouts, components: source.components, systemComponents: source.systemComponents, iconSystem: source.iconSystem, utilities: source.utilities })) {
     const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '');

@@ -12,7 +12,7 @@
 
 | 層 | 実装 | 担当する意味 | 検証対象 |
 |---:|---|---|---|
-| 1 | 44個の南陽台FCカスタムSVGと`.c-icon` | チーム固有、主要ナビ、Tablerにない競技固有概念 | `currentColor`、意味クラス、装飾時の`aria-hidden` |
+| 1 | 44個の既定チームカスタムSVGと`.c-icon` | チーム固有、主要ナビ、Tablerにない競技固有概念 | `currentColor`、意味クラス、装飾時の`aria-hidden` |
 | 2 | ローカルTabler Icons 3.46.0の144クラス・サブセットCSS／WOFF2と`.ti` | 操作、試合記録、サッカー補助語彙 | ローカル定義、未定義クラス、再生成、Font Awesome再導入禁止 |
 | 3 | 絵文字 | ランキング順位などの非操作的な補助 | 単独の主要操作へ使わない |
 | 4 | `pitch-renderer.js`のCanvas描画 | 選手位置、パス、ドリブル、エリア、器具 | ツール選択の意味と線種・オブジェクトの整合 |
@@ -81,7 +81,7 @@ v1.30.85では、P40、P42、P43、P45、P46、P47、P48を通過し、状態部
 
 ## 関連文書
 
-- [`NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md`](./NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md)
+- [`TEAM_AGNOSTIC_BRAND_DESIGN_SYSTEM_STANDARD.md`](./TEAM_AGNOSTIC_BRAND_DESIGN_SYSTEM_STANDARD.md)
 - [`ICON_SYSTEM.md`](./ICON_SYSTEM.md)
 - [`DARK_MODE_SEMANTIC_TOKEN_DESIGN.md`](./DARK_MODE_SEMANTIC_TOKEN_DESIGN.md)
 - [`WCAG21_LIGHT_DARK_CONTRAST_VALIDATION_SPEC.md`](./WCAG21_LIGHT_DARK_CONTRAST_VALIDATION_SPEC.md)

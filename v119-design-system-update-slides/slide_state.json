@@ -51,7 +51,7 @@
     {
       "id": "cover",
       "title": "CoachMgr デザインシステム更新",
-      "summary": "v1.19.0の動的チームテーマ、ライト／ダーク、南陽台FCアイコン統合を示す表紙。",
+      "summary": "v1.19.0の動的チームテーマ、ライト／ダーク、既定チームアイコン統合を示す表紙。",
       "image_plan": "Use a suitable image if needed"
     },
     {
@@ -74,7 +74,7 @@
     },
     {
       "id": "icon_system",
-      "title": "南陽台FCの44アイコンを正式採用",
+      "title": "既定チームの44アイコンを正式採用",
       "summary": "currentColorでテーマ適応するアイコンシステム、カテゴリ、利用規約、主要ナビゲーションへの導入。",
       "image_plan": "Use a suitable image if needed"
     },

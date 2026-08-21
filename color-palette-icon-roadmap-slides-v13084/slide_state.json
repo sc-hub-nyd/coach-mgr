@@ -62,7 +62,7 @@
     {
       "id": "palette_foundation",
       "title": "赤を起点に、役割で色を使う",
-      "summary": "南陽台FCの既定赤系を起点とした、キャンバス・面・文字・状態色の実装済みプリミティブを示す。",
+      "summary": "既定チームの既定赤系を起点とした、キャンバス・面・文字・状態色の実装済みプリミティブを示す。",
       "image_plan": "Use a suitable image if needed"
     },
     {

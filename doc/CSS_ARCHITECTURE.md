@@ -17,7 +17,7 @@ CoachMgrのCSSは、既存の静的PWA・テーマ切替・コーチ／保護者
 | 5 | `components-standard.css` | カード、セクション見出し、操作群、空状態、ステータスなどの再利用部品。既存汎用部品より後に読み込み、移行先の規則を明確にする。 |
 | 6 | `dashboard.css`、`tactical.css`、`drawing.css` | 画面・機能固有の表現だけを置く。 |
 | 7 | `components-system.css` | カラートークンを利用するフォーム、名簿、カード、データリスト、モーダルの部品契約。レガシー画面CSSより後に読み込み、移行済み部品の構造を保護する。 |
-| 8 | `icon-system.css` | 南陽台FC SVGを`currentColor`で描画する`c-icon`部品、意味別アイコン、サイズ、強制配色対応。 |
+| 8 | `icon-system.css` | 既定チーム SVGを`currentColor`で描画する`c-icon`部品、意味別アイコン、サイズ、強制配色対応。 |
 | 9 | `utilities.css` | 例外的な表示・配置を最小限に扱う単目的クラス。画面・ルート・部品を直接指定しない。 |
 
 ## 命名規約
@@ -67,22 +67,22 @@ CoachMgrの日本語本文とUIには`Noto Sans JP`、英数字・成績・時�
 | `c-practice-card` | 情報、統計、操作、詳細を分離するコンテナクエリ対応カード。操作列はカード幅で2列Gridと横並びを切り替える。 | 練習管理 |
 | `c-data-list` | 小画面で縮小すべきでない表を、識別情報と主要指標のリストへ置換する。 | 選手比較、出欠、分析 |
 | `c-modal` | ヘッダー、単一スクロール本文、固定フッターを兄弟要素として扱う。 | 練習編集、確認操作 |
-| `c-icon` | 南陽台FCのSVGをCSSマスクで描画する意味・サイズ・前景色の共通部品。隣接テキストがある場合は装飾とする。 | アプリシェル、ナビゲーション、状態、記録 |
+| `c-icon` | 既定チームのSVGをCSSマスクで描画する意味・サイズ・前景色の共通部品。隣接テキストがある場合は装飾とする。 | アプリシェル、ナビゲーション、状態、記録 |
 
 ## アイコンシステム
 
-南陽台FCの44個のSVGは`assets/icons/nanyodai/`で管理し、`icon-system.css`の`c-icon--*`クラスからだけ参照する。アイコンは親要素の`color`を継承するため、テーマ色をSVGへ固定しない。意味に合う南陽台FC資産がある新規UIでは、異なるアイコンセットを追加しない。単独アイコンの操作には日本語の`aria-label`を付け、色・アイコンだけで状態を表現しない。詳しい対応表と実装例は[`ICON_SYSTEM.md`](./ICON_SYSTEM.md)を参照する。
+既定チームの44個のSVGは`assets/icons/team/`で管理し、`icon-system.css`の`c-icon--*`クラスからだけ参照する。アイコンは親要素の`color`を継承するため、テーマ色をSVGへ固定しない。意味に合う既定チーム資産がある新規UIでは、異なるアイコンセットを追加しない。単独アイコンの操作には日本語の`aria-label`を付け、色・アイコンだけで状態を表現しない。詳しい対応表と実装例は[`ICON_SYSTEM.md`](./ICON_SYSTEM.md)を参照する。
 
 ## カラートークン
 
-利用者が選択するのは`teamInfo.theme.seed`だけである。南陽台FC向けの新規・未設定チームの既定種色は、公式サイトの赤系を表す`#EF3340`とする。ただし、この値はブランドの出発点であり、部品が直接参照する色ではない。`color-theme-service.js`が種色からlight/dark別の`--theme-*`プリミティブを生成し、`base.css`はレガシー互換の`--primary`などをこの生成値へ接続する。部品は具体色、種色、テーマ名を参照せず、`tokens.css`のセマンティックトークンだけを使う。既存チームの保存済み種色は優先し、既定赤へ無断で移行しない。
+利用者が選択するのは`teamInfo.theme.seed`だけである。既定チーム向けの新規・未設定チームの既定種色は、公式サイトの赤系を表す`#EF3340`とする。ただし、この値はブランドの出発点であり、部品が直接参照する色ではない。`color-theme-service.js`が種色からlight/dark別の`--theme-*`プリミティブを生成し、`base.css`はレガシー互換の`--primary`などをこの生成値へ接続する。部品は具体色、種色、テーマ名を参照せず、`tokens.css`のセマンティックトークンだけを使う。既存チームの保存済み種色は優先し、既定赤へ無断で移行しない。
 
 | トークン群 | 例 | 用途 |
 |---|---|---|
 | 生成プリミティブ | `--theme-primary`、`--theme-canvas`、`--theme-text` | 種色・端末モードから生成する内部値。部品から参照しない。 |
 | 表面 | `--color-canvas`、`--color-surface`、`--color-surface-subtle` | 画面背景、カード、控えめな情報領域 |
 | 文字・境界 | `--color-text`、`--color-text-muted`、`--color-border` | 本文、補助説明、区切り |
-| ブランド | `--color-brand`、`--color-brand-surface`、`--color-text-on-brand` | チームシグナル、ブランド表示、控えめなブランド面。既定は南陽台FCの赤系だが、任意の種色から生成する。 |
+| ブランド | `--color-brand`、`--color-brand-surface`、`--color-text-on-brand` | チームシグナル、ブランド表示、控えめなブランド面。既定は既定チームの赤系だが、任意の種色から生成する。 |
 | 操作・フォーカス | `--color-action`、`--color-text-on-action`、`--color-action-hover`、`--color-focus` | 主操作、その前景、hover、キーボードフォーカス |
 | 状態 | `--color-success`、`--color-warning`、`--color-danger`、`--color-info` | 成功、注意、破壊的操作、情報通知。チーム種色から生成しない。 |
 | 状態背景 | `--color-success-surface`、`--color-warning-surface`、`--color-danger-surface`、`--color-info-surface` | バッジ、インライン通知、淡い状態表示 |
@@ -91,7 +91,7 @@ CoachMgrの日本語本文とUIには`Noto Sans JP`、英数字・成績・時�
 
 高コントラストモードは設けない。通常のlight/dark出力について、本文・補助本文・主操作ラベルは4.5:1以上（実装目標5:1）、意味を持つ境界とフォーカスは3:1以上（実装目標3.5:1）をテストする。状態の意味とチームカラーが衝突しないよう、成功・注意・危険・情報は監査済みの静的ロールを使う。
 
-詳細な色階層、既定赤のフォールバック、アイコン、既存チームの保護、禁止事項は[`NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md`](./NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md)を正本とする。フォントの役割と読み込み規約は[`TYPOGRAPHY_SYSTEM.md`](./TYPOGRAPHY_SYSTEM.md)を正本とする。
+詳細な色階層、既定赤のフォールバック、アイコン、既存チームの保護、禁止事項は[`TEAM_AGNOSTIC_BRAND_DESIGN_SYSTEM_STANDARD.md`](./TEAM_AGNOSTIC_BRAND_DESIGN_SYSTEM_STANDARD.md)を正本とする。フォントの役割と読み込み規約は[`TYPOGRAPHY_SYSTEM.md`](./TYPOGRAPHY_SYSTEM.md)を正本とする。
 
 ## サーフェスシステム
 

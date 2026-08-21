@@ -136,7 +136,7 @@ CSSからクラス定義を抽出し、`index.html` とトップレベル JavaSc
 
 ## 参照
 
-[1]: https://github.com/sc-hub-nyd/coach-mgr/blob/main/CSS/components-standard.css "CoachMgr: 標準コンポーネント"
-[2]: https://github.com/sc-hub-nyd/coach-mgr/blob/main/CSS/components-system.css "CoachMgr: システムコンポーネント"
-[3]: https://github.com/sc-hub-nyd/coach-mgr/blob/main/reports/legacy-css-audit.tsv "CoachMgr: レガシーCSS監査台帳"
-[4]: https://github.com/sc-hub-nyd/coach-mgr/tree/main/CSS "CoachMgr: CSSアーキテクチャ"
+[1]: リポジトリ内/CSS/components-standard.css "CoachMgr: 標準コンポーネント"
+[2]: リポジトリ内/CSS/components-system.css "CoachMgr: システムコンポーネント"
+[3]: リポジトリ内/reports/legacy-css-audit.tsv "CoachMgr: レガシーCSS監査台帳"
+[4]: リポジトリ内/CSS "CoachMgr: CSSアーキテクチャ"

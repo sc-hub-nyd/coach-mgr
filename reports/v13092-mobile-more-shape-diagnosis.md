@@ -1,6 +1,6 @@
 # v1.30.92 モバイル「その他」メニュー面の角丸診断
 
-- 対象URL: https://sc-hub-nyd.github.io/coach-mgr/
+- 対象URL: GitHub Pages公開URL
 - 確認日時: 2026-08-20 (GMT+9)
 - 対象要素: `.mobile-more-sheet.c-modal.c-modal--bottom-sheet`
 

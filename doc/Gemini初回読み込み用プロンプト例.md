@@ -12,9 +12,9 @@
 
 対象リポジトリは次です。
 
-- リポジトリ: `sc-hub-nyd/coach-mgr`
+- リポジトリ: `YOUR_ORGANIZATION/coach-mgr`
 - ローカル作業ディレクトリ: `/home/ubuntu/coach-mgr-css`
-- 公開URL: `https://sc-hub-nyd.github.io/coach-mgr/`
+- 公開URL: `GitHub Pages公開URL`
 - 技術: Vanilla JS、ES Modules、CSS Variables、localForage、Service Worker、Google Apps Script連携
 - フレームワーク: なし。React、Vue、Svelteなどへの全面移行は禁止
 

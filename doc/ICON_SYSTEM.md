@@ -4,9 +4,9 @@
 
 ## 目的
 
-CoachMgrは、南陽台FCの44個のSVGをチーム固有の視覚言語として維持し、ローカル配信のTabler Icons 3.46.0を業務操作・試合記録・サッカー補助語彙として併用する。アイコンは単なる装飾ではなく、ナビゲーション、記録、練習、保護者連絡、状態表示、戦術作図に一貫した手掛かりを与えるデザインシステム部品である。
+CoachMgrは、既定チームの44個のSVGをチーム固有の視覚言語として維持し、ローカル配信のTabler Icons 3.46.0を業務操作・試合記録・サッカー補助語彙として併用する。アイコンは単なる装飾ではなく、ナビゲーション、記録、練習、保護者連絡、状態表示、戦術作図に一貫した手掛かりを与えるデザインシステム部品である。
 
-SVGは`assets/icons/nanyodai/`にカテゴリ・ファイル名を変えずに格納する。`CSS/icon-system.css`はSVGをCSSマスクとして参照し、`currentColor`相当の`background-color: currentColor`で描画する。Tablerは`assets/vendor/tabler-icons/`からローカル配信し、どちらもlight/darkモード、チーム色、主操作上の前景色へ適応させる。
+SVGは`assets/icons/team/`にカテゴリ・ファイル名を変えずに格納する。`CSS/icon-system.css`はSVGをCSSマスクとして参照し、`currentColor`相当の`background-color: currentColor`で描画する。Tablerは`assets/vendor/tabler-icons/`からローカル配信し、どちらもlight/darkモード、チーム色、主操作上の前景色へ適応させる。
 
 ## コンポーネント契約
 
@@ -38,7 +38,7 @@ SVGは`assets/icons/nanyodai/`にカテゴリ・ファイル名を変えずに�
 
 ## テーマとアクセシビリティ
 
-アイコンは`currentColor`を継承するため、テーマごとに別のSVGを作成しない。南陽台FC向けの新規・未設定チームでは公式サイトの赤系`#EF3340`を種色とするが、SVGへ赤を固定しない。light/darkともに、アイコンを置く親コンポーネントがセマンティック前景トークンを選択する。ブランド表示では`--color-brand`、主操作ボタンでは`--color-text-on-action`、本文のアイコンは`--color-text`を使う。利用者がチーム色を変えた場合も同じ役割が追随する。
+アイコンは`currentColor`を継承するため、テーマごとに別のSVGを作成しない。既定チーム向けの新規・未設定チームでは公式サイトの赤系`#EF3340`を種色とするが、SVGへ赤を固定しない。light/darkともに、アイコンを置く親コンポーネントがセマンティック前景トークンを選択する。ブランド表示では`--color-brand`、主操作ボタンでは`--color-text-on-action`、本文のアイコンは`--color-text`を使う。利用者がチーム色を変えた場合も同じ役割が追随する。
 
 強制配色モードでは`CanvasText`へ委譲する。状態を色やアイコンだけで伝えず、日本語の状態名、ボタンラベル、数値などを併記する。キーボードフォーカスはアイコン自体でなく、操作要素の可視フォーカスで提示する。
 
@@ -89,7 +89,7 @@ Tablerの単独アイコン操作では、`aria-label`、`title`、可視ラベ�
 
 ## 関連文書
 
-- [`NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md`](./NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md)
+- [`TEAM_AGNOSTIC_BRAND_DESIGN_SYSTEM_STANDARD.md`](./TEAM_AGNOSTIC_BRAND_DESIGN_SYSTEM_STANDARD.md)
 - [`ICON_SYSTEM_VALIDATION.md`](./ICON_SYSTEM_VALIDATION.md)
 - [`DESIGN_SYSTEM_EVOLUTION_ROADMAP_V13084.md`](./DESIGN_SYSTEM_EVOLUTION_ROADMAP_V13084.md)
 - [`../reports/tabler-subset-evaluation-v13085.md`](../reports/tabler-subset-evaluation-v13085.md)

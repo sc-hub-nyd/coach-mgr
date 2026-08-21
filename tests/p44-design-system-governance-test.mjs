@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 
 const read = file => readFile(new URL(file, import.meta.url), 'utf8');
 const [brandStandard, iconSystem, iconValidation, evolutionRoadmap, legacyRoadmap, tokens, index, drawing] = await Promise.all([
-    read('../doc/NANYODAI_BRAND_DESIGN_SYSTEM_STANDARD.md'),
+    read('../doc/TEAM_AGNOSTIC_BRAND_DESIGN_SYSTEM_STANDARD.md'),
     read('../doc/ICON_SYSTEM.md'),
     read('../doc/ICON_SYSTEM_VALIDATION.md'),
     read('../doc/DESIGN_SYSTEM_EVOLUTION_ROADMAP_V13084.md'),

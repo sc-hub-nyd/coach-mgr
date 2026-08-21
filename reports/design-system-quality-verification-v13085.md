@@ -27,7 +27,7 @@ v1.30.85のローカルPWAで、更新適用、ダッシュボード表示、ア
 
 ## 公開PWAの更新適用前確認
 
-GitHub Pagesデプロイ完了後、`https://sc-hub-nyd.github.io/coach-mgr/?dsr1r6=v13085` を開いた。旧Service Workerがv1.30.84を表示していたが、更新通知と「更新する」ボタンが表示され、v1.30.85を適用できる状態であることを確認した。
+GitHub Pagesデプロイ完了後、`GitHub Pages公開URL?dsr1r6=v13085` を開いた。旧Service Workerがv1.30.84を表示していたが、更新通知と「更新する」ボタンが表示され、v1.30.85を適用できる状態であることを確認した。
 
 ## 公開PWAの最終確認
 

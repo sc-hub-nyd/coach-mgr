@@ -1,7 +1,7 @@
 # v1.30.93 公開PWA検証記録
 
 - 確認日時: 2026-08-20 (GMT+9)
-- 公開URL: https://sc-hub-nyd.github.io/coach-mgr/
+- 公開URL: GitHub Pages公開URL
 - 対象コミット: `f9a7c7a5e647cb00e33d1c011edbe960b0f5d626`
 
 ## 更新配信状態

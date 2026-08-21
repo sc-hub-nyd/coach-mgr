@@ -147,7 +147,7 @@ Adaptive Wave Dockは、ナビ全体を装飾するのではなく、**選択タ
 [1]: https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html "W3C WAI: Understanding SC 2.5.8 Target Size (Minimum)"
 [2]: https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html "W3C WAI: Understanding SC 2.4.7 Focus Visible"
 [3]: https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html "W3C WAI: Understanding SC 2.4.13 Focus Appearance"
-[4]: https://github.com/sc-hub-nyd/coach-mgr "CoachMgr repository"
+[4]: リポジトリ "CoachMgr repository"
 [5]: /home/ubuntu/upload/bottom_menu_design_proposal.md "添付: ボトムメニュー デザイン提案書"
 
 ---

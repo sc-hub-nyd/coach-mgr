@@ -50,7 +50,7 @@ const tokenRetentionState = { syncMeta: {}, workspaces: { 'team:season': { teamI
 applyRemoteSnapshot(tokenRetentionState, { workspaces: { 'team:season': { teamInfo: { name: 'クラウドチーム' }, players: [] } }, syncMeta: {} });
 assert.equal(tokenRetentionState.workspaces['team:season'].teamInfo.gasAuthToken, 'device-only-token');
 
-const importedPractice = { id: 9001, date: '2026-08-18', location: '南陽台グラウンド', menus: [] };
+const importedPractice = { id: 9001, date: '2026-08-18', location: 'チームグラウンド', menus: [] };
 const importedState = {
     activeTeamId: 'team', activeSeasonId: 'season',
     teams: [{ id: 'team', name: 'テスト', seasons: [{ id: 'season', name: '2026年度' }] }],
