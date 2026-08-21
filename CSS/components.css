@@ -1815,3 +1815,9 @@ html[data-font-scale="large"] { font-size: 112.5%; } html[data-font-scale="xlarg
 .c-timeline-grid > div {
     overflow: hidden;
 }
+
+/* Move FAB up when mobile context bar is visible */
+body.has-context-bar .c-fab {
+    bottom: calc(env(safe-area-inset-bottom) + 130px) !important;
+    transition: bottom var(--duration-base) var(--ease-out-back);
+}

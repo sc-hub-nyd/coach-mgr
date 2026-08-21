@@ -48,6 +48,7 @@ function setMobileContextBarVisibility(contextBar, isVisible) {
     }
 
     if (isVisible) {
+        document.body.classList.add('has-context-bar');
         contextBar.classList.remove('hidden', 'is-closing', 'is-open');
         contextBar.classList.add('is-opening');
         requestAnimationFrame(() => {
@@ -61,6 +62,7 @@ function setMobileContextBarVisibility(contextBar, isVisible) {
     if (contextBar.classList.contains('hidden')) return;
     const closeDuration = getMotionDurationMs('--duration-fast');
     if (closeDuration <= 1) {
+        document.body.classList.remove('has-context-bar');
         contextBar.classList.remove('is-opening', 'is-open', 'is-closing');
         contextBar.classList.add('hidden');
         return;
@@ -69,6 +71,7 @@ function setMobileContextBarVisibility(contextBar, isVisible) {
     contextBar.classList.remove('is-opening', 'is-open');
     contextBar.classList.add('is-closing');
     const closeTimer = window.setTimeout(() => {
+        document.body.classList.remove('has-context-bar');
         contextBar.classList.remove('is-closing');
         contextBar.classList.add('hidden');
         contextBarCloseTimers.delete(contextBar);

@@ -950,6 +950,10 @@ body.role-read-only #pd-tab-goals textarea {
         width: 100% !important;
         padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
     }
+    
+    body.has-context-bar .main-content {
+        padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)) !important;
+    }
 
     .menu-toggle {
         display: block !important;
