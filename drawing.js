@@ -2480,8 +2480,14 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 }
             }
 
-            for (let i = objects.length - 1; i >= 0; i--) {
-                const obj = objects[i];
+            const isAreaShape = object => object?.type === 'rect' || object?.type === 'circle';
+            // 描画と同じレイヤー順をヒットテストにも適用し、前景オブジェクトを常に優先する。
+            const hitTestObjects = [
+                ...objects.filter(isAreaShape),
+                ...objects.filter(object => !isAreaShape(object))
+            ];
+            for (let i = hitTestObjects.length - 1; i >= 0; i--) {
+                const obj = hitTestObjects[i];
                 if (obj.type === 'line') {
                     let minDist = Infinity;
                     const cx = typeof obj.cx !== 'undefined' ? obj.cx : (obj.x1 + obj.x2) / 2;

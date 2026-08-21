@@ -3,10 +3,11 @@ import { readFile } from 'node:fs/promises';
 import { getBuiltInFormationKeys, getFormationPlayerList } from '../formation-defs.js';
 
 const read = file => readFile(new URL(file, import.meta.url), 'utf8');
-const [drawing, drawingCss, index] = await Promise.all([
+const [drawing, drawingCss, index, pitchRenderer] = await Promise.all([
     read('../drawing.js'),
     read('../CSS/drawing.css'),
-    read('../index.html')
+    read('../index.html'),
+    read('../pitch-renderer.js')
 ]);
 
 const requireAll = (text, values, label) => values.forEach(value => {
@@ -62,7 +63,8 @@ requireAll(drawingCss, [
     '\\.anim-mobile-lower-panel \\{[\\s\\S]*?order: 10;',
     '#anim-back[\\s\\S]*?display: none !important;',
     '\\.c-frame-strip__item:only-child[\\s\\S]*?inline-size: 100%;',
-    '\\.anim-mobile-lower-panel \\{[\\s\\S]*?margin-bottom: calc\\([\\s\\S]*?48px'
+    '\\.anim-mobile-lower-panel \\{[\\s\\S]*?margin-bottom: calc\\([\\s\\S]*?48px',
+    'body\\[data-route="animation"\\] #mobile-context-bar \\{[\\s\\S]*?bottom: calc\\(var\\(--safe-bottom\\) \\+ var\\(--bottom-nav-float-gap\\)\\)'
 ], 'モバイル作図のピッチ・操作・詳細の順序');
 
 // 作図初期化は練習・試合フォーメーション・ライブラリ・戦術の4保存先を解決する。
@@ -114,6 +116,22 @@ requireAll(drawing, [
     "registerListener\\('drawing.canvas', canvas, 'touchmove', handleTouchMove, \\{ passive: false \\}\\)",
     "registerListener\\('drawing.canvas', canvas, 'touchend', handleTouchEnd, \\{ passive: false \\}\\)"
 ], '図形・ドラッグ描画');
+
+// 円・四角は保存順にかかわらず背面へ描画し、選手など前景オブジェクトを優先して選択する。
+requireAll(pitchRenderer, [
+    "const isAreaShape = object => object\\?\\.type === 'rect' \\|\\| object\\?\\.type === 'circle'",
+    'const layeredRenderObjects = \\[',
+    '\\.\\.\\.renderObjects\\.filter\\(isAreaShape\\)',
+    '\\.\\.\\.renderObjects\\.filter\\(object => !isAreaShape\\(object\\)\\)',
+    'layeredRenderObjects\\.forEach\\(obj =>'
+], '図形の背面描画');
+requireAll(drawing, [
+    "const isAreaShape = object => object\\?\\.type === 'rect' \\|\\| object\\?\\.type === 'circle'",
+    'const hitTestObjects = \\[',
+    '\\.\\.\\.objects\\.filter\\(isAreaShape\\)',
+    '\\.\\.\\.objects\\.filter\\(object => !isAreaShape\\(object\\)\\)',
+    'for \\(let i = hitTestObjects\\.length - 1; i >= 0; i--\\)'
+], '図形の背面ヒットテスト');
 
 // 選択後の回転・削除・Undo/Redoは履歴と再描画を伴う。
 requireAll(drawing, [

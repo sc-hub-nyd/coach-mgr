@@ -940,6 +940,11 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         display: none !important;
     }
 
+    /* 作図ではボトムナビを表示しないため、共通戻るはSafe Area直上へ置く。 */
+    body[data-route="animation"] #mobile-context-bar {
+        bottom: calc(var(--safe-bottom) + var(--bottom-nav-float-gap)) !important;
+    }
+
     /* ==========================================
        1. 作図モード（モバイル: 縦並び・ピッチ→タブ＆ツール→下部詳細/フロート）
        ========================================== */
@@ -1118,7 +1123,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         min-height: 140px;
         margin-top: 8px;
         margin-bottom: calc(
-            12px + var(--safe-bottom) + var(--bottom-nav-float-gap) + var(--bottom-nav-height) + var(--bottom-nav-stack-gap) + 48px
+            12px + var(--safe-bottom) + var(--bottom-nav-float-gap) + 48px
         );
         padding: 10px 12px;
         background: var(--surface);

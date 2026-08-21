@@ -1271,13 +1271,19 @@ export function openPeriodAnalysis(matchId, periodIndex) {
         document.body.classList.add('modal-open');
     }
 
+    const periodTitle = `vs ${escapeHtml(match.opponent)} - ${period.name || `${periodIndex + 1}本目`} (${period.scoreUs || 0} - ${period.scoreThem || 0})`;
     const titleEl = document.getElementById('period-analysis-title');
     if (titleEl) {
-        titleEl.textContent = `vs ${escapeHtml(match.opponent)} - ${period.name || `${periodIndex + 1}本目`} (${period.scoreUs || 0} - ${period.scoreThem || 0})`;
+        titleEl.textContent = periodTitle;
         titleEl.title = titleEl.textContent;
         titleEl.style.cursor = 'pointer';
         titleEl.onclick = () => showToast(titleEl.textContent);
     }
+
+    const mobileContextBar = document.getElementById('period-analysis-mobile-context-bar');
+    const mobileContextTitle = document.getElementById('period-analysis-mobile-context-title');
+    if (mobileContextBar) mobileContextBar.classList.remove('hidden', 'is-closing');
+    if (mobileContextTitle) mobileContextTitle.textContent = periodTitle;
 
     // --- サイドパネルおよび要素の取得 ---
     const sidePanel = document.getElementById('period-info-side-panel');
@@ -2115,29 +2121,32 @@ export function openPeriodAnalysis(matchId, periodIndex) {
         btnNext.onclick = () => openPeriodAnalysis(matchId, periodIndex + 1);
     }
 
+    const closePeriodAnalysis = (e) => {
+        e?.preventDefault();
+        cleanupPeriodSideEvents();
+        if (typeof window.stopAndCleanupYouTube === 'function') {
+            window.stopAndCleanupYouTube();
+        }
+        if (timelineInterval) {
+            clearInterval(timelineInterval);
+            timelineInterval = null;
+        }
+        if (sidePanel) {
+            sidePanel.classList.add('collapsed');
+            sidePanel.classList.remove('open');
+        }
+        if (mobileContextBar) mobileContextBar.classList.add('hidden');
+        if (periodAnalysisModal) {
+            periodAnalysisModal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        }
+        openMatchDetail(matchId);
+    };
+
     const btnBack = document.getElementById('btn-back-to-match-detail');
-    if (btnBack) {
-        btnBack.onclick = (e) => {
-            e.preventDefault();
-            cleanupPeriodSideEvents();
-            if (typeof window.stopAndCleanupYouTube === 'function') {
-                window.stopAndCleanupYouTube();
-            }
-            if (timelineInterval) {
-                clearInterval(timelineInterval);
-                timelineInterval = null;
-            }
-            if (sidePanel) {
-                sidePanel.classList.add('collapsed');
-                sidePanel.classList.remove('open');
-            }
-            if (periodAnalysisModal) {
-                periodAnalysisModal.classList.add('hidden');
-                document.body.classList.remove('modal-open');
-            }
-            openMatchDetail(matchId);
-        };
-    }
+    const btnMobileBack = document.getElementById('btn-period-analysis-mobile-back');
+    if (btnBack) btnBack.onclick = closePeriodAnalysis;
+    if (btnMobileBack) btnMobileBack.onclick = closePeriodAnalysis;
 
     const btnAddTimelineEvent = document.getElementById('btn-add-timeline-event');
     if (btnAddTimelineEvent) {

@@ -1238,18 +1238,6 @@ function initDashboard() {
                 `;
             }
 
-            // ストロングポイントのHTML生成
-            const strongPointsHtml = player.strongPoints && player.strongPoints.length > 0
-                ? player.strongPoints.map(sp => `
-                    <div class="c-static-style--187">
-                        <span class="c-status c-status--info c-status--compact">
-                            <i class="ti ti-check"></i> ${escapeHtml(sp.key)}
-                        </span>
-                        <div class="c-static-style--113">${escapeHtml(sp.text)}</div>
-                    </div>
-                `).join('')
-                : '<span class="c-static-style--114">未設定</span>';
-
             // UI生成
             myPlayerContent.innerHTML = `
                 <div class="c-static-style--053">
@@ -1307,45 +1295,6 @@ function initDashboard() {
                         </button>
                     </div>
 
-                    <!-- プロファイルアコーディオン -->
-                    <details class="c-static-style--007">
-                        <summary class="c-static-style--033">
-                            <span><i class="ti ti-adjustments c-static-style--022"></i> 選手詳細プロファイル (スタイル / 強み / IDP)</span>
-                        </summary>
-                        <div class="c-static-style--090">
-                            <div class="c-static-style--008">
-                                <strong class="c-static-style--106">
-                                    <i class="ti ti-tag"></i> プレースタイル
-                                </strong>
-                                <div class="c-static-style--128">
-                                    ${escapeHtml(player.playStyle || '未設定')}
-                                </div>
-                            </div>
-
-                            <div class="c-static-style--008">
-                                <strong class="c-static-style--106">
-                                    <i class="ti ti-shield"></i> ストロングポイント
-                                </strong>
-                                ${strongPointsHtml}
-                            </div>
-
-                            <div class="c-static-style--008">
-                                <strong class="c-static-style--106">
-                                    <i class="ti ti-target"></i> 個人目標 (IDP)
-                                </strong>
-                                <div class="c-static-style--050">
-                                    <div>
-                                        <span class="c-static-style--102">[短期]</span>
-                                        <span class="c-static-style--112">${player.goals && player.goals.short ? escapeHtml(player.goals.short) : '未設定'}</span>
-                                    </div>
-                                    <div>
-                                        <span class="c-static-style--102">[長期]</span>
-                                        <span class="c-static-style--112">${player.goals && player.goals.long ? escapeHtml(player.goals.long) : '未設定'}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </details>
                 </div>
             `;
 

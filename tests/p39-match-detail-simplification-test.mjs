@@ -12,10 +12,11 @@ const editedMemo = normalizeTimelineMemo({ time: '00:00', timestampSec: 245, tag
 assert.equal(getTimelineTimestampSeconds(editedMemo), 245);
 assert.equal(editedMemo.time, '04:05');
 
-const [html, source, systemCss] = await Promise.all([
+const [html, source, systemCss, componentsCss] = await Promise.all([
     readFile(new URL('../index.html', import.meta.url), 'utf8'),
     readFile(new URL('../matches.js', import.meta.url), 'utf8'),
-    readFile(new URL('../CSS/components-system.css', import.meta.url), 'utf8')
+    readFile(new URL('../CSS/components-system.css', import.meta.url), 'utf8'),
+    readFile(new URL('../CSS/components.css', import.meta.url), 'utf8')
 ]);
 
 assert.match(html, /id="btn-add-timeline-event"/);
@@ -37,5 +38,12 @@ assert.match(source, /btn-use-current-timestamp/);
 assert.match(source, /sortTimelineMemos\(period\.analysisMemos\)/);
 assert.match(systemCss, /\.period-timeline-edit__seconds/);
 assert.match(systemCss, /\.btn-use-current-timestamp/);
+assert.match(html, /id="period-analysis-mobile-context-bar" class="c-context-bar c-context-bar--period-analysis hidden"/, '動画分析はモバイル共通戻るバーを持つ必要があります');
+assert.match(html, /id="btn-period-analysis-mobile-back"/, '動画分析のモバイル戻る操作が必要です');
+assert.match(source, /const closePeriodAnalysis = \(e\) =>/, '動画分析の終了処理は共通化する必要があります');
+assert.match(source, /btnMobileBack\.onclick = closePeriodAnalysis/, '動画分析モバイル戻るは既存終了処理を呼ぶ必要があります');
+assert.match(source, /mobileContextBar\.classList\.remove\('hidden', 'is-closing'\)/, '動画分析の開始時にモバイル戻るを表示する必要があります');
+assert.match(componentsCss, /\.period-analysis-header-left,[\s\S]*?#btn-back-to-match-detail \{[\s\S]*?display: none !important;/, 'スマホ動画分析では左上の独自戻るを隠す必要があります');
+assert.match(componentsCss, /\.c-context-bar--period-analysis \{[\s\S]*?bottom: calc\(var\(--safe-bottom\) \+ var\(--bottom-nav-float-gap\)\)/, '動画分析の戻るバーは非表示ボトムナビの予約領域を空けてはいけません');
 
 console.log('P39 match detail period-view recovery and editable timeline tests passed');

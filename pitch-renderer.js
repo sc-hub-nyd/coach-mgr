@@ -123,6 +123,12 @@ export function drawLadderToCtx(x1, y1, x2, y2, targetCtx) {
 
 export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, template = 'full', selectedObj = null) {
     const renderObjects = Array.isArray(renderObjectsInput) ? renderObjectsInput : ((renderObjectsInput && renderObjectsInput.objects) || []);
+    const isAreaShape = object => object?.type === 'rect' || object?.type === 'circle';
+    // エリア図形は保存順に関係なく常に背面へ描画する。既存の作図データも正規化不要で互換性を保つ。
+    const layeredRenderObjects = [
+        ...renderObjects.filter(isAreaShape),
+        ...renderObjects.filter(object => !isAreaShape(object))
+    ];
     const palette = getCanvasPalette();
 
     const w = targetCanvas.width;
@@ -408,7 +414,7 @@ export function drawPitchToCtx(renderObjectsInput, targetCanvas, targetCtx, temp
         targetCtx.setLineDash([]);
     }
 
-    renderObjects.forEach(obj => {
+    layeredRenderObjects.forEach(obj => {
         if (obj.type === 'line') {
             drawArrowToCtx(obj.x1, obj.y1, obj.x2, obj.y2, obj.lineType || 'pass', targetCtx, obj.cx, obj.cy);
             if (selectedObj && selectedObj === obj) {
