@@ -3,8 +3,9 @@ import { readFile } from 'node:fs/promises';
 import { getBuiltInFormationKeys, getFormationPlayerList } from '../formation-defs.js';
 
 const read = file => readFile(new URL(file, import.meta.url), 'utf8');
-const [drawing, index] = await Promise.all([
+const [drawing, drawingCss, index] = await Promise.all([
     read('../drawing.js'),
+    read('../CSS/drawing.css'),
     read('../index.html')
 ]);
 
@@ -51,6 +52,15 @@ requireAll(index, [
     'data-tool="line-pass"',
     'data-tool="line-dribble"'
 ], '標準ツールドック');
+
+// モバイル作図は、Canvas領域内の補助要素も同一flex列で制御し、ピッチ→タブ→ツールドック→下部情報の順を保つ。
+requireAll(drawingCss, [
+    '\\.anim-main-workspace:has\\(\\.c-tool-dock\\) \\.anim-canvas-area \\{\\s*display: contents;',
+    '\\.anim-main-workspace:has\\(\\.c-tool-dock\\) \\.canvas-wrapper \\{[\\s\\S]*?order: 1;',
+    '\\.anim-mobile-dock-tabs \\{[\\s\\S]*?order: 2;',
+    '\\.anim-main-workspace:has\\(\\.c-tool-dock\\) \\.c-tool-dock \\{[\\s\\S]*?order: 3;',
+    '\\.anim-mobile-lower-panel \\{[\\s\\S]*?order: 10;'
+], 'モバイル作図のピッチ・操作・詳細の順序');
 
 // 作図初期化は練習・試合フォーメーション・ライブラリ・戦術の4保存先を解決する。
 requireAll(drawing, [

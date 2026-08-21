@@ -950,19 +950,14 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         display: none !important;
     }
 
+    /*
+     * Canvas内に置かれたモバイル専用のタブ・フィルムストリップ・プレイヤー操作を、
+     * ワークスペースの同一flex列として順序制御する。これにより描画モードでは
+     * ピッチ → タブ → ツールドック → 詳細、アニメーションでは
+     * ピッチ → タブ → シーン → プレイヤー → 詳細を必ず維持する。
+     */
     .anim-main-workspace:has(.c-tool-dock) .anim-canvas-area {
-        flex: 1;
-        width: 100%;
-        height: auto;
-        min-height: 0;
-        padding: 4px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        overflow: visible;
-        order: 1;
-        box-sizing: border-box;
+        display: contents;
     }
 
     .anim-main-workspace:has(.c-tool-dock) .canvas-wrapper {
@@ -972,7 +967,7 @@ screen and (max-width: 1024px) and (orientation: landscape) {
         max-height: 100%;
         aspect-ratio: 8 / 5;
         margin: 2px auto 0 auto;
-        flex-shrink: 0;
+        flex: 0 0 auto;
         order: 1;
     }
 
