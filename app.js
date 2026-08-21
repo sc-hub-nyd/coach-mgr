@@ -1191,6 +1191,11 @@ function initDashboard() {
                     timeline.push({ type: 'assessment', date: h.date, comment: h.comment, data: h });
                 });
             }
+            if (player.developmentNotes) {
+                player.developmentNotes.forEach(n => {
+                    timeline.push({ type: 'note', date: n.date, comment: n.content, data: n });
+                });
+            }
             state.matches.forEach(m => {
                 if (m.playerFeedback) {
                     m.playerFeedback.forEach(fb => {
@@ -1208,10 +1213,12 @@ function initDashboard() {
             });
             timeline.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            const latestFeedbackItem = timeline.find(t => t.type === 'match' || t.type === 'assessment');
+            const latestFeedbackItem = timeline.find(t => t.type === 'match' || t.type === 'assessment' || t.type === 'note');
             let latestFeedbackHTML = '';
             if (latestFeedbackItem) {
-                const labelStr = latestFeedbackItem.type === 'match' ? '試合評価' : '観察メモ';
+                let labelStr = '観察メモ';
+                if (latestFeedbackItem.type === 'match') labelStr = '試合評価';
+                if (latestFeedbackItem.type === 'note') labelStr = '育成ノート';
                 latestFeedbackHTML = `
                     <div class="c-static-style--199">
                         <div class="c-static-style--078">
