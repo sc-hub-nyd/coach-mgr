@@ -1193,7 +1193,7 @@ function initDashboard() {
             }
             if (player.developmentNotes) {
                 player.developmentNotes.forEach(n => {
-                    timeline.push({ type: 'note', date: n.date, comment: n.content, data: n });
+                    timeline.push({ type: 'note', date: n.date, comment: n.observation, data: n });
                 });
             }
             state.matches.forEach(m => {
