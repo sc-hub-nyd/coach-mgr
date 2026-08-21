@@ -12,6 +12,7 @@ const settingsJs = fs.readFileSync(path.join(basePath, 'settings.js'), 'utf8');
 const libraryJs = fs.readFileSync(path.join(basePath, 'library.js'), 'utf8');
 const practicesJs = fs.readFileSync(path.join(basePath, 'practices.js'), 'utf8');
 const systemCss = fs.readFileSync(path.join(basePath, 'CSS', 'components-system.css'), 'utf8');
+const baseCss = fs.readFileSync(path.join(basePath, 'CSS', 'base.css'), 'utf8');
 
 test('1. メニュー管理・練習管理の refInp ReferenceError 修正検証', () => {
     assert.match(libraryJs, /const refInp = document\.getElementById\('menu-reflection'\);/, 'library.js has refInp definition');
@@ -54,6 +55,9 @@ test('3. 選手詳細の個別ページ化 & 選手編集モーダル検証', ()
     assert.match(indexHtml, /id="pd-profile-title"/, 'Profile section exists');
     assert.match(indexHtml, /id="pd-timeline-title"/, 'Timeline section exists');
     assert.match(indexHtml, /id="pd-matches-title"/, 'Matches section exists');
+    assert.match(indexHtml, /id="pd-btn-edit"/, 'Player detail edit action exists for coach mode');
+    assert.match(indexHtml, /id="pd-btn-delete"/, 'Player detail delete action exists for coach mode');
+    assert.match(indexHtml, /id="form-player-development-note"/, 'Development note form exists for coach mode');
     assert.doesNotMatch(indexHtml, /data-pd-tab=/, 'Tab switcher is removed for flat vertical view');
 
     // 選手登録・編集モーダル (modal-player) の検証
@@ -72,4 +76,11 @@ test('3. 選手詳細の個別ページ化 & 選手編集モーダル検証', ()
     assert.match(playersJs, /export function initPlayerDetailView\(playerId\)/, 'initPlayerDetailView is exported');
     assert.match(playersJs, /export function openPlayerEditModal\(p\)/, 'openPlayerEditModal is exported');
     assert.match(playersJs, /export function populateStrongKeySelects\(\)/, 'populateStrongKeySelects is exported');
+    assert.match(playersJs, /const canEdit = state\.currentUserRole === 'coach';/, 'Player detail derives editability from the active role');
+    assert.match(playersJs, /btnEdit\.hidden = !canEdit;[\s\S]*?btnEdit\.disabled = !canEdit;/, 'Parent mode hides and disables player edit');
+    assert.match(playersJs, /btnDelete\.hidden = !canEdit;[\s\S]*?btnDelete\.disabled = !canEdit;/, 'Parent mode hides and disables player deletion');
+    assert.match(playersJs, /if \(state\.currentUserRole !== 'coach'\) \{[\s\S]*?保護者モードでは選手情報を編集できません/, 'Direct player-edit calls reject parent mode');
+    assert.match(playersJs, /canEdit && hId \?/, 'Assessment edit and delete actions render only for coach mode');
+    assert.match(playersJs, /developmentNoteForm\.hidden = !canEdit;[\s\S]*?control\.disabled = !canEdit;/, 'Development note form is disabled in parent mode');
+    assert.match(baseCss, /body\.role-read-only #pd-btn-edit,[\s\S]*?body\.role-read-only #pd-btn-delete,/, 'Read-only CSS covers the current player-detail action IDs');
 });

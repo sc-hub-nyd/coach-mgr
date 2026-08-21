@@ -5,6 +5,7 @@ import { saveData, navigate, openModal } from './app-context.js';
 import { addDevelopmentNote, buildDevelopmentSummary, removeDevelopmentNote } from './player-development-service.js';
 
 function renderDevelopmentNotebook(player) {
+    const canEdit = state.currentUserRole === 'coach';
     const metrics = state.skillMetrics || [];
     const summary = buildDevelopmentSummary(player, { matches: state.matches, practices: state.practices, metrics });
     const trends = document.getElementById('pd-notebook-trends');
@@ -32,10 +33,14 @@ function renderDevelopmentNotebook(player) {
             <article class="c-data-list__item is-${escapeHtml(item.kind)}">
                 <span class="c-data-list__identity"><i class="${icons[item.kind] || 'ti ti-circle'}" aria-hidden="true"></i></span>
                 <div class="c-data-list__content"><span class="c-data-list__meta">${escapeHtml(item.date || '')} ・ ${labels[item.kind] || '記録'}</span><strong>${escapeHtml(item.title || '')}</strong><p class="c-data-list__body">${escapeHtml(item.detail || '')}</p></div>
-                ${item.kind === 'note' ? `<div class="c-data-list__actions"><button type="button" class="c-button btn c-button--secondary btn-secondary btn-remove-development-note" data-development-note-id="${escapeHtml(item.id)}" aria-label="育成ノートを削除"><i class="ti ti-trash"></i></button></div>` : ''}
+                ${canEdit && item.kind === 'note' ? `<div class="c-data-list__actions"><button type="button" class="c-button btn c-button--secondary btn-secondary btn-remove-development-note" data-development-note-id="${escapeHtml(item.id)}" aria-label="育成ノートを削除"><i class="ti ti-trash"></i></button></div>` : ''}
             </article>`).join('') : '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="ti ti-book-2 c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">まだ成長ノートはありません。練習・試合後の事実と次の一歩を記録しましょう。</p></div></div>';
         timeline.querySelectorAll('.btn-remove-development-note').forEach(button => {
             button.onclick = async () => {
+                if (!canEdit) {
+                    showToast('保護者モードでは育成ノートを削除できません');
+                    return;
+                }
                 const proceed = await showCustomConfirm('この育成ノートを削除しますか？', '育成ノートの削除', { okText: '削除する', type: 'danger' });
                 if (!proceed) return;
                 removeDevelopmentNote(player, button.dataset.developmentNoteId);
@@ -61,6 +66,10 @@ export function openPlayerDetail(id) {
 }
 
 export function openPlayerEditModal(p) {
+    if (state.currentUserRole !== 'coach') {
+        showToast('保護者モードでは選手情報を編集できません');
+        return;
+    }
     if (!p) return;
     const editIdEl = document.getElementById('player-edit-id');
     const titleEl = document.getElementById('player-modal-title');
@@ -120,6 +129,7 @@ export function openPlayerEditModal(p) {
 
 export function initPlayerDetailView(playerId) {
     const p = state.players.find(pl => pl.id === playerId);
+    const canEdit = state.currentUserRole === 'coach';
     if (!p) {
         showToast('選手が見つかりませんでした');
         navigate('players');
@@ -139,15 +149,21 @@ export function initPlayerDetailView(playerId) {
     // 編集ボタン
     const btnEdit = document.getElementById('pd-btn-edit');
     if (btnEdit) {
-        btnEdit.onclick = () => {
-            openPlayerEditModal(p);
-        };
+        btnEdit.hidden = !canEdit;
+        btnEdit.disabled = !canEdit;
+        btnEdit.onclick = canEdit ? () => openPlayerEditModal(p) : null;
     }
 
     // 削除ボタン
     const btnDelete = document.getElementById('pd-btn-delete');
     if (btnDelete) {
-        btnDelete.onclick = async () => {
+        btnDelete.hidden = !canEdit;
+        btnDelete.disabled = !canEdit;
+        btnDelete.onclick = canEdit ? async () => {
+            if (state.currentUserRole !== 'coach') {
+                showToast('保護者モードでは選手を削除できません');
+                return;
+            }
             const proceed = await showCustomConfirm(`「${p.name}」選手を削除しますか？`, '選手の削除', { okText: '削除する', type: 'danger' });
             if (proceed) {
                 state.players = state.players.filter(pl => pl.id !== p.id);
@@ -155,7 +171,7 @@ export function initPlayerDetailView(playerId) {
                 showToast('選手を削除しました');
                 navigate('players');
             }
-        };
+        } : null;
     }
 
     // スタッツ集計
@@ -219,8 +235,8 @@ export function initPlayerDetailView(playerId) {
         timelineEl.innerHTML = timeline.length > 0 ? timeline.map(item => {
             if (item.type === 'assessment') {
                 const hId = item.data ? item.data.id : null;
-                const editBtn = hId ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-edit-assessment" data-history-id="${hId}"><i class="ti ti-pencil"></i> 編集</button>` : '';
-                const delBtn = hId ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-assessment" data-history-id="${hId}"><i class="ti ti-trash"></i></button>` : '';
+                const editBtn = canEdit && hId ? `<button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm btn-edit-assessment" data-history-id="${hId}"><i class="ti ti-pencil"></i> 編集</button>` : '';
+                const delBtn = canEdit && hId ? `<button type="button" class="c-button btn c-button--danger btn-danger c-button--compact btn-sm btn-delete-assessment" data-history-id="${hId}"><i class="ti ti-trash"></i></button>` : '';
                 return `
                     <article class="c-data-list__item player-history-item c-static-style--197">
                         <div class="c-data-list__header">
@@ -260,6 +276,10 @@ export function initPlayerDetailView(playerId) {
     // タイムラインの編集・削除ボタンバインド
     document.querySelectorAll('.btn-edit-assessment').forEach(btn => {
         btn.onclick = (e) => {
+            if (!canEdit) {
+                showToast('保護者モードでは評価を編集できません');
+                return;
+            }
             const hId = parseInt(e.currentTarget.dataset.historyId, 10);
             const hItem = p.history ? p.history.find(h => h.id === hId) : null;
             if (!hItem) return;
@@ -290,6 +310,10 @@ export function initPlayerDetailView(playerId) {
 
     document.querySelectorAll('.btn-delete-assessment').forEach(btn => {
         btn.onclick = async (e) => {
+            if (!canEdit) {
+                showToast('保護者モードでは評価を削除できません');
+                return;
+            }
             const hId = parseInt(e.currentTarget.dataset.historyId, 10);
             const proceed = await showCustomConfirm('この評価記録を削除しますか？', '評価記録の削除', { okText: '削除する', type: 'danger' });
             if (proceed) {
@@ -304,7 +328,9 @@ export function initPlayerDetailView(playerId) {
     // 観察メモ追加ボタン
     const btnAddAssessment = document.getElementById('btn-add-assessment');
     if (btnAddAssessment) {
-        btnAddAssessment.onclick = () => {
+        btnAddAssessment.hidden = !canEdit;
+        btnAddAssessment.disabled = !canEdit;
+        btnAddAssessment.onclick = canEdit ? () => {
             document.getElementById('assessment-player-id').value = p.id;
             document.getElementById('assessment-edit-id').value = '';
             const titleEl = document.getElementById('assessment-modal-title');
@@ -313,7 +339,15 @@ export function initPlayerDetailView(playerId) {
             document.getElementById('assessment-good').value = '';
             document.getElementById('assessment-improve').value = '';
             openModal('modal-player-assessment');
-        };
+        } : null;
+    }
+
+    const developmentNoteForm = document.getElementById('form-player-development-note');
+    if (developmentNoteForm) {
+        developmentNoteForm.hidden = !canEdit;
+        developmentNoteForm.querySelectorAll('input, select, textarea, button').forEach(control => {
+            control.disabled = !canEdit;
+        });
     }
 
     // 特徴・プレースタイル
