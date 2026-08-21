@@ -329,6 +329,98 @@ a,
     font-size: 0.75rem;
 }
 
+/* Role mode switch: two named roles share the theme-switch pill language without treating role as an on/off switch. */
+.c-role-mode-switch {
+    inline-size: 8.2rem;
+    block-size: 2.35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--color-border) 74%, transparent);
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--color-surface-subtle) 88%, var(--color-brand));
+    color: var(--color-text-muted);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.c-role-mode-switch:hover {
+    border-color: color-mix(in srgb, var(--color-brand) 52%, var(--color-border));
+    box-shadow: var(--shadow-md);
+}
+
+.c-role-mode-switch:focus-visible {
+    outline: 0.2rem solid color-mix(in srgb, var(--color-brand) 58%, transparent);
+    outline-offset: 0.18rem;
+}
+
+.c-role-mode-switch__track {
+    position: relative;
+    inline-size: 7.55rem;
+    block-size: 1.8rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+}
+
+.c-role-mode-switch__label {
+    position: relative;
+    z-index: 1;
+    color: var(--color-text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    white-space: nowrap;
+    transition: color var(--duration-fast) var(--ease-out), opacity var(--duration-fast) var(--ease-out), transform var(--duration-base) var(--ease-spring);
+}
+
+.c-role-mode-switch__label--parent {
+    color: var(--color-brand);
+}
+
+.c-role-mode-switch__thumb {
+    position: absolute;
+    z-index: 0;
+    inset-block-start: 0.05rem;
+    inset-inline-start: 0.05rem;
+    inline-size: 3.65rem;
+    block-size: 1.7rem;
+    border-radius: 9999px;
+    background: var(--color-surface-raised);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--duration-base) var(--ease-spring), background-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+
+:root[data-color-mode="dark"] .c-role-mode-switch {
+    background: color-mix(in srgb, var(--color-surface-raised) 86%, var(--color-brand));
+}
+
+:root[data-color-mode="dark"] .c-role-mode-switch__thumb {
+    background: var(--color-surface);
+}
+
+.c-role-mode-switch[data-user-role="coach"] .c-role-mode-switch__thumb {
+    transform: translateX(3.8rem);
+}
+
+.c-role-mode-switch[data-user-role="coach"] .c-role-mode-switch__label--parent {
+    color: var(--color-text-muted);
+    opacity: 0.72;
+    transform: scale(0.94);
+}
+
+.c-role-mode-switch[data-user-role="coach"] .c-role-mode-switch__label--coach {
+    color: var(--color-brand);
+    opacity: 1;
+    transform: scale(1.04);
+}
+
+.c-role-mode-switch--mobile {
+    flex: 0 0 auto;
+}
+
 /* Theme mode switch: compact sun/moon pill with an immediate theme swap and a token-driven thumb settle. */
 .c-theme-mode-switch {
     inline-size: 4.65rem;
@@ -433,6 +525,9 @@ a,
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .c-role-mode-switch,
+    .c-role-mode-switch__label,
+    .c-role-mode-switch__thumb,
     .c-theme-mode-switch,
     .c-theme-mode-switch__sun,
     .c-theme-mode-switch__moon,
@@ -441,6 +536,9 @@ a,
     }
 }
 
+:root[data-reduce-motion="true"] .c-role-mode-switch,
+:root[data-reduce-motion="true"] .c-role-mode-switch__label,
+:root[data-reduce-motion="true"] .c-role-mode-switch__thumb,
 :root[data-reduce-motion="true"] .c-theme-mode-switch,
 :root[data-reduce-motion="true"] .c-theme-mode-switch__sun,
 :root[data-reduce-motion="true"] .c-theme-mode-switch__moon,

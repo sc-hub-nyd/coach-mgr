@@ -2202,9 +2202,15 @@ export function updateRoleUI() {
         mobileRoleLabel.textContent = isCoach ? 'コーチモード（編集可能）' : '保護者モード（閲覧専用）';
     }
 
-    if (btnToggle) {
-        btnToggle.innerHTML = '<i class="ti ti-arrows-exchange" aria-hidden="true"></i> <span>切替</span>';
-    }
+    const mobileBtnToggle = document.getElementById('mobile-btn-toggle-role');
+    const currentRoleLabel = isCoach ? 'コーチ' : '保護者';
+    const nextRoleLabel = isCoach ? '保護者' : 'コーチ';
+    [btnToggle, mobileBtnToggle].filter(Boolean).forEach(toggle => {
+        toggle.dataset.userRole = isCoach ? 'coach' : 'parent';
+        toggle.setAttribute('aria-pressed', String(isCoach));
+        toggle.setAttribute('aria-label', `現在は${currentRoleLabel}モードです。${nextRoleLabel}モードへ切り替えます`);
+        toggle.title = `${nextRoleLabel}モードへ切り替えます`;
+    });
 
     const btnSyncStatus = document.getElementById('btn-topbar-sync-status');
     const syncPopover = document.getElementById('sync-popover');

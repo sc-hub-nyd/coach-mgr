@@ -52,8 +52,12 @@
                         <i class="ti ti-eye" aria-hidden="true"></i><span>保護者モード</span>
                     </div>
                     <div class="c-sidebar__footer-actions">
-                        <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm c-sidebar__footer-button" id="btn-toggle-role" title="モードを切り替えます">
-                            <i class="ti ti-arrows-exchange" aria-hidden="true"></i><span>切替</span>
+                        <button type="button" class="c-role-mode-switch" id="btn-toggle-role" aria-pressed="false" data-user-role="parent" title="コーチモードへ切り替えます" aria-label="現在は保護者モードです。コーチモードへ切り替えます">
+                            <span class="c-role-mode-switch__track" aria-hidden="true">
+                                <span class="c-role-mode-switch__label c-role-mode-switch__label--parent">保護者</span>
+                                <span class="c-role-mode-switch__label c-role-mode-switch__label--coach">コーチ</span>
+                                <span class="c-role-mode-switch__thumb"></span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -102,7 +106,7 @@
 
                 <div class="c-sidebar__version-row">
                     <button type="button" class="btn-link c-sidebar__version-button" id="topbar-version-badge" title="タップして更新履歴を表示" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <i class="ti ti-info-circle" aria-hidden="true"></i> <span id="topbar-version-text">v1.31.13</span>
+                        <i class="ti ti-info-circle" aria-hidden="true"></i> <span id="topbar-version-text">v1.31.14</span>
                     </button>
                 </div>
             </div>
@@ -195,8 +199,12 @@
                         <div id="mobile-more-role-heading" class="c-mobile-more__section-label">表示モード</div>
                         <div id="mobile-user-role-label" class="c-mobile-more__role-label">保護者モード</div>
                     </div>
-                    <button type="button" class="c-button btn c-button--primary btn-primary c-button--compact btn-sm c-mobile-more__role-action" id="mobile-btn-toggle-role">
-                        <i class="ti ti-arrows-exchange" aria-hidden="true"></i> モード切替
+                    <button type="button" class="c-role-mode-switch c-role-mode-switch--mobile" id="mobile-btn-toggle-role" aria-pressed="false" data-user-role="parent" title="コーチモードへ切り替えます" aria-label="現在は保護者モードです。コーチモードへ切り替えます">
+                        <span class="c-role-mode-switch__track" aria-hidden="true">
+                            <span class="c-role-mode-switch__label c-role-mode-switch__label--parent">保護者</span>
+                            <span class="c-role-mode-switch__label c-role-mode-switch__label--coach">コーチ</span>
+                            <span class="c-role-mode-switch__thumb"></span>
+                        </span>
                     </button>
                 </section>
 
@@ -244,7 +252,7 @@
                         <span class="c-theme-mode-switch__label" id="mobile-color-mode-text">ダーク表示</span>
                     </button>
                     <button type="button" class="btn-link c-mobile-more__version" id="mobile-version-badge" onclick="if(window.openReleaseNotesModal) window.openReleaseNotesModal();">
-                        <span id="mobile-version-text">v1.31.12</span>
+                        <span id="mobile-version-text">v1.31.14</span>
                     </button>
                 </div>
             </div>

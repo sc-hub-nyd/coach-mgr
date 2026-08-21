@@ -33,6 +33,14 @@ test('P38-1: PCサイドバーフッターの配置と機能契約検証', () =>
     assert.ok(roleRowIndex < syncRowIndex && syncRowIndex < themeRowIndex && themeRowIndex < versionRowIndex, 'sidebar utilities stay vertically ordered as mode, cloud sync, display theme, then version');
     assert.match(baseCss, /\.c-sidebar__user-card,\s*\.c-sidebar__theme-row\s*\{[\s\S]*?inline-size:\s*100%;[\s\S]*?min-block-size:\s*2\.35rem;[\s\S]*?justify-content:\s*space-between;/, 'mode and display-theme rows share a full-width balanced layout');
     assert.match(baseCss, /\.c-sidebar__sync-button\s*\{[\s\S]*?min-block-size:\s*2\.35rem;/, 'cloud sync uses the same minimum touch-row height');
+    assert.match(indexHtml, /class="c-role-mode-switch" id="btn-toggle-role" aria-pressed="false" data-user-role="parent"/, 'desktop role control uses the accessible two-choice pill');
+    assert.match(indexHtml, /class="c-role-mode-switch c-role-mode-switch--mobile" id="mobile-btn-toggle-role" aria-pressed="false" data-user-role="parent"/, 'mobile role control uses the same accessible two-choice pill');
+    assert.match(indexHtml, /c-role-mode-switch__label--parent[\s\S]*?c-role-mode-switch__label--coach[\s\S]*?c-role-mode-switch__thumb/, 'role control exposes parent, coach, and the selected-position thumb');
+    assert.match(baseCss, /\.c-role-mode-switch__thumb\s*\{[\s\S]*?transition: transform var\(--duration-base\) var\(--ease-spring\)/, 'role thumb settles with the shared motion tokens');
+    assert.match(baseCss, /\.c-role-mode-switch\[data-user-role="coach"\] \.c-role-mode-switch__thumb\s*\{[\s\S]*?transform: translateX\(3\.8rem\)/, 'coach state moves the role thumb to the coach side');
+    assert.match(baseCss, /prefers-reduced-motion: reduce[\s\S]*?\.c-role-mode-switch__thumb[\s\S]*?transition-duration: 1ms/, 'reduced motion shortens the role thumb animation');
+    assert.match(appJs, /toggle\.dataset\.userRole = isCoach \? 'coach' : 'parent';/, 'role control synchronizes its visual state with currentUserRole');
+    assert.match(appJs, /toggle\.setAttribute\('aria-pressed', String\(isCoach\)\)/, 'role control exposes its selected role state to assistive technology');
 });
 
 test('P38-2: トップバーのスリム化とタイトル＆スマホモード表示検証', () => {

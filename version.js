@@ -1,8 +1,19 @@
 // version.js - アプリケーションのバージョン情報とリリースノートの一元管理
-export const APP_VERSION = 'v1.31.13';
+export const APP_VERSION = 'v1.31.14';
 export const RELEASE_DATE = '2026-08-21';
 
 export const RELEASE_NOTES = [
+    {
+        version: 'v1.31.14',
+        date: '2026-08-21',
+        title: '保護者／コーチ切替を二択ピル型コントロールへ統一',
+        features: [
+            'UI：PCサイドバーとモバイルその他メニューの保護者／コーチ切替を、ラベルと円形スライダーを持つ二択ピル型コントロールへ統一',
+            '状態：保護者では左側、コーチでは右側へスライダーを移動し、現在モードと次に切り替えるモードをラベルとARIAで明示',
+            'アクセシビリティ：ON／OFFではない役割選択のためrole=switchを流用せず、aria-pressedと状態別aria-labelで現在状態を公開',
+            '互換性：既存のコーチパスコード確認、保護者への即時切替、権限制御、同期導線、キーボード操作、縮退モーションを維持'
+        ]
+    },
     {
         version: 'v1.31.13',
         date: '2026-08-21',
