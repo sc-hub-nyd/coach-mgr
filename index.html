@@ -792,6 +792,9 @@
                             <div id="pd-notebook-trends" class="c-metric-grid c-metric-grid--inline" aria-live="polite"></div>
                         </section>
                         <div class="c-timeline-route-intro"><i class="ti ti-flag" aria-hidden="true"></i><span>現在の学年と最新月を開いています。過去の章は、必要なときに。</span></div>
+                        <p id="pd-timeline-location" class="c-timeline-location" aria-live="polite" aria-atomic="true"></p>
+                        <div id="pd-timeline-role-focus" class="c-timeline-role-focus"></div>
+                        <div id="pd-timeline-search-return" class="c-timeline-search-return" hidden></div>
                         <div id="pd-notebook-timeline" class="c-data-list c-data-list--scrollable c-data-list--notebook" aria-live="polite"></div>
                     </div>
                     <div id="pd-notebook-search-view" role="tabpanel" aria-labelledby="btn-notebook-view-search" hidden>
@@ -812,6 +815,10 @@
                                     <button type="button" class="c-chip c-chip--selectable" data-type="match" aria-pressed="false">試合</button>
                                     <button type="button" class="c-chip c-chip--selectable" data-type="practice" aria-pressed="false">練習</button>
                                 </div>
+                            </div>
+                            <div class="c-timeline-search-status">
+                                <p id="pd-notebook-search-summary" aria-live="polite"></p>
+                                <button type="button" id="btn-notebook-clear-search" class="c-button btn c-button--secondary btn-secondary c-button--compact" hidden><i class="ti ti-x" aria-hidden="true"></i> 条件をクリア</button>
                             </div>
                         </div>
                         <div id="pd-notebook-search-results" class="c-timeline-search-results" aria-live="polite"></div>

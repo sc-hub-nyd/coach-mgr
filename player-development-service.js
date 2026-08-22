@@ -63,7 +63,7 @@ export function getSkillTrend(player, metrics = []) {
 }
 
 export function buildDevelopmentTimeline(player, { matches = [], practices = [] } = {}) {
-    const playerId = Number(player?.id);
+    const playerId = String(player?.id ?? '');
     const notes = ensureDevelopmentNotes(player).map(note => ({
         kind: 'note', date: note.date, id: note.id, title: note.focus || '育成ノート', detail: note.observation || note.nextStep || '記録', note
     }));
@@ -71,10 +71,10 @@ export function buildDevelopmentTimeline(player, { matches = [], practices = [] 
         kind: 'observation', date: item.date, id: item.id, title: '観察メモ', detail: item.comment || '記録'
     }));
     const matchActivities = matches
-        .filter(match => (match.presentPlayerIds || []).some(id => Number(id) === playerId) || (match.playerFeedback || []).some(item => Number(item.playerId) === playerId))
-        .map(match => ({ kind: 'match', date: match.date, id: match.id, title: `試合：vs ${match.opponent || '対戦相手未設定'}`, detail: match.playerFeedback?.find(item => Number(item.playerId) === playerId)?.comment || '参加記録' }));
+        .filter(match => (match.presentPlayerIds || []).some(id => String(id) === playerId) || (match.playerFeedback || []).some(item => String(item.playerId) === playerId))
+        .map(match => ({ kind: 'match', date: match.date, id: match.id, title: `試合：vs ${match.opponent || '対戦相手未設定'}`, detail: match.playerFeedback?.find(item => String(item.playerId) === playerId)?.comment || '参加記録' }));
     const practiceActivities = practices
-        .filter(practice => (practice.presentPlayerIds || []).some(id => Number(id) === playerId))
+        .filter(practice => (practice.presentPlayerIds || []).some(id => String(id) === playerId))
         .map(practice => ({ kind: 'practice', date: practice.date, id: practice.id, title: '練習に参加', detail: practice.location || '練習記録' }));
     return [...notes, ...observations, ...matchActivities, ...practiceActivities]
         .sort((a, b) => toTimestamp(b.date) - toTimestamp(a.date));

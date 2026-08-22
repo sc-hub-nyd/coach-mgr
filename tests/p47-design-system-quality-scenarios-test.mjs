@@ -56,7 +56,7 @@ assert.doesNotMatch(components, /\.pwa-update-banner \.btn-primary\s*\{/, 'PWA�
 assert.match(tokens, /--color-update-action-hover-surface:/, 'PWA更新操作のhover surfaceトークンが必要です');
 assert.match(tokens, /--color-update-action-hover-text:/, 'PWA更新操作のhover textトークンが必要です');
 assert.match(tokens, /--color-update-action-pressed-surface:/, 'PWA更新操作のpressed surfaceトークンが必要です');
-assert.match(serviceWorker, /coachmgr-v272/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
+assert.match(serviceWorker, /coachmgr-v273/, 'PWA更新シナリオは現在のキャッシュ世代をprecacheする必要があります');
 assert.match(index, /rel="apple-touch-icon" sizes="180x180" href="\.\/icons\/apple-touch-icon\.png"/, 'iOSは文字なしApple Touch Iconを参照する必要があります');
 assert.match(index, /rel="icon" type="image\/png" sizes="32x32" href="\.\/icons\/favicon-32\.png"/, 'ブラウザは32pxの文字なしFaviconを参照する必要があります');
 assert.ok(manifest.icons.some(icon => icon.src === './icons/icon-192.png' && icon.sizes === '192x192' && icon.purpose === 'any'), 'manifestは通常PWA用192px文字なしアイコンを宣言する必要があります');
