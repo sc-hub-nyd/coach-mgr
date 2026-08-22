@@ -795,7 +795,7 @@
                         <p id="pd-timeline-location" class="c-timeline-location" aria-live="polite" aria-atomic="true"></p>
                         <div id="pd-timeline-role-focus" class="c-timeline-role-focus"></div>
                         <div id="pd-timeline-search-return" class="c-timeline-search-return" hidden></div>
-                        <div id="pd-notebook-timeline" class="c-data-list c-data-list--scrollable c-data-list--notebook" aria-live="polite"></div>
+                        <div id="pd-notebook-timeline" class="c-data-list c-data-list--notebook" aria-live="polite"></div>
                     </div>
                     <div id="pd-notebook-search-view" role="tabpanel" aria-labelledby="btn-notebook-view-search" hidden>
                         <div class="c-timeline-search-heading">
@@ -815,6 +815,14 @@
                                     <button type="button" class="c-chip c-chip--selectable" data-type="match" aria-pressed="false">試合</button>
                                     <button type="button" class="c-chip c-chip--selectable" data-type="practice" aria-pressed="false">練習</button>
                                 </div>
+                                <div class="c-timeline-search-structured" aria-label="記録をさらに絞り込む">
+                                    <label class="c-form-field c-form-field--compact"><span class="c-form-field__label"><i class="ti ti-calendar" aria-hidden="true"></i> 年度</span><select id="select-notebook-nendo" class="c-input form-control" aria-label="年度で絞り込む"><option value="all">すべての年度</option></select></label>
+                                    <div class="c-filter-chips" id="notebook-signal-filters" aria-label="記録の手掛かりで絞り込む">
+                                        <button type="button" class="c-chip c-chip--selectable active" data-notebook-signal="all" aria-pressed="true">すべての手掛かり</button>
+                                        <button type="button" class="c-chip c-chip--selectable" data-notebook-signal="next-step" aria-pressed="false">次の一歩あり</button>
+                                        <button type="button" class="c-chip c-chip--selectable" data-notebook-signal="skill-rated" aria-pressed="false">スキル評価あり</button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="c-timeline-search-status">
                                 <p id="pd-notebook-search-summary" aria-live="polite"></p>
@@ -826,6 +834,46 @@
                     <button type="button" class="c-fab btn-new-development-note" onclick="document.getElementById('modal-player-development-note').classList.remove('hidden')" aria-label="育成ノートを記録する" title="育成ノートを記録">
                         <i class="ti ti-pencil plus-icon" aria-hidden="true"></i>
                     </button>
+                </div>
+            </section>
+
+            <section class="card c-card" id="pd-match-footprints" aria-labelledby="pd-match-footprints-title">
+                <div class="c-section-header c-card__header">
+                    <div class="c-section-header__content">
+                        <span class="c-kicker"><i class="ti ti-trophy" aria-hidden="true"></i> EXPERIENCE MAP</span>
+                        <h3 class="c-section-header__title c-card__title c-text-effect--shimmer" id="pd-match-footprints-title">出場の足あと</h3>
+                    </div>
+                </div>
+                <div class="c-card__body l-stack l-stack--spacious">
+                    <div class="c-footprint-mode-switch" role="tablist" aria-label="出場経験の表示モード">
+                        <button type="button" id="btn-match-footprints-recent" class="c-footprint-mode-switch__button is-active" role="tab" aria-selected="true" aria-controls="pd-match-footprints-recent-view"><i class="ti ti-history" aria-hidden="true"></i> 最近の足あと</button>
+                        <button type="button" id="btn-match-footprints-search" class="c-footprint-mode-switch__button" role="tab" aria-selected="false" aria-controls="pd-match-footprints-search-view"><i class="ti ti-search" aria-hidden="true"></i> 試合を探す</button>
+                    </div>
+                    <div id="pd-match-footprints-recent-view" role="tabpanel" aria-labelledby="btn-match-footprints-recent">
+                        <p class="c-footprint-explorer__intro">最近の出場経験と、積み重ねの節目を確認できます。</p>
+                        <div id="pd-match-milestones" class="c-experience-milestones" aria-live="polite"></div>
+                        <div id="pd-match-footprints-list" class="c-experience-list" aria-live="polite"></div>
+                    </div>
+                    <div id="pd-match-footprints-search-view" role="tabpanel" aria-labelledby="btn-match-footprints-search" hidden>
+                        <div class="c-timeline-search-heading">
+                            <button type="button" id="btn-match-footprints-back" class="c-button btn c-button--secondary btn-secondary c-button--compact"><i class="ti ti-arrow-left" aria-hidden="true"></i> 最近の足あとへ</button>
+                            <div><span class="c-kicker"><i class="ti ti-search" aria-hidden="true"></i> FIND A MATCH</span><h4>試合を探す</h4><p>相手、年度、結果、得点・アシストから、当時の試合へ戻れます。</p></div>
+                        </div>
+                        <div class="c-filter-bar c-match-search-tools" aria-label="出場試合の検索と絞り込み">
+                            <div class="c-filter-bar__main c-match-search-tools__main">
+                                <div class="c-filter-bar__search"><i class="ti ti-search" aria-hidden="true"></i><input type="search" id="input-match-footprints-search" placeholder="例：対戦相手、大会名" class="c-input form-control filter-search-input"></div>
+                                <label class="c-form-field c-form-field--compact"><span class="c-form-field__label"><i class="ti ti-calendar" aria-hidden="true"></i> 年度</span><select id="select-match-footprints-nendo" class="c-input form-control" aria-label="年度で絞り込む"><option value="all">すべての年度</option></select></label>
+                                <label class="c-form-field c-form-field--compact"><span class="c-form-field__label"><i class="ti ti-chart-bar" aria-hidden="true"></i> 結果</span><select id="select-match-footprints-result" class="c-input form-control" aria-label="結果で絞り込む"><option value="all">すべての結果</option><option value="win">勝ち</option><option value="draw">分け</option><option value="loss">負け</option><option value="unknown">未入力</option></select></label>
+                                <div id="match-footprints-signal-filters" class="c-filter-chips" aria-label="活躍の手掛かりで絞り込む">
+                                    <button type="button" class="c-chip c-chip--selectable active" data-match-signal="all" aria-pressed="true">すべて</button>
+                                    <button type="button" class="c-chip c-chip--selectable" data-match-signal="goal" aria-pressed="false"><i class="ti ti-ball-football" aria-hidden="true"></i> 得点あり</button>
+                                    <button type="button" class="c-chip c-chip--selectable" data-match-signal="assist" aria-pressed="false"><i class="ti ti-shoe" aria-hidden="true"></i> アシストあり</button>
+                                </div>
+                            </div>
+                            <div class="c-timeline-search-status"><p id="pd-match-footprints-search-summary" aria-live="polite"></p><button type="button" id="btn-match-footprints-clear-search" class="c-button btn c-button--secondary btn-secondary c-button--compact" hidden><i class="ti ti-x" aria-hidden="true"></i> 条件をクリア</button></div>
+                        </div>
+                        <div id="pd-match-footprints-search-results" class="c-experience-list" aria-live="polite"></div>
+                    </div>
                 </div>
             </section>
         </div>

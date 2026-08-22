@@ -4,6 +4,7 @@ import { escapeHtml, showToast, showCustomConfirm, getNendo } from './utils.js';
 import { saveData, navigate, openModal } from './app-context.js';
 import { addDevelopmentNote, buildDevelopmentSummary, removeDevelopmentNote } from './player-development-service.js';
 import { getMatchGoalRecords, getPlayerStatistics } from './player-statistics-service.js';
+import { buildPlayerExperienceArchive } from './player-experience-service.js';
 import { buildPlayerTimelineArchive } from './player-timeline-service.js';
 import { switchWorkspace } from './workspace-service.js';
 import { getPlayerTimelineUiState, patchPlayerTimelineUiState } from './player-timeline-ui-state-service.js';
@@ -33,6 +34,8 @@ function renderDevelopmentNotebook(player) {
     const searchResults = document.getElementById('pd-notebook-search-results');
     const searchInput = document.getElementById('input-notebook-search');
     const filterChips = document.getElementById('notebook-type-filters');
+    const nendoFilter = document.getElementById('select-notebook-nendo');
+    const signalFilters = document.getElementById('notebook-signal-filters');
     const searchSummary = document.getElementById('pd-notebook-search-summary');
     const clearSearchButton = document.getElementById('btn-notebook-clear-search');
     const timelineView = document.getElementById('pd-notebook-timeline-view');
@@ -46,7 +49,10 @@ function renderDevelopmentNotebook(player) {
     const ratings = document.getElementById('development-note-ratings');
     const playerId = document.getElementById('development-player-id');
     const dateInput = document.getElementById('development-note-date');
-    let timelineState = getPlayerTimelineUiState(player.id, { view: 'timeline', searchQuery: '', filterType: 'all', openNendo: '', openMonth: '', openRecord: '', highlightRecord: '', searchReturnActive: false });
+    let timelineState = getPlayerTimelineUiState(player.id, { view: 'timeline', searchQuery: '', filterType: 'all', filterNendo: 'all', filterSignal: 'all', searchLimit: 20, openNendo: '', openMonth: '', openRecord: '', highlightRecord: '', searchReturnActive: false });
+    if (!Number.isInteger(timelineState.searchLimit) || timelineState.searchLimit < 20) timelineState = patchPlayerTimelineUiState(player.id, { searchLimit: 20 });
+    if (!['all', 'next-step', 'skill-rated'].includes(timelineState.filterSignal)) timelineState = patchPlayerTimelineUiState(player.id, { filterSignal: 'all' });
+    if (!timelineState.filterNendo) timelineState = patchPlayerTimelineUiState(player.id, { filterNendo: 'all' });
 
     if (playerId) playerId.value = player.id;
     if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
@@ -79,6 +85,10 @@ function renderDevelopmentNotebook(player) {
     }, {});
     const allGroups = buildGroups(summary.timeline);
     const sortedNendos = Object.keys(allGroups).sort((a, b) => Number(b) - Number(a));
+    if (nendoFilter) {
+        nendoFilter.innerHTML = `<option value="all">すべての年度</option>${sortedNendos.map(nendo => `<option value="${escapeHtml(nendo)}">${escapeHtml(nendo)}年度</option>`).join('')}`;
+        nendoFilter.value = sortedNendos.includes(timelineState.filterNendo) ? timelineState.filterNendo : 'all';
+    }
     const timelineMonthKeys = sortedNendos.flatMap(nendo => Object.keys(allGroups[nendo].months)
         .sort((a, b) => getMonthOrder(b) - getMonthOrder(a))
         .map(month => `${nendo}-${month}`));
@@ -195,21 +205,36 @@ function renderDevelopmentNotebook(player) {
         if (!searchResults) return;
         const query = timelineState.searchQuery.toLocaleLowerCase('ja').trim();
         const filterType = timelineState.filterType;
+        const filterNendo = timelineState.filterNendo;
+        const filterSignal = timelineState.filterSignal;
         const results = summary.timeline.filter(item => {
             const searchable = `${item.title || ''} ${item.detail || ''} ${item.note?.nextStep || ''}`.toLocaleLowerCase('ja');
-            return (filterType === 'all' || item.kind === filterType) && (!query || searchable.includes(query));
+            const itemNendo = getNendo(item.date);
+            const hasNextStep = Boolean(item.note?.nextStep);
+            const hasSkillRating = Object.keys(item.note?.skillRatings || {}).length > 0;
+            const matchesSignal = filterSignal === 'all' || (filterSignal === 'next-step' && hasNextStep) || (filterSignal === 'skill-rated' && hasSkillRating);
+            return (filterType === 'all' || item.kind === filterType)
+                && (filterNendo === 'all' || itemNendo === filterNendo)
+                && matchesSignal
+                && (!query || searchable.includes(query));
         });
-        const hasConditions = Boolean(query) || filterType !== 'all';
+        const hasConditions = Boolean(query) || filterType !== 'all' || filterNendo !== 'all' || filterSignal !== 'all';
         if (searchSummary) {
-            const typeLabel = filterType === 'all' ? '' : ` / ${labels[filterType] || filterType}`;
-            searchSummary.textContent = hasConditions ? `「${timelineState.searchQuery.trim() || 'すべて'}」${typeLabel}：${results.length}件` : `すべての記録：${results.length}件`;
+            const conditions = [
+                query ? `「${timelineState.searchQuery.trim()}」` : '',
+                filterType === 'all' ? '' : labels[filterType] || filterType,
+                filterNendo === 'all' ? '' : `${filterNendo}年度`,
+                filterSignal === 'all' ? '' : filterSignal === 'next-step' ? '次の一歩あり' : 'スキル評価あり'
+            ].filter(Boolean);
+            searchSummary.textContent = hasConditions ? `${conditions.join(' / ')}：${results.length}件` : `すべての記録：${results.length}件`;
         }
         if (clearSearchButton) clearSearchButton.hidden = !hasConditions;
-        searchResults.innerHTML = results.length ? results.map(item => {
+        const visibleResults = results.slice(0, timelineState.searchLimit);
+        searchResults.innerHTML = results.length ? `${visibleResults.map(item => {
             const nendo = getNendo(item.date);
             const month = String(Number(item.date.split('-')[1] || 0));
             return `<article class="c-timeline-search-result"><div><span class="c-status c-status--compact"><i class="${icons[item.kind] || 'ti ti-circle'}" aria-hidden="true"></i> ${labels[item.kind] || '記録'}</span><h5>${escapeHtml(item.title || '')}</h5><p>${nendo}年度 / ${month}月 / ${escapeHtml(item.date || '')}</p></div><button type="button" data-timeline-result-nendo="${nendo}" data-timeline-result-month="${month}" data-timeline-result-record="${escapeHtml(item.id)}">年表で見る <i class="ti ti-arrow-right" aria-hidden="true"></i></button></article>`;
-        }).join('') : '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="ti ti-search c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">条件に合う記録がありません。</p></div></div>';
+        }).join('')}${visibleResults.length < results.length ? `<div class="c-timeline-search-more"><button type="button" class="c-button btn c-button--secondary btn-secondary" data-timeline-load-more>さらに${Math.min(20, results.length - visibleResults.length)}件表示 <i class="ti ti-arrow-down" aria-hidden="true"></i></button></div>` : ''}` : '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="ti ti-search c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">条件に合う記録がありません。</p></div></div>';
     };
 
     timeline?.addEventListener('click', async (event) => {
@@ -264,8 +289,15 @@ function renderDevelopmentNotebook(player) {
         }
     });
     searchResults?.addEventListener('click', (event) => {
-        const target = event.target.closest('button[data-timeline-result-record]');
+        const target = event.target.closest('button');
         if (!target) return;
+        if (target.hasAttribute('data-timeline-load-more')) {
+            timelineState = patchPlayerTimelineUiState(player.id, { searchLimit: timelineState.searchLimit + 20 });
+            renderSearchResults();
+            requestAnimationFrame(() => searchResults.querySelector('[data-timeline-load-more]')?.focus());
+            return;
+        }
+        if (!target.dataset.timelineResultRecord) return;
         const resultNendo = target.dataset.timelineResultNendo || '';
         const resultRecord = target.dataset.timelineResultRecord || '';
         timelineState = patchPlayerTimelineUiState(player.id, { openNendo: resultNendo, openMonth: `${resultNendo}-${target.dataset.timelineResultMonth || ''}`, openRecord: resultRecord, highlightRecord: resultRecord, searchReturnActive: true });
@@ -274,21 +306,38 @@ function renderDevelopmentNotebook(player) {
         focusTimelineRecord(resultRecord, { scroll: true });
     });
     searchInput?.addEventListener('input', () => {
-        timelineState = patchPlayerTimelineUiState(player.id, { searchQuery: searchInput.value });
+        timelineState = patchPlayerTimelineUiState(player.id, { searchQuery: searchInput.value, searchLimit: 20 });
         renderSearchResults();
     });
     filterChips?.querySelectorAll('.c-chip').forEach(button => button.addEventListener('click', () => {
         filterChips.querySelectorAll('.c-chip').forEach(chip => { chip.classList.remove('active'); chip.setAttribute('aria-pressed', 'false'); });
         button.classList.add('active');
         button.setAttribute('aria-pressed', 'true');
-        timelineState = patchPlayerTimelineUiState(player.id, { filterType: button.dataset.type || 'all' });
+        timelineState = patchPlayerTimelineUiState(player.id, { filterType: button.dataset.type || 'all', searchLimit: 20 });
+        renderSearchResults();
+    }));
+    nendoFilter?.addEventListener('change', () => {
+        timelineState = patchPlayerTimelineUiState(player.id, { filterNendo: nendoFilter.value || 'all', searchLimit: 20 });
+        renderSearchResults();
+    });
+    signalFilters?.querySelectorAll('.c-chip').forEach(button => button.addEventListener('click', () => {
+        signalFilters.querySelectorAll('.c-chip').forEach(chip => { chip.classList.remove('active'); chip.setAttribute('aria-pressed', 'false'); });
+        button.classList.add('active');
+        button.setAttribute('aria-pressed', 'true');
+        timelineState = patchPlayerTimelineUiState(player.id, { filterSignal: button.dataset.notebookSignal || 'all', searchLimit: 20 });
         renderSearchResults();
     }));
     clearSearchButton?.addEventListener('click', () => {
-        timelineState = patchPlayerTimelineUiState(player.id, { searchQuery: '', filterType: 'all' });
+        timelineState = patchPlayerTimelineUiState(player.id, { searchQuery: '', filterType: 'all', filterNendo: 'all', filterSignal: 'all', searchLimit: 20 });
         if (searchInput) searchInput.value = '';
+        if (nendoFilter) nendoFilter.value = 'all';
         filterChips?.querySelectorAll('.c-chip').forEach(chip => {
             const active = chip.dataset.type === 'all';
+            chip.classList.toggle('active', active);
+            chip.setAttribute('aria-pressed', String(active));
+        });
+        signalFilters?.querySelectorAll('.c-chip').forEach(chip => {
+            const active = chip.dataset.notebookSignal === 'all';
             chip.classList.toggle('active', active);
             chip.setAttribute('aria-pressed', String(active));
         });
@@ -334,6 +383,11 @@ function renderDevelopmentNotebook(player) {
     }));
     filterChips?.querySelectorAll('.c-chip').forEach(chip => {
         const active = chip.dataset.type === timelineState.filterType;
+        chip.classList.toggle('active', active);
+        chip.setAttribute('aria-pressed', String(active));
+    });
+    signalFilters?.querySelectorAll('.c-chip').forEach(chip => {
+        const active = chip.dataset.notebookSignal === timelineState.filterSignal;
         chip.classList.toggle('active', active);
         chip.setAttribute('aria-pressed', String(active));
     });
@@ -414,6 +468,167 @@ export function openPlayerEditModal(p) {
     }
 
     openModal('modal-player');
+}
+
+function renderPlayerExperience(player) {
+    const archive = buildPlayerExperienceArchive(state, player);
+    const recentView = document.getElementById('pd-match-footprints-recent-view');
+    const searchView = document.getElementById('pd-match-footprints-search-view');
+    const recentModeButton = document.getElementById('btn-match-footprints-recent');
+    const searchModeButton = document.getElementById('btn-match-footprints-search');
+    const backButton = document.getElementById('btn-match-footprints-back');
+    const milestones = document.getElementById('pd-match-milestones');
+    const recentList = document.getElementById('pd-match-footprints-list');
+    const searchInput = document.getElementById('input-match-footprints-search');
+    const nendoFilter = document.getElementById('select-match-footprints-nendo');
+    const resultFilter = document.getElementById('select-match-footprints-result');
+    const signalFilters = document.getElementById('match-footprints-signal-filters');
+    const searchSummary = document.getElementById('pd-match-footprints-search-summary');
+    const clearButton = document.getElementById('btn-match-footprints-clear-search');
+    const searchResults = document.getElementById('pd-match-footprints-search-results');
+    if (!recentList || !searchResults) return;
+
+    let experienceState = getPlayerTimelineUiState(player.id, {
+        matchView: 'recent', matchQuery: '', matchNendo: 'all', matchResult: 'all', matchSignal: 'all', matchLimit: 20
+    });
+    const patchExperienceState = patch => {
+        experienceState = patchPlayerTimelineUiState(player.id, patch);
+        return experienceState;
+    };
+    if (!['recent', 'search'].includes(experienceState.matchView)) patchExperienceState({ matchView: 'recent' });
+    if (!['all', 'goal', 'assist'].includes(experienceState.matchSignal)) patchExperienceState({ matchSignal: 'all' });
+    if (!['all', 'win', 'draw', 'loss', 'unknown'].includes(experienceState.matchResult)) patchExperienceState({ matchResult: 'all' });
+    if (!Number.isInteger(experienceState.matchLimit) || experienceState.matchLimit < 20) patchExperienceState({ matchLimit: 20 });
+    if (!experienceState.matchNendo) patchExperienceState({ matchNendo: 'all' });
+
+    const itemById = new Map(archive.items.map(item => [item.id, item]));
+    const nendos = [...new Set(archive.items.map(item => String(item.sourceNendo)))].sort((left, right) => Number(right) - Number(left));
+    if (nendoFilter) {
+        nendoFilter.innerHTML = `<option value="all">すべての年度</option>${nendos.map(nendo => `<option value="${escapeHtml(nendo)}">${escapeHtml(nendo)}年度</option>`).join('')}`;
+        nendoFilter.value = nendos.includes(experienceState.matchNendo) ? experienceState.matchNendo : 'all';
+    }
+    if (resultFilter) resultFilter.value = experienceState.matchResult;
+    if (searchInput) searchInput.value = experienceState.matchQuery;
+
+    const resultLabels = { win: '勝ち', draw: '分け', loss: '負け', unknown: '結果未入力' };
+    const matchSummary = item => [item.date, item.sourceNendo ? `${item.sourceNendo}年度` : '', item.type].filter(Boolean).join(' / ');
+    const renderMatchItem = item => `<article class="c-experience-item"><div class="c-experience-item__body"><span class="c-experience-item__meta">${escapeHtml(matchSummary(item))}</span><strong>vs ${escapeHtml(item.opponent)}</strong><div class="c-experience-item__signals"><span class="c-status c-status--compact c-status--muted">${escapeHtml(item.result || '結果未入力')}</span>${item.goalCount ? `<span class="c-status c-status--compact c-status--info"><i class="ti ti-ball-football" aria-hidden="true"></i> ${item.goalCount}得点</span>` : ''}${item.assistCount ? `<span class="c-status c-status--compact c-status--success"><i class="ti ti-shoe" aria-hidden="true"></i> ${item.assistCount}アシスト</span>` : ''}</div></div><button type="button" class="c-button btn c-button--secondary btn-secondary btn-sm" data-experience-match="${escapeHtml(item.id)}"><i class="ti ti-arrow-right" aria-hidden="true"></i> 試合詳細</button></article>`;
+    const renderMilestones = () => {
+        if (!milestones) return;
+        milestones.innerHTML = archive.milestones.length ? archive.milestones.map(item => item.matchId
+            ? `<button type="button" class="c-experience-milestone" data-experience-match="${escapeHtml(item.matchId)}"><i class="ti ${item.kind === 'goal' ? 'ti-ball-football' : item.kind === 'assist' ? 'ti-shoe' : 'ti-flag'}" aria-hidden="true"></i><span>${escapeHtml(item.label)}</span><small>${escapeHtml(item.date)}</small></button>`
+            : `<span class="c-experience-milestone"><i class="ti ti-note" aria-hidden="true"></i><span>${escapeHtml(item.label)}</span></span>`
+        ).join('') : '<p class="c-footprint-explorer__empty">出場記録が増えると、ここに経験の節目が表示されます。</p>';
+    };
+    const renderRecent = () => {
+        recentList.innerHTML = archive.items.length
+            ? archive.items.slice(0, 5).map(renderMatchItem).join('')
+            : '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="ti ti-trophy c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">まだ出場記録がありません。</p></div></div>';
+    };
+    const renderSearchResults = () => {
+        const query = (experienceState.matchQuery || '').toLocaleLowerCase('ja').trim();
+        const results = archive.items.filter(item => {
+            const searchable = `${item.opponent} ${item.type} ${item.result} ${item.date}`.toLocaleLowerCase('ja');
+            const matchesSignal = experienceState.matchSignal === 'all'
+                || (experienceState.matchSignal === 'goal' && item.goalCount > 0)
+                || (experienceState.matchSignal === 'assist' && item.assistCount > 0);
+            return (!query || searchable.includes(query))
+                && (experienceState.matchNendo === 'all' || String(item.sourceNendo) === String(experienceState.matchNendo))
+                && (experienceState.matchResult === 'all' || item.resultState === experienceState.matchResult)
+                && matchesSignal;
+        });
+        const hasConditions = Boolean(query) || experienceState.matchNendo !== 'all' || experienceState.matchResult !== 'all' || experienceState.matchSignal !== 'all';
+        if (searchSummary) {
+            const conditions = [
+                query ? `「${experienceState.matchQuery.trim()}」` : '',
+                experienceState.matchNendo === 'all' ? '' : `${experienceState.matchNendo}年度`,
+                experienceState.matchResult === 'all' ? '' : resultLabels[experienceState.matchResult],
+                experienceState.matchSignal === 'all' ? '' : experienceState.matchSignal === 'goal' ? '得点あり' : 'アシストあり'
+            ].filter(Boolean);
+            searchSummary.textContent = hasConditions ? `${conditions.join(' / ')}：${results.length}件` : `すべての出場試合：${results.length}件`;
+        }
+        if (clearButton) clearButton.hidden = !hasConditions;
+        const visible = results.slice(0, experienceState.matchLimit);
+        searchResults.innerHTML = results.length
+            ? `${visible.map(renderMatchItem).join('')}${visible.length < results.length ? `<div class="c-experience-load-more"><button type="button" class="c-button btn c-button--secondary btn-secondary" data-experience-load-more>さらに${Math.min(20, results.length - visible.length)}件表示 <i class="ti ti-arrow-down" aria-hidden="true"></i></button></div>` : ''}`
+            : '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="ti ti-search c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">条件に合う出場試合がありません。</p></div></div>';
+    };
+    const setView = view => {
+        patchExperienceState({ matchView: view });
+        const recentActive = view === 'recent';
+        if (recentView) recentView.hidden = !recentActive;
+        if (searchView) searchView.hidden = recentActive;
+        if (recentModeButton) { recentModeButton.classList.toggle('is-active', recentActive); recentModeButton.setAttribute('aria-selected', String(recentActive)); }
+        if (searchModeButton) { searchModeButton.classList.toggle('is-active', !recentActive); searchModeButton.setAttribute('aria-selected', String(!recentActive)); }
+        if (!recentActive) renderSearchResults();
+    };
+    const openMatch = event => {
+        const target = event.target.closest('button[data-experience-match]');
+        if (!target) return;
+        const item = itemById.get(target.dataset.experienceMatch);
+        if (!item) return;
+        if (item.sourceSeasonId !== state.activeSeasonId) switchWorkspace(state, state.activeTeamId, item.sourceSeasonId);
+        navigate('match-detail', { id: item.sourceItemId });
+    };
+    recentList.addEventListener('click', openMatch);
+    milestones?.addEventListener('click', openMatch);
+    searchResults.addEventListener('click', event => {
+        const loadMore = event.target.closest('button[data-experience-load-more]');
+        if (loadMore) {
+            patchExperienceState({ matchLimit: experienceState.matchLimit + 20 });
+            renderSearchResults();
+            requestAnimationFrame(() => searchResults.querySelector('[data-experience-load-more]')?.focus());
+            return;
+        }
+        openMatch(event);
+    });
+    searchInput?.addEventListener('input', () => { patchExperienceState({ matchQuery: searchInput.value, matchLimit: 20 }); renderSearchResults(); });
+    nendoFilter?.addEventListener('change', () => { patchExperienceState({ matchNendo: nendoFilter.value || 'all', matchLimit: 20 }); renderSearchResults(); });
+    resultFilter?.addEventListener('change', () => { patchExperienceState({ matchResult: resultFilter.value || 'all', matchLimit: 20 }); renderSearchResults(); });
+    signalFilters?.querySelectorAll('.c-chip').forEach(button => button.addEventListener('click', () => {
+        signalFilters.querySelectorAll('.c-chip').forEach(chip => { chip.classList.remove('active'); chip.setAttribute('aria-pressed', 'false'); });
+        button.classList.add('active');
+        button.setAttribute('aria-pressed', 'true');
+        patchExperienceState({ matchSignal: button.dataset.matchSignal || 'all', matchLimit: 20 });
+        renderSearchResults();
+    }));
+    clearButton?.addEventListener('click', () => {
+        patchExperienceState({ matchQuery: '', matchNendo: 'all', matchResult: 'all', matchSignal: 'all', matchLimit: 20 });
+        if (searchInput) searchInput.value = '';
+        if (nendoFilter) nendoFilter.value = 'all';
+        if (resultFilter) resultFilter.value = 'all';
+        signalFilters?.querySelectorAll('.c-chip').forEach(chip => {
+            const active = chip.dataset.matchSignal === 'all';
+            chip.classList.toggle('active', active);
+            chip.setAttribute('aria-pressed', String(active));
+        });
+        renderSearchResults();
+        searchInput?.focus();
+    });
+    recentModeButton?.addEventListener('click', () => setView('recent'));
+    searchModeButton?.addEventListener('click', () => setView('search'));
+    backButton?.addEventListener('click', () => setView('recent'));
+    const modeTabs = [recentModeButton, searchModeButton].filter(Boolean);
+    modeTabs.forEach((button, index) => button.addEventListener('keydown', event => {
+        let nextIndex = null;
+        if (event.key === 'ArrowRight') nextIndex = (index + 1) % modeTabs.length;
+        if (event.key === 'ArrowLeft') nextIndex = (index - 1 + modeTabs.length) % modeTabs.length;
+        if (event.key === 'Home') nextIndex = 0;
+        if (event.key === 'End') nextIndex = modeTabs.length - 1;
+        if (nextIndex === null) return;
+        event.preventDefault();
+        const nextTab = modeTabs[nextIndex];
+        setView(nextTab === recentModeButton ? 'recent' : 'search');
+        nextTab.focus();
+    }));
+    signalFilters?.querySelectorAll('.c-chip').forEach(chip => {
+        const active = chip.dataset.matchSignal === experienceState.matchSignal;
+        chip.classList.toggle('active', active);
+        chip.setAttribute('aria-pressed', String(active));
+    });
+    renderMilestones();
+    renderRecent();
+    setView(experienceState.matchView);
 }
 
 export function initPlayerDetailView(playerId) {
@@ -559,6 +774,7 @@ export function initPlayerDetailView(playerId) {
     }
 
     renderDevelopmentNotebook(p);
+    renderPlayerExperience(p);
 }
 
 export function parsePlayerCSV(csvText) {

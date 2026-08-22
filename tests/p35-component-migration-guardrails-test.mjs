@@ -451,7 +451,7 @@ requireAll(source.index, [
 requireAll(source.index, [
     'c-focus-summary',
     'c-metric-grid c-metric-grid--inline',
-    'c-data-list c-data-list--scrollable c-data-list--notebook',
+    'c-data-list c-data-list--notebook',
     'c-settings-form',
     'c-sidebar',
     'c-topbar',
@@ -462,6 +462,8 @@ requireAll(source.index, [
     'c-drawer',
     'c-inspector-panel'
 ], '波Eの選手詳細・アプリシェル・作図テンプレート');
+assert.doesNotMatch(source.index, /id="pd-notebook-timeline" class="[^"]*c-data-list--scrollable/,
+    '選手年表へモバイルの二重スクロールを再導入してはいけません');
 
 requireAll(source.players, [
     'c-metric--inline',

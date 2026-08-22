@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { createCloudSnapshot, createStateSnapshot, parseBackupPayload } from '../repository.js';
 import { archiveSeason, createSeason, createTeam, ensureWorkspaceState, getActiveSeason, getActiveTeam, switchWorkspace } from '../workspace-service.js';
 import { buildPlayerTimelineArchive } from '../player-timeline-service.js';
+import { buildPlayerExperienceArchive } from '../player-experience-service.js';
 
 const state = {
     matches: [{ id: 1, date: '2026-04-01', opponent: 'テストFC' }],
@@ -41,7 +42,7 @@ archiveSeason(state, originalTeamId, newSeasonId);
 assert.ok(getActiveTeam(state).seasons.find(season => season.id === newSeasonId).archivedAt);
 
 const timelineState = {
-    matches: [{ id: 'match-2024', date: '2024-09-08', opponent: 'テストFC', presentPlayerIds: ['persist-player'] }],
+    matches: [{ id: 'match-2024', date: '2024-09-08', opponent: 'テストFC', result: '2-1', presentPlayerIds: ['persist-player'], goalRecords: [{ scorerId: 'persist-player' }] }],
     practices: [{ id: 'practice-2024', date: '2024-09-01', presentPlayerIds: ['persist-player'], location: '公園' }],
     players: [{
         id: 'persist-player', name: '継続選手', grade: '4年', history: [{ id: 'observe-2024', date: '2024-09-02', comment: '観察' }],
@@ -54,12 +55,19 @@ timelineState.teams[0].seasons[0].name = '2024年度';
 createSeason(timelineState, { name: '2025年度', copyPlayers: true, copyTeamSetup: false });
 timelineState.players[0].grade = '5年';
 timelineState.players[0].developmentNotes.push({ id: 'note-2025', date: '2025-05-03', focus: '展開', observation: '視野を広げる', nextStep: '逆サイドを見る', skillRatings: {} });
-timelineState.matches.push({ id: 'match-2025', date: '2025-05-10', opponent: '検証FC', presentPlayerIds: ['persist-player'] });
+timelineState.matches.push({ id: 'match-2025', date: '2025-05-10', opponent: '検証FC', result: '1-1', presentPlayerIds: ['persist-player'], goalRecords: [{ assistId: 'persist-player' }] });
 const archive = buildPlayerTimelineArchive(timelineState, timelineState.players[0]);
 assert.equal(archive.sources.length, 2, '同一選手を含む二年度のワークスペースを集約する必要があります');
 assert.equal(archive.items.filter(item => item.sourceItemId === 'note-2024').length, 1, '年度コピーされた同一ノートは重複表示してはいけません');
 assert.ok(archive.items.some(item => item.sourceItemId === 'match-2024' && item.sourceNendo === '2024'), '過去年度の試合を年表へ含める必要があります');
 assert.ok(archive.items.some(item => item.sourceItemId === 'match-2025' && item.sourceNendo === '2025'), '現在年度の試合を年表へ含める必要があります');
+const experienceArchive = buildPlayerExperienceArchive(timelineState, timelineState.players[0]);
+assert.equal(experienceArchive.items.length, 2, '出場の足あとには年度横断の出場試合だけを含める必要があります');
+assert.ok(experienceArchive.items.some(item => item.sourceItemId === 'match-2024' && item.goalCount === 1 && item.resultState === 'win'), '過去年度の得点・結果を導出する必要があります');
+assert.ok(experienceArchive.items.some(item => item.sourceItemId === 'match-2025' && item.assistCount === 1 && item.resultState === 'draw'), '現在年度のアシスト・結果を導出する必要があります');
+assert.ok(experienceArchive.milestones.some(item => item.kind === 'appearance'), '初出場の事実ベース節目を提供する必要があります');
+assert.ok(experienceArchive.milestones.some(item => item.kind === 'goal'), '初得点の事実ベース節目を提供する必要があります');
+assert.ok(experienceArchive.milestones.some(item => item.kind === 'assist'), '初アシストの事実ベース節目を提供する必要があります');
 
 createTeam(state, { name: 'Bチーム', color: '#123456' });
 assert.equal(getActiveTeam(state).name, 'Bチーム');
