@@ -774,29 +774,48 @@
                     </div>
                 </div>
                 <div class="c-card__body l-stack l-stack--spacious">
-                    <section class="c-focus-summary" aria-labelledby="pd-notebook-trends-title">
-                        <div>
-                            <span class="c-focus-summary__kicker">SKILL TREND</span>
-                            <h4 class="c-focus-summary__title" id="pd-notebook-trends-title">スキルの推移</h4>
-                        </div>
-                        <div id="pd-notebook-trends" class="c-metric-grid c-metric-grid--inline" aria-live="polite"></div>
-                    </section>
-                    <div id="pd-notebook-filters" class="c-filter-bar c-static-style--290" style="margin-bottom: var(--space-4);">
-                        <div class="c-filter-bar__main" style="flex-wrap: wrap; gap: var(--space-2);">
-                            <div class="c-filter-bar__search">
-                                <i class="ti ti-search" aria-hidden="true"></i>
-                                <input type="search" id="input-notebook-search" placeholder="記録をキーワード検索..." class="c-input form-control filter-search-input">
-                            </div>
-                            <div class="c-filter-chips" id="notebook-type-filters">
-                                <button type="button" class="c-chip c-chip--selectable active" data-type="all">すべて</button>
-                                <button type="button" class="c-chip c-chip--selectable" data-type="note">ノート</button>
-                                <button type="button" class="c-chip c-chip--selectable" data-type="observation">観察</button>
-                                <button type="button" class="c-chip c-chip--selectable" data-type="match">試合</button>
-                                <button type="button" class="c-chip c-chip--selectable" data-type="practice">練習</button>
-                            </div>
-                        </div>
+                    <div class="c-timeline-mode-switch" role="tablist" aria-label="育成記録の表示モード">
+                        <button type="button" id="btn-notebook-view-timeline" class="c-timeline-mode-switch__button is-active" role="tab" aria-selected="true" aria-controls="pd-notebook-timeline-view">
+                            <i class="ti ti-route" aria-hidden="true"></i> 成長の年表
+                        </button>
+                        <button type="button" id="btn-notebook-view-search" class="c-timeline-mode-switch__button" role="tab" aria-selected="false" aria-controls="pd-notebook-search-view">
+                            <i class="ti ti-search" aria-hidden="true"></i> 記録を探す
+                        </button>
+                        <p class="c-timeline-mode-switch__note">年表は「たどる」。検索は「見つける」。</p>
                     </div>
-                    <div id="pd-notebook-timeline" class="c-data-list c-data-list--scrollable c-data-list--notebook" aria-live="polite"></div>
+                    <div id="pd-notebook-timeline-view" role="tabpanel" aria-labelledby="btn-notebook-view-timeline">
+                        <section class="c-focus-summary" aria-labelledby="pd-notebook-trends-title">
+                            <div>
+                                <span class="c-focus-summary__kicker">SKILL TREND</span>
+                                <h4 class="c-focus-summary__title" id="pd-notebook-trends-title">スキルの推移</h4>
+                            </div>
+                            <div id="pd-notebook-trends" class="c-metric-grid c-metric-grid--inline" aria-live="polite"></div>
+                        </section>
+                        <div class="c-timeline-route-intro"><i class="ti ti-flag" aria-hidden="true"></i><span>現在の学年と最新月を開いています。過去の章は、必要なときに。</span></div>
+                        <div id="pd-notebook-timeline" class="c-data-list c-data-list--scrollable c-data-list--notebook" aria-live="polite"></div>
+                    </div>
+                    <div id="pd-notebook-search-view" role="tabpanel" aria-labelledby="btn-notebook-view-search" hidden>
+                        <div class="c-timeline-search-heading">
+                            <button type="button" id="btn-notebook-back-timeline" class="c-button btn c-button--secondary btn-secondary c-button--compact"><i class="ti ti-arrow-left" aria-hidden="true"></i> 年表へ戻る</button>
+                            <div><span class="c-kicker"><i class="ti ti-search" aria-hidden="true"></i> FIND A MOMENT</span><h4>記録を探す</h4><p>キーワードと種別から記録を見つけ、当時の年表の地点へ戻ります。</p></div>
+                        </div>
+                        <div id="pd-notebook-filters" class="c-filter-bar c-timeline-search-tools">
+                            <div class="c-filter-bar__main c-timeline-search-tools__main">
+                                <div class="c-filter-bar__search">
+                                    <i class="ti ti-search" aria-hidden="true"></i>
+                                    <input type="search" id="input-notebook-search" placeholder="例：守備、得点、視野" class="c-input form-control filter-search-input">
+                                </div>
+                                <div class="c-filter-chips" id="notebook-type-filters">
+                                    <button type="button" class="c-chip c-chip--selectable active" data-type="all" aria-pressed="true">すべて</button>
+                                    <button type="button" class="c-chip c-chip--selectable" data-type="note" aria-pressed="false">ノート</button>
+                                    <button type="button" class="c-chip c-chip--selectable" data-type="observation" aria-pressed="false">観察</button>
+                                    <button type="button" class="c-chip c-chip--selectable" data-type="match" aria-pressed="false">試合</button>
+                                    <button type="button" class="c-chip c-chip--selectable" data-type="practice" aria-pressed="false">練習</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pd-notebook-search-results" class="c-timeline-search-results" aria-live="polite"></div>
+                    </div>
                     <button type="button" class="c-fab btn-new-development-note" onclick="document.getElementById('modal-player-development-note').classList.remove('hidden')" aria-label="育成ノートを記録する" title="育成ノートを記録">
                         <i class="ti ti-pencil plus-icon" aria-hidden="true"></i>
                     </button>

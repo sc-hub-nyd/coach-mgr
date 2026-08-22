@@ -26,14 +26,17 @@ const summary = buildDevelopmentSummary(player, {
 });
 assert.equal(summary.noteCount, 2);
 assert.equal(summary.timeline[0].kind, 'match');
+const observationSummary = buildDevelopmentSummary({ id: 10, history: [{ id: 11, date: '2026-08-09', comment: '観察記録' }] });
+assert.equal(observationSummary.timeline[0].kind, 'observation');
 assert.equal(removeDevelopmentNote(player, first.id).id, first.id);
 assert.equal(player.developmentNotes.length, 1);
 assert.throws(() => addDevelopmentNote(player, {}), /観察メモ、次の一歩/);
 
-const [html, players, css, base] = await Promise.all([
+const [html, players, css, componentCss, base] = await Promise.all([
     readFile(new URL('../index.html', import.meta.url), 'utf8'),
     readFile(new URL('../players.js', import.meta.url), 'utf8'),
     readFile(new URL('../CSS/components-system.css', import.meta.url), 'utf8'),
+    readFile(new URL('../CSS/components.css', import.meta.url), 'utf8'),
     readFile(new URL('../CSS/base.css', import.meta.url), 'utf8')
 ]);
 assert.match(html, /pd-tab-notebook/);
@@ -41,12 +44,23 @@ assert.match(html, /form-player-development-note/);
 assert.match(html, /development-note-ratings/);
 assert.match(html, /c-focus-summary/);
 assert.match(html, /c-data-list--notebook/);
+assert.match(html, /pd-notebook-timeline-view/);
+assert.match(html, /pd-notebook-search-view/);
+assert.match(html, /role="tablist" aria-label="育成記録の表示モード"/);
+assert.match(html, /pd-notebook-search-results/);
 assert.match(html, /c-settings-form/);
 assert.match(players, /renderDevelopmentNotebook/);
 assert.match(players, /addDevelopmentNote/);
 assert.match(players, /c-metric--inline/);
 assert.match(players, /c-data-list__item/);
 assert.match(players, /c-empty-state c-empty-state--compact/);
+assert.match(players, /data-timeline-nendo/);
+assert.match(players, /data-timeline-result-record/);
+assert.match(players, /addEventListener\('click'/);
+assert.doesNotMatch(players, /custom-footprints|onclick=".*timeline/);
 assert.match(css, /c-data-list--notebook/);
+assert.match(componentCss, /c-timeline-mode-switch/);
+assert.match(componentCss, /c-timeline-record/);
+assert.doesNotMatch(componentCss, /data:image\/svg|custom-footprints/);
 assert.match(base, /form-player-development-note/);
 console.log('P19 player notebook tests passed');
