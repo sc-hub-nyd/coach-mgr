@@ -49,7 +49,7 @@ function renderDevelopmentNotebook(player) {
     const ratings = document.getElementById('development-note-ratings');
     const playerId = document.getElementById('development-player-id');
     const dateInput = document.getElementById('development-note-date');
-    let timelineState = getPlayerTimelineUiState(player.id, { view: 'timeline', searchQuery: '', filterType: 'all', filterNendo: 'all', filterSignal: 'all', searchLimit: 20, openNendo: '', openMonth: '', openRecord: '', highlightRecord: '', searchReturnActive: false });
+    let timelineState = getPlayerTimelineUiState(player.id, { view: 'timeline', searchQuery: '', filterType: 'all', filterNendo: 'all', filterSignal: 'all', searchLimit: 20, openNendo: '', openMonth: '', openRecord: '', highlightRecord: '', searchReturnActive: false, motionIntent: '' });
     if (!Number.isInteger(timelineState.searchLimit) || timelineState.searchLimit < 20) timelineState = patchPlayerTimelineUiState(player.id, { searchLimit: 20 });
     if (!['all', 'next-step', 'skill-rated'].includes(timelineState.filterSignal)) timelineState = patchPlayerTimelineUiState(player.id, { filterSignal: 'all' });
     if (!timelineState.filterNendo) timelineState = patchPlayerTimelineUiState(player.id, { filterNendo: 'all' });
@@ -143,6 +143,8 @@ function renderDevelopmentNotebook(player) {
     };
     const renderTimeline = () => {
         if (!timeline) return;
+        const motionIntent = timelineState.motionIntent || '';
+        if (motionIntent) timelineState = patchPlayerTimelineUiState(player.id, { motionIntent: '' });
         if (!summary.timeline.length) {
             timeline.innerHTML = '<div class="c-empty-state c-empty-state--compact"><div class="c-empty-state__body"><i class="ti ti-book-2 c-empty-state__icon" aria-hidden="true"></i><p class="c-empty-state__text">まだ育成記録がありません。</p></div></div>';
             return;
@@ -156,10 +158,12 @@ function renderDevelopmentNotebook(player) {
             const months = Object.keys(group.months).sort((a, b) => getMonthOrder(b) - getMonthOrder(a));
             const theme = group.items.find(item => item.note?.focus)?.note?.focus || '';
             const counts = Object.keys(labels).map(kind => `${labels[kind]}${group.items.filter(item => item.kind === kind).length}`).filter(value => !value.endsWith('0')).join(' / ');
-            return `<section class="c-timeline-chapter-group"><button type="button" class="c-timeline-chapter" data-timeline-nendo="${nendo}" aria-expanded="${chapterOpen}" aria-controls="${chapterId}"><span class="c-timeline-chapter__title"><i class="ti ${chapterOpen ? 'ti-chevron-down' : 'ti-chevron-right'}" aria-hidden="true"></i><span>${grade ? `${escapeHtml(grade)} ` : ''}${nendo}年度</span></span><span class="c-timeline-chapter__count">${group.items.length}件</span></button><div class="c-timeline-chapter__summary"><span>${escapeHtml(theme || '成長の足あと')}</span><small>${escapeHtml(counts || `${group.items.length}件の記録`)}</small></div><div id="${chapterId}" ${chapterOpen ? '' : 'hidden'}><div class="c-timeline-section">${months.map(month => renderMonth(nendo, month, group.months[month])).join('')}</div></div></section>`;
+            const chapterMotionClass = motionIntent === `route:${nendo}` ? ' is-pulse-route-enter' : '';
+            return `<section class="c-timeline-chapter-group${chapterMotionClass}"><button type="button" class="c-timeline-chapter" data-timeline-nendo="${nendo}" aria-expanded="${chapterOpen}" aria-controls="${chapterId}"><span class="c-timeline-chapter__title"><i class="ti ${chapterOpen ? 'ti-chevron-down' : 'ti-chevron-right'}" aria-hidden="true"></i><span>${grade ? `${escapeHtml(grade)} ` : ''}${nendo}年度</span></span><span class="c-timeline-chapter__count">${group.items.length}件</span></button><div class="c-timeline-chapter__summary"><span>${escapeHtml(theme || '成長の足あと')}</span><small>${escapeHtml(counts || `${group.items.length}件の記録`)}</small></div><div id="${chapterId}" ${chapterOpen ? '' : 'hidden'}><div class="c-timeline-section">${months.map(month => renderMonth(nendo, month, group.months[month], motionIntent)).join('')}</div></div></section>`;
         }).join('');
         updateTimelineContext();
         renderRoleFocus();
+        if (motionIntent) requestAnimationFrame(() => timeline.querySelectorAll('.is-pulse-route-enter, .is-pulse-arrival-enter, .is-pulse-complete-enter').forEach(element => element.classList.remove('is-pulse-route-enter', 'is-pulse-arrival-enter', 'is-pulse-complete-enter')));
     };
     const focusTimelineControl = (selector, { scroll = false } = {}) => {
         requestAnimationFrame(() => {
@@ -178,7 +182,7 @@ function renderDevelopmentNotebook(player) {
             control.focus({ preventScroll: !scroll });
         });
     };
-    const renderMonth = (nendo, month, items) => {
+    const renderMonth = (nendo, month, items, motionIntent = '') => {
         const monthKey = `${nendo}-${month}`;
         const monthOpen = timelineState.openMonth === monthKey;
         const monthId = `pd-timeline-month-${nendo}-${month}`;
@@ -193,13 +197,17 @@ function renderDevelopmentNotebook(player) {
         const newerMonth = monthIndex > 0 ? timelineMonthKeys[monthIndex - 1] : '';
         const olderMonth = monthIndex >= 0 && monthIndex < timelineMonthKeys.length - 1 ? timelineMonthKeys[monthIndex + 1] : '';
         const navigation = newerMonth || olderMonth ? `<nav class="c-timeline-month-nav" aria-label="記録月を移動">${newerMonth ? `<button type="button" data-timeline-jump-month="${newerMonth}"><i class="ti ti-arrow-back-up" aria-hidden="true"></i> 新しい記録月</button>` : ''}${olderMonth ? `<button type="button" data-timeline-jump-month="${olderMonth}">以前の記録月 <i class="ti ti-arrow-down" aria-hidden="true"></i></button>` : ''}</nav>` : '';
-        return `<section class="c-timeline-month"><button type="button" class="c-timeline-route" data-timeline-month="${monthKey}" aria-expanded="${monthOpen}" aria-controls="${monthId}"><span class="c-timeline-route__title"><i class="ti ti-flag" aria-hidden="true"></i><i class="ti ${monthOpen ? 'ti-chevron-down' : 'ti-chevron-right'}" aria-hidden="true"></i>${month}月${focus ? ` <small>${escapeHtml(focus)}</small>` : ''}</span><span class="c-timeline-route__count">${items.length}件</span></button><div id="${monthId}" ${monthOpen ? '' : 'hidden'}><div class="c-timeline-month-summary"><span class="c-timeline-month-summary__label">今月のひとこま</span><strong>${escapeHtml(highlightText)}</strong><div class="c-timeline-month-summary__counts">${countText}</div></div><div class="c-timeline-items">${items.map(item => renderRecord(nendo, month, item)).join('')}</div>${navigation}</div></section>`;
+        const monthMotionClass = motionIntent === `route:${monthKey}` ? ' is-pulse-route-enter' : '';
+        return `<section class="c-timeline-month${monthMotionClass}"><button type="button" class="c-timeline-route" data-timeline-month="${monthKey}" aria-expanded="${monthOpen}" aria-controls="${monthId}"><span class="c-timeline-route__title"><i class="ti ti-flag" aria-hidden="true"></i><i class="ti ${monthOpen ? 'ti-chevron-down' : 'ti-chevron-right'}" aria-hidden="true"></i>${month}月${focus ? ` <small>${escapeHtml(focus)}</small>` : ''}</span><span class="c-timeline-route__count">${items.length}件</span></button><div id="${monthId}" ${monthOpen ? '' : 'hidden'}><div class="c-timeline-month-summary"><span class="c-timeline-month-summary__label">今月のひとこま</span><strong>${escapeHtml(highlightText)}</strong><div class="c-timeline-month-summary__counts">${countText}</div></div><div class="c-timeline-items">${items.map(item => renderRecord(nendo, month, item, motionIntent)).join('')}</div>${navigation}</div></section>`;
     };
-    const renderRecord = (nendo, month, item) => {
+    const renderRecord = (nendo, month, item, motionIntent = '') => {
         const recordId = `pd-timeline-record-${String(item.id).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
         const isOpen = timelineState.openRecord === String(item.id);
         const nextStep = item.note?.nextStep || '';
-        return `<article class="c-timeline-record-group${timelineState.highlightRecord === String(item.id) ? ' is-search-target' : ''}"><button type="button" class="c-timeline-record is-${escapeHtml(item.kind)}" data-timeline-record="${escapeHtml(item.id)}" aria-expanded="${isOpen}" aria-controls="${recordId}"><span class="c-timeline-record__icon"><i class="${icons[item.kind] || 'ti ti-circle'}" aria-hidden="true"></i></span><span><span class="c-timeline-record__meta">${escapeHtml(item.date || '')} ・ ${labels[item.kind] || '記録'}</span><strong class="c-timeline-record__title">${escapeHtml(item.title || '')}</strong></span><i class="ti ${isOpen ? 'ti-chevron-down' : 'ti-chevron-right'} c-timeline-record__chevron" aria-hidden="true"></i></button><div id="${recordId}" class="c-timeline-record-detail" ${isOpen ? '' : 'hidden'}><p><strong>記録</strong>${escapeHtml(item.detail || '記録')}</p>${nextStep ? `<p><strong>次の一歩</strong>${escapeHtml(nextStep)}</p>` : ''}<div class="c-data-list__actions c-timeline-record-detail__actions">${item.kind === 'match' ? `<button type="button" class="c-button btn c-button--secondary btn-secondary btn-sm" data-timeline-match-id="${escapeHtml(item.id)}"><i class="ti ti-ball-football" aria-hidden="true"></i> 試合詳細を見る</button>` : ''}${canEdit && item.kind === 'note' ? `<button type="button" class="c-button btn c-button--secondary btn-secondary btn-sm" data-timeline-note-id="${escapeHtml(item.id)}"><i class="ti ti-trash" aria-hidden="true"></i> 削除</button>` : ''}</div></div></article>`;
+        const isSearchArrival = motionIntent === `search:${item.id}` || motionIntent === `arrival:${item.id}`;
+        const isSaveArrival = motionIntent === `save:${item.id}`;
+        const motionClass = isSaveArrival ? ' is-pulse-complete-enter' : (isSearchArrival ? ' is-pulse-arrival-enter' : '');
+        return `<article class="c-timeline-record-group${timelineState.highlightRecord === String(item.id) ? ' is-search-target' : ''}${motionClass}"><button type="button" class="c-timeline-record is-${escapeHtml(item.kind)}" data-timeline-record="${escapeHtml(item.id)}" aria-expanded="${isOpen}" aria-controls="${recordId}"><span class="c-timeline-record__icon"><i class="${icons[item.kind] || 'ti ti-circle'}" aria-hidden="true"></i></span><span><span class="c-timeline-record__meta">${escapeHtml(item.date || '')} ・ ${labels[item.kind] || '記録'}</span><strong class="c-timeline-record__title">${escapeHtml(item.title || '')}</strong></span><i class="ti ${isOpen ? 'ti-chevron-down' : 'ti-chevron-right'} c-timeline-record__chevron" aria-hidden="true"></i></button><div id="${recordId}" class="c-timeline-record-detail" ${isOpen ? '' : 'hidden'}><p><strong>記録</strong>${escapeHtml(item.detail || '記録')}</p>${nextStep ? `<p><strong>次の一歩</strong>${escapeHtml(nextStep)}</p>` : ''}<div class="c-data-list__actions c-timeline-record-detail__actions">${item.kind === 'match' ? `<button type="button" class="c-button btn c-button--secondary btn-secondary btn-sm" data-timeline-match-id="${escapeHtml(item.id)}"><i class="ti ti-ball-football" aria-hidden="true"></i> 試合詳細を見る</button>` : ''}${canEdit && item.kind === 'note' ? `<button type="button" class="c-button btn c-button--secondary btn-secondary btn-sm" data-timeline-note-id="${escapeHtml(item.id)}"><i class="ti ti-trash" aria-hidden="true"></i> 削除</button>` : ''}</div></div></article>`;
     };
     const renderSearchResults = () => {
         if (!searchResults) return;
@@ -243,28 +251,28 @@ function renderDevelopmentNotebook(player) {
         if (target.dataset.timelineNendo) {
             const nextNendo = timelineState.openNendo === target.dataset.timelineNendo ? '' : target.dataset.timelineNendo;
             const months = nextNendo ? Object.keys(allGroups[nextNendo].months).sort((a, b) => getMonthOrder(b) - getMonthOrder(a)) : [];
-            timelineState = patchPlayerTimelineUiState(player.id, { openNendo: nextNendo, openMonth: months[0] ? `${nextNendo}-${months[0]}` : '', openRecord: '' });
+            timelineState = patchPlayerTimelineUiState(player.id, { openNendo: nextNendo, openMonth: months[0] ? `${nextNendo}-${months[0]}` : '', openRecord: '', motionIntent: `route:${target.dataset.timelineNendo}` });
             renderTimeline();
             focusTimelineControl(`[data-timeline-nendo="${target.dataset.timelineNendo}"]`);
             return;
         }
         if (target.dataset.timelineMonth) {
             const nextMonth = timelineState.openMonth === target.dataset.timelineMonth ? '' : target.dataset.timelineMonth;
-            timelineState = patchPlayerTimelineUiState(player.id, { openMonth: nextMonth, openRecord: '' });
+            timelineState = patchPlayerTimelineUiState(player.id, { openMonth: nextMonth, openRecord: '', motionIntent: `route:${target.dataset.timelineMonth}` });
             renderTimeline();
             focusTimelineControl(`[data-timeline-month="${target.dataset.timelineMonth}"]`);
             return;
         }
         if (target.dataset.timelineJumpMonth) {
             const [nextNendo, nextMonth] = target.dataset.timelineJumpMonth.split('-');
-            timelineState = patchPlayerTimelineUiState(player.id, { openNendo: nextNendo, openMonth: target.dataset.timelineJumpMonth, openRecord: '', highlightRecord: '' });
+            timelineState = patchPlayerTimelineUiState(player.id, { openNendo: nextNendo, openMonth: target.dataset.timelineJumpMonth, openRecord: '', highlightRecord: '', motionIntent: `route:${target.dataset.timelineJumpMonth}` });
             renderTimeline();
             focusTimelineControl(`[data-timeline-month="${nextNendo}-${nextMonth}"]`, { scroll: true });
             return;
         }
         if (target.dataset.timelineRecord) {
             const nextRecord = timelineState.openRecord === target.dataset.timelineRecord ? '' : target.dataset.timelineRecord;
-            timelineState = patchPlayerTimelineUiState(player.id, { openRecord: nextRecord, highlightRecord: '' });
+            timelineState = patchPlayerTimelineUiState(player.id, { openRecord: nextRecord, highlightRecord: '', motionIntent: nextRecord ? `arrival:${nextRecord}` : '' });
             renderTimeline();
             focusTimelineRecord(target.dataset.timelineRecord);
             return;
@@ -300,7 +308,7 @@ function renderDevelopmentNotebook(player) {
         if (!target.dataset.timelineResultRecord) return;
         const resultNendo = target.dataset.timelineResultNendo || '';
         const resultRecord = target.dataset.timelineResultRecord || '';
-        timelineState = patchPlayerTimelineUiState(player.id, { openNendo: resultNendo, openMonth: `${resultNendo}-${target.dataset.timelineResultMonth || ''}`, openRecord: resultRecord, highlightRecord: resultRecord, searchReturnActive: true });
+        timelineState = patchPlayerTimelineUiState(player.id, { openNendo: resultNendo, openMonth: `${resultNendo}-${target.dataset.timelineResultMonth || ''}`, openRecord: resultRecord, highlightRecord: resultRecord, searchReturnActive: true, motionIntent: `search:${resultRecord}` });
         setView('timeline');
         renderTimeline();
         focusTimelineRecord(resultRecord, { scroll: true });
@@ -732,9 +740,12 @@ export function initPlayerDetailView(playerId) {
                     });
                 }
                 
-                addDevelopmentNote(p, { date, observation, nextStep, skillRatings });
+                const createdNote = addDevelopmentNote(p, { date, observation, nextStep, skillRatings });
                 await saveData();
-                showToast('育成ノートを記録しました');
+                const noteNendo = getNendo(createdNote.date);
+                const noteMonth = String(Number(createdNote.date.split('-')[1] || 0));
+                patchPlayerTimelineUiState(p.id, { view: 'timeline', openNendo: noteNendo, openMonth: `${noteNendo}-${noteMonth}`, openRecord: createdNote.id, highlightRecord: '', searchReturnActive: false, motionIntent: `save:${createdNote.id}` });
+                showToast('育成ノートを記録しました', { type: 'success', duration: 3200 });
                 
                 // フォームリセット
                 document.getElementById('development-note-observation').value = '';

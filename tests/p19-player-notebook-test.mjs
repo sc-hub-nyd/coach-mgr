@@ -32,12 +32,14 @@ assert.equal(removeDevelopmentNote(player, first.id).id, first.id);
 assert.equal(player.developmentNotes.length, 1);
 assert.throws(() => addDevelopmentNote(player, {}), /観察メモ、次の一歩/);
 
-const [html, players, css, componentCss, base] = await Promise.all([
+const [html, players, css, componentCss, base, tokens, app] = await Promise.all([
     readFile(new URL('../index.html', import.meta.url), 'utf8'),
     readFile(new URL('../players.js', import.meta.url), 'utf8'),
     readFile(new URL('../CSS/components-system.css', import.meta.url), 'utf8'),
     readFile(new URL('../CSS/components.css', import.meta.url), 'utf8'),
-    readFile(new URL('../CSS/base.css', import.meta.url), 'utf8')
+    readFile(new URL('../CSS/base.css', import.meta.url), 'utf8'),
+    readFile(new URL('../CSS/tokens.css', import.meta.url), 'utf8'),
+    readFile(new URL('../app.js', import.meta.url), 'utf8')
 ]);
 assert.match(html, /pd-tab-notebook/);
 assert.match(html, /form-player-development-note/);
@@ -86,6 +88,10 @@ assert.match(players, /aria-selected/);
 assert.match(players, /data-timeline-load-more/);
 assert.match(players, /filterNendo/);
 assert.match(players, /filterSignal/);
+assert.match(players, /motionIntent/);
+assert.match(players, /is-pulse-arrival-enter/);
+assert.match(players, /is-pulse-complete-enter/);
+assert.match(players, /showToast\('育成ノートを記録しました', \{ type: 'success'/);
 assert.match(players, /data-experience-match/);
 assert.match(players, /matchLimit/);
 assert.match(players, /addEventListener\('click'/);
@@ -102,6 +108,15 @@ assert.match(componentCss, /c-timeline-search-more/);
 assert.match(componentCss, /c-timeline-search-structured/);
 assert.match(componentCss, /c-experience-milestones/);
 assert.match(componentCss, /c-experience-item/);
+assert.match(componentCss, /color-motion-arrival/);
+assert.match(componentCss, /is-pulse-route-enter/);
+assert.match(componentCss, /is-route-arrival/);
 assert.doesNotMatch(componentCss, /data:image\/svg|custom-footprints/);
 assert.match(base, /form-player-development-note/);
+assert.match(tokens, /--color-motion-route: var\(--color-success\)/);
+assert.match(tokens, /--color-motion-arrival: var\(--color-warning\)/);
+assert.match(tokens, /--duration-route: 220ms/);
+assert.match(tokens, /data-reduce-motion="true"[\s\S]*--duration-route: 1ms/);
+assert.match(app, /triggerTransientMotion/);
+assert.match(app, /is-route-arrival/);
 console.log('P19 player notebook tests passed');

@@ -279,6 +279,20 @@
     --duration-base: 200ms;
     --duration-sheet: 260ms;
     --duration-sheet-close: 180ms;
+
+    /* Pitchside Pulse: state feedback is semantic, never a literal team color. */
+    --color-motion-route: var(--color-success);
+    --color-motion-route-surface: var(--color-surface-success-soft);
+    --color-motion-arrival: var(--color-warning);
+    --color-motion-arrival-surface: var(--color-surface-warning-soft);
+    --color-motion-complete: var(--color-success);
+    --color-motion-complete-surface: var(--color-surface-success-soft);
+    --color-motion-context: var(--color-brand);
+    --motion-distance-micro: 0.1875rem;
+    --duration-route: 220ms;
+    --duration-arrival: 320ms;
+    --duration-settle: 640ms;
+    --ease-arrival: cubic-bezier(0.18, 0.78, 0.26, 1);
 }
 
 :root[data-color-mode="dark"] {
@@ -349,6 +363,9 @@
         --duration-base: 1ms;
         --duration-sheet: 1ms;
         --duration-sheet-close: 1ms;
+        --duration-route: 1ms;
+        --duration-arrival: 1ms;
+        --duration-settle: 1ms;
     }
 }
 
@@ -358,4 +375,7 @@
     --duration-base: 1ms;
     --duration-sheet: 1ms;
     --duration-sheet-close: 1ms;
+    --duration-route: 1ms;
+    --duration-arrival: 1ms;
+    --duration-settle: 1ms;
 }

@@ -39,6 +39,16 @@ function getModalCloseDuration(modalEl) {
         : getMotionDurationMs('--duration-fast');
 }
 
+function triggerTransientMotion(element, className, durationToken) {
+    if (!(element instanceof HTMLElement)) return;
+    const duration = getMotionDurationMs(durationToken);
+    if (duration <= 1) return;
+    element.classList.remove(className);
+    void element.offsetWidth;
+    element.classList.add(className);
+    window.setTimeout(() => element.classList.remove(className), duration);
+}
+
 function setMobileContextBarVisibility(contextBar, isVisible) {
     if (!(contextBar instanceof HTMLElement)) return;
     const pendingClose = contextBarCloseTimers.get(contextBar);
@@ -2500,6 +2510,7 @@ export function navigate(route, params = null, isBack = false, restoredRouteCont
         state.navHistory = [];
     }
 
+    const previousRoute = uiState.currentRoute;
     state.currentRoute = route;
     uiState.currentRoute = route;
     uiState.currentParams = params;
@@ -2547,6 +2558,10 @@ export function navigate(route, params = null, isBack = false, restoredRouteCont
         const isGroupedRoute = link.dataset.mobileRouteGroup === activeMobileRouteGroup;
         link.classList.toggle('active', isDirectRoute || isGroupedRoute);
     });
+    if (previousRoute && previousRoute !== route) {
+        const activeBottomNav = Array.from(bottomNavLinks).find(link => link.classList.contains('active'));
+        triggerTransientMotion(activeBottomNav, 'is-route-arrival', '--duration-route');
+    }
 
     // スマホ用スリム戻るコンテキストバーの表示・非表示・タイトル制御
     const mobileContextBar = document.getElementById('mobile-context-bar');
