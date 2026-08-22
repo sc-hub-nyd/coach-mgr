@@ -2193,6 +2193,53 @@
     font-family: var(--font-numeric);
 }
 
+/* Pitchside Pulse U4〜U5: record arrivals are state feedback, not team-color decoration. */
+#view-container .c-dashboard-widget,
+#view-container .c-practice-card,
+#view-container .c-match-card,
+#view-container .c-empty-state,
+.timeline-edit-row {
+    transition: opacity var(--duration-arrival) var(--ease-out), transform var(--duration-arrival) var(--ease-arrival), background-color var(--duration-arrival) var(--ease-out), box-shadow var(--duration-settle) var(--ease-out);
+}
+
+#view-container.is-view-arrival .c-dashboard-widget,
+#view-container.is-view-arrival .c-practice-card,
+#view-container.is-view-arrival .c-match-card,
+#view-container.is-view-arrival .c-empty-state {
+    opacity: 0.72;
+    transform: translateY(var(--motion-distance-micro));
+}
+
+#view-container .c-practice-card.is-pulse-complete {
+    background: var(--color-motion-complete-surface);
+    box-shadow: 0 0 0 0.3rem color-mix(in srgb, var(--color-motion-complete) 22%, transparent);
+}
+
+.timeline-edit-row.is-pulse-timestamp-settle {
+    background: var(--color-motion-complete-surface);
+    box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--color-motion-complete) 20%, transparent);
+    transform: translateY(calc(var(--motion-distance-micro) * -1));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #view-container .c-dashboard-widget,
+    #view-container .c-practice-card,
+    #view-container .c-match-card,
+    #view-container .c-empty-state,
+    .timeline-edit-row { transition: none; }
+    #view-container.is-view-arrival .c-dashboard-widget,
+    #view-container.is-view-arrival .c-practice-card,
+    #view-container.is-view-arrival .c-match-card,
+    #view-container.is-view-arrival .c-empty-state,
+    .timeline-edit-row.is-pulse-timestamp-settle { transform: none; box-shadow: none; }
+}
+
+:root[data-reduce-motion="true"] #view-container .c-dashboard-widget,
+:root[data-reduce-motion="true"] #view-container .c-practice-card,
+:root[data-reduce-motion="true"] #view-container .c-match-card,
+:root[data-reduce-motion="true"] #view-container .c-empty-state,
+:root[data-reduce-motion="true"] .timeline-edit-row { transition: none; }
+
 .btn-use-current-timestamp {
     min-inline-size: 2.25rem;
     min-block-size: 2.25rem;

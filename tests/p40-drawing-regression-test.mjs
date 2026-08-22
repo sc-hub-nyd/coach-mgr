@@ -151,6 +151,18 @@ requireAll(drawing, [
     'drawPitch\\(objects\\)'
 ], '選択・編集・履歴');
 
+// Pitchside Pulse U5: Canvasの描画データは変えず、選択・配置時だけ外枠へ短い接地感を与える。
+requireAll(drawing, [
+    'function triggerCanvasFeedback\\(className, durationToken = \'--duration-settle\'\\)',
+    "triggerCanvasFeedback\\('is-pulse-selected', '--duration-arrival'\\)",
+    "triggerCanvasFeedback\\('is-pulse-placed'\\)"
+], 'Canvas選択・配置フィードバック');
+requireAll(drawingCss, [
+    '\\.canvas-wrapper\\.is-pulse-selected',
+    '\\.canvas-wrapper\\.is-pulse-placed',
+    'data-reduce-motion="true"'
+], 'Canvas接地感と縮退モーション');
+
 // 一括配置はポップオーバー、選択値、フォーメーション解決、配置対象別の置換、履歴・再描画までを保証する。
 requireDomIds([
     'anim-bulk-formation-btn', 'anim-bulk-formation-popover',

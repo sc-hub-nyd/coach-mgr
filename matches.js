@@ -2539,7 +2539,7 @@ window.editFormation = function (matchId, formationId = null) {
     openModal('modal-formation');
 };
 
-function renderPeriodTimelineList(period) {
+function renderPeriodTimelineList(period, feedbackMemoId = '') {
     const container = document.getElementById('period-timeline-list');
     if (!container) return;
 
@@ -2574,7 +2574,7 @@ function renderPeriodTimelineList(period) {
         const tagOptionHtml = (state.analysisTags || []).map(t => `<option value="${escapeHtml(t)}" ${currentTag === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('');
 
         return `
-            <div class="timeline-edit-row c-data-list__item" data-index="${idx}">
+            <div class="timeline-edit-row c-data-list__item${String(m.id) === String(feedbackMemoId) ? ' is-pulse-timestamp-settle' : ''}" data-index="${idx}" data-memo-id="${escapeHtml(m.id)}">
                 <div class="c-data-list__header period-timeline-edit__controls">
                     <button type="button" class="c-button btn c-button--secondary btn-secondary c-button--compact btn-sm period-timeline-edit__seek btn-seek-timestamp" data-seconds="${timestampSec}" aria-label="${formatSeconds(timestampSec)}から動画を再生">
                         <i class="ti ti-player-play" aria-hidden="true"></i> ${formatSeconds(timestampSec)}
@@ -2608,7 +2608,7 @@ function renderPeriodTimelineList(period) {
         const btnDelete = row.querySelector('.btn-delete-memo');
         const btnSeek = row.querySelector('.btn-seek-timestamp');
 
-        const updateData = ({ rerender = false } = {}) => {
+        const updateData = ({ rerender = false, feedback = false } = {}) => {
             const memo = period.analysisMemos[idx];
             if (!memo) return false;
             const timestampSec = Number(secondsInput?.value);
@@ -2632,18 +2632,19 @@ function renderPeriodTimelineList(period) {
             period.analysisMemos[idx] = normalized;
             sortTimelineMemos(period.analysisMemos);
             saveData();
-            if (rerender) renderPeriodTimelineList(period);
+            if (rerender) renderPeriodTimelineList(period, feedback ? normalized.id : '');
+            else if (feedback) row.classList.add('is-pulse-timestamp-settle');
             return true;
         };
 
         if (tagSelect && isCoach) tagSelect.onchange = () => updateData();
         if (textInput && isCoach) textInput.oninput = () => updateData();
         if (secondsInput && isCoach) {
-            secondsInput.onchange = () => updateData({ rerender: true });
+            secondsInput.onchange = () => updateData({ rerender: true, feedback: true });
             secondsInput.onkeydown = event => {
                 if (event.key === 'Enter') {
                     event.preventDefault();
-                    updateData({ rerender: true });
+                    updateData({ rerender: true, feedback: true });
                 }
             };
         }
@@ -2654,7 +2655,7 @@ function renderPeriodTimelineList(period) {
                     return;
                 }
                 if (secondsInput) secondsInput.value = String(Math.max(0, Math.floor(ytPlayer.getCurrentTime())));
-                updateData({ rerender: true });
+                updateData({ rerender: true, feedback: true });
             };
         }
 

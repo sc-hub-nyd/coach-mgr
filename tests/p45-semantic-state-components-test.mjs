@@ -2,13 +2,16 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const read = file => readFile(new URL(file, import.meta.url), 'utf8');
-const [tokens, standard, components, dashboard, utils, index] = await Promise.all([
+const [tokens, standard, components, dashboard, utils, index, app, practices, system] = await Promise.all([
     read('../CSS/tokens.css'),
     read('../CSS/components-standard.css'),
     read('../CSS/components.css'),
     read('../CSS/dashboard.css'),
     read('../utils.js'),
-    read('../index.html')
+    read('../index.html'),
+    read('../app.js'),
+    read('../practices.js'),
+    read('../CSS/components-system.css')
 ]);
 
 const requireAll = (text, values, label) => values.forEach(value => {
@@ -79,5 +82,16 @@ requireAll(dashboard, [
     'color: var(--color-info);',
     'background: var(--color-status-muted-surface);'
 ], 'ダッシュボードの状態表現');
+
+requireAll(practices, [
+    "navigate('practices', { pulse: 'complete', pulsePracticeId: practice?.id });"
+], '練習保存後の成功遷移');
+requireAll(app, [
+    "triggerTransientMotion(practiceCard, 'is-pulse-complete', '--duration-settle');"
+], '保存済み練習の成功着地');
+requireAll(system, [
+    '#view-container .c-practice-card.is-pulse-complete',
+    'var(--color-motion-complete-surface)'
+], '成功着地の意味的状態色');
 
 console.log('P45 semantic state component contracts passed');

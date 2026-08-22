@@ -550,12 +550,12 @@ export function initPractices(miniPitchObserver) {
                 });
                 if (selectedTemplate) applyPracticeTemplate(practice, selectedTemplate);
                 else delete practice.appliedTemplateId;
-                showToast(editId ? '練習日情報を更新しました' : '練習日を記録しました');
+                showToast(editId ? '練習日情報を更新しました' : '練習日を記録しました', { type: 'success', duration: 3200 });
             }
 
             saveData();
             document.getElementById('modal-practice').classList.add('hidden');
-            navigate('practices');
+            navigate('practices', { pulse: 'complete', pulsePracticeId: practice?.id });
         };
     }
 

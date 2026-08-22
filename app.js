@@ -2617,6 +2617,10 @@ export function navigate(route, params = null, isBack = false, restoredRouteCont
         viewContainer.innerHTML = '';
         viewContainer.appendChild(template.content.cloneNode(true));
 
+        if (previousRoute && previousRoute !== route) {
+            triggerTransientMotion(viewContainer, 'is-view-arrival', '--duration-arrival');
+        }
+
         // 画面遷移時はスクロール位置をトップにリセット
         viewContainer.scrollTop = 0;
         window.scrollTo(0, 0);
@@ -2653,6 +2657,14 @@ export function navigate(route, params = null, isBack = false, restoredRouteCont
                 }
             }
             initPractices(miniPitchObserver);
+            const pulsePracticeId = params && typeof params === 'object' ? params.pulsePracticeId : null;
+            if (pulsePracticeId !== null && pulsePracticeId !== undefined) {
+                const practiceCard = Array.from(viewContainer.querySelectorAll('.c-practice-card'))
+                    .find(card => card.dataset.practiceId === String(pulsePracticeId));
+                if (practiceCard) {
+                    triggerTransientMotion(practiceCard, 'is-pulse-complete', '--duration-settle');
+                }
+            }
         }
         if (route === 'matches') initMatches();
         if (route === 'tactics') initTactics(miniPitchObserver);

@@ -413,6 +413,19 @@ body[data-route="animation"] .c-bottom-nav {
     pointer-events: auto;
 }
 
+/* Pitchside Pulse U5: the canvas stays deterministic; its shell gives the brief settle cue. */
+.canvas-wrapper { transition: transform var(--duration-arrival) var(--ease-arrival), box-shadow var(--duration-settle) var(--ease-out); }
+.canvas-wrapper.is-pulse-selected { box-shadow: 0 0 0 0.24rem color-mix(in srgb, var(--color-motion-context) 28%, transparent); transform: scale(0.998); }
+.canvas-wrapper.is-pulse-placed { box-shadow: 0 0 0 0.3rem color-mix(in srgb, var(--color-motion-complete) 24%, transparent); transform: scale(0.996); }
+
+@media (prefers-reduced-motion: reduce) {
+    .canvas-wrapper { transition: none; }
+    .canvas-wrapper.is-pulse-selected,
+    .canvas-wrapper.is-pulse-placed { transform: none; box-shadow: none; }
+}
+
+:root[data-reduce-motion="true"] .canvas-wrapper { transition: none; }
+
 #pitch-ui-canvas {
     background: transparent;
     z-index: 30;

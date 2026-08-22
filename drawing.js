@@ -134,6 +134,23 @@ function updateCanvasToolbar() {
     updateToolDockActive();
 }
 
+function getMotionDurationMs(token) {
+    const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+    const numeric = Number.parseFloat(value);
+    if (!Number.isFinite(numeric)) return 0;
+    return value.endsWith('ms') ? numeric : numeric * 1000;
+}
+
+function triggerCanvasFeedback(className, durationToken = '--duration-settle') {
+    const target = canvas?.closest('.canvas-wrapper') || canvas;
+    const duration = getMotionDurationMs(durationToken);
+    if (!(target instanceof HTMLElement) || duration <= 1) return;
+    target.classList.remove(className);
+    void target.offsetWidth;
+    target.classList.add(className);
+    window.setTimeout(() => target.classList.remove(className), duration);
+}
+
 // --- シーン管理 ---
 function updateFrameCount() {
     const el = document.getElementById('frame-count');
@@ -2575,6 +2592,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 }
             }
             drawPitch(objects);
+            if (selectedObject) triggerCanvasFeedback('is-pulse-selected', '--duration-arrival');
         } else if (currentTool && (currentTool.startsWith('line-') || currentTool === 'ladder')) {
             isDrawing = true;
             startX = applyGridSnap(x);
@@ -2624,6 +2642,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                                 saveHistory();
                                 drawPitch(objects);
                                 updateContextPopover();
+                                triggerCanvasFeedback('is-pulse-placed');
                             }
                             modal.classList.add('hidden');
                         };
@@ -2637,6 +2656,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 updateToolDockActive();
                 saveHistory();
                 drawPitch(objects);
+                triggerCanvasFeedback('is-pulse-placed');
 
                 if (type === 'player') {
                     const elNum = document.getElementById('canvas-player-number');
@@ -2753,6 +2773,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             activeSnapLines = { v: null, h: null };
             drawPitch(objects);
         } else if (isDrawing && currentTool && (currentTool.startsWith('line-') || currentTool === 'ladder')) {
+            let didPlaceObject = false;
             const pos = getCanvasPos(e);
             const x = applyGridSnap(pos.x);
             const y = applyGridSnap(pos.y);
@@ -2781,6 +2802,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
                 if (newObj) {
                     objects.push(newObj);
                     selectedObject = newObj;
+                    didPlaceObject = true;
                 }
                 saveHistory();
             }
@@ -2789,6 +2811,7 @@ export function initAnimation(params, navigateFunc, openModalFunc) {
             updateToolDockActive();
             drawPitch(objects);
             updateContextPopover();
+            if (didPlaceObject) triggerCanvasFeedback('is-pulse-placed');
         }
     };
 
